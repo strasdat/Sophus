@@ -1,0 +1,7 @@
+C++ implementation of Lie Groups using Eigen.
+
+For a installation guideline, please refer to 
+
+https://github.com/strasdat/ScaViSLAM
+
+for now.
