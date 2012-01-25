@@ -18,7 +18,7 @@ IF (CMAKE_COMPILER_IS_GNUCXX )
 ENDIF()
 
 
-SET (INCLUDE_DIRS "../eigen3/")
+SET (INCLUDE_DIRS "../eigen3.1/")
 
 SET (SOURCE_DIR "sophus")
 SET (CLASSES  se3
