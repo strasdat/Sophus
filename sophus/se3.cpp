@@ -20,7 +20,9 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
+#include <iostream>
 #include "se3.h"
+
 
 namespace Sophus
 {
@@ -143,63 +145,86 @@ Vector6d SE3
 SE3 SE3
 ::exp(const Vector6d & update)
 {
+  Quaterniond q;
   Vector3d upsilon = update.head<3>();
   Vector3d omega = update.tail<3>();
 
   double theta = omega.norm();
   Matrix3d Omega = SO3::hat(omega);
+  Matrix3d Omega_sq = Omega*Omega;
 
-  Matrix3d R;
   Matrix3d V;
-  if (theta<SMALL_EPS)
+  double half_theta = 0.5*theta;
+
+  double imag_factor;
+  double real_factor = cos(half_theta);
+  if(theta<SMALL_EPS)
   {
-    R = (Matrix3d::Identity() + Omega + Omega*Omega);
-    V = R;
+    double theta_sq = theta*theta;
+    double theta_po4 = theta_sq*theta_sq;
+    imag_factor = 0.5-0.0208333*theta_sq+0.000260417*theta_po4;
+    q.w() = real_factor;
+    q.x() = imag_factor*omega.x();
+    q.y() = imag_factor*omega.y();
+    q.z() = imag_factor*omega.z();
+    V = q.matrix();
   }
   else
   {
-    Matrix3d Omega2 = Omega*Omega;
-
-    R = (Matrix3d::Identity()
-         + sin(theta)/theta *Omega
-         + (1-cos(theta))/(theta*theta)*Omega2);
-
+    double theta_sq = theta*theta;
+    double sin_half_theta = sin(half_theta);
+    imag_factor = sin_half_theta/theta;
+    q.w() = real_factor;
+    q.x() = imag_factor*omega.x();
+    q.y() = imag_factor*omega.y();
+    q.z() = imag_factor*omega.z();
     V = (Matrix3d::Identity()
-         + (1-cos(theta))/(theta*theta)*Omega
-         + (theta-sin(theta))/(pow(theta,3))*Omega2);
+         + (1-cos(theta))/(theta_sq)*Omega
+         + (theta-sin(theta))/(theta_sq*theta)*Omega_sq);
   }
-  return SE3(Quaterniond(R),V*upsilon);
+  return SE3(q,V*upsilon);
 }
 
 Vector6d SE3
 ::log(const SE3 & se3)
 {
-  Vector6d res;
+  Vector6d upsilon_omega;
+  double q_real = se3.so3_.quaternion().w();
+  double theta ;
   Matrix3d _R = se3.so3_.matrix();
-  double d =  0.5*(_R(0,0)+_R(1,1)+_R(2,2)-1);
-  Vector3d omega;
-  Vector3d upsilon;
   Vector3d dR = SO3::deltaR(_R);
-  Matrix3d V_inv;
-  if (d>1.-SMALL_EPS)
+  Vector3d omega;
+
+  if (q_real>1.-SMALL_EPS)
   {
+    upsilon_omega.tail<3>() =  (2.-2./3.*(q_real-1.)+4./15.*(q_real-1.)*(q_real-1.))
+        *Vector3d(se3.so3_.quaternion().x(),se3.so3_.quaternion().y(),se3.so3_.quaternion().z());
+    theta = upsilon_omega.tail<3>().norm();
     omega = 0.5*dR;
     Matrix3d Omega = SO3::hat(omega);
-    V_inv = Matrix3d::Identity()- 0.5*Omega + (1./12.)*(Omega*Omega);
+    Matrix3d V_inv = Matrix3d::Identity()- 0.5*Omega + (1./12.)*(Omega*Omega);
+    upsilon_omega.head<3>() = V_inv*se3.translation_;
   }
   else
   {
-    double theta = acos(d);
-    omega = theta/(2*sqrt(1-d*d))*dR;
-    Matrix3d Omega = SO3::hat(omega);
-    V_inv = ( Matrix3d::Identity() - 0.5*Omega
+
+    theta = 2.*acos(q_real);
+    double theta_by_sin_half_theta = theta/sqrt(1. - q_real*q_real);
+
+    upsilon_omega.tail<3>() = Vector3d(theta_by_sin_half_theta*se3.so3_.quaternion().x(),
+                                       theta_by_sin_half_theta*se3.so3_.quaternion().y(),
+                                       theta_by_sin_half_theta*se3.so3_.quaternion().z());
+
+    Matrix3d Omega = SO3::hat(upsilon_omega.tail<3>());
+    Matrix3d V_inv = ( Matrix3d::Identity() - 0.5*Omega
               + ( 1-theta/(2*tan(theta/2)))/(theta*theta)*(Omega*Omega) );
+    upsilon_omega.head<3>() = V_inv*se3.translation_;
+
   }
-  upsilon = V_inv*se3.translation_;
 
-  res.head<3>() = upsilon;
-  res.tail<3>() = omega;
-  return res;
+  return upsilon_omega;
+
 }
 
 }
+
