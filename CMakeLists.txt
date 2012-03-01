@@ -31,7 +31,17 @@ FOREACH(class ${CLASSES})
   LIST(APPEND SOURCES ${SOURCE_DIR}/${class}.cpp ${SOURCE_DIR}/${class}.h)
 ENDFOREACH(class)
 
+LINK_LIBRARIES (${PROJECT_NAME} ${LIBS})
+
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCES})
+
+ADD_EXECUTABLE(test_so3 sophus/test_so3.cpp)
+ADD_EXECUTABLE(test_se3 sophus/test_se3.cpp)
+ENABLE_TESTING()
+
+ADD_TEST(test_so3 test_so3)
+ADD_TEST(test_se3 test_se3)
+
 
 

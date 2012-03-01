@@ -1,0 +1,88 @@
+#include <iostream>
+#include <vector>
+
+#include "so3.h"
+
+using namespace Sophus;
+using namespace std;
+
+void so3explog_tests()
+{
+  double pi = 3.14159265;
+  vector<SO3> omegas;
+  omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, 0.0)));
+  omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, -1.0)));
+  omegas.push_back(SO3::exp(Vector3d(0., 0., 0.)));
+  omegas.push_back(SO3::exp(Vector3d(0., 0., 0.00001)));
+  omegas.push_back(SO3::exp(Vector3d(pi, 0, 0)));
+  omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, 0.0))
+                   *SO3::exp(Vector3d(pi, 0, 0))
+                   *SO3::exp(Vector3d(-0.2, -0.5, -0.0)));
+  omegas.push_back(SO3::exp(Vector3d(0.3, 0.5, 0.1))
+                   *SO3::exp(Vector3d(pi, 0, 0))
+                   *SO3::exp(Vector3d(-0.3, -0.5, -0.1)));
+
+  bool failed = false;
+
+  for (size_t i=0; i<omegas.size(); ++i)
+  {
+    Matrix3d R1 = omegas[i].matrix();
+    Matrix3d R2 = SO3::exp(omegas[i].log()).matrix();
+
+    Matrix3d DiffR = R1-R2;
+    double nrm = DiffR.norm();
+
+    if (isnan(nrm) || nrm>SMALL_EPS)
+    {
+      cerr << "SO3 - exp(log(SO3))" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << DiffR <<endl;
+      cerr << endl;
+      failed = true;
+    }
+  }
+  if (failed)
+    exit(-1);
+}
+
+
+void so3bracket_tests()
+{
+  vector<Vector3d> vecs;
+  vecs.push_back(Vector3d(0,0,0));
+  vecs.push_back(Vector3d(1,0,0));
+  vecs.push_back(Vector3d(0,1,0));
+  vecs.push_back(Vector3d(0,0,1));
+  vecs.push_back(Vector3d(-1,1,0));
+  vecs.push_back(Vector3d(20,-1,0));
+  vecs.push_back(Vector3d(30,5,-1));
+  for (uint i=0; i<vecs.size(); ++i)
+  {
+    for (uint j=0; j<vecs.size(); ++j)
+    {
+      Vector3d res1 = SO3::lieBracket(vecs[i],vecs[j]);
+      Matrix3d mat = SO3::hat(vecs[i])*SO3::hat(vecs[j])-SO3::hat(vecs[j])*SO3::hat(vecs[i]);
+      Vector3d res2 = SO3::vee(mat);
+      Vector3d resDiff = res1-res2;
+      if (resDiff.norm()>SMALL_EPS)
+      {
+        cerr << "SO3 Lie Bracket Test" << endl;
+        cerr  << "Test case: " << i << ", " <<j<< endl;
+        cerr << res1-res2 << endl;
+        cerr << endl;
+      }
+    }
+  }
+
+
+
+}
+
+
+
+int main()
+{
+  so3explog_tests();
+  so3bracket_tests();
+  return 0;
+}

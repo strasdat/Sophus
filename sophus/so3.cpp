@@ -20,6 +20,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
+#include <iostream>
 #include "so3.h"
 
 namespace Sophus
@@ -114,9 +115,11 @@ Vector3d SO3
 ::log(const SO3 & other)
 {
   double q_real = other.quaternion_.w();
+
   if (q_real>1.-SMALL_EPS)
   {
-    return Vector3d(0.,0.,0.);
+    return (2.-2./3.*(q_real-1.)+4./15.*(q_real-1.)*(q_real-1.))
+        *Vector3d(other.quaternion_.x(),other.quaternion_.y(),other.quaternion_.z());
   }
 
   double theta = 2.*acos(q_real);
@@ -131,19 +134,26 @@ SO3 SO3
 ::exp(const Vector3d & omega)
 {
   double theta = omega.norm();
+  double half_theta = 0.5*theta;
 
+  double imag_factor;
+  double real_factor = cos(half_theta);
   if(theta<SMALL_EPS)
   {
-    return SO3(Quaterniond::Identity());
+    double theta_sq = theta*theta;
+    double theta_po4 = theta_sq*theta_sq;
+    imag_factor = 0.5-0.0208333*theta_sq+0.000260417*theta_po4;
+  }
+  else
+  {
+    double sin_half_theta = sin(half_theta);
+    imag_factor = sin_half_theta/theta;
   }
 
-  double half_theta = 0.5*theta;
-  double sin_half_theta = sin(half_theta);
-  double sin_half_theta_by_theta = sin_half_theta/theta;
-  return SO3(Quaterniond(cos(half_theta),
-                         sin_half_theta_by_theta*omega.x(),
-                         sin_half_theta_by_theta*omega.y(),
-                         sin_half_theta_by_theta*omega.z()));
+  return SO3(Quaterniond(real_factor,
+                         imag_factor*omega.x(),
+                         imag_factor*omega.y(),
+                         imag_factor*omega.z()));
 }
 
 Matrix3d SO3
@@ -159,9 +169,9 @@ Matrix3d SO3
 Vector3d SO3
 ::vee(const Matrix3d & Omega)
 {
-  assert(fabs(Omega(2,1)-Omega(1,2))<SMALL_EPS);
-  assert(fabs(Omega(0,2)-Omega(2,0))<SMALL_EPS);
-  assert(fabs(Omega(1,0)-Omega(0,1))<SMALL_EPS);
+  assert(fabs(Omega(2,1)+Omega(1,2))<SMALL_EPS);
+  assert(fabs(Omega(0,2)+Omega(2,0))<SMALL_EPS);
+  assert(fabs(Omega(1,0)+Omega(0,1))<SMALL_EPS);
   return Vector3d(Omega(2,1), Omega(0,2), Omega(1,0));
 }
 
