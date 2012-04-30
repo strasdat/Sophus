@@ -88,7 +88,7 @@ public:
   Matrix4d
   Adj                        () const;
 
-  Matrix3d
+  Matrix4d
   generator                  (int i);
 
   Vector4d
