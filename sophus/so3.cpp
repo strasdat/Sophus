@@ -23,76 +23,81 @@
 #include <iostream>
 #include "so3.h"
 
+//ToDo: Think completely through when to normalize Quaternion
+
 namespace Sophus
 {
 
 SO3::SO3()
 {
-  quaternion_.setIdentity();
+  unit_quaternion_.setIdentity();
 }
 
 SO3
-::SO3(const SO3 & other) : quaternion_(other.quaternion_) {}
+::SO3(const SO3 & other) : unit_quaternion_(other.unit_quaternion_) {}
 
 SO3
-::SO3(const Matrix3d & R) : quaternion_(R) {}
+::SO3(const Matrix3d & R) : unit_quaternion_(R) {}
 
 SO3
-::SO3(const Quaterniond & quat) : quaternion_(quat) {}
+::SO3(const Quaterniond & quat) : unit_quaternion_(quat)
+{
+  unit_quaternion_.normalize();
+}
 
 SO3
 ::SO3(double rot_x, double rot_y, double rot_z)
 {
-  quaternion_
+  unit_quaternion_
       = (SO3::exp(Vector3d(rot_x, 0.f, 0.f))
          *SO3::exp(Vector3d(0.f, rot_y, 0.f))
-         *SO3::exp(Vector3d(0.f, 0.f, rot_z))).quaternion_;
+         *SO3::exp(Vector3d(0.f, 0.f, rot_z))).unit_quaternion_;
 }
 
 void SO3
 ::operator=(const SO3 & other)
 {
-  this->quaternion_ = other.quaternion_;
+  this->unit_quaternion_ = other.unit_quaternion_;
 }
 
 SO3 SO3
 ::operator*(const SO3& other) const
 {
   SO3 result(*this);
-  result.quaternion_ *= other.quaternion_;
-  result.quaternion_.normalize();
+  result.unit_quaternion_ *= other.unit_quaternion_;
+  result.unit_quaternion_.normalize();
   return result;
 }
 
 void SO3
 ::operator*=(const SO3& other)
 {
-  quaternion_ *= other.quaternion_;
-  quaternion_.normalize();
+  unit_quaternion_ *= other.unit_quaternion_;
+  unit_quaternion_.normalize();
 }
 
 Vector3d SO3
 ::operator*(const Vector3d & xyz) const
 {
-  return quaternion_._transformVector(xyz);
+  return unit_quaternion_._transformVector(xyz);
 }
 
 SO3 SO3
 ::inverse() const
 {
-  return SO3(quaternion_.conjugate());
+  return SO3(unit_quaternion_.conjugate());
 }
 
 Matrix3d SO3
 ::matrix() const
 {
-  return quaternion_.toRotationMatrix();
+  return unit_quaternion_.toRotationMatrix();
 }
 
 Matrix3d SO3
 ::Adj() const
 {
-  return quaternion_.toRotationMatrix();
+  return matrix();
 }
 
 Matrix3d SO3
@@ -114,40 +119,58 @@ Vector3d SO3
 Vector3d SO3
 ::log(const SO3 & other)
 {
-  double q_real = other.quaternion_.w();
+  double theta;
+  return logAndTheta(other, &theta);
+}
+
+Vector3d SO3
+::logAndTheta(const SO3 & other, double * theta)
+{
+  double q_real = other.unit_quaternion_.w();
+
 
   if (q_real>1.-SMALL_EPS)
   {
+    *theta = 2.*acos(std::min(q_real, 1.0));
     return (2.-2./3.*(q_real-1.)+4./15.*(q_real-1.)*(q_real-1.))
-        *Vector3d(other.quaternion_.x(),other.quaternion_.y(),other.quaternion_.z());
+        *Vector3d(other.unit_quaternion_.x(),
+                  other.unit_quaternion_.y(),
+                  other.unit_quaternion_.z());
   }
 
-  double theta = 2.*acos(q_real);
-  double theta_by_sin_half_theta = theta/sqrt(1. - q_real*q_real);
+  *theta = 2.*acos(q_real);
+  double theta_by_sin_half_theta = (*theta)/sqrt(1. - q_real*q_real);
 
-  return Vector3d(theta_by_sin_half_theta*other.quaternion_.x(),
-                  theta_by_sin_half_theta*other.quaternion_.y(),
-                  theta_by_sin_half_theta*other.quaternion_.z());
+  return Vector3d(theta_by_sin_half_theta*other.unit_quaternion_.x(),
+                  theta_by_sin_half_theta*other.unit_quaternion_.y(),
+                  theta_by_sin_half_theta*other.unit_quaternion_.z());
 }
 
 SO3 SO3
 ::exp(const Vector3d & omega)
 {
-  double theta = omega.norm();
-  double half_theta = 0.5*theta;
+  double theta;
+  return expAndTheta(omega, &theta);
+}
+
+SO3 SO3
+::expAndTheta(const Vector3d & omega, double * theta)
+{
+  *theta = omega.norm();
+  double half_theta = 0.5*(*theta);
 
   double imag_factor;
   double real_factor = cos(half_theta);
-  if(theta<SMALL_EPS)
+  if((*theta)<SMALL_EPS)
   {
-    double theta_sq = theta*theta;
+    double theta_sq = (*theta)*(*theta);
     double theta_po4 = theta_sq*theta_sq;
     imag_factor = 0.5-0.0208333*theta_sq+0.000260417*theta_po4;
   }
   else
   {
     double sin_half_theta = sin(half_theta);
-    imag_factor = sin_half_theta/theta;
+    imag_factor = sin_half_theta/(*theta);
   }
 
   return SO3(Quaterniond(real_factor,
@@ -179,6 +202,12 @@ Vector3d SO3
 ::lieBracket(const Vector3d & omega1, const Vector3d & omega2)
 {
   return omega1.cross(omega2);
+}
+
+Matrix3d SO3
+::d_lieBracketab_by_d_a(const Vector3d & b)
+{
+  return -hat(b);
 }
 
 Vector3d SO3::

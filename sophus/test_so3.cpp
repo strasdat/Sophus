@@ -41,8 +41,45 @@ void so3explog_tests()
       failed = true;
     }
   }
-  if (failed)
-    exit(-1);
+
+  for (size_t i=0; i<omegas.size(); ++i)
+  {
+    Vector3d p(1,2,4);
+    Matrix3d sR = omegas[i].matrix();
+    Vector3d res1 = omegas[i]*p;
+    Vector3d res2 = sR*p;
+
+    double nrm = (res1-res2).norm();
+
+    if (isnan(nrm) || nrm>SMALL_EPS)
+    {
+      cerr << "Transform vector" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << (res1-res2) <<endl;
+      cerr << endl;
+      failed = true;
+    }
+  }
+
+  for (size_t i=0; i<omegas.size(); ++i)
+  {
+    Matrix3d q = omegas[i].matrix();
+    Matrix3d inv_q = omegas[i].inverse().matrix();
+    Matrix3d res = q*inv_q ;
+    Matrix3d I;
+    I.setIdentity();
+
+    double nrm = (res-I).norm();
+
+    if (isnan(nrm) || nrm>SMALL_EPS)
+    {
+      cerr << "Inverse" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << (res-I) <<endl;
+      cerr << endl;
+      failed = true;
+    }
+  }
 }
 
 
@@ -61,7 +98,9 @@ void so3bracket_tests()
     for (uint j=0; j<vecs.size(); ++j)
     {
       Vector3d res1 = SO3::lieBracket(vecs[i],vecs[j]);
-      Matrix3d mat = SO3::hat(vecs[i])*SO3::hat(vecs[j])-SO3::hat(vecs[j])*SO3::hat(vecs[i]);
+      Matrix3d mat =
+          SO3::hat(vecs[i])*SO3::hat(vecs[j])
+          -SO3::hat(vecs[j])*SO3::hat(vecs[i]);
       Vector3d res2 = SO3::vee(mat);
       Vector3d resDiff = res1-res2;
       if (resDiff.norm()>SMALL_EPS)

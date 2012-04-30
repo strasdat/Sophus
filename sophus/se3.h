@@ -88,6 +88,9 @@ public:
   lieBracket                 (const Vector6d & v1,
                               const Vector6d & v2);
 
+  static Matrix6d
+  d_lieBracketab_by_d_a      (const Vector6d & b);
+
   //TODO: remove later
   static SE3 from_SE3(const SE3 & se3)
   {
@@ -118,12 +121,12 @@ public:
 
   const Quaterniond & quaternion() const
   {
-    return so3_.quaternion();
+    return so3_.unit_quaternion();
   }
 
   Quaterniond& quaternion()
   {
-    return so3_.quaternion();
+    return so3_.unit_quaternion();
   }
 
   Matrix3d rotation_matrix() const
@@ -133,7 +136,7 @@ public:
 
   void set_rotation_matrix(const Matrix3d & rotation_matrix)
   {
-    so3_.quaternion() = Quaterniond(rotation_matrix);
+    so3_.unit_quaternion() = Quaterniond(rotation_matrix);
   }
 
   const SO3& so3() const
@@ -157,7 +160,7 @@ private:
 inline std::ostream& operator <<(std::ostream & out_str,
                                  const SE3 &  se3)
 {
-  out_str << se3.matrix() << std::endl;
+  out_str << se3.so3() << se3.translation() << std::endl;
   return out_str;
 }
 

@@ -11,7 +11,7 @@ ENDIF()
 
 IF (CMAKE_COMPILER_IS_GNUCXX )
    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
-   SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -g ")
+   SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG ")
 
   ADD_DEFINITIONS("-Wall -Werror -Wno-unused-variable
                    -Wno-unused-but-set-variable -Wno-unknown-pragmas ")
@@ -23,7 +23,9 @@ SET (INCLUDE_DIRS "../eigen3.1/")
 SET (SOURCE_DIR "sophus")
 SET (CLASSES  se3
               so3
-              sim3)
+              scso3
+              sim3
+)
 
 SET (SOURCES)
 
@@ -37,11 +39,15 @@ INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCES})
 
 ADD_EXECUTABLE(test_so3 sophus/test_so3.cpp)
+ADD_EXECUTABLE(test_scso3 sophus/test_scso3.cpp)
 ADD_EXECUTABLE(test_se3 sophus/test_se3.cpp)
+ADD_EXECUTABLE(test_sim3 sophus/test_sim3.cpp)
 ENABLE_TESTING()
 
 ADD_TEST(test_so3 test_so3)
+ADD_TEST(test_scso3 test_scso3)
 ADD_TEST(test_se3 test_se3)
+ADD_TEST(test_sim3 test_sim3)
 
 
 

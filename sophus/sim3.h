@@ -23,6 +23,7 @@
 #ifndef SOPHUS_SIMILARITY_H
 #define SOPHUS_SIMILARITY_H
 
+#include "scso3.h"
 #include "se3.h"
 
 namespace Sophus
@@ -47,15 +48,13 @@ public:
 
   Sim3                       ();
 
-  Sim3                       (const SO3& so3,
-                              const Vector3d & t,
-                              double s);
-  Sim3                       (const Matrix3d & R,
-                              const Vector3d & t,
-                              double s);
+  Sim3                       (const ScSO3& scso3,
+                              const Vector3d & t);
+  Sim3                       (double s,
+                              const Matrix3d & R,
+                              const Vector3d & t);
   Sim3                       (const Quaterniond& q,
-                              const Vector3d & t,
-                              double s);
+                              const Vector3d & t);
   Sim3                       (const Sim3 & sim3);
 
   static Sim3
@@ -101,6 +100,10 @@ public:
   lieBracket                 (const Vector7d & omega1,
                               const Vector7d & omega2);
 
+  static Matrix7d
+  d_lieBracketab_by_d_a      (const Vector7d & b);
+
+
   const Vector3d& translation() const
   {
     return translation_;
@@ -111,45 +114,35 @@ public:
     return translation_;
   }
 
-  const Quaterniond & quat() const
+  const Quaterniond & quaternion() const
   {
-    return so3_.quaternion();
+    return scso3_.quaternion();
   }
 
-  Quaterniond& quat()
+  Quaterniond& quaternion()
   {
-    return so3_.quaternion();
+    return scso3_.quaternion();
+  }
+
+  const ScSO3 & scso3() const
+  {
+    return scso3_;
+  }
+
+  ScSO3& scso3()
+  {
+    return scso3_;
   }
 
   Matrix3d rotation_matrix() const
   {
-    return so3_.matrix();
-  }
-
-  void set_rotation_matrix(const Matrix3d & R)
-  {
-    so3_.quaternion()= Quaterniond(R);
-  }
-
-  double& scale()
-  {
-    return scale_;
-  }
-
-  const double& scale() const
-  {
-    return scale_;
+    return scso3_.rotationMatrix();
   }
 
 
-  inline const SO3& so3() const
+  double scale() const
   {
-    return so3_;
-  }
-
-  inline SO3& so3()
-  {
-    return so3_;
+    return scso3_.scale();
   }
 
   Matrix<double,7,1> log() const
@@ -157,28 +150,25 @@ public:
     return Sim3::log(*this);
   }
 
-  //TODO: Yes we assume at the moment a fixed scale as in the ICCV paper
-  //      I'll reconsider this problem later...
-  static const int DoF = 6;
+  static const int DoF = 7;
 
 protected:
-  SO3 so3_;
+  static Matrix3d
+  calcW                      (double theta,
+                              double sigma,
+                              double scale,
+                              const Matrix3d & Omega);
+
+  ScSO3 scso3_;
   Vector3d translation_;
-  double scale_;
 };
 
 
 inline std::ostream& operator <<(std::ostream& out_str,
                                  const Sim3 &  sim3)
 {
-  Matrix<double,4,4> homogenious_matrix;
-  homogenious_matrix.setIdentity();
-  homogenious_matrix.block(0,0,3,3) = sim3.rotation_matrix();
-  homogenious_matrix.col(3).head(3) = sim3.translation();
-  homogenious_matrix(3,3) = 1;
-  out_str << sim3.scale() << " * " << endl <<
-             homogenious_matrix << std::endl;
-
+  out_str << sim3.scso3() <<
+             sim3.translation().transpose() << std::endl;
   return out_str;
 }
 

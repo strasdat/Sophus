@@ -22,43 +22,32 @@
 
 #include "sim3.h"
 
+#include <iostream>
+
 namespace Sophus
 {
 Sim3
 ::Sim3()
 {
   translation_.setZero();
-  scale_ = 1.;
 }
 
 Sim3
-::Sim3(const SO3& so3, const Vector3d & t, double s)
-  :so3_(so3),translation_(t),scale_(s)
-{
-}
-
-Sim3
-::Sim3(const Matrix3d& R, const Vector3d & t, double s)
-  :so3_(R),translation_(t),scale_(s)
-{
-}
-
-Sim3
-::Sim3(const Quaterniond& q, const Vector3d & t,double s)
-  :so3_(q),translation_(t),scale_(s)
+::Sim3(const ScSO3& scso3, const Vector3d & t)
+  :scso3_(scso3),translation_(t)
 {
 }
 
 Sim3
 ::Sim3(const Sim3 & sim3)
-  : so3_(sim3.so3_),translation_(sim3.translation_),scale_(sim3.scale_)
+  : scso3_(sim3.scso3_),translation_(sim3.translation_)
 {
 }
 
 Sim3 Sim3
 ::from_SE3(const SE3 & se3)
 {
-  return Sim3(se3.so3(),se3.translation(),1);
+  return Sim3(ScSO3(1.,se3.so3()),se3.translation());
 }
 
 SE3 Sim3
@@ -76,25 +65,23 @@ SE3 Sim3
 Sim3 Sim3
 ::inverse() const
 {
-  const SO3 Rinv = so3().inverse();
-  return Sim3(Rinv, -(1./scale_)*(Rinv*translation_), 1./scale_);
+  const ScSO3 sRinv = scso3_.inverse();
+  return Sim3(sRinv, -(sRinv*translation_));
 }
 
 Sim3& Sim3
 ::operator*=(const Sim3& sim3)
 {
-  translation_ += scale_*(so3_ * sim3.translation());
-  so3_ *= sim3.so3();
-  scale_ *= sim3.scale();
+  translation_ += (scso3_ * sim3.translation());
+  scso3_ *= sim3.scso3();
   return *this;
 }
 
 Sim3 Sim3
 ::operator*(const Sim3& sim3) const
 {
-  return Sim3(so3_*sim3.so3(),
-              scale_*(so3_*sim3.translation()) + translation_,
-              scale_*sim3.scale());
+  return Sim3(scso3_*sim3.scso3(),
+              (scso3_*sim3.translation()) + translation_);
 }
 
 Matrix4d Sim3
@@ -111,23 +98,77 @@ Matrix4d Sim3
 Vector3d Sim3
 ::operator*(const Vector3d & xyz) const
 {
-  return scale_*(so3_*xyz) + translation_;
+  return (scso3_*xyz) + translation_;
 }
 
 Matrix7d Sim3::
 Adj() const
 {
-  Matrix3d R = so3_.matrix();
+  Matrix3d R = scso3_.rotationMatrix();
   Matrix7d res;
   res.setZero();
 
-  res.block(0,0,3,3) = scale_*R;
+  res.block(0,0,3,3) = scale()*R;
   res.block(0,3,3,3) = SO3::hat(translation_)*R;
   res.block(0,6,3,1) = -translation_;
   res.block(3,3,3,3) = R;
   res(6,6) = 1;
 
   return res;
+}
+
+
+Matrix3d Sim3
+::calcW(double theta,
+        double sigma,
+        double scale,
+        const Matrix3d & Omega)
+{
+  Matrix3d Omega2 = Omega*Omega;
+
+  static const Matrix3d I = Matrix3d::Identity();
+
+  double A,B,C;
+  if (fabs(sigma)<SMALL_EPS)
+  {
+    C = 1;
+    if (theta<SMALL_EPS)
+    {
+      A = 1./2.;
+      B = 1./6.;
+      //ToDO: Use more accurate expansion
+    }
+    else
+    {
+      double theta_sq = theta*theta;
+      A = (1-cos(theta))/theta_sq;
+      B = (theta-sin(theta))/(theta_sq*theta);
+      //ToDO: Use more accurate expansion
+    }
+  }
+  else
+  {
+    C=(scale-1)/sigma;
+    if (theta<SMALL_EPS)
+    {
+      double sigma_sq = sigma*sigma;
+      A = ((sigma-1)*scale+1)/sigma_sq;
+      B = ((0.5*sigma*sigma-sigma+1)*scale)/(sigma_sq*sigma);
+     //ToDO: Use more accurate expansion
+    }
+    else
+    {
+      double theta_sq = theta*theta;
+
+      double a = scale*sin(theta);
+      double b = scale*cos(theta);
+      double c = theta_sq+sigma*sigma;
+      A = (a*sigma+ (1-b)*theta)/(theta*c);
+      B = (C-((b-1)*sigma+a*theta)/(c))*1./(theta_sq);
+
+    }
+  }
+  return A*Omega + B*Omega2 + C*I;
 }
 
 Sim3 Sim3
@@ -137,126 +178,35 @@ Sim3 Sim3
   Vector3d omega = vect.segment(3,3);
   double sigma = vect[6];
 
-  double theta = omega.norm();
+  double theta;
+  ScSO3 scso3 = ScSO3::expAndTheta(vect.tail<4>(), &theta);
+
   Matrix3d Omega = SO3::hat(omega);
-  Matrix3d Omega2 = Omega*Omega;
-  Matrix3d R;
-
-  Matrix3d I;
-  I.setIdentity();
-  double s = std::exp(sigma);
-
-  double A,B,C;
-  if (fabs(sigma)<SMALL_EPS)
-  {
-    C = 1;
-    if (theta<SMALL_EPS)
-    {
-      A = 1./2.;
-      B = 1./6.;
-      R = (I + Omega + Omega*Omega);
-    }
-    else
-    {
-      double theta_sq = theta*theta;
-      A = (1-cos(theta))/theta_sq;
-      B = (theta-sin(theta))/(theta_sq*theta);
-      R = I + sin(theta)/theta *Omega + (1-cos(theta))/(theta_sq)*Omega2;
-    }
-  }
-  else
-  {
-    C=(s-1)/sigma;
-    if (theta<SMALL_EPS)
-    {
-      double theta_sq = theta*theta;
-      A = ((sigma-1)*s+1)/theta_sq;
-      B = ((0.5*sigma*sigma-sigma+1)*s)/(theta_sq*theta);
-      R = (I + Omega + Omega2);
-    }
-    else
-    {
-      double theta_sq = theta*theta;
-      R = I + sin(theta)/theta *Omega + (1-cos(theta))/(theta_sq)*Omega2;
-      double a = s*sin(theta);
-      double b = s*cos(theta);
-      double c = theta_sq+sigma*sigma;
-      A = (a*sigma+ (1-b)*theta)/(theta*c);
-      B = (C-((b-1)*sigma+a*theta)/(c))*1./(theta_sq);
-
-    }
-  }
-
-  Matrix3d W = A*Omega + B*Omega2 + C*I;
+  Matrix3d W = calcW(theta, sigma, scso3.scale(), Omega);
   Vector3d t = W*upsilon;
-  return Sim3(R, t, s);
+  return Sim3(scso3, t);
 }
 
 Matrix<double,7,1> Sim3
 ::log(const Sim3& sim3)
 {
   Vector7d res;
-  double s = sim3.scale_;
-  double sigma = std::log(s);
+  double scale = sim3.scale();
 
   Vector3d t = sim3.translation_;
-  const Matrix3d & R = sim3.rotation_matrix();
-  double d =  0.5*(R(0,0)+R(1,1)+R(2,2)-1);
 
-  Vector3d omega;
-  Vector3d upsilon;
-  Matrix3d Omega;
+  double theta;
 
-  Matrix3d I;
-  I.setIdentity();
+  Vector4d omega_sigma = ScSO3::logAndTheta(sim3.scso3_, &theta);
+  Vector3d omega = omega_sigma.head<3>();
+  double sigma = omega_sigma[3];
+  Matrix3d Omega = SO3::hat(omega);
 
-  double A,B,C;
-  if (fabs(sigma)<SMALL_EPS)
-  {
-    C = 1;
-    if (d > 1.-SMALL_EPS)
-    {
-      omega=0.5*SO3::deltaR(R);
-      Omega = SO3::hat(omega);
-      A = 1./2.;
-      B = 1./6.;
-    }
-    else
-    {
-      double theta = acos(d);
-      double theta_sq = theta*theta;
-      omega = theta/(2*sqrt(1-d*d))*SO3::deltaR(R);
-      Omega = SO3::hat(omega);
-      A = (1-cos(theta))/theta_sq;
-      B = (theta-sin(theta))/(theta_sq*theta);
-    }
-  }
-  else
-  {
-    C=(s-1)/sigma;
-    if (d > 1.-SMALL_EPS)
-    {
-      omega=0.5*SO3::deltaR(R);
-      Omega = SO3::hat(omega);
-      double sigma_sq = sigma*sigma;
-      A = ((sigma-1)*s+1)/sigma_sq;
-      B = ((0.5*sigma*sigma-sigma+1)*s)/(sigma_sq*sigma);
-    }
-    else
-    {
-      double theta = acos(d);
-      double theta_sq = theta*theta;
-      omega = theta/(2*sqrt(1-d*d))*SO3::deltaR(R);
-      Omega = SO3::hat(omega);
-      double a = s*sin(theta);
-      double b = s*cos(theta);
-      double c = theta_sq+sigma*sigma;
-      A = (a*sigma+ (1-b)*theta)/(theta*c);
-      B = (C-((b-1)*sigma+a*theta)/(c))*1./(theta_sq);
-    }
-  }
-  Matrix3d W = A*Omega + B*Omega*Omega + C*I;
-  upsilon = W.lu().solve(t);
+  Matrix3d W = calcW(theta, sigma, scale, Omega);
+
+  //Vector3d upsilon = W.jacobiSvd(ComputeFullU | ComputeFullV).solve(t);
+  Vector3d upsilon = W.partialPivLu().solve(t);
+
   res.segment(0,3) = upsilon;
   res.segment(3,3) = omega;
   res[6] = sigma;
@@ -267,31 +217,57 @@ Matrix4d Sim3::
 hat(const Vector7d & v)
 {
   Matrix4d Omega;
-  Omega.topLeftCorner<3,3>() = SO3::hat(v.tail<3>());
-  Omega(0,0) = v[6];
-  Omega(1,1) = v[6];
-  Omega(2,2) = v[6];
+  Omega.topLeftCorner<3,3>() = ScSO3::hat(v.tail<4>());
   Omega.col(3).head<3>() = v.head<3>();
-  Omega.row(3) = Vector4d(0., 0., 0., 1.);
+  Omega.row(3) = Vector4d(0., 0., 0., 0.);
   return Omega;
 }
 
 Vector7d Sim3::
 vee(const Matrix4d & Omega)
 {
-  assert(fabs(Omega(0,0)-Omega(1,1))<SMALL_EPS);
-  assert(fabs(Omega(1,1)-Omega(2,2))<SMALL_EPS);
   Vector7d upsilon_omega_sigma;
   upsilon_omega_sigma.head<3>() = Omega.col(3).head<3>();
-  upsilon_omega_sigma.segment<3>(3) = SO3::vee(Omega.topLeftCorner<3,3>());
-  upsilon_omega_sigma[6] = Omega(0,0);
+  upsilon_omega_sigma.tail<4>() = ScSO3::vee(Omega.topLeftCorner<3,3>());
   return upsilon_omega_sigma;
 }
 
-Vector7d Sim3::
-lieBracket(const Vector7d & omega1, const Vector7d & omega2)
+Vector7d Sim3
+::lieBracket(const Vector7d & v1, const Vector7d & v2)
 {
-  return vee(hat(omega1)*hat(omega2)-hat(omega2)*hat(omega1));
+  Vector3d upsilon1 = v1.head<3>();
+  Vector3d upsilon2 = v2.head<3>();
+  Vector3d omega1 = v1.segment<3>(3);
+  Vector3d omega2 = v2.segment<3>(3);
+  double sigma1 = v1[6];
+  double sigma2 = v2[6];
+
+  Vector7d res;
+  res.head<3>() =
+      SO3::hat(omega1)*upsilon2 + SO3::hat(upsilon1)*omega2
+      + sigma1*upsilon2 - sigma2*upsilon1;
+  res.segment<3>(3) = omega1.cross(omega2);
+  res[6] = 0.;
+
+  return res;
+}
+
+Matrix7d Sim3
+::d_lieBracketab_by_d_a(const Vector7d & b)
+{
+  Matrix7d res;
+  res.setZero();
+
+  Vector3d upsilon2 = b.head<3>();
+  Vector3d omega2 = b.segment<3>(3);
+  double sigma2 = b[6];
+
+  res.topLeftCorner<3,3>() = -SO3::hat(omega2)-sigma2*Matrix3d::Identity();
+  res.block<3,3>(0,3) = -SO3::hat(upsilon2);
+  res.topRightCorner<3,1>() = upsilon2;
+
+  res.block<3,3>(3,3) = -SO3::hat(omega2);
+  return res;
 }
 
 }

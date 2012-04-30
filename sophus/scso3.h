@@ -20,114 +20,128 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-#ifndef SOPHUS_SO3_H
-#define SOPHUS_SO3_H
+#ifndef SOPHUS_ScSO3_H
+#define SOPHUS_ScSO3_H
 
 #include <Eigen/Core>
 #include <Eigen/StdVector>
 #include <Eigen/Geometry>
+
+#include "so3.h"
 
 
 namespace Sophus
 {
 using namespace Eigen;
 
-const double SMALL_EPS = 0.0000000001;
-
-class SO3
+class ScSO3
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  SO3                        ();
+  ScSO3                        ();
 
-  SO3                        (const SO3 & other);
-
-  explicit
-  SO3                        (const Matrix3d & _R);
+  ScSO3                        (const ScSO3 & other);
 
   explicit
-  SO3                        (const Quaterniond & unit_quaternion);
+  ScSO3                        (const Matrix3d & scale_times_R);
 
-  SO3                        (double rot_x,
-                              double rot_y,
-                              double rot_z);
+  ScSO3                        (double scale,
+                                const SO3 & so3);
+
+  ScSO3                        (double scale,
+                                const Matrix3d & R);
+
+  explicit
+  ScSO3                        (const Quaterniond & quaternion);
+
   void
-  operator=                  (const SO3 & so3);
+  operator=                  (const ScSO3 & ScSO3);
 
-  SO3
-  operator*                  (const SO3 & so3) const;
+  ScSO3
+  operator*                  (const ScSO3 & ScSO3) const;
 
   void
-  operator*=                 (const SO3 & so3);
+  operator*=                 (const ScSO3 & ScSO3);
 
   Vector3d
   operator*                  (const Vector3d & xyz) const;
 
-  SO3
+  ScSO3
   inverse                    () const;
 
   Matrix3d
   matrix                     () const;
 
   Matrix3d
+  rotationMatrix             () const;
+
+  double
+  scale                      () const;
+
+  void
+  setRotationMatrix          (const Matrix3d & R);
+
+  void
+  setScale                   (double scale);
+
+  Matrix4d
   Adj                        () const;
 
   Matrix3d
   generator                  (int i);
 
-  Vector3d
+  Vector4d
   log                        () const;
 
-  static SO3
-  exp                        (const Vector3d & omega);
+  static ScSO3
+  exp                        (const Vector4d & omega);
 
-  static SO3
-  expAndTheta                (const Vector3d & omega,
+  static ScSO3
+  expAndTheta                (const Vector4d & omega,
                               double * theta);
-  static Vector3d
-  log                        (const SO3 & so3);
 
-  static Vector3d
-  logAndTheta                (const SO3 & so3,
+  static Vector4d
+  log                        (const ScSO3 & ScSO3);
+
+  static Vector4d
+  logAndTheta                (const ScSO3 & ScSO3,
                               double * theta);
 
   static Matrix3d
-  hat                        (const Vector3d & omega);
+  hat                        (const Vector4d & omega);
 
-  static Vector3d
+  static Vector4d
   vee                        (const Matrix3d & Omega);
 
-  static Vector3d
-  lieBracket                 (const Vector3d & omega1,
-                              const Vector3d & omega2);
+  static Vector4d
+  lieBracket                 (const Vector4d & omega1,
+                              const Vector4d & omega2);
 
-  static Matrix3d
-  d_lieBracketab_by_d_a      (const Vector3d & b);
+  static Matrix4d
+  d_lieBracketab_by_d_a      (const Vector4d & b);
 
-  static Vector3d
-  deltaR                     (const Matrix3d & R);
 
-  const Quaterniond & unit_quaternion() const
+  const Quaterniond & quaternion() const
   {
-    return unit_quaternion_;
+    return quaternion_;
   }
-  Quaterniond& unit_quaternion()
+  Quaterniond& quaternion()
   {
-    return unit_quaternion_;
+    return quaternion_;
   }
 
-  static const int DoF = 3;
+  static const int DoF = 4;
 
 protected:
-  Quaterniond unit_quaternion_;
+  Quaterniond quaternion_;
 };
 
 inline std::ostream& operator <<(std::ostream & out_str,
-                                 const SO3 & so3)
+                                 const ScSO3& scso3)
 {
-
-  out_str << so3.log().transpose() << std::endl;
+  out_str << scso3.scale() << " * " <<
+             scso3.log().head<3>().transpose() << std::endl;
   return out_str;
 }
 
