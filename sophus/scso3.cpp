@@ -158,7 +158,7 @@ Matrix4d ScSO3
   return res;
 }
 
-Matrix4d ScSO3
+Matrix3d ScSO3
 ::generator(int i)
 {
   assert(i>=0 && i<4);
