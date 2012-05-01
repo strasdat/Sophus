@@ -220,4 +220,12 @@ deltaR(const Matrix3d & R)
   return v;
 }
 
+void SO3::
+setQuaternion(const Quaterniond& quaternion)
+{
+  unit_quaternion_ = quaternion;
+  unit_quaternion_.normalize();
+}
+
+
 }

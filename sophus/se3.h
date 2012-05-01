@@ -44,7 +44,7 @@ public:
                               const Vector3d & translation);
   SE3                        (const Matrix3d & rotation_matrix,
                               const Vector3d & translation);
-  SE3                        (const Quaterniond & quaternion,
+  SE3                        (const Quaterniond & unit_quaternion,
                               const Vector3d & translation_);
   SE3                        (const SE3 & other);
 
@@ -91,6 +91,9 @@ public:
   static Matrix6d
   d_lieBracketab_by_d_a      (const Vector6d & b);
 
+  void
+  setQuaternion              (const Quaterniond& quaternion);
+
   //TODO: remove later
   static SE3 from_SE3(const SE3 & se3)
   {
@@ -119,12 +122,7 @@ public:
     return translation_;
   }
 
-  const Quaterniond & quaternion() const
-  {
-    return so3_.unit_quaternion();
-  }
-
-  Quaterniond& quaternion()
+  const Quaterniond & unit_quaternion() const
   {
     return so3_.unit_quaternion();
   }
@@ -136,7 +134,7 @@ public:
 
   void set_rotation_matrix(const Matrix3d & rotation_matrix)
   {
-    so3_.unit_quaternion() = Quaterniond(rotation_matrix);
+    so3_.setQuaternion(Quaterniond(rotation_matrix));
   }
 
   const SO3& so3() const

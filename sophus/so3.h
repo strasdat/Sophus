@@ -108,11 +108,10 @@ public:
   static Vector3d
   deltaR                     (const Matrix3d & R);
 
+  void
+  setQuaternion              (const Quaterniond& quaternion);
+
   const Quaterniond & unit_quaternion() const
-  {
-    return unit_quaternion_;
-  }
-  Quaterniond& unit_quaternion()
   {
     return unit_quaternion_;
   }

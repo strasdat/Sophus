@@ -220,5 +220,11 @@ Vector6d SE3
   return upsilon_omega;
 }
 
+void SE3::
+setQuaternion(const Quaterniond& quat)
+{
+  return so3_.setQuaternion(quat);
+}
+
 }
 
