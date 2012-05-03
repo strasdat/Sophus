@@ -20,77 +20,63 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-#ifndef SOPHUS_SO3_H
-#define SOPHUS_SO3_H
+#ifndef SOPHUS_SE2_H
+#define SOPHUS_SE2_H
 
-#include <Eigen/Core>
-#include <Eigen/StdVector>
-#include <Eigen/Geometry>
-
+#include "so2.h"
 
 namespace Sophus
 {
 using namespace Eigen;
+using namespace std;
 
-const double SMALL_EPS = 0.0000000001;
-
-class SO3
+class SE2
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  SO3                        ();
+  SE2                        ();
 
-  SO3                        (const SO3 & other);
+  SE2                        (const SO2 & so2,
+                              const Vector2d & translation);
 
-  explicit
-  SO3                        (const Matrix3d & _R);
+  SE2                        (const Matrix2d & rotation_matrix,
+                              const Vector2d & translation);
 
-  explicit
-  SO3                        (const Quaterniond & unit_quaternion);
+  SE2                        (double theta,
+                              const Vector2d & translation_);
 
-  SO3                        (double rot_x,
-                              double rot_y,
-                              double rot_z);
-  void
-  operator=                  (const SO3 & so3);
+  SE2                        (const SE2 & other);
 
-  SO3
-  operator*                  (const SO3 & so3) const;
+  SE2 &
+  operator=                  (const SE2 & other);
 
-  void
-  operator*=                 (const SO3 & so3);
+  SE2
+  operator*                  (const SE2& other) const;
 
-  Vector3d
-  operator*                  (const Vector3d & xyz) const;
+  SE2&
+  operator*=                 (const SE2& other);
 
-  SO3
+  SE2
   inverse                    () const;
-
-  Matrix3d
-  matrix                     () const;
-
-  Matrix3d
-  Adj                        () const;
-
-  Matrix3d
-  generator                  (int i);
 
   Vector3d
   log                        () const;
 
-  static SO3
-  exp                        (const Vector3d & omega);
+  Vector2d
+  operator*                  (const Vector2d & xy) const;
 
-  static SO3
-  expAndTheta                (const Vector3d & omega,
-                              double * theta);
-  static Vector3d
-  log                        (const SO3 & so3);
+  static SE2
+  exp                        (const Vector3d & update);
 
   static Vector3d
-  logAndTheta                (const SO3 & so3,
-                              double * theta);
+  log                        (const SE2 & SE2);
+
+  Matrix<double,3,3>
+  matrix                     () const;
+
+  Matrix<double, 3, 3>
+  Adj                        () const;
 
   static Matrix3d
   hat                        (const Vector3d & omega);
@@ -99,31 +85,54 @@ public:
   vee                        (const Matrix3d & Omega);
 
   static Vector3d
-  lieBracket                 (const Vector3d & omega1,
-                              const Vector3d & omega2);
+  lieBracket                 (const Vector3d & v1,
+                              const Vector3d & v2);
 
   static Matrix3d
   d_lieBracketab_by_d_a      (const Vector3d & b);
 
-  void
-  setQuaternion              (const Quaterniond& quaternion);
-
-  const Quaterniond & unit_quaternion() const
+  const Vector2d & translation() const
   {
-    return unit_quaternion_;
+    return translation_;
+  }
+
+  Vector2d& translation()
+  {
+    return translation_;
+  }
+
+  Matrix2d rotation_matrix() const
+  {
+    return so2_.matrix();
+  }
+
+  void setRotationMatrix(const Matrix2d & rotation_matrix)
+  {
+    so2_ = SO2(rotation_matrix);
+  }
+
+  const SO2& so2() const
+  {
+    return so2_;
+  }
+
+  SO2& so2()
+  {
+    return so2_;
   }
 
   static const int DoF = 3;
 
-protected:
-  Quaterniond unit_quaternion_;
+private:
+  SO2 so2_;
+  Vector2d translation_;
+
 };
 
 inline std::ostream& operator <<(std::ostream & out_str,
-                                 const SO3 & so3)
+                                 const SE2 &  SE2)
 {
-
-  out_str << so3.log().transpose() << std::endl;
+  out_str << SE2.so2() << SE2.translation() << std::endl;
   return out_str;
 }
 

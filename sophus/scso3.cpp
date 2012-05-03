@@ -1,6 +1,6 @@
 // This file is part of Sophus.
 //
-// Copyright 2011 Hauke Strasdat (Imperial College London)
+// Copyright 2012 Hauke Strasdat (Imperial College London)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to

@@ -1,12 +1,13 @@
 #include <iostream>
 #include <vector>
 
+#include <unsupported/Eigen/MatrixFunctions>
 #include "se3.h"
 
 using namespace Sophus;
 using namespace std;
 
-void se3explog_tests()
+bool se3explog_tests()
 {
   double pi = 3.14159265;
   vector<SE3> omegas;
@@ -80,11 +81,13 @@ void se3explog_tests()
       failed = true;
     }
   }
+  return failed;
 }
 
 
-void se3bracket_tests()
+bool se3bracket_tests()
 {
+  bool failed = false;
   vector<Vector6d> vecs;
   Vector6d tmp;
   tmp << 0,0,0,0,0,0;
@@ -93,7 +96,7 @@ void se3bracket_tests()
   vecs.push_back(tmp);
   tmp << 0,1,0,1,0,0;
   vecs.push_back(tmp);
-  tmp << 0,0,1,0,1,0;
+  tmp << 0,-5,10,0,0,0;
   vecs.push_back(tmp);
   tmp << -1,1,0,0,0,1;
   vecs.push_back(tmp);
@@ -110,6 +113,7 @@ void se3bracket_tests()
       cerr  << "Test case: " << i <<  endl;
       cerr << resDiff.transpose() << endl;
       cerr << endl;
+      failed = true;
     }
 
     for (uint j=0; j<vecs.size(); ++j)
@@ -128,16 +132,42 @@ void se3bracket_tests()
         cerr << vecs[j].transpose() << endl;
         cerr << resDiff.transpose() << endl;
         cerr << endl;
+        failed = true;
       }
     }
+
+
+    Vector6d omega = vecs[i];
+    Matrix4d exp_x = SE3::exp(omega).matrix();
+    Matrix4d expmap_hat_x = (SE3::hat(omega)).exp();
+    Matrix4d DiffR = exp_x-expmap_hat_x;
+    double nrm = DiffR.norm();
+
+    if (isnan(nrm) || nrm>SMALL_EPS)
+    {
+      cerr << "expmap(hat(x)) - exp(x)" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << exp_x <<endl;
+      cerr << expmap_hat_x <<endl;
+      cerr << DiffR <<endl;
+      cerr << endl;
+      failed = true;
+    }
   }
+return failed;
 }
 
 
 
 int main()
 {
-  se3explog_tests();
-  se3bracket_tests();
+  bool failed = se3explog_tests();
+  failed = failed || se3bracket_tests();
+
+  if (failed)
+  {
+    cerr << "failed" << endl;
+    exit(-1);
+  }
   return 0;
 }

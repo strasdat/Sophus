@@ -145,7 +145,7 @@ Vector6d SE3
   Vector3d omega2 = v2.tail<3>();
 
   Vector6d res;
-  res.head<3>() = SO3::hat(omega1)*upsilon2 + SO3::hat(upsilon1)*omega2;
+  res.head<3>() = omega1.cross(upsilon2) + upsilon1.cross(omega2);
   res.tail<3>() = omega1.cross(omega2);
 
   return res;
@@ -170,7 +170,6 @@ Matrix6d SE3
 SE3 SE3
 ::exp(const Vector6d & update)
 {
-  Quaterniond q;
   Vector3d upsilon = update.head<3>();
   Vector3d omega = update.tail<3>();
 

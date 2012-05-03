@@ -2,60 +2,52 @@
 #include <vector>
 
 #include <unsupported/Eigen/MatrixFunctions>
-#include "scso3.h"
+#include "se2.h"
+#include "so3.h"
 
 using namespace Sophus;
 using namespace std;
 
-
-bool scso3explog_tests()
+bool se2explog_tests()
 {
   double pi = 3.14159265;
-  vector<ScSO3> omegas;
-  omegas.push_back(ScSO3::exp(Vector4d(0.2, 0.5, 0.0, 1.)));
-  omegas.push_back(ScSO3::exp(Vector4d(0.2, 0.5, -1.0, 1.1)));
-  omegas.push_back(ScSO3::exp(Vector4d(0., 0., 0., 1.1)));
-  omegas.push_back(ScSO3::exp(Vector4d(0., 0., 0.00001, 0.)));
-  omegas.push_back(ScSO3::exp(Vector4d(0., 0., 0.00001, 0.00001)));
-  omegas.push_back(ScSO3::exp(Vector4d(0., 0., 0.00001, 0)));
-  omegas.push_back(ScSO3::exp(Vector4d(pi, 0, 0, 0.9)));
-  omegas.push_back(ScSO3::exp(Vector4d(0.2, 0.5, 0.0,0))
-                   *ScSO3::exp(Vector4d(pi, 0, 0,0.0))
-                   *ScSO3::exp(Vector4d(-0.2, -0.5, -0.0,0)));
-  omegas.push_back(ScSO3::exp(Vector4d(0.3, 0.5, 0.1,0))
-                   *ScSO3::exp(Vector4d(pi, 0, 0,0))
-                   *ScSO3::exp(Vector4d(-0.3, -0.5, -0.1,0)));
+  vector<SE2> omegas;
+  omegas.push_back(SE2(SO2(0.0),Vector2d(0,0)));
+  omegas.push_back(SE2(SO2(0.2),Vector2d(10,0)));
+  omegas.push_back(SE2(SO2(0.),Vector2d(0,100)));
+  omegas.push_back(SE2(SO2(-1.),Vector2d(20,-1)));
+  omegas.push_back(SE2(SO2(0.00001),Vector2d(-0.00000001,0.0000000001)));
+  omegas.push_back(SE2(SO2(0.2),Vector2d(0,0))
+                   *SE2(SO2(pi),Vector2d(0,0))
+                   *SE2(SO2(-0.2),Vector2d(0,0)));
+  omegas.push_back(SE2(SO2(0.3),Vector2d(2,0))
+                   *SE2(SO2(pi),Vector2d(0,0))
+                   *SE2(SO2(-0.3),Vector2d(0,6)));
 
   bool failed = false;
 
   for (size_t i=0; i<omegas.size(); ++i)
   {
-    Matrix3d sR1 = omegas[i].matrix();
-    Matrix3d sR2 = ScSO3::exp(omegas[i].log()).matrix();
-    Matrix3d DiffR = sR1-sR2;
+    Matrix3d R1 = omegas[i].matrix();
+    Matrix3d R2 = SE2::exp(omegas[i].log()).matrix();
+    Matrix3d DiffR = R1-R2;
     double nrm = DiffR.norm();
 
-    //// ToDO: Force ScSO3 to be more accurate!
     if (isnan(nrm) || nrm>SMALL_EPS)
     {
-      cerr << "ScSO3 - exp(log(ScSO3))" << endl;
+      cerr << "SE2 - exp(log(SE2))" << endl;
       cerr  << "Test case: " << i << endl;
-      cerr << sR1 << endl;
-      cerr << omegas[i].log() << endl;
-      cerr << sR2 << endl;
       cerr << DiffR <<endl;
       cerr << endl;
       failed = true;
     }
-
   }
-
   for (size_t i=0; i<omegas.size(); ++i)
   {
-    Vector3d p(1,2,4);
-    Matrix3d sR = omegas[i].matrix();
-    Vector3d res1 = omegas[i]*p;
-    Vector3d res2 = sR*p;
+    Vector2d p(1,2);
+    Matrix3d T = omegas[i].matrix();
+    Vector2d res1 = omegas[i]*p;
+    Vector2d res2 = T.topLeftCorner<2,2>()*p + T.topRightCorner<2,1>();
 
     double nrm = (res1-res2).norm();
 
@@ -89,31 +81,30 @@ bool scso3explog_tests()
     }
   }
   return failed;
+
 }
 
 
-bool scso3bracket_tests()
+bool se2bracket_tests()
 {
   bool failed = false;
-  vector<Vector4d> vecs;
-  Vector4d tmp;
-  tmp << 0,0,0,0;
+  vector<Vector3d> vecs;
+  Vector3d tmp;
+//  tmp << 0,0,0;
+//  vecs.push_back(tmp);
+//  tmp << 1,0,0;
+//  vecs.push_back(tmp);
+//  tmp << 0,1,1;
+//  vecs.push_back(tmp);
+//  tmp << -1,1,0;
+//  vecs.push_back(tmp);
+  tmp << 20,-1,-1;
   vecs.push_back(tmp);
-  tmp << 1,0,0,0;
-  vecs.push_back(tmp);
-  tmp << 1,0,0,0.1;
-  vecs.push_back(tmp);
-  tmp << 0,1,0,0.1;
-  vecs.push_back(tmp);
-  tmp << 0,0,1,-0.1;
-  vecs.push_back(tmp);
-  tmp << -1,1,0,-0.1;
-  vecs.push_back(tmp);
-  tmp << 20,-1,0,2;
-  vecs.push_back(tmp);
+//  tmp << 30,5,20;
+//  vecs.push_back(tmp);
   for (uint i=0; i<vecs.size(); ++i)
   {
-    Vector4d resDiff = vecs[i] - ScSO3::vee(ScSO3::hat(vecs[i]));
+    Vector3d resDiff = vecs[i] - SE2::vee(SE2::hat(vecs[i]));
     if (resDiff.norm()>SMALL_EPS)
     {
       cerr << "Hat-vee Test" << endl;
@@ -124,18 +115,20 @@ bool scso3bracket_tests()
 
     for (uint j=0; j<vecs.size(); ++j)
     {
-      Vector4d res1 = ScSO3::lieBracket(vecs[i],vecs[j]);
-      Matrix3d hati = ScSO3::hat(vecs[i]);
-      Matrix3d hatj = ScSO3::hat(vecs[j]);
+      Vector3d res1 = SE2::lieBracket(vecs[i],vecs[j]);
+      Matrix3d hati = SE2::hat(vecs[i]);
+      Matrix3d hatj = SE2::hat(vecs[j]);
 
-      Vector4d res2 = ScSO3::vee(hati*hatj-hatj*hati);
-      Vector4d resDiff = res1-res2;
+      Vector3d res2 = SE2::vee(hati*hatj-hatj*hati);
+      Vector3d resDiff = res1-res2;
       if (resDiff.norm()>SMALL_EPS)
       {
-        cerr << "ScSO3 Lie Bracket Test" << endl;
+        cerr << "SE2 Lie Bracket Test" << endl;
         cerr  << "Test case: " << i << ", " <<j<< endl;
         cerr << vecs[i].transpose() << endl;
         cerr << vecs[j].transpose() << endl;
+        cerr << res1 << endl;
+        cerr << res2 << endl;
         cerr << resDiff.transpose() << endl;
         cerr << endl;
         failed = true;
@@ -143,10 +136,9 @@ bool scso3bracket_tests()
     }
 
 
-
-    Vector4d omega = vecs[i];
-    Matrix3d exp_x = ScSO3::exp(omega).matrix();
-    Matrix3d expmap_hat_x = (ScSO3::hat(omega)).exp();
+    Vector3d omega = vecs[i];
+    Matrix3d exp_x = SE2::exp(omega).matrix();
+    Matrix3d expmap_hat_x = (SE2::hat(omega)).exp();
     Matrix3d DiffR = exp_x-expmap_hat_x;
     double nrm = DiffR.norm();
 
@@ -161,15 +153,17 @@ bool scso3bracket_tests()
       failed = true;
     }
   }
+
   return failed;
+
 }
 
 
 
 int main()
 {
-  bool failed = scso3explog_tests();
-  failed = failed || scso3bracket_tests();
+  bool failed = se2explog_tests();
+  failed = failed || se2bracket_tests();
 
   if (failed)
   {
@@ -178,4 +172,3 @@ int main()
   }
   return 0;
 }
-

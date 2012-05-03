@@ -132,7 +132,7 @@ public:
     return so3_.matrix();
   }
 
-  void set_rotation_matrix(const Matrix3d & rotation_matrix)
+  void setRotationMatrix(const Matrix3d & rotation_matrix)
   {
     so3_.setQuaternion(Quaterniond(rotation_matrix));
   }

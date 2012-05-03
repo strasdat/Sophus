@@ -1,13 +1,18 @@
 #include <iostream>
 #include <vector>
 
+
+#include <unsupported/Eigen/MatrixFunctions>
+
 #include "so3.h"
 
 using namespace Sophus;
 using namespace std;
 
-void so3explog_tests()
+
+bool so3explog_tests()
 {
+
   double pi = 3.14159265;
   vector<SO3> omegas;
   omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, 0.0)));
@@ -80,11 +85,13 @@ void so3explog_tests()
       failed = true;
     }
   }
+  return failed;
 }
 
 
-void so3bracket_tests()
+bool so3bracket_tests()
 {
+  bool failed = false;
   vector<Vector3d> vecs;
   vecs.push_back(Vector3d(0,0,0));
   vecs.push_back(Vector3d(1,0,0));
@@ -109,10 +116,28 @@ void so3bracket_tests()
         cerr  << "Test case: " << i << ", " <<j<< endl;
         cerr << res1-res2 << endl;
         cerr << endl;
+        failed = true;
       }
     }
-  }
 
+    Vector3d omega = vecs[i];
+    Matrix3d exp_x = SO3::exp(omega).matrix();
+    Matrix3d expmap_hat_x = (SO3::hat(omega)).exp();
+    Matrix3d DiffR = exp_x-expmap_hat_x;
+    double nrm = DiffR.norm();
+
+    if (isnan(nrm) || nrm>SMALL_EPS)
+    {
+      cerr << "expmap(hat(x)) - exp(x)" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << exp_x <<endl;
+      cerr << expmap_hat_x <<endl;
+      cerr << DiffR <<endl;
+      cerr << endl;
+      failed = true;
+    }
+  }
+return failed;
 
 
 }
@@ -121,7 +146,13 @@ void so3bracket_tests()
 
 int main()
 {
-  so3explog_tests();
-  so3bracket_tests();
+  bool failed = so3explog_tests();
+  failed = failed || so3bracket_tests();
+
+  if (failed)
+  {
+    cerr << "failed" << endl;
+    exit(-1);
+  }
   return 0;
 }

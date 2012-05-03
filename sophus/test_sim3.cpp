@@ -1,12 +1,14 @@
 #include <iostream>
 #include <vector>
 
+#include <unsupported/Eigen/MatrixFunctions>
+
 #include "sim3.h"
 
 using namespace Sophus;
 using namespace std;
 
-void sim3explog_tests()
+bool sim3explog_tests()
 {
   double pi = 3.14159265;
   vector<Sim3> omegas;
@@ -38,9 +40,6 @@ void sim3explog_tests()
     {
       cerr << "Sim3 - exp(log(Sim3))" << endl;
       cerr  << "Test case: " << i << endl;
-//      cerr << R1 <<endl;
-//      cerr << omegas[i].log().transpose() <<endl;
-//      cerr << R2 <<endl;
       cerr << DiffR <<endl;
       cerr << endl;
       failed = true;
@@ -84,11 +83,13 @@ void sim3explog_tests()
       failed = true;
     }
   }
+  return failed;
 }
 
 
-void sim3bracket_tests()
+bool sim3bracket_tests()
 {
+  bool failed = false;
   vector<Vector7d> vecs;
   Vector7d tmp;
   tmp << 0,0,0,0,0,0,0;
@@ -114,6 +115,7 @@ void sim3bracket_tests()
       cerr  << "Test case: " << i <<  endl;
       cerr << resDiff.transpose() << endl;
       cerr << endl;
+      failed = true;
     }
 
     for (uint j=0; j<vecs.size(); ++j)
@@ -132,17 +134,44 @@ void sim3bracket_tests()
         cerr << vecs[j].transpose() << endl;
         cerr << resDiff.transpose() << endl;
         cerr << endl;
+        failed = true;
       }
     }
+
+
+
+    Vector7d omega = vecs[i];
+    Matrix4d exp_x = Sim3::exp(omega).matrix();
+    Matrix4d expmap_hat_x = (Sim3::hat(omega)).exp();
+    Matrix4d DiffR = exp_x-expmap_hat_x;
+    double nrm = DiffR.norm();
+
+    if (isnan(nrm) || nrm>SMALL_EPS)
+    {
+      cerr << "expmap(hat(x)) - exp(x)" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << exp_x <<endl;
+      cerr << expmap_hat_x <<endl;
+      cerr << DiffR <<endl;
+      cerr << endl;
+      failed = true;
+    }
   }
+  return failed;
 }
 
 
 
 int main()
 {
-  sim3explog_tests();
-  sim3bracket_tests();
+  bool failed = sim3explog_tests();
+  failed = failed || sim3bracket_tests();
+
+  if (failed)
+  {
+    cerr << "failed" << endl;
+    exit(-1);
+  }
   return 0;
 }
 

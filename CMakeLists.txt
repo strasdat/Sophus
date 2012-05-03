@@ -21,7 +21,9 @@ ENDIF()
 SET (INCLUDE_DIRS "../eigen3.1/")
 
 SET (SOURCE_DIR "sophus")
-SET (CLASSES  se3
+SET (CLASSES  so2
+              se2
+              se3
               so3
               scso3
               sim3
@@ -38,12 +40,16 @@ LINK_LIBRARIES (${PROJECT_NAME} ${LIBS})
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCES})
 
+ADD_EXECUTABLE(test_so2 sophus/test_so2.cpp)
+ADD_EXECUTABLE(test_se2 sophus/test_se2.cpp)
 ADD_EXECUTABLE(test_so3 sophus/test_so3.cpp)
 ADD_EXECUTABLE(test_scso3 sophus/test_scso3.cpp)
 ADD_EXECUTABLE(test_se3 sophus/test_se3.cpp)
 ADD_EXECUTABLE(test_sim3 sophus/test_sim3.cpp)
 ENABLE_TESTING()
 
+ADD_TEST(test_so2 test_so2)
+ADD_TEST(test_se2 test_se2)
 ADD_TEST(test_so3 test_so3)
 ADD_TEST(test_scso3 test_scso3)
 ADD_TEST(test_se3 test_se3)

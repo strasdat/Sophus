@@ -210,19 +210,10 @@ Matrix3d SO3
   return -hat(b);
 }
 
-Vector3d SO3::
-deltaR(const Matrix3d & R)
-{
-  Vector3d v;
-  v(0) = R(2,1)-R(1,2);
-  v(1) = R(0,2)-R(2,0);
-  v(2) = R(1,0)-R(0,1);
-  return v;
-}
-
 void SO3::
 setQuaternion(const Quaterniond& quaternion)
 {
+  assert(quaternion.norm()!=0);
   unit_quaternion_ = quaternion;
   unit_quaternion_.normalize();
 }
