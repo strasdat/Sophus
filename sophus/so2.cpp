@@ -99,10 +99,10 @@ Matrix2d SO2
   return R;
 }
 
-Matrix2d SO2
+double SO2
 ::Adj() const
 {
-  return Matrix2d::Identity();
+  return 1.;
 }
 
 Matrix2d SO2

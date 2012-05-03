@@ -146,15 +146,20 @@ Vector3d SE2
   double theta2 = v2[2];
 
   return Vector3d(-theta1*upsilon2[1] + theta2*upsilon1[1],
-                   theta1*upsilon2[0] - theta2*upsilon1[0],
+                  theta1*upsilon2[0] - theta2*upsilon1[0],
                   0.);
 }
 
 Matrix3d SE2
-::d_lieBracketab_by_d_a(const Vector3d & b)
+::d_lieBracketab_by_d_a(const Vector3d & v2)
 {
+  Vector2d upsilon2 = v2.head<2>();
+  double theta2 = v2[2];
+
   Matrix3d res;
-  assert(false);
+  res <<      0., theta2, -upsilon2[1]
+      ,  -theta2,     0.,  upsilon2[0]
+      ,       0.,     0.,           0.;
   return res;
 }
 

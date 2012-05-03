@@ -69,7 +69,7 @@ public:
   Matrix2d
   matrix                     () const;
 
-  Matrix2d
+  double
   Adj                        () const;
 
   Matrix2d
