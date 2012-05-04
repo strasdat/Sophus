@@ -103,6 +103,8 @@ public:
   static Matrix7d
   d_lieBracketab_by_d_a      (const Vector7d & b);
 
+  SO3
+  so3                        () const;
 
   const Vector3d& translation() const
   {

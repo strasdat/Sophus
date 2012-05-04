@@ -39,21 +39,21 @@ class ScSO3
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  ScSO3                        ();
+  ScSO3                      ();
 
-  ScSO3                        (const ScSO3 & other);
-
-  explicit
-  ScSO3                        (const Matrix3d & scale_times_R);
-
-  ScSO3                        (double scale,
-                                const SO3 & so3);
-
-  ScSO3                        (double scale,
-                                const Matrix3d & R);
+  ScSO3                      (const ScSO3 & other);
 
   explicit
-  ScSO3                        (const Quaterniond & quaternion);
+  ScSO3                      (const Matrix3d & scale_times_R);
+
+  ScSO3                      (double scale,
+                              const SO3 & so3);
+
+  ScSO3                      (double scale,
+                              const Matrix3d & R);
+
+  explicit
+  ScSO3                      (const Quaterniond & quaternion);
 
   void
   operator=                  (const ScSO3 & ScSO3);

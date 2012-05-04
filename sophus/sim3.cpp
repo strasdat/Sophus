@@ -270,6 +270,12 @@ Matrix7d Sim3
   return res;
 }
 
+SO3 Sim3
+::so3() const
+{
+  return SO3(quaternion());
+}
+
 }
 
 

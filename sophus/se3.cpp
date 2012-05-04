@@ -183,7 +183,7 @@ SE3 SE3
   if(theta<SMALL_EPS)
   {
     V = so3.matrix();
-    //ToDO: Use more accurate expansion
+    //Note: That is an accurate expansion!
   }
   else
   {
@@ -206,7 +206,7 @@ Vector6d SE3
   {
     Matrix3d Omega = SO3::hat(upsilon_omega.tail<3>());
     Matrix3d V_inv = Matrix3d::Identity()- 0.5*Omega + (1./12.)*(Omega*Omega);
-    //ToDO: Use more accurate expansion
+
     upsilon_omega.head<3>() = V_inv*se3.translation_;
   }
   else
