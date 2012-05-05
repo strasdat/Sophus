@@ -158,7 +158,7 @@ private:
 inline std::ostream& operator <<(std::ostream & out_str,
                                  const SE3 &  se3)
 {
-  out_str << se3.so3() << se3.translation() << std::endl;
+  out_str << se3.so3() << se3.translation().transpose() << std::endl;
   return out_str;
 }
 

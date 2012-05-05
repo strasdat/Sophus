@@ -32,7 +32,8 @@ bool so3explog_tests()
   for (size_t i=0; i<omegas.size(); ++i)
   {
     Matrix3d R1 = omegas[i].matrix();
-    Matrix3d R2 = SO3::exp(omegas[i].log()).matrix();
+    double theta;
+    Matrix3d R2 = SO3::exp(SO3::logAndTheta(omegas[i],&theta)).matrix();
 
     Matrix3d DiffR = R1-R2;
     double nrm = DiffR.norm();
@@ -45,6 +46,16 @@ bool so3explog_tests()
       cerr << endl;
       failed = true;
     }
+
+    if (theta>M_PI || theta<-M_PI)
+    {
+      cerr << "log theta not in [-pi,pi]" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << theta <<endl;
+      cerr << endl;
+      failed = true;
+    }
+
   }
 
   for (size_t i=0; i<omegas.size(); ++i)

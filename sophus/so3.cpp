@@ -139,6 +139,10 @@ Vector3d SO3
   }
 
   *theta = 2.*acos(q_real);
+  // normalize between -pi and pi
+  if (*theta>M_PI)
+    *theta -= 2*M_PI;
+
   double theta_by_sin_half_theta = (*theta)/sqrt(1. - q_real*q_real);
 
   return Vector3d(theta_by_sin_half_theta*other.unit_quaternion_.x(),
