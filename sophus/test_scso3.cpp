@@ -87,6 +87,9 @@ bool scso3explog_tests()
       cerr << endl;
       failed = true;
     }
+    Matrix3d R = omegas[i].rotationMatrix();
+    cerr << R*R.transpose() << endl;
+
   }
   return failed;
 }

@@ -137,6 +137,14 @@ Vector3d SO3
                   other.unit_quaternion_.y(),
                   other.unit_quaternion_.z());
   }
+  else if (q_real<-1.+SMALL_EPS)
+  {
+    *theta = 2.*acos(std::max(q_real, -1.0)) - 2*M_PI;
+    return (-2.+2./3.*(q_real-1.)-4./15.*(q_real-1.)*(q_real-1.))
+        *Vector3d(other.unit_quaternion_.x(),
+                  other.unit_quaternion_.y(),
+                  other.unit_quaternion_.z());
+  }
 
   *theta = 2.*acos(q_real);
   // normalize between -pi and pi

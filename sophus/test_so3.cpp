@@ -15,6 +15,8 @@ bool so3explog_tests()
 
   double pi = 3.14159265;
   vector<SO3> omegas;
+  omegas.push_back(SO3(Quaterniond(-1.,0.,0.,0.)));
+  omegas.push_back(SO3(Quaterniond(-1.01,0.,0.,0.)));
   omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, 0.0)));
   omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, -1.0)));
   omegas.push_back(SO3::exp(Vector3d(0., 0., 0.)));
