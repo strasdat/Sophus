@@ -13,20 +13,19 @@ using namespace std;
 bool so3explog_tests()
 {
 
-  double pi = 3.14159265;
   vector<SO3> omegas;
-  omegas.push_back(SO3(Quaterniond(-1.,0.,0.,0.)));
-  omegas.push_back(SO3(Quaterniond(-1.01,0.,0.,0.)));
+  omegas.push_back(SO3(Quaterniond(0.1e-11, 0., 1., 0.)));
+  omegas.push_back(SO3(Quaterniond(-1,0.00001,0.0,0.0)));
   omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, 0.0)));
   omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, -1.0)));
   omegas.push_back(SO3::exp(Vector3d(0., 0., 0.)));
   omegas.push_back(SO3::exp(Vector3d(0., 0., 0.00001)));
-  omegas.push_back(SO3::exp(Vector3d(pi, 0, 0)));
+  omegas.push_back(SO3::exp(Vector3d(M_PI, 0, 0)));
   omegas.push_back(SO3::exp(Vector3d(0.2, 0.5, 0.0))
-                   *SO3::exp(Vector3d(pi, 0, 0))
+                   *SO3::exp(Vector3d(M_PI, 0, 0))
                    *SO3::exp(Vector3d(-0.2, -0.5, -0.0)));
   omegas.push_back(SO3::exp(Vector3d(0.3, 0.5, 0.1))
-                   *SO3::exp(Vector3d(pi, 0, 0))
+                   *SO3::exp(Vector3d(M_PI, 0, 0))
                    *SO3::exp(Vector3d(-0.3, -0.5, -0.1)));
 
   bool failed = false;
@@ -109,7 +108,7 @@ bool so3bracket_tests()
   vecs.push_back(Vector3d(0,0,0));
   vecs.push_back(Vector3d(1,0,0));
   vecs.push_back(Vector3d(0,1,0));
-  vecs.push_back(Vector3d(0,0,1));
+  vecs.push_back(Vector3d(M_PI_2,M_PI_2,0.0));
   vecs.push_back(Vector3d(-1,1,0));
   vecs.push_back(Vector3d(20,-1,0));
   vecs.push_back(Vector3d(30,5,-1));
@@ -150,7 +149,7 @@ bool so3bracket_tests()
       failed = true;
     }
   }
-return failed;
+  return failed;
 
 
 }

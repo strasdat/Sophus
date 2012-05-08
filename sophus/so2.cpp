@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include "so2.h"
+#include "so3.h"
 
 namespace Sophus
 {
@@ -155,7 +156,7 @@ double SO2
 void SO2::
 setComplex(const Complexd& complex)
 {
-  assert(abs(complexs)!=0);
+  assert(abs(complex)!=0);
   unit_complex_ = complex;
   normalize();
 }

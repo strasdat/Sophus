@@ -42,6 +42,7 @@ SO3
 SO3
 ::SO3(const Quaterniond & quat) : unit_quaternion_(quat)
 {
+  assert(unit_quaternion_.squaredNorm() > SMALL_EPS);
   unit_quaternion_.normalize();
 }
 
@@ -126,36 +127,45 @@ Vector3d SO3
 Vector3d SO3
 ::logAndTheta(const SO3 & other, double * theta)
 {
-  double q_real = other.unit_quaternion_.w();
 
+    double n = other.unit_quaternion_.vec().norm();
+    double w = other.unit_quaternion_.w();
+    double squared_w = w*w;
 
-  if (q_real>1.-SMALL_EPS)
-  {
-    *theta = 2.*acos(std::min(q_real, 1.0));
-    return (2.-2./3.*(q_real-1.)+4./15.*(q_real-1.)*(q_real-1.))
-        *Vector3d(other.unit_quaternion_.x(),
-                  other.unit_quaternion_.y(),
-                  other.unit_quaternion_.z());
-  }
-  else if (q_real<-1.+SMALL_EPS)
-  {
-    *theta = 2.*acos(std::max(q_real, -1.0)) - 2*M_PI;
-    return (-2.+2./3.*(q_real-1.)-4./15.*(q_real-1.)*(q_real-1.))
-        *Vector3d(other.unit_quaternion_.x(),
-                  other.unit_quaternion_.y(),
-                  other.unit_quaternion_.z());
-  }
+    double two_atan_nbyw_by_n;
+    // Atan-based log thanks to
+    //
+    // C. Hertzberg et al.:
+    // "Integrating Generic Sensor Fusion Algorithms with Sound State
+    // Representation through Encapsulation of Manifolds"
+    // Information Fusion, 2011
 
-  *theta = 2.*acos(q_real);
-  // normalize between -pi and pi
-  if (*theta>M_PI)
-    *theta -= 2*M_PI;
+    if (n < SMALL_EPS)
+    {
+      // If quaternion is normalized and n=1, then w should be 1;
+      // w=0 should never happen here!
+      assert(fabs(w)>SMALL_EPS);
 
-  double theta_by_sin_half_theta = (*theta)/sqrt(1. - q_real*q_real);
+      two_atan_nbyw_by_n = 2./w - 2.*(n*n)/(w*squared_w);
+    }
+    else
+    {
+      if (fabs(w)<SMALL_EPS)
+      {
+        if (w>0)
+        {
+          two_atan_nbyw_by_n = M_PI/n;
+        }
+        else
+        {
+          two_atan_nbyw_by_n = -M_PI/n;
+        }
+      }
+      two_atan_nbyw_by_n = 2*atan(n/w)/n;
+    }
 
-  return Vector3d(theta_by_sin_half_theta*other.unit_quaternion_.x(),
-                  theta_by_sin_half_theta*other.unit_quaternion_.y(),
-                  theta_by_sin_half_theta*other.unit_quaternion_.z());
+    *theta = two_atan_nbyw_by_n*n;
+    return two_atan_nbyw_by_n * other.unit_quaternion_.vec();
 }
 
 SO3 SO3
