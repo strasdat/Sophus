@@ -1,7 +1,3 @@
-C++ implementation of Lie Groups using Eigen.
+This folk attempts to extend Hauke's Sophus.
 
-For a installation guideline, please refer to 
-
-https://github.com/strasdat/ScaViSLAM
-
-for now.
+For original project, see: https://github.com/strasdat/Sophus
