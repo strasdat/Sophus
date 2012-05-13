@@ -27,13 +27,14 @@
 
 #include <Eigen/Core>
 
+#include "define.h"
 
 namespace Sophus
 {
 using namespace Eigen;
 
 
-class SO2
+class LIBRARY_API SO2
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

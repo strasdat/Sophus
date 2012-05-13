@@ -27,6 +27,7 @@
 #include <Eigen/StdVector>
 #include <Eigen/Geometry>
 
+#include "define.h"
 
 namespace Sophus
 {
@@ -34,7 +35,7 @@ using namespace Eigen;
 
 const double SMALL_EPS = 1e-10;
 
-class SO3
+class LIBRARY_API SO3
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

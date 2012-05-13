@@ -41,7 +41,7 @@ typedef Matrix< double, 7, 7 > Matrix7d;
    *   Zaragoza, Spain, 2010.
    *   http://www.roboticsproceedings.org/rss06/p10.html
    */
-class Sim3
+class LIBRARY_API Sim3
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

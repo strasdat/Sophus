@@ -30,7 +30,7 @@ namespace Sophus
 using namespace Eigen;
 using namespace std;
 
-class SE2
+class LIBRARY_API SE2
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

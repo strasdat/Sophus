@@ -29,12 +29,11 @@
 
 #include "so3.h"
 
-
 namespace Sophus
 {
 using namespace Eigen;
 
-class ScSO3
+class LIBRARY_API ScSO3
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -33,7 +33,7 @@ using namespace std;
 typedef Matrix< double, 6, 1 > Vector6d;
 typedef Matrix< double, 6, 6 > Matrix6d;
 
-class SE3
+class LIBRARY_API SE3
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
