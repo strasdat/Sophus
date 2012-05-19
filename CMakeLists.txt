@@ -18,7 +18,7 @@ IF (CMAKE_COMPILER_IS_GNUCXX )
 ENDIF()
 
 
-SET (INCLUDE_DIRS "../eigen3.1/")
+SET (INCLUDE_DIRS "/usr/local/include/eigen3")
 
 SET (SOURCE_DIR "sophus")
 SET (CLASSES  so2
@@ -55,5 +55,7 @@ ADD_TEST(test_scso3 test_scso3)
 ADD_TEST(test_se3 test_se3)
 ADD_TEST(test_sim3 test_sim3)
 
-
-
+# Export config file for easy inclusion into other projects: FIND_PACKAGE( Sophus )
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake @ONLY IMMEDIATE )
+EXPORT( PACKAGE ${PROJECT_NAME} )
