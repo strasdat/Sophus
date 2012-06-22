@@ -72,6 +72,9 @@ public:
   static Vector6d
   log                        (const SE3 & se3);
 
+  Matrix<double,3,4>
+  matrix3x4                  () const;
+
   Matrix<double,4,4>
   matrix                     () const;
 
@@ -155,12 +158,12 @@ private:
 
 };
 
-inline std::ostream& operator <<(std::ostream & out_str,
-                                 const SE3 &  se3)
-{
-  out_str << se3.so3() << se3.translation().transpose() << std::endl;
-  return out_str;
-}
+//inline std::ostream& operator <<(std::ostream & out_str,
+//                                 const SE3 &  se3)
+//{
+//  out_str << se3.so3() << se3.translation().transpose() << std::endl;
+//  return out_str;
+//}
 
 } // end namespace
 

@@ -94,6 +94,15 @@ Vector3d SE3
   return so3_*xyz + translation_;
 }
 
+Matrix<double,3,4> SE3
+::matrix3x4() const
+{
+  Matrix<double,3,4> matrix;
+  matrix.block(0,0,3,3) = rotation_matrix();
+  matrix.col(3) = translation_;
+  return matrix;
+}
+
 Matrix4d SE3
 ::matrix() const
 {
