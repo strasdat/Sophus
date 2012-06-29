@@ -114,7 +114,7 @@ bool scso3bracket_tests()
   vecs.push_back(tmp);
   tmp << 20,-1,0,2;
   vecs.push_back(tmp);
-  for (uint i=0; i<vecs.size(); ++i)
+  for (unsigned int i=0; i<vecs.size(); ++i)
   {
     Vector4d resDiff = vecs[i] - ScSO3::vee(ScSO3::hat(vecs[i]));
     if (resDiff.norm()>SMALL_EPS)
@@ -125,7 +125,7 @@ bool scso3bracket_tests()
       cerr << endl;
     }
 
-    for (uint j=0; j<vecs.size(); ++j)
+    for (unsigned int j=0; j<vecs.size(); ++j)
     {
       Vector4d res1 = ScSO3::lieBracket(vecs[i],vecs[j]);
       Matrix3d hati = ScSO3::hat(vecs[i]);

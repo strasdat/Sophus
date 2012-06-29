@@ -104,7 +104,7 @@ bool se3bracket_tests()
   vecs.push_back(tmp);
   tmp << 30,5,-1,20,-1,0;
   vecs.push_back(tmp);
-  for (uint i=0; i<vecs.size(); ++i)
+  for (unsigned int i=0; i<vecs.size(); ++i)
   {
     Vector6d resDiff = vecs[i] - SE3::vee(SE3::hat(vecs[i]));
     if (resDiff.norm()>SMALL_EPS)
@@ -116,7 +116,7 @@ bool se3bracket_tests()
       failed = true;
     }
 
-    for (uint j=0; j<vecs.size(); ++j)
+    for (unsigned int j=0; j<vecs.size(); ++j)
     {
       Vector6d res1 = SE3::lieBracket(vecs[i],vecs[j]);
       Matrix4d hati = SE3::hat(vecs[i]);

@@ -106,7 +106,7 @@ bool sim3bracket_tests()
   vecs.push_back(tmp);
   tmp << 30,5,-1,20,-1,0,2;
   vecs.push_back(tmp);
-  for (uint i=0; i<vecs.size(); ++i)
+  for (unsigned int i=0; i<vecs.size(); ++i)
   {
     Vector7d resDiff = vecs[i] - Sim3::vee(Sim3::hat(vecs[i]));
     if (resDiff.norm()>SMALL_EPS)
@@ -118,7 +118,7 @@ bool sim3bracket_tests()
       failed = true;
     }
 
-    for (uint j=0; j<vecs.size(); ++j)
+    for (unsigned int j=0; j<vecs.size(); ++j)
     {
       Vector7d res1 = Sim3::lieBracket(vecs[i],vecs[j]);
       Matrix4d hati = Sim3::hat(vecs[i]);
