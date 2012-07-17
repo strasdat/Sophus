@@ -17,8 +17,22 @@ IF (CMAKE_COMPILER_IS_GNUCXX )
                    -Wno-unused-but-set-variable -Wno-unknown-pragmas ")
 ENDIF()
 
+################################################################################
+# Add local path for finding packages, set the local version first
+set( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" )
+list( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 
-SET (INCLUDE_DIRS "../eigen3.1/")
+################################################################################
+# Create variables used for exporting in SophusConfig.cmake
+set( Sophus_LIBRARIES "" )
+set( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
+
+################################################################################
+
+#SET (INCLUDE_DIRS "../eigen3.1/")
+find_package( Eigen3 REQUIRED )
+INCLUDE_DIRECTORIES( ${EIGEN3_INCLUDE_DIR} )
+SET( Sophus_INCLUDE_DIR ${Sophus_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} )
 
 SET (SOURCE_DIR "sophus")
 SET (CLASSES  so2
@@ -55,5 +69,9 @@ ADD_TEST(test_scso3 test_scso3)
 ADD_TEST(test_se3 test_se3)
 ADD_TEST(test_sim3 test_sim3)
 
-
+################################################################################
+# Create the SophusConfig.cmake file for other cmake projects.
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY IMMEDIATE )
+export( PACKAGE Sophus )
 
