@@ -51,6 +51,8 @@ ENDFOREACH(class)
 
 LINK_LIBRARIES (${PROJECT_NAME} ${LIBS})
 
+set( Sophus_LIBRARIES ${Sophus_LIBRARIES} ${LIBS} )
+
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCES})
 
@@ -68,6 +70,11 @@ ADD_TEST(test_so3 test_so3)
 ADD_TEST(test_scso3 test_scso3)
 ADD_TEST(test_se3 test_se3)
 ADD_TEST(test_sim3 test_sim3)
+
+##############################################################################
+# Get full library name
+GET_TARGET_PROPERTY( FULL_LIBRARY_NAME ${PROJECT_NAME} LOCATION )
+set( Sophus_LIBRARIES ${Sophus_LIBRARIES} ${FULL_LIBRARY_NAME} )
 
 ################################################################################
 # Create the SophusConfig.cmake file for other cmake projects.
