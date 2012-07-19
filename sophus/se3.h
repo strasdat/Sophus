@@ -46,6 +46,7 @@ public:
                               const Vector3d & translation);
   SE3                        (const Quaterniond & unit_quaternion,
                               const Vector3d & translation_);
+  SE3                        (const Eigen::Matrix4d& T);
   SE3                        (const SE3 & other);
 
   SE3 &

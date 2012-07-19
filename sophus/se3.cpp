@@ -45,6 +45,10 @@ SE3
   : so3_(quaternion), translation_(translation) {}
 
 SE3
+::SE3(const Eigen::Matrix4d& T)
+  : so3_(T.topLeftCorner<3,3>()), translation_(T.block<3,1>(0,3)) {}
+
+SE3
 ::SE3(const SE3 & se3) : so3_(se3.so3_),translation_(se3.translation_){}
 
 
