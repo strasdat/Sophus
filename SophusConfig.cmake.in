@@ -1,5 +1,12 @@
-SET( Sophus_LIBRARIES   "@PROJECT_NAME@" )
-SET( Sophus_INCLUDE_DIR "@PROJECT_SOURCE_DIR@" )
-SET( Sophus_LIBRARY_DIRS "@CMAKE_CURRENT_BINARY_DIR@" )
+################################################################################
+# Sophus source dir
+set( Sophus_SOURCE_DIR "@CMAKE_CURRENT_SOURCE_DIR@")
 
+################################################################################
+# Sophus build dir
+set( Sophus_DIR "@CMAKE_CURRENT_BINARY_DIR@")
 
+################################################################################
+set( Sophus_INCLUDE_DIR  "@Sophus_INCLUDE_DIR@" )
+set( Sophus_LIBRARIES    "@Sophus_LIBRARIES@"   )
+set( Sophus_LIBRARY_DIR  "@Sophus_LIBRARIES@"   )
