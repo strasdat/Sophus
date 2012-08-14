@@ -90,18 +90,18 @@ bool se2bracket_tests()
   bool failed = false;
   vector<Vector3d> vecs;
   Vector3d tmp;
-//  tmp << 0,0,0;
-//  vecs.push_back(tmp);
-//  tmp << 1,0,0;
-//  vecs.push_back(tmp);
-//  tmp << 0,1,1;
-//  vecs.push_back(tmp);
-//  tmp << -1,1,0;
-//  vecs.push_back(tmp);
+  tmp << 0,0,0;
+  vecs.push_back(tmp);
+  tmp << 1,0,0;
+  vecs.push_back(tmp);
+  tmp << 0,1,1;
+  vecs.push_back(tmp);
+  tmp << -1,1,0;
+  vecs.push_back(tmp);
   tmp << 20,-1,-1;
   vecs.push_back(tmp);
-//  tmp << 30,5,20;
-//  vecs.push_back(tmp);
+  tmp << 30,5,20;
+  vecs.push_back(tmp);
   for (size_t i=0; i<vecs.size(); ++i)
   {
     Vector3d resDiff = vecs[i] - SE2::vee(SE2::hat(vecs[i]));
