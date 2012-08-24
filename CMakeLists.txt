@@ -75,6 +75,7 @@ ADD_TEST(test_sim3 test_sim3)
 # Get full library name
 GET_TARGET_PROPERTY( FULL_LIBRARY_NAME ${PROJECT_NAME} LOCATION )
 set( Sophus_LIBRARIES ${Sophus_LIBRARIES} ${FULL_LIBRARY_NAME} )
+set( Sophus_LIBRARY_DIR ${PROJECT_BINARY_DIR} )
 
 ################################################################################
 # Create the SophusConfig.cmake file for other cmake projects.
