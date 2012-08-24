@@ -8,5 +8,10 @@ set( Sophus_DIR "@CMAKE_CURRENT_BINARY_DIR@")
 
 ################################################################################
 set( Sophus_INCLUDE_DIR  "@Sophus_INCLUDE_DIR@" )
-set( Sophus_LIBRARIES    "@Sophus_LIBRARIES@"   )
-set( Sophus_LIBRARY_DIR  "@Sophus_LIBRARIES@"   )
+set( Sophus_INCLUDE_DIRS  "@Sophus_INCLUDE_DIR@" )
+
+set( Sophus_LIBRARIES    "@Sophus_LIBRARIES@" )
+set( Sophus_LIBRARY      "@Sophus_LIBRARIES@" )
+
+set( Sophus_LIBRARY_DIR  "@Sophus_LIBRARY_DIR@" )
+set( Sophus_LIBRARY_DIRS "@Sophus_LIBRARY_DIR@" )
