@@ -17,8 +17,21 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
                    -Wno-unused-but-set-variable -Wno-unknown-pragmas ")
 ENDIF()
 
+################################################################################
+# Add local path for finding packages, set the local version first
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules")
 
-SET(INCLUDE_DIRS "../Eigen")
+################################################################################
+# Create variables used for exporting in SophusConfig.cmake
+set( Sophus_LIBRARIES "" )
+set( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
+
+################################################################################
+
+find_package( Eigen3 REQUIRED )
+INCLUDE_DIRECTORIES( ${EIGEN3_INCLUDE_DIR} )
+SET( Sophus_INCLUDE_DIR ${Sophus_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} )
 
 SET(SOURCE_DIR "sophus")
 SET(CLASSES so2
@@ -29,10 +42,8 @@ SET(CLASSES so2
             sim3)
 
 SET(SOURCES ${SOURCE_DIR}/define.h)
-SET(INSTALL_HEADERS ${SOURCE_DIR}/define.h)
 FOREACH(class ${CLASSES})
    LIST(APPEND SOURCES ${SOURCE_DIR}/${class}.cpp ${SOURCE_DIR}/${class}.h)
-   LIST(APPEND INSTALL_HEADERS ${SOURCE_DIR}/${class}.h) 
 ENDFOREACH(class)
 
 IF(MSVC)
@@ -40,23 +51,18 @@ IF(MSVC)
 ENDIF(MSVC)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
+LINK_LIBRARIES (${LIBRARY_NAME} ${LIBS})
 
 SET(CMAKE_DEBUG_POSTFIX "d")
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 ADD_LIBRARY(${LIBRARY_NAME} SHARED ${SOURCES})
 
 ADD_EXECUTABLE(test_so2 sophus/test_so2.cpp)
-TARGET_LINK_LIBRARIES(test_so2 ${LIBRARY_NAME})
 ADD_EXECUTABLE(test_se2 sophus/test_se2.cpp)
-TARGET_LINK_LIBRARIES(test_se2 ${LIBRARY_NAME})
 ADD_EXECUTABLE(test_so3 sophus/test_so3.cpp)
-TARGET_LINK_LIBRARIES(test_so3 ${LIBRARY_NAME})
 ADD_EXECUTABLE(test_scso3 sophus/test_scso3.cpp)
-TARGET_LINK_LIBRARIES(test_scso3 ${LIBRARY_NAME})
 ADD_EXECUTABLE(test_se3 sophus/test_se3.cpp)
-TARGET_LINK_LIBRARIES(test_se3 ${LIBRARY_NAME})
 ADD_EXECUTABLE(test_sim3 sophus/test_sim3.cpp)
-TARGET_LINK_LIBRARIES(test_sim3 ${LIBRARY_NAME})
 ENABLE_TESTING()
 
 ADD_TEST(test_so2 test_so2)
@@ -66,20 +72,13 @@ ADD_TEST(test_scso3 test_scso3)
 ADD_TEST(test_se3 test_se3)
 ADD_TEST(test_sim3 test_sim3)
 
-# install headers
-INSTALL(FILES ${INSTALL_HEADERS} 
-  DESTINATION ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME})
+##############################################################################
+# Get full library name
+GET_TARGET_PROPERTY( FULL_LIBRARY_NAME ${PROJECT_NAME} LOCATION )
+SET( Sophus_LIBRARIES ${Sophus_LIBRARIES} ${FULL_LIBRARY_NAME} )
 
-# install library when Debug mode
-INSTALL(TARGETS ${LIBRARY_NAME}
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/Debug CONFIGURATIONS Debug
-  LIBRARY DESTINATION ${PROJECT_SOURCE_DIR}/lib/Debug CONFIGURATIONS Debug
-  ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/lib/Debug CONFIGURATIONS Debug
-)
-
-# install library when Release mode
-INSTALL(TARGETS ${LIBRARY_NAME}
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/Release CONFIGURATIONS Release
-  LIBRARY DESTINATION ${PROJECT_SOURCE_DIR}/lib/Release CONFIGURATIONS Release
-  ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/lib/Release CONFIGURATIONS Release
-)
+################################################################################
+# Create the SophusConfig.cmake file for other cmake projects.
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
+					 ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY IMMEDIATE )
+export( PACKAGE Sophus )

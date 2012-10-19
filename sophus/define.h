@@ -12,9 +12,12 @@
 #define M_PI_2     1.57079632679489661923
 #define isnan(x) _isnan(x) 
 
-typedef unsigned int uint;
+#else
 
+#define LIBRARY_API
 
 #endif //_MSVC_
+
+typedef unsigned int uint;
 
 #endif // DEFINE_H
