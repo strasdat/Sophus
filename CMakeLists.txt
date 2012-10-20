@@ -23,15 +23,10 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules")
 
 ################################################################################
-# Create variables used for exporting in SophusConfig.cmake
-set( Sophus_LIBRARIES "" )
-set( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
 
-################################################################################
-
-find_package( Eigen3 REQUIRED )
+FIND_PACKAGE( Eigen3 REQUIRED )
 INCLUDE_DIRECTORIES( ${EIGEN3_INCLUDE_DIR} )
-SET( Sophus_INCLUDE_DIR ${Sophus_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} )
+SET(ALL_INCLUDE_DIRS ${PROJECT_SOURCE_DIR} ${EIGEN3_INCLUDE_DIR} )
 
 SET(SOURCE_DIR "sophus")
 SET(CLASSES so2
@@ -50,7 +45,7 @@ IF(MSVC)
    ADD_DEFINITIONS(-D_MSVC_)
 ENDIF(MSVC)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+STRING(TOLOWER ${PROJECT_NAME} LIBRARY_NAME)
 LINK_LIBRARIES (${LIBRARY_NAME} ${LIBS})
 
 SET(CMAKE_DEBUG_POSTFIX "d")
@@ -72,13 +67,8 @@ ADD_TEST(test_scso3 test_scso3)
 ADD_TEST(test_se3 test_se3)
 ADD_TEST(test_sim3 test_sim3)
 
-##############################################################################
-# Get full library name
-GET_TARGET_PROPERTY( FULL_LIBRARY_NAME ${PROJECT_NAME} LOCATION )
-SET( Sophus_LIBRARIES ${Sophus_LIBRARIES} ${FULL_LIBRARY_NAME} )
-
 ################################################################################
 # Create the SophusConfig.cmake file for other cmake projects.
-CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
-					 ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY IMMEDIATE )
-export( PACKAGE Sophus )
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
+			   ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY IMMEDIATE)
+export(PACKAGE ${PROJECT_NAME})

@@ -137,6 +137,11 @@ public:
     so3_.setQuaternion(Quaterniond(rotation_matrix));
   }
 
+  void setTranslationVector(const Vector3d & translation_vector)
+  {
+    translation_ = translation_vector;
+  }
+
   const SO3& so3() const
   {
     return so3_;
