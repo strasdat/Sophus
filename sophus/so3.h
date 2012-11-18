@@ -113,6 +113,11 @@ public:
     return unit_quaternion_;
   }
 
+  Quaterniond & unit_quaternion()
+  {
+    return unit_quaternion_;
+  }
+
   static const int DoF = 3;
 
 protected:
