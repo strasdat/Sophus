@@ -59,7 +59,7 @@ namespace Sophus
 using namespace Eigen;
 
 ////////////////////////////////////////////////////////////////////////////
-// Template Definition
+// SO3GroupBase type - implements SO3 class but is storage agnostic
 ////////////////////////////////////////////////////////////////////////////
 
 const double SMALL_EPS = 1e-10;
@@ -72,11 +72,13 @@ public:
     typedef typename internal::traits<Derived>::QuaternionType QuaternionType;
     static const int DoF = 3;
 
-    inline QuaternionType& unit_quaternion() {
+    EIGEN_STRONG_INLINE
+    QuaternionType& unit_quaternion() {
         return static_cast<Derived*>(this)->unit_quaternion();
     }
 
-    inline const QuaternionType& unit_quaternion() const {
+    EIGEN_STRONG_INLINE
+    const QuaternionType& unit_quaternion() const {
         return static_cast<const Derived*>(this)->unit_quaternion();
     }
 
@@ -142,7 +144,7 @@ public:
       return SO3Group<Scalar>::log(*this);
     }
 
-    inline
+    inline static
     Matrix<Scalar,3,1> log(const SO3Group<Scalar> & other)
     {
       Scalar theta;
@@ -193,7 +195,7 @@ public:
         return two_atan_nbyw_by_n * other.unit_quaternion().vec();
     }
 
-    inline
+    inline static
     SO3Group<Scalar> exp(const Matrix<Scalar,3,1> & omega)
     {
       Scalar theta;
@@ -245,13 +247,13 @@ public:
       return Matrix<Scalar,3,1>(Omega(2,1), Omega(0,2), Omega(1,0));
     }
 
-    inline
+    inline static
     Matrix<Scalar,3,1> lieBracket(const Matrix<Scalar,3,1> & omega1, const Matrix<Scalar,3,1> & omega2)
     {
       return omega1.cross(omega2);
     }
 
-    inline
+    inline static
     Matrix<Scalar,3,3> d_lieBracketab_by_d_a(const Matrix<Scalar,3,1> & b)
     {
       return -hat(b);
@@ -267,6 +269,10 @@ public:
 
 };
 
+////////////////////////////////////////////////////////////////////////////
+// SO3Group type - Constructors and default storage for SO3 Type
+////////////////////////////////////////////////////////////////////////////
+
 template<typename _Scalar, int _Options>
 class SO3Group : public SO3GroupBase<SO3Group<_Scalar,_Options> >
 {
@@ -281,7 +287,8 @@ public:
       unit_quaternion_.setIdentity();
     }
 
-    inline SO3Group(const SO3Group & other) : unit_quaternion_(other.unit_quaternion_) {}
+    template<typename OtherDerived> inline
+    SO3Group(const SO3GroupBase<OtherDerived> & other) : unit_quaternion_(other.unit_quaternion()) {}
 
 
     inline SO3Group(const Matrix<Scalar,3,3> & R) : unit_quaternion_(R) {}
@@ -300,12 +307,14 @@ public:
              *SO3Group::exp(Matrix<Scalar,3,1>(0.f, 0.f, rot_z))).unit_quaternion_;
     }
 
-    inline const QuaternionType & unit_quaternion() const
+    EIGEN_STRONG_INLINE
+    const QuaternionType & unit_quaternion() const
     {
       return unit_quaternion_;
     }
 
-    inline QuaternionType & unit_quaternion()
+    EIGEN_STRONG_INLINE
+    QuaternionType & unit_quaternion()
     {
       return unit_quaternion_;
     }

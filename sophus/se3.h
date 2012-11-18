@@ -25,371 +25,345 @@
 
 #include "so3.h"
 
+////////////////////////////////////////////////////////////////////////////
+// Forward Declarations / typedefs
+////////////////////////////////////////////////////////////////////////////
+
+namespace Sophus
+{
+    template<typename _Scalar, int _Options=0> class SE3Group;
+    typedef SE3Group<double> SE3;
+    typedef Matrix<double,6,1> Vector6d;
+    typedef Matrix<double,6,6> Matrix6d;
+}
+
+////////////////////////////////////////////////////////////////////////////
+// Eigen Traits (For querying derived types in CRTP hierarchy)
+////////////////////////////////////////////////////////////////////////////
+
+namespace Eigen {
+namespace internal {
+
+template<typename _Scalar, int _Options>
+struct traits<Sophus::SE3Group<_Scalar,_Options> >
+{
+    typedef _Scalar Scalar;
+    typedef Sophus::SO3Group<Scalar> SO3Type;
+};
+
+}
+}
+
+
+
 namespace Sophus
 {
 using namespace Eigen;
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////
-// Forward Declarations / typedefs
+// SE3GroupBase type - implements SE3 class but is storage agnostic
 ////////////////////////////////////////////////////////////////////////////
 
-template<typename Scalar> class SE3Group;
-typedef SE3Group<double> SE3;
-
-typedef Matrix<double,6,1> Vector6d;
-typedef Matrix<double,6,6> Matrix6d;
-
-////////////////////////////////////////////////////////////////////////////
-// Template Definition
-////////////////////////////////////////////////////////////////////////////
-
-template<typename Scalar=double>
-class SE3Group
+template<typename Derived>
+class SE3GroupBase
 {
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    typedef typename internal::traits<Derived>::Scalar Scalar;
+    typedef typename internal::traits<Derived>::SO3Type SO3Type;
+    static const int DoF = 6;
 
-  SE3Group                        ();
 
-  SE3Group                        (const SO3Group<Scalar> & so3,
-                              const Matrix<Scalar,3,1> & translation);
-  SE3Group                        (const Matrix3d & rotation_matrix,
-                              const Matrix<Scalar,3,1> & translation);
-  SE3Group                        (const Quaternion<Scalar> & unit_quaternion,
-                              const Matrix<Scalar,3,1> & translation_);
-  SE3Group                        (const Eigen::Matrix<Scalar,4,4>& T);
-  SE3Group                        (const SE3Group & other);
+    EIGEN_STRONG_INLINE
+    const Matrix<Scalar,3,1>& translation() const {
+        return static_cast<const Derived*>(this)->translation();
+    }
 
-  SE3Group &
-  operator=                  (const SE3Group & other);
+    EIGEN_STRONG_INLINE
+    const SO3Group<Scalar>& so3() const {
+        return static_cast<const Derived*>(this)->so3();
+    }
 
-  SE3Group
-  operator*                  (const SE3Group& other) const;
+    EIGEN_STRONG_INLINE
+    Matrix<Scalar,3,1>& translation() {
+        return static_cast<Derived*>(this)->translation();
+    }
 
-  SE3Group&
-  operator*=                 (const SE3Group& other);
+    EIGEN_STRONG_INLINE
+    SO3Group<Scalar>& so3() {
+        return static_cast<Derived*>(this)->so3();
+    }
 
-  SE3Group
-  inverse                    () const;
 
-  Matrix<Scalar,6,1>
-  log                        () const;
+    inline
+    SE3Group<Scalar> & operator = (const SE3Group<Scalar> & other)
+    {
+      so3() = other.so3();
+      translation() = other.translation();
+      return *this;
+    }
 
-  Matrix<Scalar,3,1>
-  operator*                  (const Matrix<Scalar,3,1> & xyz) const;
+    inline
+    SE3Group<Scalar> operator*(const SE3Group<Scalar> & other) const
+    {
+      SE3Group<Scalar> result(*this);
+      result.translation() += so3()*(other.translation());
+      result.so3()*=other.so3();
+      return result;
+    }
 
-  static SE3Group
-  exp                        (const Matrix<Scalar,6,1> & update);
+    inline
+    SE3Group<Scalar>& operator *= (const SE3Group<Scalar> & other)
+    {
+        translation()+= so3()*(other.translation());
+        so3()*=other.so3();
+      return *this;
+    }
 
-  static Matrix<Scalar,6,1>
-  log                        (const SE3Group & SE3Group);
+    inline
+    SE3Group<Scalar> inverse() const
+    {
+      SE3Group<Scalar> ret;
+      ret.so3()= so3().inverse();
+      ret.translation()= ret.so3()*(translation()*-1.);
+      return ret;
+    }
 
-  Matrix<Scalar,3,4>
-  matrix3x4                  () const;
+    inline
+    Matrix<Scalar,6,1> log() const
+    {
+      return log(*this);
+    }
 
-  Matrix<Scalar,4,4>
-  matrix                     () const;
+    inline
+    Matrix<Scalar,3,1> operator *(const Matrix<Scalar,3,1> & xyz) const
+    {
+        return so3()*xyz + translation();
+    }
 
-  Matrix<Scalar, 6, 6>
-  Adj                        () const;
+    inline
+    Matrix<Scalar,3,4> matrix3x4() const
+    {
+      Matrix<Scalar,3,4> matrix;
+      matrix.block(0,0,3,3) = rotation_matrix();
+      matrix.col(3) = translation();
+      return matrix;
+    }
 
-  static Matrix<Scalar,4,4>
-  hat                        (const Matrix<Scalar,6,1> & omega);
+    inline
+    Matrix<Scalar,4,4> matrix() const
+    {
+      Matrix<Scalar,4,4> homogenious_matrix;
+      homogenious_matrix.setIdentity();
+      homogenious_matrix.block(0,0,3,3) = rotation_matrix();
+      homogenious_matrix.col(3).head(3) = translation();
+      return homogenious_matrix;
+    }
 
-  static Matrix<Scalar,6,1>
-  vee                        (const Matrix<Scalar,4,4> & Omega);
 
-  static Matrix<Scalar,6,1>
-  lieBracket                 (const Matrix<Scalar,6,1> & v1,
-                              const Matrix<Scalar,6,1> & v2);
+    inline
+    Matrix<Scalar, 6, 6> Adj() const
+    {
+      Matrix3d R = so3().matrix();
+      Matrix<Scalar, 6, 6> res;
+      res.block(0,0,3,3) = R;
+      res.block(3,3,3,3) = R;
+      res.block(0,3,3,3) = SO3Group<Scalar>::hat(translation())*R;
+      res.block(3,0,3,3) = Matrix3d::Zero(3,3);
+      return res;
+    }
 
-  static Matrix<Scalar,6,6>
-  d_lieBracketab_by_d_a      (const Matrix<Scalar,6,1> & b);
+    inline static
+    Matrix<Scalar,4,4> hat(const Matrix<Scalar,6,1> & v)
+    {
+      Matrix<Scalar,4,4> Omega;
+      Omega.setZero();
+      Omega.template topLeftCorner<3,3>() = SO3Group<Scalar>::hat(v.template tail<3>());
+      Omega.col(3).template head<3>() = v.template head<3>();
+      return Omega;
+    }
 
-  void
-  setQuaternion              (const Quaternion<Scalar>& quaternion);
+    inline static
+    Matrix<Scalar,6,1> vee(const Matrix<Scalar,4,4> & Omega)
+    {
+      Matrix<Scalar,6,1> upsilon_omega;
+      upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
+      upsilon_omega.template tail<3>() = SO3Group<Scalar>::vee(Omega.template topLeftCorner<3,3>());
+      return upsilon_omega;
+    }
 
-  const Matrix<Scalar,3,1> & translation() const
-  {
-    return translation_;
-  }
+    inline static
+    Matrix<Scalar,6,1> lieBracket(const Matrix<Scalar,6,1> & v1, const Matrix<Scalar,6,1> & v2)
+    {
+      Matrix<Scalar,3,1> upsilon1 = v1.template head<3>();
+      Matrix<Scalar,3,1> upsilon2 = v2.template head<3>();
+      Matrix<Scalar,3,1> omega1 = v1.template tail<3>();
+      Matrix<Scalar,3,1> omega2 = v2.template tail<3>();
 
-  Matrix<Scalar,3,1>& translation()
-  {
-    return translation_;
-  }
+      Matrix<Scalar,6,1> res;
+      res.template head<3>() = omega1.cross(upsilon2) + upsilon1.cross(omega2);
+      res.template tail<3>() = omega1.cross(omega2);
 
-  const Quaternion<Scalar> & unit_quaternion() const
-  {
-    return so3_.unit_quaternion();
-  }
+      return res;
+    }
 
-  Matrix3d rotation_matrix() const
-  {
-    return so3_.matrix();
-  }
+    inline static
+    Matrix<Scalar,6,6> d_lieBracketab_by_d_a(const Matrix<Scalar,6,1> & b)
+    {
+      Matrix<Scalar,6,6> res;
+      res.setZero();
 
-  void setRotationMatrix(const Matrix3d & rotation_matrix)
-  {
-    so3_.setQuaternion(Quaternion<Scalar>(rotation_matrix));
-  }
+      Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
+      Matrix<Scalar,3,1> omega2 = b.template tail<3>();
 
-  const SO3Group<Scalar>& so3() const
-  {
-    return so3_;
-  }
+      res.template topLeftCorner<3,3>() = -SO3Group<Scalar>::hat(omega2);
+      res.template topRightCorner<3,3>() = -SO3Group<Scalar>::hat(upsilon2);
 
-  SO3Group<Scalar>& so3()
-  {
-    return so3_;
-  }
+      res.template bottomRightCorner<3,3>() = -SO3Group<Scalar>::hat(omega2);
+      return res;
+    }
 
-  static const int DoF = 6;
+    inline static
+    SE3Group<Scalar> exp(const Matrix<Scalar,6,1> & update)
+    {
+      Matrix<Scalar,3,1> upsilon = update.template head<3>();
+      Matrix<Scalar,3,1> omega = update.template tail<3>();
 
-private:
-  SO3Group<Scalar> so3_;
-  Matrix<Scalar,3,1> translation_;
+      Scalar theta;
+      SO3Group<Scalar> so3 = SO3Group<Scalar>::expAndTheta(omega, &theta);
+
+      Matrix3d Omega = SO3Group<Scalar>::hat(omega);
+      Matrix3d Omega_sq = Omega*Omega;
+      Matrix3d V;
+
+      if(theta<SMALL_EPS)
+      {
+        V = so3.matrix();
+        //Note: That is an accurate expansion!
+      }
+      else
+      {
+        Scalar theta_sq = theta*theta;
+        V = (Matrix3d::Identity()
+             + (1-cos(theta))/(theta_sq)*Omega
+             + (theta-sin(theta))/(theta_sq*theta)*Omega_sq);
+      }
+      return SE3Group<Scalar>(so3,V*upsilon);
+    }
+
+    inline static
+    Matrix<Scalar,6,1> log(const SE3Group<Scalar> & se3)
+    {
+      Matrix<Scalar,6,1> upsilon_omega;
+      Scalar theta;
+      upsilon_omega.template tail<3>() = SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
+
+      if (theta<SMALL_EPS)
+      {
+        Matrix3d Omega = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
+        Matrix3d V_inv = Matrix3d::Identity()- 0.5*Omega + (1./12.)*(Omega*Omega);
+
+        upsilon_omega.template head<3>() = V_inv*se3.translation();
+      }
+      else
+      {
+        Matrix3d Omega = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
+        Matrix3d V_inv = ( Matrix3d::Identity() - 0.5*Omega
+                  + ( 1-theta/(2*tan(theta/2)))/(theta*theta)*(Omega*Omega) );
+        upsilon_omega.template head<3>() = V_inv*se3.translation();
+      }
+      return upsilon_omega;
+    }
+
+    inline
+    void setQuaternion(const Quaternion<Scalar>& quat)
+    {
+      return so3().setQuaternion(quat);
+    }
+
+    inline
+    const Quaternion<Scalar> & unit_quaternion() const
+    {
+        return so3().unit_quaternion();
+    }
+
+    inline
+    Matrix3d rotation_matrix() const
+    {
+        return so3().matrix();
+    }
+
+    inline
+    void setRotationMatrix(const Matrix3d & rotation_matrix)
+    {
+        so3().setQuaternion(Quaternion<Scalar>(rotation_matrix));
+    }
 
 };
 
 ////////////////////////////////////////////////////////////////////////////
-// Template Implementation
+// SE3Group type - Constructors and default storage for SE3 Type
 ////////////////////////////////////////////////////////////////////////////
 
-template<typename Scalar> inline
-SE3Group<Scalar>
-::SE3Group()
+template<typename _Scalar, int _Options>
+class SE3Group : public SE3GroupBase<SE3Group<_Scalar,_Options> >
 {
-  translation_.setZero();
-}
+public:
+    typedef _Scalar Scalar;
 
-template<typename Scalar> inline
-SE3Group<Scalar>
-::SE3Group(const SO3Group<Scalar> & so3, const Matrix<Scalar,3,1> & translation)
-  : so3_(so3), translation_(translation) {}
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-template<typename Scalar> inline
-SE3Group<Scalar>
-::SE3Group(const Matrix3d & rotation_matrix, const Matrix<Scalar,3,1> & translation)
-  : so3_(rotation_matrix), translation_(translation){}
+    inline
+    SE3Group()
+    {
+      translation_.setZero();
+    }
 
-template<typename Scalar> inline
-SE3Group<Scalar>
-::SE3Group(const Quaternion<Scalar> & quaternion, const Matrix<Scalar,3,1> & translation)
-  : so3_(quaternion), translation_(translation) {}
+    template<typename OtherDerived> inline
+    SE3Group(const SO3GroupBase<OtherDerived> & so3, const Matrix<Scalar,3,1> & translation)
+      : so3_(so3), translation_(translation) {}
 
-template<typename Scalar> inline
-SE3Group<Scalar>
-::SE3Group(const Eigen::Matrix<Scalar,4,4>& T)
-  : so3_(T.template topLeftCorner<3,3>()), translation_(T.template block<3,1>(0,3)) {}
+    inline
+    SE3Group(const Matrix3d & rotation_matrix, const Matrix<Scalar,3,1> & translation)
+      : so3_(rotation_matrix), translation_(translation){}
 
-template<typename Scalar> inline
-SE3Group<Scalar>
-::SE3Group(const SE3Group & SE3Group) : so3_(SE3Group.so3_),translation_(SE3Group.translation_){}
+    inline
+    SE3Group(const Quaternion<Scalar> & quaternion, const Matrix<Scalar,3,1> & translation)
+      : so3_(quaternion), translation_(translation) {}
 
+    inline
+    SE3Group(const Eigen::Matrix<Scalar,4,4>& T)
+      : so3_(T.template topLeftCorner<3,3>()), translation_(T.template block<3,1>(0,3)) {}
 
-template<typename Scalar> inline
-SE3Group<Scalar> & SE3Group<Scalar>
-::operator = (const SE3Group & other)
-{
-  so3_ = other.so3_;
-  translation_ = other.translation_;
-  return *this;
-}
-
-template<typename Scalar> inline
-SE3Group<Scalar> SE3Group<Scalar>
-::operator*(const SE3Group & other) const
-{
-  SE3Group result(*this);
-  result.translation_ += so3_*(other.translation_);
-  result.so3_*=other.so3_;
-  return result;
-}
-
-template<typename Scalar> inline
-SE3Group<Scalar>& SE3Group<Scalar>
-::operator *= (const SE3Group & other)
-{
-  translation_+= so3_*(other.translation_);
-  so3_*=other.so3_;
-  return *this;
-}
-
-template<typename Scalar> inline
-SE3Group<Scalar> SE3Group<Scalar>
-::inverse() const
-{
-  SE3Group ret;
-  ret.so3_= so3_.inverse();
-  ret.translation_= ret.so3_*(translation_*-1.);
-  return ret;
-}
-
-template<typename Scalar> inline
-Matrix<Scalar,6,1> SE3Group<Scalar>
-::log() const
-{
-  return log(*this);
-}
-
-template<typename Scalar> inline
-Matrix<Scalar,3,1> SE3Group<Scalar>
-::operator *(const Matrix<Scalar,3,1> & xyz) const
-{
-  return so3_*xyz + translation_;
-}
-
-template<typename Scalar> inline
-Matrix<Scalar,3,4> SE3Group<Scalar>
-::matrix3x4() const
-{
-  Matrix<Scalar,3,4> matrix;
-  matrix.block(0,0,3,3) = rotation_matrix();
-  matrix.col(3) = translation_;
-  return matrix;
-}
-
-template<typename Scalar> inline
-Matrix<Scalar,4,4> SE3Group<Scalar>
-::matrix() const
-{
-  Matrix<Scalar,4,4> homogenious_matrix;
-  homogenious_matrix.setIdentity();
-  homogenious_matrix.block(0,0,3,3) = rotation_matrix();
-  homogenious_matrix.col(3).head(3) = translation_;
-  return homogenious_matrix;
-}
+    template<typename OtherDerived> inline
+    SE3Group(const SE3GroupBase<OtherDerived> & other)
+        : so3_(other.so3()),translation_(other.translation()){}
 
 
-template<typename Scalar> inline
-Matrix<Scalar, 6, 6> SE3Group<Scalar>
-::Adj() const
-{
-  Matrix3d R = so3_.matrix();
-  Matrix<Scalar, 6, 6> res;
-  res.block(0,0,3,3) = R;
-  res.block(3,3,3,3) = R;
-  res.block(0,3,3,3) = SO3Group<Scalar>::hat(translation_)*R;
-  res.block(3,0,3,3) = Matrix3d::Zero(3,3);
-  return res;
-}
+    EIGEN_STRONG_INLINE
+    const Matrix<Scalar,3,1>& translation() const {
+        return translation_;
+    }
 
-template<typename Scalar> inline
-Matrix<Scalar,4,4> SE3Group<Scalar>
-::hat(const Matrix<Scalar,6,1> & v)
-{
-  Matrix<Scalar,4,4> Omega;
-  Omega.setZero();
-  Omega.template topLeftCorner<3,3>() = SO3Group<Scalar>::hat(v.template tail<3>());
-  Omega.col(3).template head<3>() = v.template head<3>();
-  return Omega;
-}
+    EIGEN_STRONG_INLINE
+    const SO3Group<Scalar>& so3() const {
+        return so3_;
+    }
 
-template<typename Scalar> inline
-Matrix<Scalar,6,1> SE3Group<Scalar>
-::vee(const Matrix<Scalar,4,4> & Omega)
-{
-  Matrix<Scalar,6,1> upsilon_omega;
-  upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
-  upsilon_omega.template tail<3>() = SO3Group<Scalar>::vee(Omega.template topLeftCorner<3,3>());
-  return upsilon_omega;
-}
+    EIGEN_STRONG_INLINE
+    Matrix<Scalar,3,1>& translation() {
+        return translation_;
+    }
 
-template<typename Scalar> inline
-Matrix<Scalar,6,1> SE3Group<Scalar>
-::lieBracket(const Matrix<Scalar,6,1> & v1, const Matrix<Scalar,6,1> & v2)
-{
-  Matrix<Scalar,3,1> upsilon1 = v1.template head<3>();
-  Matrix<Scalar,3,1> upsilon2 = v2.template head<3>();
-  Matrix<Scalar,3,1> omega1 = v1.template tail<3>();
-  Matrix<Scalar,3,1> omega2 = v2.template tail<3>();
+    EIGEN_STRONG_INLINE
+    SO3Group<Scalar>& so3() {
+        return so3_;
+    }
 
-  Matrix<Scalar,6,1> res;
-  res.template head<3>() = omega1.cross(upsilon2) + upsilon1.cross(omega2);
-  res.template tail<3>() = omega1.cross(omega2);
-
-  return res;
-}
-
-template<typename Scalar> inline
-Matrix<Scalar,6,6> SE3Group<Scalar>
-::d_lieBracketab_by_d_a(const Matrix<Scalar,6,1> & b)
-{
-  Matrix<Scalar,6,6> res;
-  res.setZero();
-
-  Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
-  Matrix<Scalar,3,1> omega2 = b.template tail<3>();
-
-  res.template topLeftCorner<3,3>() = -SO3Group<Scalar>::hat(omega2);
-  res.template topRightCorner<3,3>() = -SO3Group<Scalar>::hat(upsilon2);
-
-  res.template bottomRightCorner<3,3>() = -SO3Group<Scalar>::hat(omega2);
-  return res;
-}
-
-template<typename Scalar> inline
-SE3Group<Scalar> SE3Group<Scalar>
-::exp(const Matrix<Scalar,6,1> & update)
-{
-  Matrix<Scalar,3,1> upsilon = update.template head<3>();
-  Matrix<Scalar,3,1> omega = update.template tail<3>();
-
-  Scalar theta;
-  SO3Group<Scalar> so3 = SO3Group<Scalar>::expAndTheta(omega, &theta);
-
-  Matrix3d Omega = SO3Group<Scalar>::hat(omega);
-  Matrix3d Omega_sq = Omega*Omega;
-  Matrix3d V;
-
-  if(theta<SMALL_EPS)
-  {
-    V = so3.matrix();
-    //Note: That is an accurate expansion!
-  }
-  else
-  {
-    Scalar theta_sq = theta*theta;
-    V = (Matrix3d::Identity()
-         + (1-cos(theta))/(theta_sq)*Omega
-         + (theta-sin(theta))/(theta_sq*theta)*Omega_sq);
-  }
-  return SE3Group(so3,V*upsilon);
-}
-
-template<typename Scalar> inline
-Matrix<Scalar,6,1> SE3Group<Scalar>
-::log(const SE3Group & SE3Group)
-{
-  Matrix<Scalar,6,1> upsilon_omega;
-  Scalar theta;
-  upsilon_omega.template tail<3>() = SO3Group<Scalar>::logAndTheta(SE3Group.so3_, &theta);
-
-  if (theta<SMALL_EPS)
-  {
-    Matrix3d Omega = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-    Matrix3d V_inv = Matrix3d::Identity()- 0.5*Omega + (1./12.)*(Omega*Omega);
-
-    upsilon_omega.template head<3>() = V_inv*SE3Group.translation_;
-  }
-  else
-  {
-    Matrix3d Omega = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-    Matrix3d V_inv = ( Matrix3d::Identity() - 0.5*Omega
-              + ( 1-theta/(2*tan(theta/2)))/(theta*theta)*(Omega*Omega) );
-    upsilon_omega.template head<3>() = V_inv*SE3Group.translation_;
-  }
-  return upsilon_omega;
-}
-
-template<typename Scalar> inline
-void SE3Group<Scalar>::
-setQuaternion(const Quaternion<Scalar>& quat)
-{
-  return so3_.setQuaternion(quat);
-}
+protected:
+    SO3Group<Scalar> so3_;
+    Matrix<Scalar,3,1> translation_;
+};
 
 
 } // end namespace
