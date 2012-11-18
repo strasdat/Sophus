@@ -48,7 +48,26 @@ template<typename _Scalar, int _Options>
 struct traits<Sophus::SE3Group<_Scalar,_Options> >
 {
     typedef _Scalar Scalar;
+    typedef Matrix<Scalar,3,1> TranslationType;
     typedef Sophus::SO3Group<Scalar> SO3Type;
+};
+
+template<typename _Scalar, int _Options>
+struct traits<Map<Sophus::SE3Group<_Scalar>, _Options> >
+        : traits<Sophus::SE3Group<_Scalar, _Options> >
+{
+    typedef _Scalar Scalar;
+    typedef Map<Matrix<Scalar,3,1>,_Options> TranslationType;
+    typedef Map<Sophus::SO3Group<Scalar>,_Options> SO3Type;
+};
+
+template<typename _Scalar, int _Options>
+struct traits<Map<const Sophus::SE3Group<_Scalar>, _Options> >
+        : traits<const Sophus::SE3Group<_Scalar, _Options> >
+{
+    typedef _Scalar Scalar;
+    typedef Map<const Matrix<Scalar,3,1>,_Options> TranslationType;
+    typedef Map<const Sophus::SO3Group<Scalar>,_Options> SO3Type;
 };
 
 }
@@ -70,27 +89,28 @@ class SE3GroupBase
 {
 public:
     typedef typename internal::traits<Derived>::Scalar Scalar;
+    typedef typename internal::traits<Derived>::TranslationType TranslationType;
     typedef typename internal::traits<Derived>::SO3Type SO3Type;
     static const int DoF = 6;
 
 
     EIGEN_STRONG_INLINE
-    const Matrix<Scalar,3,1>& translation() const {
+    const TranslationType& translation() const {
         return static_cast<const Derived*>(this)->translation();
     }
 
     EIGEN_STRONG_INLINE
-    const SO3Group<Scalar>& so3() const {
+    const SO3Type& so3() const {
         return static_cast<const Derived*>(this)->so3();
     }
 
     EIGEN_STRONG_INLINE
-    Matrix<Scalar,3,1>& translation() {
+    TranslationType& translation() {
         return static_cast<Derived*>(this)->translation();
     }
 
     EIGEN_STRONG_INLINE
-    SO3Group<Scalar>& so3() {
+    SO3Type& so3() {
         return static_cast<Derived*>(this)->so3();
     }
 
@@ -159,7 +179,6 @@ public:
       homogenious_matrix.col(3).head(3) = translation();
       return homogenious_matrix;
     }
-
 
     inline
     Matrix<Scalar, 6, 6> Adj() const
@@ -321,23 +340,23 @@ public:
 
     template<typename OtherDerived> inline
     SE3Group(const SO3GroupBase<OtherDerived> & so3, const Matrix<Scalar,3,1> & translation)
-      : so3_(so3), translation_(translation) {}
+      : translation_(translation), so3_(so3) {}
 
     inline
     SE3Group(const Matrix3d & rotation_matrix, const Matrix<Scalar,3,1> & translation)
-      : so3_(rotation_matrix), translation_(translation){}
+      : translation_(translation), so3_(rotation_matrix) {}
 
     inline
     SE3Group(const Quaternion<Scalar> & quaternion, const Matrix<Scalar,3,1> & translation)
-      : so3_(quaternion), translation_(translation) {}
+      : translation_(translation), so3_(quaternion) {}
 
     inline
     SE3Group(const Eigen::Matrix<Scalar,4,4>& T)
-      : so3_(T.template topLeftCorner<3,3>()), translation_(T.template block<3,1>(0,3)) {}
+      : translation_(T.template block<3,1>(0,3)), so3_(T.template topLeftCorner<3,3>()) {}
 
     template<typename OtherDerived> inline
     SE3Group(const SE3GroupBase<OtherDerived> & other)
-        : so3_(other.so3()),translation_(other.translation()){}
+      : translation_(other.translation()), so3_(other.so3()) {}
 
 
     EIGEN_STRONG_INLINE
@@ -361,12 +380,88 @@ public:
     }
 
 protected:
-    SO3Group<Scalar> so3_;
     Matrix<Scalar,3,1> translation_;
+    SO3Group<Scalar> so3_;
 };
 
 
 } // end namespace
 
+////////////////////////////////////////////////////////////////////////////
+// Specialisation of Eigen::Map for SE3GroupBase
+// Allows us to wrap SE3 Objects around POD array (e.g. external c style xyz vector + quaternion)
+////////////////////////////////////////////////////////////////////////////
+
+namespace Eigen {
+
+template<typename _Scalar, int _Options>
+class Map<Sophus::SE3Group<_Scalar>, _Options>
+        : public Sophus::SE3GroupBase<Map<Sophus::SE3Group<_Scalar>, _Options> >
+{
+    typedef Sophus::SE3GroupBase<Map<Sophus::SE3Group<_Scalar>, _Options> > Base;
+
+public:
+    typedef typename internal::traits<Map>::Scalar Scalar;
+    typedef typename internal::traits<Map>::TranslationType TranslationType;
+    typedef typename internal::traits<Map>::SO3Type SO3Type;
+
+    EIGEN_STRONG_INLINE
+    Map(Scalar* coeffs) : translation_(coeffs), so3_(coeffs+3) {}
+
+    EIGEN_STRONG_INLINE
+    const TranslationType& translation() const {
+        return translation_;
+    }
+
+    EIGEN_STRONG_INLINE
+    const SO3Type& so3() const {
+        return so3_;
+    }
+
+    EIGEN_STRONG_INLINE
+    TranslationType& translation() {
+        return translation_;
+    }
+
+    EIGEN_STRONG_INLINE
+    SO3Type& so3() {
+        return so3_;
+    }
+
+  protected:
+    TranslationType translation_;
+    SO3Type so3_;
+};
+
+template<typename _Scalar, int _Options>
+class Map<const Sophus::SE3Group<_Scalar>, _Options>
+        : public Sophus::SE3GroupBase<Map<const Sophus::SE3Group<_Scalar>, _Options> >
+{
+    typedef Sophus::SE3GroupBase<Map<const Sophus::SE3Group<_Scalar>, _Options> > Base;
+
+public:
+    typedef typename internal::traits<Map>::Scalar Scalar;
+    typedef typename internal::traits<Map>::TranslationType TranslationType;
+    typedef typename internal::traits<Map>::SO3Type SO3Type;
+
+    EIGEN_STRONG_INLINE
+    Map(const Scalar* coeffs) : translation_(coeffs), so3_(coeffs+3) {}
+
+    EIGEN_STRONG_INLINE
+    const TranslationType& translation() const {
+        return translation_;
+    }
+
+    EIGEN_STRONG_INLINE
+    const SO3Type& so3() const {
+        return so3_;
+    }
+
+  protected:
+    const TranslationType translation_;
+    const SO3Type so3_;
+};
+
+}
 
 #endif

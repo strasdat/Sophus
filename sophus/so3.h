@@ -38,7 +38,7 @@ namespace Sophus
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// Traits
+// Eigen Traits (For querying derived types in CRTP hierarchy)
 ////////////////////////////////////////////////////////////////////////////
 
 namespace Eigen {
@@ -49,6 +49,22 @@ struct traits<Sophus::SO3Group<_Scalar,_Options> >
 {
     typedef _Scalar Scalar;
     typedef Quaternion<Scalar> QuaternionType;
+};
+
+template<typename _Scalar, int _Options>
+struct traits<Map<Sophus::SO3Group<_Scalar>, _Options> >
+        : traits<Sophus::SO3Group<_Scalar, _Options> >
+{
+    typedef _Scalar Scalar;
+    typedef Map<Quaternion<Scalar>,_Options> QuaternionType;
+};
+
+template<typename _Scalar, int _Options>
+struct traits<Map<const Sophus::SO3Group<_Scalar>, _Options> >
+        : traits<const Sophus::SO3Group<_Scalar, _Options> >
+{
+    typedef _Scalar Scalar;
+    typedef Map<const Quaternion<Scalar>,_Options> QuaternionType;
 };
 
 }
@@ -92,8 +108,8 @@ public:
     SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const
     {
       SO3Group<Scalar> result(*this);
-      result.unit_quaternion_ *= other.unit_quaternion_;
-      result.unit_quaternion_.normalize();
+      result.unit_quaternion() *= other.unit_quaternion();
+      result.unit_quaternion().normalize();
       return result;
     }
 
@@ -325,5 +341,65 @@ protected:
 
 } // end namespace
 
+////////////////////////////////////////////////////////////////////////////
+// Specialisation of Eigen::Map for SO3GroupBase
+// Allows us to wrap SO3 Objects around POD array (e.g. external c style quaternion)
+////////////////////////////////////////////////////////////////////////////
+
+namespace Eigen {
+
+template<typename _Scalar, int _Options>
+class Map<Sophus::SO3Group<_Scalar>, _Options>
+        : public Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> >
+{
+    typedef Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> > Base;
+
+public:
+    typedef typename internal::traits<Map>::Scalar Scalar;
+    typedef typename internal::traits<Map>::QuaternionType QuaternionType;
+
+    EIGEN_STRONG_INLINE
+    Map(Scalar* coeffs) : unit_quaternion_(coeffs) {}
+
+    EIGEN_STRONG_INLINE
+    const QuaternionType & unit_quaternion() const
+    {
+      return unit_quaternion_;
+    }
+
+    EIGEN_STRONG_INLINE
+    QuaternionType & unit_quaternion()
+    {
+      return unit_quaternion_;
+    }
+
+  protected:
+    QuaternionType unit_quaternion_;
+};
+
+template<typename _Scalar, int _Options>
+class Map<const Sophus::SO3Group<_Scalar>, _Options>
+        : public Sophus::SO3GroupBase<Map<const Sophus::SO3Group<_Scalar>, _Options> >
+{
+    typedef Sophus::SO3GroupBase<Map<const Sophus::SO3Group<_Scalar>, _Options> > Base;
+
+public:
+    typedef typename internal::traits<Map>::Scalar Scalar;
+    typedef typename internal::traits<Map>::QuaternionType QuaternionType;
+
+    EIGEN_STRONG_INLINE
+    Map(const Scalar* coeffs) : unit_quaternion_(coeffs) {}
+
+    EIGEN_STRONG_INLINE
+    const QuaternionType & unit_quaternion() const
+    {
+      return unit_quaternion_;
+    }
+
+  protected:
+    const QuaternionType unit_quaternion_;
+};
+
+}
 
 #endif
