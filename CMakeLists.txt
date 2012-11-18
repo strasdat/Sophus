@@ -36,8 +36,8 @@ SET( Sophus_INCLUDE_DIR ${Sophus_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} )
 SET (SOURCE_DIR "sophus")
 SET (CLASSES  so2
               se2
-              se3
-              so3
+#              se3
+#              so3
               scso3
               sim3
 )
