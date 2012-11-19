@@ -101,7 +101,7 @@ public:
     inline
     void operator=(const SO3Group<Scalar> & other)
     {
-      this->unit_quaternion_ = other.unit_quaternion_;
+        unit_quaternion() = other.unit_quaternion();
     }
 
     inline
@@ -185,17 +185,19 @@ public:
 
         if (n < SMALL_EPS)
         {
-          // If quaternion is normalized and n=1, then w should be 1;
-          // w=0 should never happen here!
-          assert(fabs(w)>SMALL_EPS);
+//          // If quaternion is normalized and n=1, then w should be 1;
+//          // w=0 should never happen here!
+//          assert(fabs(w)>SMALL_EPS);
+//          two_atan_nbyw_by_n = (Scalar)(2) / w - (Scalar)(2)*(n*n)/(w*squared_w);
 
-          two_atan_nbyw_by_n = 2./w - 2.*(n*n)/(w*squared_w);
+          // Talk with Hauke about this
+          two_atan_nbyw_by_n = (Scalar)2 / squared_w;
         }
         else
         {
           if (fabs(w)<SMALL_EPS)
           {
-            if (w>0)
+            if (w > (Scalar)(0))
             {
               two_atan_nbyw_by_n = M_PI/n;
             }
@@ -203,8 +205,12 @@ public:
             {
               two_atan_nbyw_by_n = -M_PI/n;
             }
+          }else{
+//            two_atan_nbyw_by_n = 2*atan(n/w)/n;
+
+            // TODO: replace with atan (according to paper above)
+            two_atan_nbyw_by_n = (Scalar)(2) * atan2(n,w) / n;
           }
-          two_atan_nbyw_by_n = 2*atan(n/w)/n;
         }
 
         *theta = two_atan_nbyw_by_n*n;
@@ -248,9 +254,9 @@ public:
     Matrix<Scalar,3,3> hat(const Matrix<Scalar,3,1> & v)
     {
       Matrix<Scalar,3,3> Omega;
-      Omega <<  0, -v(2),  v(1)
-          ,  v(2),     0, -v(0)
-          , -v(1),  v(0),     0;
+      Omega <<  (Scalar)0, -v(2),  v(1)
+          ,  v(2),     (Scalar)0, -v(0)
+          , -v(1),  v(0),     (Scalar)0;
       return Omega;
     }
 
@@ -281,6 +287,12 @@ public:
       assert(quaternion.norm()!=0);
       unit_quaternion() = quaternion;
       unit_quaternion().normalize();
+    }
+
+    template<typename NewScalarType>
+    inline SO3Group<NewScalarType> cast() const
+    {
+        return SO3Group<NewScalarType>(unit_quaternion().cast<NewScalarType>() );
     }
 
 };
@@ -358,6 +370,10 @@ public:
     typedef typename internal::traits<Map>::Scalar Scalar;
     typedef typename internal::traits<Map>::QuaternionType QuaternionType;
 
+    EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+    using Base::operator*=;
+    using Base::operator*;
+
     EIGEN_STRONG_INLINE
     Map(Scalar* coeffs) : unit_quaternion_(coeffs) {}
 
@@ -386,6 +402,10 @@ class Map<const Sophus::SO3Group<_Scalar>, _Options>
 public:
     typedef typename internal::traits<Map>::Scalar Scalar;
     typedef typename internal::traits<Map>::QuaternionType QuaternionType;
+
+    EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+    using Base::operator*=;
+    using Base::operator*;
 
     EIGEN_STRONG_INLINE
     Map(const Scalar* coeffs) : unit_quaternion_(coeffs) {}

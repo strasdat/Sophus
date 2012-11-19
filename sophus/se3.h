@@ -116,7 +116,7 @@ public:
 
 
     inline
-    SE3Group<Scalar> & operator = (const SE3Group<Scalar> & other)
+    SE3GroupBase<Derived>& operator = (const SE3Group<Scalar> & other)
     {
       so3() = other.so3();
       translation() = other.translation();
@@ -143,10 +143,8 @@ public:
     inline
     SE3Group<Scalar> inverse() const
     {
-      SE3Group<Scalar> ret;
-      ret.so3()= so3().inverse();
-      ret.translation()= ret.so3()*(translation()*-1.);
-      return ret;
+      const SO3Group<Scalar> invR = so3().inverse();
+      return SE3Group<Scalar>(invR, invR*(translation()*  (Scalar)(-1) ) );
     }
 
     inline
@@ -279,29 +277,33 @@ public:
 
       if (theta<SMALL_EPS)
       {
-        Matrix3d Omega = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-        Matrix3d V_inv = Matrix3d::Identity()- 0.5*Omega + (1./12.)*(Omega*Omega);
+        const Matrix<Scalar,3,3> Omega = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
+        const Matrix<Scalar,3,3> V_inv =
+                Matrix<Scalar,3,3>::Identity() -
+                (Scalar)(0.5)*Omega + (Scalar)(1./12.)*(Omega*Omega);
 
         upsilon_omega.template head<3>() = V_inv*se3.translation();
       }
       else
       {
-        Matrix3d Omega = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-        Matrix3d V_inv = ( Matrix3d::Identity() - 0.5*Omega
-                  + ( 1-theta/(2*tan(theta/2)))/(theta*theta)*(Omega*Omega) );
+        const Matrix<Scalar,3,3> Omega = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
+        const Matrix<Scalar,3,3> V_inv =
+                ( Matrix<Scalar,3,3>::Identity() - (Scalar)(0.5)*Omega
+                  + ( (Scalar)(1)-theta/((Scalar)(2)*tan(theta/Scalar(2)))) /
+                    (theta*theta)*(Omega*Omega) );
         upsilon_omega.template head<3>() = V_inv*se3.translation();
       }
       return upsilon_omega;
     }
 
     inline
-    void setQuaternion(const Quaternion<Scalar>& quat)
+    void setQuaternion(const typename SO3Type::QuaternionType& quat)
     {
       return so3().setQuaternion(quat);
     }
 
     inline
-    const Quaternion<Scalar> & unit_quaternion() const
+    const typename SO3Type::QuaternionType& unit_quaternion() const
     {
         return so3().unit_quaternion();
     }
@@ -316,6 +318,12 @@ public:
     void setRotationMatrix(const Matrix3d & rotation_matrix)
     {
         so3().setQuaternion(Quaternion<Scalar>(rotation_matrix));
+    }
+
+    template<typename NewScalarType>
+    inline SE3Group<NewScalarType> cast() const
+    {
+        return SE3Group<NewScalarType>(so3().cast<NewScalarType>(), translation().cast<NewScalarType>() );
     }
 
 };
@@ -405,6 +413,10 @@ public:
     typedef typename internal::traits<Map>::TranslationType TranslationType;
     typedef typename internal::traits<Map>::SO3Type SO3Type;
 
+    EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+    using Base::operator*=;
+    using Base::operator*;
+
     EIGEN_STRONG_INLINE
     Map(Scalar* coeffs) : translation_(coeffs), so3_(coeffs+3) {}
 
@@ -443,6 +455,10 @@ public:
     typedef typename internal::traits<Map>::Scalar Scalar;
     typedef typename internal::traits<Map>::TranslationType TranslationType;
     typedef typename internal::traits<Map>::SO3Type SO3Type;
+
+    EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+    using Base::operator*=;
+    using Base::operator*;
 
     EIGEN_STRONG_INLINE
     Map(const Scalar* coeffs) : translation_(coeffs), so3_(coeffs+3) {}
