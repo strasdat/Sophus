@@ -249,9 +249,9 @@ public:
       Scalar theta;
       SO3Group<Scalar> so3 = SO3Group<Scalar>::expAndTheta(omega, &theta);
 
-      Matrix3d Omega = SO3Group<Scalar>::hat(omega);
-      Matrix3d Omega_sq = Omega*Omega;
-      Matrix3d V;
+      Matrix<Scalar,3,3> Omega = SO3Group<Scalar>::hat(omega);
+      Matrix<Scalar,3,3> Omega_sq = Omega*Omega;
+      Matrix<Scalar,3,3> V;
 
       if(theta<SMALL_EPS)
       {
@@ -261,8 +261,8 @@ public:
       else
       {
         Scalar theta_sq = theta*theta;
-        V = (Matrix3d::Identity()
-             + (1-cos(theta))/(theta_sq)*Omega
+        V = (Matrix<Scalar,3,3>::Identity()
+             + ((Scalar)1-cos(theta))/(theta_sq)*Omega
              + (theta-sin(theta))/(theta_sq*theta)*Omega_sq);
       }
       return SE3Group<Scalar>(so3,V*upsilon);
@@ -309,7 +309,7 @@ public:
     }
 
     inline
-    Matrix3d rotation_matrix() const
+    Matrix<Scalar,3,3> rotation_matrix() const
     {
         return so3().matrix();
     }
@@ -387,6 +387,22 @@ public:
         return so3_;
     }
 
+    EIGEN_STRONG_INLINE
+    Scalar* data()
+    {
+        // TODO: Check this is true
+        // translation_ and so3_ are layed out sequentially with no padding
+        return translation_.data();
+    }
+
+    EIGEN_STRONG_INLINE
+    const Scalar* data() const
+    {
+        // TODO: Check this is true
+        // translation_ and so3_ are layed out sequentially with no padding
+        return translation_.data();
+    }
+
 protected:
     Matrix<Scalar,3,1> translation_;
     SO3Group<Scalar> so3_;
@@ -461,7 +477,14 @@ public:
     using Base::operator*;
 
     EIGEN_STRONG_INLINE
-    Map(const Scalar* coeffs) : translation_(coeffs), so3_(coeffs+3) {}
+    Map(const Scalar* coeffs)
+        : translation_(coeffs), so3_(coeffs+3)
+    {}
+
+    EIGEN_STRONG_INLINE
+    Map(const Scalar* trans_coeffs, const Scalar* rot_coeffs)
+        : translation_(trans_coeffs), so3_(rot_coeffs)
+    {}
 
     EIGEN_STRONG_INLINE
     const TranslationType& translation() const {

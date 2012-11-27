@@ -292,6 +292,16 @@ public:
         return SO3Group<NewScalarType>(unit_quaternion().cast<NewScalarType>() );
     }
 
+    inline Scalar* data()
+    {
+        return unit_quaternion().data();
+    }
+
+    inline const Scalar* data() const
+    {
+        return unit_quaternion().data();
+    }
+
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -309,7 +319,8 @@ public:
 
     inline SO3Group()
     {
-      unit_quaternion_.setIdentity();
+      // Set Quaternion to identity rotation
+      unit_quaternion_.coeffs() << (Scalar)0, (Scalar)0, (Scalar)0, (Scalar)1;
     }
 
     template<typename OtherDerived> inline
