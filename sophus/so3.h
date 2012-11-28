@@ -170,12 +170,12 @@ public:
     inline static
     Matrix<Scalar,3,1> logAndTheta(const SO3Group<Scalar> & other, Scalar * theta)
     {
-
-        Scalar n = other.unit_quaternion().vec().norm();
-        Scalar w = other.unit_quaternion().w();
-        Scalar squared_w = w*w;
+        const Scalar squared_n = other.unit_quaternion().vec().squaredNorm();
+        const Scalar n = sqrt(squared_n);
+        const Scalar w = other.unit_quaternion().w();
 
         Scalar two_atan_nbyw_by_n;
+
         // Atan-based log thanks to
         //
         // C. Hertzberg et al.:
@@ -185,13 +185,11 @@ public:
 
         if (n < SMALL_EPS)
         {
-//          // If quaternion is normalized and n=1, then w should be 1;
-//          // w=0 should never happen here!
-//          assert(fabs(w)>SMALL_EPS);
-//          two_atan_nbyw_by_n = (Scalar)(2) / w - (Scalar)(2)*(n*n)/(w*squared_w);
-
-          // Talk with Hauke about this
-          two_atan_nbyw_by_n = (Scalar)2 / squared_w;
+          // If quaternion is normalized and n=1, then w should be 1;
+          // w=0 should never happen here!
+          assert(fabs(w)>SMALL_EPS);
+          const Scalar squared_w = w*w;
+          two_atan_nbyw_by_n = (Scalar)(2) / w - (Scalar)(2)*(squared_n)/(w*squared_w);
         }
         else
         {
@@ -211,6 +209,7 @@ public:
         }
 
         *theta = two_atan_nbyw_by_n*n;
+
         return two_atan_nbyw_by_n * other.unit_quaternion().vec();
     }
 
@@ -224,24 +223,26 @@ public:
     inline static
     SO3Group<Scalar> expAndTheta(const Matrix<Scalar,3,1> & omega, Scalar * theta)
     {
-      *theta = omega.norm();
-      Scalar half_theta = 0.5*(*theta);
+      const Scalar theta_sq = omega.squaredNorm();
+      *theta = sqrt(theta_sq);
+      const Scalar half_theta = 0.5*(*theta);
 
       Scalar imag_factor;
-      Scalar real_factor = cos(half_theta);
+      Scalar real_factor;// = cos(half_theta);
       if((*theta)<SMALL_EPS)
       {
-        Scalar theta_sq = (*theta)*(*theta);
-        Scalar theta_po4 = theta_sq*theta_sq;
-        imag_factor = 0.5-0.0208333*theta_sq+0.000260417*theta_po4;
+        const Scalar theta_po4 = theta_sq*theta_sq;
+        imag_factor = 0.5 - (1.0/48.0)*theta_sq + (1.0/3840.0)*theta_po4;
+        real_factor = (Scalar)1 - 0.5*theta_sq + (1.0/384.0)*theta_po4;
       }
       else
       {
-        Scalar sin_half_theta = sin(half_theta);
+        const Scalar sin_half_theta = sin(half_theta);
         imag_factor = sin_half_theta/(*theta);
+        real_factor = cos(half_theta);
       }
 
-      return SO3Group<Scalar>(Quaternion<Scalar>(real_factor,
+      return SO3Group<Scalar>(QuaternionType(real_factor,
                              imag_factor*omega.x(),
                              imag_factor*omega.y(),
                              imag_factor*omega.z()));
@@ -279,7 +280,7 @@ public:
     }
 
     inline
-    void setQuaternion(const Quaternion<Scalar>& quaternion)
+    void setQuaternion(const QuaternionType& quaternion)
     {
       assert(quaternion.norm()!=0);
       unit_quaternion() = quaternion;
@@ -312,8 +313,8 @@ template<typename _Scalar, int _Options>
 class SO3Group : public SO3GroupBase<SO3Group<_Scalar,_Options> >
 {
 public:
-    typedef _Scalar Scalar;
-    typedef Quaternion<Scalar> QuaternionType;
+    typedef typename internal::traits<SO3Group<_Scalar,_Options> >::Scalar Scalar;
+    typedef typename internal::traits<SO3Group<_Scalar,_Options> >::QuaternionType QuaternionType;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -329,7 +330,7 @@ public:
 
     inline SO3Group(const Matrix<Scalar,3,3> & R) : unit_quaternion_(R) {}
 
-    inline SO3Group(const Quaternion<Scalar> & quat) : unit_quaternion_(quat)
+    inline SO3Group(const QuaternionType & quat) : unit_quaternion_(quat)
     {
       assert(unit_quaternion_.squaredNorm() > SMALL_EPS);
       unit_quaternion_.normalize();

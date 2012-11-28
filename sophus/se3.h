@@ -317,7 +317,7 @@ public:
     inline
     void setRotationMatrix(const Matrix3d & rotation_matrix)
     {
-        so3().setQuaternion(Quaternion<Scalar>(rotation_matrix));
+        so3().setQuaternion(SO3Type::QuaternionType(rotation_matrix));
     }
 
     template<typename NewScalarType>
@@ -336,7 +336,9 @@ template<typename _Scalar, int _Options>
 class SE3Group : public SE3GroupBase<SE3Group<_Scalar,_Options> >
 {
 public:
-    typedef _Scalar Scalar;
+    typedef typename internal::traits<SE3Group<_Scalar,_Options> >::Scalar Scalar;
+    typedef typename internal::traits<SE3Group<_Scalar,_Options> >::TranslationType TranslationType;
+    typedef typename internal::traits<SE3Group<_Scalar,_Options> >::SO3Type SO3Type;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -368,22 +370,22 @@ public:
 
 
     EIGEN_STRONG_INLINE
-    const Matrix<Scalar,3,1>& translation() const {
+    const TranslationType& translation() const {
         return translation_;
     }
 
     EIGEN_STRONG_INLINE
-    const SO3Group<Scalar>& so3() const {
+    const SO3Type& so3() const {
         return so3_;
     }
 
     EIGEN_STRONG_INLINE
-    Matrix<Scalar,3,1>& translation() {
+    TranslationType& translation() {
         return translation_;
     }
 
     EIGEN_STRONG_INLINE
-    SO3Group<Scalar>& so3() {
+    SO3Type& so3() {
         return so3_;
     }
 
@@ -404,8 +406,8 @@ public:
     }
 
 protected:
-    Matrix<Scalar,3,1> translation_;
-    SO3Group<Scalar> so3_;
+    TranslationType translation_;
+    SO3Type so3_;
 };
 
 
