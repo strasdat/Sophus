@@ -174,7 +174,7 @@ SE2 SE2
 
   double sin_theta_by_theta;
   double one_minus_cos_theta_by_theta;
-  if(abs(theta)<SMALL_EPS)
+  if(abs(theta)<SophusConstants<double>::epsilon())
   {
     double theta_sq = theta*theta;
 
@@ -208,7 +208,7 @@ Vector3d SE2
   double halftheta = 0.5*theta;
 
   double halftheta_by_tan_of_halftheta;
-  if (abs(theta)<SMALL_EPS)
+  if (abs(theta)<SophusConstants<double>::epsilon())
   {
     halftheta_by_tan_of_halftheta = 1. - (1./12)*theta*theta;
   }

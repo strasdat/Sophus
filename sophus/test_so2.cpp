@@ -11,18 +11,20 @@ using namespace std;
 
 bool so2explog_tests()
 {
-  double pi = 3.14159265;
+  const double SMALL_EPS = SophusConstants<double>::epsilon();
+  const double PI = SophusConstants<double>::pi();
+
   vector<SO2> so2;
   so2.push_back(SO2::exp(0.0));
   so2.push_back(SO2::exp(0.2));
   so2.push_back(SO2::exp(10.));
   so2.push_back(SO2::exp(0.00001));
-  so2.push_back(SO2::exp(pi));
+  so2.push_back(SO2::exp(PI));
   so2.push_back(SO2::exp(0.2)
-                   *SO2::exp(pi)
+                   *SO2::exp(PI)
                    *SO2::exp(-0.2));
   so2.push_back(SO2::exp(-0.3)
-                   *SO2::exp(pi)
+                   *SO2::exp(PI)
                    *SO2::exp(0.3));
 
 

@@ -24,6 +24,7 @@
 #ifndef SOPHUS_SE3_H
 #define SOPHUS_SE3_H
 
+#include <iostream>
 #include "so3.h"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -216,7 +217,7 @@ public:
     Matrix<Scalar,3,3> Omega_sq = Omega*Omega;
     Matrix<Scalar,3,3> V;
 
-    if(theta<SMALL_EPS) {
+    if(theta<SophusConstants<Scalar>::epsilon()) {
       V = so3.matrix();
       //Note: That is an accurate expansion!
     } else {
@@ -235,8 +236,7 @@ public:
     upsilon_omega.template tail<3>()
         = SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
 
-    if (theta<SMALL_EPS)
-    {
+    if (theta<SophusConstants<Scalar>::epsilon()) {
       const Matrix<Scalar,3,3> Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
       const Matrix<Scalar,3,3> V_inv =

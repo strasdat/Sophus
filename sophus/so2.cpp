@@ -143,7 +143,7 @@ Matrix2d SO2
 double SO2
 ::vee(const Matrix2d & Omega)
 {
-  assert(fabs(Omega(1,0)+Omega(0,1))<SMALL_EPS);
+  assert(fabs(Omega(1,0)+Omega(0,1)) < SophusConstants<double>::epsilon());
   return Omega(1,0);
 }
 

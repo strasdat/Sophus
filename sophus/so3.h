@@ -34,7 +34,9 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SO3Group;
-typedef SO3Group<double> SO3;
+typedef SO3Group<double> SO3; //deprecated
+typedef SO3Group<double> SO3d;
+typedef SO3Group<float> SO3f;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -74,7 +76,31 @@ using namespace Eigen;
 // SO3GroupBase type - implements SO3 class but is storage agnostic
 ////////////////////////////////////////////////////////////////////////////
 
-const double SMALL_EPS = 1e-10;
+template<typename Scalar>
+struct SophusConstants {
+  EIGEN_ALWAYS_INLINE static
+  const Scalar epsilon() {
+    return static_cast<Scalar>(1e-10);
+  }
+
+  EIGEN_ALWAYS_INLINE static
+  const Scalar pi() {
+    return static_cast<Scalar>(M_PI);
+  }
+};
+
+template<>
+struct SophusConstants<float> {
+  EIGEN_ALWAYS_INLINE static
+  const float epsilon() {
+    return 1e-5f;
+  }
+
+  EIGEN_ALWAYS_INLINE static
+  const float pi() {
+    return static_cast<float>(M_PI);
+  }
+};
 
 template<typename Derived>
 class SO3GroupBase {
@@ -159,15 +185,15 @@ public:
     // Representation through Encapsulation of Manifolds"
     // Information Fusion, 2011
 
-    if (n < SMALL_EPS) {
+    if (n < SophusConstants<Scalar>::epsilon()) {
       // If quaternion is normalized and n=1, then w should be 1;
       // w=0 should never happen here!
-      assert(fabs(w)>SMALL_EPS);
+      assert(fabs(w)>SophusConstants<Scalar>::epsilon());
       const Scalar squared_w = w*w;
       two_atan_nbyw_by_n = static_cast<Scalar>(2) / w
                            - static_cast<Scalar>(2)*(squared_n)/(w*squared_w);
     } else {
-      if (fabs(w)<SMALL_EPS) {
+      if (fabs(w)<SophusConstants<Scalar>::epsilon()) {
         if (w > static_cast<Scalar>(0)) {
           two_atan_nbyw_by_n = M_PI/n;
         } else {
@@ -197,8 +223,8 @@ public:
     const Scalar half_theta = 0.5*(*theta);
 
     Scalar imag_factor;
-    Scalar real_factor;// = cos(half_theta);
-    if((*theta)<SMALL_EPS) {
+    Scalar real_factor;;
+    if((*theta)<SophusConstants<Scalar>::epsilon()) {
       const Scalar theta_po4 = theta_sq*theta_sq;
       imag_factor = 0.5 - (1.0/48.0)*theta_sq + (1.0/3840.0)*theta_po4;
       real_factor = static_cast<Scalar>(1)
@@ -227,9 +253,9 @@ public:
 
   inline static
   const Matrix<Scalar,3,1> vee(const Matrix<Scalar,3,3> & Omega) {
-    assert(fabs(Omega(2,1)+Omega(1,2))<SMALL_EPS);
-    assert(fabs(Omega(0,2)+Omega(2,0))<SMALL_EPS);
-    assert(fabs(Omega(1,0)+Omega(0,1))<SMALL_EPS);
+    assert(fabs(Omega(2,1)+Omega(1,2)) < SophusConstants<Scalar>::epsilon());
+    assert(fabs(Omega(0,2)+Omega(2,0)) < SophusConstants<Scalar>::epsilon());
+    assert(fabs(Omega(1,0)+Omega(0,1)) < SophusConstants<Scalar>::epsilon());
     return Matrix<Scalar,3,1>(Omega(2,1), Omega(0,2), Omega(1,0));
   }
 
@@ -310,7 +336,7 @@ public:
   }
 
   inline SO3Group(const QuaternionType & quat) : unit_quaternion_(quat) {
-    assert(unit_quaternion_.squaredNorm() > SMALL_EPS);
+    assert(unit_quaternion_.squaredNorm() > SophusConstants<Scalar>::epsilon());
     unit_quaternion_.normalize();
   }
 

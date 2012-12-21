@@ -10,7 +10,9 @@ using namespace std;
 
 bool se2explog_tests()
 {
-  double pi = 3.14159265;
+  const double SMALL_EPS = SophusConstants<double>::epsilon();
+  const double PI = SophusConstants<double>::pi();
+
   vector<SE2> omegas;
   omegas.push_back(SE2(SO2(0.0),Vector2d(0,0)));
   omegas.push_back(SE2(SO2(0.2),Vector2d(10,0)));
@@ -18,10 +20,10 @@ bool se2explog_tests()
   omegas.push_back(SE2(SO2(-1.),Vector2d(20,-1)));
   omegas.push_back(SE2(SO2(0.00001),Vector2d(-0.00000001,0.0000000001)));
   omegas.push_back(SE2(SO2(0.2),Vector2d(0,0))
-                   *SE2(SO2(pi),Vector2d(0,0))
+                   *SE2(SO2(PI),Vector2d(0,0))
                    *SE2(SO2(-0.2),Vector2d(0,0)));
   omegas.push_back(SE2(SO2(0.3),Vector2d(2,0))
-                   *SE2(SO2(pi),Vector2d(0,0))
+                   *SE2(SO2(PI),Vector2d(0,0))
                    *SE2(SO2(-0.3),Vector2d(0,6)));
 
   bool failed = false;
@@ -87,6 +89,8 @@ bool se2explog_tests()
 
 bool se2bracket_tests()
 {
+  const double SMALL_EPS = SophusConstants<double>::epsilon();
+
   bool failed = false;
   vector<Vector3d> vecs;
   Vector3d tmp;

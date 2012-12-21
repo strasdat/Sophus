@@ -129,10 +129,10 @@ Matrix3d Sim3
   static const Matrix3d I = Matrix3d::Identity();
 
   double A,B,C;
-  if (fabs(sigma)<SMALL_EPS)
+  if (fabs(sigma)<SophusConstants<double>::epsilon())
   {
     C = 1;
-    if (theta<SMALL_EPS)
+    if (theta<SophusConstants<double>::epsilon())
     {
       A = 1./2.;
       B = 1./6.;
@@ -149,7 +149,7 @@ Matrix3d Sim3
   else
   {
     C=(scale-1)/sigma;
-    if (theta<SMALL_EPS)
+    if (theta<SophusConstants<double>::epsilon())
     {
       double sigma_sq = sigma*sigma;
       A = ((sigma-1)*scale+1)/sigma_sq;

@@ -224,11 +224,11 @@ Matrix3d ScSO3
 Vector4d ScSO3
 ::vee(const Matrix3d & Omega)
 {
-  assert(fabs(Omega(2,1)+Omega(1,2))<SMALL_EPS);
-  assert(fabs(Omega(0,2)+Omega(2,0))<SMALL_EPS);
-  assert(fabs(Omega(1,0)+Omega(0,1))<SMALL_EPS);
-  assert(fabs(Omega(0,0)-Omega(1,1))<SMALL_EPS);
-  assert(fabs(Omega(0,0)-Omega(2,2))<SMALL_EPS);
+  assert(fabs(Omega(2,1)+Omega(1,2))<SophusConstants<double>::epsilon());
+  assert(fabs(Omega(0,2)+Omega(2,0))<SophusConstants<double>::epsilon());
+  assert(fabs(Omega(1,0)+Omega(0,1))<SophusConstants<double>::epsilon());
+  assert(fabs(Omega(0,0)-Omega(1,1))<SophusConstants<double>::epsilon());
+  assert(fabs(Omega(0,0)-Omega(2,2))<SophusConstants<double>::epsilon());
   return Vector4d(Omega(2,1), Omega(0,2), Omega(1,0), Omega(0,0));
 }
 
