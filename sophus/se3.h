@@ -113,7 +113,8 @@ public:
   inline
   SE3Group<Scalar> inverse() const {
     const SO3Group<Scalar> invR = so3().inverse();
-    return SE3Group<Scalar>(invR, invR*(translation()*  (Scalar)(-1) ) );
+    return SE3Group<Scalar>(invR, invR*(translation()
+                                        *static_cast<Scalar>(-1) ) );
   }
 
   inline
@@ -221,7 +222,7 @@ public:
     } else {
       Scalar theta_sq = theta*theta;
       V = (Matrix<Scalar,3,3>::Identity()
-           + ((Scalar)1-cos(theta))/(theta_sq)*Omega
+           + (static_cast<Scalar>(1)-cos(theta))/(theta_sq)*Omega
            + (theta-sin(theta))/(theta_sq*theta)*Omega_sq);
     }
     return SE3Group<Scalar>(so3,V*upsilon);
@@ -240,15 +241,17 @@ public:
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
       const Matrix<Scalar,3,3> V_inv =
           Matrix<Scalar,3,3>::Identity() -
-          (Scalar)(0.5)*Omega + (Scalar)(1./12.)*(Omega*Omega);
+          static_cast<Scalar>(0.5)*Omega
+          + static_cast<Scalar>(1./12.)*(Omega*Omega);
 
       upsilon_omega.template head<3>() = V_inv*se3.translation();
     } else {
       const Matrix<Scalar,3,3> Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
       const Matrix<Scalar,3,3> V_inv =
-          ( Matrix<Scalar,3,3>::Identity() - (Scalar)(0.5)*Omega
-            + ( (Scalar)(1)-theta/((Scalar)(2)*tan(theta/Scalar(2)))) /
+          ( Matrix<Scalar,3,3>::Identity() - static_cast<Scalar>(0.5)*Omega
+            + ( static_cast<Scalar>(1)
+                - theta/(static_cast<Scalar>(2)*tan(theta/Scalar(2)))) /
             (theta*theta)*(Omega*Omega) );
       upsilon_omega.template head<3>() = V_inv*se3.translation();
     }
