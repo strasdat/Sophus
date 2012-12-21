@@ -40,11 +40,19 @@ SET (CLASSES  so2
               sim3
 )
 
+SET (TEMPLATES so3
+               se3
+)
+
 SET (SOURCES)
 
 FOREACH(class ${CLASSES})
   LIST(APPEND SOURCES ${SOURCE_DIR}/${class}.cpp ${SOURCE_DIR}/${class}.h)
 ENDFOREACH(class)
+
+FOREACH(templ ${TEMPLATES})
+  LIST(APPEND SOURCES ${SOURCE_DIR}/${templ}.h)
+ENDFOREACH(templ)
 
 LINK_LIBRARIES (${PROJECT_NAME} ${LIBS})
 
