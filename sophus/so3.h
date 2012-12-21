@@ -90,7 +90,7 @@ public:
   }
 
   inline
-  SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
+  const SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
     SO3Group<Scalar> result(*this);
     result.unit_quaternion() *= other.unit_quaternion();
     result.unit_quaternion().normalize();
@@ -104,27 +104,27 @@ public:
   }
 
   inline
-  Matrix<Scalar,3,1> operator*(const Matrix<Scalar,3,1> & xyz) const {
+  const Matrix<Scalar,3,1> operator*(const Matrix<Scalar,3,1> & xyz) const {
     return unit_quaternion()._transformVector(xyz);
   }
 
   inline
-  SO3Group<Scalar> inverse() const {
+  const SO3Group<Scalar> inverse() const {
     return SO3Group<Scalar>(unit_quaternion().conjugate());
   }
 
   inline
-  Matrix<Scalar,3,3> matrix() const {
+  const Matrix<Scalar,3,3> matrix() const {
     return unit_quaternion().toRotationMatrix();
   }
 
   inline
-  Matrix<Scalar,3,3> Adj() const {
+  const Matrix<Scalar,3,3> Adj() const {
     return matrix();
   }
 
   inline
-  Matrix<Scalar,3,3> generator(int i) {
+  const Matrix<Scalar,3,3> generator(int i) {
     assert(i>=0 && i<3);
     Matrix<Scalar,3,1> e;
     e.setZero();
@@ -133,18 +133,18 @@ public:
   }
 
   inline
-  Matrix<Scalar,3,1> log() const {
+  const Matrix<Scalar,3,1> log() const {
     return SO3Group<Scalar>::log(*this);
   }
 
   inline static
-  Matrix<Scalar,3,1> log(const SO3Group<Scalar> & other) {
+  const Matrix<Scalar,3,1> log(const SO3Group<Scalar> & other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
 
   inline static
-  Matrix<Scalar,3,1> logAndTheta(const SO3Group<Scalar> & other,
+  const Matrix<Scalar,3,1> logAndTheta(const SO3Group<Scalar> & other,
                                  Scalar * theta) {
     const Scalar squared_n = other.unit_quaternion().vec().squaredNorm();
     const Scalar n = sqrt(squared_n);
@@ -184,13 +184,13 @@ public:
   }
 
   inline static
-  SO3Group<Scalar> exp(const Matrix<Scalar,3,1> & omega) {
+  const SO3Group<Scalar> exp(const Matrix<Scalar,3,1> & omega) {
     Scalar theta;
     return expAndTheta(omega, &theta);
   }
 
   inline static
-  SO3Group<Scalar> expAndTheta(const Matrix<Scalar,3,1> & omega,
+  const SO3Group<Scalar> expAndTheta(const Matrix<Scalar,3,1> & omega,
                                Scalar * theta) {
     const Scalar theta_sq = omega.squaredNorm();
     *theta = sqrt(theta_sq);
@@ -217,7 +217,7 @@ public:
   }
 
   inline static
-  Matrix<Scalar,3,3> hat(const Matrix<Scalar,3,1> & v) {
+  const Matrix<Scalar,3,3> hat(const Matrix<Scalar,3,1> & v) {
     Matrix<Scalar,3,3> Omega;
     Omega <<  static_cast<Scalar>(0), -v(2),  v(1)
         ,  v(2),     static_cast<Scalar>(0), -v(0)
@@ -226,7 +226,7 @@ public:
   }
 
   inline static
-  Matrix<Scalar,3,1> vee(const Matrix<Scalar,3,3> & Omega) {
+  const Matrix<Scalar,3,1> vee(const Matrix<Scalar,3,3> & Omega) {
     assert(fabs(Omega(2,1)+Omega(1,2))<SMALL_EPS);
     assert(fabs(Omega(0,2)+Omega(2,0))<SMALL_EPS);
     assert(fabs(Omega(1,0)+Omega(0,1))<SMALL_EPS);
@@ -234,13 +234,13 @@ public:
   }
 
   inline static
-  Matrix<Scalar,3,1> lieBracket(const Matrix<Scalar,3,1> & omega1,
+  const Matrix<Scalar,3,1> lieBracket(const Matrix<Scalar,3,1> & omega1,
                                 const Matrix<Scalar,3,1> & omega2) {
     return omega1.cross(omega2);
   }
 
   inline static
-  Matrix<Scalar,3,3> d_lieBracketab_by_d_a(const Matrix<Scalar,3,1> & b) {
+  const Matrix<Scalar,3,3> d_lieBracketab_by_d_a(const Matrix<Scalar,3,1> & b) {
     return -hat(b);
   }
 

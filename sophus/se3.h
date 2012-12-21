@@ -96,7 +96,7 @@ public:
   }
 
   inline
-  SE3Group<Scalar> operator*(const SE3Group<Scalar> & other) const {
+  const SE3Group<Scalar> operator*(const SE3Group<Scalar> & other) const {
     SE3Group<Scalar> result(*this);
     result.translation() += so3()*(other.translation());
     result.so3()*=other.so3();
@@ -104,31 +104,31 @@ public:
   }
 
   inline
-  SE3Group<Scalar>& operator *= (const SE3Group<Scalar> & other) {
+  const SE3Group<Scalar>& operator *= (const SE3Group<Scalar> & other) {
     translation()+= so3()*(other.translation());
     so3()*=other.so3();
     return *this;
   }
 
   inline
-  SE3Group<Scalar> inverse() const {
+  const SE3Group<Scalar> inverse() const {
     const SO3Group<Scalar> invR = so3().inverse();
     return SE3Group<Scalar>(invR, invR*(translation()
                                         *static_cast<Scalar>(-1) ) );
   }
 
   inline
-  Matrix<Scalar,6,1> log() const {
+  const Matrix<Scalar,6,1> log() const {
     return log(*this);
   }
 
   inline
-  Matrix<Scalar,3,1> operator *(const Matrix<Scalar,3,1> & xyz) const {
+  const Matrix<Scalar,3,1> operator *(const Matrix<Scalar,3,1> & xyz) const {
     return so3()*xyz + translation();
   }
 
   inline
-  Matrix<Scalar,3,4> matrix3x4() const {
+  const Matrix<Scalar,3,4> matrix3x4() const {
     Matrix<Scalar,3,4> matrix;
     matrix.block(0,0,3,3) = rotation_matrix();
     matrix.col(3) = translation();
@@ -136,7 +136,7 @@ public:
   }
 
   inline
-  Matrix<Scalar,4,4> matrix() const {
+  const Matrix<Scalar,4,4> matrix() const {
     Matrix<Scalar,4,4> homogenious_matrix;
     homogenious_matrix.setIdentity();
     homogenious_matrix.block(0,0,3,3) = rotation_matrix();
@@ -145,7 +145,7 @@ public:
   }
 
   inline
-  Matrix<Scalar, 6, 6> Adj() const {
+  const Matrix<Scalar, 6, 6> Adj() const {
     Matrix3d R = so3().matrix();
     Matrix<Scalar, 6, 6> res;
     res.block(0,0,3,3) = R;
@@ -156,7 +156,7 @@ public:
   }
 
   inline static
-  Matrix<Scalar,4,4> hat(const Matrix<Scalar,6,1> & v) {
+  const Matrix<Scalar,4,4> hat(const Matrix<Scalar,6,1> & v) {
     Matrix<Scalar,4,4> Omega;
     Omega.setZero();
     Omega.template topLeftCorner<3,3>()
@@ -166,7 +166,7 @@ public:
   }
 
   inline static
-  Matrix<Scalar,6,1> vee(const Matrix<Scalar,4,4> & Omega) {
+  const Matrix<Scalar,6,1> vee(const Matrix<Scalar,4,4> & Omega) {
     Matrix<Scalar,6,1> upsilon_omega;
     upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
     upsilon_omega.template tail<3>()
@@ -175,7 +175,7 @@ public:
   }
 
   inline static
-  Matrix<Scalar,6,1> lieBracket(const Matrix<Scalar,6,1> & v1,
+  const Matrix<Scalar,6,1> lieBracket(const Matrix<Scalar,6,1> & v1,
                                 const Matrix<Scalar,6,1> & v2) {
     Matrix<Scalar,3,1> upsilon1 = v1.template head<3>();
     Matrix<Scalar,3,1> upsilon2 = v2.template head<3>();
@@ -190,7 +190,7 @@ public:
   }
 
   inline static
-  Matrix<Scalar,6,6> d_lieBracketab_by_d_a(const Matrix<Scalar,6,1> & b) {
+  const Matrix<Scalar,6,6> d_lieBracketab_by_d_a(const Matrix<Scalar,6,1> & b) {
     Matrix<Scalar,6,6> res;
     res.setZero();
 
@@ -205,7 +205,7 @@ public:
   }
 
   inline static
-  SE3Group<Scalar> exp(const Matrix<Scalar,6,1> & update) {
+  const SE3Group<Scalar> exp(const Matrix<Scalar,6,1> & update) {
     Matrix<Scalar,3,1> upsilon = update.template head<3>();
     Matrix<Scalar,3,1> omega = update.template tail<3>();
 
@@ -229,7 +229,7 @@ public:
   }
 
   inline static
-  Matrix<Scalar,6,1> log(const SE3Group<Scalar> & se3) {
+  const Matrix<Scalar,6,1> log(const SE3Group<Scalar> & se3) {
     Matrix<Scalar,6,1> upsilon_omega;
     Scalar theta;
     upsilon_omega.template tail<3>()
@@ -292,7 +292,7 @@ public:
   }
 
   inline
-  Matrix<Scalar,3,3> rotation_matrix() const {
+  const Matrix<Scalar,3,3> rotation_matrix() const {
     return so3().matrix();
   }
 
@@ -434,6 +434,8 @@ public:
   EIGEN_STRONG_INLINE
   Map(Scalar* coeffs) : translation_(coeffs), so3_(coeffs+3) {
   }
+
+  // GETTERS & SETTERS
 
   EIGEN_STRONG_INLINE
   const TranslationType& translation() const {
