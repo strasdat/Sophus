@@ -1,3 +1,25 @@
+// This file is part of Sophus.
+//
+// Copyright 2012 Hauke Strasdat
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights  to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
+
 #include <iostream>
 #include <vector>
 
@@ -7,15 +29,15 @@
 using namespace Sophus;
 using namespace std;
 
-bool se3explog_tests()
-{
+bool se3explog_tests() {
   double pi = 3.14159265;
   vector<SE3> omegas;
   omegas.push_back(SE3(SO3::exp(Vector3d(0.2, 0.5, 0.0)),Vector3d(0,0,0)));
   omegas.push_back(SE3(SO3::exp(Vector3d(0.2, 0.5, -1.0)),Vector3d(10,0,0)));
   omegas.push_back(SE3(SO3::exp(Vector3d(0., 0., 0.)),Vector3d(0,100,5)));
   omegas.push_back(SE3(SO3::exp(Vector3d(0., 0., 0.00001)),Vector3d(0,0,0)));
-  omegas.push_back(SE3(SO3::exp(Vector3d(0., 0., 0.00001)),Vector3d(0,-0.00000001,0.0000000001)));
+  omegas.push_back(SE3(SO3::exp(Vector3d(0., 0., 0.00001)),
+                       Vector3d(0,-0.00000001,0.0000000001)));
   omegas.push_back(SE3(SO3::exp(Vector3d(0., 0., 0.00001)),Vector3d(0.01,0,0)));
   omegas.push_back(SE3(SO3::exp(Vector3d(pi, 0, 0)),Vector3d(4,-5,0)));
   omegas.push_back(SE3(SO3::exp(Vector3d(0.2, 0.5, 0.0)),Vector3d(0,0,0))
@@ -27,15 +49,13 @@ bool se3explog_tests()
 
   bool failed = false;
 
-  for (size_t i=0; i<omegas.size(); ++i)
-  {
+  for (size_t i=0; i<omegas.size(); ++i) {
     Matrix4d R1 = omegas[i].matrix();
     Matrix4d R2 = SE3::exp(omegas[i].log()).matrix();
     Matrix4d DiffR = R1-R2;
     double nrm = DiffR.norm();
 
-    if (isnan(nrm) || nrm>SMALL_EPS)
-    {
+    if (isnan(nrm) || nrm>SMALL_EPS) {
       cerr << "SE3 - exp(log(SE3))" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << DiffR <<endl;
@@ -43,8 +63,7 @@ bool se3explog_tests()
       failed = true;
     }
   }
-  for (size_t i=0; i<omegas.size(); ++i)
-  {
+  for (size_t i=0; i<omegas.size(); ++i) {
     Vector3d p(1,2,4);
     Matrix4d T = omegas[i].matrix();
     Vector3d res1 = omegas[i]*p;
@@ -52,8 +71,7 @@ bool se3explog_tests()
 
     double nrm = (res1-res2).norm();
 
-    if (isnan(nrm) || nrm>SMALL_EPS)
-    {
+    if (isnan(nrm) || nrm>SMALL_EPS) {
       cerr << "Transform vector" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << (res1-res2) <<endl;
@@ -62,8 +80,7 @@ bool se3explog_tests()
     }
   }
 
-  for (size_t i=0; i<omegas.size(); ++i)
-  {
+  for (size_t i=0; i<omegas.size(); ++i) {
     Matrix4d q = omegas[i].matrix();
     Matrix4d inv_q = omegas[i].inverse().matrix();
     Matrix4d res = q*inv_q ;
@@ -72,8 +89,7 @@ bool se3explog_tests()
 
     double nrm = (res-I).norm();
 
-    if (isnan(nrm) || nrm>SMALL_EPS)
-    {
+    if (isnan(nrm) || nrm>SMALL_EPS) {
       cerr << "Inverse" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << (res-I) <<endl;
@@ -85,8 +101,7 @@ bool se3explog_tests()
 }
 
 
-bool se3bracket_tests()
-{
+bool se3bracket_tests() {
   bool failed = false;
   vector<Vector6d> vecs;
   Vector6d tmp;
@@ -104,11 +119,9 @@ bool se3bracket_tests()
   vecs.push_back(tmp);
   tmp << 30,5,-1,20,-1,0;
   vecs.push_back(tmp);
-  for (size_t i=0; i<vecs.size(); ++i)
-  {
+  for (size_t i=0; i<vecs.size(); ++i) {
     Vector6d resDiff = vecs[i] - SE3::vee(SE3::hat(vecs[i]));
-    if (resDiff.norm()>SMALL_EPS)
-    {
+    if (resDiff.norm()>SMALL_EPS) {
       cerr << "Hat-vee Test" << endl;
       cerr  << "Test case: " << i <<  endl;
       cerr << resDiff.transpose() << endl;
@@ -116,16 +129,14 @@ bool se3bracket_tests()
       failed = true;
     }
 
-    for (size_t j=0; j<vecs.size(); ++j)
-    {
+    for (size_t j=0; j<vecs.size(); ++j) {
       Vector6d res1 = SE3::lieBracket(vecs[i],vecs[j]);
       Matrix4d hati = SE3::hat(vecs[i]);
       Matrix4d hatj = SE3::hat(vecs[j]);
 
       Vector6d res2 = SE3::vee(hati*hatj-hatj*hati);
       Vector6d resDiff = res1-res2;
-      if (resDiff.norm()>SMALL_EPS)
-      {
+      if (resDiff.norm()>SMALL_EPS) {
         cerr << "SE3 Lie Bracket Test" << endl;
         cerr  << "Test case: " << i << ", " <<j<< endl;
         cerr << vecs[i].transpose() << endl;
@@ -143,8 +154,7 @@ bool se3bracket_tests()
     Matrix4d DiffR = exp_x-expmap_hat_x;
     double nrm = DiffR.norm();
 
-    if (isnan(nrm) || nrm>SMALL_EPS)
-    {
+    if (isnan(nrm) || nrm>SMALL_EPS) {
       cerr << "expmap(hat(x)) - exp(x)" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << exp_x <<endl;
