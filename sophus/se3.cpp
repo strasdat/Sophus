@@ -45,6 +45,10 @@ SE3
   : so3_(quaternion), translation_(translation) {}
 
 SE3
+::SE3(const Eigen::Matrix4d& T)
+  : so3_(T.topLeftCorner<3,3>()), translation_(T.block<3,1>(0,3)) {}
+
+SE3
 ::SE3(const SE3 & se3) : so3_(se3.so3_),translation_(se3.translation_){}
 
 
@@ -92,6 +96,15 @@ Vector3d SE3
 ::operator *(const Vector3d & xyz) const
 {
   return so3_*xyz + translation_;
+}
+
+Matrix<double,3,4> SE3
+::matrix3x4() const
+{
+  Matrix<double,3,4> matrix;
+  matrix.block(0,0,3,3) = rotation_matrix();
+  matrix.col(3) = translation_;
+  return matrix;
 }
 
 Matrix4d SE3

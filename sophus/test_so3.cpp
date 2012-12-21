@@ -112,9 +112,9 @@ bool so3bracket_tests()
   vecs.push_back(Vector3d(-1,1,0));
   vecs.push_back(Vector3d(20,-1,0));
   vecs.push_back(Vector3d(30,5,-1));
-  for (uint i=0; i<vecs.size(); ++i)
+  for (unsigned int i=0; i<vecs.size(); ++i)
   {
-    for (uint j=0; j<vecs.size(); ++j)
+    for (unsigned int j=0; j<vecs.size(); ++j)
     {
       Vector3d res1 = SO3::lieBracket(vecs[i],vecs[j]);
       Matrix3d mat =
