@@ -100,9 +100,9 @@ public:
   }
 
   inline
-  void operator=(const SO3Group<Scalar> & other)
-  {
+  SO3Group<Scalar>& operator=(const SO3Group<Scalar> & other) {
     unit_quaternion() = other.unit_quaternion();
+    return *this;
   }
 
   inline
