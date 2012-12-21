@@ -132,29 +132,29 @@ Matrix3d Sim3
   if (fabs(sigma)<SophusConstants<double>::epsilon())
   {
     C = 1;
-    if (theta<SophusConstants<double>::epsilon())
+    if (fabs(theta)<SophusConstants<double>::epsilon())
     {
       A = 1./2.;
       B = 1./6.;
-      //ToDO: Use more accurate expansion
+      //ToDO: Use more accurate expansion?
     }
     else
     {
       double theta_sq = theta*theta;
       A = (1-cos(theta))/theta_sq;
       B = (theta-sin(theta))/(theta_sq*theta);
-      //ToDO: Use more accurate expansion
+      //ToDO: Use more accurate expansion?
     }
   }
   else
   {
     C=(scale-1)/sigma;
-    if (theta<SophusConstants<double>::epsilon())
+    if (fabs(theta)<SophusConstants<double>::epsilon())
     {
       double sigma_sq = sigma*sigma;
       A = ((sigma-1)*scale+1)/sigma_sq;
       B = ((0.5*sigma*sigma-sigma+1)*scale)/(sigma_sq*sigma);
-     //ToDO: Use more accurate expansion
+     //ToDO: Use more accurate expansion?
     }
     else
     {

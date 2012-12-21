@@ -236,7 +236,7 @@ public:
     upsilon_omega.template tail<3>()
         = SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
 
-    if (theta<SophusConstants<Scalar>::epsilon()) {
+    if (fabs(theta)<SophusConstants<Scalar>::epsilon()) {
       const Matrix<Scalar,3,3> Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
       const Matrix<Scalar,3,3> V_inv =
