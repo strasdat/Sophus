@@ -24,8 +24,7 @@
 #ifndef SOPHUS_SO3_H
 #define SOPHUS_SO3_H
 
-#include <Eigen/Core>
-#include <Eigen/StdVector>
+#include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
 ////////////////////////////////////////////////////////////////////////////
