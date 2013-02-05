@@ -24,8 +24,7 @@
 #ifndef SOPHUS_SO3_H
 #define SOPHUS_SO3_H
 
-#include <Eigen/Core>
-#include <Eigen/StdVector>
+#include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
 ////////////////////////////////////////////////////////////////////////////
@@ -109,8 +108,8 @@ public:
   typedef typename internal::traits<Derived>::QuaternionType QuaternionType;
   static const int DoF = 3;
 
-  inline
-  SO3Group<Scalar>& operator=(const SO3Group<Scalar> & other) {
+  template<typename OtherDerived> inline
+  SO3GroupBase<Derived>& operator=(const SO3GroupBase<OtherDerived> & other) {
     unit_quaternion() = other.unit_quaternion();
     return *this;
   }
