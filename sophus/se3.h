@@ -89,8 +89,8 @@ public:
   typedef typename internal::traits<Derived>::SO3Type SO3Type;
   static const int DoF = 6;
 
-  inline
-  SE3GroupBase<Derived>& operator = (const SE3Group<Scalar> & other) {
+  template<typename OtherDerived> inline
+  SE3GroupBase<Derived>& operator = (const SE3GroupBase<OtherDerived> & other) {
     so3() = other.so3();
     translation() = other.translation();
     return *this;
