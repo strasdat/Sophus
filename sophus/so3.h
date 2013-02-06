@@ -309,8 +309,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////
 
 template<typename _Scalar, int _Options>
-class SO3Group : public SO3GroupBase<SO3Group<_Scalar,_Options> >
-{
+class SO3Group : public SO3GroupBase<SO3Group<_Scalar,_Options> > {
 public:
   typedef typename internal::traits<SO3Group<_Scalar,_Options> >
   ::Scalar Scalar;

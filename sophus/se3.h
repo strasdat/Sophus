@@ -315,8 +315,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////
 
 template<typename _Scalar, int _Options>
-class SE3Group : public SE3GroupBase<SE3Group<_Scalar,_Options> >
-{
+class SE3Group : public SE3GroupBase<SE3Group<_Scalar,_Options> > {
 public:
   typedef typename internal::traits<SE3Group<_Scalar,_Options> >
   ::Scalar Scalar;
@@ -385,16 +384,14 @@ public:
   }
 
   EIGEN_STRONG_INLINE
-  Scalar* data()
-  {
+  Scalar* data() {
     // TODO: Check this is true
     // translation_ and so3_ are layed out sequentially with no padding
     return translation_.data();
   }
 
   EIGEN_STRONG_INLINE
-  const Scalar* data() const
-  {
+  const Scalar* data() const {
     // TODO: Check this is true
     // translation_ and so3_ are layed out sequentially with no padding
     return translation_.data();
