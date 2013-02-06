@@ -33,9 +33,13 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SE3Group;
-typedef SE3Group<double> SE3;
+typedef SE3Group<double> SE3; //deprecated
+typedef SE3Group<double> SE3d;
+typedef SE3Group<float> SE3f;
 typedef Matrix<double,6,1> Vector6d;
 typedef Matrix<double,6,6> Matrix6d;
+typedef Matrix<float,6,1> Vector6f;
+typedef Matrix<float,6,6> Matrix6f;
 }
 
 ////////////////////////////////////////////////////////////////////////////
