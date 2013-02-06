@@ -101,18 +101,30 @@ public:
   }
 
   inline
-  const SE3Group<Scalar> operator*(const SE3Group<Scalar> & other) const {
-    SE3Group<Scalar> result(*this);
-    result.translation() += so3()*(other.translation());
-    result.so3()*=other.so3();
-    return result;
+  void normalize() {
+    so3().normalize();
+  }
+
+  template<typename Other> inline
+  SE3GroupBase<Other>& operator*=(const SE3GroupBase<Other>& other) {
+    translation() += so3()*(other.translation());
+    so3() *= other.so3();
+    return *this;
   }
 
   inline
-  const SE3Group<Scalar>& operator *= (const SE3Group<Scalar> & other) {
-    translation()+= so3()*(other.translation());
-    so3()*=other.so3();
-    return *this;
+  const SE3Group<Scalar> operator*(const SE3Group<Scalar>& other) const {
+    SE3Group<Scalar> result(*this);
+    result *= other;
+    return result;
+  }
+
+  // Fast multiplication without normalization
+  // It is up to the user to call normalize() once in a while.
+  inline
+  void fastMultiply(const SE3Group<Scalar>& other) {
+    translation() += so3()*(other.translation());
+    so3().fastMultiply(other.so3());
   }
 
   inline
@@ -128,7 +140,7 @@ public:
   }
 
   inline
-  const Matrix<Scalar,3,1> operator *(const Matrix<Scalar,3,1> & xyz) const {
+  const Matrix<Scalar,3,1> operator*(const Matrix<Scalar,3,1> & xyz) const {
     return so3()*xyz + translation();
   }
 

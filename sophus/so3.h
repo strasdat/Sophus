@@ -115,17 +115,29 @@ public:
   }
 
   inline
-  const SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
-    SO3Group<Scalar> result(*this);
-    result.unit_quaternion() *= other.unit_quaternion();
-    result.unit_quaternion().normalize();
-    return result;
+  void normalize() {
+    unit_quaternion().normalize();
+  }
+
+  template<typename Other> inline
+  SO3GroupBase<Other>& operator*=(const SO3GroupBase<Other>& other) {
+    unit_quaternion() *= other.unit_quaternion();
+    normalize();
+    return *this;
   }
 
   inline
-  void operator*=(const SO3Group<Scalar>& other) {
+  const SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
+    SO3Group<Scalar> result(*this);
+    result *= other;
+    return result;
+  }
+
+  // Fast multiplication without normalization
+  // It is up to the user to call normalize() once in a while.
+  inline
+  void fastMultiply(const SO3Group<Scalar>& other) {
     unit_quaternion() *= other.unit_quaternion();
-    unit_quaternion().normalize();
   }
 
   inline

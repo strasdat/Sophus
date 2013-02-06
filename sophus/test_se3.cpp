@@ -117,6 +117,24 @@ bool se3explog_tests() {
       failed = true;
     }
   }
+
+  for (size_t i=0; i<omegas.size(); ++i) {
+    for (size_t j=0; j<omegas.size(); ++j) {
+      Matrix4Scalar mul_resmat = (omegas[i]*omegas[j]).matrix();
+      SE3Scalar fastmul_res = omegas[i];
+      fastmul_res.fastMultiply(omegas[j]);
+      Matrix4Scalar diff =  mul_resmat-fastmul_res.matrix();
+      Scalar nrm = diff.norm();
+      if (isnan(nrm) || nrm>SMALL_EPS) {
+        cerr << "Fast multiplication" << endl;
+        cerr  << "Test case: " << i  << "," << j << endl;
+        cerr << diff <<endl;
+        cerr << endl;
+        failed = true;
+      }
+    }
+  }
+
   return failed;
 }
 
