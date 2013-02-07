@@ -24,8 +24,7 @@
 #ifndef SOPHUS_SO3_H
 #define SOPHUS_SO3_H
 
-#include <Eigen/Eigen>
-#include <Eigen/Geometry>
+#include "sophus.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // Forward Declarations / typedefs
@@ -74,32 +73,6 @@ using namespace Eigen;
 ////////////////////////////////////////////////////////////////////////////
 // SO3GroupBase type - implements SO3 class but is storage agnostic
 ////////////////////////////////////////////////////////////////////////////
-
-template<typename Scalar>
-struct SophusConstants {
-  EIGEN_ALWAYS_INLINE static
-  const Scalar epsilon() {
-    return static_cast<Scalar>(1e-10);
-  }
-
-  EIGEN_ALWAYS_INLINE static
-  const Scalar pi() {
-    return static_cast<Scalar>(M_PI);
-  }
-};
-
-template<>
-struct SophusConstants<float> {
-  EIGEN_ALWAYS_INLINE static
-  const float epsilon() {
-    return 1e-5f;
-  }
-
-  EIGEN_ALWAYS_INLINE static
-  const float pi() {
-    return static_cast<float>(M_PI);
-  }
-};
 
 template<typename Derived>
 class SO3GroupBase {

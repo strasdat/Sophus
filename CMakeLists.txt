@@ -44,7 +44,7 @@ SET (TEMPLATES so3
                se3
 )
 
-SET (SOURCES)
+SET (SOURCES ${SOURCE_DIR}/sophus.hpp)
 
 FOREACH(class ${CLASSES})
   LIST(APPEND SOURCES ${SOURCE_DIR}/${class}.cpp ${SOURCE_DIR}/${class}.h)
