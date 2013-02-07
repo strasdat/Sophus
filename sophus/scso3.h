@@ -47,7 +47,7 @@ public:
   ScSO3                      (const Matrix3d & scale_times_R);
 
   ScSO3                      (double scale,
-                              const SO3 & so3);
+                              const SO3d & so3);
 
   ScSO3                      (double scale,
                               const Matrix3d & R);

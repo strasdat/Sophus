@@ -32,7 +32,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SO3Group;
-typedef SO3Group<double> SO3; //deprecated
+typedef SOPHUS_DEPRECATED SO3Group<double> SO3;
 typedef SO3Group<double> SO3d;
 typedef SO3Group<float> SO3f;
 }

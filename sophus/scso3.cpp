@@ -61,7 +61,7 @@ ScSO3
 }
 
 ScSO3
-::ScSO3(double scale, const SO3 & so3)
+::ScSO3(double scale, const SO3d & so3)
 {
   assert(scale>0);
   quaternion_ = so3.unit_quaternion();
@@ -187,7 +187,7 @@ Vector4d ScSO3
   double scale = other.quaternion().norm();
   Vector4d omega_sigma;
   omega_sigma[3] = std::log(scale);
-  omega_sigma.head<3>() = SO3::logAndTheta(SO3(other.quaternion()), theta);
+  omega_sigma.head<3>() = SO3d::logAndTheta(SO3d(other.quaternion()), theta);
   return omega_sigma;
 }
 

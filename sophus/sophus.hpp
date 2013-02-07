@@ -23,6 +23,21 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
+#ifdef __GNUC__
+
+#  define SOPHUS_DEPRECATED __attribute__((deprecated))
+
+#elif defined _MSC_VER
+
+#  define SOPHUS_DEPRECATED __declspec(deprecated)
+
+#else
+
+#  define SOPHUS_DEPRECATED
+
+#endif
+
+
 namespace Sophus {
 using namespace Eigen;
 
