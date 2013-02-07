@@ -24,7 +24,7 @@
 #define SOPHUS_SIMILARITY_H
 
 #include "scso3.h"
-#include "se3.h"
+#include "se3.hpp"
 
 namespace Sophus
 {

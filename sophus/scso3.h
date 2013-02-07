@@ -27,7 +27,7 @@
 #include <Eigen/StdVector>
 #include <Eigen/Geometry>
 
-#include "so3.h"
+#include "so3.hpp"
 
 
 namespace Sophus

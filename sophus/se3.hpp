@@ -25,7 +25,7 @@
 #define SOPHUS_SE3_H
 
 #include <iostream>
-#include "so3.h"
+#include "so3.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // Forward Declarations / typedefs

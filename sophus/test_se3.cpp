@@ -24,7 +24,7 @@
 #include <vector>
 
 #include <unsupported/Eigen/MatrixFunctions>
-#include "se3.h"
+#include "se3.hpp"
 
 using namespace Sophus;
 using namespace std;

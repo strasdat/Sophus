@@ -22,7 +22,7 @@
 
 #include <iostream>
 #include "so2.h"
-#include "so3.h"
+#include "so3.hpp"
 
 namespace Sophus
 {

@@ -4,7 +4,7 @@
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include "so2.h"
-#include "so3.h"
+#include "so3.hpp"
 
 using namespace Sophus;
 using namespace std;
