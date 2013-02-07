@@ -116,12 +116,12 @@ public:
 
   inline
   void normalize() {
-    unit_quaternion().normalize();
+    unit_quaternion_nonconst().normalize();
   }
 
   template<typename Other> inline
   SO3GroupBase<Other>& operator*=(const SO3GroupBase<Other>& other) {
-    unit_quaternion() *= other.unit_quaternion();
+    unit_quaternion_nonconst() *= other.unit_quaternion();
     normalize();
     return *this;
   }
@@ -137,7 +137,7 @@ public:
   // It is up to the user to call normalize() once in a while.
   inline
   void fastMultiply(const SO3Group<Scalar>& other) {
-    unit_quaternion() *= other.unit_quaternion();
+    unit_quaternion_nonconst() *= other.unit_quaternion();
   }
 
   inline
@@ -284,11 +284,6 @@ public:
   // GETTERS & SETTERS
 
   EIGEN_STRONG_INLINE
-  QuaternionType& unit_quaternion() {
-    return static_cast<Derived*>(this)->unit_quaternion();
-  }
-
-  EIGEN_STRONG_INLINE
   const QuaternionType& unit_quaternion() const {
     return static_cast<const Derived*>(this)->unit_quaternion();
   }
@@ -314,6 +309,14 @@ public:
     return unit_quaternion().data();
   }
 
+private:
+  // Nonconst accessor of unit_quaternion is private so users are hampered
+  // from setting non-unit quaternions.
+  EIGEN_STRONG_INLINE
+  QuaternionType& unit_quaternion_nonconst() {
+    return static_cast<Derived*>(this)->unit_quaternion_nonconst();
+  }
+
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -327,6 +330,9 @@ public:
   ::Scalar Scalar;
   typedef typename internal::traits<SO3Group<_Scalar,_Options> >
   ::QuaternionType QuaternionType;
+
+  // base is friend so unit_quaternion_nonconst can be accessed from base
+  friend class SO3GroupBase<SO3Group<_Scalar,_Options> >;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -365,12 +371,14 @@ public:
     return unit_quaternion_;
   }
 
+protected:
+  // Nonconst accessor of unit_quaternion is protected so users are hampered
+  // from setting non-unit quaternions.
   EIGEN_STRONG_INLINE
-  QuaternionType & unit_quaternion() {
+  QuaternionType & unit_quaternion_nonconst() {
     return unit_quaternion_;
   }
 
-protected:
   QuaternionType unit_quaternion_;
 };
 
@@ -393,6 +401,9 @@ public:
   typedef typename internal::traits<Map>::Scalar Scalar;
   typedef typename internal::traits<Map>::QuaternionType QuaternionType;
 
+  // base is friend so unit_quaternion_nonconst can be accessed from base
+  friend class Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> >;
+
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
@@ -408,12 +419,14 @@ public:
     return unit_quaternion_;
   }
 
+protected:
+  // Nonconst accessor of unit_quaternion is protected so users are hampered
+  // from setting non-unit quaternions.
   EIGEN_STRONG_INLINE
   QuaternionType & unit_quaternion() {
     return unit_quaternion_;
   }
 
-protected:
   QuaternionType unit_quaternion_;
 };
 
