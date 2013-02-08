@@ -345,8 +345,8 @@ public:
 
   inline
   SE3Group()
+      : translation_( TranslationType::Zero() )
   {
-    translation_.setZero();
   }
 
   template<typename OtherDerived> inline

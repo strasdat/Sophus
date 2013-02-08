@@ -265,8 +265,8 @@ public:
   inline
   void setQuaternion(const QuaternionType& quaternion) {
     assert(quaternion.norm()!=static_cast<Scalar>(0));
-    unit_quaternion() = quaternion;
-    unit_quaternion().normalize();
+    unit_quaternion_nonconst() = quaternion;
+    unit_quaternion_nonconst().normalize();
   }
 
   template<typename NewScalarType>
@@ -312,8 +312,8 @@ public:
 
   inline SO3Group()
     // Initialize Quaternion to identity rotation
-    : unit_quaternion_(static_cast<Scalar>(0), static_cast<Scalar>(0),
-                       static_cast<Scalar>(0), static_cast<Scalar>(1)) {
+    : unit_quaternion_(static_cast<Scalar>(1), static_cast<Scalar>(0),
+                       static_cast<Scalar>(0), static_cast<Scalar>(0)) {
   }
 
   template<typename OtherDerived> inline
