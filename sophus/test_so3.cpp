@@ -1,6 +1,6 @@
 // This file is part of Sophus.
 //
-// Copyright 2012 Hauke Strasdat
+// Copyright 2012-2013 Hauke Strasdat
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -120,7 +120,9 @@ bool so3explog_tests() {
   for (size_t i=0; i<omegas.size(); ++i) {
     for (size_t j=0; j<omegas.size(); ++j) {
       Matrix3Scalar mul_resmat = (omegas[i]*omegas[j]).matrix();
-      SO3Scalar fastmul_res = omegas[i];
+      Scalar fastmul_res_raw[SO3Scalar::num_parameters];
+      Eigen::Map<SO3Scalar> fastmul_res(fastmul_res_raw);
+      fastmul_res = omegas[i];
       fastmul_res.fastMultiply(omegas[j]);
       Matrix3Scalar diff =  mul_resmat-fastmul_res.matrix();
       Scalar nrm = diff.norm();

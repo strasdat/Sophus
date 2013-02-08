@@ -80,10 +80,11 @@ public:
   typedef typename internal::traits<Derived>::Scalar Scalar;
   typedef typename internal::traits<Derived>::QuaternionType QuaternionType;
   static const int DoF = 3;
+  static const int num_parameters = 3;
 
   template<typename OtherDerived> inline
   SO3GroupBase<Derived>& operator=(const SO3GroupBase<OtherDerived> & other) {
-    unit_quaternion() = other.unit_quaternion();
+    unit_quaternion_nonconst() = other.unit_quaternion();
     return *this;
   }
 

@@ -92,6 +92,7 @@ public:
   typedef typename internal::traits<Derived>::TranslationType TranslationType;
   typedef typename internal::traits<Derived>::SO3Type SO3Type;
   static const int DoF = 6;
+  static const int num_parameters = 7;
 
   template<typename OtherDerived> inline
   SE3GroupBase<Derived>& operator = (const SE3GroupBase<OtherDerived> & other) {
