@@ -352,30 +352,30 @@ public:
   template<typename OtherDerived> inline
   SE3Group(const SO3GroupBase<OtherDerived> & so3,
            const Matrix<Scalar,3,1> & translation)
-    : translation_(translation), so3_(so3) {
+    : so3_(so3), translation_(translation) {
   }
 
   inline
   SE3Group(const Matrix3d & rotation_matrix,
            const Matrix<Scalar,3,1> & translation)
-    : translation_(translation), so3_(rotation_matrix) {
+    : so3_(rotation_matrix), translation_(translation) {
   }
 
   inline
   SE3Group(const Quaternion<Scalar> & quaternion,
            const Matrix<Scalar,3,1> & translation)
-    : translation_(translation), so3_(quaternion) {
+    : so3_(quaternion), translation_(translation) {
   }
 
   inline
   SE3Group(const Eigen::Matrix<Scalar,4,4>& T)
-    : translation_(T.template block<3,1>(0,3)),
-      so3_(T.template topLeftCorner<3,3>()) {
+    : so3_(T.template topLeftCorner<3,3>()),
+      translation_(T.template block<3,1>(0,3)) {
   }
 
   template<typename OtherDerived> inline
   SE3Group(const SE3GroupBase<OtherDerived> & other)
-    : translation_(other.translation()), so3_(other.so3()) {
+    : so3_(other.so3()), translation_(other.translation()) {
   }
 
   // GETTERS & SETTERS
@@ -402,21 +402,19 @@ public:
 
   EIGEN_STRONG_INLINE
   Scalar* data() {
-    // TODO: Check this is true
-    // translation_ and so3_ are layed out sequentially with no padding
-    return translation_.data();
+    // so3_ and translation_ are layed out sequentially with no padding
+    return so3_.data();
   }
 
   EIGEN_STRONG_INLINE
   const Scalar* data() const {
-    // TODO: Check this is true
-    // translation_ and so3_ are layed out sequentially with no padding
-    return translation_.data();
+      // so3_ and translation_ are layed out sequentially with no padding
+      return so3_.data();
   }
 
 protected:
-  TranslationType translation_;
   SO3Type so3_;
+  TranslationType translation_;
 };
 
 
@@ -446,7 +444,7 @@ public:
   using Base::operator*;
 
   EIGEN_STRONG_INLINE
-  Map(Scalar* coeffs) : translation_(coeffs), so3_(coeffs+3) {
+  Map(Scalar* coeffs) : so3_(coeffs), translation_(coeffs+4) {
   }
 
   // GETTERS & SETTERS
@@ -472,8 +470,8 @@ public:
   }
 
 protected:
-  TranslationType translation_;
   SO3Type so3_;
+  TranslationType translation_;
 };
 
 template<typename _Scalar, int _Options>
@@ -494,7 +492,7 @@ public:
 
   EIGEN_STRONG_INLINE
   Map(const Scalar* coeffs)
-    : translation_(coeffs), so3_(coeffs+3){
+    : so3_(coeffs), translation_(coeffs+4) {
   }
 
   EIGEN_STRONG_INLINE
