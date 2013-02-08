@@ -423,7 +423,7 @@ protected:
 ////////////////////////////////////////////////////////////////////////////
 // Specialisation of Eigen::Map for SE3GroupBase
 // Allows us to wrap SE3 Objects around POD array
-// (e.g. external c style xyz vector + quaternion)
+// (e.g. external c style quaternion + xyz vector)
 ////////////////////////////////////////////////////////////////////////////
 
 namespace Eigen {
