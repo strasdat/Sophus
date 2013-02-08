@@ -276,11 +276,11 @@ public:
   }
 
   inline Scalar* data() {
-    return unit_quaternion().data();
+    return unit_quaternion_nonconst().coeffs().data();
   }
 
   inline const Scalar* data() const {
-    return unit_quaternion().data();
+    return unit_quaternion().coeffs().data();
   }
 
 private:
