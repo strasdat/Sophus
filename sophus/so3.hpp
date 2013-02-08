@@ -397,7 +397,7 @@ protected:
   // Nonconst accessor of unit_quaternion is protected so users are hampered
   // from setting non-unit quaternions.
   EIGEN_STRONG_INLINE
-  QuaternionType & unit_quaternion() {
+  QuaternionType & unit_quaternion_nonconst() {
     return unit_quaternion_;
   }
 
