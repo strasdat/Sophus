@@ -1,7 +1,7 @@
 // This file is part of Sophus.
 //
-// Copyright 2011 Hauke Strasdat (Imperial College London)
-//           2012 Steven Lovegrove, Hauke Strasdat
+// Copyright 2011-2013 Hauke Strasdat
+// Copyrifht 2012-2013 Steven Lovegrove
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -33,8 +33,8 @@
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SO3Group;
 typedef SOPHUS_DEPRECATED SO3Group<double> SO3;
-typedef SO3Group<double> SO3d;
-typedef SO3Group<float> SO3f;
+typedef SO3Group<double> SO3d; /**< double precision SO3 */
+typedef SO3Group<float> SO3f;  /**< single precision SO3 */
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -70,36 +70,138 @@ struct traits<Map<const Sophus::SO3Group<_Scalar>, _Options> >
 namespace Sophus {
 using namespace Eigen;
 
-////////////////////////////////////////////////////////////////////////////
-// SO3GroupBase type - implements SO3 class but is storage agnostic
-////////////////////////////////////////////////////////////////////////////
-
+/**
+ * \brief SO3 base type - implements SO3 class but is storage agnostic
+ *
+ * [add more detailed description/tutorial]
+ */
 template<typename Derived>
 class SO3GroupBase {
 public:
   typedef typename internal::traits<Derived>::Scalar Scalar;
   typedef typename internal::traits<Derived>::QuaternionType QuaternionType;
+  /** \brief degree of freedom of group */
   static const int DoF = 3;
+  /** \brief number of internal parameters used */
   static const int num_parameters = 3;
 
+  /**
+   * \brief Adjoint transformation
+   *
+   * This function return the adjoint transformation \f$ Ad \f$ of the
+   * group instance \f$ A \f$  such that for all \f$ x \f$
+   * it holds that \f$ \widehat{Ad_A\cdot x} = A\widehat{x}A^{-1} \f$
+   * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
+   *
+   * For SO3, it simply returns the rotation matrix corresponding to \f$ A \f$.
+   */
+  inline
+  const Matrix<Scalar,3,3> Adj() const {
+    return matrix();
+  }
+
+  /**
+   * \returns copy of instance casted to NewScalarType
+   */
+  template<typename NewScalarType>
+  inline SO3Group<NewScalarType> cast() const {
+    return SO3Group<NewScalarType>(unit_quaternion()
+                                   .template cast<NewScalarType>() );
+  }
+
+  /**
+   * \returns pointer to internal data
+   *
+   * This provides unsafe read/write access to internal data. SO3 is represented
+   * by an Eigen::Quaternion (four parameters). When using direct write access,
+   * the user needs to take care of that the quaternion stays normalized.
+   *
+   * Note: The first three Scalars represent the imaginary parts, while the
+   * forth Scalar represent the real part.
+   *
+   * \see normalize()
+   */
+  inline Scalar* data() {
+    return unit_quaternion_nonconst().coeffs().data();
+  }
+
+  /**
+   * \returns const pointer to internal data
+   *
+   * Const version of data().
+   */
+  inline const Scalar* data() const {
+    return unit_quaternion().coeffs().data();
+  }
+
+  /**
+   * \brief Fast group multiplication
+   *
+   * This method is a fast version of operator*=(), since it does not perform
+   * normalization. It is up to the user to call normalize() once in a while.
+   *
+   * \see operator*=()
+   */
+  inline
+  void fastMultiply(const SO3Group<Scalar>& other) {
+    unit_quaternion_nonconst() *= other.unit_quaternion();
+  }
+
+  /**
+   * \returns group inverse of instance
+   */
+  inline
+  const SO3Group<Scalar> inverse() const {
+    return SO3Group<Scalar>(unit_quaternion().conjugate());
+  }
+
+  /**
+   * \brief Logarithmic map
+   *
+   * \returns tangent space representation (=rotation vector) of instance
+   *
+   * \see  log().
+   */
+  inline
+  const Matrix<Scalar,3,1> log() const {
+    return SO3Group<Scalar>::log(*this);
+  }
+
+  /**
+   * \brief Normalize quaternion
+   *
+   * It re-normalizes unit_quaternion to unit length. This method only needs to
+   * be called in conjunction with fastMultiply() or data() write access.
+   */
+  inline
+  void normalize() {
+    unit_quaternion_nonconst().normalize();
+  }
+
+  /**
+   * \returns 3x3 matrix representation of instance
+   *
+   * For SO3, the matrix representation is an orthogonal matrix R with det(R)=1,
+   * thus the so-called rotation matrix.
+   */
+  inline
+  const Matrix<Scalar,3,3> matrix() const {
+    return unit_quaternion().toRotationMatrix();
+  }
+
+  /**
+   * \brief Assignment operator
+   */
   template<typename OtherDerived> inline
   SO3GroupBase<Derived>& operator=(const SO3GroupBase<OtherDerived> & other) {
     unit_quaternion_nonconst() = other.unit_quaternion();
     return *this;
   }
 
-  inline
-  void normalize() {
-    unit_quaternion_nonconst().normalize();
-  }
-
-  template<typename Other> inline
-  SO3GroupBase<Other>& operator*=(const SO3GroupBase<Other>& other) {
-    unit_quaternion_nonconst() *= other.unit_quaternion();
-    normalize();
-    return *this;
-  }
-
+  /**
+   * \brief Group multiplication
+   * \see operator*=()
+   */
   inline
   const SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
     SO3Group<Scalar> result(*this);
@@ -107,34 +209,166 @@ public:
     return result;
   }
 
-  // Fast multiplication without normalization
-  // It is up to the user to call normalize() once in a while.
+  /**
+   * \brief Group action on \f$ \mathbf{R}^3 \f$
+   *
+   * \param p point \f$p \in \mathbf{R}^3 \f$
+   * \returns point \f$p' \in \mathbf{R}^3 \f$, rotated version of \f$p\f$
+   *
+   * This function rotates a point \f$ p \f$ in  \f$ \mathbf{R}^3 \f$ by the
+   * SO3 transformation \f$R\f$ (=rotation matrix): \f$ p' = R\cdot p \f$.
+   *
+   *
+   * Since SO3 is intenally represented by a unit quaternion \f$q\f$, it is
+   * implemented as \f$ p' = q\cdot p \cdot q^{*} \f$
+   * with \f$ q^{*} \f$ being the quaternion conjugate of \f$ q \f$.
+   *
+   * Geometrically, \f$ p \f$  is rotated by angle \f$|\omega|\f$ around the
+   * axis \f$\frac{\omega}{|\omega|}\f$ with \f$ \omega = \log(R)^\vee \f$.
+   *
+   * \see log()
+   */
   inline
-  void fastMultiply(const SO3Group<Scalar>& other) {
+  const Matrix<Scalar,3,1> operator*(const Matrix<Scalar,3,1> & p) const {
+    return unit_quaternion()._transformVector(p);
+  }
+
+  /**
+   * \brief In-place group multiplication
+   *
+   * \see fastMultiply()
+   * \see operator*()
+   */
+  inline
+  void operator*=(const SO3Group<Scalar>& other) {
     unit_quaternion_nonconst() *= other.unit_quaternion();
+    normalize();
   }
 
+  /**
+   * \brief Setter of internal unit quaternion representation
+   *
+   * \param quaternion
+   * \pre   the quaternion must not be zero
+   *
+   * The quaternion is normalized to unit length.
+   */
   inline
-  const Matrix<Scalar,3,1> operator*(const Matrix<Scalar,3,1> & xyz) const {
-    return unit_quaternion()._transformVector(xyz);
+  void setQuaternion(const QuaternionType& quaternion) {
+    assert(quaternion.norm()!=static_cast<Scalar>(0));
+    unit_quaternion_nonconst() = quaternion;
+    unit_quaternion_nonconst().normalize();
   }
 
-  inline
-  const SO3Group<Scalar> inverse() const {
-    return SO3Group<Scalar>(unit_quaternion().conjugate());
+  /**
+   * \brief Read access to unit quaternion
+   *
+   * No direct write access is given to ensure the quaternion stays normalized.
+   */
+  EIGEN_STRONG_INLINE
+  const QuaternionType& unit_quaternion() const {
+    return static_cast<const Derived*>(this)->unit_quaternion();
   }
 
-  inline
-  const Matrix<Scalar,3,3> matrix() const {
-    return unit_quaternion().toRotationMatrix();
+  ////////////////////////////////////////////////////////////////////////////
+  // public static functions
+  ////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * \param   b 3-vector representation of Lie algebra element
+   * \returns   derivative of Lie bracket
+   *
+   * This function returns \f$ \frac{\partial}{\partial a} [a, b]_{so3} \f$
+   * with \f$ [a, b]_{so3} \f$ being the lieBracket() of the Lie algebra so3.
+   *
+   * \see lieBracket()
+   */
+  inline static
+  const Matrix<Scalar,3,3> d_lieBracketab_by_d_a(const Matrix<Scalar,3,1> & b) {
+    return -hat(b);
   }
 
-  inline
-  const Matrix<Scalar,3,3> Adj() const {
-    return matrix();
+  /**
+   * \brief Group exponential
+   *
+   * \param omega tangent space element (=rotation vector \f$ \omega \f$)
+   * \returns     corresponding element of the group SO3
+   *
+   * To be more specific, this function computes \f$ \exp(\widehat{\omega}) \f$
+   * with \f$ \exp(\cdot) \f$ being the matrix exponential
+   * and \f$ \widehat{\cdot} \f$ the hat()-operator of SO3.
+   *
+   * \see expAndTheta()
+   * \see hat()
+   * \see log()
+   */
+  inline static
+  const SO3Group<Scalar> exp(const Matrix<Scalar,3,1> & omega) {
+    Scalar theta;
+    return expAndTheta(omega, &theta);
   }
 
-  inline
+  /**
+   * \brief Group exponential and theta
+   *
+   * \param      omega tangent space element (=rotation vector \f$ \omega \f$)
+   * \param[out] theta angle of rotation \f$ \theta = |\omega| \f$
+   * \returns          corresponding element of the group SO3
+   *
+   * \see exp() for details
+   */
+  inline static
+  const SO3Group<Scalar> expAndTheta(const Matrix<Scalar,3,1> & omega,
+                                     Scalar * theta) {
+    const Scalar theta_sq = omega.squaredNorm();
+    *theta = sqrt(theta_sq);
+    const Scalar half_theta = 0.5*(*theta);
+
+    Scalar imag_factor;
+    Scalar real_factor;;
+    if((*theta)<SophusConstants<Scalar>::epsilon()) {
+      const Scalar theta_po4 = theta_sq*theta_sq;
+      imag_factor = 0.5 - (1.0/48.0)*theta_sq + (1.0/3840.0)*theta_po4;
+      real_factor = static_cast<Scalar>(1)
+                    - static_cast<Scalar>(0.5)*theta_sq +
+                    static_cast<Scalar>(1.0/384.0)*theta_po4;
+    } else {
+      const Scalar sin_half_theta = sin(half_theta);
+      imag_factor = sin_half_theta/(*theta);
+      real_factor = cos(half_theta);
+    }
+
+    return SO3Group<Scalar>(QuaternionType(real_factor,
+                                           imag_factor*omega.x(),
+                                           imag_factor*omega.y(),
+                                           imag_factor*omega.z()));
+  }
+
+  /**
+   * \pre \f$ i \in \{0,1,2\} \f$
+   * \returns \f$ i \f$th generator \f$ G_i \f$ of SO3
+   *
+   * The infitesimal generators of SO3
+   * are \f$
+   *        G_0 = \left( \begin{array}{ccc}
+   *                          0&  0&  0& \\
+   *                          0&  0& -1& \\
+   *                          0&  1&  0&
+   *                     \end{array} \right),
+   *        G_1 = \left( \begin{array}{ccc}
+   *                          0&  0&  1& \\
+   *                          0&  0&  0& \\
+   *                         -1&  0&  0&
+   *                     \end{array} \right),
+   *        G_2 = \left( \begin{array}{ccc}
+   *                          0& -1&  0& \\
+   *                          1&  0&  0& \\
+   *                          0&  0&  0&
+   *                     \end{array} \right).
+   * \f$
+   * \see hat()
+   */
+  inline static
   const Matrix<Scalar,3,3> generator(int i) {
     assert(i>=0 && i<3);
     Matrix<Scalar,3,1> e;
@@ -143,21 +377,93 @@ public:
     return hat(e);
   }
 
-  inline
-  const Matrix<Scalar,3,1> log() const {
-    return SO3Group<Scalar>::log(*this);
+  /**
+   * \brief Hat-operator
+   *
+   * \param omega 3-vector representation of Lie algebra element
+   * \returns     3x3-matrix representatin of Lie algebra element
+   *
+   * Formally, the hat-operator of SO3 is defined
+   * as \f$ \widehat{\cdot}: \mathbf{R}^3 \rightarrow \mathbf{R}^{3\times 3},
+   * \quad \widehat{\omega} = \sum_{i=0}^2 G_i \omega_i \f$
+   * with \f$ G_i \f$ being the ith infinitesial generator().
+   *
+   * \see generator()
+   * \see vee()
+   */
+  inline static
+  const Matrix<Scalar,3,3> hat(const Matrix<Scalar,3,1> & omega) {
+    Matrix<Scalar,3,3> Omega;
+    Omega <<  static_cast<Scalar>(0), -omega(2),  omega(1)
+        ,  omega(2),     static_cast<Scalar>(0), -omega(0)
+        , -omega(1),  omega(0),     static_cast<Scalar>(0);
+    return Omega;
   }
 
+  /**
+   * \brief Lie bracket
+   *
+   * \param omega1 3-vector representation of Lie algebra element
+   * \param omega2 3-vector representation of Lie algebra element
+   * \returns      3-vector representation of Lie algebra element
+   *
+   * It computes the bracket of SO3. To be more specific, it
+   * computes \f$ [\omega_1, \omega_2]_{so3}
+   * := [\widehat{\omega_1}, \widehat{\omega_2}]^\vee \f$
+   * with \f$ [A,B] = AB-BA \f$ being the matrix
+   * commutator, \f$ \widehat{\cdot} \f$ the
+   * hat()-operator and \f$ (\cdot)^\vee \f$ the vee()-operator of SO3.
+   *
+   * For the Lie algebra so3, the Lie bracket is simply the
+   * cross product: \f$ [\omega_1, \omega_2]_{so3}
+   *                    = \omega_1 \times \omega_2 \f$.
+   *
+   * \see hat()
+   * \see vee()
+   */
+  inline static
+  const Matrix<Scalar,3,1> lieBracket(const Matrix<Scalar,3,1> & omega1,
+                                      const Matrix<Scalar,3,1> & omega2) {
+    return omega1.cross(omega2);
+  }
+
+  /**
+   * \brief Logarithmic map
+   *
+   * \param other element of the group SO3
+   * \returns     corresponding tangent space element
+   *              (=rotation vector \f$ \omega \f$)
+   *
+   * Computes the logarithmic, the inverse of the group exponential.
+   * To be specific, this function computes \f$ \log({\cdot})^\vee \f$
+   * with \f$ \vee(\cdot) \f$ being the matrix logarithm
+   * and \f$ \vee{\cdot} \f$ the vee()-operator of SO3.
+   *
+   * \see exp()
+   * \see logAndTheta()
+   * \see vee()
+   */
   inline static
   const Matrix<Scalar,3,1> log(const SO3Group<Scalar> & other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
 
+  /**
+   * \brief Logarithmic map and theta
+   *
+   * \param      other element of the group SO3
+   * \param[out] theta         angle of rotation \f$ \theta = |\omega| \f$
+   * \returns                  corresponding tangent space element
+   *                           (=rotation vector \f$ \omega \f$)
+   *
+   * \see log() for details
+   */
   inline static
   const Matrix<Scalar,3,1> logAndTheta(const SO3Group<Scalar> & other,
-                                 Scalar * theta) {
-    const Scalar squared_n = other.unit_quaternion().vec().squaredNorm();
+                                       Scalar * theta) {
+    const Scalar squared_n
+        = other.unit_quaternion().vec().squaredNorm();
     const Scalar n = sqrt(squared_n);
     const Scalar w = other.unit_quaternion().w();
 
@@ -194,93 +500,22 @@ public:
     return two_atan_nbyw_by_n * other.unit_quaternion().vec();
   }
 
-  inline static
-  const SO3Group<Scalar> exp(const Matrix<Scalar,3,1> & omega) {
-    Scalar theta;
-    return expAndTheta(omega, &theta);
-  }
-
-  inline static
-  const SO3Group<Scalar> expAndTheta(const Matrix<Scalar,3,1> & omega,
-                               Scalar * theta) {
-    const Scalar theta_sq = omega.squaredNorm();
-    *theta = sqrt(theta_sq);
-    const Scalar half_theta = 0.5*(*theta);
-
-    Scalar imag_factor;
-    Scalar real_factor;;
-    if((*theta)<SophusConstants<Scalar>::epsilon()) {
-      const Scalar theta_po4 = theta_sq*theta_sq;
-      imag_factor = 0.5 - (1.0/48.0)*theta_sq + (1.0/3840.0)*theta_po4;
-      real_factor = static_cast<Scalar>(1)
-                    - static_cast<Scalar>(0.5)*theta_sq +
-                    static_cast<Scalar>(1.0/384.0)*theta_po4;
-    } else {
-      const Scalar sin_half_theta = sin(half_theta);
-      imag_factor = sin_half_theta/(*theta);
-      real_factor = cos(half_theta);
-    }
-
-    return SO3Group<Scalar>(QuaternionType(real_factor,
-                                           imag_factor*omega.x(),
-                                           imag_factor*omega.y(),
-                                           imag_factor*omega.z()));
-  }
-
-  inline static
-  const Matrix<Scalar,3,3> hat(const Matrix<Scalar,3,1> & v) {
-    Matrix<Scalar,3,3> Omega;
-    Omega <<  static_cast<Scalar>(0), -v(2),  v(1)
-        ,  v(2),     static_cast<Scalar>(0), -v(0)
-        , -v(1),  v(0),     static_cast<Scalar>(0);
-    return Omega;
-  }
-
+  /**
+   * \brief Vee-operator
+   *
+   * \param Omega 3x3-matrix representation of Lie algebra element
+   * \returns     3-vector representatin of Lie algebra element
+   *
+   * This is the inverse of the hat()-operator.
+   *
+   * \see hat()
+   */
   inline static
   const Matrix<Scalar,3,1> vee(const Matrix<Scalar,3,3> & Omega) {
     assert(fabs(Omega(2,1)+Omega(1,2)) < SophusConstants<Scalar>::epsilon());
     assert(fabs(Omega(0,2)+Omega(2,0)) < SophusConstants<Scalar>::epsilon());
     assert(fabs(Omega(1,0)+Omega(0,1)) < SophusConstants<Scalar>::epsilon());
     return Matrix<Scalar,3,1>(Omega(2,1), Omega(0,2), Omega(1,0));
-  }
-
-  inline static
-  const Matrix<Scalar,3,1> lieBracket(const Matrix<Scalar,3,1> & omega1,
-                                const Matrix<Scalar,3,1> & omega2) {
-    return omega1.cross(omega2);
-  }
-
-  inline static
-  const Matrix<Scalar,3,3> d_lieBracketab_by_d_a(const Matrix<Scalar,3,1> & b) {
-    return -hat(b);
-  }
-
-  // GETTERS & SETTERS
-
-  EIGEN_STRONG_INLINE
-  const QuaternionType& unit_quaternion() const {
-    return static_cast<const Derived*>(this)->unit_quaternion();
-  }
-
-  inline
-  void setQuaternion(const QuaternionType& quaternion) {
-    assert(quaternion.norm()!=static_cast<Scalar>(0));
-    unit_quaternion_nonconst() = quaternion;
-    unit_quaternion_nonconst().normalize();
-  }
-
-  template<typename NewScalarType>
-  inline SO3Group<NewScalarType> cast() const {
-    return SO3Group<NewScalarType>(unit_quaternion()
-                                   .template cast<NewScalarType>() );
-  }
-
-  inline Scalar* data() {
-    return unit_quaternion_nonconst().coeffs().data();
-  }
-
-  inline const Scalar* data() const {
-    return unit_quaternion().coeffs().data();
   }
 
 private:
@@ -293,10 +528,9 @@ private:
 
 };
 
-////////////////////////////////////////////////////////////////////////////
-// SO3Group type - Constructors and default storage for SO3 Type
-////////////////////////////////////////////////////////////////////////////
-
+/**
+ * \brief SO3 default type - Constructors and default storage for SO3 Type
+ */
 template<typename _Scalar, int _Options>
 class SO3Group : public SO3GroupBase<SO3Group<_Scalar,_Options> > {
 public:
@@ -310,36 +544,69 @@ public:
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+  /**
+   * \brief Default constructor
+   *
+   * Initialize Quaternion to identity rotation.
+   */
   inline SO3Group()
-    // Initialize Quaternion to identity rotation
     : unit_quaternion_(static_cast<Scalar>(1), static_cast<Scalar>(0),
                        static_cast<Scalar>(0), static_cast<Scalar>(0)) {
   }
 
+  /**
+   * \brief Copy constructor
+   */
   template<typename OtherDerived> inline
   SO3Group(const SO3GroupBase<OtherDerived> & other)
     : unit_quaternion_(other.unit_quaternion()) {
   }
 
-
+  /**
+   * \brief Constructor from rotation matrix
+   *
+   * \pre rotation matrix need to be orthogonal with determinant of 1
+   */
   inline SO3Group(const Matrix<Scalar,3,3> & R) : unit_quaternion_(R) {
   }
 
+  /**
+   * \brief Constructor from quaternion
+   *
+   * \pre quaternion must not be zero
+   */
   inline SO3Group(const QuaternionType & quat) : unit_quaternion_(quat) {
     assert(unit_quaternion_.squaredNorm() > SophusConstants<Scalar>::epsilon());
     unit_quaternion_.normalize();
   }
 
-  inline SO3Group(Scalar rot_x, Scalar rot_y, Scalar rot_z) {
+  /**
+   * \brief Constructor from Euler angles
+   *
+   * \param alpha1 rotation around x-axis
+   * \param alpha2 rotation around y-axis
+   * \param alpha3 rotation around z-axis
+   *
+   * Since rotations in 3D do not commute, the order of the individual rotations
+   * matter. Here, the following convention is used. We calculate a SO3 member
+   * corresponding to the rotation matrix \f$ R \f$ such
+   * that \f$ R=\exp\left(\begin{array}{c}\alpha_1\\ 0\\ 0\end{array}\right)
+   *    \cdot   \exp\left(\begin{array}{c}0\\ \alpha_2\\ 0\end{array}\right)
+   *    \cdot   \exp\left(\begin{array}{c}0\\ 0\\ \alpha_3\end{array}\right)\f$.
+   */
+  inline SO3Group(Scalar alpha1, Scalar alpha2, Scalar alpha3) {
     unit_quaternion_
-        = (SO3Group::exp(Matrix<Scalar,3,1>(rot_x, 0.f, 0.f))
-           *SO3Group::exp(Matrix<Scalar,3,1>(0.f, rot_y, 0.f))
-           *SO3Group::exp(Matrix<Scalar,3,1>(0.f, 0.f, rot_z)))
+        = ( SO3Group::exp(Matrix<Scalar,3,1>(alpha1, 0.f, 0.f))
+           *SO3Group::exp(Matrix<Scalar,3,1>(0.f, alpha2, 0.f))
+           *SO3Group::exp(Matrix<Scalar,3,1>(0.f, 0.f, alpha3)) )
           .unit_quaternion_;
   }
 
-  // GETTERS & SETTERS
-
+  /**
+   * \brief Read access to unit quaternion
+   *
+   * No direct write access is given to ensure the quaternion stays normalized.
+   */
   EIGEN_STRONG_INLINE
   const QuaternionType & unit_quaternion() const {
     return unit_quaternion_;
@@ -358,14 +625,14 @@ protected:
 
 } // end namespace
 
-////////////////////////////////////////////////////////////////////////////
-// Specialisation of Eigen::Map for SO3GroupBase
-// Allows us to wrap SO3 Objects around POD array
-// (e.g. external c style quaternion)
-////////////////////////////////////////////////////////////////////////////
 
 namespace Eigen {
-
+/**
+ * \brief Specialisation of Eigen::Map for SO3GroupBase
+ *
+ * Allows us to wrap SO3 Objects around POD array
+ * (e.g. external c style quaternion)
+ */
 template<typename _Scalar, int _Options>
 class Map<Sophus::SO3Group<_Scalar>, _Options>
     : public Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> > {
@@ -386,8 +653,11 @@ public:
   Map(Scalar* coeffs) : unit_quaternion_(coeffs) {
   }
 
-  // GETTERS & SETTERS
-
+  /**
+   * \brief Read access to unit quaternion
+   *
+   * No direct write access is given to ensure the quaternion stays normalized.
+   */
   EIGEN_STRONG_INLINE
   const QuaternionType & unit_quaternion() const {
     return unit_quaternion_;
@@ -404,6 +674,12 @@ protected:
   QuaternionType unit_quaternion_;
 };
 
+/**
+ * \brief Specialisation of Eigen::Map for const SO3GroupBase
+ *
+ * Allows us to wrap SO3 Objects around POD array
+ * (e.g. external c style quaternion)
+ */
 template<typename _Scalar, int _Options>
 class Map<const Sophus::SO3Group<_Scalar>, _Options>
     : public Sophus::SO3GroupBase<
@@ -419,12 +695,15 @@ public:
   using Base::operator*=;
   using Base::operator*;
 
-  // GETTERS & SETTERS
-
   EIGEN_STRONG_INLINE
   Map(const Scalar* coeffs) : unit_quaternion_(coeffs) {
   }
 
+  /**
+   * \brief Read access to unit quaternion
+   *
+   * No direct write access is given to ensure the quaternion stays normalized.
+   */
   EIGEN_STRONG_INLINE
   const QuaternionType & unit_quaternion() const {
     return unit_quaternion_;
