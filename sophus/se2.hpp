@@ -345,14 +345,14 @@ public:
   /**
    * \brief Group exponential
    *
-   * \param v tangent space element (3-vector)
+   * \param a tangent space element (3-vector)
    * \returns corresponding element of the group SE2
    *
-   * The first two components of v represent the translational
-   * part \f$ \upsilon \f$ on the tangent space SE2, while the last components
-   * of v is the rotation angle \f$ \theta \f$.
+   * The first two components of \f$ a \f$ represent the translational
+   * part \f$ \upsilon \f$ in the tangent space of SE2, while the last
+   * components of \f$ a \f$ is the rotation angle \f$ \theta \f$.
    *
-   * To be more specific, this function computes \f$ \exp(\widehat{v}) \f$
+   * To be more specific, this function computes \f$ \exp(\widehat{a}) \f$
    * with \f$ \exp(\cdot) \f$ being the matrix exponential
    * and \f$ \widehat{\cdot} \f$ the hat()-operator of SE2.
    *
@@ -360,9 +360,9 @@ public:
    * \see log()
    */
   inline static
-  const SE2Group<Scalar> exp(const Matrix<Scalar,3,1> & v) {
-    Matrix<Scalar,2,1> upsilon = v.template head<2>();
-    Scalar theta = v[2];
+  const SE2Group<Scalar> exp(const Matrix<Scalar,3,1> & a) {
+    Matrix<Scalar,2,1> upsilon = a.template head<2>();
+    Scalar theta = a[2];
     SO2Type so2 = SO2Type::exp(theta);
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;

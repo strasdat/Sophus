@@ -351,14 +351,14 @@ public:
   /**
    * \brief Group exponential
    *
-   * \param v tangent space element (6-vector)
+   * \param a tangent space element (6-vector)
    * \returns corresponding element of the group SE3
    *
-   * The first three components of v represent the translational
-   * part \f$ \upsilon \f$ on the tangent space SE3, while the last three
-   * components of v represents the rotation vector \f$ \omega \f$.
+   * The first three components of \f$ a \f$ represent the translational
+   * part \f$ \upsilon \f$ in the tangent space of SE3, while the last three
+   * components of \f$ a \f$ represents the rotation vector \f$ \omega \f$.
    *
-   * To be more specific, this function computes \f$ \exp(\widehat{v}) \f$
+   * To be more specific, this function computes \f$ \exp(\widehat{a}) \f$
    * with \f$ \exp(\cdot) \f$ being the matrix exponential
    * and \f$ \widehat{\cdot} \f$ the hat()-operator of SE3.
    *
@@ -366,9 +366,9 @@ public:
    * \see log()
    */
   inline static
-  const SE3Group<Scalar> exp(const Matrix<Scalar,6,1> & v) {
-    Matrix<Scalar,3,1> upsilon = v.template head<3>();
-    Matrix<Scalar,3,1> omega = v.template tail<3>();
+  const SE3Group<Scalar> exp(const Matrix<Scalar,6,1> & a) {
+    Matrix<Scalar,3,1> upsilon = a.template head<3>();
+    Matrix<Scalar,3,1> omega = a.template tail<3>();
 
     Scalar theta;
     SO3Group<Scalar> so3 = SO3Group<Scalar>::expAndTheta(omega, &theta);
