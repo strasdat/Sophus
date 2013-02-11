@@ -348,9 +348,9 @@ public:
    * \param v tangent space element (3-vector)
    * \returns corresponding element of the group SE2
    *
-   * The first two components of v represent the translational part $\upsilon$
-   * on the tangent space SE2, while the last components of v is the
-   * rotation angle $\theta$
+   * The first two components of v represent the translational
+   * part \f$ \upsilon \f$ on the tangent space SE2, while the last components
+   * of v is the rotation angle \f$ \theta \f$.
    *
    * To be more specific, this function computes \f$ \exp(\widehat{v}) \f$
    * with \f$ \exp(\cdot) \f$ being the matrix exponential

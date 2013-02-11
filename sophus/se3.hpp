@@ -354,9 +354,9 @@ public:
    * \param v tangent space element (6-vector)
    * \returns corresponding element of the group SE3
    *
-   * The first three components of v represent the translational part $\upsilon$
-   * on the tangent space SE3, while the last three components of v represents
-   * the rotation vector $\omega$
+   * The first three components of v represent the translational
+   * part \f$ \upsilon \f$ on the tangent space SE3, while the last three
+   * components of v represents the rotation vector \f$ \omega \f$.
    *
    * To be more specific, this function computes \f$ \exp(\widehat{v}) \f$
    * with \f$ \exp(\cdot) \f$ being the matrix exponential
