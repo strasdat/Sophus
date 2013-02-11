@@ -20,6 +20,9 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
+#ifndef SOPHUS_HPP
+#define SOPHUS_HPP
+
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
@@ -68,3 +71,5 @@ struct SophusConstants<float> {
 };
 
 }
+
+#endif

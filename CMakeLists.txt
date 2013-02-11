@@ -5,6 +5,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 SET (CMAKE_VERBOSE_MAKEFILE ON)
 
+# Release by default
+# Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"
 IF( NOT CMAKE_BUILD_TYPE )
    SET( CMAKE_BUILD_TYPE Release )
 ENDIF()
@@ -34,14 +36,15 @@ INCLUDE_DIRECTORIES( ${EIGEN3_INCLUDE_DIR} )
 SET( Sophus_INCLUDE_DIR ${Sophus_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} )
 
 SET (SOURCE_DIR "sophus")
-SET (CLASSES  so2
-              se2
-              scso3
+SET (CLASSES  scso3
               sim3
 )
 
-SET (TEMPLATES so3
+SET (TEMPLATES so2
+               se2
+               so3
                se3
+
 )
 
 SET (SOURCES ${SOURCE_DIR}/sophus.hpp)

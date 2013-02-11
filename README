@@ -1,7 +1,24 @@
+Sophus - CRTP branch
+
 C++ implementation of Lie Groups using Eigen.
 
-For a installation guideline, please refer to 
+Thanks to Steve Lovegrove, Sophus is now fully templated  - using the Curiously Recurring Template Pattern (CRTP).
 
-https://github.com/strasdat/ScaViSLAM
 
-for now.
+Installation guide:
+
+>>>
+cd Sophus
+mkdir build
+cd build
+cmake ..
+make
+<<<
+
+
+Create doxygen documentation:
+
+>>>
+cd sophus
+doxygen .
+<<< 
