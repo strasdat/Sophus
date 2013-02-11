@@ -147,14 +147,13 @@ public:
    */
   inline
   void fastMultiply(const SO2Group<Scalar>& other) {
-    const Scalar & lhs_real = unit_complex().x();
-    const Scalar & lhs_imag = unit_complex().y();
+    Scalar lhs_real = unit_complex().x();
+    Scalar lhs_imag = unit_complex().y();
     const Scalar & rhs_real = other.unit_complex().x();
     const Scalar & rhs_imag = other.unit_complex().y();
     // complex multiplication
-    unit_complex_nonconst()
-        = Matrix<Scalar,2,1>(lhs_real*rhs_real - lhs_imag*rhs_imag,
-                             lhs_real*rhs_imag + lhs_imag*rhs_real);
+    unit_complex_nonconst().x() = lhs_real*rhs_real - lhs_imag*rhs_imag;
+    unit_complex_nonconst().y() = lhs_real*rhs_imag + lhs_imag*rhs_real;
   }
 
   /**
