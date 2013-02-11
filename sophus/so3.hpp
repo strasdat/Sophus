@@ -241,7 +241,7 @@ public:
    */
   inline
   void operator*=(const SO3Group<Scalar>& other) {
-    unit_quaternion_nonconst() *= other.unit_quaternion();
+    fastMultiply(other);
     normalize();
   }
 
@@ -345,10 +345,12 @@ public:
   }
 
   /**
+   * \brief Generators
+   *
    * \pre \f$ i \in \{0,1,2\} \f$
    * \returns \f$ i \f$th generator \f$ G_i \f$ of SO3
    *
-   * The infitesimal generators of SO3
+   * The infinitesimal generators of SO3
    * are \f$
    *        G_0 = \left( \begin{array}{ccc}
    *                          0&  0&  0& \\
@@ -378,7 +380,7 @@ public:
   }
 
   /**
-   * \brief Hat-operator
+   * \brief hat-operator
    *
    * \param omega 3-vector representation of Lie algebra element
    * \returns     3x3-matrix representatin of Lie algebra element
@@ -453,9 +455,9 @@ public:
    * \brief Logarithmic map and theta
    *
    * \param      other element of the group SO3
-   * \param[out] theta         angle of rotation \f$ \theta = |\omega| \f$
-   * \returns                  corresponding tangent space element
-   *                           (=rotation vector \f$ \omega \f$)
+   * \param[out] theta angle of rotation \f$ \theta = |\omega| \f$
+   * \returns          corresponding tangent space element
+   *                   (=rotation vector \f$ \omega \f$)
    *
    * \see log() for details
    */
@@ -501,7 +503,7 @@ public:
   }
 
   /**
-   * \brief Vee-operator
+   * \brief vee-operator
    *
    * \param Omega 3x3-matrix representation of Lie algebra element
    * \returns     3-vector representatin of Lie algebra element

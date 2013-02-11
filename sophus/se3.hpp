@@ -241,8 +241,8 @@ public:
    */
   inline
   void operator*=(const SE3Group<Scalar>& other) {
-    translation() += so3()*(other.translation());
-    so3() *= other.so3();
+    fastMultiply(other);
+    normalize();
   }
 
 
@@ -390,10 +390,12 @@ public:
   }
 
   /**
+   * \brief Generators
+   *
    * \pre \f$ i \in \{0,1,2,3,4,5\} \f$
    * \returns \f$ i \f$th generator \f$ G_i \f$ of SE3
    *
-   * The infitesimal generators of SE3 are: \f[
+   * The infinitesimal generators of SE3 are: \f[
    *        G_0 = \left( \begin{array}{cccc}
    *                          0&  0&  0&  1\\
    *                          0&  0&  0&  0\\
@@ -443,7 +445,7 @@ public:
   }
 
   /**
-   * \brief Hat-operator
+   * \brief hat-operator
    *
    * \param omega 6-vector representation of Lie algebra element
    * \returns     4x4-matrix representatin of Lie algebra element
@@ -544,7 +546,7 @@ public:
   }
 
   /**
-   * \brief Vee-operator
+   * \brief vee-operator
    *
    * \param Omega 4x4-matrix representation of Lie algebra element
    * \returns     6-vector representatin of Lie algebra element
