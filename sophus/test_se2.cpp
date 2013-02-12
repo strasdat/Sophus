@@ -25,55 +25,56 @@
 
 #include <unsupported/Eigen/MatrixFunctions>
 #include "se2.hpp"
-#include "so3.hpp"
 
 using namespace Sophus;
 using namespace std;
 
 template<class Scalar>
 bool se2explog_tests() {
-  typedef SO2Group<Scalar> SO2Scalar;
-  typedef SE2Group<Scalar> SE2Scalar;
-  typedef Matrix<Scalar,2,1> Vector2Scalar;
-  typedef Matrix<Scalar,3,3> Matrix3Scalar;
+  typedef SO2Group<Scalar> SO2Type;
+  typedef SE2Group<Scalar> SE2Type;
+  typedef typename SE2Group<Scalar>::PointType PointType;
+  typedef typename SE2Group<Scalar>::TangentType TangentType;
+  typedef typename SE2Group<Scalar>::AdjointType AdjointType;
+  typedef typename SE2Group<Scalar>::TransformationType TransformationType;
   const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
   const Scalar PI = SophusConstants<Scalar>::pi();
 
-  vector<SE2Scalar> omegas;
-  omegas.push_back(SE2Scalar(SO2Scalar(0.0),Vector2Scalar(0,0)));
-  omegas.push_back(SE2Scalar(SO2Scalar(0.2),Vector2Scalar(10,0)));
-  omegas.push_back(SE2Scalar(SO2Scalar(0.),Vector2Scalar(0,100)));
-  omegas.push_back(SE2Scalar(SO2Scalar(-1.),Vector2Scalar(20,-1)));
-  omegas.push_back(SE2Scalar(SO2Scalar(0.00001),
-                            Vector2Scalar(-0.00000001,0.0000000001)));
-  omegas.push_back(SE2Scalar(SO2Scalar(0.2),Vector2Scalar(0,0))
-                   *SE2Scalar(SO2Scalar(PI),Vector2Scalar(0,0))
-                   *SE2Scalar(SO2Scalar(-0.2),Vector2Scalar(0,0)));
-  omegas.push_back(SE2Scalar(SO2Scalar(0.3),Vector2Scalar(2,0))
-                   *SE2Scalar(SO2Scalar(PI),Vector2Scalar(0,0))
-                   *SE2Scalar(SO2Scalar(-0.3),Vector2Scalar(0,6)));
+  vector<SE2Type> se2_vec;
+  se2_vec.push_back(SE2Type(SO2Type(0.0),PointType(0,0)));
+  se2_vec.push_back(SE2Type(SO2Type(0.2),PointType(10,0)));
+  se2_vec.push_back(SE2Type(SO2Type(0.),PointType(0,100)));
+  se2_vec.push_back(SE2Type(SO2Type(-1.),PointType(20,-1)));
+  se2_vec.push_back(SE2Type(SO2Type(0.00001),
+                            PointType(-0.00000001,0.0000000001)));
+  se2_vec.push_back(SE2Type(SO2Type(0.2),PointType(0,0))
+                   *SE2Type(SO2Type(PI),PointType(0,0))
+                   *SE2Type(SO2Type(-0.2),PointType(0,0)));
+  se2_vec.push_back(SE2Type(SO2Type(0.3),PointType(2,0))
+                   *SE2Type(SO2Type(PI),PointType(0,0))
+                   *SE2Type(SO2Type(-0.3),PointType(0,6)));
 
   bool failed = false;
 
-  for (size_t i=0; i<omegas.size(); ++i) {
-    Matrix3Scalar R1 = omegas[i].matrix();
-    Matrix3Scalar R2 = SE2Scalar::exp(omegas[i].log()).matrix();
-    Matrix3Scalar DiffR = R1-R2;
+  for (size_t i=0; i<se2_vec.size(); ++i) {
+    TransformationType R1 = se2_vec[i].matrix();
+    TransformationType R2 = SE2Type::exp(se2_vec[i].log()).matrix();
+    TransformationType DiffR = R1-R2;
     Scalar nrm = DiffR.norm();
 
     if (isnan(nrm) || nrm>SMALL_EPS) {
-      cerr << "SE2Scalar - exp(log(SE2Scalar))" << endl;
+      cerr << "SE2Type - exp(log(SE2Type))" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << DiffR <<endl;
       cerr << endl;
       failed = true;
     }
   }
-  for (size_t i=0; i<omegas.size(); ++i) {
-    Vector2Scalar p(1,2);
-    Matrix3Scalar T = omegas[i].matrix();
-    Vector2Scalar res1 = omegas[i]*p;
-    Vector2Scalar res2
+  for (size_t i=0; i<se2_vec.size(); ++i) {
+    PointType p(1,2);
+    TransformationType T = se2_vec[i].matrix();
+    PointType res1 = se2_vec[i]*p;
+    PointType res2
         = T.template topLeftCorner<2,2>()*p
         + T.template topRightCorner<2,1>();
     Scalar nrm = (res1-res2).norm();
@@ -87,12 +88,32 @@ bool se2explog_tests() {
       failed = true;
     }
   }
+  for (size_t i=0; i<se2_vec.size(); ++i) {
+    TransformationType T = se2_vec[i].matrix();
+    AdjointType Ad = se2_vec[i].Adj();
+    TangentType x;
+    x << 1,2,1;
+    TransformationType I;
+    I.setIdentity();
+    TangentType ad1 = Ad*x;
+    TangentType ad2 = SE2Type::vee(T*SE2Type::hat(x)
+                                     *se2_vec[i].inverse().matrix());
+    Scalar nrm = (ad1-ad2).norm();
 
-  for (size_t i=0; i<omegas.size(); ++i) {
-    Matrix3Scalar q = omegas[i].matrix();
-    Matrix3Scalar inv_q = omegas[i].inverse().matrix();
-    Matrix3Scalar res = q*inv_q ;
-    Matrix3Scalar I;
+    if (isnan(nrm) || nrm>SMALL_EPS) {
+      cerr << "Adjoint" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << Ad <<endl;
+      cerr << endl;
+      failed = true;
+    }
+  }
+  for (size_t i=0; i<se2_vec.size(); ++i) {
+    TransformationType q = se2_vec[i].matrix();
+    TransformationType inv_q = se2_vec[i].inverse().matrix();
+    TransformationType res = q*inv_q ;
+    TransformationType I;
     I.setIdentity();
 
     Scalar nrm = (res-I).norm();
@@ -107,14 +128,14 @@ bool se2explog_tests() {
     }
   }
 
-  for (size_t i=0; i<omegas.size(); ++i) {
-    for (size_t j=0; j<omegas.size(); ++j) {
-      Matrix3Scalar mul_resmat = (omegas[i]*omegas[j]).matrix();
-      Scalar fastmul_res_raw[SE2Scalar::num_parameters];
-      Eigen::Map<SE2Scalar> fastmul_res(fastmul_res_raw);
-      fastmul_res = omegas[i];
-      fastmul_res.fastMultiply(omegas[j]);
-      Matrix3Scalar diff =  mul_resmat-fastmul_res.matrix();
+  for (size_t i=0; i<se2_vec.size(); ++i) {
+    for (size_t j=0; j<se2_vec.size(); ++j) {
+      TransformationType mul_resmat = (se2_vec[i]*se2_vec[j]).matrix();
+      Scalar fastmul_res_raw[SE2Type::num_parameters];
+      Eigen::Map<SE2Type> fastmul_res(fastmul_res_raw);
+      fastmul_res = se2_vec[i];
+      fastmul_res.fastMultiply(se2_vec[j]);
+      TransformationType diff =  mul_resmat-fastmul_res.matrix();
       Scalar nrm = diff.norm();
       if (isnan(nrm) || nrm>SMALL_EPS) {
         cerr << "Fast multiplication" << endl;
@@ -131,14 +152,14 @@ bool se2explog_tests() {
 
 template<class Scalar>
 bool se2bracket_tests() {
-  typedef SE2Group<Scalar> SE2Scalar;
-  typedef Matrix<Scalar,3,1> Vector3Scalar;
-  typedef Matrix<Scalar,3,3> Matrix3Scalar;
+  typedef SE2Group<Scalar> SE2Type;
+  typedef typename SE2Group<Scalar>::TangentType TangentType;
+  typedef typename SE2Group<Scalar>::AdjointType AdjointType;
   const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
 
   bool failed = false;
-  vector<Vector3Scalar> vecs;
-  Vector3Scalar tmp;
+  vector<TangentType> vecs;
+  TangentType tmp;
   tmp << 0,0,0;
   vecs.push_back(tmp);
   tmp << 1,0,0;
@@ -152,7 +173,7 @@ bool se2bracket_tests() {
   tmp << 30,5,20;
   vecs.push_back(tmp);
   for (size_t i=0; i<vecs.size(); ++i) {
-    Vector3Scalar resDiff = vecs[i] - SE2Scalar::vee(SE2Scalar::hat(vecs[i]));
+    TangentType resDiff = vecs[i] - SE2Type::vee(SE2Type::hat(vecs[i]));
     if (resDiff.norm()>SMALL_EPS)
     {
       cerr << "Hat-vee Test" << endl;
@@ -162,14 +183,14 @@ bool se2bracket_tests() {
     }
 
     for (size_t j=0; j<vecs.size(); ++j) {
-      Vector3Scalar res1 = SE2Scalar::lieBracket(vecs[i],vecs[j]);
-      Matrix3Scalar hati = SE2Scalar::hat(vecs[i]);
-      Matrix3Scalar hatj = SE2Scalar::hat(vecs[j]);
+      TangentType res1 = SE2Type::lieBracket(vecs[i],vecs[j]);
+      AdjointType hati = SE2Type::hat(vecs[i]);
+      AdjointType hatj = SE2Type::hat(vecs[j]);
 
-      Vector3Scalar res2 = SE2Scalar::vee(hati*hatj-hatj*hati);
-      Vector3Scalar resDiff = res1-res2;
+      TangentType res2 = SE2Type::vee(hati*hatj-hatj*hati);
+      TangentType resDiff = res1-res2;
       if (resDiff.norm()>SMALL_EPS) {
-        cerr << "SE2Scalar Lie Bracket Test" << endl;
+        cerr << "SE2Type Lie Bracket Test" << endl;
         cerr  << "Test case: " << i << ", " <<j<< endl;
         cerr << vecs[i].transpose() << endl;
         cerr << vecs[j].transpose() << endl;
@@ -181,10 +202,10 @@ bool se2bracket_tests() {
       }
     }
 
-    Vector3Scalar omega = vecs[i];
-    Matrix3Scalar exp_x = SE2Scalar::exp(omega).matrix();
-    Matrix3Scalar expmap_hat_x = (SE2Scalar::hat(omega)).exp();
-    Matrix3Scalar DiffR = exp_x-expmap_hat_x;
+    TangentType omega = vecs[i];
+    AdjointType exp_x = SE2Type::exp(omega).matrix();
+    AdjointType expmap_hat_x = (SE2Type::hat(omega)).exp();
+    AdjointType DiffR = exp_x-expmap_hat_x;
     Scalar nrm = DiffR.norm();
 
     if (isnan(nrm) || nrm>SMALL_EPS) {

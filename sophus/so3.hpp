@@ -32,7 +32,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SO3Group;
-typedef SOPHUS_DEPRECATED SO3Group<double> SO3;
+typedef SOPHUS_DEPRECATED(SO3Group<double> SO3);
 typedef SO3Group<double> SO3d; /**< double precision SO3 */
 typedef SO3Group<float> SO3f;  /**< single precision SO3 */
 }
@@ -78,12 +78,28 @@ using namespace Eigen;
 template<typename Derived>
 class SO3GroupBase {
 public:
+  /** \brief scalar type */
   typedef typename internal::traits<Derived>::Scalar Scalar;
+  /** \brief quaternion type */
   typedef typename internal::traits<Derived>::QuaternionType QuaternionType;
-  /** \brief degree of freedom of group */
+
+
+  /** \brief degree of freedom of group
+   *         (three for rotation) */
   static const int DoF = 3;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = 3;
+  /** \brief number of internal parameters used
+   *         (unit quaternion for rotation) */
+  static const int num_parameters = 4;
+  /** \brief group transformations are NxN matrices */
+  static const int N = 3;
+  /** \brief group transfomation type */
+  typedef Matrix<Scalar,N,N> TransformationType;
+   /** \brief point type */
+  typedef Matrix<Scalar,3,1> PointType;
+   /** \brief tangent vector type */
+  typedef Matrix<Scalar,DoF,1> TangentType;
+   /** \brief adjoint transformation type */
+  typedef Matrix<Scalar,DoF,DoF> AdjointType;
 
   /**
    * \brief Adjoint transformation
@@ -91,12 +107,12 @@ public:
    * This function return the adjoint transformation \f$ Ad \f$ of the
    * group instance \f$ A \f$  such that for all \f$ x \f$
    * it holds that \f$ \widehat{Ad_A\cdot x} = A\widehat{x}A^{-1} \f$
-   * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
+   * with \f$\ \widehat{\cdot} \f$ being the hat()-Vector4Scalaror.
    *
    * For SO3, it simply returns the rotation matrix corresponding to \f$ A \f$.
    */
   inline
-  const Matrix<Scalar,3,3> Adj() const {
+  const AdjointType Adj() const {
     return matrix();
   }
 
@@ -163,7 +179,7 @@ public:
    * \see  log().
    */
   inline
-  const Matrix<Scalar,3,1> log() const {
+  const TangentType log() const {
     return SO3Group<Scalar>::log(*this);
   }
 
@@ -185,7 +201,7 @@ public:
    * thus the so-called rotation matrix.
    */
   inline
-  const Matrix<Scalar,3,3> matrix() const {
+  const TransformationType matrix() const {
     return unit_quaternion().toRotationMatrix();
   }
 
@@ -229,7 +245,7 @@ public:
    * \see log()
    */
   inline
-  const Matrix<Scalar,3,1> operator*(const Matrix<Scalar,3,1> & p) const {
+  const PointType operator*(const PointType & p) const {
     return unit_quaternion()._transformVector(p);
   }
 
@@ -284,7 +300,7 @@ public:
    * \see lieBracket()
    */
   inline static
-  const Matrix<Scalar,3,3> d_lieBracketab_by_d_a(const Matrix<Scalar,3,1> & b) {
+  const AdjointType d_lieBracketab_by_d_a(const TangentType & b) {
     return -hat(b);
   }
 
@@ -303,7 +319,7 @@ public:
    * \see log()
    */
   inline static
-  const SO3Group<Scalar> exp(const Matrix<Scalar,3,1> & omega) {
+  const SO3Group<Scalar> exp(const TangentType & omega) {
     Scalar theta;
     return expAndTheta(omega, &theta);
   }
@@ -318,7 +334,7 @@ public:
    * \see exp() for details
    */
   inline static
-  const SO3Group<Scalar> expAndTheta(const Matrix<Scalar,3,1> & omega,
+  const SO3Group<Scalar> expAndTheta(const TangentType & omega,
                                      Scalar * theta) {
     const Scalar theta_sq = omega.squaredNorm();
     *theta = sqrt(theta_sq);
@@ -371,9 +387,9 @@ public:
    * \see hat()
    */
   inline static
-  const Matrix<Scalar,3,3> generator(int i) {
+  const TransformationType generator(int i) {
     assert(i>=0 && i<3);
-    Matrix<Scalar,3,1> e;
+    TangentType e;
     e.setZero();
     e[i] = 1.f;
     return hat(e);
@@ -394,8 +410,8 @@ public:
    * \see vee()
    */
   inline static
-  const Matrix<Scalar,3,3> hat(const Matrix<Scalar,3,1> & omega) {
-    Matrix<Scalar,3,3> Omega;
+  const TransformationType hat(const TangentType & omega) {
+    TransformationType Omega;
     Omega <<  static_cast<Scalar>(0), -omega(2),  omega(1)
         ,  omega(2),     static_cast<Scalar>(0), -omega(0)
         , -omega(1),  omega(0),     static_cast<Scalar>(0);
@@ -424,8 +440,8 @@ public:
    * \see vee()
    */
   inline static
-  const Matrix<Scalar,3,1> lieBracket(const Matrix<Scalar,3,1> & omega1,
-                                      const Matrix<Scalar,3,1> & omega2) {
+  const TangentType lieBracket(const TangentType & omega1,
+                                      const TangentType & omega2) {
     return omega1.cross(omega2);
   }
 
@@ -446,7 +462,7 @@ public:
    * \see vee()
    */
   inline static
-  const Matrix<Scalar,3,1> log(const SO3Group<Scalar> & other) {
+  const TangentType log(const SO3Group<Scalar> & other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
@@ -462,7 +478,7 @@ public:
    * \see log() for details
    */
   inline static
-  const Matrix<Scalar,3,1> logAndTheta(const SO3Group<Scalar> & other,
+  const TangentType logAndTheta(const SO3Group<Scalar> & other,
                                        Scalar * theta) {
     const Scalar squared_n
         = other.unit_quaternion().vec().squaredNorm();
@@ -513,11 +529,11 @@ public:
    * \see hat()
    */
   inline static
-  const Matrix<Scalar,3,1> vee(const Matrix<Scalar,3,3> & Omega) {
+  const TangentType vee(const TransformationType & Omega) {
     assert(fabs(Omega(2,1)+Omega(1,2)) < SophusConstants<Scalar>::epsilon());
     assert(fabs(Omega(0,2)+Omega(2,0)) < SophusConstants<Scalar>::epsilon());
     assert(fabs(Omega(1,0)+Omega(0,1)) < SophusConstants<Scalar>::epsilon());
-    return Matrix<Scalar,3,1>(Omega(2,1), Omega(0,2), Omega(1,0));
+    return TangentType(Omega(2,1), Omega(0,2), Omega(1,0));
   }
 
 private:
@@ -535,11 +551,29 @@ private:
  */
 template<typename _Scalar, int _Options>
 class SO3Group : public SO3GroupBase<SO3Group<_Scalar,_Options> > {
+  typedef SO3GroupBase<SO3Group<_Scalar,_Options> > Base;
 public:
+  /** \brief scalar type */
   typedef typename internal::traits<SO3Group<_Scalar,_Options> >
   ::Scalar Scalar;
+  /** \brief quaternion type */
   typedef typename internal::traits<SO3Group<_Scalar,_Options> >
   ::QuaternionType QuaternionType;
+
+  /** \brief degree of freedom of group */
+  static const int DoF = Base::DoF;
+  /** \brief number of internal parameters used */
+  static const int num_parameters = Base::num_parameters;
+  /** \brief group transformations are NxN matrices */
+  static const int N = Base::N;
+  /** \brief group transfomation type */
+  typedef typename Base::TransformationType TransformationType;
+  /** \brief point type */
+  typedef typename Base::PointType PointType;
+  /** \brief tangent vector type */
+  typedef typename Base::TangentType TangentType;
+  /** \brief adjoint transformation type */
+  typedef typename Base::AdjointType AdjointType;
 
   // base is friend so unit_quaternion_nonconst can be accessed from base
   friend class SO3GroupBase<SO3Group<_Scalar,_Options> >;
@@ -551,7 +585,8 @@ public:
    *
    * Initialize Quaternion to identity rotation.
    */
-  inline SO3Group()
+  inline
+  SO3Group()
     : unit_quaternion_(static_cast<Scalar>(1), static_cast<Scalar>(0),
                        static_cast<Scalar>(0), static_cast<Scalar>(0)) {
   }
@@ -569,7 +604,8 @@ public:
    *
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
-  inline SO3Group(const Matrix<Scalar,3,3> & R) : unit_quaternion_(R) {
+  inline SO3Group(const TransformationType & R)
+    : unit_quaternion_(R) {
   }
 
   /**
@@ -577,7 +613,8 @@ public:
    *
    * \pre quaternion must not be zero
    */
-  inline SO3Group(const QuaternionType & quat) : unit_quaternion_(quat) {
+  inline explicit
+  SO3Group(const QuaternionType & quat) : unit_quaternion_(quat) {
     assert(unit_quaternion_.squaredNorm() > SophusConstants<Scalar>::epsilon());
     unit_quaternion_.normalize();
   }
@@ -596,11 +633,12 @@ public:
    *    \cdot   \exp\left(\begin{array}{c}0\\ \alpha_2\\ 0\end{array}\right)
    *    \cdot   \exp\left(\begin{array}{c}0\\ 0\\ \alpha_3\end{array}\right)\f$.
    */
-  inline SO3Group(Scalar alpha1, Scalar alpha2, Scalar alpha3) {
+  inline
+  SO3Group(Scalar alpha1, Scalar alpha2, Scalar alpha3) {
     unit_quaternion_
-        = ( SO3Group::exp(Matrix<Scalar,3,1>(alpha1, 0.f, 0.f))
-           *SO3Group::exp(Matrix<Scalar,3,1>(0.f, alpha2, 0.f))
-           *SO3Group::exp(Matrix<Scalar,3,1>(0.f, 0.f, alpha3)) )
+        = ( SO3Group::exp(TangentType(alpha1, 0.f, 0.f))
+           *SO3Group::exp(TangentType(0.f, alpha2, 0.f))
+           *SO3Group::exp(TangentType(0.f, 0.f, alpha3)) )
           .unit_quaternion_;
   }
 
@@ -641,8 +679,25 @@ class Map<Sophus::SO3Group<_Scalar>, _Options>
   typedef Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> > Base;
 
 public:
+  /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
+  /** \brief quaternion type */
   typedef typename internal::traits<Map>::QuaternionType QuaternionType;
+
+  /** \brief degree of freedom of group */
+  static const int DoF = Base::DoF;
+  /** \brief number of internal parameters used */
+  static const int num_parameters = Base::num_parameters;
+  /** \brief group transformations are NxN matrices */
+  static const int N = Base::N;
+  /** \brief group transfomation type */
+  typedef typename Base::TransformationType TransformationType;
+  /** \brief point type */
+  typedef typename Base::PointType PointType;
+  /** \brief tangent vector type */
+  typedef typename Base::TangentType TangentType;
+  /** \brief adjoint transformation type */
+  typedef typename Base::AdjointType AdjointType;
 
   // base is friend so unit_quaternion_nonconst can be accessed from base
   friend class Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> >;
@@ -690,8 +745,27 @@ class Map<const Sophus::SO3Group<_Scalar>, _Options>
   Base;
 
 public:
+  /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
+  /** \brief quaternion type */
   typedef typename internal::traits<Map>::QuaternionType QuaternionType;
+
+  /** \brief degree of freedom of group */
+  static const int DoF = Base::DoF;
+  /** \brief number of internal parameters used */
+  static const int num_parameters = Base::num_parameters;
+  /** \brief group transformations are NxN matrices */
+  static const int N = Base::N;
+  /** \brief group transformations acts on M-vectors */
+  static const int M = Base::M;
+  /** \brief group transfomation type */
+  typedef typename Base::TransformationType TransformationType;
+  /** \brief point type */
+  typedef typename Base::PointType PointType;
+  /** \brief tangent vector type */
+  typedef typename Base::TangentType TangentType;
+  /** \brief adjoint transformation type */
+  typedef typename Base::AdjointType AdjointType;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
