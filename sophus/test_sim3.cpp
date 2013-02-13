@@ -1,63 +1,104 @@
+// This file is part of Sophus.
+//
+// Copyright 2012-2013 Hauke Strasdat
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights  to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
+
 #include <iostream>
 #include <vector>
 
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include "sim3.h"
+#include "sim3.hpp"
 
 using namespace Sophus;
 using namespace std;
 
-bool sim3explog_tests()
-{
-  const double SMALL_EPS = SophusConstants<double>::epsilon();
-  const double PI = SophusConstants<double>::pi();
+template<class Scalar>
+bool sim3explog_tests() {
+  typedef RxSO3Group<Scalar> RxSO3Type;
+  typedef Sim3Group<Scalar> Sim3Type;
+  typedef Matrix<Scalar,4,1> Vector4Type;
+  typedef typename Sim3Group<Scalar>::PointType PointType;
+  typedef typename Sim3Group<Scalar>::TangentType TangentType;
+  typedef typename Sim3Group<Scalar>::TransformationType TransformationType;
+  typedef typename Sim3Group<Scalar>::AdjointType AdjointType;
+  const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
+  const Scalar PI = SophusConstants<Scalar>::pi();
 
-  vector<Sim3> omegas;
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(0.2, 0.5, 0.0,1.)),Vector3d(0,0,0)));
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(0.2, 0.5, -1.0,1.1)),Vector3d(10,0,0)));
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(0., 0., 0.,1.1)),Vector3d(0,100,5)));
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(0., 0., 0.00001, 0.)),Vector3d(0,0,0)));
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(0., 0., 0.00001, 0.0000001)),Vector3d(1,-1.00000001,2.0000000001)));
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(0., 0., 0.00001, 0)),Vector3d(0.01,0,0)));
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(PI, 0, 0,0.9)),Vector3d(4,-5,0)));
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(0.2, 0.5, 0.0,0)),Vector3d(0,0,0))
-                   *Sim3(ScSO3::exp(Vector4d(PI, 0, 0,0)),Vector3d(0,0,0))
-                   *Sim3(ScSO3::exp(Vector4d(-0.2, -0.5, -0.0,0)),Vector3d(0,0,0)));
-  omegas.push_back(Sim3(ScSO3::exp(Vector4d(0.3, 0.5, 0.1,0)),Vector3d(2,0,-7))
-                   *Sim3(ScSO3::exp(Vector4d(PI, 0, 0,0)),Vector3d(0,0,0))
-                   *Sim3(ScSO3::exp(Vector4d(-0.3, -0.5, -0.1,0)),Vector3d(0,6,0)));
+  vector<Sim3Type> sim3_vec;
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0,1.)),
+                          PointType(0,0,0)));
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, -1.0,1.1)),
+                          PointType(10,0,0)));
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.,1.1)),
+                          PointType(0,10,5)));
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0.)),
+                          PointType(0,0,0)));
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(
+                                Vector4Type(0., 0., 0.00001, 0.0000001)),
+                          PointType(1,-1.00000001,2.0000000001)));
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0)),
+                          PointType(0.01,0,0)));
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0,0.9)),
+                          PointType(4,-5,0)));
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0,0)),
+                              PointType(0,0,0))
+                   *Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0,0)),
+                             PointType(0,0,0))
+                   *Sim3Type(RxSO3Type::exp(Vector4Type(-0.2, -0.5, -0.0,0)),
+                             PointType(0,0,0)));
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.3, 0.5, 0.1,0)),
+                              PointType(2,0,-7))
+                   *Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0,0)),
+                             PointType(0,0,0))
+                   *Sim3Type(RxSO3Type::exp(Vector4Type(-0.3, -0.5, -0.1,0)),
+                             PointType(0,6,0)));
 
   bool failed = false;
 
-  for (size_t i=0; i<omegas.size(); ++i)
-  {
-    Matrix4d R1 = omegas[i].matrix();
-    Matrix4d R2 = Sim3::exp(omegas[i].log()).matrix();
-    Matrix4d DiffR = R1-R2;
-    double nrm = DiffR.norm();
+  for (size_t i=0; i<sim3_vec.size(); ++i) {
+    TransformationType R1 = sim3_vec[i].matrix();
+    TransformationType R2 = Sim3Type::exp(sim3_vec[i].log()).matrix();
+    TransformationType DiffR = R1-R2;
+    Scalar nrm = DiffR.norm();
 
-    // ToDO: Force Sim3 to be more accurate!
-    if (isnan(nrm) || nrm>SMALL_EPS)
-    {
-      cerr << "Sim3 - exp(log(Sim3))" << endl;
+    // ToDO: Force Sim3Type to be more accurate!
+    if (isnan(nrm) || nrm>SMALL_EPS) {
+      cerr << "Sim3Type - exp(log(Sim3Type))" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << DiffR <<endl;
       cerr << endl;
       failed = true;
     }
   }
-  for (size_t i=0; i<omegas.size(); ++i)
-  {
-    Vector3d p(1,2,4);
-    Matrix4d T = omegas[i].matrix();
-    Vector3d res1 = omegas[i]*p;
-    Vector3d res2 = T.topLeftCorner<3,3>()*p + T.topRightCorner<3,1>();
+  for (size_t i=0; i<sim3_vec.size(); ++i) {
+    PointType p(1,2,4);
+    TransformationType T = sim3_vec[i].matrix();
+    PointType res1 = sim3_vec[i]*p;
+    PointType res2
+        = T.template topLeftCorner<3,3>()*p
+        + T.template topRightCorner<3,1>();
 
-    double nrm = (res1-res2).norm();
+    Scalar nrm = (res1-res2).norm();
 
-    if (isnan(nrm) || nrm>SMALL_EPS)
-    {
+    if (isnan(nrm) || nrm>SMALL_EPS) {
       cerr << "Transform vector" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << (res1-res2) <<endl;
@@ -65,19 +106,16 @@ bool sim3explog_tests()
       failed = true;
     }
   }
-
-  for (size_t i=0; i<omegas.size(); ++i)
-  {
-    Matrix4d q = omegas[i].matrix();
-    Matrix4d inv_q = omegas[i].inverse().matrix();
-    Matrix4d res = q*inv_q ;
-    Matrix4d I;
+  for (size_t i=0; i<sim3_vec.size(); ++i) {
+    TransformationType q = sim3_vec[i].matrix();
+    TransformationType inv_q = sim3_vec[i].inverse().matrix();
+    TransformationType res = q*inv_q ;
+    TransformationType I;
     I.setIdentity();
 
-    double nrm = (res-I).norm();
+    Scalar nrm = (res-I).norm();
 
-    if (isnan(nrm) || nrm>SMALL_EPS)
-    {
+    if (isnan(nrm) || nrm>SMALL_EPS) {
       cerr << "Inverse" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << (res-I) <<endl;
@@ -85,17 +123,63 @@ bool sim3explog_tests()
       failed = true;
     }
   }
+  for (size_t i=0; i<sim3_vec.size(); ++i) {
+    TransformationType T = sim3_vec[i].matrix();
+    AdjointType Ad = sim3_vec[i].Adj();
+    TangentType x;
+    x << 0.9, 2, 3, 1.2, 2, 3, 1.1;
+    TransformationType I;
+    I.setIdentity();
+    TangentType ad1 = Ad*x;
+    TangentType ad2 = Sim3Type::vee(T*Sim3Type::hat(x)
+                                     *sim3_vec[i].inverse().matrix());
+    Scalar nrm = (ad1-ad2).norm();
+
+    if (isnan(nrm) || nrm>SMALL_EPS) {
+      cerr << "Adjoint" << endl;
+      cerr  << "Test case: " << i << endl;
+      cerr << (ad1-ad2).transpose() <<endl;
+      cerr << endl;
+      failed = true;
+    }
+  }
+  for (size_t i=0; i<sim3_vec.size(); ++i) {
+    for (size_t j=0; j<sim3_vec.size(); ++j) {
+      TransformationType mul_resmat = (sim3_vec[i]*sim3_vec[j]).matrix();
+      Scalar mul_res_raw[Sim3Type::num_parameters];
+      Eigen::Map<Sim3Type> mul_res(mul_res_raw);
+      mul_res = sim3_vec[i];
+      mul_res *= sim3_vec[j];
+      TransformationType diff =  mul_resmat-mul_res.matrix();
+      Scalar nrm = diff.norm();
+      if (isnan(nrm) || nrm>SMALL_EPS) {
+        cerr << "Multiply and Map" << endl;
+        cerr  << "Test case: " << i  << "," << j << endl;
+           cerr << mul_resmat <<endl;
+              cerr << mul_res.matrix() <<endl;
+        cerr << diff <<endl;
+        cerr << endl;
+        failed = true;
+      }
+    }
+  }
   return failed;
 }
 
-
-bool sim3bracket_tests()
-{
-  const double SMALL_EPS = SophusConstants<double>::epsilon();
+template<class Scalar>
+bool sim3bracket_tests() {
+  typedef RxSO3Group<Scalar> RxSO3Type;
+  typedef Sim3Group<Scalar> Sim3Type;
+  typedef Matrix<Scalar,4,1> Vector4Type;
+  typedef typename Sim3Group<Scalar>::PointType PointType;
+  typedef typename Sim3Group<Scalar>::TangentType TangentType;
+  typedef typename Sim3Group<Scalar>::TransformationType TransformationType;
+  typedef typename Sim3Group<Scalar>::AdjointType AdjointType;
+  const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
 
   bool failed = false;
-  vector<Vector7d> vecs;
-  Vector7d tmp;
+  vector<TangentType> vecs;
+  TangentType tmp;
   tmp << 0,0,0,0,0,0,0;
   vecs.push_back(tmp);
   tmp << 1,0,0,0,0,0,0;
@@ -108,13 +192,11 @@ bool sim3bracket_tests()
   vecs.push_back(tmp);
   tmp << 20,-1,0,-1,1,0,-0.1;
   vecs.push_back(tmp);
-  tmp << 30,5,-1,20,-1,0,2;
+  tmp << 30,5,-1,20,-1,0,1.5;
   vecs.push_back(tmp);
-  for (size_t i=0; i<vecs.size(); ++i)
-  {
-    Vector7d resDiff = vecs[i] - Sim3::vee(Sim3::hat(vecs[i]));
-    if (resDiff.norm()>SMALL_EPS)
-    {
+  for (size_t i=0; i<vecs.size(); ++i) {
+    TangentType resDiff = vecs[i] - Sim3Type::vee(Sim3Type::hat(vecs[i]));
+    if (resDiff.norm()>SMALL_EPS) {
       cerr << "Hat-vee Test" << endl;
       cerr  << "Test case: " << i <<  endl;
       cerr << resDiff.transpose() << endl;
@@ -122,17 +204,15 @@ bool sim3bracket_tests()
       failed = true;
     }
 
-    for (size_t j=0; j<vecs.size(); ++j)
-    {
-      Vector7d res1 = Sim3::lieBracket(vecs[i],vecs[j]);
-      Matrix4d hati = Sim3::hat(vecs[i]);
-      Matrix4d hatj = Sim3::hat(vecs[j]);
+    for (size_t j=0; j<vecs.size(); ++j) {
+      TangentType res1 = Sim3Type::lieBracket(vecs[i],vecs[j]);
+      TransformationType hati = Sim3Type::hat(vecs[i]);
+      TransformationType hatj = Sim3Type::hat(vecs[j]);
 
-      Vector7d res2 = Sim3::vee(hati*hatj-hatj*hati);
-      Vector7d resDiff = res1-res2;
-      if (resDiff.norm()>SMALL_EPS)
-      {
-        cerr << "Sim3 Lie Bracket Test" << endl;
+      TangentType res2 = Sim3Type::vee(hati*hatj-hatj*hati);
+      TangentType resDiff = res1-res2;
+      if (resDiff.norm()>SMALL_EPS) {
+        cerr << "Sim3Type Lie Bracket Test" << endl;
         cerr  << "Test case: " << i << ", " <<j<< endl;
         cerr << vecs[i].transpose() << endl;
         cerr << vecs[j].transpose() << endl;
@@ -142,16 +222,13 @@ bool sim3bracket_tests()
       }
     }
 
+    TangentType omega = vecs[i];
+    TransformationType exp_x = Sim3Type::exp(omega).matrix();
+    TransformationType expmap_hat_x = (Sim3Type::hat(omega)).exp();
+    TransformationType DiffR = exp_x-expmap_hat_x;
+    Scalar nrm = DiffR.norm();
 
-
-    Vector7d omega = vecs[i];
-    Matrix4d exp_x = Sim3::exp(omega).matrix();
-    Matrix4d expmap_hat_x = (Sim3::hat(omega)).exp();
-    Matrix4d DiffR = exp_x-expmap_hat_x;
-    double nrm = DiffR.norm();
-
-    if (isnan(nrm) || nrm>SMALL_EPS)
-    {
+    if (isnan(nrm) || nrm>static_cast<Scalar>(10)*SMALL_EPS) {
       cerr << "expmap(hat(x)) - exp(x)" << endl;
       cerr  << "Test case: " << i << endl;
       cerr << exp_x <<endl;
@@ -164,17 +241,27 @@ bool sim3bracket_tests()
   return failed;
 }
 
+int main() {
+  cerr << "Test Sim3" << endl << endl;
 
-
-int main()
-{
-  bool failed = sim3explog_tests();
-  failed = failed || sim3bracket_tests();
-
-  if (failed)
-  {
-    cerr << "failed" << endl;
+  cerr << "Double tests: " << endl;
+  bool failed = sim3explog_tests<double>();
+  failed = failed || sim3bracket_tests<double>();
+  if (failed) {
+    cerr << "failed!" << endl << endl;
     exit(-1);
+  } else {
+    cerr << "passed." << endl << endl;
+  }
+
+  cerr << "Float tests: " << endl;
+  failed = failed || sim3explog_tests<float>();
+  failed = failed || sim3bracket_tests<float>();
+  if (failed) {
+    cerr << "failed!" << endl << endl;
+    exit(-1);
+  } else {
+    cerr << "passed." << endl << endl;
   }
   return 0;
 }

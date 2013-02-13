@@ -121,8 +121,6 @@ bool se3explog_tests() {
       failed = true;
     }
   }
-
-
   for (size_t i=0; i<se3_vec.size(); ++i) {
     for (size_t j=0; j<se3_vec.size(); ++j) {
       TransformationType mul_resmat = (se3_vec[i]*se3_vec[j]).matrix();
