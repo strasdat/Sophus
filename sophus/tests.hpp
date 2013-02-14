@@ -237,7 +237,7 @@ public:
 
 private:
   Matrix<Scalar,N-1,1> map(const Matrix<Scalar,N,N> & T,
-                         const Matrix<Scalar,N-1,1> & p) {
+                           const Matrix<Scalar,N-1,1> & p) {
     return T.template topLeftCorner<N-1,N-1>()*p
         + T.template topRightCorner<N-1,1>();
   }

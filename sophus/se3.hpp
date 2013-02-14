@@ -103,11 +103,11 @@ public:
   static const int N = 4;
   /** \brief group transfomation type */
   typedef Matrix<Scalar,N,N> Transformation;
-   /** \brief point type */
+  /** \brief point type */
   typedef Matrix<Scalar,3,1> Point;
-   /** \brief tangent vector type */
+  /** \brief tangent vector type */
   typedef Matrix<Scalar,DoF,1> Tangent;
-   /** \brief adjoint transformation type */
+  /** \brief adjoint transformation type */
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /** \brief SO3 transfomation type */
@@ -290,7 +290,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   SO3Type& so3() {
-      return static_cast<Derived*>(this)->so3();
+    return static_cast<Derived*>(this)->so3();
   }
 
   /**
@@ -298,7 +298,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   const SO3Type& so3() const {
-      return static_cast<const Derived*>(this)->so3();
+    return static_cast<const Derived*>(this)->so3();
   }
 
   /**
@@ -331,7 +331,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   TranslationType& translation() {
-      return static_cast<Derived*>(this)->translation();
+    return static_cast<Derived*>(this)->translation();
   }
 
   /**
@@ -339,7 +339,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   const TranslationType& translation() const {
-      return static_cast<const Derived*>(this)->translation();
+    return static_cast<const Derived*>(this)->translation();
   }
 
   /**
@@ -519,7 +519,7 @@ public:
    */
   inline static
   const Tangent lieBracket(const Tangent & a,
-                               const Tangent & b) {
+                           const Tangent & b) {
     Matrix<Scalar,3,1> upsilon1 = a.template head<3>();
     Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
     Matrix<Scalar,3,1> omega1 = a.template tail<3>();
@@ -639,7 +639,7 @@ public:
    */
   inline
   SE3Group()
-      : translation_( TranslationType::Zero() )
+    : translation_( TranslationType::Zero() )
   {
   }
 
@@ -719,8 +719,8 @@ public:
    */
   EIGEN_STRONG_INLINE
   const Scalar* data() const {
-      // so3_ and translation_ are layed out sequentially with no padding
-      return so3_.data();
+    // so3_ and translation_ are layed out sequentially with no padding
+    return so3_.data();
   }
 
   /**

@@ -46,11 +46,11 @@ void tests() {
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(M_PI, 0, 0, 0.9)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0,0))
-                   *RxSO3Type::exp(Tangent(M_PI, 0, 0,0.0))
-                   *RxSO3Type::exp(Tangent(-0.2, -0.5, -0.0,0)));
+                      *RxSO3Type::exp(Tangent(M_PI, 0, 0,0.0))
+                      *RxSO3Type::exp(Tangent(-0.2, -0.5, -0.0,0)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.3, 0.5, 0.1,0))
-                   *RxSO3Type::exp(Tangent(M_PI, 0, 0,0))
-                   *RxSO3Type::exp(Tangent(-0.3, -0.5, -0.1,0)));
+                      *RxSO3Type::exp(Tangent(M_PI, 0, 0,0))
+                      *RxSO3Type::exp(Tangent(-0.3, -0.5, -0.1,0)));
 
   vector<Tangent> tangent_vec;
   Tangent tmp;

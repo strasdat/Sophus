@@ -94,11 +94,11 @@ public:
   static const int N = 3;
   /** \brief group transfomation type */
   typedef Matrix<Scalar,N,N> Transformation;
-   /** \brief point type */
+  /** \brief point type */
   typedef Matrix<Scalar,3,1> Point;
-   /** \brief tangent vector type */
+  /** \brief tangent vector type */
   typedef Matrix<Scalar,DoF,1> Tangent;
-   /** \brief adjoint transformation type */
+  /** \brief adjoint transformation type */
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /**
@@ -443,7 +443,7 @@ public:
    */
   inline static
   const Tangent lieBracket(const Tangent & omega1,
-                               const Tangent & omega2) {
+                           const Tangent & omega2) {
     return omega1.cross(omega2);
   }
 
@@ -481,7 +481,7 @@ public:
    */
   inline static
   const Tangent logAndTheta(const SO3Group<Scalar> & other,
-                                Scalar * theta) {
+                            Scalar * theta) {
     const Scalar squared_n
         = other.unit_quaternion().vec().squaredNorm();
     const Scalar n = sqrt(squared_n);
@@ -640,8 +640,8 @@ public:
     const static Scalar zero = static_cast<Scalar>(0);
     unit_quaternion_
         = ( SO3Group::exp(Tangent(alpha1,   zero,   zero))
-           *SO3Group::exp(Tangent(  zero, alpha2,   zero))
-           *SO3Group::exp(Tangent(  zero,   zero, alpha3)) )
+            *SO3Group::exp(Tangent(  zero, alpha2,   zero))
+            *SO3Group::exp(Tangent(  zero,   zero, alpha3)) )
           .unit_quaternion_;
   }
 

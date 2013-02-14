@@ -44,11 +44,11 @@ void tests() {
   so2_vec.push_back(SO2Type::exp(0.00001));
   so2_vec.push_back(SO2Type::exp(M_PI));
   so2_vec.push_back(SO2Type::exp(0.2)
-                *SO2Type::exp(M_PI)
-                *SO2Type::exp(-0.2));
+                    *SO2Type::exp(M_PI)
+                    *SO2Type::exp(-0.2));
   so2_vec.push_back(SO2Type::exp(-0.3)
-                *SO2Type::exp(M_PI)
-                *SO2Type::exp(0.3));
+                    *SO2Type::exp(M_PI)
+                    *SO2Type::exp(0.3));
 
   vector<Tangent> tangent_vec;
   tangent_vec.push_back(Tangent(0));

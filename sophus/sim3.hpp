@@ -102,11 +102,11 @@ public:
   static const int N = 4;
   /** \brief group transfomation type */
   typedef Matrix<Scalar,N,N> Transformation;
-   /** \brief point type */
+  /** \brief point type */
   typedef Matrix<Scalar,3,1> Point;
-   /** \brief tangent vector type */
+  /** \brief tangent vector type */
   typedef Matrix<Scalar,DoF,1> Tangent;
-   /** \brief adjoint transformation type */
+  /** \brief adjoint transformation type */
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /** \brief RxSO3 transfomation type */
@@ -140,7 +140,7 @@ public:
   inline Sim3Group<NewScalarType> cast() const {
     return
         Sim3Group<NewScalarType>(rxso3().template cast<NewScalarType>(),
-                                translation().template cast<NewScalarType>() );
+                                 translation().template cast<NewScalarType>() );
   }
 
   /**
@@ -163,7 +163,7 @@ public:
   const Sim3Group<Scalar> inverse() const {
     const RxSO3Group<Scalar> invR = rxso3().inverse();
     return Sim3Group<Scalar>(invR, invR*(translation()
-                                        *static_cast<Scalar>(-1) ) );
+                                         *static_cast<Scalar>(-1) ) );
   }
 
   /**
@@ -226,7 +226,7 @@ public:
     //return result;
 
     return Sim3Group<Scalar>(rxso3()*other.rxso3(),
-                (rxso3()*other.translation()) + translation());
+                             (rxso3()*other.translation()) + translation());
   }
 
   /**
@@ -296,7 +296,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   RxSO3Type& rxso3() {
-      return static_cast<Derived*>(this)->rxso3();
+    return static_cast<Derived*>(this)->rxso3();
   }
 
   /**
@@ -304,7 +304,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   const RxSO3Type& rxso3() const {
-      return static_cast<const Derived*>(this)->rxso3();
+    return static_cast<const Derived*>(this)->rxso3();
   }
 
   /**
@@ -323,7 +323,7 @@ public:
    */
   inline
   void setRotationMatrix
-  (const RxSO3TransformationType & R) { 
+  (const RxSO3TransformationType & R) {
     rxso3().setRotationMatrix(R);
   }
 
@@ -353,7 +353,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   TranslationType& translation() {
-      return static_cast<Derived*>(this)->translation();
+    return static_cast<Derived*>(this)->translation();
   }
 
   /**
@@ -361,7 +361,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   const TranslationType& translation() const {
-      return static_cast<const Derived*>(this)->translation();
+    return static_cast<const Derived*>(this)->translation();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -528,7 +528,7 @@ public:
    */
   inline static
   const Tangent lieBracket(const Tangent & a,
-                               const Tangent & b) {
+                           const Tangent & b) {
     Matrix<Scalar,3,1> upsilon1 = a.template head<3>();
     Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
     Matrix<Scalar,3,1> omega1 = a.template segment<3>(3);
@@ -686,7 +686,7 @@ public:
    */
   inline
   Sim3Group()
-      : translation_( TranslationType::Zero() )
+    : translation_( TranslationType::Zero() )
   {
   }
 
@@ -703,7 +703,7 @@ public:
    */
   template<typename OtherDerived> inline
   Sim3Group(const RxSO3GroupBase<OtherDerived> & rxso3,
-           const Point & translation)
+            const Point & translation)
     : rxso3_(rxso3), translation_(translation) {
   }
 
@@ -714,7 +714,7 @@ public:
    */
   inline
   Sim3Group(const Quaternion<Scalar> & quaternion,
-           const Point & translation)
+            const Point & translation)
     : rxso3_(quaternion), translation_(translation) {
   }
 
@@ -752,8 +752,8 @@ public:
    */
   EIGEN_STRONG_INLINE
   const Scalar* data() const {
-      // rxso3_ and translation_ are layed out sequentially with no padding
-      return rxso3_.data();
+    // rxso3_ and translation_ are layed out sequentially with no padding
+    return rxso3_.data();
   }
 
   /**
@@ -889,8 +889,8 @@ template<typename _Scalar, int _Options>
 class Map<const Sophus::Sim3Group<_Scalar>, _Options>
     : public Sophus::Sim3GroupBase<
     Map<const Sophus::Sim3Group<_Scalar>, _Options> > {
-  typedef Sophus::Sim3GroupBase<Map<const Sophus::Sim3Group<_Scalar>, _Options> >
-  Base;
+  typedef Sophus::Sim3GroupBase<
+  Map<const Sophus::Sim3Group<_Scalar>, _Options> > Base;
 
 public:
   /** \brief scalar type */

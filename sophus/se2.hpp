@@ -98,11 +98,11 @@ public:
   static const int N = 3;
   /** \brief group transfomation type */
   typedef Matrix<Scalar,N,N> Transformation;
-   /** \brief point type */
+  /** \brief point type */
   typedef Matrix<Scalar,2,1> Point;
-   /** \brief tangent vector type */
+  /** \brief tangent vector type */
   typedef Matrix<Scalar,DoF,1> Tangent;
-   /** \brief adjoint transformation type */
+  /** \brief adjoint transformation type */
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /** \brief SO2 transfomation type */
@@ -273,7 +273,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   SO2Type& so2() {
-      return static_cast<Derived*>(this)->so2();
+    return static_cast<Derived*>(this)->so2();
   }
 
   /**
@@ -281,7 +281,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   const SO2Type& so2() const {
-      return static_cast<const Derived*>(this)->so2();
+    return static_cast<const Derived*>(this)->so2();
   }
 
   /**
@@ -314,7 +314,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   TranslationType& translation() {
-      return static_cast<Derived*>(this)->translation();
+    return static_cast<Derived*>(this)->translation();
   }
 
   /**
@@ -322,7 +322,7 @@ public:
    */
   EIGEN_STRONG_INLINE
   const TranslationType& translation() const {
-      return static_cast<const Derived*>(this)->translation();
+    return static_cast<const Derived*>(this)->translation();
   }
 
   /**
@@ -481,15 +481,15 @@ public:
    */
   inline static
   const Tangent lieBracket(const Tangent & a,
-                               const Tangent & b) {
+                           const Tangent & b) {
     Matrix<Scalar,2,1> upsilon1 = a.template head<2>();
     Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
     Scalar theta1 = a[2];
     Scalar theta2 = b[2];
 
     return Tangent(-theta1*upsilon2[1] + theta2*upsilon1[1],
-                       theta1*upsilon2[0] - theta2*upsilon1[0],
-                       static_cast<Scalar>(0));
+        theta1*upsilon2[0] - theta2*upsilon1[0],
+        static_cast<Scalar>(0));
   }
 
   /**
@@ -558,7 +558,7 @@ public:
  */
 template<typename _Scalar, int _Options>
 class SE2Group : public SE2GroupBase<SE2Group<_Scalar,_Options> > {
-   typedef SE2GroupBase<SE2Group<_Scalar,_Options> > Base;
+  typedef SE2GroupBase<SE2Group<_Scalar,_Options> > Base;
 
 public:
   /** \brief scalar type */
@@ -596,7 +596,7 @@ public:
    */
   inline
   SE2Group()
-      : translation_( TranslationType::Zero() )
+    : translation_( TranslationType::Zero() )
   {
   }
 
@@ -682,8 +682,8 @@ public:
    */
   EIGEN_STRONG_INLINE
   const Scalar* data() const {
-      // so2_ and translation_ are layed out sequentially with no padding
-      return so2_.data();
+    // so2_ and translation_ are layed out sequentially with no padding
+    return so2_.data();
   }
 
   /**

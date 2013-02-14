@@ -98,11 +98,11 @@ public:
   static const int N = 2;
   /** \brief group transfomation type */
   typedef Matrix<Scalar,N,N> Transformation;
-   /** \brief point type */
+  /** \brief point type */
   typedef Matrix<Scalar,2,1> Point;
-   /** \brief tangent vector type */
+  /** \brief tangent vector type */
   typedef Scalar Tangent;
-   /** \brief adjoint transformation type */
+  /** \brief adjoint transformation type */
   typedef Scalar Adjoint;
 
   /**

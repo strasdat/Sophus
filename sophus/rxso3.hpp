@@ -106,11 +106,11 @@ public:
   static const int N = 3;
   /** \brief group transfomation type */
   typedef Matrix<Scalar,N,N> Transformation;
-   /** \brief point type */
+  /** \brief point type */
   typedef Matrix<Scalar,3,1> Point;
-   /** \brief tangent vector type */
+  /** \brief tangent vector type */
   typedef Matrix<Scalar,DoF,1> Tangent;
-   /** \brief adjoint transformation type */
+  /** \brief adjoint transformation type */
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
 
@@ -139,7 +139,7 @@ public:
   template<typename NewScalarType>
   inline RxSO3Group<NewScalarType> cast() const {
     return RxSO3Group<NewScalarType>(quaternion()
-                                   .template cast<NewScalarType>() );
+                                     .template cast<NewScalarType>() );
   }
 
   /**
@@ -397,7 +397,7 @@ public:
    */
   inline static
   const RxSO3Group<Scalar> expAndTheta(const Tangent & a,
-                                     Scalar * theta) {
+                                       Scalar * theta) {
     const Matrix<Scalar,3,1> & omega = a.template head<3>();
     Scalar sigma = a[3];
     Scalar scale = std::exp(sigma);
@@ -489,7 +489,7 @@ public:
    */
   inline static
   const Tangent lieBracket(const Tangent & a,
-                               const Tangent & b) {
+                           const Tangent & b) {
     const Matrix<Scalar,3,1> & omega1 = a.template head<3>();
     const Matrix<Scalar,3,1> & omega2 = b.template head<3>();
     Matrix<Scalar,4,1> res;
@@ -532,7 +532,7 @@ public:
    */
   inline static
   const Tangent logAndTheta(const RxSO3Group<Scalar> & other,
-                                Scalar * theta) {
+                            Scalar * theta) {
     Scalar scale = other.quaternion().norm();
     Tangent omega_sigma;
     omega_sigma[3] = std::log(scale);
@@ -691,8 +691,10 @@ namespace Eigen {
  */
 template<typename _Scalar, int _Options>
 class Map<Sophus::RxSO3Group<_Scalar>, _Options>
-    : public Sophus::RxSO3GroupBase<Map<Sophus::RxSO3Group<_Scalar>, _Options> > {
-  typedef Sophus::RxSO3GroupBase<Map<Sophus::RxSO3Group<_Scalar>, _Options> > Base;
+    : public Sophus::RxSO3GroupBase<
+    Map<Sophus::RxSO3Group<_Scalar>,_Options> > {
+  typedef Sophus::RxSO3GroupBase<Map<Sophus::RxSO3Group<_Scalar>, _Options> >
+  Base;
 
 public:
   /** \brief scalar type */
@@ -753,8 +755,8 @@ template<typename _Scalar, int _Options>
 class Map<const Sophus::RxSO3Group<_Scalar>, _Options>
     : public Sophus::RxSO3GroupBase<
     Map<const Sophus::RxSO3Group<_Scalar>, _Options> > {
-  typedef Sophus::RxSO3GroupBase<Map<const Sophus::RxSO3Group<_Scalar>, _Options> >
-  Base;
+  typedef Sophus::RxSO3GroupBase<
+  Map<const Sophus::RxSO3Group<_Scalar>, _Options> > Base;
 
 public:
   /** \brief scalar type */
