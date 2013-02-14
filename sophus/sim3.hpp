@@ -143,6 +143,18 @@ public:
                                 translation().template cast<NewScalarType>() );
   }
 
+  /**
+   * \brief In-place group multiplication
+   *
+   * Same as operator*=() for Sim3.
+   *
+   * \see operator*()
+   */
+  inline
+  void fastMultiply(const Sim3Group<Scalar>& other) {
+    translation() += (rxso3() * other.translation());
+    rxso3() *= other.rxso3();
+  }
 
   /**
    * \returns Group inverse of instance

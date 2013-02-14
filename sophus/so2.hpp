@@ -103,7 +103,7 @@ public:
    /** \brief tangent vector type */
   typedef Scalar Tangent;
    /** \brief adjoint transformation type */
-  typedef Matrix<Scalar,DoF,DoF> Adjoint;
+  typedef Scalar Adjoint;
 
   /**
    * \brief Adjoint transformation
@@ -116,7 +116,7 @@ public:
    * For SO2, it simply returns 1.
    */
   inline
-  const Scalar Adj() const {
+  const Adjoint Adj() const {
     return 1;
   }
 
@@ -373,7 +373,7 @@ public:
    */
   inline static
   const Tangent lieBracket(const Tangent & theta1,
-                               const Tangent & theta2) {
+                           const Tangent & theta2) {
     return static_cast<Scalar>(0);
   }
 

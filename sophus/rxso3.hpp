@@ -165,6 +165,19 @@ public:
   }
 
   /**
+   * \brief In-place group multiplication
+   *
+   *  Same as operator*=() for RxSO3.
+   *
+   * \see operator*=()
+   */
+  inline
+  void fastMultiply(const RxSO3Group<Scalar>& other) {
+    quaternion() *= other.quaternion();
+  }
+
+
+  /**
    * \returns group inverse of instance
    */
   inline

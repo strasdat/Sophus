@@ -37,7 +37,7 @@ SET( Sophus_INCLUDE_DIR ${Sophus_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} )
 
 SET (SOURCE_DIR "sophus")
 
-SET (TEMPLATES
+SET (TEMPLATES tests
                so2
                se2
                so3
@@ -55,7 +55,8 @@ ENDFOREACH(templ)
 
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
-# Added ${SOURCES} to executables so they show up in QtCreator
+# Added ${SOURCES} to executables so they show up in QtCreator (and possibly
+# other IDEs).
 ADD_EXECUTABLE(test_so2 sophus/test_so2.cpp ${SOURCES})
 ADD_EXECUTABLE(test_se2 sophus/test_se2.cpp ${SOURCES})
 ADD_EXECUTABLE(test_so3 sophus/test_so3.cpp ${SOURCES})
@@ -77,5 +78,6 @@ CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY IMMEDIATE )
 export( PACKAGE Sophus )
 
-INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include FILES_MATCHING PATTERN "*.h" )
+INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING PATTERN "*.h" )
 
