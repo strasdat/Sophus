@@ -36,7 +36,7 @@ template<class Scalar>
 bool so2explog_tests() {
   typedef SO2Group<Scalar> SO2Type;
   typedef Matrix<Scalar,2,1> Vector2Type;
-  typedef typename SO2Group<Scalar>::TransformationType TransformationType;
+  typedef typename SO2Group<Scalar>::Transformation Transformation;
   const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
   const Scalar PI = SophusConstants<Scalar>::pi();
 
@@ -56,10 +56,10 @@ bool so2explog_tests() {
   bool failed = false;
 
   for (size_t i=0; i<so2.size(); ++i) {
-    TransformationType R1 = so2[i].matrix();
-    TransformationType R2 = SO2Type::exp(so2[i].log()).matrix();
+    Transformation R1 = so2[i].matrix();
+    Transformation R2 = SO2Type::exp(so2[i].log()).matrix();
 
-    TransformationType DiffR = R1-R2;
+    Transformation DiffR = R1-R2;
     double nrm = DiffR.norm();
 
     if (isnan(nrm) || nrm>SMALL_EPS) {
@@ -73,7 +73,7 @@ bool so2explog_tests() {
 
   for (size_t i=0; i<so2.size(); ++i) {
     Vector2Type p(1,2);
-    TransformationType R = so2[i].matrix();
+    Transformation R = so2[i].matrix();
     Vector2Type res1 = so2[i]*p;
     Vector2Type res2 = R*p;
 
@@ -89,10 +89,10 @@ bool so2explog_tests() {
   }
 
   for (size_t i=0; i<so2.size(); ++i) {
-    TransformationType q = so2[i].matrix();
-    TransformationType inv_q = so2[i].inverse().matrix();
-    TransformationType res = q*inv_q ;
-    TransformationType I;
+    Transformation q = so2[i].matrix();
+    Transformation inv_q = so2[i].inverse().matrix();
+    Transformation res = q*inv_q ;
+    Transformation I;
     I.setIdentity();
 
     Scalar nrm = (res-I).norm();
@@ -108,9 +108,9 @@ bool so2explog_tests() {
 
   for (size_t i=0; i<so2.size(); ++i) {
     Scalar omega = so2[i].log();
-    TransformationType exp_x = SO2Type::exp(omega).matrix();
-    TransformationType expmap_hat_x = (SO2Type::hat(omega)).exp();
-    TransformationType DiffR = exp_x-expmap_hat_x;
+    Transformation exp_x = SO2Type::exp(omega).matrix();
+    Transformation expmap_hat_x = (SO2Type::hat(omega)).exp();
+    Transformation DiffR = exp_x-expmap_hat_x;
     Scalar nrm = DiffR.norm();
 
     if (isnan(nrm) || nrm>SMALL_EPS) {
@@ -126,12 +126,12 @@ bool so2explog_tests() {
 
   for (size_t i=0; i<so2.size(); ++i) {
     for (size_t j=0; j<so2.size(); ++j) {
-      TransformationType mul_resmat = (so2[i]*so2[j]).matrix();
+      Transformation mul_resmat = (so2[i]*so2[j]).matrix();
       Scalar fastmul_res_raw[SO2Type::num_parameters];
       Eigen::Map<SO2Type> fastmul_res(fastmul_res_raw);
       fastmul_res = so2[i];
       fastmul_res.fastMultiply(so2[j]);
-      TransformationType diff =  mul_resmat-fastmul_res.matrix();
+      Transformation diff =  mul_resmat-fastmul_res.matrix();
       Scalar nrm = diff.norm();
       if (isnan(nrm) || nrm>SMALL_EPS) {
         cerr << "Fast multiplication" << endl;

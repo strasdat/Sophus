@@ -31,7 +31,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SE2Group;
-typedef SOPHUS_DEPRECATED(SE2Group<double> SE2);
+typedef SE2Group<double> SE2 EIGEN_DEPRECATED;
 typedef SE2Group<double> SE2d; /**< double precision SE2 */
 typedef SE2Group<float> SE2f;  /**< single precision SE2 */
 }
@@ -83,9 +83,9 @@ class SE2GroupBase {
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief translation type */
+  /** \brief translation type, use with care since this might be a Map type  */
   typedef typename internal::traits<Derived>::TranslationType TranslationType;
-  /** \brief SO2 type */
+  /** \brief SO2 type, use with care since this might be a Map type */
   typedef typename internal::traits<Derived>::SO2Type SO2Type;
 
   /** \brief degree of freedom of group
@@ -97,16 +97,16 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = 3;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar,N,N> TransformationType;
+  typedef Matrix<Scalar,N,N> Transformation;
    /** \brief point type */
-  typedef Matrix<Scalar,2,1> PointType;
+  typedef Matrix<Scalar,2,1> Point;
    /** \brief tangent vector type */
-  typedef Matrix<Scalar,DoF,1> TangentType;
+  typedef Matrix<Scalar,DoF,1> Tangent;
    /** \brief adjoint transformation type */
-  typedef Matrix<Scalar,DoF,DoF> AdjointType;
+  typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /** \brief SO2 transfomation type */
-  typedef typename SO2Type::TransformationType SO2TransformationType;
+  typedef typename SO2Type::Transformation SO2TransformationType;
 
   /**
    * \brief Adjoint transformation
@@ -117,9 +117,9 @@ public:
    * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
    */
   inline
-  const AdjointType Adj() const {
+  const Adjoint Adj() const {
     const SO2TransformationType & R = so2().matrix();
-    TransformationType res;
+    Transformation res;
     res.setIdentity();
     res.template topLeftCorner<2,2>() = R;
     res(0,2) =  translation()[1];
@@ -170,7 +170,7 @@ public:
    * \see  log().
    */
   inline
-  const TangentType log() const {
+  const Tangent log() const {
     return log(*this);
   }
 
@@ -189,8 +189,8 @@ public:
    * \returns 3x3 matrix representation of instance
    */
   inline
-  const TransformationType matrix() const {
-    TransformationType homogenious_matrix;
+  const Transformation matrix() const {
+    Transformation homogenious_matrix;
     homogenious_matrix.setIdentity();
     homogenious_matrix.block(0,0,2,2) = rotationMatrix();
     homogenious_matrix.col(2).head(2) = translation();
@@ -243,7 +243,7 @@ public:
    * (=rotation matrix, translation vector): \f$ p' = R\cdot p + t \f$.
    */
   inline
-  const PointType operator*(const PointType & p) const {
+  const Point operator*(const Point & p) const {
     return so2()*p + translation();
   }
 
@@ -293,7 +293,7 @@ public:
    * The complex number is normalized to unit length.
    */
   inline
-  void setComplex(const typename SO2Type::ComplexType& complex) {
+  void setComplex(const typename SO2Type::Point& complex) {
     return so2().setComplex(complex);
   }
 
@@ -350,14 +350,15 @@ public:
    * \see lieBracket()
    */
   inline static
-  const TransformationType d_lieBracketab_by_d_a(const TangentType & b) {
+  const Transformation d_lieBracketab_by_d_a(const Tangent & b) {
+    static const Scalar zero = static_cast<Scalar>(0);
     Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
-    double theta2 = b[2];
+    Scalar theta2 = b[2];
 
-    TransformationType res;
-    res <<      0., theta2, -upsilon2[1]
-        ,  -theta2,     0.,  upsilon2[0]
-        ,       0.,     0.,           0.;
+    Transformation res;
+    res <<    zero, theta2, -upsilon2[1]
+        ,  -theta2,   zero,  upsilon2[0]
+        ,     zero,   zero,         zero;
     return res;
   }
 
@@ -379,10 +380,10 @@ public:
    * \see log()
    */
   inline static
-  const SE2Group<Scalar> exp(const TangentType & a) {
+  const SE2Group<Scalar> exp(const Tangent & a) {
     Matrix<Scalar,2,1> upsilon = a.template head<2>();
     Scalar theta = a[2];
-    SO2Type so2 = SO2Type::exp(theta);
+    SO2Group<Scalar> so2 = SO2Type::exp(theta);
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;
 
@@ -430,9 +431,9 @@ public:
    * \see hat()
    */
   inline static
-  const TransformationType generator(int i) {
+  const Transformation generator(int i) {
     assert(i>=0 && i<3);
-    TangentType e;
+    Tangent e;
     e.setZero();
     e[i] = 1.f;
     return hat(e);
@@ -453,8 +454,8 @@ public:
    * \see vee()
    */
   inline static
-  const TransformationType hat(const TangentType & v) {
-    TransformationType Omega;
+  const Transformation hat(const Tangent & v) {
+    Transformation Omega;
     Omega.setZero();
     Omega.template topLeftCorner<2,2>() = SO2Group<Scalar>::hat(v[2]);
     Omega.col(2).template head<2>() = v.template head<2>();
@@ -479,14 +480,14 @@ public:
    * \see vee()
    */
   inline static
-  const TangentType lieBracket(const TangentType & a,
-                               const TangentType & b) {
+  const Tangent lieBracket(const Tangent & a,
+                               const Tangent & b) {
     Matrix<Scalar,2,1> upsilon1 = a.template head<2>();
     Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
     Scalar theta1 = a[2];
     Scalar theta2 = b[2];
 
-    return TangentType(-theta1*upsilon2[1] + theta2*upsilon1[1],
+    return Tangent(-theta1*upsilon2[1] + theta2*upsilon1[1],
                        theta1*upsilon2[0] - theta2*upsilon1[0],
                        static_cast<Scalar>(0));
   }
@@ -508,8 +509,8 @@ public:
    * \see vee()
    */
   inline static
-  const TangentType log(const SE2Group<Scalar> & other) {
-    TangentType upsilon_theta;
+  const Tangent log(const SE2Group<Scalar> & other) {
+    Tangent upsilon_theta;
     const SO2Group<Scalar> & so2 = other.so2();
     Scalar theta = SO2Group<Scalar>::log(so2);
     upsilon_theta[2] = theta;
@@ -544,8 +545,8 @@ public:
    * \see hat()
    */
   inline static
-  const TangentType vee(const TransformationType & Omega) {
-    TangentType upsilon_omega;
+  const Tangent vee(const Transformation & Omega) {
+    Tangent upsilon_omega;
     upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
     upsilon_omega[2] = SO2Type::vee(Omega.template topLeftCorner<2,2>());
     return upsilon_omega;
@@ -577,13 +578,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -612,7 +613,7 @@ public:
    */
   template<typename OtherDerived> inline
   SE2Group(const SO2GroupBase<OtherDerived> & so2,
-           const PointType & translation)
+           const Point & translation)
     : so2_(so2), translation_(translation) {
   }
 
@@ -622,8 +623,8 @@ public:
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
   inline
-  SE2Group(const typename SO2Type::TransformationType & rotation_matrix,
-           const PointType & translation)
+  SE2Group(const typename SO2Type::Transformation & rotation_matrix,
+           const Point & translation)
     : so2_(rotation_matrix), translation_(translation) {
   }
 
@@ -632,7 +633,7 @@ public:
    */
   inline
   SE2Group(const Scalar & theta,
-           const PointType & translation)
+           const Point & translation)
     : so2_(theta), translation_(translation) {
   }
 
@@ -643,7 +644,7 @@ public:
    */
   inline
   SE2Group(const std::complex<Scalar> & complex,
-           const PointType & translation)
+           const Point & translation)
     : so2_(complex), translation_(translation) {
   }
 
@@ -653,7 +654,7 @@ public:
    * \pre 2x2 sub-matrix need to be orthogonal with determinant of 1
    */
   inline explicit
-  SE2Group(const TransformationType & T)
+  SE2Group(const Transformation & T)
     : so2_(T.template topLeftCorner<2,2>()),
       translation_(T.template block<2,1>(0,2)) {
   }
@@ -754,13 +755,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
@@ -836,13 +837,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;

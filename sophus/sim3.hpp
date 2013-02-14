@@ -31,7 +31,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class Sim3Group;
-typedef SOPHUS_DEPRECATED(Sim3Group<double> Sim3);
+typedef Sim3Group<double> Sim3 EIGEN_DEPRECATED;
 typedef Sim3Group<double> Sim3d; /**< double precision Sim3 */
 typedef Sim3Group<float> Sim3f;  /**< single precision Sim3 */
 typedef Matrix<double,7,1> Vector6d;
@@ -87,9 +87,9 @@ class Sim3GroupBase {
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief translation type */
+  /** \brief translation type, use with care since this might be a Map type */
   typedef typename internal::traits<Derived>::TranslationType TranslationType;
-  /** \brief RxSO3 type */
+  /** \brief RxSO3 type, use with care since this might be a Map type */
   typedef typename internal::traits<Derived>::RxSO3Type RxSO3Type;
 
   /** \brief degree of freedom of group
@@ -101,16 +101,16 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = 4;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar,N,N> TransformationType;
+  typedef Matrix<Scalar,N,N> Transformation;
    /** \brief point type */
-  typedef Matrix<Scalar,3,1> PointType;
+  typedef Matrix<Scalar,3,1> Point;
    /** \brief tangent vector type */
-  typedef Matrix<Scalar,DoF,1> TangentType;
+  typedef Matrix<Scalar,DoF,1> Tangent;
    /** \brief adjoint transformation type */
-  typedef Matrix<Scalar,DoF,DoF> AdjointType;
+  typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /** \brief RxSO3 transfomation type */
-  typedef typename RxSO3Type::TransformationType RxSO3TransformationType;
+  typedef typename RxSO3Type::Transformation RxSO3TransformationType;
 
   /**
    * \brief Adjoint transformation
@@ -121,9 +121,9 @@ public:
    * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
    */
   inline
-  const AdjointType Adj() const {
+  const Adjoint Adj() const {
     RxSO3TransformationType  R = rxso3().rotationMatrix();
-    AdjointType res;
+    Adjoint res;
     res.setZero();
     res.block(0,0,3,3) = scale()*R;
     res.block(0,3,3,3) = SO3Group<Scalar>::hat(translation())*R;
@@ -163,7 +163,7 @@ public:
    * \see  log().
    */
   inline
-  const TangentType log() const {
+  const Tangent log() const {
     return log(*this);
   }
 
@@ -171,12 +171,11 @@ public:
    * \returns 4x4 matrix representation of instance
    */
   inline
-  const TransformationType matrix() const {
-    TransformationType homogenious_matrix;
+  const Transformation matrix() const {
+    Transformation homogenious_matrix;
     homogenious_matrix.setIdentity();
     homogenious_matrix.block(0,0,3,3) = rxso3().matrix();
     homogenious_matrix.col(3).head(3) = translation();
-    homogenious_matrix(3,3) = 1;
     return homogenious_matrix;
   }
 
@@ -210,9 +209,12 @@ public:
    */
   inline
   const Sim3Group<Scalar> operator*(const Sim3Group<Scalar>& other) const {
-    Sim3Group<Scalar> result(*this);
-    result *= other;
-    return result;
+    //Sim3Group<Scalar> result(*this);
+    //result *= other;
+    //return result;
+
+    return Sim3Group<Scalar>(rxso3()*other.rxso3(),
+                (rxso3()*other.translation()) + translation());
   }
 
   /**
@@ -227,7 +229,7 @@ public:
    * (=scaled rotation matrix, translation vector): \f$ p' = sR\cdot p + t \f$.
    */
   inline
-  const PointType operator*(const PointType & p) const {
+  const Point operator*(const Point & p) const {
     return rxso3()*p + translation();
   }
 
@@ -243,7 +245,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to unit quaternion
+   * \brief Read/write access to quaternion
    */
   inline
   typename RxSO3Type::QuaternionType& quaternion() {
@@ -251,7 +253,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Read access to quaternion
    */
   inline
   const typename RxSO3Type::QuaternionType& quaternion() const {
@@ -263,9 +265,9 @@ public:
    *
    * deprecated: use rotationMatrix() instead.
    */
-  typedef TransformationType M3_marcos_dont_like_commas;
+  typedef Transformation M3_marcos_dont_like_commas;
   inline
-  SOPHUS_DEPRECATED(const M3_marcos_dont_like_commas rotation_matrix() const) {
+  EIGEN_DEPRECATED const M3_marcos_dont_like_commas rotation_matrix() const {
     return rxso3().rotationMatrix();
   }
 
@@ -309,10 +311,8 @@ public:
    */
   inline
   void setRotationMatrix
-  (const RxSO3TransformationType & R) {
-    Scalar saved_scale = scale();
-    rxso3().setQuaternion(RxSO3Type::QuaternionType(R));
-    quaternion() *= saved_scale;
+  (const RxSO3TransformationType & R) { 
+    rxso3().setRotationMatrix(R);
   }
 
   /**
@@ -333,7 +333,7 @@ public:
   inline
   void setScaledRotationMatrix
   (const RxSO3TransformationType & sR) {
-    rxso3().setQuaternion(RxSO3Type::QuaternionType(sR));
+    rxso3().setScaledRotationMatrix(sR);
   }
 
   /**
@@ -366,12 +366,12 @@ public:
    * \see lieBracket()
    */
   inline static
-  const AdjointType d_lieBracketab_by_d_a(const TangentType & b) {
+  const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
     Matrix<Scalar,3,1> omega2 = b.template segment<3>(3);
     Scalar sigma2 = b[6];
 
-    AdjointType res;
+    Adjoint res;
     res.setZero();
     res.template topLeftCorner<3,3>()
         = -SO3::hat(omega2)-sigma2*Matrix3d::Identity();
@@ -399,7 +399,7 @@ public:
    * \see log()
    */
   inline static
-  const Sim3Group<Scalar> exp(const TangentType & a) {
+  const Sim3Group<Scalar> exp(const Tangent & a) {
     Matrix<Scalar,3,1> upsilon = a.segment(0,3);
     Matrix<Scalar,3,1> omega = a.segment(3,3);
     Scalar sigma = a[6];
@@ -465,9 +465,9 @@ public:
    * \see hat()
    */
   inline static
-  const TransformationType generator(int i) {
+  const Transformation generator(int i) {
     assert(i>=0 && i<7);
-    TangentType e;
+    Tangent e;
     e.setZero();
     e[i] = 1.f;
     return hat(e);
@@ -488,8 +488,8 @@ public:
    * \see vee()
    */
   inline static
-  const TransformationType hat(const TangentType & v) {
-    TransformationType Omega;
+  const Transformation hat(const Tangent & v) {
+    Transformation Omega;
     Omega.template topLeftCorner<3,3>()
         = RxSO3Type::hat(v.template tail<4>());
     Omega.col(3).template head<3>() = v.template head<3>();
@@ -515,8 +515,8 @@ public:
    * \see vee()
    */
   inline static
-  const TangentType lieBracket(const TangentType & a,
-                               const TangentType & b) {
+  const Tangent lieBracket(const Tangent & a,
+                               const Tangent & b) {
     Matrix<Scalar,3,1> upsilon1 = a.template head<3>();
     Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
     Matrix<Scalar,3,1> omega1 = a.template segment<3>(3);
@@ -524,13 +524,13 @@ public:
     Scalar sigma1 = a[6];
     Scalar sigma2 = b[6];
 
-    TangentType res;
+    Tangent res;
     res.template head<3>() =
         SO3Group<Scalar>::hat(omega1)*upsilon2
         + SO3Group<Scalar>::hat(upsilon1)*omega2
         + sigma1*upsilon2 - sigma2*upsilon1;
     res.template segment<3>(3) = omega1.cross(omega2);
-    res[6] = 0.;
+    res[6] = static_cast<Scalar>(0);
 
     return res;
   }
@@ -552,10 +552,10 @@ public:
    * \see vee()
    */
   inline static
-  const TangentType log(const Sim3Group<Scalar> & other) {
-    TangentType res;
+  const Tangent log(const Sim3Group<Scalar> & other) {
+    Tangent res;
     const Scalar & scale = other.scale();
-    const PointType & t = other.translation();
+    const Point & t = other.translation();
     Scalar theta;
     Matrix<Scalar,4,1> omega_sigma
         = RxSO3Type::logAndTheta(other.rxso3(), &theta);
@@ -581,8 +581,8 @@ public:
    * \see hat()
    */
   inline static
-  const TangentType vee(const TransformationType & Omega) {
-    TangentType upsilon_omega_sigma;
+  const Tangent vee(const Transformation & Omega) {
+    Tangent upsilon_omega_sigma;
     upsilon_omega_sigma.template head<3>()
         = Omega.col(3).template head<3>();
     upsilon_omega_sigma.template tail<4>()
@@ -598,7 +598,7 @@ private:
                                 const RxSO3TransformationType & Omega){
     static const RxSO3TransformationType I
         = RxSO3TransformationType::Identity();
-    static const Scalar one = static_cast<Scalar>(1);
+    static const Scalar one = static_cast<Scalar>(1.);
     static const Scalar half = static_cast<Scalar>(1./2.);
     RxSO3TransformationType Omega2 = Omega*Omega;
 
@@ -656,13 +656,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -691,7 +691,7 @@ public:
    */
   template<typename OtherDerived> inline
   Sim3Group(const RxSO3GroupBase<OtherDerived> & rxso3,
-           const PointType & translation)
+           const Point & translation)
     : rxso3_(rxso3), translation_(translation) {
   }
 
@@ -702,7 +702,7 @@ public:
    */
   inline
   Sim3Group(const Quaternion<Scalar> & quaternion,
-           const PointType & translation)
+           const Point & translation)
     : rxso3_(quaternion), translation_(translation) {
   }
 
@@ -813,13 +813,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
@@ -895,13 +895,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;

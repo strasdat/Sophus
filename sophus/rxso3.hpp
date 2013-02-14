@@ -32,7 +32,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class RxSO3Group;
-typedef SOPHUS_DEPRECATED(RxSO3Group<double> ScSO3);
+typedef RxSO3Group<double> ScSO3 EIGEN_DEPRECATED;
 typedef RxSO3Group<double> RxSO3d; /**< double precision RxSO3 */
 typedef RxSO3Group<float> RxSO3f;  /**< single precision RxSO3 */
 }
@@ -90,9 +90,9 @@ using namespace Eigen;
 template<typename Derived>
 class RxSO3GroupBase {
 public:
-  /** \brief scalar type */
+  /** \brief scalar type, use with care since this might be a Map type  */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief quaternion type */
+  /** \brief quaternion type, use with care since this might be a Map type  */
   typedef typename internal::traits<Derived>::QuaternionType QuaternionType;
 
 
@@ -105,13 +105,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = 3;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar,N,N> TransformationType;
+  typedef Matrix<Scalar,N,N> Transformation;
    /** \brief point type */
-  typedef Matrix<Scalar,3,1> PointType;
+  typedef Matrix<Scalar,3,1> Point;
    /** \brief tangent vector type */
-  typedef Matrix<Scalar,DoF,1> TangentType;
+  typedef Matrix<Scalar,DoF,1> Tangent;
    /** \brief adjoint transformation type */
-  typedef Matrix<Scalar,DoF,DoF> AdjointType;
+  typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
 
   /**
@@ -126,8 +126,8 @@ public:
    * \f$ A \f$.
    */
   inline
-  const AdjointType Adj() const {
-    AdjointType res;
+  const Adjoint Adj() const {
+    Adjoint res;
     res.setIdentity();
     res.template topLeftCorner<3,3>() = rotationMatrix();
     return res;
@@ -150,8 +150,6 @@ public:
    *
    * Note: The first three Scalars represent the imaginary parts, while the
    * forth Scalar represent the real part.
-   *
-   * \see normalize()
    */
   inline Scalar* data() {
     return quaternion().coeffs().data();
@@ -171,7 +169,7 @@ public:
    */
   inline
   const RxSO3Group<Scalar> inverse() const {
-    assert(quaternion().squaredNorm()>static_cast<Scalar>(0.));
+    assert(quaternion().squaredNorm()>static_cast<Scalar>(0));
     return RxSO3Group<Scalar>(quaternion().inverse());
   }
 
@@ -183,7 +181,7 @@ public:
    * \see  log().
    */
   inline
-  const TangentType log() const {
+  const Tangent log() const {
     return RxSO3Group<Scalar>::log(*this);
   }
 
@@ -195,10 +193,10 @@ public:
    * matrix \f$ R \f$  with scale s.
    */
   inline
-  const TransformationType matrix() const {
+  const Transformation matrix() const {
     //ToDO: implement this directly!
     Scalar scale = quaternion().norm();
-    QuaternionType norm_quad = quaternion();
+    Quaternion<Scalar> norm_quad = quaternion();
     norm_quad.coeffs() /= scale;
     return scale*norm_quad.toRotationMatrix();
   }
@@ -236,10 +234,10 @@ public:
    * : \f$ p' = sR\cdot p \f$.
    */
   inline
-  const PointType operator*(const PointType & p) const {
+  const Point operator*(const Point & p) const {
     //ToDO: implement this directly!
     Scalar scale = quaternion().norm();
-    QuaternionType norm_quad = quaternion();
+    Quaternion<Scalar> norm_quad = quaternion();
     norm_quad.coeffs() /= scale;
     return scale*norm_quad._transformVector(p);
   }
@@ -273,9 +271,9 @@ public:
    * \returns rotation matrix
    */
   inline
-  TransformationType rotationMatrix() const {
+  Transformation rotationMatrix() const {
     Scalar scale = quaternion().norm();
-    QuaternionType norm_quad = quaternion();
+    Quaternion<Scalar> norm_quad = quaternion();
     norm_quad.coeffs() /= scale;
     return norm_quad.toRotationMatrix();
   }
@@ -289,12 +287,46 @@ public:
   }
 
   /**
+   * \brief Setter of quaternion using rotation matrix, leaves scale untouched
+   *
+   * \param R a 3x3 rotation matrix
+   * \pre       the 3x3 matrix should be orthogonal and have a determinant of 1
+   */
+  inline
+  void setRotationMatrix(const Transformation & R) {
+    Scalar saved_scale = scale();
+    quaternion() = R;
+    quaternion() *= saved_scale;
+  }
+
+  /**
    * \brief Scale setter
    */
   EIGEN_STRONG_INLINE
   void setScale(const Scalar & scale) {
     quaternion().normalize();
     quaternion() *= scale;
+  }
+
+  /**
+   * \brief Setter of quaternion using scaled rotation matrix
+   *
+   * \param sR a 3x3 scaled rotation matrix
+   * \pre        the 3x3 matrix should be "scaled orthogonal"
+   *             and have a positive determinant
+   */
+  inline
+  void setScaledRotationMatrix
+  (const Transformation & sR) {
+    assert(sR.determinant() > static_cast<Scalar>(0));
+    Transformation squared_sR = sR*sR.transpose();
+    Scalar squared_scale
+        = static_cast<Scalar>(1./3.)
+          *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
+    assert(squared_scale > static_cast<Scalar>(0));
+    Scalar scale = sqrt(squared_scale);
+    quaternion() = sR/scale;
+    quaternion().coeffs() *= scale;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -312,8 +344,8 @@ public:
    * \see lieBracket()
    */
   inline static
-  const AdjointType d_lieBracketab_by_d_a(const TangentType & b) {
-    AdjointType res;
+  const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
+    Adjoint res;
     res.setZero();
     res.template topLeftCorner<3,3>() = -SO3::hat(b.template head<3>());
     return res;
@@ -335,7 +367,7 @@ public:
    * \see log()
    */
   inline static
-  const RxSO3Group<Scalar> exp(const TangentType & a) {
+  const RxSO3Group<Scalar> exp(const Tangent & a) {
     Scalar theta;
     return expAndTheta(a, &theta);
   }
@@ -351,7 +383,7 @@ public:
    * \see exp() for details
    */
   inline static
-  const RxSO3Group<Scalar> expAndTheta(const TangentType & a,
+  const RxSO3Group<Scalar> expAndTheta(const Tangent & a,
                                      Scalar * theta) {
     const Matrix<Scalar,3,1> & omega = a.template head<3>();
     Scalar sigma = a[3];
@@ -394,9 +426,9 @@ public:
    * \see hat()
    */
   inline static
-  const TransformationType generator(int i) {
+  const Transformation generator(int i) {
     assert(i>=0 && i<4);
-    TangentType e;
+    Tangent e;
     e.setZero();
     e[i] = 1.f;
     return hat(e);
@@ -417,8 +449,8 @@ public:
    * \see vee()
    */
   inline static
-  const TransformationType hat(const TangentType & a) {
-    TransformationType Omega;
+  const Transformation hat(const Tangent & a) {
+    Transformation Omega;
     Omega <<  a(3), -a(2),  a(1)
         ,     a(2),  a(3), -a(0)
         ,    -a(1),  a(0),  a(3);
@@ -443,13 +475,13 @@ public:
    * \see vee()
    */
   inline static
-  const TangentType lieBracket(const TangentType & a,
-                               const TangentType & b) {
+  const Tangent lieBracket(const Tangent & a,
+                               const Tangent & b) {
     const Matrix<Scalar,3,1> & omega1 = a.template head<3>();
     const Matrix<Scalar,3,1> & omega2 = b.template head<3>();
     Matrix<Scalar,4,1> res;
     res.template head<3>() = omega1.cross(omega2);
-    res[3] = 0.;
+    res[3] = static_cast<Scalar>(0);
     return res;
   }
 
@@ -470,7 +502,7 @@ public:
    * \see vee()
    */
   inline static
-  const TangentType log(const RxSO3Group<Scalar> & other) {
+  const Tangent log(const RxSO3Group<Scalar> & other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
@@ -486,10 +518,10 @@ public:
    * \see log() for details
    */
   inline static
-  const TangentType logAndTheta(const RxSO3Group<Scalar> & other,
-                                       Scalar * theta) {
+  const Tangent logAndTheta(const RxSO3Group<Scalar> & other,
+                                Scalar * theta) {
     Scalar scale = other.quaternion().norm();
-    TangentType omega_sigma;
+    Tangent omega_sigma;
     omega_sigma[3] = std::log(scale);
     omega_sigma.template head<3>()
         = SO3Group<Scalar>::logAndTheta(SO3Group<Scalar>(other.quaternion()),
@@ -508,13 +540,13 @@ public:
    * \see hat()
    */
   inline static
-  const TangentType vee(const TransformationType & Omega) {
+  const Tangent vee(const Transformation & Omega) {
     assert(abs(Omega(2,1)+Omega(1,2))<SophusConstants<Scalar>::epsilon());
     assert(abs(Omega(0,2)+Omega(2,0))<SophusConstants<Scalar>::epsilon());
     assert(abs(Omega(1,0)+Omega(0,1))<SophusConstants<Scalar>::epsilon());
     assert(abs(Omega(0,0)-Omega(1,1))<SophusConstants<Scalar>::epsilon());
     assert(abs(Omega(0,0)-Omega(2,2))<SophusConstants<Scalar>::epsilon());
-    return TangentType(Omega(2,1), Omega(0,2), Omega(1,0), Omega(0,0));
+    return Tangent(Omega(2,1), Omega(0,2), Omega(1,0), Omega(0,0));
   }
 };
 
@@ -539,13 +571,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -573,15 +605,8 @@ public:
    * \pre matrix need to be "scaled orthogonal" with positive determinant
    */
   inline explicit
-  RxSO3Group(const TransformationType & scale_times_R) {
-    TransformationType squared_sR = scale_times_R*scale_times_R.transpose();
-    Scalar squared_scale
-        = static_cast<Scalar>(1./3.)
-          *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
-    assert(squared_scale > static_cast<Scalar>(0));
-    Scalar scale = sqrt(squared_scale);
-    quaternion_ = scale_times_R/scale;
-    quaternion_.coeffs() *= scale;
+  RxSO3Group(const Transformation & sR) {
+    setScaledRotationMatrix(sR);
   }
 
   /**
@@ -591,7 +616,7 @@ public:
    * \pre scale need to be not zero
    */
   inline
-  RxSO3Group(const Scalar & scale, const TransformationType & R)
+  RxSO3Group(const Scalar & scale, const Transformation & R)
     : quaternion_(R) {
     assert(scale > static_cast<Scalar>(0));
     quaternion_.normalize();
@@ -622,7 +647,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to unit quaternion
+   * \brief Read/write access to quaternion
    */
   EIGEN_STRONG_INLINE
   QuaternionType & quaternion() {
@@ -630,7 +655,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Read access to quaternion
    */
   EIGEN_STRONG_INLINE
   const QuaternionType & quaternion() const {
@@ -669,13 +694,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
@@ -686,7 +711,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to unit quaternion
+   * \brief Read/write access to quaternion
    */
   EIGEN_STRONG_INLINE
   QuaternionType & quaternion() {
@@ -694,7 +719,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Read access to quaternion
    */
   EIGEN_STRONG_INLINE
   const QuaternionType & quaternion() const {
@@ -731,13 +756,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;

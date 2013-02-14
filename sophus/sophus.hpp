@@ -26,16 +26,6 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
-
-#ifdef __GNUC__
-#  define SOPHUS_DEPRECATED(func) func __attribute__ ((deprecated))
-#elif defined _MSC_VER
-#  define SOPHUS_DEPRECATED(func) __declspec(deprecated) func
-#else
-#  define SOPHUS_DEPRECATED(func) func
-#endif
-
-
 namespace Sophus {
 using namespace Eigen;
 

@@ -33,7 +33,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SO2Group;
-typedef SOPHUS_DEPRECATED(SO2Group<double> SO2);
+typedef SO2Group<double> SO2 EIGEN_DEPRECATED;
 typedef SO2Group<double> SO2d; /**< double precision SO2 */
 typedef SO2Group<float> SO2f;  /**< single precision SO2 */
 }
@@ -85,7 +85,7 @@ class SO2GroupBase {
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief complex number type */
+  /** \brief complex number type, use with care since this might be a Map type*/
   typedef typename internal::traits<Derived>::ComplexType ComplexType;
 
   /** \brief degree of freedom of group
@@ -97,13 +97,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = 2;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar,N,N> TransformationType;
+  typedef Matrix<Scalar,N,N> Transformation;
    /** \brief point type */
-  typedef Matrix<Scalar,2,1> PointType;
+  typedef Matrix<Scalar,2,1> Point;
    /** \brief tangent vector type */
-  typedef Matrix<Scalar,DoF,1> TangentType;
+  typedef Scalar Tangent;
    /** \brief adjoint transformation type */
-  typedef Matrix<Scalar,DoF,DoF> AdjointType;
+  typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /**
    * \brief Adjoint transformation
@@ -214,10 +214,10 @@ public:
    * thus the so-called rotation matrix.
    */
   inline
-  const TransformationType matrix() const {
+  const Transformation matrix() const {
     const Scalar & real = unit_complex().x();
     const Scalar & imag = unit_complex().y();
-    TransformationType R;
+    Transformation R;
     R(0,0) = real; R(0,1) = -imag;
     R(1,0) = imag; R(1,1) =  real;
     return R;
@@ -253,10 +253,10 @@ public:
    * SO2 transformation \f$R\f$ (=rotation matrix): \f$ p' = R\cdot p \f$.
    */
   inline
-  const PointType operator*(const PointType & p) const {
+  const Point operator*(const Point & p) const {
     const Scalar & real = unit_complex().x();
     const Scalar & imag = unit_complex().y();
-    return PointType(real*p[0] - imag*p[1], imag*p[0] + real*p[1]);
+    return Point(real*p[0] - imag*p[1], imag*p[0] + real*p[1]);
   }
 
   /**
@@ -280,7 +280,7 @@ public:
    * The complex number is normalized to unit length.
    */
   inline
-  void setComplex(const ComplexType& complex) {
+  void setComplex(const Point & complex) {
     assert(abs(complex)!=static_cast<Scalar>(0));
     unit_complex() = complex;
     normalize();
@@ -314,7 +314,7 @@ public:
    * \see log()
    */
   inline static
-  const SO2Group<Scalar> exp(const Scalar & theta) {
+  const SO2Group<Scalar> exp(const Tangent & theta) {
     return SO2Group<Scalar>(ComplexType(cos(theta), sin(theta)));
   }
 
@@ -331,7 +331,7 @@ public:
    * \see hat()
    */
   inline static
-  const TransformationType generator() {
+  const Transformation generator() {
     return hat(1);
   }
 
@@ -350,8 +350,8 @@ public:
    * \see vee()
    */
   inline static
-  const TransformationType hat(const Scalar & theta) {
-    TransformationType Omega;
+  const Transformation hat(const Tangent & theta) {
+    Transformation Omega;
     Omega <<  static_cast<Scalar>(0), -theta
         ,  theta,     static_cast<Scalar>(0);
     return Omega;
@@ -372,8 +372,8 @@ public:
    * \see vee()
    */
   inline static
-  const Scalar lieBracket(const Scalar & theta1,
-                          const Scalar & theta2) {
+  const Tangent lieBracket(const Tangent & theta1,
+                               const Tangent & theta2) {
     return static_cast<Scalar>(0);
   }
 
@@ -393,7 +393,7 @@ public:
    * \see vee()
    */
   inline static
-  const Scalar log(const SO2Group<Scalar> & other) {
+  const Tangent log(const SO2Group<Scalar> & other) {
     // todo: general implementation for Scalar not being float or double.
     return atan2(other.unit_complex_.y(), other.unit_complex().x());
   }
@@ -409,7 +409,7 @@ public:
    * \see hat()
    */
   inline static
-  const Scalar vee(const TransformationType & Omega) {
+  const Tangent vee(const Transformation & Omega) {
     assert(fabs(Omega(1,0)+Omega(0,1)) < SophusConstants<Scalar>::epsilon());
     return Omega(1,0);
   }
@@ -445,13 +445,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   // base is friend so unit_complex_nonconst can be accessed from base
   friend class SO2GroupBase<SO2Group<_Scalar,_Options> >;
@@ -481,7 +481,7 @@ public:
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
   inline explicit
-  SO2Group(const TransformationType & R)
+  SO2Group(const Transformation & R)
     : unit_complex_(static_cast<Scalar>(0.5)*(R(0,0)+R(1,1)),
                     static_cast<Scalar>(0.5)*(R(1,0)-R(0,1))) {
   }
@@ -597,13 +597,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   // base is friend so unit_complex_nonconst can be accessed from base
   friend class Sophus::SO2GroupBase<Map<Sophus::SO2Group<_Scalar>, _Options> >;
@@ -666,13 +666,13 @@ public:
   /** \brief group transformations acts on M-vectors */
   static const int M = Base::M;
   /** \brief group transfomation type */
-  typedef typename Base::TransformationType TransformationType;
+  typedef typename Base::Transformation Transformation;
   /** \brief point type */
-  typedef typename Base::PointType PointType;
+  typedef typename Base::Point Point;
   /** \brief tangent vector type */
-  typedef typename Base::TangentType TangentType;
+  typedef typename Base::Tangent Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::AdjointType AdjointType;
+  typedef typename Base::Adjoint Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;

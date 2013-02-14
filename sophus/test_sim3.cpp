@@ -35,48 +35,48 @@ bool sim3explog_tests() {
   typedef RxSO3Group<Scalar> RxSO3Type;
   typedef Sim3Group<Scalar> Sim3Type;
   typedef Matrix<Scalar,4,1> Vector4Type;
-  typedef typename Sim3Group<Scalar>::PointType PointType;
-  typedef typename Sim3Group<Scalar>::TangentType TangentType;
-  typedef typename Sim3Group<Scalar>::TransformationType TransformationType;
-  typedef typename Sim3Group<Scalar>::AdjointType AdjointType;
+  typedef typename Sim3Group<Scalar>::Point Point;
+  typedef typename Sim3Group<Scalar>::Tangent Tangent;
+  typedef typename Sim3Group<Scalar>::Transformation Transformation;
+  typedef typename Sim3Group<Scalar>::Adjoint Adjoint;
   const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
   const Scalar PI = SophusConstants<Scalar>::pi();
 
   vector<Sim3Type> sim3_vec;
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0,1.)),
-                          PointType(0,0,0)));
+                              Point(0,0,0)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, -1.0,1.1)),
-                          PointType(10,0,0)));
+                              Point(10,0,0)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.,1.1)),
-                          PointType(0,10,5)));
+                              Point(0,10,5)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0.)),
-                          PointType(0,0,0)));
+                              Point(0,0,0)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(
                                 Vector4Type(0., 0., 0.00001, 0.0000001)),
-                          PointType(1,-1.00000001,2.0000000001)));
+                              Point(1,-1.00000001,2.0000000001)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0)),
-                          PointType(0.01,0,0)));
+                              Point(0.01,0,0)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0,0.9)),
-                          PointType(4,-5,0)));
+                              Point(4,-5,0)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0,0)),
-                              PointType(0,0,0))
-                   *Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0,0)),
-                             PointType(0,0,0))
-                   *Sim3Type(RxSO3Type::exp(Vector4Type(-0.2, -0.5, -0.0,0)),
-                             PointType(0,0,0)));
+                              Point(0,0,0))
+                     *Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0,0)),
+                               Point(0,0,0))
+                     *Sim3Type(RxSO3Type::exp(Vector4Type(-0.2, -0.5, -0.0,0)),
+                               Point(0,0,0)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.3, 0.5, 0.1,0)),
-                              PointType(2,0,-7))
-                   *Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0,0)),
-                             PointType(0,0,0))
-                   *Sim3Type(RxSO3Type::exp(Vector4Type(-0.3, -0.5, -0.1,0)),
-                             PointType(0,6,0)));
+                              Point(2,0,-7))
+                     *Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0,0)),
+                               Point(0,0,0))
+                     *Sim3Type(RxSO3Type::exp(Vector4Type(-0.3, -0.5, -0.1,0)),
+                               Point(0,6,0)));
 
   bool failed = false;
 
   for (size_t i=0; i<sim3_vec.size(); ++i) {
-    TransformationType R1 = sim3_vec[i].matrix();
-    TransformationType R2 = Sim3Type::exp(sim3_vec[i].log()).matrix();
-    TransformationType DiffR = R1-R2;
+    Transformation R1 = sim3_vec[i].matrix();
+    Transformation R2 = Sim3Type::exp(sim3_vec[i].log()).matrix();
+    Transformation DiffR = R1-R2;
     Scalar nrm = DiffR.norm();
 
     // ToDO: Force Sim3Type to be more accurate!
@@ -89,10 +89,10 @@ bool sim3explog_tests() {
     }
   }
   for (size_t i=0; i<sim3_vec.size(); ++i) {
-    PointType p(1,2,4);
-    TransformationType T = sim3_vec[i].matrix();
-    PointType res1 = sim3_vec[i]*p;
-    PointType res2
+    Point p(1,2,4);
+    Transformation T = sim3_vec[i].matrix();
+    Point res1 = sim3_vec[i]*p;
+    Point res2
         = T.template topLeftCorner<3,3>()*p
         + T.template topRightCorner<3,1>();
 
@@ -107,10 +107,10 @@ bool sim3explog_tests() {
     }
   }
   for (size_t i=0; i<sim3_vec.size(); ++i) {
-    TransformationType q = sim3_vec[i].matrix();
-    TransformationType inv_q = sim3_vec[i].inverse().matrix();
-    TransformationType res = q*inv_q ;
-    TransformationType I;
+    Transformation q = sim3_vec[i].matrix();
+    Transformation inv_q = sim3_vec[i].inverse().matrix();
+    Transformation res = q*inv_q ;
+    Transformation I;
     I.setIdentity();
 
     Scalar nrm = (res-I).norm();
@@ -124,15 +124,15 @@ bool sim3explog_tests() {
     }
   }
   for (size_t i=0; i<sim3_vec.size(); ++i) {
-    TransformationType T = sim3_vec[i].matrix();
-    AdjointType Ad = sim3_vec[i].Adj();
-    TangentType x;
+    Transformation T = sim3_vec[i].matrix();
+    Adjoint Ad = sim3_vec[i].Adj();
+    Tangent x;
     x << 0.9, 2, 3, 1.2, 2, 3, 1.1;
-    TransformationType I;
+    Transformation I;
     I.setIdentity();
-    TangentType ad1 = Ad*x;
-    TangentType ad2 = Sim3Type::vee(T*Sim3Type::hat(x)
-                                     *sim3_vec[i].inverse().matrix());
+    Tangent ad1 = Ad*x;
+    Tangent ad2 = Sim3Type::vee(T*Sim3Type::hat(x)
+                                    *sim3_vec[i].inverse().matrix());
     Scalar nrm = (ad1-ad2).norm();
 
     if (isnan(nrm) || nrm>SMALL_EPS) {
@@ -145,18 +145,14 @@ bool sim3explog_tests() {
   }
   for (size_t i=0; i<sim3_vec.size(); ++i) {
     for (size_t j=0; j<sim3_vec.size(); ++j) {
-      TransformationType mul_resmat = (sim3_vec[i]*sim3_vec[j]).matrix();
+      Transformation mul_resmat = (sim3_vec[i]*sim3_vec[j]).matrix();
       Scalar mul_res_raw[Sim3Type::num_parameters];
-      Eigen::Map<Sim3Type> mul_res(mul_res_raw);
+      Map<Sim3Type> mul_res(mul_res_raw);
       mul_res = sim3_vec[i];
       mul_res *= sim3_vec[j];
-      TransformationType diff =  mul_resmat-mul_res.matrix();
+      Transformation diff =  mul_resmat-mul_res.matrix();
       Scalar nrm = diff.norm();
       if (isnan(nrm) || nrm>SMALL_EPS) {
-        cerr << "Multiply and Map" << endl;
-        cerr  << "Test case: " << i  << "," << j << endl;
-           cerr << mul_resmat <<endl;
-              cerr << mul_res.matrix() <<endl;
         cerr << diff <<endl;
         cerr << endl;
         failed = true;
@@ -171,15 +167,15 @@ bool sim3bracket_tests() {
   typedef RxSO3Group<Scalar> RxSO3Type;
   typedef Sim3Group<Scalar> Sim3Type;
   typedef Matrix<Scalar,4,1> Vector4Type;
-  typedef typename Sim3Group<Scalar>::PointType PointType;
-  typedef typename Sim3Group<Scalar>::TangentType TangentType;
-  typedef typename Sim3Group<Scalar>::TransformationType TransformationType;
-  typedef typename Sim3Group<Scalar>::AdjointType AdjointType;
+  typedef typename Sim3Group<Scalar>::Point Point;
+  typedef typename Sim3Group<Scalar>::Tangent Tangent;
+  typedef typename Sim3Group<Scalar>::Transformation Transformation;
+  typedef typename Sim3Group<Scalar>::Adjoint Adjoint;
   const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
 
   bool failed = false;
-  vector<TangentType> vecs;
-  TangentType tmp;
+  vector<Tangent> vecs;
+  Tangent tmp;
   tmp << 0,0,0,0,0,0,0;
   vecs.push_back(tmp);
   tmp << 1,0,0,0,0,0,0;
@@ -195,7 +191,7 @@ bool sim3bracket_tests() {
   tmp << 30,5,-1,20,-1,0,1.5;
   vecs.push_back(tmp);
   for (size_t i=0; i<vecs.size(); ++i) {
-    TangentType resDiff = vecs[i] - Sim3Type::vee(Sim3Type::hat(vecs[i]));
+    Tangent resDiff = vecs[i] - Sim3Type::vee(Sim3Type::hat(vecs[i]));
     if (resDiff.norm()>SMALL_EPS) {
       cerr << "Hat-vee Test" << endl;
       cerr  << "Test case: " << i <<  endl;
@@ -205,12 +201,12 @@ bool sim3bracket_tests() {
     }
 
     for (size_t j=0; j<vecs.size(); ++j) {
-      TangentType res1 = Sim3Type::lieBracket(vecs[i],vecs[j]);
-      TransformationType hati = Sim3Type::hat(vecs[i]);
-      TransformationType hatj = Sim3Type::hat(vecs[j]);
+      Tangent res1 = Sim3Type::lieBracket(vecs[i],vecs[j]);
+      Transformation hati = Sim3Type::hat(vecs[i]);
+      Transformation hatj = Sim3Type::hat(vecs[j]);
 
-      TangentType res2 = Sim3Type::vee(hati*hatj-hatj*hati);
-      TangentType resDiff = res1-res2;
+      Tangent res2 = Sim3Type::vee(hati*hatj-hatj*hati);
+      Tangent resDiff = res1-res2;
       if (resDiff.norm()>SMALL_EPS) {
         cerr << "Sim3Type Lie Bracket Test" << endl;
         cerr  << "Test case: " << i << ", " <<j<< endl;
@@ -222,10 +218,10 @@ bool sim3bracket_tests() {
       }
     }
 
-    TangentType omega = vecs[i];
-    TransformationType exp_x = Sim3Type::exp(omega).matrix();
-    TransformationType expmap_hat_x = (Sim3Type::hat(omega)).exp();
-    TransformationType DiffR = exp_x-expmap_hat_x;
+    Tangent omega = vecs[i];
+    Transformation exp_x = Sim3Type::exp(omega).matrix();
+    Transformation expmap_hat_x = (Sim3Type::hat(omega)).exp();
+    Transformation DiffR = exp_x-expmap_hat_x;
     Scalar nrm = DiffR.norm();
 
     if (isnan(nrm) || nrm>static_cast<Scalar>(10)*SMALL_EPS) {

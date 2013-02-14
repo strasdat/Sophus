@@ -2,7 +2,7 @@ Sophus - CRTP branch
 
 C++ implementation of Lie Groups using Eigen.
 
-Thanks to Steve Lovegrove, Sophus is now fully templated  - using the Curiously Recurring Template Pattern (CRTP).
+Thanks to Steven Lovegrove, Sophus is now fully templated  - using the Curiously Recurring Template Pattern (CRTP).
 
 
 Installation guide:

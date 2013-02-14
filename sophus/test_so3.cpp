@@ -34,37 +34,37 @@ template<class Scalar>
 bool so3explog_tests() {
   typedef SO3Group<Scalar> SO3Type;
   typedef typename SO3Group<Scalar>::QuaternionType QuaternionType;
-  typedef typename SO3Group<Scalar>::PointType PointType;
-  typedef typename SO3Group<Scalar>::AdjointType AdjointType;
-  typedef typename SO3Group<Scalar>::TangentType TangentType;
-  typedef typename SO3Group<Scalar>::TransformationType TransformationType;
+  typedef typename SO3Group<Scalar>::Point Point;
+  typedef typename SO3Group<Scalar>::Adjoint Adjoint;
+  typedef typename SO3Group<Scalar>::Tangent Tangent;
+  typedef typename SO3Group<Scalar>::Transformation Transformation;
   const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
   const Scalar PI = SophusConstants<Scalar>::pi();
 
   vector<SO3Type> so3_vec;
   so3_vec.push_back(SO3Type(QuaternionType(0.1e-11, 0., 1., 0.)));
   so3_vec.push_back(SO3Type(QuaternionType(-1,0.00001,0.0,0.0)));
-  so3_vec.push_back(SO3Type::exp(PointType(0.2, 0.5, 0.0)));
-  so3_vec.push_back(SO3Type::exp(PointType(0.2, 0.5, -1.0)));
-  so3_vec.push_back(SO3Type::exp(PointType(0., 0., 0.)));
-  so3_vec.push_back(SO3Type::exp(PointType(0., 0., 0.00001)));
-  so3_vec.push_back(SO3Type::exp(PointType(M_PI, 0, 0)));
-  so3_vec.push_back(SO3Type::exp(PointType(0.2, 0.5, 0.0))
-                   *SO3Type::exp(PointType(M_PI, 0, 0))
-                   *SO3Type::exp(PointType(-0.2, -0.5, -0.0)));
-  so3_vec.push_back(SO3Type::exp(PointType(0.3, 0.5, 0.1))
-                   *SO3Type::exp(PointType(M_PI, 0, 0))
-                   *SO3Type::exp(PointType(-0.3, -0.5, -0.1)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, -1.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.)));
+  so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.00001)));
+  so3_vec.push_back(SO3Type::exp(Point(M_PI, 0, 0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0))
+                   *SO3Type::exp(Point(M_PI, 0, 0))
+                   *SO3Type::exp(Point(-0.2, -0.5, -0.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.3, 0.5, 0.1))
+                   *SO3Type::exp(Point(M_PI, 0, 0))
+                   *SO3Type::exp(Point(-0.3, -0.5, -0.1)));
 
   bool failed = false;
 
   for (size_t i=0; i<so3_vec.size(); ++i) {
-    TransformationType R1 = so3_vec[i].matrix();
+    Transformation R1 = so3_vec[i].matrix();
     Scalar theta;
-    TransformationType R2
+    Transformation R2
         = SO3Type::exp(SO3Type::logAndTheta(so3_vec[i],&theta)).matrix();
 
-    TransformationType DiffR = R1-R2;
+    Transformation DiffR = R1-R2;
     Scalar nrm = DiffR.norm();
 
     if (isnan(nrm) || nrm>SMALL_EPS) {
@@ -85,10 +85,10 @@ bool so3explog_tests() {
   }
 
   for (size_t i=0; i<so3_vec.size(); ++i) {
-    PointType p(1,2,4);
-    TransformationType sR = so3_vec[i].matrix();
-    PointType res1 = so3_vec[i]*p;
-    PointType res2 = sR*p;
+    Point p(1,2,4);
+    Transformation sR = so3_vec[i].matrix();
+    Point res1 = so3_vec[i]*p;
+    Point res2 = sR*p;
 
     Scalar nrm = (res1-res2).norm();
 
@@ -102,10 +102,10 @@ bool so3explog_tests() {
   }
 
   for (size_t i=0; i<so3_vec.size(); ++i) {
-    TransformationType q = so3_vec[i].matrix();
-    TransformationType inv_q = so3_vec[i].inverse().matrix();
-    TransformationType res = q*inv_q ;
-    TransformationType I;
+    Transformation q = so3_vec[i].matrix();
+    Transformation inv_q = so3_vec[i].inverse().matrix();
+    Transformation res = q*inv_q ;
+    Transformation I;
     I.setIdentity();
 
     Scalar nrm = (res-I).norm();
@@ -119,14 +119,14 @@ bool so3explog_tests() {
     }
   }
   for (size_t i=0; i<so3_vec.size(); ++i) {
-    TransformationType T = so3_vec[i].matrix();
-    AdjointType Ad = so3_vec[i].Adj();
-    TangentType x;
+    Transformation T = so3_vec[i].matrix();
+    Adjoint Ad = so3_vec[i].Adj();
+    Tangent x;
     x << 1,2,3;
-    TransformationType I;
+    Transformation I;
     I.setIdentity();
-    TangentType ad1 = Ad*x;
-    TangentType ad2 = SO3Type::vee(T*SO3Type::hat(x)
+    Tangent ad1 = Ad*x;
+    Tangent ad2 = SO3Type::vee(T*SO3Type::hat(x)
                                      *so3_vec[i].inverse().matrix());
     Scalar nrm = (ad1-ad2).norm();
 
@@ -140,12 +140,12 @@ bool so3explog_tests() {
   }
   for (size_t i=0; i<so3_vec.size(); ++i) {
     for (size_t j=0; j<so3_vec.size(); ++j) {
-      TransformationType mul_resmat = (so3_vec[i]*so3_vec[j]).matrix();
+      Transformation mul_resmat = (so3_vec[i]*so3_vec[j]).matrix();
       Scalar fastmul_res_raw[SO3Type::num_parameters];
       Eigen::Map<SO3Type> fastmul_res(fastmul_res_raw);
       fastmul_res = so3_vec[i];
       fastmul_res.fastMultiply(so3_vec[j]);
-      TransformationType diff =  mul_resmat-fastmul_res.matrix();
+      Transformation diff =  mul_resmat-fastmul_res.matrix();
       Scalar nrm = diff.norm();
       if (isnan(nrm) || nrm>SMALL_EPS) {
         cerr << "Fast multiplication" << endl;
@@ -162,27 +162,27 @@ bool so3explog_tests() {
 template<class Scalar>
 bool so3bracket_tests() {
   typedef SO3Group<Scalar> SO3Type;
-  typedef typename SO3Group<Scalar>::TangentType TangentType;
-  typedef typename SO3Group<Scalar>::TransformationType TransformationType;
+  typedef typename SO3Group<Scalar>::Tangent Tangent;
+  typedef typename SO3Group<Scalar>::Transformation Transformation;
   const Scalar SMALL_EPS = SophusConstants<Scalar>::epsilon();
 
   bool failed = false;
-  vector<TangentType> vecs;
-  vecs.push_back(TangentType(0,0,0));
-  vecs.push_back(TangentType(1,0,0));
-  vecs.push_back(TangentType(0,1,0));
-  vecs.push_back(TangentType(M_PI_2,M_PI_2,0.0));
-  vecs.push_back(TangentType(-1,1,0));
-  vecs.push_back(TangentType(20,-1,0));
-  vecs.push_back(TangentType(30,5,-1));
+  vector<Tangent> vecs;
+  vecs.push_back(Tangent(0,0,0));
+  vecs.push_back(Tangent(1,0,0));
+  vecs.push_back(Tangent(0,1,0));
+  vecs.push_back(Tangent(M_PI_2,M_PI_2,0.0));
+  vecs.push_back(Tangent(-1,1,0));
+  vecs.push_back(Tangent(20,-1,0));
+  vecs.push_back(Tangent(30,5,-1));
   for (unsigned int i=0; i<vecs.size(); ++i) {
     for (unsigned int j=0; j<vecs.size(); ++j) {
-      TangentType res1 = SO3Type::lieBracket(vecs[i],vecs[j]);
-      TransformationType mat =
+      Tangent res1 = SO3Type::lieBracket(vecs[i],vecs[j]);
+      Transformation mat =
           SO3Type::hat(vecs[i])*SO3Type::hat(vecs[j])
           -SO3Type::hat(vecs[j])*SO3Type::hat(vecs[i]);
-      TangentType res2 = SO3Type::vee(mat);
-      TangentType resDiff = res1-res2;
+      Tangent res2 = SO3Type::vee(mat);
+      Tangent resDiff = res1-res2;
       if (resDiff.norm()>SMALL_EPS) {
         cerr << "SO3 Lie Bracket Test" << endl;
         cerr  << "Test case: " << i << ", " <<j<< endl;
@@ -192,10 +192,10 @@ bool so3bracket_tests() {
       }
     }
 
-    TangentType omega = vecs[i];
-    TransformationType exp_x = SO3Type::exp(omega).matrix();
-    TransformationType expmap_hat_x = (SO3Type::hat(omega)).exp();
-    TransformationType DiffR = exp_x-expmap_hat_x;
+    Tangent omega = vecs[i];
+    Transformation exp_x = SO3Type::exp(omega).matrix();
+    Transformation expmap_hat_x = (SO3Type::hat(omega)).exp();
+    Transformation DiffR = exp_x-expmap_hat_x;
     Scalar nrm = DiffR.norm();
 
     if (isnan(nrm) || nrm>SMALL_EPS) {
