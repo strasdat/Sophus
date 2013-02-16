@@ -15,10 +15,3 @@ cmake ..
 make
 <<<
 
-
-Create doxygen documentation:
-
->>>
-cd sophus
-doxygen .
-<<< 
