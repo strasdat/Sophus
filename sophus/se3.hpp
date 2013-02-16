@@ -478,8 +478,8 @@ public:
    */
   inline static
   const Transformation generator(int i) {
-    if (i<0 || i>6) {
-      throw SophusException("i is not in range [0,6].");
+    if (i<0 || i>5) {
+      throw SophusException("i is not in range [0,5].");
     }
     Tangent e;
     e.setZero();
