@@ -57,7 +57,7 @@ public:
 
         if (isnan(nrm) || nrm>10.*SMALL_EPS) {
           cerr << "Adjoint" << endl;
-          cerr  << "Test case: " << i << endl;
+          cerr  << "Test case: " << i << "," << j <<endl;
           cerr << (ad1-ad2) <<endl;
           cerr << endl;
           passed = false;
@@ -249,7 +249,7 @@ private:
   }
 
   Scalar norm(const Scalar & v) {
-    return abs(v);
+    return std::abs(v);
   }
 
   Scalar norm(const Matrix<Scalar,DoF,1> & T) {

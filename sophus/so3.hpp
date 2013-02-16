@@ -194,7 +194,11 @@ public:
    */
   inline
   void normalize() {
-    unit_quaternion_nonconst().normalize();
+    Scalar length = unit_quaternion_nonconst().norm();
+    if (length < SophusConstants<Scalar>::epsilon()) {
+      throw SophusException("Quaternion is (near) zero!");
+    }
+    unit_quaternion_nonconst().coeffs() /= length;
   }
 
   /**
@@ -274,9 +278,8 @@ public:
    */
   inline
   void setQuaternion(const Quaternion<Scalar>& quaternion) {
-    assert(quaternion.norm()!=static_cast<Scalar>(0));
     unit_quaternion_nonconst() = quaternion;
-    unit_quaternion_nonconst().normalize();
+    normalize();
   }
 
   /**
@@ -340,7 +343,7 @@ public:
   const SO3Group<Scalar> expAndTheta(const Tangent & omega,
                                      Scalar * theta) {
     const Scalar theta_sq = omega.squaredNorm();
-    *theta = sqrt(theta_sq);
+    *theta = std::sqrt(theta_sq);
     const Scalar half_theta = static_cast<Scalar>(0.5)*(*theta);
 
     Scalar imag_factor;
@@ -354,9 +357,9 @@ public:
                     - static_cast<Scalar>(0.5)*theta_sq +
                     static_cast<Scalar>(1.0/384.0)*theta_po4;
     } else {
-      const Scalar sin_half_theta = sin(half_theta);
+      const Scalar sin_half_theta = std::sin(half_theta);
       imag_factor = sin_half_theta/(*theta);
-      real_factor = cos(half_theta);
+      real_factor = std::cos(half_theta);
     }
 
     return SO3Group<Scalar>(Quaternion<Scalar>(real_factor,
@@ -393,7 +396,9 @@ public:
    */
   inline static
   const Transformation generator(int i) {
-    assert(i>=0 && i<3);
+    if (i<0 || i>2) {
+      throw SophusException("i is not in range [0,2].");
+    }
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -487,7 +492,7 @@ public:
                             Scalar * theta) {
     const Scalar squared_n
         = other.unit_quaternion().vec().squaredNorm();
-    const Scalar n = sqrt(squared_n);
+    const Scalar n = std::sqrt(squared_n);
     const Scalar w = other.unit_quaternion().w();
 
     Scalar two_atan_nbyw_by_n;
@@ -500,14 +505,16 @@ public:
     // Information Fusion, 2011
 
     if (n < SophusConstants<Scalar>::epsilon()) {
-      // If quaternion is normalized and n=1, then w should be 1;
+      // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
-      assert(fabs(w)>SophusConstants<Scalar>::epsilon());
+      if (std::abs(w) < SophusConstants<Scalar>::epsilon()) {
+        throw SophusException("Quaternion is not normalized!");
+      }
       const Scalar squared_w = w*w;
       two_atan_nbyw_by_n = static_cast<Scalar>(2) / w
                            - static_cast<Scalar>(2)*(squared_n)/(w*squared_w);
     } else {
-      if (fabs(w)<SophusConstants<Scalar>::epsilon()) {
+      if (std::abs(w)<SophusConstants<Scalar>::epsilon()) {
         if (w > static_cast<Scalar>(0)) {
           two_atan_nbyw_by_n = M_PI/n;
         } else {
@@ -527,6 +534,7 @@ public:
    * \brief vee-operator
    *
    * \param Omega 3x3-matrix representation of Lie algebra element
+   * \pr          Omega must be a skew-symmetric matrix
    * \returns     3-vector representatin of Lie algebra element
    *
    * This is the inverse of the hat()-operator.
@@ -535,10 +543,9 @@ public:
    */
   inline static
   const Tangent vee(const Transformation & Omega) {
-    assert(fabs(Omega(2,1)+Omega(1,2)) < SophusConstants<Scalar>::epsilon());
-    assert(fabs(Omega(0,2)+Omega(2,0)) < SophusConstants<Scalar>::epsilon());
-    assert(fabs(Omega(1,0)+Omega(0,1)) < SophusConstants<Scalar>::epsilon());
-    return Tangent(Omega(2,1), Omega(0,2), Omega(1,0));
+    return static_cast<Scalar>(0.5) * Tangent(Omega(2,1) - Omega(1,2),
+                                              Omega(0,2) - Omega(2,0),
+                                              Omega(1,0) - Omega(0,1));
   }
 
 private:
@@ -622,8 +629,7 @@ public:
    */
   inline explicit
   SO3Group(const Quaternion<Scalar> & quat) : unit_quaternion_(quat) {
-    assert(unit_quaternion_.squaredNorm() > SophusConstants<Scalar>::epsilon());
-    unit_quaternion_.normalize();
+    Base::normalize();
   }
 
   /**

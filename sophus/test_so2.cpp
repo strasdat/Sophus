@@ -67,6 +67,16 @@ void tests() {
   tests.setPoints(point_vec);
 
   tests.runAllTests();
+
+  cerr << "Exception test: ";
+  try {
+    SO2Type so2(0., 0.);
+  } catch(SophusException & e) {
+    cerr << "passed." << endl << endl;
+    return;
+  }
+  cerr << "failed!" << endl << endl;
+  exit(-1);
 }
 
 int main() {

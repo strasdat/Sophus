@@ -396,7 +396,7 @@ public:
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;
 
-    if(abs(theta)<SophusConstants<Scalar>::epsilon()) {
+    if(std::abs(theta)<SophusConstants<Scalar>::epsilon()) {
       Scalar theta_sq = theta*theta;
       sin_theta_by_theta
           = static_cast<Scalar>(1.) - static_cast<Scalar>(1./6.)*theta_sq;
@@ -441,7 +441,9 @@ public:
    */
   inline static
   const Transformation generator(int i) {
-    assert(i>=0 && i<3);
+    if (i<0 || i>2) {
+      throw SophusException("i is not in range [0,2].");
+    }
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -528,7 +530,7 @@ public:
 
     const Matrix<Scalar,2,1> & z = so2.unit_complex();
     Scalar real_minus_one = z.x()-static_cast<Scalar>(1.);
-    if (abs(real_minus_one)<SophusConstants<Scalar>::epsilon()) {
+    if (std::abs(real_minus_one)<SophusConstants<Scalar>::epsilon()) {
       halftheta_by_tan_of_halftheta
           = static_cast<Scalar>(1.)
             - static_cast<Scalar>(1./12)*theta*theta;

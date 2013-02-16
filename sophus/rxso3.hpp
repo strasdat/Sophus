@@ -70,6 +70,13 @@ struct traits<Map<const Sophus::RxSO3Group<_Scalar>, _Options> >
 namespace Sophus {
 using namespace Eigen;
 
+class ScaleNotPositive : public SophusException {
+public:
+  ScaleNotPositive ()
+    : SophusException("Scale factor is not positive") {
+  }
+};
+
 /**
  * \brief RxSO3 base type - implements RxSO3 class but is storage agnostic
  *
@@ -186,7 +193,9 @@ public:
    */
   inline
   const RxSO3Group<Scalar> inverse() const {
-    assert(quaternion().squaredNorm()>static_cast<Scalar>(0));
+    if(quaternion().squaredNorm() <= static_cast<Scalar>(0)) {
+      throw ScaleNotPositive();
+    }
     return RxSO3Group<Scalar>(quaternion().inverse());
   }
 
@@ -335,13 +344,17 @@ public:
   inline
   void setScaledRotationMatrix
   (const Transformation & sR) {
-    assert(sR.determinant() > static_cast<Scalar>(0));
     Transformation squared_sR = sR*sR.transpose();
     Scalar squared_scale
         = static_cast<Scalar>(1./3.)
           *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
-    assert(squared_scale > static_cast<Scalar>(0));
-    Scalar scale = sqrt(squared_scale);
+    if (squared_scale <= static_cast<Scalar>(0)) {
+      throw ScaleNotPositive();
+    }
+    Scalar scale = std::sqrt(squared_scale);
+    if (scale <= static_cast<Scalar>(0)) {
+      throw ScaleNotPositive();
+    }
     quaternion() = sR/scale;
     quaternion().coeffs() *= scale;
   }
@@ -444,7 +457,9 @@ public:
    */
   inline static
   const Transformation generator(int i) {
-    assert(i>=0 && i<4);
+    if (i<0 || i>4) {
+      throw SophusException("i is not in range [0,4].");
+    }
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -558,12 +573,11 @@ public:
    */
   inline static
   const Tangent vee(const Transformation & Omega) {
-    assert(abs(Omega(2,1)+Omega(1,2))<SophusConstants<Scalar>::epsilon());
-    assert(abs(Omega(0,2)+Omega(2,0))<SophusConstants<Scalar>::epsilon());
-    assert(abs(Omega(1,0)+Omega(0,1))<SophusConstants<Scalar>::epsilon());
-    assert(abs(Omega(0,0)-Omega(1,1))<SophusConstants<Scalar>::epsilon());
-    assert(abs(Omega(0,0)-Omega(2,2))<SophusConstants<Scalar>::epsilon());
-    return Tangent(Omega(2,1), Omega(0,2), Omega(1,0), Omega(0,0));
+    return Tangent( static_cast<Scalar>(0.5) * (Omega(2,1) - Omega(1,2)),
+                    static_cast<Scalar>(0.5) * (Omega(0,2) - Omega(2,0)),
+                    static_cast<Scalar>(0.5) * (Omega(1,0) - Omega(0,1)),
+                    static_cast<Scalar>(1./3.)
+                    * (Omega(0,0) + Omega(1,1) + Omega(2,2)) );
   }
 };
 
@@ -638,7 +652,9 @@ public:
   inline
   RxSO3Group(const Scalar & scale, const Transformation & R)
     : quaternion_(R) {
-    assert(scale > static_cast<Scalar>(0));
+    if(scale <= static_cast<Scalar>(0)) {
+      throw ScaleNotPositive();
+    }
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -651,7 +667,9 @@ public:
   inline
   RxSO3Group(const Scalar & scale, const SO3Group<Scalar> & so3)
     : quaternion_(so3.unit_quaternion()) {
-    assert(scale > static_cast<Scalar>(0));
+    if (scale <= static_cast<Scalar>(0)) {
+      throw ScaleNotPositive();
+    }
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -663,7 +681,9 @@ public:
    */
   inline explicit
   RxSO3Group(const Quaternion<Scalar> & quat) : quaternion_(quat) {
-    assert(quaternion_.squaredNorm() > SophusConstants<Scalar>::epsilon());
+    if(quaternion_.squaredNorm() <= SophusConstants<Scalar>::epsilon()) {
+      throw ScaleNotPositive();
+    }
   }
 
   /**

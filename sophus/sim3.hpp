@@ -486,7 +486,9 @@ public:
    */
   inline static
   const Transformation generator(int i) {
-    assert(i>=0 && i<7);
+    if (i<0 || i>7) {
+      throw SophusException("i is not in range [0,7].");
+    }
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -623,26 +625,26 @@ private:
     RxSO3TransformationType Omega2 = Omega*Omega;
 
     Scalar A,B,C;
-    if (abs(sigma)<SophusConstants<Scalar>::epsilon()) {
+    if (std::abs(sigma)<SophusConstants<Scalar>::epsilon()) {
       C = one;
-      if (abs(theta)<SophusConstants<Scalar>::epsilon()) {
+      if (std::abs(theta)<SophusConstants<Scalar>::epsilon()) {
         A = half;
         B = static_cast<Scalar>(1./6.);
       } else {
         Scalar theta_sq = theta*theta;
-        A = (one-cos(theta))/theta_sq;
-        B = (theta-sin(theta))/(theta_sq*theta);
+        A = (one-std::cos(theta))/theta_sq;
+        B = (theta-std::sin(theta))/(theta_sq*theta);
       }
     } else {
       C = (scale-one)/sigma;
-      if (fabs(theta)<SophusConstants<Scalar>::epsilon()) {
+      if (std::abs(theta)<SophusConstants<Scalar>::epsilon()) {
         Scalar sigma_sq = sigma*sigma;
         A = ((sigma-one)*scale+one)/sigma_sq;
         B = ((half*sigma*sigma-sigma+one)*scale)/(sigma_sq*sigma);
       } else {
         Scalar theta_sq = theta*theta;
-        Scalar a = scale*sin(theta);
-        Scalar b = scale*cos(theta);
+        Scalar a = scale*std::sin(theta);
+        Scalar b = scale*std::cos(theta);
         Scalar c = theta_sq+sigma*sigma;
         A = (a*sigma+ (one-b)*theta)/(theta*c);
         B = (C-((b-one)*sigma+a*theta)/(c))*one/(theta_sq);

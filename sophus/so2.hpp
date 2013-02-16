@@ -204,9 +204,11 @@ public:
   inline
   void normalize() {
     Scalar length =
-        sqrt(unit_complex().x()*unit_complex().x()
+        std::sqrt(unit_complex().x()*unit_complex().x()
              + unit_complex().y()*unit_complex().y());
-    assert(length > SophusConstants<Scalar>::epsilon());
+    if(length < SophusConstants<Scalar>::epsilon()) {
+      throw SophusException("Complex number is (near) zero!");
+    }
     unit_complex_nonconst().x() /= length;
     unit_complex_nonconst().y() /= length;
   }
@@ -279,13 +281,12 @@ public:
    * \brief Setter of internal unit complex number representation
    *
    * \param complex
-   * \pre   the complex number must not be zero
+   * \pre   the complex number must not be near zero
    *
    * The complex number is normalized to unit length.
    */
   inline
   void setComplex(const Point & complex) {
-    assert(abs(complex)!=static_cast<Scalar>(0));
     unit_complex() = complex;
     normalize();
   }
@@ -319,7 +320,7 @@ public:
    */
   inline static
   const SO2Group<Scalar> exp(const Tangent & theta) {
-    return SO2Group<Scalar>(cos(theta), sin(theta));
+    return SO2Group<Scalar>(std::cos(theta), std::sin(theta));
   }
 
   /**
@@ -406,16 +407,16 @@ public:
    * \brief vee-operator
    *
    * \param Omega 2x2-matrix representation of Lie algebra element
+   * \pre         Omega need to be a skew-symmetric matrix
    * \returns     scalar representatin of Lie algebra element
-   *
+   *s
    * This is the inverse of the hat()-operator.
    *
    * \see hat()
    */
   inline static
   const Tangent vee(const Transformation & Omega) {
-    assert(fabs(Omega(1,0)+Omega(0,1)) < SophusConstants<Scalar>::epsilon());
-    return Omega(1,0);
+    return static_cast<Scalar>(0.5)*(Omega(1,0) - Omega(0,1));
   }
 
 private:
@@ -491,6 +492,10 @@ public:
   SO2Group(const Transformation & R)
     : unit_complex_(static_cast<Scalar>(0.5)*(R(0,0)+R(1,1)),
                     static_cast<Scalar>(0.5)*(R(1,0)-R(0,1))) {
+    if (std::abs(R.determinant()-static_cast<Scalar>(1))
+        > SophusConstants<Scalar>::epsilon()) {
+      throw SophusException("det(R) is not near 1.");
+    }
   }
 
   /**
@@ -500,8 +505,7 @@ public:
    */
   inline SO2Group(const Scalar & real, const Scalar & imag)
     : unit_complex_(real, imag) {
-    assert(real*real + imag*imag > SophusConstants<Scalar>::epsilon());
-    normalize();
+    Base::normalize();
   }
 
   /**
@@ -512,9 +516,7 @@ public:
   inline explicit
   SO2Group(const Matrix<Scalar,2,1> & complex)
     : unit_complex_(complex) {
-    assert(complex.x()*complex.x() + complex.y()*complex.y()
-           > SophusConstants<Scalar>::epsilon());
-    normalize();
+    Base::normalize();
   }
 
   /**
@@ -525,9 +527,7 @@ public:
   inline explicit
   SO2Group(const std::complex<Scalar> & complex)
     : unit_complex_(complex.real(), complex.imag()) {
-    assert(complex.real()*complex.real() + complex.imag()*complex.imag()
-           > SophusConstants<Scalar>::epsilon());
-    normalize();
+    Base::normalize();
   }
 
   /**
@@ -536,22 +536,6 @@ public:
   inline explicit
   SO2Group(Scalar theta) {
     unit_complex_nonconst() = SO2Group<Scalar>::exp(theta).unit_complex();
-  }
-
-  /**
-   * \brief Normalize complex number
-   *
-   * It re-normalizes complex number to unit length. This method only needs to
-   * be called in conjunction with fastMultiply() or data() write access.
-   */
-  inline
-  void normalize() {
-    Scalar length =
-        sqrt(unit_complex_.x()*unit_complex_.x()
-             + unit_complex_.y()*unit_complex_.y());
-    assert(length > SophusConstants<Scalar>::epsilon());
-    unit_complex_.x() /= length;
-    unit_complex_.y() /= length;
   }
 
   /**
@@ -571,6 +555,10 @@ protected:
   EIGEN_STRONG_INLINE
   ComplexReference unit_complex_nonconst() {
     return unit_complex_;
+  }
+
+  static bool isNearZero(const Scalar & real, const Scalar & imag) {
+    return (real*real + imag*imag < SophusConstants<Scalar>::epsilon());
   }
 
   Matrix<Scalar,2,1> unit_complex_;

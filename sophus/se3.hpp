@@ -424,8 +424,8 @@ public:
     } else {
       Scalar theta_sq = theta*theta;
       V = (SO3TransformationType::Identity()
-           + (static_cast<Scalar>(1)-cos(theta))/(theta_sq)*Omega
-           + (theta-sin(theta))/(theta_sq*theta)*Omega_sq);
+           + (static_cast<Scalar>(1)-std::cos(theta))/(theta_sq)*Omega
+           + (theta-std::sin(theta))/(theta_sq*theta)*Omega_sq);
     }
     return SE3Group<Scalar>(so3,V*upsilon);
   }
@@ -478,7 +478,9 @@ public:
    */
   inline static
   const Transformation generator(int i) {
-    assert(i>=0 && i<6);
+    if (i<0 || i>6) {
+      throw SophusException("i is not in range [0,6].");
+    }
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -564,7 +566,7 @@ public:
     upsilon_omega.template tail<3>()
         = SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
 
-    if (fabs(theta)<SophusConstants<Scalar>::epsilon()) {
+    if (std::abs(theta)<SophusConstants<Scalar>::epsilon()) {
       const SO3TransformationType Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
       const SO3TransformationType V_inv =

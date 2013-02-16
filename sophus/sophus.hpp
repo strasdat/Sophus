@@ -23,6 +23,8 @@
 #ifndef SOPHUS_HPP
 #define SOPHUS_HPP
 
+#include <stdexcept>
+
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
@@ -52,6 +54,13 @@ struct SophusConstants<float> {
   EIGEN_ALWAYS_INLINE static
   const float pi() {
     return static_cast<float>(M_PI);
+  }
+};
+
+class SophusException : public std::runtime_error {
+public:
+  SophusException (const std::string& str)
+    : runtime_error("Sophus exception: " + str) {
   }
 };
 
