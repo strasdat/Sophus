@@ -85,8 +85,12 @@ class SO2GroupBase {
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief complex number type, use with care since this might be a Map type*/
-  typedef typename internal::traits<Derived>::ComplexType ComplexType;
+  /** \brief complex number reference type */
+  typedef typename internal::traits<Derived>::ComplexType &
+  ComplexReference;
+  /** \brief complex number const reference type */
+  typedef const typename internal::traits<Derived>::ComplexType &
+  ConstComplexReference;
 
   /** \brief degree of freedom of group
    *         (one for in-plane rotation) */
@@ -149,7 +153,7 @@ public:
    * Const version of data().
    */
   inline const Scalar* data() const {
-    return reinterpret_cast<Scalar>(&unit_complex_nonconst());
+    return unit_complex().data();
   }
 
   /**
@@ -292,7 +296,7 @@ public:
    * No direct write access is given to ensure the complex stays normalized.
    */
   EIGEN_STRONG_INLINE
-  const ComplexType& unit_complex() const {
+  ConstComplexReference unit_complex() const {
     return static_cast<const Derived*>(this)->unit_complex();
   }
 
@@ -315,7 +319,7 @@ public:
    */
   inline static
   const SO2Group<Scalar> exp(const Tangent & theta) {
-    return SO2Group<Scalar>(ComplexType(cos(theta), sin(theta)));
+    return SO2Group<Scalar>(cos(theta), sin(theta));
   }
 
   /**
@@ -418,7 +422,7 @@ private:
   // Nonconst accessor of complex number is private so users are hampered
   // from setting non-unit complex numbers.
   EIGEN_STRONG_INLINE
-  ComplexType& unit_complex_nonconst() {
+  ComplexReference unit_complex_nonconst() {
     return static_cast<Derived*>(this)->unit_complex_nonconst();
   }
 
@@ -434,9 +438,12 @@ public:
   /** \brief scalar type */
   typedef typename internal::traits<SO2Group<_Scalar,_Options> >
   ::Scalar Scalar;
-  /** \brief complex number type */
+  /** \brief complex number reference type */
   typedef typename internal::traits<SO2Group<_Scalar,_Options> >
-  ::ComplexType ComplexType;
+  ::ComplexType & ComplexReference;
+  /** \brief complex number const reference type */
+  typedef const typename internal::traits<SO2Group<_Scalar,_Options> >
+  ::ComplexType & ConstComplexReference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -503,7 +510,7 @@ public:
    * \pre vector must not be zero
    */
   inline explicit
-  SO2Group(const ComplexType & complex)
+  SO2Group(const Matrix<Scalar,2,1> & complex)
     : unit_complex_(complex) {
     assert(complex.x()*complex.x() + complex.y()*complex.y()
            > SophusConstants<Scalar>::epsilon());
@@ -554,7 +561,7 @@ public:
    * normalized.
    */
   EIGEN_STRONG_INLINE
-  const ComplexType & unit_complex() const {
+  ConstComplexReference unit_complex() const {
     return unit_complex_;
   }
 
@@ -562,11 +569,11 @@ protected:
   // Nonconst accessor of unit_complex is protected so users are hampered
   // from setting non-unit complex numbers.
   EIGEN_STRONG_INLINE
-  ComplexType & unit_complex_nonconst() {
+  ComplexReference unit_complex_nonconst() {
     return unit_complex_;
   }
 
-  ComplexType unit_complex_;
+  Matrix<Scalar,2,1> unit_complex_;
 };
 
 } // end namespace
@@ -574,7 +581,7 @@ protected:
 
 namespace Eigen {
 /**
- * \brief Specialisation of Eigen::Map for SO3GroupBase
+ * \brief Specialisation of Eigen::Map for SO2GroupBase
  *
  * Allows us to wrap SO2 Objects around POD array
  * (e.g. external c style complex number)
@@ -587,8 +594,11 @@ class Map<Sophus::SO2Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief complex number type */
-  typedef typename internal::traits<Map>::ComplexType ComplexType;
+  /** \brief complex number reference type */
+  typedef typename internal::traits<Map>::ComplexType & ComplexReference;
+  /** \brief complex number const reference type */
+  typedef const typename internal::traits<Map>::ComplexType &
+  ConstComplexReference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -623,7 +633,7 @@ public:
    * normalized.
    */
   EIGEN_STRONG_INLINE
-  const ComplexType & unit_complex() const {
+  ConstComplexReference unit_complex() const {
     return unit_complex_;
   }
 
@@ -631,15 +641,15 @@ protected:
   // Nonconst accessor of complex number is protected so users are hampered
   // from setting non-unit complex number.
   EIGEN_STRONG_INLINE
-  ComplexType & unit_complex_nonconst() {
+  ComplexReference unit_complex_nonconst() {
     return unit_complex_;
   }
 
-  ComplexType unit_complex_;
+  Map<Matrix<Scalar,2,1>,_Options> unit_complex_;
 };
 
 /**
- * \brief Specialisation of Eigen::Map for const SO3GroupBase
+ * \brief Specialisation of Eigen::Map for const SO2GroupBase
  *
  * Allows us to wrap SO2 Objects around POD array
  * (e.g. external c style complex number)
@@ -654,8 +664,10 @@ class Map<const Sophus::SO2Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief complex number type */
-  typedef typename internal::traits<Map>::ComplexType ComplexType;
+  /** \brief complex number const reference type */
+  typedef const typename internal::traits<Map>::ComplexType &
+  ConstComplexReference;
+
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -663,8 +675,6 @@ public:
   static const int num_parameters = Base::num_parameters;
   /** \brief group transformations are NxN matrices */
   static const int N = Base::N;
-  /** \brief group transformations acts on M-vectors */
-  static const int M = Base::M;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -689,12 +699,12 @@ public:
    * normalized.
    */
   EIGEN_STRONG_INLINE
-  const ComplexType & unit_complex() const {
+  ConstComplexReference unit_complex() const {
     return unit_complex_;
   }
 
 protected:
-  const ComplexType unit_complex_;
+  const Map<const Matrix<Scalar,2,1>,_Options> unit_complex_;
 };
 
 }

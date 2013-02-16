@@ -88,10 +88,18 @@ class SE3GroupBase {
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief translation type, use with care since this might be a Map type  */
-  typedef typename internal::traits<Derived>::TranslationType TranslationType;
-  /** \brief SO3 type, use with care since this might be a Map type  */
-  typedef typename internal::traits<Derived>::SO3Type SO3Type;
+  /** \brief translation reference type */
+  typedef typename internal::traits<Derived>::TranslationType &
+  TranslationReference;
+  /** \brief translation const reference type */
+  typedef const typename internal::traits<Derived>::TranslationType &
+  ConstTranslationReference;
+  /** \brief SO3 reference type */
+  typedef typename internal::traits<Derived>::SO3Type &
+  SO3Reference;
+  /** \brief SO3 const reference type */
+  typedef const typename internal::traits<Derived>::SO3Type &
+  ConstSO3Reference;
 
   /** \brief degree of freedom of group
     *        (three for translation, three for rotation) */
@@ -111,7 +119,7 @@ public:
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /** \brief SO3 transfomation type */
-  typedef typename SO3Type::Transformation SO3TransformationType;
+  typedef typename SO3Group<Scalar>::Transformation SO3TransformationType;
 
   /**
    * \brief Adjoint transformation
@@ -289,7 +297,7 @@ public:
    * \brief Read/write access to SO3 group
    */
   EIGEN_STRONG_INLINE
-  SO3Type& so3() {
+  SO3Reference so3() {
     return static_cast<Derived*>(this)->so3();
   }
 
@@ -297,7 +305,7 @@ public:
    * \brief Read access to SO3 group
    */
   EIGEN_STRONG_INLINE
-  const SO3Type& so3() const {
+  ConstSO3Reference so3() const {
     return static_cast<const Derived*>(this)->so3();
   }
 
@@ -330,7 +338,7 @@ public:
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return static_cast<Derived*>(this)->translation();
   }
 
@@ -338,7 +346,7 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return static_cast<const Derived*>(this)->translation();
   }
 
@@ -348,7 +356,8 @@ public:
    * No direct write access is given to ensure the quaternion stays normalized.
    */
   inline
-  const typename SO3Type::QuaternionType& unit_quaternion() const {
+  typename internal::traits<Derived>::SO3Type::ConstQuaternionReference
+  unit_quaternion() const {
     return so3().unit_quaternion();
   }
 
@@ -472,7 +481,7 @@ public:
     assert(i>=0 && i<6);
     Tangent e;
     e.setZero();
-    e[i] = 1.f;
+    e[i] = static_cast<Scalar>(1);
     return hat(e);
   }
 
@@ -607,12 +616,18 @@ public:
   /** \brief scalar type */
   typedef typename internal::traits<SE3Group<_Scalar,_Options> >
   ::Scalar Scalar;
-  /** \brief SO3 type */
+  /** \brief SO3 reference type */
   typedef typename internal::traits<SE3Group<_Scalar,_Options> >
-  ::SO3Type SO3Type;
-  /** \brief translation type */
+  ::SO3Type & SO3Reference;
+  /** \brief SO3 const reference type */
+  typedef const typename internal::traits<SE3Group<_Scalar,_Options> >
+  ::SO3Type & ConstSO3Reference;
+  /** \brief translation reference type */
   typedef typename internal::traits<SE3Group<_Scalar,_Options> >
-  ::TranslationType TranslationType;
+  ::TranslationType & TranslationReference;
+  /** \brief translation const reference type */
+  typedef const typename internal::traits<SE3Group<_Scalar,_Options> >
+  ::TranslationType & ConstTranslationReference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -639,7 +654,7 @@ public:
    */
   inline
   SE3Group()
-    : translation_( TranslationType::Zero() )
+    : translation_( Matrix<Scalar,3,1>::Zero() )
   {
   }
 
@@ -666,7 +681,7 @@ public:
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
   inline
-  SE3Group(const typename SO3Type::Transformation & rotation_matrix,
+  SE3Group(const Matrix<Scalar,3,3> & rotation_matrix,
            const Point & translation)
     : so3_(rotation_matrix), translation_(translation) {
   }
@@ -727,7 +742,7 @@ public:
    * \brief Read access to SO3
    */
   EIGEN_STRONG_INLINE
-  SO3Type& so3() {
+  SO3Reference so3() {
     return so3_;
   }
 
@@ -735,7 +750,7 @@ public:
    * \brief Read/write access to SO3
    */
   EIGEN_STRONG_INLINE
-  const SO3Type& so3() const {
+  ConstSO3Reference so3() const {
     return so3_;
   }
 
@@ -743,7 +758,7 @@ public:
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return translation_;
   }
 
@@ -751,13 +766,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  SO3Type so3_;
-  TranslationType translation_;
+  Sophus::SO3Group<Scalar> so3_;
+  Matrix<Scalar,3,1> translation_;
 };
 
 
@@ -779,10 +794,18 @@ class Map<Sophus::SE3Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief translation type */
-  typedef typename internal::traits<Map>::TranslationType TranslationType;
-  /** \brief SO3 type */
-  typedef typename internal::traits<Map>::SO3Type SO3Type;
+  /** \brief translation reference type */
+  typedef typename internal::traits<Map>::TranslationType &
+  TranslationReference;
+  /** \brief translation const reference type */
+  typedef const typename internal::traits<Map>::TranslationType &
+  ConstTranslationReference;
+  /** \brief SO3 reference type */
+  typedef typename internal::traits<Map>::SO3Type &
+  SO3Reference;
+  /** \brief SO3 const reference type */
+  typedef const typename internal::traits<Map>::SO3Type &
+  ConstSO3Reference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -805,14 +828,15 @@ public:
 
   EIGEN_STRONG_INLINE
   Map(Scalar* coeffs)
-    : so3_(coeffs), translation_(coeffs+SO3Type::num_parameters) {
+    : so3_(coeffs),
+      translation_(coeffs+Sophus::SO3Group<Scalar>::num_parameters) {
   }
 
   /**
    * \brief Read/write access to SO3
    */
   EIGEN_STRONG_INLINE
-  SO3Type& so3() {
+  SO3Reference so3() {
     return so3_;
   }
 
@@ -820,7 +844,7 @@ public:
    * \brief Read access to SO3
    */
   EIGEN_STRONG_INLINE
-  const SO3Type& so3() const {
+  ConstSO3Reference so3() const {
     return so3_;
   }
 
@@ -828,7 +852,7 @@ public:
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return translation_;
   }
 
@@ -836,13 +860,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  SO3Type so3_;
-  TranslationType translation_;
+  Map<Sophus::SO3Group<Scalar>,_Options> so3_;
+  Map<Matrix<Scalar,3,1>,_Options> translation_;
 };
 
 /**
@@ -861,10 +885,12 @@ class Map<const Sophus::SE3Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief translation type */
-  typedef typename internal::traits<Map>::TranslationType TranslationType;
-  /** \brief SO3 type */
-  typedef typename internal::traits<Map>::SO3Type SO3Type;
+  /** \brief translation const reference type */
+  typedef const typename internal::traits<Map>::TranslationType &
+  ConstTranslationReference;
+  /** \brief SO3 const reference type */
+  typedef const typename internal::traits<Map>::SO3Type &
+  ConstSO3Reference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -887,7 +913,8 @@ public:
 
   EIGEN_STRONG_INLINE
   Map(const Scalar* coeffs)
-    : so3_(coeffs), translation_(coeffs+SO3Type::num_parameters) {
+    : so3_(coeffs),
+      translation_(coeffs+Sophus::SO3Group<Scalar>::num_parameters) {
   }
 
   EIGEN_STRONG_INLINE
@@ -899,7 +926,7 @@ public:
    * \brief Read access to SO3
    */
   EIGEN_STRONG_INLINE
-  const SO3Type& so3() const {
+  ConstSO3Reference so3() const {
     return so3_;
   }
 
@@ -907,13 +934,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  const SO3Type so3_;
-  const TranslationType translation_;
+  const Map<const Sophus::SO3Group<Scalar>,_Options> so3_;
+  const Map<const Matrix<Scalar,3,1>,_Options> translation_;
 };
 
 }

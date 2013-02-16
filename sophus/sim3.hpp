@@ -87,10 +87,19 @@ class Sim3GroupBase {
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief translation type, use with care since this might be a Map type */
-  typedef typename internal::traits<Derived>::TranslationType TranslationType;
-  /** \brief RxSO3 type, use with care since this might be a Map type */
-  typedef typename internal::traits<Derived>::RxSO3Type RxSO3Type;
+  /** \brief translation reference type */
+  typedef typename internal::traits<Derived>::TranslationType &
+  TranslationReference;
+  /** \brief translation const reference type */
+  typedef const typename internal::traits<Derived>::TranslationType &
+  ConstTranslationReference;
+  /** \brief RxSO3 reference type */
+  typedef typename internal::traits<Derived>::RxSO3Type &
+  RxSO3Reference;
+  /** \brief RxSO3 const reference type */
+  typedef const typename internal::traits<Derived>::RxSO3Type &
+  ConstRxSO3Reference;
+
 
   /** \brief degree of freedom of group
     *        (three for translation, three for rotation, one for scale) */
@@ -110,7 +119,7 @@ public:
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /** \brief RxSO3 transfomation type */
-  typedef typename RxSO3Type::Transformation RxSO3TransformationType;
+  typedef typename RxSO3Group<Scalar>::Transformation RxSO3TransformationType;
 
   /**
    * \brief Adjoint transformation
@@ -221,12 +230,9 @@ public:
    */
   inline
   const Sim3Group<Scalar> operator*(const Sim3Group<Scalar>& other) const {
-    //Sim3Group<Scalar> result(*this);
-    //result *= other;
-    //return result;
-
-    return Sim3Group<Scalar>(rxso3()*other.rxso3(),
-                             (rxso3()*other.translation()) + translation());
+    Sim3Group<Scalar> result(*this);
+    result *= other;
+    return result;
   }
 
   /**
@@ -260,7 +266,8 @@ public:
    * \brief Read/write access to quaternion
    */
   inline
-  typename RxSO3Type::QuaternionType& quaternion() {
+  typename internal::traits<Derived>::RxSO3Type::QuaternionReference
+  quaternion() {
     return rxso3().quaternion();
   }
 
@@ -268,7 +275,8 @@ public:
    * \brief Read access to quaternion
    */
   inline
-  const typename RxSO3Type::QuaternionType& quaternion() const {
+  typename internal::traits<Derived>::RxSO3Type::ConstQuaternionReference
+  quaternion() const {
     return rxso3().quaternion();
   }
 
@@ -295,7 +303,7 @@ public:
    * \brief Read/write access to RxSO3 group
    */
   EIGEN_STRONG_INLINE
-  RxSO3Type& rxso3() {
+  RxSO3Reference rxso3() {
     return static_cast<Derived*>(this)->rxso3();
   }
 
@@ -303,7 +311,7 @@ public:
    * \brief Read access to RxSO3 group
    */
   EIGEN_STRONG_INLINE
-  const RxSO3Type& rxso3() const {
+  ConstRxSO3Reference rxso3() const {
     return static_cast<const Derived*>(this)->rxso3();
   }
 
@@ -352,7 +360,7 @@ public:
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return static_cast<Derived*>(this)->translation();
   }
 
@@ -360,7 +368,7 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return static_cast<const Derived*>(this)->translation();
   }
 
@@ -481,7 +489,7 @@ public:
     assert(i>=0 && i<7);
     Tangent e;
     e.setZero();
-    e[i] = 1.f;
+    e[i] = static_cast<Scalar>(1);
     return hat(e);
   }
 
@@ -503,7 +511,7 @@ public:
   const Transformation hat(const Tangent & v) {
     Transformation Omega;
     Omega.template topLeftCorner<3,3>()
-        = RxSO3Type::hat(v.template tail<4>());
+        = RxSO3Group<Scalar>::hat(v.template tail<4>());
     Omega.col(3).template head<3>() = v.template head<3>();
     Omega.row(3).setZero();
     return Omega;
@@ -570,7 +578,7 @@ public:
     const Point & t = other.translation();
     Scalar theta;
     Matrix<Scalar,4,1> omega_sigma
-        = RxSO3Type::logAndTheta(other.rxso3(), &theta);
+        = RxSO3Group<Scalar>::logAndTheta(other.rxso3(), &theta);
     Matrix<Scalar,3,1> omega = omega_sigma.template head<3>();
     Scalar sigma = omega_sigma[3];
     RxSO3TransformationType W
@@ -586,7 +594,7 @@ public:
    * \brief vee-operator
    *
    * \param Omega 4x4-matrix representation of Lie algebra element
-   * \returns     6-vector representatin of Lie algebra element
+   * \returns     7-vector representatin of Lie algebra element
    *
    * This is the inverse of the hat()-operator.
    *
@@ -598,7 +606,7 @@ public:
     upsilon_omega_sigma.template head<3>()
         = Omega.col(3).template head<3>();
     upsilon_omega_sigma.template tail<4>()
-        = RxSO3Type::vee(Omega.template topLeftCorner<3,3>());
+        = RxSO3Group<Scalar>::vee(Omega.template topLeftCorner<3,3>());
     return upsilon_omega_sigma;
   }
 
@@ -654,12 +662,18 @@ public:
   /** \brief scalar type */
   typedef typename internal::traits<Sim3Group<_Scalar,_Options> >
   ::Scalar Scalar;
-  /** \brief RxSO3 type */
+  /** \brief RxSO3 reference type */
   typedef typename internal::traits<Sim3Group<_Scalar,_Options> >
-  ::RxSO3Type RxSO3Type;
-  /** \brief translation type */
+  ::RxSO3Type & RxSO3Reference;
+  /** \brief RxSO3 const reference type */
+  typedef const typename internal::traits<Sim3Group<_Scalar,_Options> >
+  ::RxSO3Type & ConstRxSO3Reference;
+  /** \brief translation reference type */
   typedef typename internal::traits<Sim3Group<_Scalar,_Options> >
-  ::TranslationType TranslationType;
+  ::TranslationType & TranslationReference;
+  /** \brief translation const reference type */
+  typedef const typename internal::traits<Sim3Group<_Scalar,_Options> >
+  ::TranslationType & ConstTranslationReference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -686,7 +700,7 @@ public:
    */
   inline
   Sim3Group()
-    : translation_( TranslationType::Zero() )
+    : translation_( Matrix<Scalar,3,1>::Zero() )
   {
   }
 
@@ -760,7 +774,7 @@ public:
    * \brief Read access to RxSO3
    */
   EIGEN_STRONG_INLINE
-  RxSO3Type& rxso3() {
+  RxSO3Reference rxso3() {
     return rxso3_;
   }
 
@@ -768,7 +782,7 @@ public:
    * \brief Read/write access to RxSO3
    */
   EIGEN_STRONG_INLINE
-  const RxSO3Type& rxso3() const {
+  ConstRxSO3Reference rxso3() const {
     return rxso3_;
   }
 
@@ -776,7 +790,7 @@ public:
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return translation_;
   }
 
@@ -784,13 +798,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  RxSO3Type rxso3_;
-  TranslationType translation_;
+  Sophus::RxSO3Group<Scalar> rxso3_;
+  Matrix<Scalar,3,1> translation_;
 };
 
 
@@ -813,10 +827,19 @@ class Map<Sophus::Sim3Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief translation type */
-  typedef typename internal::traits<Map>::TranslationType TranslationType;
-  /** \brief RxSO3 type */
-  typedef typename internal::traits<Map>::RxSO3Type RxSO3Type;
+  /** \brief translation reference type */
+  typedef typename internal::traits<Map>::TranslationType &
+  TranslationReference;
+  /** \brief translation const reference type */
+  typedef const typename internal::traits<Map>::TranslationType &
+  ConstTranslationReference;
+  /** \brief RxSO3 reference type */
+  typedef typename internal::traits<Map>::RxSO3Type &
+  RxSO3Reference;
+  /** \brief RxSO3 const reference type */
+  typedef const typename internal::traits<Map>::RxSO3Type &
+  ConstRxSO3Reference;
+
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -839,14 +862,15 @@ public:
 
   EIGEN_STRONG_INLINE
   Map(Scalar* coeffs)
-    : rxso3_(coeffs), translation_(coeffs+RxSO3Type::num_parameters) {
+    : rxso3_(coeffs),
+      translation_(coeffs+Sophus::RxSO3Group<Scalar>::num_parameters) {
   }
 
   /**
    * \brief Read/write access to RxSO3
    */
   EIGEN_STRONG_INLINE
-  RxSO3Type& rxso3() {
+  RxSO3Reference rxso3() {
     return rxso3_;
   }
 
@@ -854,7 +878,7 @@ public:
    * \brief Read access to RxSO3
    */
   EIGEN_STRONG_INLINE
-  const RxSO3Type& rxso3() const {
+  ConstRxSO3Reference rxso3() const {
     return rxso3_;
   }
 
@@ -862,7 +886,7 @@ public:
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return translation_;
   }
 
@@ -870,13 +894,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  RxSO3Type rxso3_;
-  TranslationType translation_;
+  Map<Sophus::RxSO3Group<Scalar>,_Options> rxso3_;
+  Map<Matrix<Scalar,3,1>,_Options> translation_;
 };
 
 /**
@@ -896,9 +920,11 @@ public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
   /** \brief translation type */
-  typedef typename internal::traits<Map>::TranslationType TranslationType;
-  /** \brief RxSO3 type */
-  typedef typename internal::traits<Map>::RxSO3Type RxSO3Type;
+  typedef const typename internal::traits<Map>::TranslationType &
+  ConstTranslationReference;
+  /** \brief RxSO3 const reference type */
+  typedef const typename internal::traits<Map>::RxSO3Type &
+  ConstRxSO3Reference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -921,7 +947,8 @@ public:
 
   EIGEN_STRONG_INLINE
   Map(const Scalar* coeffs)
-    : rxso3_(coeffs), translation_(coeffs+RxSO3Type::num_parameters) {
+    : rxso3_(coeffs),
+      translation_(coeffs+Sophus::RxSO3Group<Scalar>::num_parameters) {
   }
 
   EIGEN_STRONG_INLINE
@@ -933,7 +960,7 @@ public:
    * \brief Read access to RxSO3
    */
   EIGEN_STRONG_INLINE
-  const RxSO3Type& rxso3() const {
+  ConstRxSO3Reference rxso3() const {
     return rxso3_;
   }
 
@@ -941,13 +968,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  const RxSO3Type rxso3_;
-  const TranslationType translation_;
+  const Map<const Sophus::RxSO3Group<Scalar>,_Options> rxso3_;
+  const Map<const Matrix<Scalar,3,1>,_Options> translation_;
 };
 
 }

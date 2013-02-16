@@ -162,8 +162,9 @@ public:
         Transformation mul_resmat = (group_vec_[i]*group_vec_[j]).matrix();
         Scalar fastmul_res_raw[LieGroup::num_parameters];
         Eigen::Map<LieGroup> fastmul_res(fastmul_res_raw);
+        Eigen::Map<const LieGroup> group_j_constmap(group_vec_[j].data());
         fastmul_res = group_vec_[i];
-        fastmul_res.fastMultiply(group_vec_[j]);
+        fastmul_res.fastMultiply(group_j_constmap);
         Transformation diff =  mul_resmat-fastmul_res.matrix();
         Scalar nrm = diff.norm();
         if (isnan(nrm) || nrm>SMALL_EPS) {

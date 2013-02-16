@@ -83,10 +83,18 @@ class SE2GroupBase {
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief translation type, use with care since this might be a Map type  */
-  typedef typename internal::traits<Derived>::TranslationType TranslationType;
-  /** \brief SO2 type, use with care since this might be a Map type */
-  typedef typename internal::traits<Derived>::SO2Type SO2Type;
+  /** \brief translation reference type */
+  typedef typename internal::traits<Derived>::TranslationType &
+  TranslationReference;
+  /** \brief translation const reference type */
+  typedef const typename internal::traits<Derived>::TranslationType &
+  ConstTranslationReference;
+  /** \brief SO2 reference type */
+  typedef typename internal::traits<Derived>::SO2Type &
+  SO2Reference;
+  /** \brief SO2 type */
+  typedef const typename internal::traits<Derived>::SO2Type &
+  ConstSO2Reference;
 
   /** \brief degree of freedom of group
     *        (two for translation, one for in-plane rotation) */
@@ -106,7 +114,7 @@ public:
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
   /** \brief SO2 transfomation type */
-  typedef typename SO2Type::Transformation SO2TransformationType;
+  typedef typename SO2Group<Scalar>::Transformation SO2TransformationType;
 
   /**
    * \brief Adjoint transformation
@@ -269,22 +277,6 @@ public:
   }
 
   /**
-   * \brief Read/write access to SO2 group
-   */
-  EIGEN_STRONG_INLINE
-  SO2Type& so2() {
-    return static_cast<Derived*>(this)->so2();
-  }
-
-  /**
-   * \brief Read access to SO2 group
-   */
-  EIGEN_STRONG_INLINE
-  const SO2Type& so2() const {
-    return static_cast<const Derived*>(this)->so2();
-  }
-
-  /**
    * \brief Setter of internal unit complex number representation
    *
    * \param complex
@@ -293,7 +285,7 @@ public:
    * The complex number is normalized to unit length.
    */
   inline
-  void setComplex(const typename SO2Type::Point& complex) {
+  void setComplex(const Matrix<Scalar,2,1> & complex) {
     return so2().setComplex(complex);
   }
 
@@ -310,10 +302,26 @@ public:
   }
 
   /**
+   * \brief Read/write access to SO2 group
+   */
+  EIGEN_STRONG_INLINE
+  SO2Reference so2() {
+    return static_cast<Derived*>(this)->so2();
+  }
+
+  /**
+   * \brief Read access to SO2 group
+   */
+  EIGEN_STRONG_INLINE
+  ConstSO2Reference so2() const {
+    return static_cast<const Derived*>(this)->so2();
+  }
+
+  /**
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return static_cast<Derived*>(this)->translation();
   }
 
@@ -321,7 +329,7 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return static_cast<const Derived*>(this)->translation();
   }
 
@@ -332,7 +340,8 @@ public:
    * normalized.
    */
   inline
-  const typename SO2Type::ComplexType& unit_complex() const {
+  typename internal::traits<Derived>::SO2Type::ConstComplexReference
+  unit_complex() const {
     return so2().unit_complex();
   }
 
@@ -383,7 +392,7 @@ public:
   const SE2Group<Scalar> exp(const Tangent & a) {
     Matrix<Scalar,2,1> upsilon = a.template head<2>();
     Scalar theta = a[2];
-    SO2Group<Scalar> so2 = SO2Type::exp(theta);
+    SO2Group<Scalar> so2 = SO2Group<Scalar>::exp(theta);
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;
 
@@ -435,7 +444,7 @@ public:
     assert(i>=0 && i<3);
     Tangent e;
     e.setZero();
-    e[i] = 1.f;
+    e[i] = static_cast<Scalar>(1);
     return hat(e);
   }
 
@@ -548,7 +557,8 @@ public:
   const Tangent vee(const Transformation & Omega) {
     Tangent upsilon_omega;
     upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
-    upsilon_omega[2] = SO2Type::vee(Omega.template topLeftCorner<2,2>());
+    upsilon_omega[2]
+        = SO2Group<Scalar>::vee(Omega.template topLeftCorner<2,2>());
     return upsilon_omega;
   }
 };
@@ -564,12 +574,17 @@ public:
   /** \brief scalar type */
   typedef typename internal::traits<SE2Group<_Scalar,_Options> >
   ::Scalar Scalar;
-  /** \brief translation type */
+  /** \brief translation reference type */
   typedef typename internal::traits<SE2Group<_Scalar,_Options> >
-  ::TranslationType TranslationType;
-  /** \brief SO2 type */
+  ::TranslationType & TranslationReference;
+  typedef const typename internal::traits<SE2Group<_Scalar,_Options> >
+  ::TranslationType & ConstTranslationReference;
+  /** \brief SO2 reference type */
   typedef typename internal::traits<SE2Group<_Scalar,_Options> >
-  ::SO2Type SO2Type;
+  ::SO2Type & SO2Reference;
+  /** \brief SO2 const reference type */
+  typedef const typename internal::traits<SE2Group<_Scalar,_Options> >
+  ::SO2Type & ConstSO2Reference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -596,7 +611,7 @@ public:
    */
   inline
   SE2Group()
-    : translation_( TranslationType::Zero() )
+    : translation_( Matrix<Scalar,2,1>::Zero() )
   {
   }
 
@@ -623,7 +638,7 @@ public:
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
   inline
-  SE2Group(const typename SO2Type::Transformation & rotation_matrix,
+  SE2Group(const typename SO2Group<Scalar>::Transformation & rotation_matrix,
            const Point & translation)
     : so2_(rotation_matrix), translation_(translation) {
   }
@@ -690,7 +705,7 @@ public:
    * \brief Read access to SO2
    */
   EIGEN_STRONG_INLINE
-  SO2Type& so2() {
+  SO2Reference so2() {
     return so2_;
   }
 
@@ -698,7 +713,7 @@ public:
    * \brief Read/write access to SO2
    */
   EIGEN_STRONG_INLINE
-  const SO2Type& so2() const {
+  ConstSO2Reference so2() const {
     return so2_;
   }
 
@@ -706,7 +721,7 @@ public:
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return translation_;
   }
 
@@ -714,13 +729,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  SO2Type so2_;
-  TranslationType translation_;
+  Sophus::SO2Group<Scalar> so2_;
+  Matrix<Scalar,2,1> translation_;
 };
 
 
@@ -743,10 +758,16 @@ class Map<Sophus::SE2Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief translation type */
-  typedef typename internal::traits<Map>::TranslationType TranslationType;
-  /** \brief SO2 type */
-  typedef typename internal::traits<Map>::SO2Type SO2Type;
+  /** \brief translation reference type */
+  typedef typename internal::traits<Map>::TranslationType &
+  TranslationReference;
+  /** \brief translation reference type */
+  typedef const typename internal::traits<Map>::TranslationType &
+  ConstTranslationReference;
+  /** \brief SO2 reference type */
+  typedef typename internal::traits<Map>::SO2Type & SO2Reference;
+  /** \brief SO2 const reference type */
+  typedef const typename internal::traits<Map>::SO2Type & ConstSO2Reference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -769,14 +790,15 @@ public:
 
   EIGEN_STRONG_INLINE
   Map(Scalar* coeffs)
-    : so2_(coeffs), translation_(coeffs+SO2Type::num_parameters) {
+    : so2_(coeffs),
+      translation_(coeffs+Sophus::SO2Group<Scalar>::num_parameters) {
   }
 
   /**
    * \brief Read/write access to SO2
    */
   EIGEN_STRONG_INLINE
-  SO2Type& so2() {
+  SO2Reference so2() {
     return so2_;
   }
 
@@ -784,7 +806,7 @@ public:
    * \brief Read access to SO2
    */
   EIGEN_STRONG_INLINE
-  const SO2Type& so2() const {
+  ConstSO2Reference so2() const {
     return so2_;
   }
 
@@ -792,7 +814,7 @@ public:
    * \brief Read/write access to translation vector
    */
   EIGEN_STRONG_INLINE
-  TranslationType& translation() {
+  TranslationReference translation() {
     return translation_;
   }
 
@@ -800,13 +822,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  SO2Type so2_;
-  TranslationType translation_;
+  Map<Sophus::SO2Group<Scalar>,_Options> so2_;
+  Map<Matrix<Scalar,2,1>,_Options> translation_;
 };
 
 /**
@@ -825,10 +847,11 @@ class Map<const Sophus::SE2Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief translation type */
-  typedef typename internal::traits<Map>::TranslationType TranslationType;
-  /** \brief SO2 type */
-  typedef typename internal::traits<Map>::SO2Type SO2Type;
+  /** \brief translation reference type */
+  typedef const typename internal::traits<Map>::TranslationType &
+  ConstTranslationReference;
+  /** \brief SO2 const reference type */
+  typedef const typename internal::traits<Map>::SO2Type & ConstSO2Reference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -851,7 +874,8 @@ public:
 
   EIGEN_STRONG_INLINE
   Map(const Scalar* coeffs)
-    : so2_(coeffs), translation_(coeffs+SO2Type::num_parameters) {
+    : so2_(coeffs),
+      translation_(coeffs+Sophus::SO2Group<Scalar>::num_parameters) {
   }
 
   EIGEN_STRONG_INLINE
@@ -863,7 +887,7 @@ public:
    * \brief Read access to SO2
    */
   EIGEN_STRONG_INLINE
-  const SO2Type& so2() const {
+  ConstSO2Reference so2() const {
     return so2_;
   }
 
@@ -871,13 +895,13 @@ public:
    * \brief Read access to translation vector
    */
   EIGEN_STRONG_INLINE
-  const TranslationType& translation() const {
+  ConstTranslationReference translation() const {
     return translation_;
   }
 
 protected:
-  const SO2Type so2_;
-  const TranslationType translation_;
+  const Map<const Sophus::SO2Group<Scalar>,_Options> so2_;
+  const Map<const Matrix<Scalar,2,1>,_Options> translation_;
 };
 
 }

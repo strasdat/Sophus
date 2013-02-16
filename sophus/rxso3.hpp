@@ -92,8 +92,12 @@ class RxSO3GroupBase {
 public:
   /** \brief scalar type, use with care since this might be a Map type  */
   typedef typename internal::traits<Derived>::Scalar Scalar;
-  /** \brief quaternion type, use with care since this might be a Map type  */
-  typedef typename internal::traits<Derived>::QuaternionType QuaternionType;
+  /** \brief quaternion reference type */
+  typedef typename internal::traits<Derived>::QuaternionType &
+  QuaternionReference;
+  /** \brief quaternion const reference type */
+  typedef const typename internal::traits<Derived>::QuaternionType &
+  ConstQuaternionReference;
 
 
   /** \brief degree of freedom of group
@@ -268,7 +272,7 @@ public:
    * \brief Read/write access to quaternion
    */
   EIGEN_STRONG_INLINE
-  QuaternionType& quaternion() {
+  QuaternionReference quaternion() {
     return static_cast<Derived*>(this)->quaternion();
   }
 
@@ -276,7 +280,7 @@ public:
    * \brief Read access to quaternion
    */
   EIGEN_STRONG_INLINE
-  const QuaternionType& quaternion() const {
+  ConstQuaternionReference quaternion() const {
     return static_cast<const Derived*>(this)->quaternion();
   }
 
@@ -401,7 +405,7 @@ public:
     const Matrix<Scalar,3,1> & omega = a.template head<3>();
     Scalar sigma = a[3];
     Scalar scale = std::exp(sigma);
-    QuaternionType quat
+    Quaternion<Scalar> quat
         = SO3Group<Scalar>::expAndTheta(omega, theta).unit_quaternion();
     quat.coeffs() *= scale;
     return RxSO3Group<Scalar>(quat);
@@ -443,7 +447,7 @@ public:
     assert(i>=0 && i<4);
     Tangent e;
     e.setZero();
-    e[i] = 1.f;
+    e[i] = static_cast<Scalar>(1);
     return hat(e);
   }
 
@@ -573,9 +577,12 @@ public:
   /** \brief scalar type */
   typedef typename internal::traits<SO3Group<_Scalar,_Options> >
   ::Scalar Scalar;
-  /** \brief quaternion type */
+  /** \brief quaternion reference type */
   typedef typename internal::traits<SO3Group<_Scalar,_Options> >
-  ::QuaternionType QuaternionType;
+  ::QuaternionType & QuaternionReference;
+  /** \brief quaternion const reference type */
+  typedef const typename internal::traits<SO3Group<_Scalar,_Options> >
+  ::QuaternionType & ConstQuaternionReference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -655,7 +662,7 @@ public:
    * \pre quaternion must not be zero
    */
   inline explicit
-  RxSO3Group(const QuaternionType & quat) : quaternion_(quat) {
+  RxSO3Group(const Quaternion<Scalar> & quat) : quaternion_(quat) {
     assert(quaternion_.squaredNorm() > SophusConstants<Scalar>::epsilon());
   }
 
@@ -663,7 +670,7 @@ public:
    * \brief Read/write access to quaternion
    */
   EIGEN_STRONG_INLINE
-  QuaternionType & quaternion() {
+  QuaternionReference quaternion() {
     return quaternion_;
   }
 
@@ -671,12 +678,12 @@ public:
    * \brief Read access to quaternion
    */
   EIGEN_STRONG_INLINE
-  const QuaternionType & quaternion() const {
+  ConstQuaternionReference quaternion() const {
     return quaternion_;
   }
 
 protected:
-  QuaternionType quaternion_;
+  Quaternion<Scalar> quaternion_;
 };
 
 } // end namespace
@@ -699,8 +706,12 @@ class Map<Sophus::RxSO3Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief quaternion type */
-  typedef typename internal::traits<Map>::QuaternionType QuaternionType;
+  /** \brief quaternion reference type */
+  typedef typename internal::traits<Map>::QuaternionType &
+  QuaternionReference;
+  /** \brief quaternion const reference type */
+  typedef const typename internal::traits<Map>::QuaternionType &
+  ConstQuaternionReference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -729,7 +740,7 @@ public:
    * \brief Read/write access to quaternion
    */
   EIGEN_STRONG_INLINE
-  QuaternionType & quaternion() {
+  QuaternionReference quaternion() {
     return quaternion_;
   }
 
@@ -737,12 +748,12 @@ public:
    * \brief Read access to quaternion
    */
   EIGEN_STRONG_INLINE
-  const QuaternionType & quaternion() const {
+  ConstQuaternionReference quaternion() const {
     return quaternion_;
   }
 
 protected:
-  QuaternionType quaternion_;
+  Map<Quaternion<Scalar>,_Options> quaternion_;
 };
 
 /**
@@ -761,8 +772,9 @@ class Map<const Sophus::RxSO3Group<_Scalar>, _Options>
 public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
-  /** \brief quaternion type */
-  typedef typename internal::traits<Map>::QuaternionType QuaternionType;
+  /** \brief quaternion const reference type */
+  typedef const typename internal::traits<Map>::QuaternionType &
+  ConstQuaternionReference;
 
   /** \brief degree of freedom of group */
   static const int DoF = Base::DoF;
@@ -793,12 +805,12 @@ public:
    * No direct write access is given to ensure the quaternion stays normalized.
    */
   EIGEN_STRONG_INLINE
-  const QuaternionType & quaternion() const {
+  ConstQuaternionReference quaternion() const {
     return quaternion_;
   }
 
 protected:
-  const QuaternionType quaternion_;
+  const Map<const Quaternion<Scalar>,_Options> quaternion_;
 };
 
 }
