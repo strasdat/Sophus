@@ -674,8 +674,7 @@ protected:
     return unit_quaternion_;
   }
 
-  typename internal::traits<SO3Group<_Scalar,_Options> >::QuaternionType
-  unit_quaternion_;
+  Quaternion<Scalar> unit_quaternion_;
 };
 
 } // end namespace
@@ -747,7 +746,7 @@ protected:
     return unit_quaternion_;
   }
 
-  typename internal::traits<Map>::QuaternionType unit_quaternion_;
+  Map<Quaternion<Scalar>,_Options> unit_quaternion_;
 };
 
 /**
@@ -804,7 +803,7 @@ public:
   }
 
 protected:
-  const typename internal::traits<Map>::QuaternionType unit_quaternion_;
+  const Map<const Quaternion<Scalar>,_Options> unit_quaternion_;
 };
 
 }
