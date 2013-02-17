@@ -224,8 +224,8 @@ public:
     const Scalar & real = unit_complex().x();
     const Scalar & imag = unit_complex().y();
     Transformation R;
-    R(0,0) = real; R(0,1) = -imag;
-    R(1,0) = imag; R(1,1) =  real;
+    R << real, -imag
+        ,imag,  real;
     return R;
   }
 

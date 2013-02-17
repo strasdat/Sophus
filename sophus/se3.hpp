@@ -118,8 +118,6 @@ public:
   /** \brief adjoint transformation type */
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
-  /** \brief SO3 transfomation type */
-  typedef typename SO3Group<Scalar>::Transformation SO3TransformationType;
 
   /**
    * \brief Adjoint transformation
@@ -131,7 +129,7 @@ public:
    */
   inline
   const Adjoint Adj() const {
-    SO3TransformationType R = so3().matrix();
+    const Matrix<Scalar,3,3> & R = so3().matrix();
     Adjoint res;
     res.block(0,0,3,3) = R;
     res.block(3,3,3,3) = R;
@@ -288,7 +286,7 @@ public:
    * \returns Rotation matrix
    */
   inline
-  const SO3TransformationType rotationMatrix() const {
+  const Matrix<Scalar,3,3> rotationMatrix() const {
     return so3().matrix();
   }
 
@@ -330,7 +328,7 @@ public:
    */
   inline
   void setRotationMatrix
-  (const SO3TransformationType & rotation_matrix) {
+  (const Matrix<Scalar,3,3> & rotation_matrix) {
     so3().setQuaternion(rotation_matrix);
   }
 
@@ -414,16 +412,16 @@ public:
     Scalar theta;
     SO3Group<Scalar> so3 = SO3Group<Scalar>::expAndTheta(omega, &theta);
 
-    SO3TransformationType Omega = SO3Group<Scalar>::hat(omega);
-    SO3TransformationType Omega_sq = Omega*Omega;
-    SO3TransformationType V;
+    Matrix<Scalar,3,3> Omega = SO3Group<Scalar>::hat(omega);
+    Matrix<Scalar,3,3> Omega_sq = Omega*Omega;
+    Matrix<Scalar,3,3> V;
 
     if(theta<SophusConstants<Scalar>::epsilon()) {
       V = so3.matrix();
       //Note: That is an accurate expansion!
     } else {
       Scalar theta_sq = theta*theta;
-      V = (SO3TransformationType::Identity()
+      V = (Matrix<Scalar,3,3>::Identity()
            + (static_cast<Scalar>(1)-std::cos(theta))/(theta_sq)*Omega
            + (theta-std::sin(theta))/(theta_sq*theta)*Omega_sq);
     }
@@ -567,19 +565,19 @@ public:
         = SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
 
     if (std::abs(theta)<SophusConstants<Scalar>::epsilon()) {
-      const SO3TransformationType Omega
+      const Matrix<Scalar,3,3> Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-      const SO3TransformationType V_inv =
-          SO3TransformationType::Identity() -
+      const Matrix<Scalar,3,3> V_inv =
+          Matrix<Scalar,3,3>::Identity() -
           static_cast<Scalar>(0.5)*Omega
           + static_cast<Scalar>(1./12.)*(Omega*Omega);
 
       upsilon_omega.template head<3>() = V_inv*se3.translation();
     } else {
-      const SO3TransformationType Omega
+      const Matrix<Scalar,3,3> Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-      const SO3TransformationType V_inv =
-          ( SO3TransformationType::Identity() - static_cast<Scalar>(0.5)*Omega
+      const Matrix<Scalar,3,3> V_inv =
+          ( Matrix<Scalar,3,3>::Identity() - static_cast<Scalar>(0.5)*Omega
             + ( static_cast<Scalar>(1)
                 - theta/(static_cast<Scalar>(2)*tan(theta/Scalar(2)))) /
             (theta*theta)*(Omega*Omega) );

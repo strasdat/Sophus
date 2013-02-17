@@ -118,9 +118,6 @@ public:
   /** \brief adjoint transformation type */
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
-  /** \brief RxSO3 transfomation type */
-  typedef typename RxSO3Group<Scalar>::Transformation RxSO3TransformationType;
-
   /**
    * \brief Adjoint transformation
    *
@@ -131,7 +128,7 @@ public:
    */
   inline
   const Adjoint Adj() const {
-    RxSO3TransformationType  R = rxso3().rotationMatrix();
+    const Matrix<Scalar,3,3> & R = rxso3().rotationMatrix();
     Adjoint res;
     res.setZero();
     res.block(0,0,3,3) = scale()*R;
@@ -295,7 +292,7 @@ public:
    * \returns Rotation matrix
    */
   inline
-  const RxSO3TransformationType rotationMatrix() const {
+  const Matrix<Scalar,3,3> rotationMatrix() const {
     return rxso3().rotationMatrix();
   }
 
@@ -331,7 +328,7 @@ public:
    */
   inline
   void setRotationMatrix
-  (const RxSO3TransformationType & R) {
+  (const Matrix<Scalar,3,3> & R) {
     rxso3().setRotationMatrix(R);
   }
 
@@ -352,7 +349,7 @@ public:
    */
   inline
   void setScaledRotationMatrix
-  (const RxSO3TransformationType & sR) {
+  (const Matrix<Scalar,3,3> & sR) {
     rxso3().setScaledRotationMatrix(sR);
   }
 
@@ -426,8 +423,8 @@ public:
     Scalar theta;
     RxSO3Group<Scalar> rxso3
         = RxSO3Group<Scalar>::expAndTheta(a.template tail<4>(), &theta);
-    RxSO3TransformationType Omega = SO3Group<Scalar>::hat(omega);
-    RxSO3TransformationType W = calcW(theta, sigma, rxso3.scale(), Omega);
+    const Matrix<Scalar,3,3> & Omega = SO3Group<Scalar>::hat(omega);
+    const Matrix<Scalar,3,3> & W = calcW(theta, sigma, rxso3.scale(), Omega);
     Matrix<Scalar,3,1> t = W*upsilon;
     return Sim3Group<Scalar>(rxso3, t);
   }
@@ -583,7 +580,7 @@ public:
         = RxSO3Group<Scalar>::logAndTheta(other.rxso3(), &theta);
     Matrix<Scalar,3,1> omega = omega_sigma.template head<3>();
     Scalar sigma = omega_sigma[3];
-    RxSO3TransformationType W
+    const Matrix<Scalar,3,3> & W
         = calcW(theta, sigma, scale, SO3Group<Scalar>::hat(omega));
     Matrix<Scalar,3,1> upsilon = W.partialPivLu().solve(t);
     res.segment(0,3) = upsilon;
@@ -614,15 +611,15 @@ public:
 
 private:
   static
-  RxSO3TransformationType calcW(const Scalar & theta,
-                                const Scalar & sigma,
-                                const Scalar & scale,
-                                const RxSO3TransformationType & Omega){
-    static const RxSO3TransformationType I
-        = RxSO3TransformationType::Identity();
+  Matrix<Scalar,3,3> calcW(const Scalar & theta,
+                           const Scalar & sigma,
+                           const Scalar & scale,
+                           const Matrix<Scalar,3,3> & Omega){
+    static const Matrix<Scalar,3,3> I
+        = Matrix<Scalar,3,3>::Identity();
     static const Scalar one = static_cast<Scalar>(1.);
     static const Scalar half = static_cast<Scalar>(1./2.);
-    RxSO3TransformationType Omega2 = Omega*Omega;
+    Matrix<Scalar,3,3> Omega2 = Omega*Omega;
 
     Scalar A,B,C;
     if (std::abs(sigma)<SophusConstants<Scalar>::epsilon()) {

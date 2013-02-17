@@ -113,9 +113,6 @@ public:
   /** \brief adjoint transformation type */
   typedef Matrix<Scalar,DoF,DoF> Adjoint;
 
-  /** \brief SO2 transfomation type */
-  typedef typename SO2Group<Scalar>::Transformation SO2TransformationType;
-
   /**
    * \brief Adjoint transformation
    *
@@ -126,7 +123,7 @@ public:
    */
   inline
   const Adjoint Adj() const {
-    const SO2TransformationType & R = so2().matrix();
+    const Matrix<Scalar,2,2> & R = so2().matrix();
     Transformation res;
     res.setIdentity();
     res.template topLeftCorner<2,2>() = R;
@@ -272,7 +269,7 @@ public:
    * \returns Rotation matrix
    */
   inline
-  const SO2TransformationType rotationMatrix() const {
+  const Matrix<Scalar,2,2> rotationMatrix() const {
     return so2().matrix();
   }
 
@@ -296,7 +293,7 @@ public:
    * \pre     the 2x2 matrix should be orthogonal and have a determinant of 1
    */
   inline
-  void setRotationMatrix(const SO2TransformationType & R) {
+  void setRotationMatrix(const Matrix<Scalar,2,2> & R) {
     so2().setComplex(static_cast<Scalar>(0.5)*(R(0,0)+R(1,1)),
                      static_cast<Scalar>(0.5)*(R(1,0)-R(0,1)));
   }
@@ -408,9 +405,9 @@ public:
       one_minus_cos_theta_by_theta
           = (static_cast<Scalar>(1.) - so2.unit_complex().x())/theta;
     }
-    SO2TransformationType V;
-    V(0,0) = sin_theta_by_theta; V(0,1) = -one_minus_cos_theta_by_theta;
-    V(1,0) = one_minus_cos_theta_by_theta; V(1,1) = sin_theta_by_theta;
+    Matrix<Scalar,2,2> V;
+    V <<           sin_theta_by_theta, -one_minus_cos_theta_by_theta
+        ,one_minus_cos_theta_by_theta,            sin_theta_by_theta;
     return SE2Group<Scalar>(so2,V*upsilon);
   }
 
@@ -538,9 +535,9 @@ public:
       halftheta_by_tan_of_halftheta
           = -(halftheta*z.y())/(real_minus_one);
     }
-    SO2TransformationType V_inv;
-    V_inv(0,0) = halftheta_by_tan_of_halftheta; V_inv(1,0) = -halftheta;
-    V_inv(0,1) = halftheta; V_inv(1,1) = halftheta_by_tan_of_halftheta;
+    Matrix<Scalar,2,2> V_inv;
+    V_inv <<  halftheta_by_tan_of_halftheta,                      halftheta
+        ,                        -halftheta,  halftheta_by_tan_of_halftheta;
     upsilon_theta.template head<2>() = V_inv*other.translation();
     return upsilon_theta;
   }
