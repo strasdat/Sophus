@@ -384,8 +384,8 @@ public:
    */
   inline static
   const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
-    Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
-    Matrix<Scalar,3,1> omega2 = b.template segment<3>(3);
+    const Matrix<Scalar,3,1> & upsilon2 = b.template head<3>();
+    const Matrix<Scalar,3,1> & omega2 = b.template segment<3>(3);
     Scalar sigma2 = b[6];
 
     Adjoint res;
@@ -417,16 +417,15 @@ public:
    */
   inline static
   const Sim3Group<Scalar> exp(const Tangent & a) {
-    Matrix<Scalar,3,1> upsilon = a.segment(0,3);
-    Matrix<Scalar,3,1> omega = a.segment(3,3);
+    const Matrix<Scalar,3,1> & upsilon = a.segment(0,3);
+    const Matrix<Scalar,3,1> & omega = a.segment(3,3);
     Scalar sigma = a[6];
     Scalar theta;
     RxSO3Group<Scalar> rxso3
         = RxSO3Group<Scalar>::expAndTheta(a.template tail<4>(), &theta);
     const Matrix<Scalar,3,3> & Omega = SO3Group<Scalar>::hat(omega);
     const Matrix<Scalar,3,3> & W = calcW(theta, sigma, rxso3.scale(), Omega);
-    Matrix<Scalar,3,1> t = W*upsilon;
-    return Sim3Group<Scalar>(rxso3, t);
+    return Sim3Group<Scalar>(rxso3, W*upsilon);
   }
 
   /**
@@ -536,10 +535,10 @@ public:
   inline static
   const Tangent lieBracket(const Tangent & a,
                            const Tangent & b) {
-    Matrix<Scalar,3,1> upsilon1 = a.template head<3>();
-    Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
-    Matrix<Scalar,3,1> omega1 = a.template segment<3>(3);
-    Matrix<Scalar,3,1> omega2 = b.template segment<3>(3);
+    const Matrix<Scalar,3,1> & upsilon1 = a.template head<3>();
+    const Matrix<Scalar,3,1> & upsilon2 = b.template head<3>();
+    const Matrix<Scalar,3,1> & omega1 = a.template segment<3>(3);
+    const Matrix<Scalar,3,1> & omega2 = b.template segment<3>(3);
     Scalar sigma1 = a[6];
     Scalar sigma2 = b[6];
 
@@ -573,17 +572,14 @@ public:
   inline static
   const Tangent log(const Sim3Group<Scalar> & other) {
     Tangent res;
-    const Scalar & scale = other.scale();
-    const Point & t = other.translation();
     Scalar theta;
-    Matrix<Scalar,4,1> omega_sigma
+    const Matrix<Scalar,4,1> & omega_sigma
         = RxSO3Group<Scalar>::logAndTheta(other.rxso3(), &theta);
-    Matrix<Scalar,3,1> omega = omega_sigma.template head<3>();
+    const Matrix<Scalar,3,1> & omega = omega_sigma.template head<3>();
     Scalar sigma = omega_sigma[3];
     const Matrix<Scalar,3,3> & W
-        = calcW(theta, sigma, scale, SO3Group<Scalar>::hat(omega));
-    Matrix<Scalar,3,1> upsilon = W.partialPivLu().solve(t);
-    res.segment(0,3) = upsilon;
+        = calcW(theta, sigma, other.scale(), SO3Group<Scalar>::hat(omega));
+    res.segment(0,3) = W.partialPivLu().solve(other.translation());
     res.segment(3,3) = omega;
     res[6] = sigma;
     return res;

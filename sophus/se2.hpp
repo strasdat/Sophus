@@ -387,9 +387,8 @@ public:
    */
   inline static
   const SE2Group<Scalar> exp(const Tangent & a) {
-    Matrix<Scalar,2,1> upsilon = a.template head<2>();
     Scalar theta = a[2];
-    SO2Group<Scalar> so2 = SO2Group<Scalar>::exp(theta);
+    const SO2Group<Scalar> & so2 = SO2Group<Scalar>::exp(theta);
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;
 
@@ -408,7 +407,7 @@ public:
     Matrix<Scalar,2,2> V;
     V <<           sin_theta_by_theta, -one_minus_cos_theta_by_theta
         ,one_minus_cos_theta_by_theta,            sin_theta_by_theta;
-    return SE2Group<Scalar>(so2,V*upsilon);
+    return SE2Group<Scalar>(so2,V*a.template head<2>());
   }
 
   /**

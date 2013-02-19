@@ -552,7 +552,7 @@ public:
   inline static
   const Tangent logAndTheta(const RxSO3Group<Scalar> & other,
                             Scalar * theta) {
-    Scalar scale = other.quaternion().norm();
+    const Scalar & scale = other.quaternion().norm();
     Tangent omega_sigma;
     omega_sigma[3] = std::log(scale);
     omega_sigma.template head<3>()

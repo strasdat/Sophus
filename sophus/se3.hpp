@@ -377,12 +377,11 @@ public:
     Adjoint res;
     res.setZero();
 
-    Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
-    Matrix<Scalar,3,1> omega2 = b.template tail<3>();
+    const Matrix<Scalar,3,1> & upsilon2 = b.template head<3>();
+    const Matrix<Scalar,3,1> & omega2 = b.template tail<3>();
 
     res.template topLeftCorner<3,3>() = -SO3Group<Scalar>::hat(omega2);
     res.template topRightCorner<3,3>() = -SO3Group<Scalar>::hat(upsilon2);
-
     res.template bottomRightCorner<3,3>() = -SO3Group<Scalar>::hat(omega2);
     return res;
   }
@@ -406,14 +405,14 @@ public:
    */
   inline static
   const SE3Group<Scalar> exp(const Tangent & a) {
-    Matrix<Scalar,3,1> upsilon = a.template head<3>();
-    Matrix<Scalar,3,1> omega = a.template tail<3>();
+    const Matrix<Scalar,3,1> & omega = a.template tail<3>();
 
     Scalar theta;
-    SO3Group<Scalar> so3 = SO3Group<Scalar>::expAndTheta(omega, &theta);
+    const SO3Group<Scalar> & so3
+        = SO3Group<Scalar>::expAndTheta(omega, &theta);
 
-    Matrix<Scalar,3,3> Omega = SO3Group<Scalar>::hat(omega);
-    Matrix<Scalar,3,3> Omega_sq = Omega*Omega;
+    const Matrix<Scalar,3,3> & Omega = SO3Group<Scalar>::hat(omega);
+    const Matrix<Scalar,3,3> & Omega_sq = Omega*Omega;
     Matrix<Scalar,3,3> V;
 
     if(theta<SophusConstants<Scalar>::epsilon()) {
@@ -425,7 +424,7 @@ public:
            + (static_cast<Scalar>(1)-std::cos(theta))/(theta_sq)*Omega
            + (theta-std::sin(theta))/(theta_sq*theta)*Omega_sq);
     }
-    return SE3Group<Scalar>(so3,V*upsilon);
+    return SE3Group<Scalar>(so3,V*a.template head<3>());
   }
 
   /**
@@ -565,18 +564,18 @@ public:
         = SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
 
     if (std::abs(theta)<SophusConstants<Scalar>::epsilon()) {
-      const Matrix<Scalar,3,3> Omega
+      const Matrix<Scalar,3,3> & Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-      const Matrix<Scalar,3,3> V_inv =
+      const Matrix<Scalar,3,3> & V_inv =
           Matrix<Scalar,3,3>::Identity() -
           static_cast<Scalar>(0.5)*Omega
           + static_cast<Scalar>(1./12.)*(Omega*Omega);
 
       upsilon_omega.template head<3>() = V_inv*se3.translation();
     } else {
-      const Matrix<Scalar,3,3> Omega
+      const Matrix<Scalar,3,3> & Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-      const Matrix<Scalar,3,3> V_inv =
+      const Matrix<Scalar,3,3> & V_inv =
           ( Matrix<Scalar,3,3>::Identity() - static_cast<Scalar>(0.5)*Omega
             + ( static_cast<Scalar>(1)
                 - theta/(static_cast<Scalar>(2)*tan(theta/Scalar(2)))) /
