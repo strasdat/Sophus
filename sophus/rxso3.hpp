@@ -88,8 +88,8 @@ public:
  * where \f$ R \f$ is an orthognal matrix with \f$ det(R)=1 \f$ and \f$ s>0 \f$
  * be a positive real number.
  *
- * Internally, RxSO3 is represented by the group of non-zero quaternion. This is
- * a most compact representation since the degrees of freedom (DoF) of SxSO3
+ * Internally, RxSO3 is represented by the group of non-zero quaternions. This
+ * is a most compact representation since the degrees of freedom (DoF) of RxSO3
  * (=4) equals the number of internal parameters (=4).
  *
  * [add more detailed description/tutorial]
@@ -347,7 +347,7 @@ public:
     Transformation squared_sR = sR*sR.transpose();
     Scalar squared_scale
         = static_cast<Scalar>(1./3.)
-          *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
+        *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
     if (squared_scale <= static_cast<Scalar>(0)) {
       throw ScaleNotPositive();
     }
@@ -469,12 +469,12 @@ public:
   /**
    * \brief hat-operator
    *
-   * \param omega 4-vector representation of Lie algebra element
-   * \returns     3x3-matrix representatin of Lie algebra element
+   * \param a 4-vector representation of Lie algebra element
+   * \returns 3x3-matrix representatin of Lie algebra element
    *
    * Formally, the hat-operator of RxSO3 is defined
    * as \f$ \widehat{\cdot}: \mathbf{R}^4 \rightarrow \mathbf{R}^{3\times 3},
-   * \quad \widehat{\omega} = \sum_{i=0}^3 G_i \omega_i \f$
+   * \quad \widehat{a} = \sum_{i=0}^3 G_i a_i \f$
    * with \f$ G_i \f$ being the ith infinitesial generator().
    *
    * \see generator()
@@ -482,11 +482,11 @@ public:
    */
   inline static
   const Transformation hat(const Tangent & a) {
-    Transformation Omega;
-    Omega <<  a(3), -a(2),  a(1)
-        ,     a(2),  a(3), -a(0)
-        ,    -a(1),  a(0),  a(3);
-    return Omega;
+    Transformation A;
+    A <<  a(3), -a(2),  a(1)
+        , a(2),  a(3), -a(0)
+        ,-a(1),  a(0),  a(3);
+    return A;
   }
 
   /**
