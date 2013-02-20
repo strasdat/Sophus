@@ -55,7 +55,7 @@ public:
                                     *group_vec_[i].inverse().matrix());
         Scalar nrm = norm(ad1-ad2);
 
-        if (isnan(nrm) || nrm>10.*SMALL_EPS) {
+        if (isnan(nrm) || nrm>20.*SMALL_EPS) {
           cerr << "Adjoint" << endl;
           cerr  << "Test case: " << i << "," << j <<endl;
           cerr << (ad1-ad2) <<endl;
