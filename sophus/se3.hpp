@@ -329,7 +329,7 @@ public:
   inline
   void setRotationMatrix
   (const Matrix<Scalar,3,3> & rotation_matrix) {
-    so3().setQuaternion(rotation_matrix);
+    so3().setQuaternion(Quaternion<Scalar>(rotation_matrix));
   }
 
   /**

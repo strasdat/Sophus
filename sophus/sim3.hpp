@@ -34,10 +34,10 @@ template<typename _Scalar, int _Options=0> class Sim3Group;
 typedef Sim3Group<double> Sim3 EIGEN_DEPRECATED;
 typedef Sim3Group<double> Sim3d; /**< double precision Sim3 */
 typedef Sim3Group<float> Sim3f;  /**< single precision Sim3 */
-typedef Matrix<double,7,1> Vector6d;
-typedef Matrix<double,7,6> Matrix6d;
-typedef Matrix<float,7,1> Vector6f;
-typedef Matrix<float,7,7> Matrix6f;
+typedef Matrix<double,7,1> Vector7d;
+typedef Matrix<double,7,6> Matrix7d;
+typedef Matrix<float,7,1> Vector7f;
+typedef Matrix<float,7,7> Matrix7f;
 }
 
 ////////////////////////////////////////////////////////////////////////////

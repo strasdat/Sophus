@@ -398,16 +398,16 @@ public:
           = static_cast<Scalar>(1.) - static_cast<Scalar>(1./6.)*theta_sq;
       one_minus_cos_theta_by_theta
           = static_cast<Scalar>(0.5)*theta
-            - static_cast<Scalar>(1./24.)*theta*theta_sq;
+          - static_cast<Scalar>(1./24.)*theta*theta_sq;
     } else {
       sin_theta_by_theta = so2.unit_complex().y()/theta;
       one_minus_cos_theta_by_theta
           = (static_cast<Scalar>(1.) - so2.unit_complex().x())/theta;
     }
-    Matrix<Scalar,2,2> V;
-    V <<           sin_theta_by_theta, -one_minus_cos_theta_by_theta
-        ,one_minus_cos_theta_by_theta,            sin_theta_by_theta;
-    return SE2Group<Scalar>(so2,V*a.template head<2>());
+    Matrix<Scalar,2,1> trans
+        (sin_theta_by_theta*a[0] - one_minus_cos_theta_by_theta*a[1],
+        one_minus_cos_theta_by_theta * a[0]+sin_theta_by_theta*a[1]);
+    return SE2Group<Scalar>(so2, trans);
   }
 
   /**
@@ -529,7 +529,7 @@ public:
     if (std::abs(real_minus_one)<SophusConstants<Scalar>::epsilon()) {
       halftheta_by_tan_of_halftheta
           = static_cast<Scalar>(1.)
-            - static_cast<Scalar>(1./12)*theta*theta;
+          - static_cast<Scalar>(1./12)*theta*theta;
     } else {
       halftheta_by_tan_of_halftheta
           = -(halftheta*z.y())/(real_minus_one);
