@@ -1,4 +1,4 @@
-Sophus - CRTP branch
+Sophus (new templated version)
 
 C++ implementation of Lie Groups using Eigen.
 
