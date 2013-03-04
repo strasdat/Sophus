@@ -292,7 +292,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit complex number
+   * \brief Accessor of unit complex number
    *
    * No direct write access is given to ensure the complex stays normalized.
    */
@@ -420,7 +420,7 @@ public:
   }
 
 private:
-  // Nonconst accessor of complex number is private so users are hampered
+  // Mutator of complex number is private so users are hampered
   // from setting non-unit complex numbers.
   EIGEN_STRONG_INLINE
   ComplexReference unit_complex_nonconst() {
@@ -539,7 +539,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit complex number
+   * \brief Accessor of unit complex number
    *
    * No direct write access is given to ensure the complex number stays
    * normalized.
@@ -550,7 +550,7 @@ public:
   }
 
 protected:
-  // Nonconst accessor of unit_complex is protected so users are hampered
+  // Mutator of complex number is protected so users are hampered
   // from setting non-unit complex numbers.
   EIGEN_STRONG_INLINE
   ComplexReference unit_complex_nonconst() {
@@ -615,7 +615,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit complex number
+   * \brief Accessor of unit complex number
    *
    * No direct write access is given to ensure the complex number stays
    * normalized.
@@ -626,7 +626,7 @@ public:
   }
 
 protected:
-  // Nonconst accessor of complex number is protected so users are hampered
+  // Mutator of complex number is protected so users are hampered
   // from setting non-unit complex number.
   EIGEN_STRONG_INLINE
   ComplexReference unit_complex_nonconst() {
@@ -681,7 +681,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit complex number
+   * \brief Accessor of unit complex number
    *
    * No direct write access is given to ensure the complex number stays
    * normalized.

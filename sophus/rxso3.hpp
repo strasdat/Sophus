@@ -278,7 +278,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to quaternion
+   * \brief Mutator of quaternion
    */
   EIGEN_STRONG_INLINE
   QuaternionReference quaternion() {
@@ -286,7 +286,7 @@ public:
   }
 
   /**
-   * \brief Read access to quaternion
+   * \brief Accessor of quaternion
    */
   EIGEN_STRONG_INLINE
   ConstQuaternionReference quaternion() const {
@@ -687,7 +687,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to quaternion
+   * \brief Mutator of quaternion
    */
   EIGEN_STRONG_INLINE
   QuaternionReference quaternion() {
@@ -695,7 +695,7 @@ public:
   }
 
   /**
-   * \brief Read access to quaternion
+   * \brief Accessor of quaternion
    */
   EIGEN_STRONG_INLINE
   ConstQuaternionReference quaternion() const {
@@ -757,7 +757,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to quaternion
+   * \brief Mutator of quaternion
    */
   EIGEN_STRONG_INLINE
   QuaternionReference quaternion() {
@@ -765,7 +765,7 @@ public:
   }
 
   /**
-   * \brief Read access to quaternion
+   * \brief Accessor of quaternion
    */
   EIGEN_STRONG_INLINE
   ConstQuaternionReference quaternion() const {
@@ -820,7 +820,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Accessor of unit quaternion
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */

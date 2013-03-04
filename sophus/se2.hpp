@@ -243,7 +243,7 @@ public:
    * \returns point \f$p' \in \mathbf{R}^2 \f$,
    *          rotated and translated version of \f$p\f$
    *
-   * This function rotates aand translates point \f$ p \f$
+   * This function rotates and translates point \f$ p \f$
    * in \f$ \mathbf{R}^2 \f$ by the SE2 transformation \f$R,t\f$
    * (=rotation matrix, translation vector): \f$ p' = R\cdot p + t \f$.
    */
@@ -299,7 +299,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to SO2 group
+   * \brief Mutator of SO2 group
    */
   EIGEN_STRONG_INLINE
   SO2Reference so2() {
@@ -307,7 +307,7 @@ public:
   }
 
   /**
-   * \brief Read access to SO2 group
+   * \brief Accessor of SO2 group
    */
   EIGEN_STRONG_INLINE
   ConstSO2Reference so2() const {
@@ -315,7 +315,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -323,7 +323,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -331,7 +331,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit complex number
+   * \brief Accessor of unit complex number
    *
    * No direct write access is given to ensure the complex number stays
    * normalized.
@@ -700,7 +700,7 @@ public:
   }
 
   /**
-   * \brief Read access to SO2
+   * \brief Accessor of SO2
    */
   EIGEN_STRONG_INLINE
   SO2Reference so2() {
@@ -708,7 +708,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to SO2
+   * \brief Mutator of SO2
    */
   EIGEN_STRONG_INLINE
   ConstSO2Reference so2() const {
@@ -716,7 +716,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -724,7 +724,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -793,7 +793,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to SO2
+   * \brief Mutator of SO2
    */
   EIGEN_STRONG_INLINE
   SO2Reference so2() {
@@ -801,7 +801,7 @@ public:
   }
 
   /**
-   * \brief Read access to SO2
+   * \brief Accessor of SO2
    */
   EIGEN_STRONG_INLINE
   ConstSO2Reference so2() const {
@@ -809,7 +809,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -817,7 +817,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -882,7 +882,7 @@ public:
   }
 
   /**
-   * \brief Read access to SO2
+   * \brief Accessor of SO2
    */
   EIGEN_STRONG_INLINE
   ConstSO2Reference so2() const {
@@ -890,7 +890,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {

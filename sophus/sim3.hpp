@@ -260,7 +260,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to quaternion
+   * \brief Mutator of quaternion
    */
   inline
   typename internal::traits<Derived>::RxSO3Type::QuaternionReference
@@ -269,7 +269,7 @@ public:
   }
 
   /**
-   * \brief Read access to quaternion
+   * \brief Accessor of quaternion
    */
   inline
   typename internal::traits<Derived>::RxSO3Type::ConstQuaternionReference
@@ -282,9 +282,8 @@ public:
    *
    * deprecated: use rotationMatrix() instead.
    */
-  typedef Transformation M3_marcos_dont_like_commas;
   inline
-  EIGEN_DEPRECATED const M3_marcos_dont_like_commas rotation_matrix() const {
+  EIGEN_DEPRECATED const Transformation rotation_matrix() const {
     return rxso3().rotationMatrix();
   }
 
@@ -297,7 +296,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to RxSO3 group
+   * \brief Mutator of RxSO3 group
    */
   EIGEN_STRONG_INLINE
   RxSO3Reference rxso3() {
@@ -305,7 +304,7 @@ public:
   }
 
   /**
-   * \brief Read access to RxSO3 group
+   * \brief Accessor of RxSO3 group
    */
   EIGEN_STRONG_INLINE
   ConstRxSO3Reference rxso3() const {
@@ -354,7 +353,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -362,7 +361,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -766,7 +765,7 @@ public:
   }
 
   /**
-   * \brief Read access to RxSO3
+   * \brief Accessor of RxSO3
    */
   EIGEN_STRONG_INLINE
   RxSO3Reference rxso3() {
@@ -774,7 +773,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to RxSO3
+   * \brief Mutator of RxSO3
    */
   EIGEN_STRONG_INLINE
   ConstRxSO3Reference rxso3() const {
@@ -782,7 +781,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -790,7 +789,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -862,7 +861,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to RxSO3
+   * \brief Mutator of RxSO3
    */
   EIGEN_STRONG_INLINE
   RxSO3Reference rxso3() {
@@ -870,7 +869,7 @@ public:
   }
 
   /**
-   * \brief Read access to RxSO3
+   * \brief Accessor of RxSO3
    */
   EIGEN_STRONG_INLINE
   ConstRxSO3Reference rxso3() const {
@@ -878,7 +877,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -886,7 +885,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -952,7 +951,7 @@ public:
   }
 
   /**
-   * \brief Read access to RxSO3
+   * \brief Accessor of RxSO3
    */
   EIGEN_STRONG_INLINE
   ConstRxSO3Reference rxso3() const {
@@ -960,7 +959,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {

@@ -249,7 +249,7 @@ public:
    * \returns point \f$p' \in \mathbf{R}^3 \f$,
    *          rotated and translated version of \f$p\f$
    *
-   * This function rotates aand translates point \f$ p \f$
+   * This function rotates and translates point \f$ p \f$
    * in \f$ \mathbf{R}^3 \f$ by the SE3 transformation \f$R,t\f$
    * (=rotation matrix, translation vector): \f$ p' = R\cdot p + t \f$.
    */
@@ -292,7 +292,7 @@ public:
 
 
   /**
-   * \brief Read/write access to SO3 group
+   * \brief Mutator of SO3 group
    */
   EIGEN_STRONG_INLINE
   SO3Reference so3() {
@@ -300,7 +300,7 @@ public:
   }
 
   /**
-   * \brief Read access to SO3 group
+   * \brief Accessor of SO3 group
    */
   EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
@@ -333,7 +333,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -341,7 +341,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -349,7 +349,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Accessor of unit quaternion
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
@@ -738,7 +738,7 @@ public:
   }
 
   /**
-   * \brief Read access to SO3
+   * \brief Accessor of SO3
    */
   EIGEN_STRONG_INLINE
   SO3Reference so3() {
@@ -746,7 +746,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to SO3
+   * \brief Mutator of SO3
    */
   EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
@@ -754,7 +754,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -762,7 +762,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -832,7 +832,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to SO3
+   * \brief Mutator of SO3
    */
   EIGEN_STRONG_INLINE
   SO3Reference so3() {
@@ -840,7 +840,7 @@ public:
   }
 
   /**
-   * \brief Read access to SO3
+   * \brief Accessor of SO3
    */
   EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
@@ -848,7 +848,7 @@ public:
   }
 
   /**
-   * \brief Read/write access to translation vector
+   * \brief Mutator of translation vector
    */
   EIGEN_STRONG_INLINE
   TranslationReference translation() {
@@ -856,7 +856,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
@@ -922,7 +922,7 @@ public:
   }
 
   /**
-   * \brief Read access to SO3
+   * \brief Accessor of SO3
    */
   EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
@@ -930,7 +930,7 @@ public:
   }
 
   /**
-   * \brief Read access to translation vector
+   * \brief Accessor of translation vector
    */
   EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {

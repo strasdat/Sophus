@@ -283,7 +283,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Accessor of unit quaternion
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
@@ -549,7 +549,7 @@ public:
   }
 
 private:
-  // Nonconst accessor of unit_quaternion is private so users are hampered
+  // Mutator of unit_quaternion is private so users are hampered
   // from setting non-unit quaternions.
   EIGEN_STRONG_INLINE
   QuaternionReference unit_quaternion_nonconst() {
@@ -657,7 +657,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Accessor of unit quaternion
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
@@ -667,7 +667,7 @@ public:
   }
 
 protected:
-  // Nonconst accessor of unit_quaternion is protected so users are hampered
+  // Mutator of unit_quaternion is protected so users are hampered
   // from setting non-unit quaternions.
   EIGEN_STRONG_INLINE
   QuaternionReference unit_quaternion_nonconst() {
@@ -729,7 +729,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Accessor of unit quaternion
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
@@ -739,7 +739,7 @@ public:
   }
 
 protected:
-  // Nonconst accessor of unit_quaternion is protected so users are hampered
+  // Mutator of unit_quaternion is protected so users are hampered
   // from setting non-unit quaternions.
   EIGEN_STRONG_INLINE
   QuaternionReference unit_quaternion_nonconst() {
@@ -793,7 +793,7 @@ public:
   }
 
   /**
-   * \brief Read access to unit quaternion
+   * \brief Accessor of unit quaternion
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
