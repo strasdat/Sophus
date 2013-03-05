@@ -574,12 +574,6 @@ public:
   typedef const typename internal::traits<SO3Group<_Scalar,_Options> >
   ::QuaternionType & ConstQuaternionReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -702,12 +696,6 @@ public:
   typedef const typename internal::traits<Map>::QuaternionType &
   ConstQuaternionReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -769,12 +757,6 @@ public:
   typedef const typename internal::traits<Map>::QuaternionType &
   ConstQuaternionReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
