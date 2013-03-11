@@ -481,9 +481,7 @@ public:
    */
   inline static
   Transformation generator(int i) {
-    if (i<0 || i>6) {
-      throw SophusException("i is not in range [0,6].");
-    }
+    SOPHUS_ASSERT(i>=0 || i<=6, "i is not in range [0,6].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);

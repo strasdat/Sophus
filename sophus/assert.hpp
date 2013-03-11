@@ -20,46 +20,34 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-#ifndef SOPHUS_HPP
-#define SOPHUS_HPP
+#ifndef SOPHUS_ASSERT_HPP
+#define SOPHUS_ASSERT_HPP
 
-#include <stdexcept>
+#include <cassert>
+#include <string>
 
-#include <Eigen/Eigen>
-#include <Eigen/Geometry>
+//following boost's assert.hpp
+#undef SOPHUS_ASSERT
 
-#include "assert.hpp"
+#if defined(SOPHUS_DISABLE_ASSERTS)
+
+# define SOPHUS_ASSERT(expr, descpiption) ((void)0)
+
+#elif defined(SOPHUS_ENABLE_ASSERT_HANDLER)
 
 namespace Sophus {
-using namespace Eigen;
-
-template<typename Scalar>
-struct SophusConstants {
-  EIGEN_ALWAYS_INLINE static
-  Scalar epsilon() {
-    return static_cast<Scalar>(1e-10);
-  }
-
-  EIGEN_ALWAYS_INLINE static
-  Scalar pi() {
-    return static_cast<Scalar>(M_PI);
-  }
-};
-
-template<>
-struct SophusConstants<float> {
-  EIGEN_ALWAYS_INLINE static
-  float epsilon() {
-    return static_cast<float>(1e-5);
-  }
-
-  EIGEN_ALWAYS_INLINE static
-  float pi() {
-    return static_cast<float>(M_PI);
-  }
-};
-
-
+void assertionFailed(const std::string & description);
 }
 
+#define SOPHUS_ASSERT(expr, descpiption) ((expr)                               \
+  ? ((void)0)                                                                  \
+  : ::Sophus::assertionFailed(descpiption))
+
+#else
+# define SOPHUS_ASSERT(expr, descpiption) ((expr)                              \
+   ? ((void)0)                                                                 \
+  : assert((expr)))
 #endif
+
+
+#endif // SOPHUS_ASSERT_HPP

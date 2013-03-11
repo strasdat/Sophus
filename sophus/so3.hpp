@@ -195,9 +195,9 @@ public:
   inline
   void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
-    if (length < SophusConstants<Scalar>::epsilon()) {
-      throw SophusException("Quaternion is (near) zero!");
-    }
+
+    SOPHUS_ASSERT(length >= SophusConstants<Scalar>::epsilon(),
+                  "Quaternion is (near) zero!");
     unit_quaternion_nonconst().coeffs() /= length;
   }
 
@@ -396,9 +396,7 @@ public:
    */
   inline static
   Transformation generator(int i) {
-    if (i<0 || i>2) {
-      throw SophusException("i is not in range [0,2].");
-    }
+    SOPHUS_ASSERT(i>=0 && i<=2, "i is not in range [0,2].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -507,9 +505,8 @@ public:
     if (n < SophusConstants<Scalar>::epsilon()) {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
-      if (std::abs(w) < SophusConstants<Scalar>::epsilon()) {
-        throw SophusException("Quaternion is not normalized!");
-      }
+      SOPHUS_ASSERT(std::abs(w) >= SophusConstants<Scalar>::epsilon(),
+                    "Quaternion is not normalized!");
       Scalar squared_w = w*w;
       two_atan_nbyw_by_n = static_cast<Scalar>(2) / w
                            - static_cast<Scalar>(2)*(squared_n)/(w*squared_w);

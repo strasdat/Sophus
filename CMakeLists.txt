@@ -13,10 +13,11 @@ ENDIF()
 
 IF (CMAKE_COMPILER_IS_GNUCXX )
    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
-   SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG ")
+   SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
   ADD_DEFINITIONS("-Wall -Werror -Wno-unused-variable
-                   -Wno-unused-but-set-variable -Wno-unknown-pragmas ")
+                   -Wno-unused-but-set-variable -Wno-unknown-pragmas
+                   -DSOPHUS_ENABLE_ASSERT_HANDLER")
 ENDIF()
 
 ################################################################################
@@ -46,7 +47,8 @@ SET (TEMPLATES tests
                sim3
 )
 
-SET (SOURCES ${SOURCE_DIR}/sophus.hpp)
+SET (SOURCES ${SOURCE_DIR}/sophus.hpp ${SOURCE_DIR}/example_assert_handler.cpp
+             ${SOURCE_DIR}/assert.hpp)
 
 FOREACH(templ ${TEMPLATES})
   LIST(APPEND SOURCES ${SOURCE_DIR}/${templ}.hpp)
