@@ -34,12 +34,12 @@ using namespace Eigen;
 template<typename Scalar>
 struct SophusConstants {
   EIGEN_ALWAYS_INLINE static
-  const Scalar epsilon() {
+  Scalar epsilon() {
     return static_cast<Scalar>(1e-10);
   }
 
   EIGEN_ALWAYS_INLINE static
-  const Scalar pi() {
+  Scalar pi() {
     return static_cast<Scalar>(M_PI);
   }
 };
@@ -47,12 +47,12 @@ struct SophusConstants {
 template<>
 struct SophusConstants<float> {
   EIGEN_ALWAYS_INLINE static
-  const float epsilon() {
+  float epsilon() {
     return static_cast<float>(1e-5);
   }
 
   EIGEN_ALWAYS_INLINE static
-  const float pi() {
+  float pi() {
     return static_cast<float>(M_PI);
   }
 };

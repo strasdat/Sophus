@@ -115,7 +115,7 @@ public:
    * For SO3, it simply returns the rotation matrix corresponding to \f$ A \f$.
    */
   inline
-  const Adjoint Adj() const {
+  Adjoint Adj() const {
     return matrix();
   }
 
@@ -170,7 +170,7 @@ public:
    * \returns group inverse of instance
    */
   inline
-  const SO3Group<Scalar> inverse() const {
+  SO3Group<Scalar> inverse() const {
     return SO3Group<Scalar>(unit_quaternion().conjugate());
   }
 
@@ -182,7 +182,7 @@ public:
    * \see  log().
    */
   inline
-  const Tangent log() const {
+  Tangent log() const {
     return SO3Group<Scalar>::log(*this);
   }
 
@@ -208,7 +208,7 @@ public:
    * thus the so-called rotation matrix.
    */
   inline
-  const Transformation matrix() const {
+  Transformation matrix() const {
     return unit_quaternion().toRotationMatrix();
   }
 
@@ -226,7 +226,7 @@ public:
    * \see operator*=()
    */
   inline
-  const SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
+  SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
     SO3Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -252,7 +252,7 @@ public:
    * \see log()
    */
   inline
-  const Point operator*(const Point & p) const {
+  Point operator*(const Point & p) const {
     return unit_quaternion()._transformVector(p);
   }
 
@@ -306,7 +306,7 @@ public:
    * \see lieBracket()
    */
   inline static
-  const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
+  Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     return -hat(b);
   }
 
@@ -325,7 +325,7 @@ public:
    * \see log()
    */
   inline static
-  const SO3Group<Scalar> exp(const Tangent & omega) {
+  SO3Group<Scalar> exp(const Tangent & omega) {
     Scalar theta;
     return expAndTheta(omega, &theta);
   }
@@ -340,16 +340,16 @@ public:
    * \see exp() for details
    */
   inline static
-  const SO3Group<Scalar> expAndTheta(const Tangent & omega,
+  SO3Group<Scalar> expAndTheta(const Tangent & omega,
                                      Scalar * theta) {
-    const Scalar theta_sq = omega.squaredNorm();
+    Scalar theta_sq = omega.squaredNorm();
     *theta = std::sqrt(theta_sq);
-    const Scalar half_theta = static_cast<Scalar>(0.5)*(*theta);
+    Scalar half_theta = static_cast<Scalar>(0.5)*(*theta);
 
     Scalar imag_factor;
     Scalar real_factor;;
     if((*theta)<SophusConstants<Scalar>::epsilon()) {
-      const Scalar theta_po4 = theta_sq*theta_sq;
+      Scalar theta_po4 = theta_sq*theta_sq;
       imag_factor = static_cast<Scalar>(0.5)
                     - static_cast<Scalar>(1.0/48.0)*theta_sq
                     + static_cast<Scalar>(1.0/3840.0)*theta_po4;
@@ -357,7 +357,7 @@ public:
                     - static_cast<Scalar>(0.5)*theta_sq +
                     static_cast<Scalar>(1.0/384.0)*theta_po4;
     } else {
-      const Scalar sin_half_theta = std::sin(half_theta);
+      Scalar sin_half_theta = std::sin(half_theta);
       imag_factor = sin_half_theta/(*theta);
       real_factor = std::cos(half_theta);
     }
@@ -395,7 +395,7 @@ public:
    * \see hat()
    */
   inline static
-  const Transformation generator(int i) {
+  Transformation generator(int i) {
     if (i<0 || i>2) {
       throw SophusException("i is not in range [0,2].");
     }
@@ -420,7 +420,7 @@ public:
    * \see vee()
    */
   inline static
-  const Transformation hat(const Tangent & omega) {
+  Transformation hat(const Tangent & omega) {
     Transformation Omega;
     Omega <<  static_cast<Scalar>(0), -omega(2),  omega(1)
         ,  omega(2),     static_cast<Scalar>(0), -omega(0)
@@ -450,7 +450,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent lieBracket(const Tangent & omega1,
+  Tangent lieBracket(const Tangent & omega1,
                            const Tangent & omega2) {
     return omega1.cross(omega2);
   }
@@ -472,7 +472,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent log(const SO3Group<Scalar> & other) {
+  Tangent log(const SO3Group<Scalar> & other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
@@ -488,12 +488,12 @@ public:
    * \see log() for details
    */
   inline static
-  const Tangent logAndTheta(const SO3Group<Scalar> & other,
+  Tangent logAndTheta(const SO3Group<Scalar> & other,
                             Scalar * theta) {
-    const Scalar squared_n
+    Scalar squared_n
         = other.unit_quaternion().vec().squaredNorm();
-    const Scalar n = std::sqrt(squared_n);
-    const Scalar w = other.unit_quaternion().w();
+    Scalar n = std::sqrt(squared_n);
+    Scalar w = other.unit_quaternion().w();
 
     Scalar two_atan_nbyw_by_n;
 
@@ -510,7 +510,7 @@ public:
       if (std::abs(w) < SophusConstants<Scalar>::epsilon()) {
         throw SophusException("Quaternion is not normalized!");
       }
-      const Scalar squared_w = w*w;
+      Scalar squared_w = w*w;
       two_atan_nbyw_by_n = static_cast<Scalar>(2) / w
                            - static_cast<Scalar>(2)*(squared_n)/(w*squared_w);
     } else {
@@ -542,7 +542,7 @@ public:
    * \see hat()
    */
   inline static
-  const Tangent vee(const Transformation & Omega) {
+  Tangent vee(const Transformation & Omega) {
     return static_cast<Scalar>(0.5) * Tangent(Omega(2,1) - Omega(1,2),
                                               Omega(0,2) - Omega(2,0),
                                               Omega(1,0) - Omega(0,1));

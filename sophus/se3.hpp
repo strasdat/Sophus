@@ -128,7 +128,7 @@ public:
    * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
    */
   inline
-  const Adjoint Adj() const {
+  Adjoint Adj() const {
     const Matrix<Scalar,3,3> & R = so3().matrix();
     Adjoint res;
     res.block(0,0,3,3) = R;
@@ -166,8 +166,8 @@ public:
    * \returns Group inverse of instance
    */
   inline
-  const SE3Group<Scalar> inverse() const {
-    const SO3Group<Scalar> invR = so3().inverse();
+  SE3Group<Scalar> inverse() const {
+     SO3Group<Scalar> invR = so3().inverse();
     return SE3Group<Scalar>(invR, invR*(translation()
                                         *static_cast<Scalar>(-1) ) );
   }
@@ -181,7 +181,7 @@ public:
    * \see  log().
    */
   inline
-  const Tangent log() const {
+  Tangent log() const {
     return log(*this);
   }
 
@@ -200,7 +200,7 @@ public:
    * \returns 4x4 matrix representation of instance
    */
   inline
-  const Transformation matrix() const {
+  Transformation matrix() const {
     Transformation homogenious_matrix;
     homogenious_matrix.setIdentity();
     homogenious_matrix.block(0,0,3,3) = rotationMatrix();
@@ -214,7 +214,7 @@ public:
    * It returns the three first row of matrix().
    */
   inline
-  const Matrix<Scalar,3,4> matrix3x4() const {
+  Matrix<Scalar,3,4> matrix3x4() const {
     Matrix<Scalar,3,4> matrix;
     matrix.block(0,0,3,3) = rotationMatrix();
     matrix.col(3) = translation();
@@ -236,7 +236,7 @@ public:
    * \see operator*=()
    */
   inline
-  const SE3Group<Scalar> operator*(const SE3Group<Scalar>& other) const {
+  SE3Group<Scalar> operator*(const SE3Group<Scalar>& other) const {
     SE3Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -254,7 +254,7 @@ public:
    * (=rotation matrix, translation vector): \f$ p' = R\cdot p + t \f$.
    */
   inline
-  const Point operator*(const Point & p) const {
+  Point operator*(const Point & p) const {
     return so3()*p + translation();
   }
 
@@ -286,7 +286,7 @@ public:
    * \returns Rotation matrix
    */
   inline
-  const Matrix<Scalar,3,3> rotationMatrix() const {
+  Matrix<Scalar,3,3> rotationMatrix() const {
     return so3().matrix();
   }
 
@@ -373,7 +373,7 @@ public:
    * \see lieBracket()
    */
   inline static
-  const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
+  Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     Adjoint res;
     res.setZero();
 
@@ -404,7 +404,7 @@ public:
    * \see log()
    */
   inline static
-  const SE3Group<Scalar> exp(const Tangent & a) {
+  SE3Group<Scalar> exp(const Tangent & a) {
     const Matrix<Scalar,3,1> & omega = a.template tail<3>();
 
     Scalar theta;
@@ -474,7 +474,7 @@ public:
    * \see hat()
    */
   inline static
-  const Transformation generator(int i) {
+  Transformation generator(int i) {
     if (i<0 || i>5) {
       throw SophusException("i is not in range [0,5].");
     }
@@ -499,7 +499,7 @@ public:
    * \see vee()
    */
   inline static
-  const Transformation hat(const Tangent & v) {
+  Transformation hat(const Tangent & v) {
     Transformation Omega;
     Omega.setZero();
     Omega.template topLeftCorner<3,3>()
@@ -526,7 +526,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent lieBracket(const Tangent & a,
+  Tangent lieBracket(const Tangent & a,
                            const Tangent & b) {
     Matrix<Scalar,3,1> upsilon1 = a.template head<3>();
     Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
@@ -557,7 +557,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent log(const SE3Group<Scalar> & se3) {
+  Tangent log(const SE3Group<Scalar> & se3) {
     Tangent upsilon_omega;
     Scalar theta;
     upsilon_omega.template tail<3>()
@@ -596,7 +596,7 @@ public:
    * \see hat()
    */
   inline static
-  const Tangent vee(const Transformation & Omega) {
+  Tangent vee(const Transformation & Omega) {
     Tangent upsilon_omega;
     upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
     upsilon_omega.template tail<3>()

@@ -137,7 +137,7 @@ public:
    * \f$ A \f$.
    */
   inline
-  const Adjoint Adj() const {
+  Adjoint Adj() const {
     Adjoint res;
     res.setIdentity();
     res.template topLeftCorner<3,3>() = rotationMatrix();
@@ -192,7 +192,7 @@ public:
    * \returns group inverse of instance
    */
   inline
-  const RxSO3Group<Scalar> inverse() const {
+  RxSO3Group<Scalar> inverse() const {
     if(quaternion().squaredNorm() <= static_cast<Scalar>(0)) {
       throw ScaleNotPositive();
     }
@@ -207,7 +207,7 @@ public:
    * \see  log().
    */
   inline
-  const Tangent log() const {
+  Tangent log() const {
     return RxSO3Group<Scalar>::log(*this);
   }
 
@@ -219,7 +219,7 @@ public:
    * matrix \f$ R \f$  with scale s.
    */
   inline
-  const Transformation matrix() const {
+  Transformation matrix() const {
     //ToDO: implement this directly!
     Scalar scale = quaternion().norm();
     Quaternion<Scalar> norm_quad = quaternion();
@@ -242,7 +242,7 @@ public:
    * \see operator*=()
    */
   inline
-  const RxSO3Group<Scalar> operator*(const RxSO3Group<Scalar>& other) const {
+  RxSO3Group<Scalar> operator*(const RxSO3Group<Scalar>& other) const {
     RxSO3Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -260,7 +260,7 @@ public:
    * : \f$ p' = sR\cdot p \f$.
    */
   inline
-  const Point operator*(const Point & p) const {
+  Point operator*(const Point & p) const {
     //ToDO: implement this directly!
     Scalar scale = quaternion().norm();
     Quaternion<Scalar> norm_quad = quaternion();
@@ -308,7 +308,7 @@ public:
    * \returns scale
    */
   EIGEN_STRONG_INLINE
-  const Scalar scale() const {
+  Scalar scale() const {
     return quaternion().norm();
   }
 
@@ -374,7 +374,7 @@ public:
    * \see lieBracket()
    */
   inline static
-  const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
+  Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     Adjoint res;
     res.setZero();
     res.template topLeftCorner<3,3>() = -SO3::hat(b.template head<3>());
@@ -397,7 +397,7 @@ public:
    * \see log()
    */
   inline static
-  const RxSO3Group<Scalar> exp(const Tangent & a) {
+  RxSO3Group<Scalar> exp(const Tangent & a) {
     Scalar theta;
     return expAndTheta(a, &theta);
   }
@@ -413,7 +413,7 @@ public:
    * \see exp() for details
    */
   inline static
-  const RxSO3Group<Scalar> expAndTheta(const Tangent & a,
+  RxSO3Group<Scalar> expAndTheta(const Tangent & a,
                                        Scalar * theta) {
     const Matrix<Scalar,3,1> & omega = a.template head<3>();
     Scalar sigma = a[3];
@@ -456,7 +456,7 @@ public:
    * \see hat()
    */
   inline static
-  const Transformation generator(int i) {
+  Transformation generator(int i) {
     if (i<0 || i>3) {
       throw SophusException("i is not in range [0,3].");
     }
@@ -481,7 +481,7 @@ public:
    * \see vee()
    */
   inline static
-  const Transformation hat(const Tangent & a) {
+  Transformation hat(const Tangent & a) {
     Transformation A;
     A <<  a(3), -a(2),  a(1)
         , a(2),  a(3), -a(0)
@@ -507,7 +507,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent lieBracket(const Tangent & a,
+  Tangent lieBracket(const Tangent & a,
                            const Tangent & b) {
     const Matrix<Scalar,3,1> & omega1 = a.template head<3>();
     const Matrix<Scalar,3,1> & omega2 = b.template head<3>();
@@ -534,7 +534,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent log(const RxSO3Group<Scalar> & other) {
+  Tangent log(const RxSO3Group<Scalar> & other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
@@ -550,7 +550,7 @@ public:
    * \see log() for details
    */
   inline static
-  const Tangent logAndTheta(const RxSO3Group<Scalar> & other,
+  Tangent logAndTheta(const RxSO3Group<Scalar> & other,
                             Scalar * theta) {
     const Scalar & scale = other.quaternion().norm();
     Tangent omega_sigma;
@@ -572,7 +572,7 @@ public:
    * \see hat()
    */
   inline static
-  const Tangent vee(const Transformation & Omega) {
+  Tangent vee(const Transformation & Omega) {
     return Tangent( static_cast<Scalar>(0.5) * (Omega(2,1) - Omega(1,2)),
                     static_cast<Scalar>(0.5) * (Omega(0,2) - Omega(2,0)),
                     static_cast<Scalar>(0.5) * (Omega(1,0) - Omega(0,1)),

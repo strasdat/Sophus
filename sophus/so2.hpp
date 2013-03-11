@@ -120,7 +120,7 @@ public:
    * For SO2, it simply returns 1.
    */
   inline
-  const Adjoint Adj() const {
+  Adjoint Adj() const {
     return 1;
   }
 
@@ -179,7 +179,7 @@ public:
    * \returns group inverse of instance
    */
   inline
-  const SO2Group<Scalar> inverse() const {
+  SO2Group<Scalar> inverse() const {
     return SO2Group<Scalar>(unit_complex().x(), -unit_complex().y());
   }
 
@@ -191,7 +191,7 @@ public:
    * \see  log().
    */
   inline
-  const Scalar log() const {
+  Scalar log() const {
     return SO2Group<Scalar>::log(*this);
   }
 
@@ -220,7 +220,7 @@ public:
    * thus the so-called rotation matrix.
    */
   inline
-  const Transformation matrix() const {
+  Transformation matrix() const {
     const Scalar & real = unit_complex().x();
     const Scalar & imag = unit_complex().y();
     Transformation R;
@@ -243,7 +243,7 @@ public:
    * \see operator*=()
    */
   inline
-  const SO2Group<Scalar> operator*(const SO2Group<Scalar>& other) const {
+  SO2Group<Scalar> operator*(const SO2Group<Scalar>& other) const {
     SO2Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -259,7 +259,7 @@ public:
    * SO2 transformation \f$R\f$ (=rotation matrix): \f$ p' = R\cdot p \f$.
    */
   inline
-  const Point operator*(const Point & p) const {
+  Point operator*(const Point & p) const {
     const Scalar & real = unit_complex().x();
     const Scalar & imag = unit_complex().y();
     return Point(real*p[0] - imag*p[1], imag*p[0] + real*p[1]);
@@ -319,7 +319,7 @@ public:
    * \see log()
    */
   inline static
-  const SO2Group<Scalar> exp(const Tangent & theta) {
+  SO2Group<Scalar> exp(const Tangent & theta) {
     return SO2Group<Scalar>(std::cos(theta), std::sin(theta));
   }
 
@@ -336,7 +336,7 @@ public:
    * \see hat()
    */
   inline static
-  const Transformation generator() {
+  Transformation generator() {
     return hat(1);
   }
 
@@ -355,7 +355,7 @@ public:
    * \see vee()
    */
   inline static
-  const Transformation hat(const Tangent & theta) {
+  Transformation hat(const Tangent & theta) {
     Transformation Omega;
     Omega <<  static_cast<Scalar>(0), -theta
         ,  theta,     static_cast<Scalar>(0);
@@ -377,7 +377,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent lieBracket(const Tangent & theta1,
+  Tangent lieBracket(const Tangent & theta1,
                            const Tangent & theta2) {
     return static_cast<Scalar>(0);
   }
@@ -398,7 +398,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent log(const SO2Group<Scalar> & other) {
+  Tangent log(const SO2Group<Scalar> & other) {
     // todo: general implementation for Scalar not being float or double.
     return atan2(other.unit_complex_.y(), other.unit_complex().x());
   }
@@ -415,7 +415,7 @@ public:
    * \see hat()
    */
   inline static
-  const Tangent vee(const Transformation & Omega) {
+   Tangent vee(const Transformation & Omega) {
     return static_cast<Scalar>(0.5)*(Omega(1,0) - Omega(0,1));
   }
 

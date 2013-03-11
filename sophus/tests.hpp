@@ -23,7 +23,7 @@ public:
   static const int N = LieGroup::N;
   static const int DoF = LieGroup::DoF;
 
-  const Scalar SMALL_EPS;
+  Scalar SMALL_EPS;
 
   Tests() : SMALL_EPS(SophusConstants<Scalar>::epsilon()) {
   }
