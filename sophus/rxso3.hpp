@@ -176,8 +176,9 @@ public:
    * \see operator*=()
    */
   inline
-  void fastMultiply(const RxSO3Group<Scalar>& other) {
+  RxSO3GroupBase<Derived>& fastMultiply(const RxSO3Group<Scalar>& other) {
     quaternion() *= other.quaternion();
+    return *this;
   }
 
 
@@ -265,8 +266,9 @@ public:
    * \see operator*=()
    */
   inline
-  void operator*=(const RxSO3Group<Scalar>& other) {
+  RxSO3GroupBase<Derived>& operator*=(const RxSO3Group<Scalar>& other) {
     quaternion() *= other.quaternion();
+    return *this;
   }
 
   /**

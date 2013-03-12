@@ -162,8 +162,9 @@ public:
    * \see operator*=()
    */
   inline
-  void fastMultiply(const SO3Group<Scalar>& other) {
+  SO3GroupBase<Derived>&  fastMultiply(const SO3Group<Scalar>& other) {
     unit_quaternion_nonconst() *= other.unit_quaternion();
+    return *this;
   }
 
   /**
@@ -263,9 +264,10 @@ public:
    * \see operator*()
    */
   inline
-  void operator*=(const SO3Group<Scalar>& other) {
+  SO3GroupBase<Derived>&  operator*=(const SO3Group<Scalar>& other) {
     fastMultiply(other);
     normalize();
+    return *this;
   }
 
   /**

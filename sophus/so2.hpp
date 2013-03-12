@@ -165,7 +165,7 @@ public:
    * \see operator*=()
    */
   inline
-  void fastMultiply(const SO2Group<Scalar>& other) {
+  SO2GroupBase<Derived>& fastMultiply(const SO2Group<Scalar>& other) {
     Scalar lhs_real = unit_complex().x();
     Scalar lhs_imag = unit_complex().y();
     const Scalar & rhs_real = other.unit_complex().x();
@@ -173,6 +173,7 @@ public:
     // complex multiplication
     unit_complex_nonconst().x() = lhs_real*rhs_real - lhs_imag*rhs_imag;
     unit_complex_nonconst().y() = lhs_real*rhs_imag + lhs_imag*rhs_real;
+    return *this;
   }
 
   /**
@@ -271,9 +272,10 @@ public:
    * \see operator*()
    */
   inline
-  void operator*=(const SO2Group<Scalar>& other) {
+  SO2GroupBase<Derived> operator*=(const SO2Group<Scalar>& other) {
     fastMultiply(other);
     normalize();
+    return *this;
   }
 
   /**

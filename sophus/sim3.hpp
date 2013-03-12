@@ -157,9 +157,10 @@ public:
    * \see operator*()
    */
   inline
-  void fastMultiply(const Sim3Group<Scalar>& other) {
+  Sim3GroupBase<Derived>& fastMultiply(const Sim3Group<Scalar>& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
+    return *this;
   }
 
   /**
@@ -254,9 +255,10 @@ public:
    * \see operator*()
    */
   inline
-  void operator*=(const Sim3Group<Scalar>& other) {
+  Sim3GroupBase<Derived>& operator*=(const Sim3Group<Scalar>& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
+    return *this;
   }
 
   /**
