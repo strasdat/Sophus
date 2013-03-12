@@ -20,15 +20,17 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-#include "assert.hpp"
+#include "ensure.hpp"
 
-#include <string>
 #include <cstdio>
 #include <cstdlib>
 
 namespace Sophus {
-void assertionFailed(const std::string & description) {
-  std::printf("Sophus assert: %s \n", description.c_str());
+void ensureFailed(const char * function, const char * file, int line,
+                  const char * description) {
+  std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
+              file, function, line);
+  std::printf("Description: %s\n",  description);
   std::abort();
 }
 }

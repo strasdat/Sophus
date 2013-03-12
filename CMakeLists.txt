@@ -17,7 +17,7 @@ IF (CMAKE_COMPILER_IS_GNUCXX )
 
   ADD_DEFINITIONS("-Wall -Werror -Wno-unused-variable
                    -Wno-unused-but-set-variable -Wno-unknown-pragmas
-                   -DSOPHUS_ENABLE_ASSERT_HANDLER")
+                   -DSOPHUS_ENABLE_ENSURE_HANDLER")
 ENDIF()
 
 ################################################################################
@@ -47,8 +47,8 @@ SET (TEMPLATES tests
                sim3
 )
 
-SET (SOURCES ${SOURCE_DIR}/sophus.hpp ${SOURCE_DIR}/example_assert_handler.cpp
-             ${SOURCE_DIR}/assert.hpp)
+SET (SOURCES ${SOURCE_DIR}/sophus.hpp ${SOURCE_DIR}/example_ensure_handler.cpp
+             ${SOURCE_DIR}/ensure.hpp)
 
 FOREACH(templ ${TEMPLATES})
   LIST(APPEND SOURCES ${SOURCE_DIR}/${templ}.hpp)

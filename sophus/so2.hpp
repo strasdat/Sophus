@@ -207,8 +207,8 @@ public:
     Scalar length =
         std::sqrt(unit_complex().x()*unit_complex().x()
              + unit_complex().y()*unit_complex().y());
-    SOPHUS_ASSERT(length >= SophusConstants<Scalar>::epsilon(),
-                  "Complex number is (near) zero!");
+    SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
+                  "Complex number should not be close to zero!");
     unit_complex_nonconst().x() /= length;
     unit_complex_nonconst().y() /= length;
   }
@@ -487,9 +487,9 @@ public:
   SO2Group(const Transformation & R)
     : unit_complex_(static_cast<Scalar>(0.5)*(R(0,0)+R(1,1)),
                     static_cast<Scalar>(0.5)*(R(1,0)-R(0,1))) {
-    SOPHUS_ASSERT(std::abs(R.determinant()-static_cast<Scalar>(1))
-                  > SophusConstants<Scalar>::epsilon(),
-                  "det(R) is not near 1.");
+    SOPHUS_ENSURE(std::abs(R.determinant()-static_cast<Scalar>(1))
+                  <= SophusConstants<Scalar>::epsilon(),
+                  "det(R) should be (close to) 1.");
   }
 
   /**

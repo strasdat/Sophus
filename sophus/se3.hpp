@@ -477,7 +477,7 @@ public:
    */
   inline static
   Transformation generator(int i) {
-    SOPHUS_ASSERT(i>=0 && i<=5, "i is not in range [0,5].");
+    SOPHUS_ENSURE(i>=0 && i<=5, "i should be in range [0,5].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);

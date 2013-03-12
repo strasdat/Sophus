@@ -28,7 +28,7 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
-#include "assert.hpp"
+#include "ensure.hpp"
 
 namespace Sophus {
 using namespace Eigen;

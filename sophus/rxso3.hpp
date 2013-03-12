@@ -187,8 +187,8 @@ public:
    */
   inline
   RxSO3Group<Scalar> inverse() const {
-    SOPHUS_ASSERT(quaternion().squaredNorm() > static_cast<Scalar>(0),
-                  "Scale factor is not positive");
+    SOPHUS_ENSURE(quaternion().squaredNorm() > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     return RxSO3Group<Scalar>(quaternion().inverse());
   }
 
@@ -342,11 +342,11 @@ public:
     Scalar squared_scale
         = static_cast<Scalar>(1./3.)
         *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
-    SOPHUS_ASSERT(squared_scale > static_cast<Scalar>(0),
-                  "Scale factor is not positive");
+    SOPHUS_ENSURE(squared_scale > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     Scalar scale = std::sqrt(squared_scale);
-    SOPHUS_ASSERT(scale > static_cast<Scalar>(0),
-                  "Scale factor is not positive");
+    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     quaternion() = sR/scale;
     quaternion().coeffs() *= scale;
   }
@@ -449,7 +449,7 @@ public:
    */
   inline static
   Transformation generator(int i) {
-    SOPHUS_ASSERT(i>=0 && i<=3, "i is not in range [0,3].");
+    SOPHUS_ENSURE(i>=0 && i<=3, "i should be in range [0,3].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -636,8 +636,8 @@ public:
   inline
   RxSO3Group(const Scalar & scale, const Transformation & R)
     : quaternion_(R) {
-    SOPHUS_ASSERT(scale > static_cast<Scalar>(0),
-                  "Scale factor is not positive");
+    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -650,8 +650,8 @@ public:
   inline
   RxSO3Group(const Scalar & scale, const SO3Group<Scalar> & so3)
     : quaternion_(so3.unit_quaternion()) {
-    SOPHUS_ASSERT(scale > static_cast<Scalar>(0),
-                  "Scale factor is not positive");
+    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -663,9 +663,9 @@ public:
    */
   inline explicit
   RxSO3Group(const Quaternion<Scalar> & quat) : quaternion_(quat) {
-    SOPHUS_ASSERT(quaternion_.squaredNorm()
+    SOPHUS_ENSURE(quaternion_.squaredNorm()
                   > SophusConstants<Scalar>::epsilon(),
-                  "Scale factor is not positive");
+                  "Scale factor should be positive");
   }
 
   /**

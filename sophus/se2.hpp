@@ -439,7 +439,7 @@ public:
    */
   inline static
   Transformation generator(int i) {
-    SOPHUS_ASSERT(i>=0 || i<=2, "i is not in range [0,2].");
+    SOPHUS_ENSURE(i>=0 || i<=2, "i should be in range [0,2].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
