@@ -4,12 +4,20 @@
 #include <vector>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include "sophus.hpp"
+#include <sophus/sophus.hpp>
 
 namespace Sophus {
 
 using namespace std;
 using namespace Eigen;
+
+inline void ensureFailed(const char * function, const char * file, int line,
+                  const char * description) {
+  std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
+              file, function, line);
+  std::printf("Description: %s\n",  description);
+  std::abort();
+}
 
 template <class LieGroup>
 class Tests {

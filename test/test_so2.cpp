@@ -20,11 +20,11 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
+
 #include <iostream>
 #include <vector>
 
-
-#include "rxso3.hpp"
+#include <sophus/so2.hpp>
 #include "tests.hpp"
 
 using namespace Sophus;
@@ -33,47 +33,36 @@ using namespace std;
 template<class Scalar>
 void tests() {
 
-  typedef RxSO3Group<Scalar> RxSO3Type;
-  typedef typename RxSO3Group<Scalar>::Point Point;
-  typedef typename RxSO3Group<Scalar>::Tangent Tangent;
+  typedef SO2Group<Scalar> SO2Type;
+  typedef typename SO2Group<Scalar>::Point Point;
+  typedef typename SO2Group<Scalar>::Tangent Tangent;
 
-  vector<RxSO3Type> rxso3_vec;
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 1.)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, -1.0, 1.1)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0., 1.1)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.00001)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(M_PI, 0, 0, 0.9)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0,0))
-                      *RxSO3Type::exp(Tangent(M_PI, 0, 0,0.0))
-                      *RxSO3Type::exp(Tangent(-0.2, -0.5, -0.0,0)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.3, 0.5, 0.1,0))
-                      *RxSO3Type::exp(Tangent(M_PI, 0, 0,0))
-                      *RxSO3Type::exp(Tangent(-0.3, -0.5, -0.1,0)));
+  vector<SO2Type> so2_vec;
+  so2_vec.push_back(SO2Type::exp(0.0));
+  so2_vec.push_back(SO2Type::exp(0.2));
+  so2_vec.push_back(SO2Type::exp(10.));
+  so2_vec.push_back(SO2Type::exp(0.00001));
+  so2_vec.push_back(SO2Type::exp(M_PI));
+  so2_vec.push_back(SO2Type::exp(0.2)
+                    *SO2Type::exp(M_PI)
+                    *SO2Type::exp(-0.2));
+  so2_vec.push_back(SO2Type::exp(-0.3)
+                    *SO2Type::exp(M_PI)
+                    *SO2Type::exp(0.3));
 
   vector<Tangent> tangent_vec;
-  Tangent tmp;
-  tmp << 0,0,0,0;
-  tangent_vec.push_back(tmp);
-  tmp << 1,0,0,0;
-  tangent_vec.push_back(tmp);
-  tmp << 1,0,0,0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 0,1,0,0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 0,0,1,-0.1;
-  tangent_vec.push_back(tmp);
-  tmp << -1,1,0,-0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 20,-1,0,2;
-  tangent_vec.push_back(tmp);
+  tangent_vec.push_back(Tangent(0));
+  tangent_vec.push_back(Tangent(1));
+  tangent_vec.push_back(Tangent(M_PI_2));
+  tangent_vec.push_back(Tangent(-1));
+  tangent_vec.push_back(Tangent(20));
+  tangent_vec.push_back(Tangent(M_PI_2+0.0001));
 
   vector<Point> point_vec;
-  point_vec.push_back(Point(1,2,4));
+  point_vec.push_back(Point(1,2));
 
-  Tests<RxSO3Type> tests;
-  tests.setGroupElements(rxso3_vec);
+  Tests<SO2Type> tests;
+  tests.setGroupElements(so2_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
@@ -81,7 +70,7 @@ void tests() {
 }
 
 int main() {
-  cerr << "Test RxSO3" << endl << endl;
+  cerr << "Test SO2" << endl << endl;
 
   cerr << "Double tests: " << endl;
   tests<double>();

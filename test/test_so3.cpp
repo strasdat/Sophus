@@ -23,8 +23,7 @@
 #include <iostream>
 #include <vector>
 
-#include <unsupported/Eigen/MatrixFunctions>
-#include "se2.hpp"
+#include <sophus/so3.hpp>
 #include "tests.hpp"
 
 using namespace Sophus;
@@ -33,45 +32,40 @@ using namespace std;
 template<class Scalar>
 void tests() {
 
-  typedef SO2Group<Scalar> SO2Type;
-  typedef SE2Group<Scalar> SE2Type;
-  typedef typename SE2Group<Scalar>::Point Point;
-  typedef typename SE2Group<Scalar>::Tangent Tangent;
+  typedef SO3Group<Scalar> SO3Type;
+  typedef typename SO3Group<Scalar>::Point Point;
+  typedef typename SO3Group<Scalar>::Tangent Tangent;
 
-  vector<SE2Type> se2_vec;
-  se2_vec.push_back(SE2Type(SO2Type(0.0),Point(0,0)));
-  se2_vec.push_back(SE2Type(SO2Type(0.2),Point(10,0)));
-  se2_vec.push_back(SE2Type(SO2Type(0.),Point(0,100)));
-  se2_vec.push_back(SE2Type(SO2Type(-1.),Point(20,-1)));
-  se2_vec.push_back(SE2Type(SO2Type(0.00001),
-                            Point(-0.00000001,0.0000000001)));
-  se2_vec.push_back(SE2Type(SO2Type(0.2),Point(0,0))
-                    *SE2Type(SO2Type(M_PI),Point(0,0))
-                    *SE2Type(SO2Type(-0.2),Point(0,0)));
-  se2_vec.push_back(SE2Type(SO2Type(0.3),Point(2,0))
-                    *SE2Type(SO2Type(M_PI),Point(0,0))
-                    *SE2Type(SO2Type(-0.3),Point(0,6)));
+  vector<SO3Type> so3_vec;
+
+  so3_vec.push_back(SO3Type(Quaternion<Scalar>(0.1e-11, 0., 1., 0.)));
+  so3_vec.push_back(SO3Type(Quaternion<Scalar>(-1,0.00001,0.0,0.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, -1.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.)));
+  so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.00001)));
+  so3_vec.push_back(SO3Type::exp(Point(M_PI, 0, 0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0))
+                    *SO3Type::exp(Point(M_PI, 0, 0))
+                    *SO3Type::exp(Point(-0.2, -0.5, -0.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.3, 0.5, 0.1))
+                    *SO3Type::exp(Point(M_PI, 0, 0))
+                    *SO3Type::exp(Point(-0.3, -0.5, -0.1)));
 
   vector<Tangent> tangent_vec;
-  Tangent tmp;
-  tmp << 0,0,0;
-  tangent_vec.push_back(tmp);
-  tmp << 1,0,0;
-  tangent_vec.push_back(tmp);
-  tmp << 0,1,1;
-  tangent_vec.push_back(tmp);
-  tmp << -1,1,0;
-  tangent_vec.push_back(tmp);
-  tmp << 20,-1,-1;
-  tangent_vec.push_back(tmp);
-  tmp << 30,5,20;
-  tangent_vec.push_back(tmp);
+  tangent_vec.push_back(Tangent(0,0,0));
+  tangent_vec.push_back(Tangent(1,0,0));
+  tangent_vec.push_back(Tangent(0,1,0));
+  tangent_vec.push_back(Tangent(M_PI_2,M_PI_2,0.0));
+  tangent_vec.push_back(Tangent(-1,1,0));
+  tangent_vec.push_back(Tangent(20,-1,0));
+  tangent_vec.push_back(Tangent(30,5,-1));
 
   vector<Point> point_vec;
-  point_vec.push_back(Point(1,2));
+  point_vec.push_back(Point(1,2,4));
 
-  Tests<SE2Type> tests;
-  tests.setGroupElements(se2_vec);
+  Tests<SO3Type> tests;
+  tests.setGroupElements(so3_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
@@ -79,7 +73,7 @@ void tests() {
 }
 
 int main() {
-  cerr << "Test SE2" << endl << endl;
+  cerr << "Test SO3" << endl << endl;
 
   cerr << "Double tests: " << endl;
   tests<double>();

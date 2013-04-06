@@ -20,11 +20,11 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-
 #include <iostream>
 #include <vector>
 
-#include "so2.hpp"
+#include <unsupported/Eigen/MatrixFunctions>
+#include <sophus/se2.hpp>
 #include "tests.hpp"
 
 using namespace Sophus;
@@ -34,35 +34,44 @@ template<class Scalar>
 void tests() {
 
   typedef SO2Group<Scalar> SO2Type;
-  typedef typename SO2Group<Scalar>::Point Point;
-  typedef typename SO2Group<Scalar>::Tangent Tangent;
+  typedef SE2Group<Scalar> SE2Type;
+  typedef typename SE2Group<Scalar>::Point Point;
+  typedef typename SE2Group<Scalar>::Tangent Tangent;
 
-  vector<SO2Type> so2_vec;
-  so2_vec.push_back(SO2Type::exp(0.0));
-  so2_vec.push_back(SO2Type::exp(0.2));
-  so2_vec.push_back(SO2Type::exp(10.));
-  so2_vec.push_back(SO2Type::exp(0.00001));
-  so2_vec.push_back(SO2Type::exp(M_PI));
-  so2_vec.push_back(SO2Type::exp(0.2)
-                    *SO2Type::exp(M_PI)
-                    *SO2Type::exp(-0.2));
-  so2_vec.push_back(SO2Type::exp(-0.3)
-                    *SO2Type::exp(M_PI)
-                    *SO2Type::exp(0.3));
+  vector<SE2Type> se2_vec;
+  se2_vec.push_back(SE2Type(SO2Type(0.0),Point(0,0)));
+  se2_vec.push_back(SE2Type(SO2Type(0.2),Point(10,0)));
+  se2_vec.push_back(SE2Type(SO2Type(0.),Point(0,100)));
+  se2_vec.push_back(SE2Type(SO2Type(-1.),Point(20,-1)));
+  se2_vec.push_back(SE2Type(SO2Type(0.00001),
+                            Point(-0.00000001,0.0000000001)));
+  se2_vec.push_back(SE2Type(SO2Type(0.2),Point(0,0))
+                    *SE2Type(SO2Type(M_PI),Point(0,0))
+                    *SE2Type(SO2Type(-0.2),Point(0,0)));
+  se2_vec.push_back(SE2Type(SO2Type(0.3),Point(2,0))
+                    *SE2Type(SO2Type(M_PI),Point(0,0))
+                    *SE2Type(SO2Type(-0.3),Point(0,6)));
 
   vector<Tangent> tangent_vec;
-  tangent_vec.push_back(Tangent(0));
-  tangent_vec.push_back(Tangent(1));
-  tangent_vec.push_back(Tangent(M_PI_2));
-  tangent_vec.push_back(Tangent(-1));
-  tangent_vec.push_back(Tangent(20));
-  tangent_vec.push_back(Tangent(M_PI_2+0.0001));
+  Tangent tmp;
+  tmp << 0,0,0;
+  tangent_vec.push_back(tmp);
+  tmp << 1,0,0;
+  tangent_vec.push_back(tmp);
+  tmp << 0,1,1;
+  tangent_vec.push_back(tmp);
+  tmp << -1,1,0;
+  tangent_vec.push_back(tmp);
+  tmp << 20,-1,-1;
+  tangent_vec.push_back(tmp);
+  tmp << 30,5,20;
+  tangent_vec.push_back(tmp);
 
   vector<Point> point_vec;
   point_vec.push_back(Point(1,2));
 
-  Tests<SO2Type> tests;
-  tests.setGroupElements(so2_vec);
+  Tests<SE2Type> tests;
+  tests.setGroupElements(se2_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
@@ -70,7 +79,7 @@ void tests() {
 }
 
 int main() {
-  cerr << "Test SO2" << endl << endl;
+  cerr << "Test SE2" << endl << endl;
 
   cerr << "Double tests: " << endl;
   tests<double>();
