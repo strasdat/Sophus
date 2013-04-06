@@ -22,8 +22,7 @@ ENDIF()
 
 ################################################################################
 # Add local path for finding packages, set the local version first
-SET( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" )
-LIST( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 ################################################################################
 # Create variables used for exporting in SophusConfig.cmake
