@@ -39,12 +39,12 @@ bool test(const SE3d& T_w_targ, const SE3d& T_w_init)
     Problem problem;
     
     // Specify local update rule for our parameter
-    problem.AddParameterBlock(T_wr.data(), 7, new LocalParameterizationSe3);
+    problem.AddParameterBlock(T_wr.data(), SE3d::num_parameters, new LocalParameterizationSe3);
     
     // Create and add cost function. Derivatives will be evaluated via
     // automatic differentiation
     CostFunction* cost_function =
-        new AutoDiffCostFunction<TestCostFunctor, 6, 7>(
+        new AutoDiffCostFunction<TestCostFunctor, SE3d::DoF, SE3d::num_parameters>(
             new TestCostFunctor(T_w_targ.inverse())
         );
     problem.AddResidualBlock(cost_function, NULL, T_wr.data());
