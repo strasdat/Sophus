@@ -34,5 +34,3 @@ void ensureFailed(const char * function, const char * file, int line,
   std::abort();
 }
 }
-
-

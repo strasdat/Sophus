@@ -80,7 +80,7 @@ void tests() {
   tests.runAllTests();
 }
 
-int main() {
+int test_rxso3() {
   cerr << "Test RxSO3" << endl << endl;
 
   cerr << "Double tests: " << endl;
@@ -89,4 +89,8 @@ int main() {
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
+}
+
+int main() {
+  return test_rxso3();
 }

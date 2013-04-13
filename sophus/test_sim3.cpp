@@ -97,7 +97,7 @@ void tests() {
   tests.runAllTests();
 }
 
-int main() {
+int test_sim3() {
   cerr << "Test Sim3" << endl << endl;
 
   cerr << "Double tests: " << endl;
@@ -106,4 +106,8 @@ int main() {
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
+}
+
+int main() {
+  return test_sim3();
 }

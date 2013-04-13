@@ -139,6 +139,14 @@ public:
   }
 
   /**
+   * \returns Affine3 transformation
+   */
+  inline
+  Transform<Scalar,3,Affine> affine3() const {
+    return Transform<Scalar,3,Affine>(matrix());
+  }
+
+  /**
    * \returns copy of instance casted to NewScalarType
    */
   template<typename NewScalarType>
@@ -292,7 +300,6 @@ public:
     return so3().matrix();
   }
 
-
   /**
    * \brief Mutator of SO3 group
    */
@@ -307,6 +314,18 @@ public:
   EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
     return static_cast<const Derived*>(this)->so3();
+  }
+
+  /**
+   * \brief Setter using Affine3
+   *
+   * \param affine3
+   * \pre   3x3 sub-matrix needs to be orthogonal with determinant of 1
+   */
+  inline
+  void setAffine3(const Transform<Scalar,3,Affine> & affine3) {
+    so3().setRotationMatrix(affine3.matrix().template topLeftCorner<3,3>());
+    translation() = affine3.matrix().template topRightCorner<3,1>();
   }
 
   /**
@@ -699,6 +718,17 @@ public:
   SE3Group(const Eigen::Matrix<Scalar,4,4>& T)
     : so3_(T.template topLeftCorner<3,3>()),
       translation_(T.template block<3,1>(0,3)) {
+  }
+
+  /**
+   * \brief Constructor from Affine3
+   *
+   * \pre top-left 3x3 sub-matrix need to be orthogonal with determinant of 1
+   */
+  inline explicit
+  SE3Group(const Eigen::Transform<Scalar,3,Affine>& affine3)
+    : so3_(affine3.matrix().template topLeftCorner<3,3>()),
+      translation_(affine3.matrix().template block<3,1>(0,3)) {
   }
 
   /**

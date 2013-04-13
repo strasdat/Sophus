@@ -69,7 +69,7 @@ void tests() {
   tests.runAllTests();
 }
 
-int main() {
+int test_so2() {
   cerr << "Test SO2" << endl << endl;
 
   cerr << "Double tests: " << endl;
@@ -78,4 +78,8 @@ int main() {
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
+}
+
+int main() {
+  return test_so2();
 }

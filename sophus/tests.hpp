@@ -11,6 +11,17 @@ namespace Sophus {
 using namespace std;
 using namespace Eigen;
 
+//fight the good fight
+using std::isnan;
+/* without, you may get these errors:
+tests.hpp:170:9: error: call of overloaded ‘isnan(Sophus::Tests<Sophus::RxSO3Group<double> >::Scalar&)’ is ambiguous
+tests.hpp:170:9: note: candidates are:
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:236:12: note: int isnan(double)
+/usr/include/c++/4.6/cmath:552:3: note: bool std::isnan(long double)
+/usr/include/c++/4.6/cmath:548:3: note: bool std::isnan(double)
+/usr/include/c++/4.6/cmath:544:3: note: bool std::isnan(float)
+*/
+
 template <class LieGroup>
 class Tests {
 
@@ -143,7 +154,7 @@ public:
 
         Tangent res2 = LieGroup::vee(hati*hatj-hatj*hati);
         Tangent resDiff = res1-res2;
-        if (norm(resDiff)>SMALL_EPS) {
+        if (isnan(norm(resDiff)) || norm(resDiff)>SMALL_EPS) {
           cerr << "Lie Bracket Test" << endl;
           cerr  << "Test case: " << i << ", " <<j<< endl;
           cerr << resDiff << endl;
@@ -184,7 +195,7 @@ public:
     for (size_t i=0; i<tangent_vec_.size(); ++i) {
       Tangent resDiff
           = tangent_vec_[i] - LieGroup::vee(LieGroup::hat(tangent_vec_[i]));
-      if (norm(resDiff)>SMALL_EPS) {
+      if (isnan(norm(resDiff)) || norm(resDiff)>SMALL_EPS) {
         cerr << "Hat-vee Test" << endl;
         cerr  << "Test case: " << i <<  endl;
         cerr << resDiff << endl;
