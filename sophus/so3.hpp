@@ -168,6 +168,23 @@ public:
   }
 
   /**
+   * \brief multiply by ith internal generator
+   *
+   * \returns *this  x  ith generator of intenral SU(2) representation)
+   *
+   * \see internalGenerator
+   */
+  inline
+  Matrix<Scalar,num_parameters,1> internalMultiplyByGenerator(int i) const
+  {
+    Matrix<Scalar,num_parameters,1> res;
+    Quaternion<Scalar> internal_gen_q;
+    internalGenerator(i, &internal_gen_q);
+    res.template head<4>() = (unit_quaternion()*internal_gen_q).coeffs();
+    return res;
+  }
+
+  /**
    * \returns group inverse of instance
    */
   inline
@@ -403,6 +420,37 @@ public:
     e.setZero();
     e[i] = static_cast<Scalar>(1);
     return hat(e);
+  }
+
+  /**
+   * \brief ith generator of internal SU(2) representation
+   *
+   * The internal representation is the Lie group SU(2) (unit quaternions)
+   */
+  inline
+  void internalGenerator(int i, Quaternion<Scalar> * internal_gen_q) const
+  {
+    SOPHUS_ENSURE(i>=0 && i<=2, "i should be in range [0,2]");
+    SOPHUS_ENSURE(internal_gen_q!=NULL,
+                  "internal_gen_q must not be the null pointer");
+    // factor of 0.5 since SU(2) is a double cover of SO(3)?
+    internal_gen_q->coeffs()[i-3] = static_cast<Scalar>(0.5);
+  }
+
+  /**
+   * \returns Jacobian of generator of internal SU(2) represenation
+   *
+   * \see internalMultiplyByGenerator
+   */
+  inline
+  Matrix<Scalar,num_parameters,DoF> internalJacobian() const
+  {
+    Matrix<Scalar,num_parameters,DoF> J;
+    for (int i=0; i<DoF; ++i)
+    {
+      J.col(i) = internalMultiplyByGenerator(i);
+    }
+    return J;
   }
 
   /**

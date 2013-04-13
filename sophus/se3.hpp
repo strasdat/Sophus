@@ -171,6 +171,28 @@ public:
     return *this;
   }
 
+ /**
+   * \brief multiply by ith internal generator
+   *
+   * \returns *this  x  ith generator of internal data representation
+   *
+   * \see internalGenerator
+   */
+  inline
+  Matrix<Scalar,num_parameters,1> internalMultiplyByGenerator(int i) const
+  {
+    Matrix<Scalar,num_parameters,1> res;
+
+    Quaternion<Scalar> internal_gen_q;
+    Matrix<Scalar,3,1> internal_gen_t;
+
+    internalGenerator(i, &internal_gen_q, &internal_gen_t);
+
+    res.template head<4>() = (unit_quaternion()*internal_gen_q).coeffs();
+    res.template tail<3>() = unit_quaternion()*internal_gen_t;
+    return res;
+  }
+
   /**
    * \returns Group inverse of instance
    */
@@ -504,6 +526,50 @@ public:
   }
 
   /**
+   * \brief ith generator of internal data representation
+   *
+   * The internal representation is the semi-direct product of SU(2)
+   * (unit quaternions) by the 3-dim. Euclidean space (translations).
+   */
+  inline static
+  void internalGenerator(int i, Quaternion<Scalar> * internal_gen_q,
+                         Matrix<Scalar,3,1> * internal_gen_t)
+  {
+    SOPHUS_ENSURE(i>=0 && i<=5, "i should be in range [0,5]");
+    SOPHUS_ENSURE(internal_gen_q!=NULL,
+                  "internal_gen_q must not be the null pointer");
+    SOPHUS_ENSURE(internal_gen_t!=NULL,
+                  "internal_gen_t must not be the null pointer");
+
+    internal_gen_q->coeffs().setZero();
+    internal_gen_t->setZero();
+    if (i<3)
+    {
+      (*internal_gen_t)[i] = static_cast<Scalar>(1);
+    }
+    else
+    {
+      SO3Group<Scalar>::internalGenerator(i-3, internal_gen_q);;
+    }
+  }
+
+  /**
+   * \returns Jacobian of generator of internal data represenation
+   *
+   * \see internalMultiplyByGenerator
+   */
+  inline static
+  Matrix<Scalar,num_parameters,DoF> internalJacobian()
+  {
+    Matrix<Scalar,num_parameters,DoF> J;
+    for (int i=0; i<DoF; ++i)
+    {
+      J.col(i) = internalMultiplyByGenerator(i);
+    }
+    return J;
+  }
+
+  /**
    * \brief hat-operator
    *
    * \param omega 6-vector representation of Lie algebra element
@@ -546,7 +612,7 @@ public:
    */
   inline static
   Tangent lieBracket(const Tangent & a,
-                           const Tangent & b) {
+                     const Tangent & b) {
     Matrix<Scalar,3,1> upsilon1 = a.template head<3>();
     Matrix<Scalar,3,1> upsilon2 = b.template head<3>();
     Matrix<Scalar,3,1> omega1 = a.template tail<3>();
