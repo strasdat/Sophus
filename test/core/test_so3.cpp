@@ -23,8 +23,7 @@
 #include <iostream>
 #include <vector>
 
-
-#include "rxso3.hpp"
+#include <sophus/so3.hpp>
 #include "tests.hpp"
 
 using namespace Sophus;
@@ -33,55 +32,48 @@ using namespace std;
 template<class Scalar>
 void tests() {
 
-  typedef RxSO3Group<Scalar> RxSO3Type;
-  typedef typename RxSO3Group<Scalar>::Point Point;
-  typedef typename RxSO3Group<Scalar>::Tangent Tangent;
+  typedef SO3Group<Scalar> SO3Type;
+  typedef typename SO3Group<Scalar>::Point Point;
+  typedef typename SO3Group<Scalar>::Tangent Tangent;
 
-  vector<RxSO3Type> rxso3_vec;
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 1.)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, -1.0, 1.1)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0., 1.1)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.00001)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(M_PI, 0, 0, 0.9)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0,0))
-                      *RxSO3Type::exp(Tangent(M_PI, 0, 0,0.0))
-                      *RxSO3Type::exp(Tangent(-0.2, -0.5, -0.0,0)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.3, 0.5, 0.1,0))
-                      *RxSO3Type::exp(Tangent(M_PI, 0, 0,0))
-                      *RxSO3Type::exp(Tangent(-0.3, -0.5, -0.1,0)));
+  vector<SO3Type> so3_vec;
+
+  so3_vec.push_back(SO3Type(Quaternion<Scalar>(0.1e-11, 0., 1., 0.)));
+  so3_vec.push_back(SO3Type(Quaternion<Scalar>(-1,0.00001,0.0,0.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, -1.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.)));
+  so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.00001)));
+  so3_vec.push_back(SO3Type::exp(Point(M_PI, 0, 0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0))
+                    *SO3Type::exp(Point(M_PI, 0, 0))
+                    *SO3Type::exp(Point(-0.2, -0.5, -0.0)));
+  so3_vec.push_back(SO3Type::exp(Point(0.3, 0.5, 0.1))
+                    *SO3Type::exp(Point(M_PI, 0, 0))
+                    *SO3Type::exp(Point(-0.3, -0.5, -0.1)));
 
   vector<Tangent> tangent_vec;
-  Tangent tmp;
-  tmp << 0,0,0,0;
-  tangent_vec.push_back(tmp);
-  tmp << 1,0,0,0;
-  tangent_vec.push_back(tmp);
-  tmp << 1,0,0,0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 0,1,0,0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 0,0,1,-0.1;
-  tangent_vec.push_back(tmp);
-  tmp << -1,1,0,-0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 20,-1,0,2;
-  tangent_vec.push_back(tmp);
+  tangent_vec.push_back(Tangent(0,0,0));
+  tangent_vec.push_back(Tangent(1,0,0));
+  tangent_vec.push_back(Tangent(0,1,0));
+  tangent_vec.push_back(Tangent(M_PI_2,M_PI_2,0.0));
+  tangent_vec.push_back(Tangent(-1,1,0));
+  tangent_vec.push_back(Tangent(20,-1,0));
+  tangent_vec.push_back(Tangent(30,5,-1));
 
   vector<Point> point_vec;
   point_vec.push_back(Point(1,2,4));
 
-  Tests<RxSO3Type> tests;
-  tests.setGroupElements(rxso3_vec);
+  Tests<SO3Type> tests;
+  tests.setGroupElements(so3_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
   tests.runAllTests();
 }
 
-int test_rxso3() {
-  cerr << "Test RxSO3" << endl << endl;
+int test_so3() {
+  cerr << "Test SO3" << endl << endl;
 
   cerr << "Double tests: " << endl;
   tests<double>();
@@ -92,5 +84,5 @@ int test_rxso3() {
 }
 
 int main() {
-  return test_rxso3();
+  return test_so3();
 }

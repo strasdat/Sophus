@@ -76,7 +76,7 @@ struct traits<Map<const Sophus::SE3Group<_Scalar>, _Options> >
 
 namespace Sophus {
 using namespace Eigen;
-using namespace std;
+using std::abs;
 
 /**
  * \brief SE3 base type - implements SE3 class but is storage agnostic
@@ -191,6 +191,22 @@ public:
     res.template head<4>() = (unit_quaternion()*internal_gen_q).coeffs();
     res.template tail<3>() = unit_quaternion()*internal_gen_t;
     return res;
+  }
+
+  /**
+   * \returns Jacobian of generator of internal data represenation
+   *
+   * \see internalMultiplyByGenerator
+   */
+  inline
+  Matrix<Scalar,num_parameters,DoF> internalJacobian() const
+  {
+    Matrix<Scalar,num_parameters,DoF> J;
+    for (int i=0; i<DoF; ++i)
+    {
+      J.col(i) = internalMultiplyByGenerator(i);
+    }
+    return J;
   }
 
   /**
@@ -554,22 +570,6 @@ public:
   }
 
   /**
-   * \returns Jacobian of generator of internal data represenation
-   *
-   * \see internalMultiplyByGenerator
-   */
-  inline static
-  Matrix<Scalar,num_parameters,DoF> internalJacobian()
-  {
-    Matrix<Scalar,num_parameters,DoF> J;
-    for (int i=0; i<DoF; ++i)
-    {
-      J.col(i) = internalMultiplyByGenerator(i);
-    }
-    return J;
-  }
-
-  /**
    * \brief hat-operator
    *
    * \param omega 6-vector representation of Lie algebra element
@@ -648,7 +648,7 @@ public:
     upsilon_omega.template tail<3>()
         = SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
 
-    if (std::abs(theta)<SophusConstants<Scalar>::epsilon()) {
+    if (abs(theta)<SophusConstants<Scalar>::epsilon()) {
       const Matrix<Scalar,3,3> & Omega
           = SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
       const Matrix<Scalar,3,3> & V_inv =

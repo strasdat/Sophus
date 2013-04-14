@@ -24,7 +24,7 @@
 #include <iostream>
 #include <vector>
 
-#include "so2.hpp"
+#include <sophus/so2.hpp>
 #include "tests.hpp"
 
 using namespace Sophus;

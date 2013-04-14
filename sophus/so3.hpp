@@ -69,6 +69,8 @@ struct traits<Map<const Sophus::SO3Group<_Scalar>, _Options> >
 
 namespace Sophus {
 using namespace Eigen;
+using std::sqrt;
+using std::abs;
 
 /**
  * \brief SO3 base type - implements SO3 class but is storage agnostic
@@ -182,6 +184,22 @@ public:
     internalGenerator(i, &internal_gen_q);
     res.template head<4>() = (unit_quaternion()*internal_gen_q).coeffs();
     return res;
+  }
+
+  /**
+   * \returns Jacobian of generator of internal SU(2) represenation
+   *
+   * \see internalMultiplyByGenerator
+   */
+  inline
+  Matrix<Scalar,num_parameters,DoF> internalJacobian() const
+  {
+    Matrix<Scalar,num_parameters,DoF> J;
+    for (int i=0; i<DoF; ++i)
+    {
+      J.col(i) = internalMultiplyByGenerator(i);
+    }
+    return J;
   }
 
   /**
@@ -427,30 +445,14 @@ public:
    *
    * The internal representation is the Lie group SU(2) (unit quaternions)
    */
-  inline
-  void internalGenerator(int i, Quaternion<Scalar> * internal_gen_q) const
+  inline static
+  void internalGenerator(int i, Quaternion<Scalar> * internal_gen_q)
   {
     SOPHUS_ENSURE(i>=0 && i<=2, "i should be in range [0,2]");
     SOPHUS_ENSURE(internal_gen_q!=NULL,
                   "internal_gen_q must not be the null pointer");
     // factor of 0.5 since SU(2) is a double cover of SO(3)?
-    internal_gen_q->coeffs()[i-3] = static_cast<Scalar>(0.5);
-  }
-
-  /**
-   * \returns Jacobian of generator of internal SU(2) represenation
-   *
-   * \see internalMultiplyByGenerator
-   */
-  inline
-  Matrix<Scalar,num_parameters,DoF> internalJacobian() const
-  {
-    Matrix<Scalar,num_parameters,DoF> J;
-    for (int i=0; i<DoF; ++i)
-    {
-      J.col(i) = internalMultiplyByGenerator(i);
-    }
-    return J;
+    internal_gen_q->coeffs()[i] = static_cast<Scalar>(0.5);
   }
 
   /**
@@ -540,7 +542,7 @@ public:
                             Scalar * theta) {
     Scalar squared_n
         = other.unit_quaternion().vec().squaredNorm();
-    Scalar n = std::sqrt(squared_n);
+    Scalar n = sqrt(squared_n);
     Scalar w = other.unit_quaternion().w();
 
     Scalar two_atan_nbyw_by_n;
@@ -555,13 +557,13 @@ public:
     if (n < SophusConstants<Scalar>::epsilon()) {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
-      SOPHUS_ENSURE(std::abs(w) >= SophusConstants<Scalar>::epsilon(),
+      SOPHUS_ENSURE(abs(w) >= SophusConstants<Scalar>::epsilon(),
                     "Quaternion should be normalized!");
       Scalar squared_w = w*w;
       two_atan_nbyw_by_n = static_cast<Scalar>(2) / w
                            - static_cast<Scalar>(2)*(squared_n)/(w*squared_w);
     } else {
-      if (std::abs(w)<SophusConstants<Scalar>::epsilon()) {
+      if (abs(w)<SophusConstants<Scalar>::epsilon()) {
         if (w > static_cast<Scalar>(0)) {
           two_atan_nbyw_by_n = M_PI/n;
         } else {

@@ -23,7 +23,7 @@
 #include <iostream>
 #include <vector>
 
-#include "se3.hpp"
+#include <sophus/se3.hpp>
 #include "tests.hpp"
 
 using namespace Sophus;
