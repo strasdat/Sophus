@@ -71,6 +71,8 @@ namespace Sophus {
 using namespace Eigen;
 using std::sqrt;
 using std::abs;
+using std::cos;
+using std::sin;
 
 /**
  * \brief SO3 base type - implements SO3 class but is storage agnostic
@@ -380,7 +382,7 @@ public:
   SO3Group<Scalar> expAndTheta(const Tangent & omega,
                                      Scalar * theta) {
     Scalar theta_sq = omega.squaredNorm();
-    *theta = std::sqrt(theta_sq);
+    *theta = sqrt(theta_sq);
     Scalar half_theta = static_cast<Scalar>(0.5)*(*theta);
 
     Scalar imag_factor;
@@ -394,9 +396,9 @@ public:
                     - static_cast<Scalar>(0.5)*theta_sq +
                     static_cast<Scalar>(1.0/384.0)*theta_po4;
     } else {
-      Scalar sin_half_theta = std::sin(half_theta);
+      Scalar sin_half_theta = sin(half_theta);
       imag_factor = sin_half_theta/(*theta);
-      real_factor = std::cos(half_theta);
+      real_factor = cos(half_theta);
     }
 
     return SO3Group<Scalar>(Quaternion<Scalar>(real_factor,

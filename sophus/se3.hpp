@@ -77,6 +77,8 @@ struct traits<Map<const Sophus::SE3Group<_Scalar>, _Options> >
 namespace Sophus {
 using namespace Eigen;
 using std::abs;
+using std::cos;
+using std::sin;
 
 /**
  * \brief SE3 base type - implements SE3 class but is storage agnostic
@@ -480,8 +482,8 @@ public:
     } else {
       Scalar theta_sq = theta*theta;
       V = (Matrix<Scalar,3,3>::Identity()
-           + (static_cast<Scalar>(1)-std::cos(theta))/(theta_sq)*Omega
-           + (theta-std::sin(theta))/(theta_sq*theta)*Omega_sq);
+           + (static_cast<Scalar>(1)-cos(theta))/(theta_sq)*Omega
+           + (theta-sin(theta))/(theta_sq*theta)*Omega_sq);
     }
     return SE3Group<Scalar>(so3,V*a.template head<3>());
   }
