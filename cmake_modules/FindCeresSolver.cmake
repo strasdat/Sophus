@@ -238,6 +238,14 @@ IF (${PROTOBUF_FOUND})
   LIST(APPEND CERES_LIBRARY_DEPENDENCIES ${PROTOBUF_LIBRARY})
 ENDIF (${PROTOBUF_FOUND})
 
+# Use threads but not on Android, where there is no support for OpenMP yet.
+IF ("${UNIX}" AND NOT ${BUILD_ANDROID})
+  # At least on Linux, we need pthreads to be enabled for mutex to compile.
+  # This may not work on windows or android.
+  FIND_PACKAGE(Threads REQUIRED)
+  LIST(APPEND CERES_LIBRARY_DEPENDENCIES ${CMAKE_THREAD_LIBS_INIT})
+ENDIF ("${UNIX}" AND NOT ${BUILD_ANDROID})
+
 ####################################################################
 # Set Variables
 ####################################################################
