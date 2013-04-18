@@ -1,5 +1,5 @@
 # git clone https://ceres-solver.googlesource.com/ceres-solver
-find_package( CeresSolver REQUIRED)
+find_package( CeresSolver QUIET )
 
 if( CeresSolver_FOUND )
   # Ensure that ${Sophus_INCLUDE_DIR} is first on search path
