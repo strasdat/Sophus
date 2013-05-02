@@ -24,7 +24,7 @@ ENDIF()
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 ################################################################################
-# Create variables used for exporting in SophusConfig.cmake
+# Create variables used for exporting (from build tree) in SophusConfig.cmake
 SET( Sophus_LIBRARIES "" )
 SET( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
 
@@ -59,10 +59,30 @@ ENABLE_TESTING()
 ADD_SUBDIRECTORY( test )
 
 ################################################################################
-# Create the SophusConfig.cmake file for other cmake projects.
-CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY IMMEDIATE )
+# Export package for use from the build tree
 EXPORT( PACKAGE Sophus )
 
+# Create the SophusConfig.cmake file for other cmake projects.
+# ... for the build tree
+SET( CONFIG_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+SET( CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR})
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY )
+# ... for the install tree
+SET( CMAKECONFIG_INSTALL_DIR lib/cmake/Sophus )
+FILE( RELATIVE_PATH REL_INCLUDE_DIR
+    "${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR}"
+    "${CMAKE_INSTALL_PREFIX}/include" )
+
+SET( Sophus_INCLUDE_DIR "\${Sophus_CMAKE_DIR}/${REL_INCLUDE_DIR}" )
+SET( CONFIG_SOURCE_DIR )
+SET( CONFIG_DIR )
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SophusConfig.cmake @ONLY )
+
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SophusConfig.cmake"
+        DESTINATION ${CMAKECONFIG_INSTALL_DIR} )
+
+# Install headers
 INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
         FILES_MATCHING PATTERN "*.hpp" )
