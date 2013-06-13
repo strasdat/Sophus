@@ -2,7 +2,6 @@
 #include <ceres/ceres.h>
 #include <sophus/se3.hpp>
 
-#include "ceres_eigen.hpp"
 #include "local_parameterization_se3.hpp"
 
 struct TestCostFunctor

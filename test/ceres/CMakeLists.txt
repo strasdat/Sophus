@@ -1,9 +1,12 @@
-# git clone https://ceres-solver.googlesource.com/ceres-solver
-find_package( CeresSolver QUIET )
+# Make sure Ceres knows where to find Eigen
+list(APPEND SEARCH_HEADERS ${EIGEN3_INCLUDE_DIR})
 
-if( CeresSolver_FOUND )
+# git clone https://ceres-solver.googlesource.com/ceres-solver
+find_package( Ceres 1.6.0 QUIET )
+
+if( Ceres_FOUND )
   # Ensure that ${Sophus_INCLUDE_DIR} is first on search path
-  INCLUDE_DIRECTORIES( BEFORE ${Sophus_INCLUDE_DIR} ${CeresSolver_INCLUDE_DIRS})
+  INCLUDE_DIRECTORIES( BEFORE ${Sophus_INCLUDE_DIR} ${CERES_INCLUDE_DIRS})
 
   MESSAGE(STATUS "CERES found")
 
@@ -12,8 +15,8 @@ if( CeresSolver_FOUND )
 
   FOREACH(test_src ${TEST_SOURCES})
     ADD_EXECUTABLE( ${test_src} ${test_src}.cpp)
-    TARGET_LINK_LIBRARIES( ${test_src} ${CeresSolver_LIBRARIES} )
+    TARGET_LINK_LIBRARIES( ${test_src} ${CERES_LIBRARIES} )
     ADD_TEST( ${test_src} ${test_src} )
   ENDFOREACH(test_src)
 
-endif( CeresSolver_FOUND )
+endif( Ceres_FOUND )
