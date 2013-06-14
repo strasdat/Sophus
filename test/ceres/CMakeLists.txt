@@ -6,7 +6,7 @@ find_package( Ceres 1.6.0 QUIET )
 
 if( Ceres_FOUND )
   # Ensure that ${Sophus_INCLUDE_DIR} is first on search path
-  INCLUDE_DIRECTORIES( BEFORE ${Sophus_INCLUDE_DIR} ${CERES_INCLUDE_DIRS})
+  INCLUDE_DIRECTORIES( BEFORE ${Sophus_INCLUDE_DIR} ${CERES_INCLUDES})
 
   MESSAGE(STATUS "CERES found")
 
