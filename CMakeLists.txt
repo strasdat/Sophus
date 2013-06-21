@@ -55,8 +55,11 @@ ADD_CUSTOM_TARGET( libsophus SOURCES ${SOURCES} )
 
 ################################################################################
 # Create 'test' make target using ctest
-ENABLE_TESTING()
-ADD_SUBDIRECTORY( test )
+option(BUILD_TESTS "Build tests." ON)
+if(BUILD_TESTS)
+    ENABLE_TESTING()
+    ADD_SUBDIRECTORY( test )
+endif()
 
 ################################################################################
 # Export package for use from the build tree
