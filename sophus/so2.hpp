@@ -288,7 +288,7 @@ public:
    */
   inline
   void setComplex(const Point & complex) {
-    unit_complex() = complex;
+    unit_complex_nonconst() = complex;
     normalize();
   }
 
