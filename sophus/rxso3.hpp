@@ -32,7 +32,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class RxSO3Group;
-typedef RxSO3Group<double> ScSO3 EIGEN_DEPRECATED;
+EIGEN_DEPRECATED typedef RxSO3Group<double> ScSO3;
 typedef RxSO3Group<double> RxSO3d; /**< double precision RxSO3 */
 typedef RxSO3Group<float> RxSO3f;  /**< single precision RxSO3 */
 }

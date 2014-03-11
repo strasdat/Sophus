@@ -31,7 +31,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SE2Group;
-typedef SE2Group<double> SE2 EIGEN_DEPRECATED;
+EIGEN_DEPRECATED typedef SE2Group<double> SE2;
 typedef SE2Group<double> SE2d; /**< double precision SE2 */
 typedef SE2Group<float> SE2f;  /**< single precision SE2 */
 }

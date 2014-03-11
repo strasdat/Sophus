@@ -33,7 +33,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SO2Group;
-typedef SO2Group<double> SO2 EIGEN_DEPRECATED;
+EIGEN_DEPRECATED typedef SO2Group<double> SO2;
 typedef SO2Group<double> SO2d; /**< double precision SO2 */
 typedef SO2Group<float> SO2f;  /**< single precision SO2 */
 }
