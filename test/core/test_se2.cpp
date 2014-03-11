@@ -21,7 +21,6 @@
 // IN THE SOFTWARE.
 
 #include <iostream>
-#include <vector>
 
 #include <unsupported/Eigen/MatrixFunctions>
 #include <sophus/se2.hpp>
@@ -38,7 +37,7 @@ void tests() {
   typedef typename SE2Group<Scalar>::Point Point;
   typedef typename SE2Group<Scalar>::Tangent Tangent;
 
-  vector<SE2Type> se2_vec;
+  vector<SE2Type, Eigen::aligned_allocator<SE2Type> > se2_vec;
   se2_vec.push_back(SE2Type(SO2Type(0.0),Point(0,0)));
   se2_vec.push_back(SE2Type(SO2Type(0.2),Point(10,0)));
   se2_vec.push_back(SE2Type(SO2Type(0.),Point(0,100)));
@@ -52,7 +51,7 @@ void tests() {
                     *SE2Type(SO2Type(M_PI),Point(0,0))
                     *SE2Type(SO2Type(-0.3),Point(0,6)));
 
-  vector<Tangent> tangent_vec;
+  vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec;
   Tangent tmp;
   tmp << 0,0,0;
   tangent_vec.push_back(tmp);
@@ -67,7 +66,7 @@ void tests() {
   tmp << 30,5,20;
   tangent_vec.push_back(tmp);
 
-  vector<Point> point_vec;
+  vector<Point, Eigen::aligned_allocator<Point> > point_vec;
   point_vec.push_back(Point(1,2));
 
   Tests<SE2Type> tests;

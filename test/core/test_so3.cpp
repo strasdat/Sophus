@@ -21,7 +21,6 @@
 // IN THE SOFTWARE.
 
 #include <iostream>
-#include <vector>
 
 #include <sophus/so3.hpp>
 #include "tests.hpp"
@@ -36,8 +35,7 @@ void tests() {
   typedef typename SO3Group<Scalar>::Point Point;
   typedef typename SO3Group<Scalar>::Tangent Tangent;
 
-  vector<SO3Type> so3_vec;
-
+  vector<SO3Type, Eigen::aligned_allocator<SO3Type> > so3_vec;
   so3_vec.push_back(SO3Type(Quaternion<Scalar>(0.1e-11, 0., 1., 0.)));
   so3_vec.push_back(SO3Type(Quaternion<Scalar>(-1,0.00001,0.0,0.0)));
   so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)));
@@ -52,7 +50,7 @@ void tests() {
                     *SO3Type::exp(Point(M_PI, 0, 0))
                     *SO3Type::exp(Point(-0.3, -0.5, -0.1)));
 
-  vector<Tangent> tangent_vec;
+  vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec;
   tangent_vec.push_back(Tangent(0,0,0));
   tangent_vec.push_back(Tangent(1,0,0));
   tangent_vec.push_back(Tangent(0,1,0));
@@ -61,7 +59,7 @@ void tests() {
   tangent_vec.push_back(Tangent(20,-1,0));
   tangent_vec.push_back(Tangent(30,5,-1));
 
-  vector<Point> point_vec;
+  vector<Point, Eigen::aligned_allocator<Point> > point_vec;
   point_vec.push_back(Point(1,2,4));
 
   Tests<SO3Type> tests;

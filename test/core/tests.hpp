@@ -1,10 +1,16 @@
 #ifndef SOPUHS_TESTS_HPP
 #define SOPUHS_TESTS_HPP
 
-#include <vector>
+#include <Eigen/StdVector>
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include <sophus/sophus.hpp>
+
+// These definitions are not standard C++ and are missing on some compilers.
+#if !defined(M_PI) || !defined(M_PI_2)
+#define M_PI      3.14159265358979323846264338328
+#define M_PI_2    1.57079632679489661923132169164
+#endif
 
 namespace Sophus {
 
@@ -12,7 +18,11 @@ using namespace std;
 using namespace Eigen;
 
 //fight the good fight
+#ifdef _MSC_VER
+#define isnan(x) _isnan(x)
+#else
 using std::isnan;
+#endif
 /* without, you may get these errors:
 tests.hpp:170:9: error: call of overloaded ‘isnan(Sophus::Tests<Sophus::RxSO3Group<double> >::Scalar&)’ is ambiguous
 tests.hpp:170:9: note: candidates are:
@@ -48,15 +58,15 @@ public:
   Tests() : SMALL_EPS(SophusConstants<Scalar>::epsilon()) {
   }
 
-  void setGroupElements(const vector<LieGroup> & group_vec) {
+  void setGroupElements(const vector<LieGroup, Eigen::aligned_allocator<LieGroup> > & group_vec) {
     group_vec_  = group_vec;
   }
 
-  void setTangentVectors(const vector<Tangent> & tangent_vec) {
+  void setTangentVectors(const vector<Tangent, Eigen::aligned_allocator<Tangent> > & tangent_vec) {
     tangent_vec_  = tangent_vec;
   }
 
-  void setPoints(const vector<Point> & point_vec) {
+  void setPoints(const vector<Point, Eigen::aligned_allocator<Point> > & point_vec) {
     point_vec_  = point_vec;
   }
 
@@ -276,9 +286,9 @@ private:
     return T.norm();
   }
 
-  std::vector<LieGroup> group_vec_;
-  std::vector<Tangent> tangent_vec_;
-  std::vector<Point> point_vec_;
+  std::vector<LieGroup, Eigen::aligned_allocator<LieGroup> > group_vec_;
+  std::vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec_;
+  std::vector<Point, Eigen::aligned_allocator<Point> > point_vec_;
 };
 }
 #endif // TESTS_HPP

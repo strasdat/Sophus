@@ -21,8 +21,6 @@
 // IN THE SOFTWARE.
 
 #include <iostream>
-#include <vector>
-
 
 #include <sophus/rxso3.hpp>
 #include "tests.hpp"
@@ -37,7 +35,7 @@ void tests() {
   typedef typename RxSO3Group<Scalar>::Point Point;
   typedef typename RxSO3Group<Scalar>::Tangent Tangent;
 
-  vector<RxSO3Type> rxso3_vec;
+  vector<RxSO3Type, Eigen::aligned_allocator<RxSO3Type> > rxso3_vec;
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 1.)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, -1.0, 1.1)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0., 1.1)));
@@ -52,7 +50,7 @@ void tests() {
                       *RxSO3Type::exp(Tangent(M_PI, 0, 0,0))
                       *RxSO3Type::exp(Tangent(-0.3, -0.5, -0.1,0)));
 
-  vector<Tangent> tangent_vec;
+  vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec;
   Tangent tmp;
   tmp << 0,0,0,0;
   tangent_vec.push_back(tmp);
@@ -69,7 +67,7 @@ void tests() {
   tmp << 20,-1,0,2;
   tangent_vec.push_back(tmp);
 
-  vector<Point> point_vec;
+  vector<Point, Eigen::aligned_allocator<Point> > point_vec;
   point_vec.push_back(Point(1,2,4));
 
   Tests<RxSO3Type> tests;

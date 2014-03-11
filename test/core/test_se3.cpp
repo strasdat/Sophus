@@ -21,7 +21,6 @@
 // IN THE SOFTWARE.
 
 #include <iostream>
-#include <vector>
 
 #include <sophus/se3.hpp>
 #include "tests.hpp"
@@ -37,7 +36,7 @@ void tests() {
   typedef typename SE3Group<Scalar>::Point Point;
   typedef typename SE3Group<Scalar>::Tangent Tangent;
 
-  vector<SE3Type> se3_vec;
+  vector<SE3Type,Eigen::aligned_allocator<SE3Type> > se3_vec;
   se3_vec.push_back(SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)),
                             Point(0,0,0)));
   se3_vec.push_back(SE3Type(SO3Type::exp(Point(0.2, 0.5, -1.0)),
@@ -64,7 +63,8 @@ void tests() {
                              Point(0,0,0))
                     *SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)),
                              Point(0,6,0)));
-  vector<Tangent> tangent_vec;
+
+  vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec;
   Tangent tmp;
   tmp << 0,0,0,0,0,0;
   tangent_vec.push_back(tmp);
@@ -81,7 +81,7 @@ void tests() {
   tmp << 30,5,-1,20,-1,0;
   tangent_vec.push_back(tmp);
 
-  vector<Point> point_vec;
+  vector<Point, Eigen::aligned_allocator<Point> > point_vec;
   point_vec.push_back(Point(1,2,4));
 
   Tests<SE3Type> tests;
