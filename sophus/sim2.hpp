@@ -1,6 +1,6 @@
 // This file is part of Sophus.
 //
-// Copyright 2012-2013 Hauke Strasdat
+// Copyright 2013-2014 Ping-Lin Chang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -443,7 +443,7 @@ public:
    *                          0& -1&  0\\
    *                          1&  0&  0\\
    *                          0&  0&  0\\
-   *                     \end{array} \right).
+   *                     \end{array} \right),
    *        G_3 = \left( \begin{array}{ccc}
    *                          1&  0&  0\\
    *                          0&  1&  0\\

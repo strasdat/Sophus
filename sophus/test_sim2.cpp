@@ -1,6 +1,6 @@
 // This file is part of Sophus.
 //
-// Copyright 2012-2013 Hauke Strasdat
+// Copyright 2013-2014 Ping-Lin Chang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -56,7 +56,7 @@ void tests() {
                               Point(0.01,0)));
   sim2_vec.push_back(Sim2Type(RxSO2Type::exp(Vector2Type(M_PI, 0.9)),
                               Point(4,-5)));
-  sim2_vec.push_back(Sim2Type(RxSO2Type::exp(Vector2Type(0.2, 0)),
+  sim2_vec.push_back(Sim2Type(RxSO2Type::exp(Vector2Type(0.2, 0.5)),
                               Point(0,0))
                      *Sim2Type(RxSO2Type::exp(Vector2Type(M_PI, 0)),
                                Point(0,0))
