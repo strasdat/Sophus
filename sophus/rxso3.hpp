@@ -21,7 +21,7 @@
 // IN THE SOFTWARE.
 
 #ifndef SOPHUS_RXSO3_HPP
-#define RXSO3_HPP
+#define SOPHUS_RXSO3_HPP
 
 #include "sophus.hpp"
 #include "so3.hpp"
@@ -32,7 +32,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class RxSO3Group;
-typedef RxSO3Group<double> ScSO3 EIGEN_DEPRECATED;
+typedef RxSO3Group<double> RxSO3 EIGEN_DEPRECATED;
 typedef RxSO3Group<double> RxSO3d; /**< double precision RxSO3 */
 typedef RxSO3Group<float> RxSO3f;  /**< single precision RxSO3 */
 }
@@ -377,7 +377,7 @@ public:
   const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     Adjoint res;
     res.setZero();
-    res.template topLeftCorner<3,3>() = -SO3::hat(b.template head<3>());
+    res.template topLeftCorner<3,3>() = -SO3Group<Scalar>::hat(b.template head<3>());
     return res;
   }
 
@@ -497,7 +497,7 @@ public:
    * \returns 4-vector representation of Lie algebra element
    *
    * It computes the bracket of RxSO3. To be more specific, it
-   * computes \f$ [a, 2]_{rxso3}
+   * computes \f$ [a, b]_{rxso3}
    * := [\widehat{a}, \widehat{b}]^\vee \f$
    * with \f$ [A,B] = AB-BA \f$ being the matrix
    * commutator, \f$ \widehat{\cdot} \f$ the
@@ -526,8 +526,8 @@ public:
    *
    * Computes the logarithmic, the inverse of the group exponential.
    * To be specific, this function computes \f$ \log({\cdot})^\vee \f$
-   * with \f$ \vee(\cdot) \f$ being the matrix logarithm
-   * and \f$ \vee{\cdot} \f$ the vee()-operator of RxSO3.
+   * with \f$ log(\cdot) \f$ being the matrix logarithm
+   * and \f$ \vee \f$ the vee()-operator of RxSO3.
    *
    * \see exp()
    * \see logAndTheta()
@@ -682,7 +682,7 @@ public:
   inline explicit
   RxSO3Group(const Quaternion<Scalar> & quat) : quaternion_(quat) {
     if(quaternion_.squaredNorm() <= SophusConstants<Scalar>::epsilon()) {
-      throw ScaleNotPositive();
+      throw SophusException("Quaternion is (near) zero!");
     }
   }
 

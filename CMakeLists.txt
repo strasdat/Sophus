@@ -40,8 +40,10 @@ SET (SOURCE_DIR "sophus")
 SET (TEMPLATES tests
                so2
                se2
+			   rxso2
+			   sim2
                so3
-               se3
+               se3			   
                rxso3
                sim3
 )
@@ -59,6 +61,8 @@ INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 # other IDEs).
 ADD_EXECUTABLE(test_so2 sophus/test_so2.cpp ${SOURCES})
 ADD_EXECUTABLE(test_se2 sophus/test_se2.cpp ${SOURCES})
+ADD_EXECUTABLE(test_rxso2 sophus/test_rxso2.cpp ${SOURCES})
+ADD_EXECUTABLE(test_sim2 sophus/test_sim2.cpp ${SOURCES})
 ADD_EXECUTABLE(test_so3 sophus/test_so3.cpp ${SOURCES})
 ADD_EXECUTABLE(test_se3 sophus/test_se3.cpp ${SOURCES})
 ADD_EXECUTABLE(test_rxso3 sophus/test_rxso3.cpp ${SOURCES})
@@ -67,6 +71,8 @@ ENABLE_TESTING()
 
 ADD_TEST(test_so2 test_so2)
 ADD_TEST(test_se2 test_se2)
+ADD_TEST(test_rxso2 test_rxso2)
+ADD_TEST(test_sim2 test_sim2)
 ADD_TEST(test_so3 test_so3)
 ADD_TEST(test_se3 test_se3)
 ADD_TEST(test_rxso3 test_rxso3)
