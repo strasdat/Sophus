@@ -205,7 +205,7 @@ public:
   /**
    * \returns 2x3 matrix representation of instance
    *
-   * It returns the three first row of matrix().
+   * It returns the two first row of matrix().
    */
   inline
   const Matrix<Scalar,2,3> matrix2x3() const {
@@ -356,12 +356,12 @@ public:
    * \see lieBracket()
    */
   inline static
-  const Transformation d_lieBracketab_by_d_a(const Tangent & b) {
+  const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     static const Scalar zero = static_cast<Scalar>(0);
     Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
     Scalar theta2 = b[2];
 
-    Transformation res;
+    Adjoint res;
     res <<    zero, theta2, -upsilon2[1]
         ,  -theta2,   zero,  upsilon2[0]
         ,     zero,   zero,         zero;
