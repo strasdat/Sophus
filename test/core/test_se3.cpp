@@ -23,7 +23,7 @@
 #include <iostream>
 #include <vector>
 
-#include "se3.hpp"
+#include <sophus/se3.hpp>
 #include "tests.hpp"
 
 using namespace Sophus;
@@ -93,7 +93,7 @@ void tests() {
   cerr << "passed." << endl << endl;
 }
 
-int main() {
+int test_se3() {
   cerr << "Test SE3" << endl << endl;
 
   cerr << "Double tests: " << endl;
@@ -102,4 +102,8 @@ int main() {
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
+}
+
+int main() {
+  return test_se3();
 }

@@ -23,8 +23,7 @@
 #include <iostream>
 #include <vector>
 
-
-#include "rxso2.hpp"
+#include "sophus/rxso2.hpp"
 #include "tests.hpp"
 
 using namespace Sophus;

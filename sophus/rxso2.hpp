@@ -70,27 +70,6 @@ struct traits<Map<const Sophus::RxSO2Group<_Scalar>, _Options> >
 namespace Sophus {
 using namespace Eigen;
 
-class ScaleNotPositive : public SophusException {
-public:
-    ScaleNotPositive ()
-        : SophusException("Scale factor is not positive") {
-    }
-};
-
-class ComplexScaleNearZero : public SophusException {
-public:
-    ComplexScaleNearZero ()
-        : SophusException("Complex scale is near zero") {
-    }
-};
-
-class DeterminantNotNearOne : public SophusException {
-public:
-    DeterminantNotNearOne ()
-        : SophusException("det(R) is not near 1") {
-    }
-};
-
 /**
  * \brief RxSO2 base type - implements RxSO2 class but is storage agnostic
  *
@@ -337,10 +316,9 @@ public:
     inline
     void setRotationMatrix(const Transformation & R) {
 
-        if(std::abs(R.determinant()-static_cast<Scalar>(1))
-            > SophusConstants<Scalar>::epsilon()) {
-          throw DeterminantNotNearOne();
-        }
+        SOPHUS_ENSURE(std::abs(R.determinant()-static_cast<Scalar>(1))
+                      < SophusConstants<Scalar>::epsilon(),
+                      "det(R) is not near 1");
 
         Scalar saved_scale = scale();
         complex().x() = R(0,0);
@@ -354,9 +332,10 @@ public:
     EIGEN_STRONG_INLINE
     void setScale(const Scalar & new_scale) {
         Scalar scale = complex().norm();
-        if(scale < SophusConstants<Scalar>::epsilon()) {
-            throw ComplexScaleNearZero();
-        }
+
+        SOPHUS_ENSURE(new_scale
+                      > SophusConstants<Scalar>::epsilon(),
+                      "Scale factor should be positive");
 
         complex().x() /= scale;
         complex().y() /= scale;
@@ -376,14 +355,10 @@ public:
 
       const Scalar scale = sqrt(sR(0,0)*sR(0,0)+sR(1,1)*sR(1,1));
       Transformation R = sR/scale;
-      if(std::abs(R.determinant()-static_cast<Scalar>(1))
-          > SophusConstants<Scalar>::epsilon()) {
-          throw DeterminantNotNearOne();
-      }
 
-      if(scale < SophusConstants<Scalar>::epsilon()) {
-          throw ComplexScaleNearZero();
-      }
+      SOPHUS_ENSURE(std::abs(R.determinant()-static_cast<Scalar>(1))
+                    < SophusConstants<Scalar>::epsilon(),
+                    "det(R) is not near 1");
 
       complex().x() = sR(0,0);
       complex().y() = sR(1,1);
@@ -582,9 +557,10 @@ public:
      */
     inline RxSO2Group(const Scalar & real, const Scalar & imag)
         : complex_(real, imag) {
-        if(complex_.norm() <= SophusConstants<Scalar>::epsilon()) {
-            throw ComplexScaleNearZero();
-        }
+
+        SOPHUS_ENSURE(complex_.norm()
+                      > SophusConstants<Scalar>::epsilon(),
+                      "Scale factor should be positive");
     }
 
     /*!
@@ -605,9 +581,9 @@ public:
     inline explicit
     RxSO2Group(const std::complex<Scalar> & complex)
         : complex_(complex.real(), complex.imag()) {
-        if(complex_.norm() <= SophusConstants<Scalar>::epsilon()) {
-            throw ComplexScaleNearZero();
-        }
+        SOPHUS_ENSURE(complex_.norm()
+                      > SophusConstants<Scalar>::epsilon(),
+                      "Scale factor should be positive");
     }
 
     /*!
@@ -628,10 +604,8 @@ public:
      */
     inline explicit
     RxSO2Group(const Scalar & scale, const Transformation & R) {
-        if(scale <= static_cast<Scalar>(0)) {
-            throw ScaleNotPositive();
-        }
-
+//        SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+//                      "Scale factor should be positive");
         RxSO2Group(scale*R);
     }
 
@@ -642,9 +616,8 @@ public:
      */
     inline
     RxSO2Group(const Scalar & scale, const SO2Group<Scalar> & so2) {
-        if (scale <= static_cast<Scalar>(0)) {
-            throw ScaleNotPositive();
-        }
+//        SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+//                      "Scale factor should be positive");
 
         complex_ = scale*so2.unit_complex();
     }

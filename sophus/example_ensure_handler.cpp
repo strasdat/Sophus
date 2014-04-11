@@ -20,46 +20,17 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-#ifndef SOPHUS_HPP
-#define SOPHUS_HPP
-
-#include <stdexcept>
-
-#include <Eigen/Eigen>
-#include <Eigen/Geometry>
-
 #include "ensure.hpp"
 
+#include <cstdio>
+#include <cstdlib>
+
 namespace Sophus {
-using namespace Eigen;
-
-template<typename Scalar>
-struct SophusConstants {
-  EIGEN_ALWAYS_INLINE static
-  Scalar epsilon() {
-    return static_cast<Scalar>(1e-10);
-  }
-
-  EIGEN_ALWAYS_INLINE static
-  Scalar pi() {
-    return static_cast<Scalar>(M_PI);
-  }
-};
-
-template<>
-struct SophusConstants<float> {
-  EIGEN_ALWAYS_INLINE static
-  float epsilon() {
-    return static_cast<float>(1e-5);
-  }
-
-  EIGEN_ALWAYS_INLINE static
-  float pi() {
-    return static_cast<float>(M_PI);
-  }
-};
-
-
+void ensureFailed(const char * function, const char * file, int line,
+                  const char * description) {
+  std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
+              file, function, line);
+  std::printf("Description: %s\n",  description);
+  std::abort();
 }
-
-#endif
+}

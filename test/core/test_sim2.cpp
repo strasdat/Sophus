@@ -25,7 +25,7 @@
 
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include "sim2.hpp"
+#include "sophus/sim2.hpp"
 #include "tests.hpp"
 
 using namespace Sophus;

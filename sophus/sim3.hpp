@@ -127,7 +127,7 @@ public:
    * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
    */
   inline
-  const Adjoint Adj() const {
+  Adjoint Adj() const {
     const Matrix<Scalar,3,3> & R = rxso3().rotationMatrix();
     Adjoint res;
     res.setZero();
@@ -157,17 +157,18 @@ public:
    * \see operator*()
    */
   inline
-  void fastMultiply(const Sim3Group<Scalar>& other) {
+  Sim3GroupBase<Derived>& fastMultiply(const Sim3Group<Scalar>& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
+    return *this;
   }
 
   /**
    * \returns Group inverse of instance
    */
   inline
-  const Sim3Group<Scalar> inverse() const {
-    const RxSO3Group<Scalar> invR = rxso3().inverse();
+  Sim3Group<Scalar> inverse() const {
+     RxSO3Group<Scalar> invR = rxso3().inverse();
     return Sim3Group<Scalar>(invR, invR*(translation()
                                          *static_cast<Scalar>(-1) ) );
   }
@@ -181,7 +182,7 @@ public:
    * \see  log().
    */
   inline
-  const Tangent log() const {
+  Tangent log() const {
     return log(*this);
   }
 
@@ -189,7 +190,7 @@ public:
    * \returns 4x4 matrix representation of instance
    */
   inline
-  const Transformation matrix() const {
+  Transformation matrix() const {
     Transformation homogenious_matrix;
     homogenious_matrix.setIdentity();
     homogenious_matrix.block(0,0,3,3) = rxso3().matrix();
@@ -203,7 +204,7 @@ public:
    * It returns the three first row of matrix().
    */
   inline
-  const Matrix<Scalar,3,4> matrix3x4() const {
+  Matrix<Scalar,3,4> matrix3x4() const {
     Matrix<Scalar,3,4> matrix;
     matrix.block(0,0,3,3) = rxso3().matrix();
     matrix.col(3) = translation();
@@ -226,7 +227,7 @@ public:
    * \see operator*=()
    */
   inline
-  const Sim3Group<Scalar> operator*(const Sim3Group<Scalar>& other) const {
+  Sim3Group<Scalar> operator*(const Sim3Group<Scalar>& other) const {
     Sim3Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -244,7 +245,7 @@ public:
    * (=scaled rotation matrix, translation vector): \f$ p' = sR\cdot p + t \f$.
    */
   inline
-  const Point operator*(const Point & p) const {
+  Point operator*(const Point & p) const {
     return rxso3()*p + translation();
   }
 
@@ -254,9 +255,10 @@ public:
    * \see operator*()
    */
   inline
-  void operator*=(const Sim3Group<Scalar>& other) {
+  Sim3GroupBase<Derived>& operator*=(const Sim3Group<Scalar>& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
+    return *this;
   }
 
   /**
@@ -291,7 +293,7 @@ public:
    * \returns Rotation matrix
    */
   inline
-  const Matrix<Scalar,3,3> rotationMatrix() const {
+  Matrix<Scalar,3,3> rotationMatrix() const {
     return rxso3().rotationMatrix();
   }
 
@@ -315,7 +317,7 @@ public:
    * \returns scale
    */
   EIGEN_STRONG_INLINE
-  const Scalar scale() const {
+  Scalar scale() const {
     return rxso3().scale();
   }
 
@@ -382,7 +384,7 @@ public:
    * \see lieBracket()
    */
   inline static
-  const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
+  Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     const Matrix<Scalar,3,1> & upsilon2 = b.template head<3>();
     const Matrix<Scalar,3,1> & omega2 = b.template segment<3>(3);
     Scalar sigma2 = b[6];
@@ -415,7 +417,7 @@ public:
    * \see log()
    */
   inline static
-  const Sim3Group<Scalar> exp(const Tangent & a) {
+  Sim3Group<Scalar> exp(const Tangent & a) {
     const Matrix<Scalar,3,1> & upsilon = a.segment(0,3);
     const Matrix<Scalar,3,1> & omega = a.segment(3,3);
     Scalar sigma = a[6];
@@ -480,10 +482,8 @@ public:
    * \see hat()
    */
   inline static
-  const Transformation generator(int i) {
-    if (i<0 || i>6) {
-      throw SophusException("i is not in range [0,6].");
-    }
+  Transformation generator(int i) {
+    SOPHUS_ENSURE(i>=0 || i<=6, "i should be in range [0,6].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -505,7 +505,7 @@ public:
    * \see vee()
    */
   inline static
-  const Transformation hat(const Tangent & v) {
+  Transformation hat(const Tangent & v) {
     Transformation Omega;
     Omega.template topLeftCorner<3,3>()
         = RxSO3Group<Scalar>::hat(v.template tail<4>());
@@ -532,7 +532,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent lieBracket(const Tangent & a,
+  Tangent lieBracket(const Tangent & a,
                            const Tangent & b) {
     const Matrix<Scalar,3,1> & upsilon1 = a.template head<3>();
     const Matrix<Scalar,3,1> & upsilon2 = b.template head<3>();
@@ -569,7 +569,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent log(const Sim3Group<Scalar> & other) {
+  Tangent log(const Sim3Group<Scalar> & other) {
     Tangent res;
     Scalar theta;
     const Matrix<Scalar,4,1> & omega_sigma
@@ -595,7 +595,7 @@ public:
    * \see hat()
    */
   inline static
-  const Tangent vee(const Transformation & Omega) {
+  Tangent vee(const Transformation & Omega) {
     Tangent upsilon_omega_sigma;
     upsilon_omega_sigma.template head<3>()
         = Omega.col(3).template head<3>();
@@ -669,12 +669,6 @@ public:
   typedef const typename internal::traits<Sim3Group<_Scalar,_Options> >
   ::TranslationType & ConstTranslationReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -834,13 +828,6 @@ public:
   typedef const typename internal::traits<Map>::RxSO3Type &
   ConstRxSO3Reference;
 
-
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -920,12 +907,6 @@ public:
   typedef const typename internal::traits<Map>::RxSO3Type &
   ConstRxSO3Reference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
