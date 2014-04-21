@@ -712,7 +712,7 @@ public:
    * \pre top-left 2x2 sub-matrix need to be "scaled orthogonal"
    *      with positive determinant of
    */
-  inline explicit
+  inline
   Sim2Group(const Eigen::Matrix<Scalar,3,3>& T)
     : rxso2_(T.template topLeftCorner<2,2>()),
       translation_(T.template block<2,1>(0,2)) {

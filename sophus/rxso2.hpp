@@ -145,7 +145,7 @@ public:
                                          .template cast<NewScalarType>() );
     }
 
-    /*!
+    /**
      * \returns pointer to internal data
      *
      * This provides unsafe read/write access to internal data. RxSO2 is represented
@@ -156,7 +156,7 @@ public:
         return complex().data();
     }
 
-    /*!
+    /**
      * \returns const pointer to internal data
      *
      * Const version of data().
@@ -165,7 +165,7 @@ public:
         return complex().data();
     }
 
-    /*!
+    /**
      * \brief Fast group multiplication
      *
      * \see operator*=()
@@ -192,7 +192,7 @@ public:
         return RxSO2Group<Scalar>(complex().x()/sq_scale, -complex().y()/sq_scale);
     }
 
-    /*!
+    /**
      * \brief Logarithmic map
      *
      * \returns tangent space representation (=rotation vector) of instance
@@ -204,7 +204,7 @@ public:
         return RxSO2Group<Scalar>::log(*this);
     }
 
-    /*!
+    /**
      * \returns 2x2 matrix representation of instance
      *
      * For RxSO2, the matrix representation is a scaled orthogonal
@@ -221,7 +221,7 @@ public:
         return R;
     }
 
-    /*!
+    /**
      * \brief Assignment operator
      */
     template<typename OtherDerived> inline
@@ -231,7 +231,7 @@ public:
         return *this;
     }
 
-    /*!
+    /**
      * \brief Group multiplication
      * \see operator*=()
      */
@@ -242,7 +242,7 @@ public:
         return result;
     }
 
-    /*!
+    /**
      * \brief Group action on \f$ \mathbf{R}^2 \f$
      *
      * \param p point \f$p \in \mathbf{R}^2 \f$
@@ -258,7 +258,7 @@ public:
         return matrix()*p;
     }
 
-    /*!
+    /**
      * \brief In-place group multiplication
      * \see operator*=()
      */
@@ -267,7 +267,7 @@ public:
         fastMultiply(other);
     }
 
-    /*!
+    /**
      * \brief Mutator of complex number
      */
     EIGEN_STRONG_INLINE
@@ -275,7 +275,7 @@ public:
         return static_cast<Derived*>(this)->complex();
     }
 
-    /*!
+    /**
      * \brief Accessor of complex number
      */
     EIGEN_STRONG_INLINE
@@ -299,7 +299,7 @@ public:
       return R;
     }
 
-    /*!
+    /**
      * \returns scale
      */
     EIGEN_STRONG_INLINE
@@ -368,7 +368,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////
     // public static functions
     ////////////////////////////////////////////////////////////////////////////
-    /*!
+    /**
      * \brief Group exponential
      *
      * \param a tangent space element
@@ -387,7 +387,7 @@ public:
         return RxSO2Group<Scalar>(std::exp(a[1]), SO2Group<Scalar>(a[0]));
     }
 
-    /*!
+    /**
      * \brief Generator
      *
      * \param \f$ i \in \{0,1\} \f$
@@ -457,7 +457,7 @@ public:
     }
 
 
-    /*!
+    /**
    * \brief Logarithmic map
    *
    * \param other element of the group RxSO2
@@ -550,7 +550,7 @@ public:
         : complex_(other.complex()) {
     }
 
-    /*!
+    /**
      * \brief Constructor from pair of real and imaginary number
      *
      * \pre pair must not be zero
@@ -563,7 +563,7 @@ public:
                       "Scale factor should be positive");
     }
 
-    /*!
+    /**
      * \brief Constructor from 2-vector
      *
      * \pre vector must not be zero
@@ -573,7 +573,7 @@ public:
       : complex_(complex) {
     }
 
-    /*!
+    /**
      * \brief Constructor from std::complex
      *
      * \pre complex number must not be zero
@@ -586,7 +586,7 @@ public:
                       "Scale factor should be positive");
     }
 
-    /*!
+    /**
      * \brief Constructor from scaled rotation matrix
      *
      * \pre matrix need to be "scaled orthogonal" with positive determinant
@@ -604,8 +604,8 @@ public:
      */
     inline explicit
     RxSO2Group(const Scalar & scale, const Transformation & R) {
-//        SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
-//                      "Scale factor should be positive");
+        SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+                      "Scale factor should be positive");
         RxSO2Group(scale*R);
     }
 
@@ -616,9 +616,8 @@ public:
      */
     inline
     RxSO2Group(const Scalar & scale, const SO2Group<Scalar> & so2) {
-//        SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
-//                      "Scale factor should be positive");
-
+        SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+                      "Scale factor should be positive");
         complex_ = scale*so2.unit_complex();
     }
 

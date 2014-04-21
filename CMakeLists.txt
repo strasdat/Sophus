@@ -5,6 +5,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 SET( CMAKE_VERBOSE_MAKEFILE ON)
 
+option(OPTOIN_USE_CERES "Use Ceres for optimisation" OFF)
+
 ################################################################################
 # Release by default
 # Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"
