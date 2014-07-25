@@ -70,8 +70,6 @@ struct traits<Map<const Sophus::SE2Group<_Scalar>, _Options> >
 }
 
 namespace Sophus {
-using namespace Eigen;
-using namespace std;
 
 /**
  * \brief SE2 base type - implements SE2 class but is storage agnostic
@@ -82,18 +80,18 @@ template<typename Derived>
 class SE2GroupBase {
 public:
   /** \brief scalar type */
-  typedef typename internal::traits<Derived>::Scalar Scalar;
+  typedef typename Eigen::internal::traits<Derived>::Scalar Scalar;
   /** \brief translation reference type */
-  typedef typename internal::traits<Derived>::TranslationType &
+  typedef typename Eigen::internal::traits<Derived>::TranslationType &
   TranslationReference;
   /** \brief translation const reference type */
-  typedef const typename internal::traits<Derived>::TranslationType &
+  typedef const typename Eigen::internal::traits<Derived>::TranslationType &
   ConstTranslationReference;
   /** \brief SO2 reference type */
-  typedef typename internal::traits<Derived>::SO2Type &
+  typedef typename Eigen::internal::traits<Derived>::SO2Type &
   SO2Reference;
   /** \brief SO2 type */
-  typedef const typename internal::traits<Derived>::SO2Type &
+  typedef const typename Eigen::internal::traits<Derived>::SO2Type &
   ConstSO2Reference;
 
   /** \brief degree of freedom of group
@@ -105,13 +103,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = 3;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar,N,N> Transformation;
+  typedef Eigen::Matrix<Scalar,N,N> Transformation;
   /** \brief point type */
-  typedef Matrix<Scalar,2,1> Point;
+  typedef Eigen::Matrix<Scalar,2,1> Point;
   /** \brief tangent vector type */
-  typedef Matrix<Scalar,DoF,1> Tangent;
+  typedef Eigen::Matrix<Scalar,DoF,1> Tangent;
   /** \brief adjoint transformation type */
-  typedef Matrix<Scalar,DoF,DoF> Adjoint;
+  typedef Eigen::Matrix<Scalar,DoF,DoF> Adjoint;
 
   /**
    * \brief Adjoint transformation
@@ -123,7 +121,7 @@ public:
    */
   inline
   const Adjoint Adj() const {
-    const Matrix<Scalar,2,2> & R = so2().matrix();
+    const Eigen::Matrix<Scalar,2,2> & R = so2().matrix();
     Transformation res;
     res.setIdentity();
     res.template topLeftCorner<2,2>() = R;
@@ -208,8 +206,8 @@ public:
    * It returns the three first row of matrix().
    */
   inline
-  const Matrix<Scalar,2,3> matrix2x3() const {
-    Matrix<Scalar,2,3> matrix;
+  const Eigen::Matrix<Scalar,2,3> matrix2x3() const {
+    Eigen::Matrix<Scalar,2,3> matrix;
     matrix.block(0,0,2,2) = rotationMatrix();
     matrix.col(2) = translation();
     return matrix;
@@ -269,7 +267,7 @@ public:
    * \returns Rotation matrix
    */
   inline
-  const Matrix<Scalar,2,2> rotationMatrix() const {
+  const Eigen::Matrix<Scalar,2,2> rotationMatrix() const {
     return so2().matrix();
   }
 
@@ -282,7 +280,7 @@ public:
    * The complex number is normalized to unit length.
    */
   inline
-  void setComplex(const Matrix<Scalar,2,1> & complex) {
+  void setComplex(const Eigen::Matrix<Scalar,2,1> & complex) {
     return so2().setComplex(complex);
   }
 
@@ -293,7 +291,7 @@ public:
    * \pre     the 2x2 matrix should be orthogonal and have a determinant of 1
    */
   inline
-  void setRotationMatrix(const Matrix<Scalar,2,2> & R) {
+  void setRotationMatrix(const Eigen::Matrix<Scalar,2,2> & R) {
     so2().setComplex(static_cast<Scalar>(0.5)*(R(0,0)+R(1,1)),
                      static_cast<Scalar>(0.5)*(R(1,0)-R(0,1)));
   }
@@ -337,7 +335,7 @@ public:
    * normalized.
    */
   inline
-  typename internal::traits<Derived>::SO2Type::ConstComplexReference
+  typename Eigen::internal::traits<Derived>::SO2Type::ConstComplexReference
   unit_complex() const {
     return so2().unit_complex();
   }
@@ -358,7 +356,7 @@ public:
   inline static
   const Transformation d_lieBracketab_by_d_a(const Tangent & b) {
     static const Scalar zero = static_cast<Scalar>(0);
-    Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
+    Eigen::Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
     Scalar theta2 = b[2];
 
     Transformation res;
@@ -404,7 +402,7 @@ public:
       one_minus_cos_theta_by_theta
           = (static_cast<Scalar>(1.) - so2.unit_complex().x())/theta;
     }
-    Matrix<Scalar,2,1> trans
+    Eigen::Matrix<Scalar,2,1> trans
         (sin_theta_by_theta*a[0] - one_minus_cos_theta_by_theta*a[1],
         one_minus_cos_theta_by_theta * a[0]+sin_theta_by_theta*a[1]);
     return SE2Group<Scalar>(so2, trans);
@@ -489,8 +487,8 @@ public:
   inline static
   const Tangent lieBracket(const Tangent & a,
                            const Tangent & b) {
-    Matrix<Scalar,2,1> upsilon1 = a.template head<2>();
-    Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
+    Eigen::Matrix<Scalar,2,1> upsilon1 = a.template head<2>();
+    Eigen::Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
     Scalar theta1 = a[2];
     Scalar theta2 = b[2];
 
@@ -524,7 +522,7 @@ public:
     Scalar halftheta = static_cast<Scalar>(0.5)*theta;
     Scalar halftheta_by_tan_of_halftheta;
 
-    const Matrix<Scalar,2,1> & z = so2.unit_complex();
+    const Eigen::Matrix<Scalar,2,1> & z = so2.unit_complex();
     Scalar real_minus_one = z.x()-static_cast<Scalar>(1.);
     if (std::abs(real_minus_one)<SophusConstants<Scalar>::epsilon()) {
       halftheta_by_tan_of_halftheta
@@ -534,7 +532,7 @@ public:
       halftheta_by_tan_of_halftheta
           = -(halftheta*z.y())/(real_minus_one);
     }
-    Matrix<Scalar,2,2> V_inv;
+    Eigen::Matrix<Scalar,2,2> V_inv;
     V_inv <<  halftheta_by_tan_of_halftheta,                      halftheta
         ,                        -halftheta,  halftheta_by_tan_of_halftheta;
     upsilon_theta.template head<2>() = V_inv*other.translation();
@@ -570,18 +568,18 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar,_Options> > {
 
 public:
   /** \brief scalar type */
-  typedef typename internal::traits<SE2Group<_Scalar,_Options> >
+  typedef typename Eigen::internal::traits<SE2Group<_Scalar,_Options> >
   ::Scalar Scalar;
   /** \brief translation reference type */
-  typedef typename internal::traits<SE2Group<_Scalar,_Options> >
+  typedef typename Eigen::internal::traits<SE2Group<_Scalar,_Options> >
   ::TranslationType & TranslationReference;
-  typedef const typename internal::traits<SE2Group<_Scalar,_Options> >
+  typedef const typename Eigen::internal::traits<SE2Group<_Scalar,_Options> >
   ::TranslationType & ConstTranslationReference;
   /** \brief SO2 reference type */
-  typedef typename internal::traits<SE2Group<_Scalar,_Options> >
+  typedef typename Eigen::internal::traits<SE2Group<_Scalar,_Options> >
   ::SO2Type & SO2Reference;
   /** \brief SO2 const reference type */
-  typedef const typename internal::traits<SE2Group<_Scalar,_Options> >
+  typedef const typename Eigen::internal::traits<SE2Group<_Scalar,_Options> >
   ::SO2Type & ConstSO2Reference;
 
   /** \brief degree of freedom of group */
@@ -609,7 +607,7 @@ public:
    */
   inline
   SE2Group()
-    : translation_( Matrix<Scalar,2,1>::Zero() )
+    : translation_(Eigen::Matrix<Scalar,2,1>::Zero())
   {
   }
 
@@ -733,7 +731,7 @@ public:
 
 protected:
   Sophus::SO2Group<Scalar> so2_;
-  Matrix<Scalar,2,1> translation_;
+  Eigen::Matrix<Scalar,2,1> translation_;
 };
 
 

@@ -73,7 +73,6 @@ struct traits<Map<const Sophus::SO2Group<_Scalar>, _Options> >
 }
 
 namespace Sophus {
-using namespace Eigen;
 
 /**
  * \brief SO2 base type - implements SO2 class but is storage agnostic
@@ -84,12 +83,12 @@ template<typename Derived>
 class SO2GroupBase {
 public:
   /** \brief scalar type */
-  typedef typename internal::traits<Derived>::Scalar Scalar;
+  typedef typename Eigen::internal::traits<Derived>::Scalar Scalar;
   /** \brief complex number reference type */
-  typedef typename internal::traits<Derived>::ComplexType &
+  typedef typename Eigen::internal::traits<Derived>::ComplexType &
   ComplexReference;
   /** \brief complex number const reference type */
-  typedef const typename internal::traits<Derived>::ComplexType &
+  typedef const typename Eigen::internal::traits<Derived>::ComplexType &
   ConstComplexReference;
 
   /** \brief degree of freedom of group
@@ -101,9 +100,9 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = 2;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar,N,N> Transformation;
+  typedef Eigen::Matrix<Scalar,N,N> Transformation;
   /** \brief point type */
-  typedef Matrix<Scalar,2,1> Point;
+  typedef Eigen::Matrix<Scalar,2,1> Point;
   /** \brief tangent vector type */
   typedef Scalar Tangent;
   /** \brief adjoint transformation type */
@@ -437,13 +436,13 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar,_Options> > {
   typedef SO2GroupBase<SO2Group<_Scalar,_Options> > Base;
 public:
   /** \brief scalar type */
-  typedef typename internal::traits<SO2Group<_Scalar,_Options> >
+  typedef typename Eigen::internal::traits<SO2Group<_Scalar,_Options> >
   ::Scalar Scalar;
   /** \brief complex number reference type */
-  typedef typename internal::traits<SO2Group<_Scalar,_Options> >
+  typedef typename Eigen::internal::traits<SO2Group<_Scalar,_Options> >
   ::ComplexType & ComplexReference;
   /** \brief complex number const reference type */
-  typedef const typename internal::traits<SO2Group<_Scalar,_Options> >
+  typedef const typename Eigen::internal::traits<SO2Group<_Scalar,_Options> >
   ::ComplexType & ConstComplexReference;
 
   /** \brief degree of freedom of group */
@@ -514,7 +513,7 @@ public:
    * \pre vector must not be zero
    */
   inline explicit
-  SO2Group(const Matrix<Scalar,2,1> & complex)
+  SO2Group(const Eigen::Matrix<Scalar,2,1> & complex)
     : unit_complex_(complex) {
     Base::normalize();
   }
@@ -561,7 +560,7 @@ protected:
     return (real*real + imag*imag < SophusConstants<Scalar>::epsilon());
   }
 
-  Matrix<Scalar,2,1> unit_complex_;
+  Eigen::Matrix<Scalar,2,1> unit_complex_;
 };
 
 } // end namespace
