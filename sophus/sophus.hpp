@@ -29,7 +29,6 @@
 #include <Eigen/Geometry>
 
 namespace Sophus {
-using namespace Eigen;
 
 template<typename Scalar>
 struct SophusConstants {

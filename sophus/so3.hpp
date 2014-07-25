@@ -68,7 +68,6 @@ struct traits<Map<const Sophus::SO3Group<_Scalar>, _Options> >
 }
 
 namespace Sophus {
-using namespace Eigen;
 
 /**
  * \brief SO3 base type - implements SO3 class but is storage agnostic
@@ -79,12 +78,12 @@ template<typename Derived>
 class SO3GroupBase {
 public:
   /** \brief scalar type */
-  typedef typename internal::traits<Derived>::Scalar Scalar;
+  typedef typename Eigen::internal::traits<Derived>::Scalar Scalar;
   /** \brief quaternion reference type  */
-  typedef typename internal::traits<Derived>::QuaternionType &
+  typedef typename Eigen::internal::traits<Derived>::QuaternionType &
   QuaternionReference;
   /** \brief quaternion const reference type  */
-  typedef const typename internal::traits<Derived>::QuaternionType &
+  typedef const typename Eigen::internal::traits<Derived>::QuaternionType &
   ConstQuaternionReference;
 
   /** \brief degree of freedom of group
@@ -96,13 +95,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = 3;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar,N,N> Transformation;
+  typedef Eigen::Matrix<Scalar,N,N> Transformation;
   /** \brief point type */
-  typedef Matrix<Scalar,3,1> Point;
+  typedef Eigen::Matrix<Scalar,3,1> Point;
   /** \brief tangent vector type */
-  typedef Matrix<Scalar,DoF,1> Tangent;
+  typedef Eigen::Matrix<Scalar,DoF,1> Tangent;
   /** \brief adjoint transformation type */
-  typedef Matrix<Scalar,DoF,DoF> Adjoint;
+  typedef Eigen::Matrix<Scalar,DoF,DoF> Adjoint;
 
   /**
    * \brief Adjoint transformation
@@ -277,7 +276,7 @@ public:
    * The quaternion is normalized to unit length.
    */
   inline
-  void setQuaternion(const Quaternion<Scalar>& quaternion) {
+  void setQuaternion(const Eigen::Quaternion<Scalar>& quaternion) {
     unit_quaternion_nonconst() = quaternion;
     normalize();
   }
@@ -362,7 +361,7 @@ public:
       real_factor = std::cos(half_theta);
     }
 
-    return SO3Group<Scalar>(Quaternion<Scalar>(real_factor,
+    return SO3Group<Scalar>(Eigen::Quaternion<Scalar>(real_factor,
                                                imag_factor*omega.x(),
                                                imag_factor*omega.y(),
                                                imag_factor*omega.z()));
@@ -566,12 +565,12 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar,_Options> > {
   typedef SO3GroupBase<SO3Group<_Scalar,_Options> > Base;
 public:
   /** \brief scalar type */
-  typedef typename internal::traits<SO3Group<_Scalar,_Options> >
+  typedef typename Eigen::internal::traits<SO3Group<_Scalar,_Options> >
   ::Scalar Scalar;
   /** \brief quaternion type */
-  typedef typename internal::traits<SO3Group<_Scalar,_Options> >
+  typedef typename Eigen::internal::traits<SO3Group<_Scalar,_Options> >
   ::QuaternionType & QuaternionReference;
-  typedef const typename internal::traits<SO3Group<_Scalar,_Options> >
+  typedef const typename Eigen::internal::traits<SO3Group<_Scalar,_Options> >
   ::QuaternionType & ConstQuaternionReference;
 
   /** \brief degree of freedom of group */
@@ -628,7 +627,7 @@ public:
    * \pre quaternion must not be zero
    */
   inline explicit
-  SO3Group(const Quaternion<Scalar> & quat) : unit_quaternion_(quat) {
+  SO3Group(const Eigen::Quaternion<Scalar> & quat) : unit_quaternion_(quat) {
     Base::normalize();
   }
 
@@ -674,7 +673,7 @@ protected:
     return unit_quaternion_;
   }
 
-  Quaternion<Scalar> unit_quaternion_;
+  Eigen::Quaternion<Scalar> unit_quaternion_;
 };
 
 } // end namespace
