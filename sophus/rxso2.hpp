@@ -333,10 +333,6 @@ public:
     void setScale(const Scalar & new_scale) {
         Scalar scale = complex().norm();
 
-        SOPHUS_ENSURE(new_scale
-                      > SophusConstants<Scalar>::epsilon(),
-                      "Scale factor should be positive");
-
         complex().x() /= scale;
         complex().y() /= scale;
 
@@ -557,10 +553,6 @@ public:
      */
     inline RxSO2Group(const Scalar & real, const Scalar & imag)
         : complex_(real, imag) {
-
-        SOPHUS_ENSURE(complex_.norm()
-                      > SophusConstants<Scalar>::epsilon(),
-                      "Scale factor should be positive");
     }
 
     /**
@@ -580,10 +572,7 @@ public:
      */
     inline explicit
     RxSO2Group(const std::complex<Scalar> & complex)
-        : complex_(complex.real(), complex.imag()) {
-        SOPHUS_ENSURE(complex_.norm()
-                      > SophusConstants<Scalar>::epsilon(),
-                      "Scale factor should be positive");
+        : complex_(complex.real(), complex.imag()) {        
     }
 
     /**
@@ -593,7 +582,7 @@ public:
      */
     inline explicit
     RxSO2Group(const Transformation & sR) {
-        setScaledRotationMatrix(sR);
+        this->setScaledRotationMatrix(sR);
     }
 
     /**
@@ -604,8 +593,6 @@ public:
      */
     inline explicit
     RxSO2Group(const Scalar & scale, const Transformation & R) {
-        SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
-                      "Scale factor should be positive");
         RxSO2Group(scale*R);
     }
 
@@ -616,8 +603,6 @@ public:
      */
     inline
     RxSO2Group(const Scalar & scale, const SO2Group<Scalar> & so2) {
-        SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
-                      "Scale factor should be positive");
         complex_ = scale*so2.unit_complex();
     }
 

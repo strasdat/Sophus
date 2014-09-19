@@ -188,7 +188,7 @@ public:
   inline
   RxSO3Group<Scalar> inverse() const {
     SOPHUS_ENSURE(quaternion().squaredNorm() > static_cast<Scalar>(0),
-                  "Scale factor should be positive");
+                  "Quaternion norm is invalid");
     return RxSO3Group<Scalar>(quaternion().inverse());
   }
 
@@ -624,7 +624,7 @@ public:
    */
   inline explicit
   RxSO3Group(const Transformation & sR) {
-    setScaledRotationMatrix(sR);
+    this->setScaledRotationMatrix(sR);
   }
 
   /**
@@ -635,9 +635,7 @@ public:
    */
   inline
   RxSO3Group(const Scalar & scale, const Transformation & R)
-    : quaternion_(R) {
-    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
-                  "Scale factor should be positive");
+    : quaternion_(R) {    
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -649,9 +647,7 @@ public:
    */
   inline
   RxSO3Group(const Scalar & scale, const SO3Group<Scalar> & so3)
-    : quaternion_(so3.unit_quaternion()) {
-    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
-                  "Scale factor should be positive");
+    : quaternion_(so3.unit_quaternion()) {    
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -664,8 +660,8 @@ public:
   inline explicit
   RxSO3Group(const Quaternion<Scalar> & quat) : quaternion_(quat) {
     SOPHUS_ENSURE(quaternion_.squaredNorm()
-                  > SophusConstants<Scalar>::epsilon(),
-                  "Scale factor should be positive");
+                  > static_cast<Scalar>(0),
+                  "Quaternion norm is invalid");
   }
 
   /**

@@ -728,7 +728,7 @@ public:
    */
   inline explicit
   Sim3Group(const Eigen::Matrix<Scalar,4,4>& T)
-    : rxso3_(T.template topLeftCorner<3,3>()),
+    : rxso3_((Matrix<Scalar,3,3>)T.template topLeftCorner<3,3>()),
       translation_(T.template block<3,1>(0,3)) {
   }
 

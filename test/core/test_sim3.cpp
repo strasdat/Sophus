@@ -43,7 +43,7 @@ void tests() {
   vector<Sim3Type> sim3_vec;
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0,1.)),
                               Point(0,0,0)));
-  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, -1.0,1.1)),
+  sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, -1.0,-1.1)),
                               Point(10,0,0)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.,1.1)),
                               Point(0,10,5)));
