@@ -63,7 +63,6 @@ public:
   bool adjointTest() {
     bool passed = true;
     for (size_t i=0; i<group_vec_.size(); ++i) {
-      Transformation T = group_vec_[i].matrix();
       Adjoint Ad = group_vec_[i].Adj();
       for (size_t j=0; j<tangent_vec_.size(); ++j) {
         Tangent x = tangent_vec_[j];
@@ -71,7 +70,7 @@ public:
         Transformation I;
         I.setIdentity();
         Tangent ad1 = Ad*x;
-        Tangent ad2 = LieGroup::vee(T*LieGroup::hat(x)
+        Tangent ad2 = LieGroup::vee(group_vec_[i].matrix()*LieGroup::hat(x)
                                     *group_vec_[i].inverse().matrix());
         Scalar nrm = norm(ad1-ad2);
 

@@ -516,8 +516,8 @@ public:
    *
    * Computes the logarithmic, the inverse of the group exponential.
    * To be specific, this function computes \f$ \log({\cdot})^\vee \f$
-   * with \f$ \vee(\cdot) \f$ being the matrix logarithm
-   * and \f$ \vee{\cdot} \f$ the vee()-operator of SO3.
+   * with \f$ log(\cdot) \f$ being the matrix logarithm
+   * and \f$ \vee \f$ the vee()-operator of SO3.
    *
    * \see exp()
    * \see logAndTheta()

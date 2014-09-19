@@ -392,7 +392,7 @@ public:
     Adjoint res;
     res.setZero();
     res.template topLeftCorner<3,3>()
-        = -SO3::hat(omega2)-sigma2*Matrix3d::Identity();
+        = -SO3Group<Scalar>::hat(omega2)-sigma2*Matrix3d::Identity();
     res.template block<3,3>(0,3) = -SO3::hat(upsilon2);
     res.template topRightCorner<3,1>() = upsilon2;
     res.template block<3,3>(3,3) = -SO3::hat(omega2);
@@ -498,7 +498,7 @@ public:
    *
    * Formally, the hat-operator of Sim3 is defined
    * as \f$ \widehat{\cdot}: \mathbf{R}^7 \rightarrow \mathbf{R}^{4\times 4},
-   * \quad \widehat{\omega} = \sum_{i=0}^5 G_i \omega_i \f$
+   * \quad \widehat{\omega} = \sum_{i=0}^6 G_i \omega_i \f$
    * with \f$ G_i \f$ being the ith infinitesial generator().
    *
    * \see generator()
@@ -728,7 +728,7 @@ public:
    */
   inline explicit
   Sim3Group(const Eigen::Matrix<Scalar,4,4>& T)
-    : rxso3_(T.template topLeftCorner<3,3>()),
+    : rxso3_((Matrix<Scalar,3,3>)T.template topLeftCorner<3,3>()),
       translation_(T.template block<3,1>(0,3)) {
   }
 

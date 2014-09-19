@@ -329,7 +329,7 @@ public:
    *
    * The infinitesimal generator of SO2
    * is \f$
-   *        G_0 = \left( \begin{array}{ccc}
+   *        G_0 = \left( \begin{array}{cc}
    *                          0& -1& \\
    *                          1&  0&
    *                     \end{array} \right).
@@ -358,8 +358,8 @@ public:
   inline static
   Transformation hat(const Tangent & theta) {
     Transformation Omega;
-    Omega <<  static_cast<Scalar>(0), -theta
-        ,  theta,     static_cast<Scalar>(0);
+    Omega <<  static_cast<Scalar>(0), -theta,
+              theta, static_cast<Scalar>(0);
     return Omega;
   }
 
@@ -401,7 +401,7 @@ public:
   inline static
   Tangent log(const SO2Group<Scalar> & other) {
     // todo: general implementation for Scalar not being float or double.
-    return atan2(other.unit_complex_.y(), other.unit_complex().x());
+    return atan2(other.unit_complex().y(), other.unit_complex().x());
   }
 
   /**

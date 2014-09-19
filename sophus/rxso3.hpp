@@ -21,7 +21,7 @@
 // IN THE SOFTWARE.
 
 #ifndef SOPHUS_RXSO3_HPP
-#define RXSO3_HPP
+#define SOPHUS_RXSO3_HPP
 
 #include "sophus.hpp"
 #include "so3.hpp"
@@ -32,7 +32,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class RxSO3Group;
-typedef RxSO3Group<double> ScSO3 EIGEN_DEPRECATED;
+typedef RxSO3Group<double> RxSO3 EIGEN_DEPRECATED;
 typedef RxSO3Group<double> RxSO3d; /**< double precision RxSO3 */
 typedef RxSO3Group<float> RxSO3f;  /**< single precision RxSO3 */
 }
@@ -188,7 +188,7 @@ public:
   inline
   RxSO3Group<Scalar> inverse() const {
     SOPHUS_ENSURE(quaternion().squaredNorm() > static_cast<Scalar>(0),
-                  "Scale factor should be positive");
+                  "Quaternion norm is invalid");
     return RxSO3Group<Scalar>(quaternion().inverse());
   }
 
@@ -369,7 +369,7 @@ public:
   Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     Adjoint res;
     res.setZero();
-    res.template topLeftCorner<3,3>() = -SO3::hat(b.template head<3>());
+    res.template topLeftCorner<3,3>() = -SO3Group<Scalar>::hat(b.template head<3>());
     return res;
   }
 
@@ -487,7 +487,7 @@ public:
    * \returns 4-vector representation of Lie algebra element
    *
    * It computes the bracket of RxSO3. To be more specific, it
-   * computes \f$ [a, 2]_{rxso3}
+   * computes \f$ [a, b]_{rxso3}
    * := [\widehat{a}, \widehat{b}]^\vee \f$
    * with \f$ [A,B] = AB-BA \f$ being the matrix
    * commutator, \f$ \widehat{\cdot} \f$ the
@@ -516,8 +516,8 @@ public:
    *
    * Computes the logarithmic, the inverse of the group exponential.
    * To be specific, this function computes \f$ \log({\cdot})^\vee \f$
-   * with \f$ \vee(\cdot) \f$ being the matrix logarithm
-   * and \f$ \vee{\cdot} \f$ the vee()-operator of RxSO3.
+   * with \f$ log(\cdot) \f$ being the matrix logarithm
+   * and \f$ \vee \f$ the vee()-operator of RxSO3.
    *
    * \see exp()
    * \see logAndTheta()
@@ -624,7 +624,7 @@ public:
    */
   inline explicit
   RxSO3Group(const Transformation & sR) {
-    setScaledRotationMatrix(sR);
+    this->setScaledRotationMatrix(sR);
   }
 
   /**
@@ -635,9 +635,7 @@ public:
    */
   inline
   RxSO3Group(const Scalar & scale, const Transformation & R)
-    : quaternion_(R) {
-    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
-                  "Scale factor should be positive");
+    : quaternion_(R) {    
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -649,9 +647,7 @@ public:
    */
   inline
   RxSO3Group(const Scalar & scale, const SO3Group<Scalar> & so3)
-    : quaternion_(so3.unit_quaternion()) {
-    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
-                  "Scale factor should be positive");
+    : quaternion_(so3.unit_quaternion()) {    
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -664,8 +660,8 @@ public:
   inline explicit
   RxSO3Group(const Quaternion<Scalar> & quat) : quaternion_(quat) {
     SOPHUS_ENSURE(quaternion_.squaredNorm()
-                  > SophusConstants<Scalar>::epsilon(),
-                  "Scale factor should be positive");
+                  > static_cast<Scalar>(0),
+                  "Quaternion norm is invalid");
   }
 
   /**
