@@ -7,7 +7,7 @@
   <url type="repository">https://github.com/stonier/sophus</url>
   <url type="bugtracker">https://github.com/stonier/sophus/issues</url>
   <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
-  <author>Hauke Strasdat</maintainer>
+  <author>Hauke Strasdat</author>
   <license>BSD</license>
 
   <buildtool_depend>cmake</buildtool_depend>
