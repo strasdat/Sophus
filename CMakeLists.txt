@@ -80,3 +80,6 @@ export( PACKAGE Sophus )
 
 INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
         FILES_MATCHING PATTERN "*.hpp" )
+
+# Catkin Installation
+install(FILES package.xml DESTINATION share/sophus)

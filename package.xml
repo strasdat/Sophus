@@ -1,0 +1,24 @@
+<package>
+  <name>sophus</name>
+  <version>0.1.0</version>
+  <description>
+   C++ implementation of Lie Groups using Eigen.
+  </description>
+  <url type="repository">https://github.com/stonier/sophus</url>
+  <url type="bugtracker">https://github.com/stonier/sophus/issues</url>
+  <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
+  <author>Hauke Strasdat</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>cmake</buildtool_depend>
+
+  <build_depend>eigen</build_depend>
+
+  <run_depend>catkin</run_depend>
+  <run_depend>eigen</run_depend>
+
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+
+</package>
