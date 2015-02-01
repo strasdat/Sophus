@@ -25,19 +25,26 @@ set( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 
 ################################################################################
-# Create variables used for exporting in SophusConfig.cmake
-set( Sophus_LIBRARIES "" )
-set( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
+# Dependencies
+find_package( Eigen3 REQUIRED )
 
 ################################################################################
+# Create variables used for exporting in SophusConfig.cmake
+set( Sophus_LIBRARIES "" )
+set( Sophus_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include ${EIGEN3_INCLUDE_DIR} )
+# We may not actually need these, so leaving them out for now.
+# set( Sophus_VERSION "...get from package.xml")
+# set( Sophus_DEFINITIONS "-Wall -Werror -Wno-unused-variable
+#                   -Wno-unused-but-set-variable -Wno-unknown-pragmas")
 
-find_package( Eigen3 REQUIRED )
-INCLUDE_DIRECTORIES( ${EIGEN3_INCLUDE_DIR} )
-SET( Sophus_INCLUDE_DIR ${Sophus_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} )
+################################################################################
+# Package
 
-SET (SOURCE_DIR "sophus")
+include_directories( ${EIGEN3_INCLUDE_DIR} )
 
-SET (TEMPLATES tests
+set (SOURCE_DIR "sophus")
+
+set (TEMPLATES tests
                so2
                se2
                so3
@@ -46,14 +53,14 @@ SET (TEMPLATES tests
                sim3
 )
 
-SET (SOURCES ${SOURCE_DIR}/sophus.hpp)
+set (SOURCES ${SOURCE_DIR}/sophus.hpp)
 
-FOREACH(templ ${TEMPLATES})
-  LIST(APPEND SOURCES ${SOURCE_DIR}/${templ}.hpp)
-ENDFOREACH(templ)
+foreach(templ ${TEMPLATES})
+  list(APPEND SOURCES ${SOURCE_DIR}/${templ}.hpp)
+endforeach(templ)
 
 
-INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
+include_directories(${INCLUDE_DIRS})
 
 # Added ${SOURCES} to executables so they show up in QtCreator (and possibly
 # other IDEs).
@@ -82,4 +89,5 @@ INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
         FILES_MATCHING PATTERN "*.hpp" )
 
 # Catkin Installation
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake DESTINATION share/sophus)
 install(FILES package.xml DESTINATION share/sophus)
