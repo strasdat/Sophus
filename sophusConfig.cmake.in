@@ -1,0 +1,22 @@
+################################################################################
+#
+# CMake module for specifying details of an installed sophus package.
+#
+# It defines the following variables:
+#
+#     sophus_INCLUDE_DIRS
+#
+################################################################################
+
+# http://www.cmake.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file
+
+# This is ideal so that it can be made relocatable, but we'd need to
+# handle the eigen in a relocatable way as well.
+#get_filename_component(sophus_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set( sophus_INCLUDE_DIRS  "@sophus_INCLUDE_DIRS@" )
+
+# Not using yet - see CMakeLists.txt
+# set( sophus_VERSION "")
+# set( sophus_DEFINITIONS "" )
+

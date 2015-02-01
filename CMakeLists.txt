@@ -1,4 +1,4 @@
-SET(PROJECT_NAME Sophus)
+SET(PROJECT_NAME sophus)
 
 PROJECT(${PROJECT_NAME})
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
@@ -29,12 +29,12 @@ list( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 find_package( Eigen3 REQUIRED )
 
 ################################################################################
-# Create variables used for exporting in SophusConfig.cmake
-set( Sophus_LIBRARIES "" )
-set( Sophus_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include ${EIGEN3_INCLUDE_DIR} )
+# Create variables used for exporting in sophusConfig.cmake
+set( sophus_LIBRARIES "" )
+set( sophus_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include ${EIGEN3_INCLUDE_DIR} )
 # We may not actually need these, so leaving them out for now.
-# set( Sophus_VERSION "...get from package.xml")
-# set( Sophus_DEFINITIONS "-Wall -Werror -Wno-unused-variable
+# set( sophus_VERSION "...get from package.xml")
+# set( sophus_DEFINITIONS "-Wall -Werror -Wno-unused-variable
 #                   -Wno-unused-but-set-variable -Wno-unknown-pragmas")
 
 ################################################################################
@@ -80,14 +80,14 @@ ADD_TEST(test_rxso3 test_rxso3)
 ADD_TEST(test_sim3 test_sim3)
 
 ################################################################################
-# Create the SophusConfig.cmake file for other cmake projects.
-CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY IMMEDIATE )
-export( PACKAGE Sophus )
+# Create the sophusConfig.cmake file for other cmake projects.
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/sophusConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/sophusConfig.cmake @ONLY IMMEDIATE )
+export( PACKAGE sophus )
 
 INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
         FILES_MATCHING PATTERN "*.hpp" )
 
 # Catkin Installation
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake DESTINATION share/sophus)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sophusConfig.cmake DESTINATION share/sophus)
 install(FILES package.xml DESTINATION share/sophus)
