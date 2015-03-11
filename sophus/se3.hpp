@@ -411,8 +411,7 @@ public:
     const SO3Group<Scalar> & so3
         = SO3Group<Scalar>::expAndTheta(omega, &theta);
 
-    const Matrix<Scalar,3,3> & Omega = SO3Group<Scalar>::hat(omega);
-    const Matrix<Scalar,3,3> & Omega_sq = Omega*Omega;
+    Matrix<Scalar,3,3> Omega = SO3Group<Scalar>::hat(omega);
     Matrix<Scalar,3,3> V;
 
     if(theta<SophusConstants<Scalar>::epsilon()) {
@@ -422,7 +421,7 @@ public:
       Scalar theta_sq = theta*theta;
       V = (Matrix<Scalar,3,3>::Identity()
            + (static_cast<Scalar>(1)-std::cos(theta))/(theta_sq)*Omega
-           + (theta-std::sin(theta))/(theta_sq*theta)*Omega_sq);
+           + (theta-std::sin(theta))/(theta_sq*theta)*(Omega*Omega));
     }
     return SE3Group<Scalar>(so3,V*a.template head<3>());
   }
