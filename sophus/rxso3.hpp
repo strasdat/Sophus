@@ -640,7 +640,7 @@ public:
    */
   inline explicit
   RxSO3Group(const Transformation & sR) {
-    setScaledRotationMatrix(sR);
+    this->setScaledRotationMatrix(sR);
   }
 
   /**
