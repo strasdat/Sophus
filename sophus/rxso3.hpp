@@ -21,7 +21,7 @@
 // IN THE SOFTWARE.
 
 #ifndef SOPHUS_RXSO3_HPP
-#define RXSO3_HPP
+#define SOPHUS_RXSO3_HPP
 
 #include "sophus.hpp"
 #include "so3.hpp"
@@ -640,7 +640,7 @@ public:
    */
   inline explicit
   RxSO3Group(const Transformation & sR) {
-    setScaledRotationMatrix(sR);
+    this->setScaledRotationMatrix(sR);
   }
 
   /**
