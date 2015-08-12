@@ -831,7 +831,7 @@ public:
    * No direct write access is given to ensure the quaternion stays normalized.
    */
   EIGEN_STRONG_INLINE
-  const ConstQuaternionReference unit_quaternion() const {
+  ConstQuaternionReference unit_quaternion() const {
     return unit_quaternion_;
   }
 
