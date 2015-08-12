@@ -129,7 +129,7 @@ public:
    * it holds that \f$ \widehat{Ad_A\cdot x} = A\widehat{x}A^{-1} \f$
    * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Adjoint Adj() const {
     const Matrix<Scalar,3,3> & R = so3().matrix();
     Adjoint res;
@@ -143,7 +143,7 @@ public:
   /**
    * \returns Affine3 transformation
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Transform<Scalar,3,Affine> affine3() const {
     return Transform<Scalar,3,Affine>(matrix());
   }
@@ -152,7 +152,8 @@ public:
    * \returns copy of instance casted to NewScalarType
    */
   template<typename NewScalarType>
-  inline SE3Group<NewScalarType> cast() const {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+  SE3Group<NewScalarType> cast() const {
     return
         SE3Group<NewScalarType>(so3().template cast<NewScalarType>(),
                                 translation().template cast<NewScalarType>() );
@@ -166,7 +167,7 @@ public:
    *
    * \see operator*=()
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3GroupBase<Derived>& fastMultiply(const SE3Group<Scalar>& other) {
     translation() += so3()*(other.translation());
     so3().fastMultiply(other.so3());
@@ -180,7 +181,7 @@ public:
    *
    * \see internalGenerator
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Matrix<Scalar,num_parameters,1> internalMultiplyByGenerator(int i) const
   {
     Matrix<Scalar,num_parameters,1> res;
@@ -200,7 +201,7 @@ public:
    *
    * \see internalMultiplyByGenerator
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Matrix<Scalar,num_parameters,DoF> internalJacobian() const
   {
     Matrix<Scalar,num_parameters,DoF> J;
@@ -214,7 +215,7 @@ public:
   /**
    * \returns Group inverse of instance
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3Group<Scalar> inverse() const {
      SO3Group<Scalar> invR = so3().inverse();
     return SE3Group<Scalar>(invR, invR*(translation()
@@ -229,7 +230,7 @@ public:
    *
    * \see  log().
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Tangent log() const {
     return log(*this);
   }
@@ -240,7 +241,7 @@ public:
    * It re-normalizes the SO3 element. This method only needs to
    * be called in conjunction with fastMultiply() or data() write access.
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   void normalize() {
     so3().normalize();
   }
@@ -248,7 +249,7 @@ public:
   /**
    * \returns 4x4 matrix representation of instance
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Transformation matrix() const {
     Transformation homogenious_matrix;
     homogenious_matrix.setIdentity();
@@ -262,7 +263,7 @@ public:
    *
    * It returns the three first row of matrix().
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Matrix<Scalar,3,4> matrix3x4() const {
     Matrix<Scalar,3,4> matrix;
     matrix.block(0,0,3,3) = rotationMatrix();
@@ -273,7 +274,8 @@ public:
   /**
    * \brief Assignment operator
    */
-  template<typename OtherDerived> inline
+  template<typename OtherDerived>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3GroupBase<Derived>& operator= (const SE3GroupBase<OtherDerived> & other) {
     so3() = other.so3();
     translation() = other.translation();
@@ -284,7 +286,7 @@ public:
    * \brief Group multiplication
    * \see operator*=()
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3Group<Scalar> operator*(const SE3Group<Scalar>& other) const {
     SE3Group<Scalar> result(*this);
     result *= other;
@@ -302,7 +304,7 @@ public:
    * in \f$ \mathbf{R}^3 \f$ by the SE3 transformation \f$R,t\f$
    * (=rotation matrix, translation vector): \f$ p' = R\cdot p + t \f$.
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Point operator*(const Point & p) const {
     return so3()*p + translation();
   }
@@ -313,7 +315,7 @@ public:
    * \see fastMultiply()
    * \see operator*()
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3GroupBase<Derived>& operator*=(const SE3Group<Scalar>& other) {
     fastMultiply(other);
     normalize();
@@ -327,7 +329,7 @@ public:
    * deprecated: use rotationMatrix() instead.
    */
   typedef Transformation M3_marcos_dont_like_commas;
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   EIGEN_DEPRECATED const M3_marcos_dont_like_commas rotation_matrix() const {
     return so3().matrix();
   }
@@ -335,7 +337,7 @@ public:
   /**
    * \returns Rotation matrix
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Matrix<Scalar,3,3> rotationMatrix() const {
     return so3().matrix();
   }
@@ -343,7 +345,7 @@ public:
   /**
    * \brief Mutator of SO3 group
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SO3Reference so3() {
     return static_cast<Derived*>(this)->so3();
   }
@@ -351,7 +353,7 @@ public:
   /**
    * \brief Accessor of SO3 group
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
     return static_cast<const Derived*>(this)->so3();
   }
@@ -362,7 +364,7 @@ public:
    * \param affine3
    * \pre   3x3 sub-matrix needs to be orthogonal with determinant of 1
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   void setAffine3(const Transform<Scalar,3,Affine> & affine3) {
     so3().setRotationMatrix(affine3.matrix().template topLeftCorner<3,3>());
     translation() = affine3.matrix().template topRightCorner<3,1>();
@@ -376,7 +378,7 @@ public:
    *
    * The quaternion is normalized to unit length.
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   void setQuaternion(const Quaternion<Scalar> & quat) {
     so3().setQuaternion(quat);
   }
@@ -387,7 +389,7 @@ public:
    * \param rotation_matrix a 3x3 rotation matrix
    * \pre   the 3x3 matrix should be orthogonal and have a determinant of 1
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   void setRotationMatrix
   (const Matrix<Scalar,3,3> & rotation_matrix) {
     so3().setQuaternion(Quaternion<Scalar>(rotation_matrix));
@@ -396,7 +398,7 @@ public:
   /**
    * \brief Mutator of translation vector
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   TranslationReference translation() {
     return static_cast<Derived*>(this)->translation();
   }
@@ -404,7 +406,7 @@ public:
   /**
    * \brief Accessor of translation vector
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
     return static_cast<const Derived*>(this)->translation();
   }
@@ -414,7 +416,7 @@ public:
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   typename internal::traits<Derived>::SO3Type::ConstQuaternionReference
   unit_quaternion() const {
     return so3().unit_quaternion();
@@ -433,7 +435,7 @@ public:
    *
    * \see lieBracket()
    */
-  inline static
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static
   Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     Adjoint res;
     res.setZero();
@@ -464,7 +466,7 @@ public:
    * \see hat()
    * \see log()
    */
-  inline static
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static
   SE3Group<Scalar> exp(const Tangent & a) {
     const Matrix<Scalar,3,1> & omega = a.template tail<3>();
 
@@ -534,7 +536,7 @@ public:
    * \f]
    * \see hat()
    */
-  inline static
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static
   Transformation generator(int i) {
     SOPHUS_ENSURE(i>=0 && i<=5, "i should be in range [0,5].");
     Tangent e;
@@ -549,7 +551,7 @@ public:
    * The internal representation is the semi-direct product of SU(2)
    * (unit quaternions) by the 3-dim. Euclidean space (translations).
    */
-  inline static
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static
   void internalGenerator(int i, Quaternion<Scalar> * internal_gen_q,
                          Matrix<Scalar,3,1> * internal_gen_t)
   {
@@ -585,7 +587,7 @@ public:
    * \see generator()
    * \see vee()
    */
-  inline static
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static
   Transformation hat(const Tangent & v) {
     Transformation Omega;
     Omega.setZero();
@@ -612,7 +614,7 @@ public:
    * \see hat()
    * \see vee()
    */
-  inline static
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static
   Tangent lieBracket(const Tangent & a,
                      const Tangent & b) {
     Matrix<Scalar,3,1> upsilon1 = a.template head<3>();
@@ -643,7 +645,7 @@ public:
    * \see exp()
    * \see vee()
    */
-  inline static
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static
   Tangent log(const SE3Group<Scalar> & se3) {
     Tangent upsilon_omega;
     Scalar theta;
@@ -682,7 +684,7 @@ public:
    *
    * \see hat()
    */
-  inline static
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static
   Tangent vee(const Transformation & Omega) {
     Tangent upsilon_omega;
     upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
@@ -732,7 +734,7 @@ public:
    *
    * Initialize Quaternion to identity rotation and translation to zero.
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3Group()
     : translation_( Matrix<Scalar,3,1>::Zero() )
   {
@@ -741,7 +743,8 @@ public:
   /**
    * \brief Copy constructor
    */
-  template<typename OtherDerived> inline
+  template<typename OtherDerived>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3Group(const SE3GroupBase<OtherDerived> & other)
     : so3_(other.so3()), translation_(other.translation()) {
   }
@@ -749,7 +752,8 @@ public:
   /**
    * \brief Constructor from SO3 and translation vector
    */
-  template<typename OtherDerived> inline
+  template<typename OtherDerived>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3Group(const SO3GroupBase<OtherDerived> & so3,
            const Point & translation)
     : so3_(so3), translation_(translation) {
@@ -760,7 +764,7 @@ public:
    *
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3Group(const Matrix<Scalar,3,3> & rotation_matrix,
            const Point & translation)
     : so3_(rotation_matrix), translation_(translation) {
@@ -771,7 +775,7 @@ public:
    *
    * \pre quaternion must not be zero
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SE3Group(const Quaternion<Scalar> & quaternion,
            const Point & translation)
     : so3_(quaternion), translation_(translation) {
@@ -782,7 +786,7 @@ public:
    *
    * \pre top-left 3x3 sub-matrix need to be orthogonal with determinant of 1
    */
-  inline explicit
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE explicit
   SE3Group(const Eigen::Matrix<Scalar,4,4>& T)
     : so3_(T.template topLeftCorner<3,3>()),
       translation_(T.template block<3,1>(0,3)) {
@@ -793,7 +797,7 @@ public:
    *
    * \pre top-left 3x3 sub-matrix need to be orthogonal with determinant of 1
    */
-  inline explicit
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE explicit
   SE3Group(const Eigen::Transform<Scalar,3,Affine>& affine3)
     : so3_(affine3.matrix().template topLeftCorner<3,3>()),
       translation_(affine3.matrix().template block<3,1>(0,3)) {
@@ -812,7 +816,7 @@ public:
    *
    * /see normalize()
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Scalar* data() {
     // so3_ and translation_ are layed out sequentially with no padding
     return so3_.data();
@@ -823,7 +827,7 @@ public:
    *
    * Const version of data().
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   const Scalar* data() const {
     // so3_ and translation_ are layed out sequentially with no padding
     return so3_.data();
@@ -832,7 +836,7 @@ public:
   /**
    * \brief Accessor of SO3
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SO3Reference so3() {
     return so3_;
   }
@@ -840,7 +844,7 @@ public:
   /**
    * \brief Mutator of SO3
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
     return so3_;
   }
@@ -848,7 +852,7 @@ public:
   /**
    * \brief Mutator of translation vector
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   TranslationReference translation() {
     return translation_;
   }
@@ -856,7 +860,7 @@ public:
   /**
    * \brief Accessor of translation vector
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
     return translation_;
   }
@@ -911,7 +915,7 @@ public:
   using Base::operator*=;
   using Base::operator*;
 
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Map(Scalar* coeffs)
     : so3_(coeffs),
       translation_(coeffs+Sophus::SO3Group<Scalar>::num_parameters) {
@@ -920,7 +924,7 @@ public:
   /**
    * \brief Mutator of SO3
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   SO3Reference so3() {
     return so3_;
   }
@@ -928,7 +932,7 @@ public:
   /**
    * \brief Accessor of SO3
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
     return so3_;
   }
@@ -936,7 +940,7 @@ public:
   /**
    * \brief Mutator of translation vector
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   TranslationReference translation() {
     return translation_;
   }
@@ -944,7 +948,7 @@ public:
   /**
    * \brief Accessor of translation vector
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
     return translation_;
   }
@@ -990,13 +994,13 @@ public:
   using Base::operator*=;
   using Base::operator*;
 
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Map(const Scalar* coeffs)
     : so3_(coeffs),
       translation_(coeffs+Sophus::SO3Group<Scalar>::num_parameters) {
   }
 
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Map(const Scalar* trans_coeffs, const Scalar* rot_coeffs)
     : translation_(trans_coeffs), so3_(rot_coeffs){
   }
@@ -1004,7 +1008,7 @@ public:
   /**
    * \brief Accessor of SO3
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   ConstSO3Reference so3() const {
     return so3_;
   }
@@ -1012,7 +1016,7 @@ public:
   /**
    * \brief Accessor of translation vector
    */
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   ConstTranslationReference translation() const {
     return translation_;
   }
