@@ -36,6 +36,9 @@ EIGEN_DEPRECATED typedef RxSO3Group<double> ScSO3;
 typedef RxSO3Group<double> RxSO3d; /**< double precision RxSO3 */
 typedef RxSO3Group<float> RxSO3f;  /**< single precision RxSO3 */
 }
+// Avoid name hiding
+template<typename _Scalar> inline _Scalar scalar_log(_Scalar val) { return log(val); }
+template<typename _Scalar> inline _Scalar scalar_exp(_Scalar val) { return exp(val); }
 
 ////////////////////////////////////////////////////////////////////////////
 // Eigen Traits (For querying derived types in CRTP hierarchy)
@@ -69,6 +72,7 @@ struct traits<Map<const Sophus::RxSO3Group<_Scalar>, _Options> >
 
 namespace Sophus {
 using namespace Eigen;
+using namespace std;
 
 /**
  * \brief RxSO3 base type - implements RxSO3 class but is storage agnostic
@@ -344,7 +348,7 @@ public:
         *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
     SOPHUS_ENSURE(squared_scale > static_cast<Scalar>(0),
                   "Scale factor should be positive");
-    Scalar scale = std::sqrt(squared_scale);
+    Scalar scale = sqrt(squared_scale);
     SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
                   "Scale factor should be positive");
     quaternion() = sR/scale;
@@ -409,7 +413,7 @@ public:
                                        Scalar * theta) {
     const Matrix<Scalar,3,1> & omega = a.template head<3>();
     Scalar sigma = a[3];
-    Scalar scale = std::exp(sigma);
+    Scalar scale = scalar_exp(sigma);
     Quaternion<Scalar> quat
         = SO3Group<Scalar>::expAndTheta(omega, theta).unit_quaternion();
     quat.coeffs() *= scale;
@@ -544,7 +548,7 @@ public:
                             Scalar * theta) {
     const Scalar & scale = other.quaternion().norm();
     Tangent omega_sigma;
-    omega_sigma[3] = std::log(scale);
+    omega_sigma[3] = scalar_log(scale);
     omega_sigma.template head<3>()
         = SO3Group<Scalar>::logAndTheta(SO3Group<Scalar>(other.quaternion()),
                                         theta);
