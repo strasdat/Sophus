@@ -392,10 +392,10 @@ public:
     Adjoint res;
     res.setZero();
     res.template topLeftCorner<3,3>()
-        = -SO3::hat(omega2)-sigma2*Matrix3d::Identity();
-    res.template block<3,3>(0,3) = -SO3::hat(upsilon2);
+        = -SO3Group<Scalar>::hat(omega2)-sigma2*Matrix3d::Identity();
+    res.template block<3,3>(0,3) = -SO3Group<Scalar>::hat(upsilon2);
     res.template topRightCorner<3,1>() = upsilon2;
-    res.template block<3,3>(3,3) = -SO3::hat(omega2);
+    res.template block<3,3>(3,3) = -SO3Group<Scalar>::hat(omega2);
     return res;
   }
 
