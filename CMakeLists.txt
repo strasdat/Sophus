@@ -29,15 +29,6 @@ list( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 find_package( Eigen3 REQUIRED )
 
 ################################################################################
-# Create variables used for exporting in sophusConfig.cmake
-set( sophus_LIBRARIES "" )
-set( sophus_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include ${EIGEN3_INCLUDE_DIR} )
-# We may not actually need these, so leaving them out for now.
-# set( sophus_VERSION "...get from package.xml")
-# set( sophus_DEFINITIONS "-Wall -Werror -Wno-unused-variable
-#                   -Wno-unused-but-set-variable -Wno-unknown-pragmas")
-
-################################################################################
 # Package
 
 include_directories( ${EIGEN3_INCLUDE_DIR} )
