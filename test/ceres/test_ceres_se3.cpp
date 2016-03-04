@@ -64,9 +64,9 @@ bool test(const Sophus::SE3d& T_w_targ, const Sophus::SE3d& T_w_init)
 
 int main(int, char**)
 {
-  typedef Sophus::SE3Group<double> SE3Type;
+    typedef Sophus::SE3Group<double> SE3Type;
     typedef Sophus::SO3Group<double> SO3Type;
-    typedef typename Sophus::SE3Group<double>::Point Point;
+    typedef SE3Type::Point Point;
 
     std::vector<SE3Type> se3_vec;
     se3_vec.push_back(SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)),
