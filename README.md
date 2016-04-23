@@ -6,6 +6,8 @@ C++ implementation of Lie Groups using Eigen.
 
 This is a maintained version of the original code developed by Hauke Strasdat. It is also spun off as a ros 3rd party package.
 
+The current release branch is *indigo*. Ros packages are available for indigo, jade & kinetic.
+
 ### Installation - CMake
 
 ```
