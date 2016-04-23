@@ -6,7 +6,7 @@ C++ implementation of Lie Groups using Eigen.
 
 This is a maintained version of the original code developed by Hauke Strasdat.
 
-The current release branch is *indigo*. Ros packages are available for indigo, jade & kinetic.
+The current release branch is *indigo*. Ros packages are available for indigo, jade & kinetic (built as a [3rdparty package](http://wiki.ros.org/bloom/Tutorials/ReleaseThirdParty)).
 
 ### Installation - CMake
 
