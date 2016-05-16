@@ -25,8 +25,7 @@
 
 #include <stdexcept>
 
-#include <Eigen/Eigen>
-#include <Eigen/Geometry>
+#include <Eigen/Core>
 
 #include "ensure.hpp"
 

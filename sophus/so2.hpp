@@ -27,6 +27,10 @@
 
 #include "sophus.hpp"
 
+// Include only the selective set of Eigen headers that we need.
+// This helps when using Sophus with unusual compilers, like nvcc.
+#include <Eigen/LU>
+
 ////////////////////////////////////////////////////////////////////////////
 // Forward Declarations / typedefs
 ////////////////////////////////////////////////////////////////////////////
