@@ -10,11 +10,8 @@
 
 # http://www.cmake.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file
 
-# This is ideal so that it can be made relocatable, but we'd need to
-# handle the eigen in a relocatable way as well.
-#get_filename_component(sophus_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-
-set( sophus_INCLUDE_DIRS  "@sophus_INCLUDE_DIRS@" )
+# Specify include path relative to this find module, so that the installed tree can be relocated.
+set( sophus_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../include;@EIGEN3_INCLUDE_DIR@")
 
 # Not using yet - see CMakeLists.txt
 # set( sophus_VERSION "")
