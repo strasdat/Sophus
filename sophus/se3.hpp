@@ -411,7 +411,7 @@ public:
     const SO3Group<Scalar> & so3
         = SO3Group<Scalar>::expAndTheta(omega, &theta);
 
-    Matrix<Scalar,3,3> Omega = SO3Group<Scalar>::hat(omega);
+    const Matrix<Scalar,3,3>& Omega = SO3Group<Scalar>::hat(omega);
     Matrix<Scalar,3,3> V;
 
     if(theta<SophusConstants<Scalar>::epsilon()) {
