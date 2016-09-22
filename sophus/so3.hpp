@@ -243,8 +243,7 @@ public:
   void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
 
-    SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
-                  "Quaternion should not be close to zero!");
+    SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(), "Quaternion should not be close to zero!");
     unit_quaternion_nonconst().coeffs() /= length;
   }
 
@@ -254,7 +253,7 @@ public:
    * For SO3, the matrix representation is an orthogonal matrix R with det(R)=1,
    * thus the so-called rotation matrix.
    */
-  inline
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Transformation matrix() const {
     return unit_quaternion().toRotationMatrix();
   }
@@ -612,7 +611,7 @@ public:
 private:
   // Mutator of unit_quaternion is private so users are hampered
   // from setting non-unit quaternions.
-  EIGEN_STRONG_INLINE
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   QuaternionReference unit_quaternion_nonconst() {
     return static_cast<Derived*>(this)->unit_quaternion_nonconst();
   }

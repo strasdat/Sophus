@@ -34,7 +34,7 @@ using namespace Eigen;
 
 template<typename Scalar>
 struct SophusConstants {
-  EIGEN_ALWAYS_INLINE static
+  EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE static
   Scalar epsilon() {
     return static_cast<Scalar>(1e-10);
   }
@@ -47,7 +47,7 @@ struct SophusConstants {
 
 template<>
 struct SophusConstants<float> {
-  EIGEN_ALWAYS_INLINE static
+  EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE static
   float epsilon() {
     return static_cast<float>(1e-5);
   }

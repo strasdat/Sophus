@@ -58,13 +58,17 @@ void ensureFailed(const char * function, const char * file, int line,
                            (description)))
 #else
 namespace Sophus {
+EIGEN_DEVICE_FUNC
 inline
 void defaultEnsure(const char * function, const char * file, int line,
                    const char * description) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               function, file, line);
   std::printf("Description: %s\n",  description);
+
+#ifndef __CUDACC__
   std::abort();
+#endif
 }
 }
 #  define SOPHUS_ENSURE(expr, description) ((expr)                             \
