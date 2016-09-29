@@ -344,8 +344,6 @@ class SO2GroupBase {
   /**
    * \brief Lie bracket
    *
-   * \param theta1 scalar representation of Lie algebra element
-   * \param theta2 scalar representation of Lie algebra element
    * \returns      zero
    *
    * It computes the bracket. For the Lie algebra so2, the Lie bracket is
@@ -355,7 +353,7 @@ class SO2GroupBase {
    * \see hat()
    * \see vee()
    */
-  inline static Tangent lieBracket(const Tangent& theta1, const Tangent&) {
+  inline static Tangent lieBracket(const Tangent&, const Tangent&) {
     return static_cast<Scalar>(0);
   }
 

@@ -16,7 +16,7 @@ IF( CMAKE_COMPILER_IS_GNUCXX )
    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-   ADD_DEFINITIONS("-Wall -Werror")
+   ADD_DEFINITIONS("-Wall -Werror -Wextra")
 ENDIF()
 
 ################################################################################
