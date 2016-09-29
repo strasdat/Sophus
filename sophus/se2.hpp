@@ -31,7 +31,7 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SE2Group;
-typedef SE2Group<double> SE2 EIGEN_DEPRECATED;
+EIGEN_DEPRECATED typedef SE2Group<double> SE2;
 typedef SE2Group<double> SE2d; /**< double precision SE2 */
 typedef SE2Group<float> SE2f;  /**< single precision SE2 */
 }
@@ -122,7 +122,7 @@ public:
    * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
    */
   inline
-  const Adjoint Adj() const {
+  Adjoint Adj() const {
     const Matrix<Scalar,2,2> & R = so2().matrix();
     Transformation res;
     res.setIdentity();
@@ -151,16 +151,17 @@ public:
    * \see operator*=()
    */
   inline
-  void fastMultiply(const SE2Group<Scalar>& other) {
+  SE2GroupBase<Derived>& fastMultiply(const SE2Group<Scalar>& other) {
     translation() += so2()*(other.translation());
     so2().fastMultiply(other.so2());
+    return *this;
   }
 
   /**
    * \returns Group inverse of instance
    */
   inline
-  const SE2Group<Scalar> inverse() const {
+  SE2Group<Scalar> inverse() const {
     const SO2Group<Scalar> invR = so2().inverse();
     return SE2Group<Scalar>(invR, invR*(translation()
                                         *static_cast<Scalar>(-1) ) );
@@ -175,7 +176,7 @@ public:
    * \see  log().
    */
   inline
-  const Tangent log() const {
+  Tangent log() const {
     return log(*this);
   }
 
@@ -194,7 +195,7 @@ public:
    * \returns 3x3 matrix representation of instance
    */
   inline
-  const Transformation matrix() const {
+  Transformation matrix() const {
     Transformation homogenious_matrix;
     homogenious_matrix.setIdentity();
     homogenious_matrix.block(0,0,2,2) = rotationMatrix();
@@ -208,7 +209,7 @@ public:
    * It returns the three first row of matrix().
    */
   inline
-  const Matrix<Scalar,2,3> matrix2x3() const {
+  Matrix<Scalar,2,3> matrix2x3() const {
     Matrix<Scalar,2,3> matrix;
     matrix.block(0,0,2,2) = rotationMatrix();
     matrix.col(2) = translation();
@@ -230,7 +231,7 @@ public:
    * \see operator*=()
    */
   inline
-  const SE2Group<Scalar> operator*(const SE2Group<Scalar>& other) const {
+  SE2Group<Scalar> operator*(const SE2Group<Scalar>& other) const {
     SE2Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -248,7 +249,7 @@ public:
    * (=rotation matrix, translation vector): \f$ p' = R\cdot p + t \f$.
    */
   inline
-  const Point operator*(const Point & p) const {
+  Point operator*(const Point & p) const {
     return so2()*p + translation();
   }
 
@@ -259,9 +260,10 @@ public:
    * \see operator*()
    */
   inline
-  void operator*=(const SE2Group<Scalar>& other) {
+  SE2GroupBase<Derived>& operator*=(const SE2Group<Scalar>& other) {
     fastMultiply(other);
     normalize();
+    return *this;
   }
 
 
@@ -269,7 +271,7 @@ public:
    * \returns Rotation matrix
    */
   inline
-  const Matrix<Scalar,2,2> rotationMatrix() const {
+  Matrix<Scalar,2,2> rotationMatrix() const {
     return so2().matrix();
   }
 
@@ -356,7 +358,7 @@ public:
    * \see lieBracket()
    */
   inline static
-  const Transformation d_lieBracketab_by_d_a(const Tangent & b) {
+  Transformation d_lieBracketab_by_d_a(const Tangent & b) {
     static const Scalar zero = static_cast<Scalar>(0);
     Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
     Scalar theta2 = b[2];
@@ -386,7 +388,7 @@ public:
    * \see log()
    */
   inline static
-  const SE2Group<Scalar> exp(const Tangent & a) {
+  SE2Group<Scalar> exp(const Tangent & a) {
     Scalar theta = a[2];
     const SO2Group<Scalar> & so2 = SO2Group<Scalar>::exp(theta);
     Scalar sin_theta_by_theta;
@@ -436,10 +438,8 @@ public:
    * \see hat()
    */
   inline static
-  const Transformation generator(int i) {
-    if (i<0 || i>2) {
-      throw SophusException("i is not in range [0,2].");
-    }
+  Transformation generator(int i) {
+    SOPHUS_ENSURE(i>=0 || i<=2, "i should be in range [0,2].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -461,7 +461,7 @@ public:
    * \see vee()
    */
   inline static
-  const Transformation hat(const Tangent & v) {
+  Transformation hat(const Tangent & v) {
     Transformation Omega;
     Omega.setZero();
     Omega.template topLeftCorner<2,2>() = SO2Group<Scalar>::hat(v[2]);
@@ -487,7 +487,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent lieBracket(const Tangent & a,
+  Tangent lieBracket(const Tangent & a,
                            const Tangent & b) {
     Matrix<Scalar,2,1> upsilon1 = a.template head<2>();
     Matrix<Scalar,2,1> upsilon2 = b.template head<2>();
@@ -516,7 +516,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent log(const SE2Group<Scalar> & other) {
+  Tangent log(const SE2Group<Scalar> & other) {
     Tangent upsilon_theta;
     const SO2Group<Scalar> & so2 = other.so2();
     Scalar theta = SO2Group<Scalar>::log(so2);
@@ -552,7 +552,7 @@ public:
    * \see hat()
    */
   inline static
-  const Tangent vee(const Transformation & Omega) {
+  Tangent vee(const Transformation & Omega) {
     Tangent upsilon_omega;
     upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
     upsilon_omega[2]
@@ -584,12 +584,6 @@ public:
   typedef const typename internal::traits<SE2Group<_Scalar,_Options> >
   ::SO2Type & ConstSO2Reference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -767,12 +761,6 @@ public:
   /** \brief SO2 const reference type */
   typedef const typename internal::traits<Map>::SO2Type & ConstSO2Reference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -851,12 +839,6 @@ public:
   /** \brief SO2 const reference type */
   typedef const typename internal::traits<Map>::SO2Type & ConstSO2Reference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */

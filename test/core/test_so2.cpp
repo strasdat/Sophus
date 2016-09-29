@@ -22,9 +22,14 @@
 
 
 #include <iostream>
-#include <vector>
 
-#include "so2.hpp"
+// These definitions are not standard C++ and are missing on some compilers.
+#if !defined(M_PI) || !defined(M_PI_2)
+#define M_PI      3.14159265358979323846264338328
+#define M_PI_2    1.57079632679489661923132169164
+#endif
+
+#include <sophus/so2.hpp>
 #include "tests.hpp"
 
 using namespace Sophus;
@@ -37,7 +42,7 @@ void tests() {
   typedef typename SO2Group<Scalar>::Point Point;
   typedef typename SO2Group<Scalar>::Tangent Tangent;
 
-  vector<SO2Type> so2_vec;
+  vector<SO2Type, Eigen::aligned_allocator<SO2Type> > so2_vec;
   so2_vec.push_back(SO2Type::exp(0.0));
   so2_vec.push_back(SO2Type::exp(0.2));
   so2_vec.push_back(SO2Type::exp(10.));
@@ -50,7 +55,7 @@ void tests() {
                     *SO2Type::exp(M_PI)
                     *SO2Type::exp(0.3));
 
-  vector<Tangent> tangent_vec;
+  vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec;
   tangent_vec.push_back(Tangent(0));
   tangent_vec.push_back(Tangent(1));
   tangent_vec.push_back(Tangent(M_PI_2));
@@ -58,7 +63,7 @@ void tests() {
   tangent_vec.push_back(Tangent(20));
   tangent_vec.push_back(Tangent(M_PI_2+0.0001));
 
-  vector<Point> point_vec;
+  vector<Point, Eigen::aligned_allocator<Point> > point_vec;
   point_vec.push_back(Point(1,2));
 
   Tests<SO2Type> tests;
@@ -67,19 +72,9 @@ void tests() {
   tests.setPoints(point_vec);
 
   tests.runAllTests();
-
-  cerr << "Exception test: ";
-  try {
-    SO2Type so2(0., 0.);
-  } catch(SophusException & e) {
-    cerr << "passed." << endl << endl;
-    return;
-  }
-  cerr << "failed!" << endl << endl;
-  exit(-1);
 }
 
-int main() {
+int test_so2() {
   cerr << "Test SO2" << endl << endl;
 
   cerr << "Double tests: " << endl;
@@ -88,4 +83,8 @@ int main() {
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
+}
+
+int main() {
+  return test_so2();
 }

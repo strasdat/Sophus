@@ -21,7 +21,7 @@
 // IN THE SOFTWARE.
 
 #ifndef SOPHUS_RXSO3_HPP
-#define RXSO3_HPP
+#define SOPHUS_RXSO3_HPP
 
 #include "sophus.hpp"
 #include "so3.hpp"
@@ -32,9 +32,13 @@
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class RxSO3Group;
-typedef RxSO3Group<double> ScSO3 EIGEN_DEPRECATED;
+EIGEN_DEPRECATED typedef RxSO3Group<double> ScSO3;
 typedef RxSO3Group<double> RxSO3d; /**< double precision RxSO3 */
 typedef RxSO3Group<float> RxSO3f;  /**< single precision RxSO3 */
+
+// Avoid name hiding of std::log / std::exp in RxSO3GroupBase
+template<typename _Scalar> inline _Scalar scalar_log(_Scalar val) { return log(val); }
+template<typename _Scalar> inline _Scalar scalar_exp(_Scalar val) { return exp(val); }
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -69,13 +73,7 @@ struct traits<Map<const Sophus::RxSO3Group<_Scalar>, _Options> >
 
 namespace Sophus {
 using namespace Eigen;
-
-class ScaleNotPositive : public SophusException {
-public:
-  ScaleNotPositive ()
-    : SophusException("Scale factor is not positive") {
-  }
-};
+using namespace std;
 
 /**
  * \brief RxSO3 base type - implements RxSO3 class but is storage agnostic
@@ -137,7 +135,7 @@ public:
    * \f$ A \f$.
    */
   inline
-  const Adjoint Adj() const {
+  Adjoint Adj() const {
     Adjoint res;
     res.setIdentity();
     res.template topLeftCorner<3,3>() = rotationMatrix();
@@ -183,8 +181,9 @@ public:
    * \see operator*=()
    */
   inline
-  void fastMultiply(const RxSO3Group<Scalar>& other) {
+  RxSO3GroupBase<Derived>& fastMultiply(const RxSO3Group<Scalar>& other) {
     quaternion() *= other.quaternion();
+    return *this;
   }
 
 
@@ -192,10 +191,9 @@ public:
    * \returns group inverse of instance
    */
   inline
-  const RxSO3Group<Scalar> inverse() const {
-    if(quaternion().squaredNorm() <= static_cast<Scalar>(0)) {
-      throw ScaleNotPositive();
-    }
+  RxSO3Group<Scalar> inverse() const {
+    SOPHUS_ENSURE(quaternion().squaredNorm() > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     return RxSO3Group<Scalar>(quaternion().inverse());
   }
 
@@ -207,7 +205,7 @@ public:
    * \see  log().
    */
   inline
-  const Tangent log() const {
+  Tangent log() const {
     return RxSO3Group<Scalar>::log(*this);
   }
 
@@ -219,7 +217,7 @@ public:
    * matrix \f$ R \f$  with scale s.
    */
   inline
-  const Transformation matrix() const {
+  Transformation matrix() const {
     //ToDO: implement this directly!
     Scalar scale = quaternion().norm();
     Quaternion<Scalar> norm_quad = quaternion();
@@ -242,7 +240,7 @@ public:
    * \see operator*=()
    */
   inline
-  const RxSO3Group<Scalar> operator*(const RxSO3Group<Scalar>& other) const {
+  RxSO3Group<Scalar> operator*(const RxSO3Group<Scalar>& other) const {
     RxSO3Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -260,7 +258,7 @@ public:
    * : \f$ p' = sR\cdot p \f$.
    */
   inline
-  const Point operator*(const Point & p) const {
+  Point operator*(const Point & p) const {
     //ToDO: implement this directly!
     Scalar scale = quaternion().norm();
     Quaternion<Scalar> norm_quad = quaternion();
@@ -273,8 +271,9 @@ public:
    * \see operator*=()
    */
   inline
-  void operator*=(const RxSO3Group<Scalar>& other) {
+  RxSO3GroupBase<Derived>& operator*=(const RxSO3Group<Scalar>& other) {
     quaternion() *= other.quaternion();
+    return *this;
   }
 
   /**
@@ -308,7 +307,7 @@ public:
    * \returns scale
    */
   EIGEN_STRONG_INLINE
-  const Scalar scale() const {
+  Scalar scale() const {
     return quaternion().norm();
   }
 
@@ -348,13 +347,11 @@ public:
     Scalar squared_scale
         = static_cast<Scalar>(1./3.)
         *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
-    if (squared_scale <= static_cast<Scalar>(0)) {
-      throw ScaleNotPositive();
-    }
-    Scalar scale = std::sqrt(squared_scale);
-    if (scale <= static_cast<Scalar>(0)) {
-      throw ScaleNotPositive();
-    }
+    SOPHUS_ENSURE(squared_scale > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
+    Scalar scale = sqrt(squared_scale);
+    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     quaternion() = sR/scale;
     quaternion().coeffs() *= scale;
   }
@@ -374,10 +371,10 @@ public:
    * \see lieBracket()
    */
   inline static
-  const Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
+  Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
     Adjoint res;
     res.setZero();
-    res.template topLeftCorner<3,3>() = -SO3::hat(b.template head<3>());
+    res.template topLeftCorner<3,3>() = -SO3Group<Scalar>::hat(b.template head<3>());
     return res;
   }
 
@@ -397,7 +394,7 @@ public:
    * \see log()
    */
   inline static
-  const RxSO3Group<Scalar> exp(const Tangent & a) {
+  RxSO3Group<Scalar> exp(const Tangent & a) {
     Scalar theta;
     return expAndTheta(a, &theta);
   }
@@ -413,11 +410,11 @@ public:
    * \see exp() for details
    */
   inline static
-  const RxSO3Group<Scalar> expAndTheta(const Tangent & a,
+  RxSO3Group<Scalar> expAndTheta(const Tangent & a,
                                        Scalar * theta) {
     const Matrix<Scalar,3,1> & omega = a.template head<3>();
     Scalar sigma = a[3];
-    Scalar scale = std::exp(sigma);
+    Scalar scale = scalar_exp(sigma);
     Quaternion<Scalar> quat
         = SO3Group<Scalar>::expAndTheta(omega, theta).unit_quaternion();
     quat.coeffs() *= scale;
@@ -456,10 +453,8 @@ public:
    * \see hat()
    */
   inline static
-  const Transformation generator(int i) {
-    if (i<0 || i>3) {
-      throw SophusException("i is not in range [0,3].");
-    }
+  Transformation generator(int i) {
+    SOPHUS_ENSURE(i>=0 && i<=3, "i should be in range [0,3].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -481,7 +476,7 @@ public:
    * \see vee()
    */
   inline static
-  const Transformation hat(const Tangent & a) {
+  Transformation hat(const Tangent & a) {
     Transformation A;
     A <<  a(3), -a(2),  a(1)
         , a(2),  a(3), -a(0)
@@ -507,7 +502,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent lieBracket(const Tangent & a,
+  Tangent lieBracket(const Tangent & a,
                            const Tangent & b) {
     const Matrix<Scalar,3,1> & omega1 = a.template head<3>();
     const Matrix<Scalar,3,1> & omega2 = b.template head<3>();
@@ -534,7 +529,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent log(const RxSO3Group<Scalar> & other) {
+  Tangent log(const RxSO3Group<Scalar> & other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
@@ -550,11 +545,11 @@ public:
    * \see log() for details
    */
   inline static
-  const Tangent logAndTheta(const RxSO3Group<Scalar> & other,
+  Tangent logAndTheta(const RxSO3Group<Scalar> & other,
                             Scalar * theta) {
     const Scalar & scale = other.quaternion().norm();
     Tangent omega_sigma;
-    omega_sigma[3] = std::log(scale);
+    omega_sigma[3] = scalar_log(scale);
     omega_sigma.template head<3>()
         = SO3Group<Scalar>::logAndTheta(SO3Group<Scalar>(other.quaternion()),
                                         theta);
@@ -572,7 +567,7 @@ public:
    * \see hat()
    */
   inline static
-  const Tangent vee(const Transformation & Omega) {
+  Tangent vee(const Transformation & Omega) {
     return Tangent( static_cast<Scalar>(0.5) * (Omega(2,1) - Omega(1,2)),
                     static_cast<Scalar>(0.5) * (Omega(0,2) - Omega(2,0)),
                     static_cast<Scalar>(0.5) * (Omega(1,0) - Omega(0,1)),
@@ -598,12 +593,6 @@ public:
   typedef const typename internal::traits<SO3Group<_Scalar,_Options> >
   ::QuaternionType & ConstQuaternionReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -652,9 +641,8 @@ public:
   inline
   RxSO3Group(const Scalar & scale, const Transformation & R)
     : quaternion_(R) {
-    if(scale <= static_cast<Scalar>(0)) {
-      throw ScaleNotPositive();
-    }
+    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -667,9 +655,8 @@ public:
   inline
   RxSO3Group(const Scalar & scale, const SO3Group<Scalar> & so3)
     : quaternion_(so3.unit_quaternion()) {
-    if (scale <= static_cast<Scalar>(0)) {
-      throw ScaleNotPositive();
-    }
+    SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
+                  "Scale factor should be positive");
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
   }
@@ -681,9 +668,9 @@ public:
    */
   inline explicit
   RxSO3Group(const Quaternion<Scalar> & quat) : quaternion_(quat) {
-    if(quaternion_.squaredNorm() <= SophusConstants<Scalar>::epsilon()) {
-      throw ScaleNotPositive();
-    }
+    SOPHUS_ENSURE(quaternion_.squaredNorm()
+                  > SophusConstants<Scalar>::epsilon(),
+                  "Scale factor should be positive");
   }
 
   /**
@@ -733,12 +720,6 @@ public:
   typedef const typename internal::traits<Map>::QuaternionType &
   ConstQuaternionReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -796,12 +777,6 @@ public:
   typedef const typename internal::traits<Map>::QuaternionType &
   ConstQuaternionReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */

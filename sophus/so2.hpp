@@ -27,13 +27,17 @@
 
 #include "sophus.hpp"
 
+// Include only the selective set of Eigen headers that we need.
+// This helps when using Sophus with unusual compilers, like nvcc.
+#include <Eigen/LU>
+
 ////////////////////////////////////////////////////////////////////////////
 // Forward Declarations / typedefs
 ////////////////////////////////////////////////////////////////////////////
 
 namespace Sophus {
 template<typename _Scalar, int _Options=0> class SO2Group;
-typedef SO2Group<double> SO2 EIGEN_DEPRECATED;
+EIGEN_DEPRECATED typedef SO2Group<double> SO2;
 typedef SO2Group<double> SO2d; /**< double precision SO2 */
 typedef SO2Group<float> SO2f;  /**< single precision SO2 */
 }
@@ -120,7 +124,7 @@ public:
    * For SO2, it simply returns 1.
    */
   inline
-  const Adjoint Adj() const {
+  Adjoint Adj() const {
     return 1;
   }
 
@@ -165,7 +169,7 @@ public:
    * \see operator*=()
    */
   inline
-  void fastMultiply(const SO2Group<Scalar>& other) {
+  SO2GroupBase<Derived>& fastMultiply(const SO2Group<Scalar>& other) {
     Scalar lhs_real = unit_complex().x();
     Scalar lhs_imag = unit_complex().y();
     const Scalar & rhs_real = other.unit_complex().x();
@@ -173,13 +177,14 @@ public:
     // complex multiplication
     unit_complex_nonconst().x() = lhs_real*rhs_real - lhs_imag*rhs_imag;
     unit_complex_nonconst().y() = lhs_real*rhs_imag + lhs_imag*rhs_real;
+    return *this;
   }
 
   /**
    * \returns group inverse of instance
    */
   inline
-  const SO2Group<Scalar> inverse() const {
+  SO2Group<Scalar> inverse() const {
     return SO2Group<Scalar>(unit_complex().x(), -unit_complex().y());
   }
 
@@ -191,7 +196,7 @@ public:
    * \see  log().
    */
   inline
-  const Scalar log() const {
+  Scalar log() const {
     return SO2Group<Scalar>::log(*this);
   }
 
@@ -206,9 +211,8 @@ public:
     Scalar length =
         std::sqrt(unit_complex().x()*unit_complex().x()
              + unit_complex().y()*unit_complex().y());
-    if(length < SophusConstants<Scalar>::epsilon()) {
-      throw SophusException("Complex number is (near) zero!");
-    }
+    SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
+                  "Complex number should not be close to zero!");
     unit_complex_nonconst().x() /= length;
     unit_complex_nonconst().y() /= length;
   }
@@ -220,7 +224,7 @@ public:
    * thus the so-called rotation matrix.
    */
   inline
-  const Transformation matrix() const {
+  Transformation matrix() const {
     const Scalar & real = unit_complex().x();
     const Scalar & imag = unit_complex().y();
     Transformation R;
@@ -243,7 +247,7 @@ public:
    * \see operator*=()
    */
   inline
-  const SO2Group<Scalar> operator*(const SO2Group<Scalar>& other) const {
+  SO2Group<Scalar> operator*(const SO2Group<Scalar>& other) const {
     SO2Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -259,7 +263,7 @@ public:
    * SO2 transformation \f$R\f$ (=rotation matrix): \f$ p' = R\cdot p \f$.
    */
   inline
-  const Point operator*(const Point & p) const {
+  Point operator*(const Point & p) const {
     const Scalar & real = unit_complex().x();
     const Scalar & imag = unit_complex().y();
     return Point(real*p[0] - imag*p[1], imag*p[0] + real*p[1]);
@@ -272,9 +276,10 @@ public:
    * \see operator*()
    */
   inline
-  void operator*=(const SO2Group<Scalar>& other) {
+  SO2GroupBase<Derived> operator*=(const SO2Group<Scalar>& other) {
     fastMultiply(other);
     normalize();
+    return *this;
   }
 
   /**
@@ -287,7 +292,7 @@ public:
    */
   inline
   void setComplex(const Point & complex) {
-    unit_complex() = complex;
+    unit_complex_nonconst() = complex;
     normalize();
   }
 
@@ -319,7 +324,7 @@ public:
    * \see log()
    */
   inline static
-  const SO2Group<Scalar> exp(const Tangent & theta) {
+  SO2Group<Scalar> exp(const Tangent & theta) {
     return SO2Group<Scalar>(std::cos(theta), std::sin(theta));
   }
 
@@ -336,7 +341,7 @@ public:
    * \see hat()
    */
   inline static
-  const Transformation generator() {
+  Transformation generator() {
     return hat(1);
   }
 
@@ -355,7 +360,7 @@ public:
    * \see vee()
    */
   inline static
-  const Transformation hat(const Tangent & theta) {
+  Transformation hat(const Tangent & theta) {
     Transformation Omega;
     Omega <<  static_cast<Scalar>(0), -theta
         ,  theta,     static_cast<Scalar>(0);
@@ -377,7 +382,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent lieBracket(const Tangent & theta1,
+  Tangent lieBracket(const Tangent & theta1,
                            const Tangent & theta2) {
     return static_cast<Scalar>(0);
   }
@@ -398,7 +403,7 @@ public:
    * \see vee()
    */
   inline static
-  const Tangent log(const SO2Group<Scalar> & other) {
+  Tangent log(const SO2Group<Scalar> & other) {
     // todo: general implementation for Scalar not being float or double.
     return atan2(other.unit_complex_.y(), other.unit_complex().x());
   }
@@ -415,7 +420,7 @@ public:
    * \see hat()
    */
   inline static
-  const Tangent vee(const Transformation & Omega) {
+   Tangent vee(const Transformation & Omega) {
     return static_cast<Scalar>(0.5)*(Omega(1,0) - Omega(0,1));
   }
 
@@ -446,12 +451,6 @@ public:
   typedef const typename internal::traits<SO2Group<_Scalar,_Options> >
   ::ComplexType & ConstComplexReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -492,10 +491,9 @@ public:
   SO2Group(const Transformation & R)
     : unit_complex_(static_cast<Scalar>(0.5)*(R(0,0)+R(1,1)),
                     static_cast<Scalar>(0.5)*(R(1,0)-R(0,1))) {
-    if (std::abs(R.determinant()-static_cast<Scalar>(1))
-        > SophusConstants<Scalar>::epsilon()) {
-      throw SophusException("det(R) is not near 1.");
-    }
+    SOPHUS_ENSURE(std::abs(R.determinant()-static_cast<Scalar>(1))
+                  <= SophusConstants<Scalar>::epsilon(),
+                  "det(R) should be (close to) 1.");
   }
 
   /**
@@ -588,12 +586,6 @@ public:
   typedef const typename internal::traits<Map>::ComplexType &
   ConstComplexReference;
 
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */
@@ -656,13 +648,6 @@ public:
   typedef const typename internal::traits<Map>::ComplexType &
   ConstComplexReference;
 
-
-  /** \brief degree of freedom of group */
-  static const int DoF = Base::DoF;
-  /** \brief number of internal parameters used */
-  static const int num_parameters = Base::num_parameters;
-  /** \brief group transformations are NxN matrices */
-  static const int N = Base::N;
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
   /** \brief point type */

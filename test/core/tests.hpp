@@ -1,15 +1,45 @@
 #ifndef SOPUHS_TESTS_HPP
 #define SOPUHS_TESTS_HPP
 
-#include <vector>
+#include <Eigen/StdVector>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include "sophus.hpp"
+#include <sophus/sophus.hpp>
+
+// These definitions are not standard C++ and are missing on some compilers.
+#if !defined(M_PI) || !defined(M_PI_2)
+#define M_PI      3.14159265358979323846264338328
+#define M_PI_2    1.57079632679489661923132169164
+#endif
 
 namespace Sophus {
 
 using namespace std;
 using namespace Eigen;
+
+//fight the good fight
+#ifdef _MSC_VER
+#define isnan(x) _isnan(x)
+#else
+using std::isnan;
+#endif
+/* without, you may get these errors:
+tests.hpp:170:9: error: call of overloaded ‘isnan(Sophus::Tests<Sophus::RxSO3Group<double> >::Scalar&)’ is ambiguous
+tests.hpp:170:9: note: candidates are:
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:236:12: note: int isnan(double)
+/usr/include/c++/4.6/cmath:552:3: note: bool std::isnan(long double)
+/usr/include/c++/4.6/cmath:548:3: note: bool std::isnan(double)
+/usr/include/c++/4.6/cmath:544:3: note: bool std::isnan(float)
+*/
+
+inline void ensureFailed(const char * function, const char * file, int line,
+                  const char * description) {
+  std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
+              file, function, line);
+  std::printf("Description: %s\n",  description);
+  std::abort();
+}
+
 
 template <class LieGroup>
 class Tests {
@@ -23,20 +53,20 @@ public:
   static const int N = LieGroup::N;
   static const int DoF = LieGroup::DoF;
 
-  const Scalar SMALL_EPS;
+  Scalar SMALL_EPS;
 
   Tests() : SMALL_EPS(SophusConstants<Scalar>::epsilon()) {
   }
 
-  void setGroupElements(const vector<LieGroup> & group_vec) {
+  void setGroupElements(const vector<LieGroup, Eigen::aligned_allocator<LieGroup> > & group_vec) {
     group_vec_  = group_vec;
   }
 
-  void setTangentVectors(const vector<Tangent> & tangent_vec) {
+  void setTangentVectors(const vector<Tangent, Eigen::aligned_allocator<Tangent> > & tangent_vec) {
     tangent_vec_  = tangent_vec;
   }
 
-  void setPoints(const vector<Point> & point_vec) {
+  void setPoints(const vector<Point, Eigen::aligned_allocator<Point> > & point_vec) {
     point_vec_  = point_vec;
   }
 
@@ -143,7 +173,7 @@ public:
 
         Tangent res2 = LieGroup::vee(hati*hatj-hatj*hati);
         Tangent resDiff = res1-res2;
-        if (norm(resDiff)>SMALL_EPS) {
+        if (isnan(norm(resDiff)) || norm(resDiff)>SMALL_EPS) {
           cerr << "Lie Bracket Test" << endl;
           cerr  << "Test case: " << i << ", " <<j<< endl;
           cerr << resDiff << endl;
@@ -184,7 +214,7 @@ public:
     for (size_t i=0; i<tangent_vec_.size(); ++i) {
       Tangent resDiff
           = tangent_vec_[i] - LieGroup::vee(LieGroup::hat(tangent_vec_[i]));
-      if (norm(resDiff)>SMALL_EPS) {
+      if (isnan(norm(resDiff)) || norm(resDiff)>SMALL_EPS) {
         cerr << "Hat-vee Test" << endl;
         cerr  << "Test case: " << i <<  endl;
         cerr << resDiff << endl;
@@ -256,9 +286,9 @@ private:
     return T.norm();
   }
 
-  std::vector<LieGroup> group_vec_;
-  std::vector<Tangent> tangent_vec_;
-  std::vector<Point> point_vec_;
+  std::vector<LieGroup, Eigen::aligned_allocator<LieGroup> > group_vec_;
+  std::vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec_;
+  std::vector<Point, Eigen::aligned_allocator<Point> > point_vec_;
 };
 }
 #endif // TESTS_HPP

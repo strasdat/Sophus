@@ -1,44 +1,41 @@
 SET(PROJECT_NAME Sophus)
 
 PROJECT(${PROJECT_NAME})
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-SET (CMAKE_VERBOSE_MAKEFILE ON)
+SET( CMAKE_VERBOSE_MAKEFILE ON)
 
+################################################################################
 # Release by default
 # Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"
 IF( NOT CMAKE_BUILD_TYPE )
    SET( CMAKE_BUILD_TYPE Release )
 ENDIF()
 
-IF (CMAKE_COMPILER_IS_GNUCXX )
+IF( CMAKE_COMPILER_IS_GNUCXX )
    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
-   SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG ")
+   SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-  ADD_DEFINITIONS("-Wall -Werror -Wno-unused-variable
-                   -Wno-unused-but-set-variable -Wno-unknown-pragmas ")
+   ADD_DEFINITIONS("-Wall -Werror")
 ENDIF()
 
 ################################################################################
 # Add local path for finding packages, set the local version first
-set( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" )
-list( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
+SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 ################################################################################
-# Create variables used for exporting in SophusConfig.cmake
-set( Sophus_LIBRARIES "" )
-set( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
+# Create variables used for exporting (from build tree) in SophusConfig.cmake
+SET( Sophus_LIBRARIES "" )
+SET( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
 
 ################################################################################
+FIND_PACKAGE( Eigen3 REQUIRED )
+LIST( APPEND Sophus_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR} )
 
-find_package( Eigen3 REQUIRED )
-INCLUDE_DIRECTORIES( ${EIGEN3_INCLUDE_DIR} )
-SET( Sophus_INCLUDE_DIR ${Sophus_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} )
+################################################################################
+SET( SOURCE_DIR "sophus")
 
-SET (SOURCE_DIR "sophus")
-
-SET (TEMPLATES tests
-               so2
+SET( TEMPLATES so2
                se2
                so3
                se3
@@ -46,37 +43,62 @@ SET (TEMPLATES tests
                sim3
 )
 
-SET (SOURCES ${SOURCE_DIR}/sophus.hpp)
+SET( SOURCES ${SOURCE_DIR}/sophus.hpp ${SOURCE_DIR}/ensure.hpp
+             ${SOURCE_DIR}/example_ensure_handler.cpp )
 
 FOREACH(templ ${TEMPLATES})
   LIST(APPEND SOURCES ${SOURCE_DIR}/${templ}.hpp)
 ENDFOREACH(templ)
 
-
-INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
-
-# Added ${SOURCES} to executables so they show up in QtCreator (and possibly
-# other IDEs).
-ADD_EXECUTABLE(test_so2 sophus/test_so2.cpp ${SOURCES})
-ADD_EXECUTABLE(test_se2 sophus/test_se2.cpp ${SOURCES})
-ADD_EXECUTABLE(test_so3 sophus/test_so3.cpp ${SOURCES})
-ADD_EXECUTABLE(test_se3 sophus/test_se3.cpp ${SOURCES})
-ADD_EXECUTABLE(test_rxso3 sophus/test_rxso3.cpp ${SOURCES})
-ADD_EXECUTABLE(test_sim3 sophus/test_sim3.cpp ${SOURCES})
-ENABLE_TESTING()
-
-ADD_TEST(test_so2 test_so2)
-ADD_TEST(test_se2 test_se2)
-ADD_TEST(test_so3 test_so3)
-ADD_TEST(test_se3 test_se3)
-ADD_TEST(test_rxso3 test_rxso3)
-ADD_TEST(test_sim3 test_sim3)
+# Add sources as custom target so that they are shown in IDE's
+ADD_CUSTOM_TARGET( libsophus SOURCES ${SOURCES} )
 
 ################################################################################
-# Create the SophusConfig.cmake file for other cmake projects.
-CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY IMMEDIATE )
-export( PACKAGE Sophus )
+# Create 'test' make target using ctest
+option(BUILD_TESTS "Build tests." ON)
+if(BUILD_TESTS)
+    ENABLE_TESTING()
+    ADD_SUBDIRECTORY( test )
+endif()
 
+#######################################################
+## Generate Doxygen documentation target (make doc)
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc )
+    add_custom_target(doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+endif()
+
+################################################################################
+# Export package for use from the build tree
+EXPORT( PACKAGE Sophus )
+
+# Create the SophusConfig.cmake file for other cmake projects.
+# ... for the build tree
+SET( CONFIG_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+SET( CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR})
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY )
+# ... for the install tree
+SET( CMAKECONFIG_INSTALL_DIR lib/cmake/Sophus )
+FILE( RELATIVE_PATH REL_INCLUDE_DIR
+    "${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR}"
+    "${CMAKE_INSTALL_PREFIX}/include" )
+
+SET( Sophus_INCLUDE_DIR "\${Sophus_CMAKE_DIR}/${REL_INCLUDE_DIR}" )
+SET( CONFIG_SOURCE_DIR )
+SET( CONFIG_DIR )
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SophusConfig.cmake @ONLY )
+
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SophusConfig.cmake"
+        DESTINATION ${CMAKECONFIG_INSTALL_DIR} )
+
+# Install headers
 INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
         FILES_MATCHING PATTERN "*.hpp" )
