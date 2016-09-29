@@ -77,8 +77,6 @@ struct traits<Map<const Sophus::SO2Group<_Scalar>, _Options> >
 }
 
 namespace Sophus {
-using namespace Eigen;
-
 /**
  * \brief SO2 base type - implements SO2 class but is storage agnostic
  *
@@ -88,12 +86,13 @@ template <typename Derived>
 class SO2GroupBase {
  public:
   /** \brief scalar type */
-  typedef typename internal::traits<Derived>::Scalar Scalar;
+  using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
   /** \brief complex number reference type */
-  typedef typename internal::traits<Derived>::ComplexType& ComplexReference;
+  using ComplexReference =
+      typename Eigen::internal::traits<Derived>::ComplexType&;
   /** \brief complex number const reference type */
-  typedef const typename internal::traits<Derived>::ComplexType&
-      ConstComplexReference;
+  using ConstComplexReference =
+      const typename Eigen::internal::traits<Derived>::ComplexType&;
 
   /** \brief degree of freedom of group
    *         (one for in-plane rotation) */
@@ -104,13 +103,13 @@ class SO2GroupBase {
   /** \brief group transformations are NxN matrices */
   static const int N = 2;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar, N, N> Transformation;
+  using Transformation = Eigen::Matrix<Scalar, N, N>;
   /** \brief point type */
-  typedef Matrix<Scalar, 2, 1> Point;
+  using Point = Eigen::Matrix<Scalar, 2, 1>;
   /** \brief tangent vector type */
-  typedef Scalar Tangent;
+  using Tangent = Scalar;
   /** \brief adjoint transformation type */
-  typedef Scalar Adjoint;
+  using Adjoint = Scalar;
 
   /**
    * \brief Adjoint transformation
@@ -410,23 +409,23 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
 
  public:
   /** \brief scalar type */
-  typedef
-      typename internal::traits<SO2Group<_Scalar, _Options> >::Scalar Scalar;
+  using Scalar =
+      typename Eigen::internal::traits<SO2Group<_Scalar, _Options> >::Scalar;
   /** \brief complex number reference type */
-  typedef typename internal::traits<SO2Group<_Scalar, _Options> >::ComplexType&
-      ComplexReference;
+  using ComplexReference = typename Eigen::internal::traits<
+      SO2Group<_Scalar, _Options> >::ComplexType&;
   /** \brief complex number const reference type */
-  typedef const typename internal::traits<
-      SO2Group<_Scalar, _Options> >::ComplexType& ConstComplexReference;
+  using ConstComplexReference = const typename Eigen::internal::traits<
+      SO2Group<_Scalar, _Options> >::ComplexType&;
 
   /** \brief group transfomation type */
-  typedef typename Base::Transformation Transformation;
+  using Transformation = typename Base::Transformation;
   /** \brief point type */
-  typedef typename Base::Point Point;
+  using Point = typename Base::Point;
   /** \brief tangent vector type */
-  typedef typename Base::Tangent Tangent;
+  using Tangent = typename Base::Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::Adjoint Adjoint;
+  using Adjoint = typename Base::Adjoint;
 
   // base is friend so unit_complex_nonconst can be accessed from base
   friend class SO2GroupBase<SO2Group<_Scalar, _Options> >;
@@ -476,7 +475,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
    *
    * \pre vector must not be zero
    */
-  inline explicit SO2Group(const Matrix<Scalar, 2, 1>& complex)
+  inline explicit SO2Group(const Eigen::Matrix<Scalar, 2, 1>& complex)
       : unit_complex_(complex) {
     Base::normalize();
   }
@@ -517,7 +516,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
     return (real * real + imag * imag < SophusConstants<Scalar>::epsilon());
   }
 
-  Matrix<Scalar, 2, 1> unit_complex_;
+  Eigen::Matrix<Scalar, 2, 1> unit_complex_;
 };
 
 }  // end namespace
@@ -536,21 +535,21 @@ class Map<Sophus::SO2Group<_Scalar>, _Options>
 
  public:
   /** \brief scalar type */
-  typedef typename internal::traits<Map>::Scalar Scalar;
+  using Scalar = typename Eigen::internal::traits<Map>::Scalar;
   /** \brief complex number reference type */
-  typedef typename internal::traits<Map>::ComplexType& ComplexReference;
+  using ComplexReference = typename Eigen::internal::traits<Map>::ComplexType&;
   /** \brief complex number const reference type */
-  typedef const typename internal::traits<Map>::ComplexType&
-      ConstComplexReference;
+  using ConstComplexReference =
+      const typename Eigen::internal::traits<Map>::ComplexType&;
 
   /** \brief group transfomation type */
-  typedef typename Base::Transformation Transformation;
+  using Transformation = typename Base::Transformation;
   /** \brief point type */
-  typedef typename Base::Point Point;
+  using Point = typename Base::Point;
   /** \brief tangent vector type */
-  typedef typename Base::Tangent Tangent;
+  using Tangent = typename Base::Tangent;
   /** \brief adjoint transformation type */
-  typedef typename Base::Adjoint Adjoint;
+  using Adjoint = typename Base::Adjoint;
 
   // base is friend so unit_complex_nonconst can be accessed from base
   friend class Sophus::SO2GroupBase<Map<Sophus::SO2Group<_Scalar>, _Options> >;

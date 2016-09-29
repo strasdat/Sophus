@@ -27,16 +27,16 @@
 #include <sophus/sim3.hpp>
 #include "tests.hpp"
 
-using namespace Sophus;
-using namespace std;
+namespace Sophus {
 
 template <class Scalar>
 void tests() {
+  using std::vector;
   typedef Sim3Group<Scalar> Sim3Type;
   typedef RxSO3Group<Scalar> RxSO3Type;
   typedef typename Sim3Group<Scalar>::Point Point;
   typedef typename Sim3Group<Scalar>::Tangent Tangent;
-  typedef Matrix<Scalar, 4, 1> Vector4Type;
+  typedef Eigen::Matrix<Scalar, 4, 1> Vector4Type;
 
   vector<Sim3Type, Eigen::aligned_allocator<Sim3Type> > sim3_vec;
   sim3_vec.push_back(
@@ -93,14 +93,16 @@ void tests() {
 }
 
 int test_sim3() {
-  cerr << "Test Sim3" << endl << endl;
+  using std::cerr;
+  using std::endl;
 
+  cerr << "Test Sim3" << endl << endl;
   cerr << "Double tests: " << endl;
   tests<double>();
-
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
 }
+}  // namespace Sophus
 
-int main() { return test_sim3(); }
+int main() { return Sophus::test_sim3(); }

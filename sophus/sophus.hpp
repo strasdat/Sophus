@@ -30,7 +30,6 @@
 #include "ensure.hpp"
 
 namespace Sophus {
-using namespace Eigen;
 
 template <typename Scalar>
 struct SophusConstants {

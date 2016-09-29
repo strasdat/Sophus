@@ -54,27 +54,26 @@ namespace internal {
 template <typename _Scalar, int _Options>
 struct traits<Sophus::SO3Group<_Scalar, _Options> > {
   typedef _Scalar Scalar;
-  typedef Quaternion<Scalar> QuaternionType;
+  typedef Eigen::Quaternion<Scalar> QuaternionType;
 };
 
 template <typename _Scalar, int _Options>
 struct traits<Map<Sophus::SO3Group<_Scalar>, _Options> >
     : traits<Sophus::SO3Group<_Scalar, _Options> > {
   typedef _Scalar Scalar;
-  typedef Map<Quaternion<Scalar>, _Options> QuaternionType;
+  typedef Map<Eigen::Quaternion<Scalar>, _Options> QuaternionType;
 };
 
 template <typename _Scalar, int _Options>
 struct traits<Map<const Sophus::SO3Group<_Scalar>, _Options> >
     : traits<const Sophus::SO3Group<_Scalar, _Options> > {
   typedef _Scalar Scalar;
-  typedef Map<const Quaternion<Scalar>, _Options> QuaternionType;
+  typedef Map<const Eigen::Quaternion<Scalar>, _Options> QuaternionType;
 };
 }
 }
 
 namespace Sophus {
-using namespace Eigen;
 using std::sqrt;
 using std::abs;
 using std::cos;
@@ -89,13 +88,13 @@ template <typename Derived>
 class SO3GroupBase {
  public:
   /** \brief scalar type */
-  typedef typename internal::traits<Derived>::Scalar Scalar;
+  using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
   /** \brief quaternion reference type  */
-  typedef
-      typename internal::traits<Derived>::QuaternionType& QuaternionReference;
+  using QuaternionReference =
+      typename Eigen::internal::traits<Derived>::QuaternionType&;
   /** \brief quaternion const reference type  */
-  typedef const typename internal::traits<Derived>::QuaternionType&
-      ConstQuaternionReference;
+  using ConstQuaternionReference =
+      typename Eigen::internal::traits<Derived>::QuaternionType const&;
 
   /** \brief degree of freedom of group
    *         (three for rotation) */
@@ -106,13 +105,13 @@ class SO3GroupBase {
   /** \brief group transformations are NxN matrices */
   static const int N = 3;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar, N, N> Transformation;
+  typedef Eigen::Matrix<Scalar, N, N> Transformation;
   /** \brief point type */
-  typedef Matrix<Scalar, 3, 1> Point;
+  typedef Eigen::Matrix<Scalar, 3, 1> Point;
   /** \brief tangent vector type */
-  typedef Matrix<Scalar, DoF, 1> Tangent;
+  typedef Eigen::Matrix<Scalar, DoF, 1> Tangent;
   /** \brief adjoint transformation type */
-  typedef Matrix<Scalar, DoF, DoF> Adjoint;
+  typedef Eigen::Matrix<Scalar, DoF, DoF> Adjoint;
 
   /**
    * \brief Adjoint transformation
@@ -181,10 +180,10 @@ class SO3GroupBase {
    *
    * \see internalGenerator
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Matrix<Scalar, num_parameters, 1>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Eigen::Matrix<Scalar, num_parameters, 1>
   internalMultiplyByGenerator(int i) const {
-    Matrix<Scalar, num_parameters, 1> res;
-    Quaternion<Scalar> internal_gen_q;
+    Eigen::Matrix<Scalar, num_parameters, 1> res;
+    Eigen::Quaternion<Scalar> internal_gen_q;
     internalGenerator(i, &internal_gen_q);
     res.template head<4>() = (unit_quaternion() * internal_gen_q).coeffs();
     return res;
@@ -195,9 +194,10 @@ class SO3GroupBase {
    *
    * \see internalMultiplyByGenerator
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Matrix<Scalar, num_parameters, DoF>
-  internalJacobian() const {
-    Matrix<Scalar, num_parameters, DoF> J;
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+      Eigen::Matrix<Scalar, num_parameters, DoF>
+      internalJacobian() const {
+    Eigen::Matrix<Scalar, num_parameters, DoF> J;
     for (int i = 0; i < DoF; ++i) {
       J.col(i) = internalMultiplyByGenerator(i);
     }
@@ -312,7 +312,7 @@ class SO3GroupBase {
    * The quaternion is normalized to unit length.
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void setQuaternion(
-      const Quaternion<Scalar>& quaternion) {
+      const Eigen::Quaternion<Scalar>& quaternion) {
     unit_quaternion_nonconst() = quaternion;
     normalize();
   }
@@ -397,9 +397,9 @@ class SO3GroupBase {
       real_factor = cos(half_theta);
     }
 
-    return SO3Group<Scalar>(
-        Quaternion<Scalar>(real_factor, imag_factor * omega.x(),
-                           imag_factor * omega.y(), imag_factor * omega.z()));
+    return SO3Group<Scalar>(Eigen::Quaternion<Scalar>(
+        real_factor, imag_factor * omega.x(), imag_factor * omega.y(),
+        imag_factor * omega.z()));
   }
 
   /**
@@ -442,7 +442,7 @@ class SO3GroupBase {
    * The internal representation is the Lie group SU(2) (unit quaternions)
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static void internalGenerator(
-      int i, Quaternion<Scalar>* internal_gen_q) {
+      int i, Eigen::Quaternion<Scalar>* internal_gen_q) {
     SOPHUS_ENSURE(i >= 0 && i <= 2, "i should be in range [0,2]");
     SOPHUS_ENSURE(internal_gen_q != NULL,
                   "internal_gen_q must not be the null pointer");
@@ -608,13 +608,12 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
 
  public:
   /** \brief scalar type */
-  typedef
-      typename internal::traits<SO3Group<_Scalar, _Options> >::Scalar Scalar;
+  typedef typename Eigen::internal::traits<SO3Group<_Scalar, _Options> >::Scalar
+      Scalar;
   /** \brief quaternion type */
-  typedef
-      typename internal::traits<SO3Group<_Scalar, _Options> >::QuaternionType&
-          QuaternionReference;
-  typedef const typename internal::traits<
+  typedef typename Eigen::internal::traits<
+      SO3Group<_Scalar, _Options> >::QuaternionType& QuaternionReference;
+  typedef const typename Eigen::internal::traits<
       SO3Group<_Scalar, _Options> >::QuaternionType& ConstQuaternionReference;
 
   /** \brief group transfomation type */
@@ -662,7 +661,7 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
    * \pre quaternion must not be zero
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE explicit SO3Group(
-      const Quaternion<Scalar>& quat)
+      const Eigen::Quaternion<Scalar>& quat)
       : unit_quaternion_(quat) {
     Base::normalize();
   }
@@ -708,7 +707,7 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
     return unit_quaternion_;
   }
 
-  Quaternion<Scalar> unit_quaternion_;
+  Eigen::Quaternion<Scalar> unit_quaternion_;
 };
 
 }  // end namespace
@@ -727,11 +726,12 @@ class Map<Sophus::SO3Group<_Scalar>, _Options>
 
  public:
   /** \brief scalar type */
-  typedef typename internal::traits<Map>::Scalar Scalar;
+  typedef typename Eigen::internal::traits<Map>::Scalar Scalar;
   /** \brief quaternion reference type */
-  typedef typename internal::traits<Map>::QuaternionType& QuaternionReference;
+  typedef typename Eigen::internal::traits<Map>::QuaternionType&
+      QuaternionReference;
   /** \brief quaternion const reference type */
-  typedef const typename internal::traits<Map>::QuaternionType&
+  typedef const typename Eigen::internal::traits<Map>::QuaternionType&
       ConstQuaternionReference;
 
   /** \brief group transfomation type */
@@ -771,7 +771,7 @@ class Map<Sophus::SO3Group<_Scalar>, _Options>
     return unit_quaternion_;
   }
 
-  Map<Quaternion<Scalar>, _Options> unit_quaternion_;
+  Map<Eigen::Quaternion<Scalar>, _Options> unit_quaternion_;
 };
 
 /**
@@ -789,9 +789,9 @@ class Map<const Sophus::SO3Group<_Scalar>, _Options>
 
  public:
   /** \brief scalar type */
-  typedef typename internal::traits<Map>::Scalar Scalar;
+  typedef typename Eigen::internal::traits<Map>::Scalar Scalar;
   /** \brief quaternion const reference type */
-  typedef const typename internal::traits<Map>::QuaternionType&
+  typedef const typename Eigen::internal::traits<Map>::QuaternionType&
       ConstQuaternionReference;
 
   /** \brief group transfomation type */
@@ -821,7 +821,7 @@ class Map<const Sophus::SO3Group<_Scalar>, _Options>
   }
 
  protected:
-  const Map<const Quaternion<Scalar>, _Options> unit_quaternion_;
+  const Map<const Eigen::Quaternion<Scalar>, _Options> unit_quaternion_;
 };
 }
 

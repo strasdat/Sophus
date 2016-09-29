@@ -25,11 +25,12 @@
 #include <sophus/so3.hpp>
 #include "tests.hpp"
 
-using namespace Sophus;
-using namespace std;
+namespace Sophus {
 
 template <class Scalar>
 void tests() {
+  using Eigen::Quaternion;
+  using std::vector;
   typedef SO3Group<Scalar> SO3Type;
   typedef typename SO3Group<Scalar>::Point Point;
   typedef typename SO3Group<Scalar>::Tangent Tangent;
@@ -70,14 +71,16 @@ void tests() {
 }
 
 int test_so3() {
-  cerr << "Test SO3" << endl << endl;
+  using std::cerr;
+  using std::endl;
 
+  cerr << "Test SO3" << endl << endl;
   cerr << "Double tests: " << endl;
   tests<double>();
-
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
 }
+}  // namespace Sophus
 
-int main() { return test_so3(); }
+int main() { return Sophus::test_so3(); }

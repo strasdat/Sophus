@@ -14,9 +14,6 @@
 
 namespace Sophus {
 
-using namespace std;
-using namespace Eigen;
-
 // fight the good fight
 #ifdef _MSC_VER
 #define isnan(x) _isnan(x)
@@ -57,22 +54,24 @@ class Tests {
   Tests() : SMALL_EPS(SophusConstants<Scalar>::epsilon()) {}
 
   void setGroupElements(
-      const vector<LieGroup, Eigen::aligned_allocator<LieGroup> >& group_vec) {
+      const std::vector<LieGroup, Eigen::aligned_allocator<LieGroup> >& group_vec) {
     group_vec_ = group_vec;
   }
 
   void setTangentVectors(
-      const vector<Tangent, Eigen::aligned_allocator<Tangent> >& tangent_vec) {
+      const std::vector<Tangent, Eigen::aligned_allocator<Tangent> >& tangent_vec) {
     tangent_vec_ = tangent_vec;
   }
 
   void setPoints(
-      const vector<Point, Eigen::aligned_allocator<Point> >& point_vec) {
+      const std::vector<Point, Eigen::aligned_allocator<Point> >& point_vec) {
     point_vec_ = point_vec;
   }
 
   bool adjointTest() {
     bool passed = true;
+    using std::cerr;
+    using std::endl;
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       Transformation T = group_vec_[i].matrix();
       Adjoint Ad = group_vec_[i].Adj();
@@ -99,6 +98,8 @@ class Tests {
   }
 
   bool expLogTest() {
+    using std::cerr;
+    using std::endl;
     bool passed = true;
 
     for (size_t i = 0; i < group_vec_.size(); ++i) {
@@ -119,6 +120,8 @@ class Tests {
   }
 
   bool expMapTest() {
+    using std::cerr;
+    using std::endl;
     bool passed = true;
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
       Tangent omega = tangent_vec_[i];
@@ -141,6 +144,8 @@ class Tests {
   }
 
   bool groupActionTest() {
+    using std::cerr;
+    using std::endl;
     bool passed = true;
 
     for (size_t i = 0; i < group_vec_.size(); ++i) {
@@ -163,6 +168,8 @@ class Tests {
   }
 
   bool lieBracketTest() {
+    using std::cerr;
+    using std::endl;
     bool passed = true;
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
       for (size_t j = 0; j < tangent_vec_.size(); ++j) {
@@ -185,6 +192,8 @@ class Tests {
   }
 
   bool mapAndMultTest() {
+    using std::cerr;
+    using std::endl;
     bool passed = true;
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       for (size_t j = 0; j < group_vec_.size(); ++j) {
@@ -209,6 +218,8 @@ class Tests {
   }
 
   bool veeHatTest() {
+    using std::cerr;
+    using std::endl;
     bool passed = true;
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
       Tangent resDiff =
@@ -225,6 +236,8 @@ class Tests {
   }
 
   void runAllTests() {
+    using std::cerr;
+    using std::endl;
     bool passed = adjointTest();
     if (!passed) {
       cerr << "failed!" << endl << endl;
@@ -264,20 +277,20 @@ class Tests {
   }
 
  private:
-  Matrix<Scalar, N - 1, 1> map(const Matrix<Scalar, N, N>& T,
-                               const Matrix<Scalar, N - 1, 1>& p) {
+  Eigen::Matrix<Scalar, N - 1, 1> map(const Eigen::Matrix<Scalar, N, N>& T,
+                               const Eigen::Matrix<Scalar, N - 1, 1>& p) {
     return T.template topLeftCorner<N - 1, N - 1>() * p +
            T.template topRightCorner<N - 1, 1>();
   }
 
-  Matrix<Scalar, N, 1> map(const Matrix<Scalar, N, N>& T,
-                           const Matrix<Scalar, N, 1>& p) {
+  Eigen::Matrix<Scalar, N, 1> map(const Eigen::Matrix<Scalar, N, N>& T,
+                           const Eigen::Matrix<Scalar, N, 1>& p) {
     return T * p;
   }
 
   Scalar norm(const Scalar& v) { return std::abs(v); }
 
-  Scalar norm(const Matrix<Scalar, DoF, 1>& T) { return T.norm(); }
+  Scalar norm(const Eigen::Matrix<Scalar, DoF, 1>& T) { return T.norm(); }
 
   std::vector<LieGroup, Eigen::aligned_allocator<LieGroup> > group_vec_;
   std::vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec_;

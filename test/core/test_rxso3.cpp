@@ -25,11 +25,11 @@
 #include <sophus/rxso3.hpp>
 #include "tests.hpp"
 
-using namespace Sophus;
-using namespace std;
+namespace Sophus {
 
 template <class Scalar>
 void tests() {
+  using std::vector;
   typedef RxSO3Group<Scalar> RxSO3Type;
   typedef typename RxSO3Group<Scalar>::Point Point;
   typedef typename RxSO3Group<Scalar>::Tangent Tangent;
@@ -78,14 +78,17 @@ void tests() {
 }
 
 int test_rxso3() {
-  cerr << "Test RxSO3" << endl << endl;
+  using std::cerr;
+  using std::endl;
 
+  cerr << "Test RxSO3" << endl << endl;
   cerr << "Double tests: " << endl;
   tests<double>();
-
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
 }
 
-int main() { return test_rxso3(); }
+}  // Sophus
+
+int main() { return Sophus::test_rxso3(); }

@@ -25,11 +25,11 @@
 #include <sophus/se3.hpp>
 #include "tests.hpp"
 
-using namespace Sophus;
-using namespace std;
+namespace Sophus {
 
 template <class Scalar>
 void tests() {
+  using std::vector;
   typedef SO3Group<Scalar> SO3Type;
   typedef SE3Group<Scalar> SE3Type;
   typedef typename SE3Group<Scalar>::Point Point;
@@ -83,18 +83,19 @@ void tests() {
   tests.setPoints(point_vec);
 
   tests.runAllTests();
-  cerr << "passed." << endl << endl;
 }
 
 int test_se3() {
-  cerr << "Test SE3" << endl << endl;
+  using std::cerr;
+  using std::endl;
 
+  cerr << "Test SE3" << endl << endl;
   cerr << "Double tests: " << endl;
   tests<double>();
-
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
 }
+}  // namespace Sophus
 
-int main() { return test_se3(); }
+int main() { return Sophus::test_se3(); }

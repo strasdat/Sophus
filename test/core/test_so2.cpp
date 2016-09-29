@@ -31,11 +31,11 @@
 #include <sophus/so2.hpp>
 #include "tests.hpp"
 
-using namespace Sophus;
-using namespace std;
+namespace Sophus {
 
 template <class Scalar>
 void tests() {
+  using std::vector;
   typedef SO2Group<Scalar> SO2Type;
   typedef typename SO2Group<Scalar>::Point Point;
   typedef typename SO2Group<Scalar>::Tangent Tangent;
@@ -71,14 +71,16 @@ void tests() {
 }
 
 int test_so2() {
-  cerr << "Test SO2" << endl << endl;
+  using std::cerr;
+  using std::endl;
 
+  cerr << "Test SO2" << endl << endl;
   cerr << "Double tests: " << endl;
   tests<double>();
-
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
 }
+}  // namespace Sophus
 
-int main() { return test_so2(); }
+int main() { return Sophus::test_so2(); }

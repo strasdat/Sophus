@@ -26,11 +26,11 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include "tests.hpp"
 
-using namespace Sophus;
-using namespace std;
+namespace Sophus {
 
 template <class Scalar>
 void tests() {
+  using std::vector;
   typedef SO2Group<Scalar> SO2Type;
   typedef SE2Group<Scalar> SE2Type;
   typedef typename SE2Group<Scalar>::Point Point;
@@ -77,14 +77,16 @@ void tests() {
 }
 
 int test_se2() {
-  cerr << "Test SE2" << endl << endl;
+  using std::cerr;
+  using std::endl;
 
+  cerr << "Test SE2" << endl << endl;
   cerr << "Double tests: " << endl;
   tests<double>();
-
   cerr << "Float tests: " << endl;
   tests<float>();
   return 0;
 }
+}  // namespace Sophus
 
-int main() { return test_se2(); }
+int main() { return Sophus::test_se2(); }
