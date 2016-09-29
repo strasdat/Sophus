@@ -26,7 +26,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-//following boost's assert.hpp
+// following boost's assert.hpp
 #undef SOPHUS_ENSURE
 
 // ENSURES are similar to ASSERTS, but they are always checked for (including in
@@ -34,43 +34,40 @@
 // only be used for checks which are performance critical.
 
 #ifdef __GNUC__
-#  define SOPHUS_FUNCTION __PRETTY_FUNCTION__
+#define SOPHUS_FUNCTION __PRETTY_FUNCTION__
 #elif (_MSC_VER >= 1310)
-#  define SOPHUS_FUNCTION __FUNCTION__
+#define SOPHUS_FUNCTION __FUNCTION__
 #else
-#  define SOPHUS_FUNCTION "unknown"
+#define SOPHUS_FUNCTION "unknown"
 #endif
 
 #if defined(SOPHUS_DISABLE_ENSURES)
 
-#  define SOPHUS_ENSURE(expr, description) ((void)0)
+#define SOPHUS_ENSURE(expr, description) ((void)0)
 
 #elif defined(SOPHUS_ENABLE_ENSURE_HANDLER)
 
 namespace Sophus {
-void ensureFailed(const char * function, const char * file, int line,
-                  const char * description);
+void ensureFailed(const char* function, const char* file, int line,
+                  const char* description);
 }
 
-#define SOPHUS_ENSURE(expr, description) ((expr)                               \
-  ? ((void)0)                                                                  \
-  : ::Sophus::ensureFailed(SOPHUS_FUNCTION, __FILE__, __LINE__,                \
-                           (description)))
+#define SOPHUS_ENSURE(expr, description)                                  \
+  ((expr) ? ((void)0) : ::Sophus::ensureFailed(SOPHUS_FUNCTION, __FILE__, \
+                                               __LINE__, (description)))
 #else
 namespace Sophus {
-inline
-void defaultEnsure(const char * function, const char * file, int line,
-                   const char * description) {
+inline void defaultEnsure(const char* function, const char* file, int line,
+                          const char* description) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               function, file, line);
-  std::printf("Description: %s\n",  description);
+  std::printf("Description: %s\n", description);
   std::abort();
 }
 }
-#  define SOPHUS_ENSURE(expr, description) ((expr)                             \
-   ? ((void)0)                                                                 \
-  : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, __LINE__,                 \
-                          (description)))
+#define SOPHUS_ENSURE(expr, description)                                 \
+  ((expr) ? ((void)0) : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, \
+                                              __LINE__, (description)))
 #endif
 
-#endif // SOPHUS_ENSURE_HPP
+#endif  // SOPHUS_ENSURE_HPP

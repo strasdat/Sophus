@@ -26,11 +26,11 @@
 #include <cstdlib>
 
 namespace Sophus {
-void ensureFailed(const char * function, const char * file, int line,
-                  const char * description) {
+void ensureFailed(const char* function, const char* file, int line,
+                  const char* description) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               file, function, line);
-  std::printf("Description: %s\n",  description);
+  std::printf("Description: %s\n", description);
   std::abort();
 }
 }

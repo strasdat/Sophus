@@ -28,61 +28,54 @@
 using namespace Sophus;
 using namespace std;
 
-template<class Scalar>
+template <class Scalar>
 void tests() {
-
   typedef SO3Group<Scalar> SO3Type;
   typedef SE3Group<Scalar> SE3Type;
   typedef typename SE3Group<Scalar>::Point Point;
   typedef typename SE3Group<Scalar>::Tangent Tangent;
 
-  vector<SE3Type,Eigen::aligned_allocator<SE3Type> > se3_vec;
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)),
-                            Point(0,0,0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(0.2, 0.5, -1.0)),
-                            Point(10,0,0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(0., 0., 0.)),
-                            Point(0,100,5)));
+  vector<SE3Type, Eigen::aligned_allocator<SE3Type> > se3_vec;
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.2, 0.5, -1.0)), Point(10, 0, 0)));
+  se3_vec.push_back(SE3Type(SO3Type::exp(Point(0., 0., 0.)), Point(0, 100, 5)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0, 0, 0)));
   se3_vec.push_back(SE3Type(SO3Type::exp(Point(0., 0., 0.00001)),
-                            Point(0,0,0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(0., 0., 0.00001)),
-                            Point(0,-0.00000001,0.0000000001)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(0., 0., 0.00001)),
-                            Point(0.01,0,0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(M_PI, 0, 0)),
-                            Point(4,-5,0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)),
-                            Point(0,0,0))
-                    *SE3Type(SO3Type::exp(Point(M_PI, 0, 0)),
-                             Point(0,0,0))
-                    *SE3Type(SO3Type::exp(Point(-0.2, -0.5, -0.0)),
-                             Point(0,0,0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(0.3, 0.5, 0.1)),
-                            Point(2,0,-7))
-                    *SE3Type(SO3Type::exp(Point(M_PI, 0, 0)),
-                             Point(0,0,0))
-                    *SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)),
-                             Point(0,6,0)));
+                            Point(0, -0.00000001, 0.0000000001)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
+  se3_vec.push_back(SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(4, -5, 0)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
+      SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
 
   vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec;
   Tangent tmp;
-  tmp << 0,0,0,0,0,0;
+  tmp << 0, 0, 0, 0, 0, 0;
   tangent_vec.push_back(tmp);
-  tmp << 1,0,0,0,0,0;
+  tmp << 1, 0, 0, 0, 0, 0;
   tangent_vec.push_back(tmp);
-  tmp << 0,1,0,1,0,0;
+  tmp << 0, 1, 0, 1, 0, 0;
   tangent_vec.push_back(tmp);
-  tmp << 0,-5,10,0,0,0;
+  tmp << 0, -5, 10, 0, 0, 0;
   tangent_vec.push_back(tmp);
-  tmp << -1,1,0,0,0,1;
+  tmp << -1, 1, 0, 0, 0, 1;
   tangent_vec.push_back(tmp);
-  tmp << 20,-1,0,-1,1,0;
+  tmp << 20, -1, 0, -1, 1, 0;
   tangent_vec.push_back(tmp);
-  tmp << 30,5,-1,20,-1,0;
+  tmp << 30, 5, -1, 20, -1, 0;
   tangent_vec.push_back(tmp);
 
   vector<Point, Eigen::aligned_allocator<Point> > point_vec;
-  point_vec.push_back(Point(1,2,4));
+  point_vec.push_back(Point(1, 2, 4));
 
   Tests<SE3Type> tests;
   tests.setGroupElements(se3_vec);
@@ -104,6 +97,4 @@ int test_se3() {
   return 0;
 }
 
-int main() {
-  return test_se3();
-}
+int main() { return test_se3(); }

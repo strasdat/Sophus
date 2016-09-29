@@ -23,22 +23,29 @@
 #ifndef SOPHUS_RXSO3_HPP
 #define SOPHUS_RXSO3_HPP
 
-#include "sophus.hpp"
 #include "so3.hpp"
+#include "sophus.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // Forward Declarations / typedefs
 ////////////////////////////////////////////////////////////////////////////
 
 namespace Sophus {
-template<typename _Scalar, int _Options=0> class RxSO3Group;
+template <typename _Scalar, int _Options = 0>
+class RxSO3Group;
 EIGEN_DEPRECATED typedef RxSO3Group<double> ScSO3;
 typedef RxSO3Group<double> RxSO3d; /**< double precision RxSO3 */
 typedef RxSO3Group<float> RxSO3f;  /**< single precision RxSO3 */
 
 // Avoid name hiding of std::log / std::exp in RxSO3GroupBase
-template<typename _Scalar> inline _Scalar scalar_log(_Scalar val) { return log(val); }
-template<typename _Scalar> inline _Scalar scalar_exp(_Scalar val) { return exp(val); }
+template <typename _Scalar>
+inline _Scalar scalar_log(_Scalar val) {
+  return log(val);
+}
+template <typename _Scalar>
+inline _Scalar scalar_exp(_Scalar val) {
+  return exp(val);
+}
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -48,26 +55,25 @@ template<typename _Scalar> inline _Scalar scalar_exp(_Scalar val) { return exp(v
 namespace Eigen {
 namespace internal {
 
-template<typename _Scalar, int _Options>
-struct traits<Sophus::RxSO3Group<_Scalar,_Options> > {
+template <typename _Scalar, int _Options>
+struct traits<Sophus::RxSO3Group<_Scalar, _Options> > {
   typedef _Scalar Scalar;
   typedef Quaternion<Scalar> QuaternionType;
 };
 
-template<typename _Scalar, int _Options>
+template <typename _Scalar, int _Options>
 struct traits<Map<Sophus::RxSO3Group<_Scalar>, _Options> >
     : traits<Sophus::RxSO3Group<_Scalar, _Options> > {
   typedef _Scalar Scalar;
-  typedef Map<Quaternion<Scalar>,_Options> QuaternionType;
+  typedef Map<Quaternion<Scalar>, _Options> QuaternionType;
 };
 
-template<typename _Scalar, int _Options>
+template <typename _Scalar, int _Options>
 struct traits<Map<const Sophus::RxSO3Group<_Scalar>, _Options> >
     : traits<const Sophus::RxSO3Group<_Scalar, _Options> > {
   typedef _Scalar Scalar;
-  typedef Map<const Quaternion<Scalar>,_Options> QuaternionType;
+  typedef Map<const Quaternion<Scalar>, _Options> QuaternionType;
 };
-
 }
 }
 
@@ -92,18 +98,17 @@ using namespace std;
  *
  * [add more detailed description/tutorial]
  */
-template<typename Derived>
+template <typename Derived>
 class RxSO3GroupBase {
-public:
+ public:
   /** \brief scalar type, use with care since this might be a Map type  */
   typedef typename internal::traits<Derived>::Scalar Scalar;
   /** \brief quaternion reference type */
-  typedef typename internal::traits<Derived>::QuaternionType &
-  QuaternionReference;
+  typedef
+      typename internal::traits<Derived>::QuaternionType& QuaternionReference;
   /** \brief quaternion const reference type */
-  typedef const typename internal::traits<Derived>::QuaternionType &
-  ConstQuaternionReference;
-
+  typedef const typename internal::traits<Derived>::QuaternionType&
+      ConstQuaternionReference;
 
   /** \brief degree of freedom of group
    *         (three for rotation and one for scaling) */
@@ -114,14 +119,13 @@ public:
   /** \brief group transformations are NxN matrices */
   static const int N = 3;
   /** \brief group transfomation type */
-  typedef Matrix<Scalar,N,N> Transformation;
+  typedef Matrix<Scalar, N, N> Transformation;
   /** \brief point type */
-  typedef Matrix<Scalar,3,1> Point;
+  typedef Matrix<Scalar, 3, 1> Point;
   /** \brief tangent vector type */
-  typedef Matrix<Scalar,DoF,1> Tangent;
+  typedef Matrix<Scalar, DoF, 1> Tangent;
   /** \brief adjoint transformation type */
-  typedef Matrix<Scalar,DoF,DoF> Adjoint;
-
+  typedef Matrix<Scalar, DoF, DoF> Adjoint;
 
   /**
    * \brief Adjoint transformation
@@ -134,21 +138,20 @@ public:
    * For RxSO3, it simply returns the rotation matrix corresponding to
    * \f$ A \f$.
    */
-  inline
-  Adjoint Adj() const {
+  inline Adjoint Adj() const {
     Adjoint res;
     res.setIdentity();
-    res.template topLeftCorner<3,3>() = rotationMatrix();
+    res.template topLeftCorner<3, 3>() = rotationMatrix();
     return res;
   }
 
   /**
    * \returns copy of instance casted to NewScalarType
    */
-  template<typename NewScalarType>
+  template <typename NewScalarType>
   inline RxSO3Group<NewScalarType> cast() const {
-    return RxSO3Group<NewScalarType>(quaternion()
-                                     .template cast<NewScalarType>() );
+    return RxSO3Group<NewScalarType>(
+        quaternion().template cast<NewScalarType>());
   }
 
   /**
@@ -160,18 +163,14 @@ public:
    * Note: The first three Scalars represent the imaginary parts, while the
    * forth Scalar represent the real part.
    */
-  inline Scalar* data() {
-    return quaternion().coeffs().data();
-  }
+  inline Scalar* data() { return quaternion().coeffs().data(); }
 
   /**
    * \returns const pointer to internal data
    *
    * Const version of data().
    */
-  inline const Scalar* data() const {
-    return quaternion().coeffs().data();
-  }
+  inline const Scalar* data() const { return quaternion().coeffs().data(); }
 
   /**
    * \brief In-place group multiplication
@@ -180,18 +179,16 @@ public:
    *
    * \see operator*=()
    */
-  inline
-  RxSO3GroupBase<Derived>& fastMultiply(const RxSO3Group<Scalar>& other) {
+  inline RxSO3GroupBase<Derived>& fastMultiply(
+      const RxSO3Group<Scalar>& other) {
     quaternion() *= other.quaternion();
     return *this;
   }
 
-
   /**
    * \returns group inverse of instance
    */
-  inline
-  RxSO3Group<Scalar> inverse() const {
+  inline RxSO3Group<Scalar> inverse() const {
     SOPHUS_ENSURE(quaternion().squaredNorm() > static_cast<Scalar>(0),
                   "Scale factor should be positive");
     return RxSO3Group<Scalar>(quaternion().inverse());
@@ -204,10 +201,7 @@ public:
    *
    * \see  log().
    */
-  inline
-  Tangent log() const {
-    return RxSO3Group<Scalar>::log(*this);
-  }
+  inline Tangent log() const { return RxSO3Group<Scalar>::log(*this); }
 
   /**
    * \returns 3x3 matrix representation of instance
@@ -216,21 +210,20 @@ public:
    * matrix \f$ sR \f$ with \f$ det(sR)=s^3 \f$, thus a scaled rotation
    * matrix \f$ R \f$  with scale s.
    */
-  inline
-  Transformation matrix() const {
-    //ToDO: implement this directly!
+  inline Transformation matrix() const {
+    // ToDO: implement this directly!
     Scalar scale = quaternion().norm();
     Quaternion<Scalar> norm_quad = quaternion();
     norm_quad.coeffs() /= scale;
-    return scale*norm_quad.toRotationMatrix();
+    return scale * norm_quad.toRotationMatrix();
   }
 
   /**
    * \brief Assignment operator
    */
-  template<typename OtherDerived> inline
-  RxSO3GroupBase<Derived>& operator=
-  (const RxSO3GroupBase<OtherDerived> & other) {
+  template <typename OtherDerived>
+  inline RxSO3GroupBase<Derived>& operator=(
+      const RxSO3GroupBase<OtherDerived>& other) {
     quaternion() = other.quaternion();
     return *this;
   }
@@ -239,8 +232,7 @@ public:
    * \brief Group multiplication
    * \see operator*=()
    */
-  inline
-  RxSO3Group<Scalar> operator*(const RxSO3Group<Scalar>& other) const {
+  inline RxSO3Group<Scalar> operator*(const RxSO3Group<Scalar>& other) const {
     RxSO3Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -257,21 +249,19 @@ public:
    * by the RxSO3 transformation \f$sR\f$ (=rotation matrix)
    * : \f$ p' = sR\cdot p \f$.
    */
-  inline
-  Point operator*(const Point & p) const {
-    //ToDO: implement this directly!
+  inline Point operator*(const Point& p) const {
+    // ToDO: implement this directly!
     Scalar scale = quaternion().norm();
     Quaternion<Scalar> norm_quad = quaternion();
     norm_quad.coeffs() /= scale;
-    return scale*norm_quad._transformVector(p);
+    return scale * norm_quad._transformVector(p);
   }
 
   /**
    * \brief In-place group multiplication
    * \see operator*=()
    */
-  inline
-  RxSO3GroupBase<Derived>& operator*=(const RxSO3Group<Scalar>& other) {
+  inline RxSO3GroupBase<Derived>& operator*=(const RxSO3Group<Scalar>& other) {
     quaternion() *= other.quaternion();
     return *this;
   }
@@ -295,8 +285,7 @@ public:
   /**
    * \returns rotation matrix
    */
-  inline
-  Transformation rotationMatrix() const {
+  inline Transformation rotationMatrix() const {
     Scalar scale = quaternion().norm();
     Quaternion<Scalar> norm_quad = quaternion();
     norm_quad.coeffs() /= scale;
@@ -307,9 +296,7 @@ public:
    * \returns scale
    */
   EIGEN_STRONG_INLINE
-  Scalar scale() const {
-    return quaternion().norm();
-  }
+  Scalar scale() const { return quaternion().norm(); }
 
   /**
    * \brief Setter of quaternion using rotation matrix, leaves scale untouched
@@ -317,8 +304,7 @@ public:
    * \param R a 3x3 rotation matrix
    * \pre       the 3x3 matrix should be orthogonal and have a determinant of 1
    */
-  inline
-  void setRotationMatrix(const Transformation & R) {
+  inline void setRotationMatrix(const Transformation& R) {
     Scalar saved_scale = scale();
     quaternion() = R;
     quaternion() *= saved_scale;
@@ -328,7 +314,7 @@ public:
    * \brief Scale setter
    */
   EIGEN_STRONG_INLINE
-  void setScale(const Scalar & scale) {
+  void setScale(const Scalar& scale) {
     quaternion().normalize();
     quaternion() *= scale;
   }
@@ -340,19 +326,17 @@ public:
    * \pre        the 3x3 matrix should be "scaled orthogonal"
    *             and have a positive determinant
    */
-  inline
-  void setScaledRotationMatrix
-  (const Transformation & sR) {
-    Transformation squared_sR = sR*sR.transpose();
-    Scalar squared_scale
-        = static_cast<Scalar>(1./3.)
-        *(squared_sR(0,0)+squared_sR(1,1)+squared_sR(2,2));
+  inline void setScaledRotationMatrix(const Transformation& sR) {
+    Transformation squared_sR = sR * sR.transpose();
+    Scalar squared_scale =
+        static_cast<Scalar>(1. / 3.) *
+        (squared_sR(0, 0) + squared_sR(1, 1) + squared_sR(2, 2));
     SOPHUS_ENSURE(squared_scale > static_cast<Scalar>(0),
                   "Scale factor should be positive");
     Scalar scale = sqrt(squared_scale);
     SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
                   "Scale factor should be positive");
-    quaternion() = sR/scale;
+    quaternion() = sR / scale;
     quaternion().coeffs() *= scale;
   }
 
@@ -370,11 +354,11 @@ public:
    *
    * \see lieBracket()
    */
-  inline static
-  Adjoint d_lieBracketab_by_d_a(const Tangent & b) {
+  inline static Adjoint d_lieBracketab_by_d_a(const Tangent& b) {
     Adjoint res;
     res.setZero();
-    res.template topLeftCorner<3,3>() = -SO3Group<Scalar>::hat(b.template head<3>());
+    res.template topLeftCorner<3, 3>() =
+        -SO3Group<Scalar>::hat(b.template head<3>());
     return res;
   }
 
@@ -393,8 +377,7 @@ public:
    * \see hat()
    * \see log()
    */
-  inline static
-  RxSO3Group<Scalar> exp(const Tangent & a) {
+  inline static RxSO3Group<Scalar> exp(const Tangent& a) {
     Scalar theta;
     return expAndTheta(a, &theta);
   }
@@ -409,14 +392,13 @@ public:
    *
    * \see exp() for details
    */
-  inline static
-  RxSO3Group<Scalar> expAndTheta(const Tangent & a,
-                                       Scalar * theta) {
-    const Matrix<Scalar,3,1> & omega = a.template head<3>();
+  inline static RxSO3Group<Scalar> expAndTheta(const Tangent& a,
+                                               Scalar* theta) {
+    const Matrix<Scalar, 3, 1>& omega = a.template head<3>();
     Scalar sigma = a[3];
     Scalar scale = scalar_exp(sigma);
-    Quaternion<Scalar> quat
-        = SO3Group<Scalar>::expAndTheta(omega, theta).unit_quaternion();
+    Quaternion<Scalar> quat =
+        SO3Group<Scalar>::expAndTheta(omega, theta).unit_quaternion();
     quat.coeffs() *= scale;
     return RxSO3Group<Scalar>(quat);
   }
@@ -452,9 +434,8 @@ public:
    * \f$
    * \see hat()
    */
-  inline static
-  Transformation generator(int i) {
-    SOPHUS_ENSURE(i>=0 && i<=3, "i should be in range [0,3].");
+  inline static Transformation generator(int i) {
+    SOPHUS_ENSURE(i >= 0 && i <= 3, "i should be in range [0,3].");
     Tangent e;
     e.setZero();
     e[i] = static_cast<Scalar>(1);
@@ -475,12 +456,9 @@ public:
    * \see generator()
    * \see vee()
    */
-  inline static
-  Transformation hat(const Tangent & a) {
+  inline static Transformation hat(const Tangent& a) {
     Transformation A;
-    A <<  a(3), -a(2),  a(1)
-        , a(2),  a(3), -a(0)
-        ,-a(1),  a(0),  a(3);
+    A << a(3), -a(2), a(1), a(2), a(3), -a(0), -a(1), a(0), a(3);
     return A;
   }
 
@@ -501,12 +479,10 @@ public:
    * \see hat()
    * \see vee()
    */
-  inline static
-  Tangent lieBracket(const Tangent & a,
-                           const Tangent & b) {
-    const Matrix<Scalar,3,1> & omega1 = a.template head<3>();
-    const Matrix<Scalar,3,1> & omega2 = b.template head<3>();
-    Matrix<Scalar,4,1> res;
+  inline static Tangent lieBracket(const Tangent& a, const Tangent& b) {
+    const Matrix<Scalar, 3, 1>& omega1 = a.template head<3>();
+    const Matrix<Scalar, 3, 1>& omega2 = b.template head<3>();
+    Matrix<Scalar, 4, 1> res;
     res.template head<3>() = omega1.cross(omega2);
     res[3] = static_cast<Scalar>(0);
     return res;
@@ -528,8 +504,7 @@ public:
    * \see logAndTheta()
    * \see vee()
    */
-  inline static
-  Tangent log(const RxSO3Group<Scalar> & other) {
+  inline static Tangent log(const RxSO3Group<Scalar>& other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
@@ -544,15 +519,13 @@ public:
    *
    * \see log() for details
    */
-  inline static
-  Tangent logAndTheta(const RxSO3Group<Scalar> & other,
-                            Scalar * theta) {
-    const Scalar & scale = other.quaternion().norm();
+  inline static Tangent logAndTheta(const RxSO3Group<Scalar>& other,
+                                    Scalar* theta) {
+    const Scalar& scale = other.quaternion().norm();
     Tangent omega_sigma;
     omega_sigma[3] = scalar_log(scale);
-    omega_sigma.template head<3>()
-        = SO3Group<Scalar>::logAndTheta(SO3Group<Scalar>(other.quaternion()),
-                                        theta);
+    omega_sigma.template head<3>() = SO3Group<Scalar>::logAndTheta(
+        SO3Group<Scalar>(other.quaternion()), theta);
     return omega_sigma;
   }
 
@@ -566,32 +539,33 @@ public:
    *
    * \see hat()
    */
-  inline static
-  Tangent vee(const Transformation & Omega) {
-    return Tangent( static_cast<Scalar>(0.5) * (Omega(2,1) - Omega(1,2)),
-                    static_cast<Scalar>(0.5) * (Omega(0,2) - Omega(2,0)),
-                    static_cast<Scalar>(0.5) * (Omega(1,0) - Omega(0,1)),
-                    static_cast<Scalar>(1./3.)
-                    * (Omega(0,0) + Omega(1,1) + Omega(2,2)) );
+  inline static Tangent vee(const Transformation& Omega) {
+    return Tangent(static_cast<Scalar>(0.5) * (Omega(2, 1) - Omega(1, 2)),
+                   static_cast<Scalar>(0.5) * (Omega(0, 2) - Omega(2, 0)),
+                   static_cast<Scalar>(0.5) * (Omega(1, 0) - Omega(0, 1)),
+                   static_cast<Scalar>(1. / 3.) *
+                       (Omega(0, 0) + Omega(1, 1) + Omega(2, 2)));
   }
 };
 
 /**
  * \brief RxSO3 default type - Constructors and default storage for RxSO3 Type
  */
-template<typename _Scalar, int _Options>
-class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar,_Options> > {
-  typedef RxSO3GroupBase<RxSO3Group<_Scalar,_Options> > Base;
-public:
+template <typename _Scalar, int _Options>
+class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options> > {
+  typedef RxSO3GroupBase<RxSO3Group<_Scalar, _Options> > Base;
+
+ public:
   /** \brief scalar type */
-  typedef typename internal::traits<SO3Group<_Scalar,_Options> >
-  ::Scalar Scalar;
+  typedef
+      typename internal::traits<SO3Group<_Scalar, _Options> >::Scalar Scalar;
   /** \brief quaternion reference type */
-  typedef typename internal::traits<SO3Group<_Scalar,_Options> >
-  ::QuaternionType & QuaternionReference;
+  typedef
+      typename internal::traits<SO3Group<_Scalar, _Options> >::QuaternionType&
+          QuaternionReference;
   /** \brief quaternion const reference type */
-  typedef const typename internal::traits<SO3Group<_Scalar,_Options> >
-  ::QuaternionType & ConstQuaternionReference;
+  typedef const typename internal::traits<
+      SO3Group<_Scalar, _Options> >::QuaternionType& ConstQuaternionReference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
@@ -610,25 +584,22 @@ public:
    * Initialize Quaternion to identity rotation and scale.
    */
   inline RxSO3Group()
-    : quaternion_(static_cast<Scalar>(1), static_cast<Scalar>(0),
-                  static_cast<Scalar>(0), static_cast<Scalar>(0)) {
-  }
+      : quaternion_(static_cast<Scalar>(1), static_cast<Scalar>(0),
+                    static_cast<Scalar>(0), static_cast<Scalar>(0)) {}
 
   /**
    * \brief Copy constructor
    */
-  template<typename OtherDerived> inline
-  RxSO3Group(const RxSO3GroupBase<OtherDerived> & other)
-    : quaternion_(other.quaternion()) {
-  }
+  template <typename OtherDerived>
+  inline RxSO3Group(const RxSO3GroupBase<OtherDerived>& other)
+      : quaternion_(other.quaternion()) {}
 
   /**
    * \brief Constructor from scaled rotation matrix
    *
    * \pre matrix need to be "scaled orthogonal" with positive determinant
    */
-  inline explicit
-  RxSO3Group(const Transformation & sR) {
+  inline explicit RxSO3Group(const Transformation& sR) {
     setScaledRotationMatrix(sR);
   }
 
@@ -638,9 +609,8 @@ public:
    * \pre rotation matrix need to be orthogonal with determinant of 1
    * \pre scale need to be not zero
    */
-  inline
-  RxSO3Group(const Scalar & scale, const Transformation & R)
-    : quaternion_(R) {
+  inline RxSO3Group(const Scalar& scale, const Transformation& R)
+      : quaternion_(R) {
     SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
                   "Scale factor should be positive");
     quaternion_.normalize();
@@ -652,9 +622,8 @@ public:
    *
    * \pre scale need to be not zero
    */
-  inline
-  RxSO3Group(const Scalar & scale, const SO3Group<Scalar> & so3)
-    : quaternion_(so3.unit_quaternion()) {
+  inline RxSO3Group(const Scalar& scale, const SO3Group<Scalar>& so3)
+      : quaternion_(so3.unit_quaternion()) {
     SOPHUS_ENSURE(scale > static_cast<Scalar>(0),
                   "Scale factor should be positive");
     quaternion_.normalize();
@@ -666,35 +635,30 @@ public:
    *
    * \pre quaternion must not be zero
    */
-  inline explicit
-  RxSO3Group(const Quaternion<Scalar> & quat) : quaternion_(quat) {
-    SOPHUS_ENSURE(quaternion_.squaredNorm()
-                  > SophusConstants<Scalar>::epsilon(),
-                  "Scale factor should be positive");
+  inline explicit RxSO3Group(const Quaternion<Scalar>& quat)
+      : quaternion_(quat) {
+    SOPHUS_ENSURE(
+        quaternion_.squaredNorm() > SophusConstants<Scalar>::epsilon(),
+        "Scale factor should be positive");
   }
 
   /**
    * \brief Mutator of quaternion
    */
   EIGEN_STRONG_INLINE
-  QuaternionReference quaternion() {
-    return quaternion_;
-  }
+  QuaternionReference quaternion() { return quaternion_; }
 
   /**
    * \brief Accessor of quaternion
    */
   EIGEN_STRONG_INLINE
-  ConstQuaternionReference quaternion() const {
-    return quaternion_;
-  }
+  ConstQuaternionReference quaternion() const { return quaternion_; }
 
-protected:
+ protected:
   Quaternion<Scalar> quaternion_;
 };
 
-} // end namespace
-
+}  // end namespace
 
 namespace Eigen {
 /**
@@ -703,22 +667,21 @@ namespace Eigen {
  * Allows us to wrap RxSO3 Objects around POD array
  * (e.g. external c style quaternion)
  */
-template<typename _Scalar, int _Options>
+template <typename _Scalar, int _Options>
 class Map<Sophus::RxSO3Group<_Scalar>, _Options>
     : public Sophus::RxSO3GroupBase<
-    Map<Sophus::RxSO3Group<_Scalar>,_Options> > {
+          Map<Sophus::RxSO3Group<_Scalar>, _Options> > {
   typedef Sophus::RxSO3GroupBase<Map<Sophus::RxSO3Group<_Scalar>, _Options> >
-  Base;
+      Base;
 
-public:
+ public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
   /** \brief quaternion reference type */
-  typedef typename internal::traits<Map>::QuaternionType &
-  QuaternionReference;
+  typedef typename internal::traits<Map>::QuaternionType& QuaternionReference;
   /** \brief quaternion const reference type */
-  typedef const typename internal::traits<Map>::QuaternionType &
-  ConstQuaternionReference;
+  typedef const typename internal::traits<Map>::QuaternionType&
+      ConstQuaternionReference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
@@ -734,27 +697,22 @@ public:
   using Base::operator*;
 
   EIGEN_STRONG_INLINE
-  Map(Scalar* coeffs) : quaternion_(coeffs) {
-  }
+  Map(Scalar* coeffs) : quaternion_(coeffs) {}
 
   /**
    * \brief Mutator of quaternion
    */
   EIGEN_STRONG_INLINE
-  QuaternionReference quaternion() {
-    return quaternion_;
-  }
+  QuaternionReference quaternion() { return quaternion_; }
 
   /**
    * \brief Accessor of quaternion
    */
   EIGEN_STRONG_INLINE
-  ConstQuaternionReference quaternion() const {
-    return quaternion_;
-  }
+  ConstQuaternionReference quaternion() const { return quaternion_; }
 
-protected:
-  Map<Quaternion<Scalar>,_Options> quaternion_;
+ protected:
+  Map<Quaternion<Scalar>, _Options> quaternion_;
 };
 
 /**
@@ -763,19 +721,20 @@ protected:
  * Allows us to wrap RxSO3 Objects around POD array
  * (e.g. external c style quaternion)
  */
-template<typename _Scalar, int _Options>
+template <typename _Scalar, int _Options>
 class Map<const Sophus::RxSO3Group<_Scalar>, _Options>
     : public Sophus::RxSO3GroupBase<
-    Map<const Sophus::RxSO3Group<_Scalar>, _Options> > {
+          Map<const Sophus::RxSO3Group<_Scalar>, _Options> > {
   typedef Sophus::RxSO3GroupBase<
-  Map<const Sophus::RxSO3Group<_Scalar>, _Options> > Base;
+      Map<const Sophus::RxSO3Group<_Scalar>, _Options> >
+      Base;
 
-public:
+ public:
   /** \brief scalar type */
   typedef typename internal::traits<Map>::Scalar Scalar;
   /** \brief quaternion const reference type */
-  typedef const typename internal::traits<Map>::QuaternionType &
-  ConstQuaternionReference;
+  typedef const typename internal::traits<Map>::QuaternionType&
+      ConstQuaternionReference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
@@ -791,8 +750,7 @@ public:
   using Base::operator*;
 
   EIGEN_STRONG_INLINE
-  Map(const Scalar* coeffs) : quaternion_(coeffs) {
-  }
+  Map(const Scalar* coeffs) : quaternion_(coeffs) {}
 
   /**
    * \brief Accessor of unit quaternion
@@ -800,14 +758,11 @@ public:
    * No direct write access is given to ensure the quaternion stays normalized.
    */
   EIGEN_STRONG_INLINE
-  ConstQuaternionReference quaternion() const {
-    return quaternion_;
-  }
+  ConstQuaternionReference quaternion() const { return quaternion_; }
 
-protected:
-  const Map<const Quaternion<Scalar>,_Options> quaternion_;
+ protected:
+  const Map<const Quaternion<Scalar>, _Options> quaternion_;
 };
-
 }
 
-#endif // SOPHUS_RXSO3_HPP
+#endif  // SOPHUS_RXSO3_HPP
