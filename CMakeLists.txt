@@ -12,11 +12,16 @@ IF( NOT CMAKE_BUILD_TYPE )
    SET( CMAKE_BUILD_TYPE Release )
 ENDIF()
 
-IF( CMAKE_COMPILER_IS_GNUCXX )
+IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
+   ADD_DEFINITIONS("-Wall -Werror -Wextra -std=c++11 -Wno-deprecated-register")
+ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+   SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+   SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
    ADD_DEFINITIONS("-Wall -Werror -Wextra -std=c++11")
+ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+
 ENDIF()
 
 ################################################################################

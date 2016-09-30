@@ -76,8 +76,8 @@ void tests() {
       current_z *= z;
     }
   }
-  if (!(std::abs(current_z.unit_quaternion().norm() - Scalar(1) <
-                 SophusConstants<Scalar>::epsilon()))) {
+  if (!(std::abs(current_z.unit_quaternion().norm() - Scalar(1)) <
+        SophusConstants<Scalar>::epsilon())) {
     std::cerr << "There was a magnitude drift\n";
     std::exit(-1);
   }
