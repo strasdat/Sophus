@@ -68,6 +68,19 @@ void tests() {
   tests.setPoints(point_vec);
 
   tests.runAllTests();
+
+  // Test that the quaternion magnitude stays close to one.
+  SO3Type current_z;
+  for (std::size_t i = 0; i < 1000; ++i) {
+    for (const auto& z : so3_vec) {
+      current_z *= z;
+    }
+  }
+  if (!(std::abs(current_z.unit_quaternion().norm() - Scalar(1) <
+                 SophusConstants<Scalar>::epsilon()))) {
+    std::cerr << "There was a magnitude drift\n";
+    std::exit(-1);
+  }
 }
 
 int test_so3() {
