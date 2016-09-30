@@ -505,7 +505,7 @@ class RxSO3GroupBase {
    */
   inline static Tangent logAndTheta(const RxSO3Group<Scalar>& other,
                                     Scalar* theta) {
-    const Scalar& scale = other.quaternion().norm();
+    Scalar scale = other.quaternion().norm();
     Tangent omega_sigma;
     omega_sigma[3] = scalar_log(scale);
     omega_sigma.template head<3>() = SO3Group<Scalar>::logAndTheta(

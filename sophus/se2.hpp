@@ -348,7 +348,7 @@ class SE2GroupBase {
    */
   inline static SE2Group<Scalar> exp(const Tangent& a) {
     Scalar theta = a[2];
-    const SO2Group<Scalar>& so2 = SO2Group<Scalar>::exp(theta);
+    SO2Group<Scalar> so2 = SO2Group<Scalar>::exp(theta);
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;
 

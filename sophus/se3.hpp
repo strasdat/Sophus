@@ -433,13 +433,12 @@ class SE3GroupBase {
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static SE3Group<Scalar> exp(
       const Tangent& a) {
-    const Eigen::Matrix<Scalar, 3, 1>& omega = a.template tail<3>();
+    const Eigen::Matrix<Scalar,3,1> omega = a.template tail<3>();
 
     Scalar theta;
-    const SO3Group<Scalar>& so3 = SO3Group<Scalar>::expAndTheta(omega, &theta);
-
-    const Eigen::Matrix<Scalar, 3, 3>& Omega = SO3Group<Scalar>::hat(omega);
-    const Eigen::Matrix<Scalar, 3, 3>& Omega_sq = Omega * Omega;
+    SO3Group<Scalar> so3 = SO3Group<Scalar>::expAndTheta(omega, &theta);
+    Eigen::Matrix<Scalar, 3, 3> Omega = SO3Group<Scalar>::hat(omega);
+    Eigen::Matrix<Scalar, 3, 3> Omega_sq = Omega * Omega;
     Eigen::Matrix<Scalar, 3, 3> V;
 
     if (theta < SophusConstants<Scalar>::epsilon()) {
@@ -576,8 +575,8 @@ class SE3GroupBase {
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static Tangent lieBracket(
       const Tangent& a, const Tangent& b) {
-    Eigen::Matrix<Scalar, 3, 1> upsilon1 = a.template head<3>();
-    Eigen::Matrix<Scalar, 3, 1> upsilon2 = b.template head<3>();
+    const Eigen::Matrix<Scalar, 3, 1>& upsilon1 = a.template head<3>();
+    const Eigen::Matrix<Scalar, 3, 1>& upsilon2 = b.template head<3>();
     Eigen::Matrix<Scalar, 3, 1> omega1 = a.template tail<3>();
     Eigen::Matrix<Scalar, 3, 1> omega2 = b.template tail<3>();
 
@@ -612,18 +611,18 @@ class SE3GroupBase {
         SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
 
     if (abs(theta) < SophusConstants<Scalar>::epsilon()) {
-      const Eigen::Matrix<Scalar, 3, 3>& Omega =
+      Eigen::Matrix<Scalar, 3, 3> Omega =
           SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-      const Eigen::Matrix<Scalar, 3, 3>& V_inv =
+      Eigen::Matrix<Scalar, 3, 3> V_inv =
           Eigen::Matrix<Scalar, 3, 3>::Identity() -
           static_cast<Scalar>(0.5) * Omega +
           static_cast<Scalar>(1. / 12.) * (Omega * Omega);
 
       upsilon_omega.template head<3>() = V_inv * se3.translation();
     } else {
-      const Eigen::Matrix<Scalar, 3, 3>& Omega =
+      Eigen::Matrix<Scalar, 3, 3> Omega =
           SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
-      const Eigen::Matrix<Scalar, 3, 3>& V_inv =
+      Eigen::Matrix<Scalar, 3, 3> V_inv =
           (Eigen::Matrix<Scalar, 3, 3>::Identity() -
            static_cast<Scalar>(0.5) * Omega +
            (static_cast<Scalar>(1) -

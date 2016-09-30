@@ -382,9 +382,8 @@ class Sim3GroupBase {
     Scalar theta;
     RxSO3Group<Scalar> rxso3 =
         RxSO3Group<Scalar>::expAndTheta(a.template tail<4>(), &theta);
-    const Eigen::Matrix<Scalar, 3, 3>& Omega = SO3Group<Scalar>::hat(omega);
-    const Eigen::Matrix<Scalar, 3, 3>& W =
-        calcW(theta, sigma, rxso3.scale(), Omega);
+    Eigen::Matrix<Scalar, 3, 3> Omega = SO3Group<Scalar>::hat(omega);
+    Eigen::Matrix<Scalar, 3, 3> W = calcW(theta, sigma, rxso3.scale(), Omega);
     return Sim3Group<Scalar>(rxso3, W * upsilon);
   }
 
@@ -525,11 +524,11 @@ class Sim3GroupBase {
   inline static Tangent log(const Sim3Group<Scalar>& other) {
     Tangent res;
     Scalar theta;
-    const Eigen::Matrix<Scalar, 4, 1>& omega_sigma =
+    Eigen::Matrix<Scalar, 4, 1> omega_sigma =
         RxSO3Group<Scalar>::logAndTheta(other.rxso3(), &theta);
     const Eigen::Matrix<Scalar, 3, 1>& omega = omega_sigma.template head<3>();
     Scalar sigma = omega_sigma[3];
-    const Eigen::Matrix<Scalar, 3, 3>& W =
+    Eigen::Matrix<Scalar, 3, 3> W =
         calcW(theta, sigma, other.scale(), SO3Group<Scalar>::hat(omega));
     res.segment(0, 3) = W.partialPivLu().solve(other.translation());
     res.segment(3, 3) = omega;
