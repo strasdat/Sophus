@@ -1,4 +1,8 @@
-Sophus (version 0.9a)
+[![Build Status](https://travis-ci.org/strasdat/Sophus.svg)](https://travis-ci.org/strasdat/Sophus)
+
+
+Sophus
+------
 
 C++ implementation of Lie Groups using Eigen.
 
@@ -8,12 +12,12 @@ Thanks to Steven Lovegrove, Sophus is now fully templated  - using the Curiously
 
 Installation guide:
 
->>>
+```
 cd Sophus
 mkdir build
 cd build
 cmake ..
 make
-<<<
+```
 
 
