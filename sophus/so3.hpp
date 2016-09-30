@@ -210,7 +210,7 @@ class SO3GroupBase {
   /**
    * \brief Normalize quaternion
    *
-   * It re-normalizes unit_quaternion to unit length. 
+   * It re-normalizes unit_quaternion to unit length.
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
@@ -226,7 +226,7 @@ class SO3GroupBase {
    * For SO3, the matrix representation is an orthogonal matrix R with det(R)=1,
    * thus the so-called rotation matrix.
    */
-  inline Transformation matrix() const {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Transformation matrix() const {
     return unit_quaternion().toRotationMatrix();
   }
 
@@ -293,7 +293,8 @@ class SO3GroupBase {
     // square-root, but can use an approximation around 1 (see
     // http://stackoverflow.com/a/12934750 for details).
     if (squared_norm != Scalar(1.0)) {
-      unit_quaternion_nonconst().coeffs() *= Scalar(2.0) / (Scalar(1.0) + squared_norm);
+      unit_quaternion_nonconst().coeffs() *=
+          Scalar(2.0) / (Scalar(1.0) + squared_norm);
     }
     return *this;
   }
@@ -588,8 +589,8 @@ class SO3GroupBase {
  private:
   // Mutator of unit_quaternion is private so users are hampered
   // from setting non-unit quaternions.
-  EIGEN_STRONG_INLINE
-  QuaternionReference unit_quaternion_nonconst() {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE QuaternionReference
+  unit_quaternion_nonconst() {
     return static_cast<Derived*>(this)->unit_quaternion_nonconst();
   }
 };
