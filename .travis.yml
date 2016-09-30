@@ -1,0 +1,17 @@
+sudo: required
+dist: trusty
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install libeigen3-dev
+
+language: cpp
+
+compiler:
+  - gcc
+
+script:
+  - mkdir build
+  - cd build
+  - cmake .. && make
+  - make test
