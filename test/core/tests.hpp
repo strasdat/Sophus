@@ -191,32 +191,6 @@ class Tests {
     return passed;
   }
 
-  bool mapAndMultTest() {
-    using std::cerr;
-    using std::endl;
-    bool passed = true;
-    for (size_t i = 0; i < group_vec_.size(); ++i) {
-      for (size_t j = 0; j < group_vec_.size(); ++j) {
-        Transformation mul_resmat = (group_vec_[i] * group_vec_[j]).matrix();
-        Scalar fastmul_res_raw[LieGroup::num_parameters];
-        Eigen::Map<LieGroup> fastmul_res(fastmul_res_raw);
-        Eigen::Map<const LieGroup> group_j_constmap(group_vec_[j].data());
-        fastmul_res = group_vec_[i];
-        fastmul_res.fastMultiply(group_j_constmap);
-        Transformation diff = mul_resmat - fastmul_res.matrix();
-        Scalar nrm = diff.norm();
-        if (isnan(nrm) || nrm > SMALL_EPS) {
-          cerr << "Map & Multiply" << endl;
-          cerr << "Test case: " << i << "," << j << endl;
-          cerr << diff << endl;
-          cerr << endl;
-          passed = false;
-        }
-      }
-    }
-    return passed;
-  }
-
   bool veeHatTest() {
     using std::cerr;
     using std::endl;
@@ -259,11 +233,6 @@ class Tests {
       exit(-1);
     }
     passed = lieBracketTest();
-    if (!passed) {
-      cerr << "failed!" << endl << endl;
-      exit(-1);
-    }
-    passed = mapAndMultTest();
     if (!passed) {
       cerr << "failed!" << endl << endl;
       exit(-1);

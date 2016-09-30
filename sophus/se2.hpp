@@ -81,15 +81,16 @@ class SE2GroupBase {
   /** \brief scalar type */
   typedef typename Eigen::internal::traits<Derived>::Scalar Scalar;
   /** \brief translation reference type */
-  typedef
-      typename Eigen::internal::traits<Derived>::TranslationType& TranslationReference;
+  typedef typename Eigen::internal::traits<Derived>::TranslationType&
+      TranslationReference;
   /** \brief translation const reference type */
   typedef const typename Eigen::internal::traits<Derived>::TranslationType&
       ConstTranslationReference;
   /** \brief SO2 reference type */
   typedef typename Eigen::internal::traits<Derived>::SO2Type& SO2Reference;
   /** \brief SO2 type */
-  typedef const typename Eigen::internal::traits<Derived>::SO2Type& ConstSO2Reference;
+  typedef const typename Eigen::internal::traits<Derived>::SO2Type&
+      ConstSO2Reference;
 
   /** \brief degree of freedom of group
     *        (two for translation, one for in-plane rotation) */
@@ -137,20 +138,6 @@ class SE2GroupBase {
   }
 
   /**
-   * \brief Fast group multiplication
-   *
-   * This method is a fast version of operator*=(), since it does not perform
-   * normalization. It is up to the user to call normalize() once in a while.
-   *
-   * \see operator*=()
-   */
-  inline SE2GroupBase<Derived>& fastMultiply(const SE2Group<Scalar>& other) {
-    translation() += so2() * (other.translation());
-    so2().fastMultiply(other.so2());
-    return *this;
-  }
-
-  /**
    * \returns Group inverse of instance
    */
   inline SE2Group<Scalar> inverse() const {
@@ -172,8 +159,7 @@ class SE2GroupBase {
   /**
    * \brief Normalize SO2 element
    *
-   * It re-normalizes the SO2 element. This method only needs to
-   * be called in conjunction with fastMultiply() or data() write access.
+   * It re-normalizes the SO2 element.
    */
   inline void normalize() { so2().normalize(); }
 
@@ -239,19 +225,20 @@ class SE2GroupBase {
   /**
    * \brief In-place group multiplication
    *
-   * \see fastMultiply()
    * \see operator*()
    */
   inline SE2GroupBase<Derived>& operator*=(const SE2Group<Scalar>& other) {
-    fastMultiply(other);
-    normalize();
+    translation() += so2() * (other.translation());
+    so2() *= other.so2();
     return *this;
   }
 
   /**
    * \returns Rotation matrix
    */
-  inline Eigen::Matrix<Scalar, 2, 2> rotationMatrix() const { return so2().matrix(); }
+  inline Eigen::Matrix<Scalar, 2, 2> rotationMatrix() const {
+    return so2().matrix();
+  }
 
   /**
    * \brief Setter of internal unit complex number representation
@@ -312,8 +299,9 @@ class SE2GroupBase {
    * No direct write access is given to ensure the complex number stays
    * normalized.
    */
-  inline typename Eigen::internal::traits<Derived>::SO2Type::ConstComplexReference
-  unit_complex() const {
+  inline
+      typename Eigen::internal::traits<Derived>::SO2Type::ConstComplexReference
+      unit_complex() const {
     return so2().unit_complex();
   }
 
@@ -533,17 +521,17 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
 
  public:
   /** \brief scalar type */
-  typedef
-      typename Eigen::internal::traits<SE2Group<_Scalar, _Options> >::Scalar Scalar;
+  typedef typename Eigen::internal::traits<SE2Group<_Scalar, _Options> >::Scalar
+      Scalar;
   /** \brief translation reference type */
-  typedef
-      typename Eigen::internal::traits<SE2Group<_Scalar, _Options> >::TranslationType&
-          TranslationReference;
+  typedef typename Eigen::internal::traits<
+      SE2Group<_Scalar, _Options> >::TranslationType& TranslationReference;
   typedef const typename Eigen::internal::traits<
       SE2Group<_Scalar, _Options> >::TranslationType& ConstTranslationReference;
   /** \brief SO2 reference type */
-  typedef typename Eigen::internal::traits<SE2Group<_Scalar, _Options> >::SO2Type&
-      SO2Reference;
+  typedef
+      typename Eigen::internal::traits<SE2Group<_Scalar, _Options> >::SO2Type&
+          SO2Reference;
   /** \brief SO2 const reference type */
   typedef const typename Eigen::internal::traits<
       SE2Group<_Scalar, _Options> >::SO2Type& ConstSO2Reference;
@@ -688,14 +676,16 @@ class Map<Sophus::SE2Group<_Scalar>, _Options>
   /** \brief scalar type */
   typedef typename Eigen::internal::traits<Map>::Scalar Scalar;
   /** \brief translation reference type */
-  typedef typename Eigen::internal::traits<Map>::TranslationType& TranslationReference;
+  typedef typename Eigen::internal::traits<Map>::TranslationType&
+      TranslationReference;
   /** \brief translation reference type */
   typedef const typename Eigen::internal::traits<Map>::TranslationType&
       ConstTranslationReference;
   /** \brief SO2 reference type */
   typedef typename Eigen::internal::traits<Map>::SO2Type& SO2Reference;
   /** \brief SO2 const reference type */
-  typedef const typename Eigen::internal::traits<Map>::SO2Type& ConstSO2Reference;
+  typedef const typename Eigen::internal::traits<Map>::SO2Type&
+      ConstSO2Reference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
@@ -764,7 +754,8 @@ class Map<const Sophus::SE2Group<_Scalar>, _Options>
   typedef const typename Eigen::internal::traits<Map>::TranslationType&
       ConstTranslationReference;
   /** \brief SO2 const reference type */
-  typedef const typename Eigen::internal::traits<Map>::SO2Type& ConstSO2Reference;
+  typedef const typename Eigen::internal::traits<Map>::SO2Type&
+      ConstSO2Reference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;

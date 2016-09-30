@@ -155,21 +155,6 @@ class SE3GroupBase {
   }
 
   /**
-   * \brief Fast group multiplication
-   *
-   * This method is a fast version of operator*=(), since it does not perform
-   * normalization. It is up to the user to call normalize() once in a while.
-   *
-   * \see operator*=()
-   */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SE3GroupBase<Derived>& fastMultiply(
-      const SE3Group<Scalar>& other) {
-    translation() += so3() * (other.translation());
-    so3().fastMultiply(other.so3());
-    return *this;
-  }
-
-  /**
     * \brief multiply by ith internal generator
     *
     * \returns *this  x  ith generator of internal data representation
@@ -229,8 +214,7 @@ class SE3GroupBase {
   /**
    * \brief Normalize SO3 element
    *
-   * It re-normalizes the SO3 element. This method only needs to
-   * be called in conjunction with fastMultiply() or data() write access.
+   * It re-normalizes the SO3 element.
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void normalize() { so3().normalize(); }
 
@@ -298,13 +282,12 @@ class SE3GroupBase {
   /**
    * \brief In-place group multiplication
    *
-   * \see fastMultiply()
    * \see operator*()
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SE3GroupBase<Derived>& operator*=(
       const SE3Group<Scalar>& other) {
-    fastMultiply(other);
-    normalize();
+    translation() += so3() * (other.translation());
+    so3() *= other.so3();
     return *this;
   }
 
@@ -746,8 +729,8 @@ class SE3Group : public SE3GroupBase<SE3Group<_Scalar, _Options> > {
    *
    * \pre quaternion must not be zero
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-  SE3Group(const Eigen::Quaternion<Scalar>& quaternion, const Point& translation)
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SE3Group(
+      const Eigen::Quaternion<Scalar>& quaternion, const Point& translation)
       : so3_(quaternion), translation_(translation) {}
 
   /**

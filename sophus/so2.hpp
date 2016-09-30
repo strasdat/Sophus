@@ -151,25 +151,6 @@ class SO2GroupBase {
   inline const Scalar* data() const { return unit_complex().data(); }
 
   /**
-   * \brief Fast group multiplication
-   *
-   * This method is a fast version of operator*=(), since it does not perform
-   * normalization. It is up to the user to call normalize() once in a while.
-   *
-   * \see operator*=()
-   */
-  inline SO2GroupBase<Derived>& fastMultiply(const SO2Group<Scalar>& other) {
-    Scalar lhs_real = unit_complex().x();
-    Scalar lhs_imag = unit_complex().y();
-    const Scalar& rhs_real = other.unit_complex().x();
-    const Scalar& rhs_imag = other.unit_complex().y();
-    // complex multiplication
-    unit_complex_nonconst().x() = lhs_real * rhs_real - lhs_imag * rhs_imag;
-    unit_complex_nonconst().y() = lhs_real * rhs_imag + lhs_imag * rhs_real;
-    return *this;
-  }
-
-  /**
    * \returns group inverse of instance
    */
   inline SO2Group<Scalar> inverse() const {
@@ -188,8 +169,7 @@ class SO2GroupBase {
   /**
    * \brief Normalize complex number
    *
-   * It re-normalizes complex number to unit length. This method only needs to
-   * be called in conjunction with fastMultiply() or data() write access.
+   * It re-normalizes complex number to unit length.
    */
   inline void normalize() {
     Scalar length = std::sqrt(unit_complex().x() * unit_complex().x() +
@@ -252,12 +232,28 @@ class SO2GroupBase {
   /**
    * \brief In-place group multiplication
    *
-   * \see fastMultiply()
    * \see operator*()
    */
   inline SO2GroupBase<Derived> operator*=(const SO2Group<Scalar>& other) {
-    fastMultiply(other);
-    normalize();
+    Scalar lhs_real = unit_complex().x();
+    Scalar lhs_imag = unit_complex().y();
+    const Scalar& rhs_real = other.unit_complex().x();
+    const Scalar& rhs_imag = other.unit_complex().y();
+    // complex multiplication
+    unit_complex_nonconst().x() = lhs_real * rhs_real - lhs_imag * rhs_imag;
+    unit_complex_nonconst().y() = lhs_real * rhs_imag + lhs_imag * rhs_real;
+
+    Scalar squared_norm = unit_complex_nonconst().squaredNorm();
+    // We can assume that the squared-norm is close to 1 since we deal with a
+    // unit complex number. Due to numerical precission issues, there might
+    // be a small drift after pose concatenation. Hence, we need to renormalize
+    // the complex number here.
+    // Since squared-norm is close to 1, we do not need to calculate the costly
+    // square-root, but can use an approximation around 1 (see
+    // http://stackoverflow.com/a/12934750 for details).
+    if (squared_norm != Scalar(1.0)) {
+      unit_complex_nonconst() *= Scalar(2.0) / (Scalar(1.0) + squared_norm);
+    }
     return *this;
   }
 

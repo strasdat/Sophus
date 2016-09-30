@@ -170,19 +170,6 @@ class RxSO3GroupBase {
   inline const Scalar* data() const { return quaternion().coeffs().data(); }
 
   /**
-   * \brief In-place group multiplication
-   *
-   *  Same as operator*=() for RxSO3.
-   *
-   * \see operator*=()
-   */
-  inline RxSO3GroupBase<Derived>& fastMultiply(
-      const RxSO3Group<Scalar>& other) {
-    quaternion() *= other.quaternion();
-    return *this;
-  }
-
-  /**
    * \returns group inverse of instance
    */
   inline RxSO3Group<Scalar> inverse() const {

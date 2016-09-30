@@ -144,19 +144,6 @@ class Sim3GroupBase {
   }
 
   /**
-   * \brief In-place group multiplication
-   *
-   * Same as operator*=() for Sim3.
-   *
-   * \see operator*()
-   */
-  inline Sim3GroupBase<Derived>& fastMultiply(const Sim3Group<Scalar>& other) {
-    translation() += (rxso3() * other.translation());
-    rxso3() *= other.rxso3();
-    return *this;
-  }
-
-  /**
    * \returns Group inverse of instance
    */
   inline Sim3Group<Scalar> inverse() const {

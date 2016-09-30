@@ -159,20 +159,6 @@ class SO3GroupBase {
   }
 
   /**
-   * \brief Fast group multiplication
-   *
-   * This method is a fast version of operator*=(), since it does not perform
-   * normalization. It is up to the user to call normalize() once in a while.
-   *
-   * \see operator*=()
-   */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3GroupBase<Derived>& fastMultiply(
-      const SO3Group<Scalar>& other) {
-    unit_quaternion_nonconst() *= other.unit_quaternion();
-    return *this;
-  }
-
-  /**
    * \brief multiply by ith internal generator
    *
    * \returns *this  x  ith generator of intenral SU(2) representation)
@@ -224,8 +210,7 @@ class SO3GroupBase {
   /**
    * \brief Normalize quaternion
    *
-   * It re-normalizes unit_quaternion to unit length. This method only needs to
-   * be called in conjunction with fastMultiply() or data() write access.
+   * It re-normalizes unit_quaternion to unit length. 
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
@@ -292,13 +277,24 @@ class SO3GroupBase {
   /**
    * \brief In-place group multiplication
    *
-   * \see fastMultiply()
    * \see operator*()
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3GroupBase<Derived>& operator*=(
       const SO3Group<Scalar>& other) {
-    fastMultiply(other);
-    normalize();
+    unit_quaternion_nonconst() *= other.unit_quaternion();
+
+    Scalar squared_norm = unit_quaternion().squaredNorm();
+
+    // We can assume that the squared-norm is close to 1 since we deal with a
+    // unit quaternion. Due to numerical precission issues, there might
+    // be a small drift after pose concatenation. Hence, we need to renormalize
+    // the quaternion here.
+    // Since squared-norm is close to 1, we do not need to calculate the costly
+    // square-root, but can use an approximation around 1 (see
+    // http://stackoverflow.com/a/12934750 for details).
+    if (squared_norm != Scalar(1.0)) {
+      unit_quaternion_nonconst().coeffs() *= Scalar(2.0) / (Scalar(1.0) + squared_norm);
+    }
     return *this;
   }
 
