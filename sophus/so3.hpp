@@ -39,7 +39,6 @@
 namespace Sophus {
 template <typename _Scalar, int _Options = 0>
 class SO3Group;
-typedef EIGEN_DEPRECATED SO3Group<double> SO3;
 typedef SO3Group<double> SO3d; /**< double precision SO3 */
 typedef SO3Group<float> SO3f;  /**< single precision SO3 */
 }

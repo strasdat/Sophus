@@ -33,7 +33,6 @@
 namespace Sophus {
 template <typename _Scalar, int _Options = 0>
 class SE3Group;
-EIGEN_DEPRECATED typedef SE3Group<double> SE3;
 typedef SE3Group<double> SE3d; /**< double precision SE3 */
 typedef SE3Group<float> SE3f;  /**< single precision SE3 */
 typedef Eigen::Matrix<double, 6, 1> Vector6d;
