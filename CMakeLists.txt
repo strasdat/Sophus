@@ -21,7 +21,7 @@ ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
    ADD_DEFINITIONS("-Wall -Werror -Wextra -std=c++11")
 ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-
+   ADD_DEFINITIONS("-std=c++11 -D _USE_MATH_DEFINES /wd4305")
 ENDIF()
 
 ################################################################################
