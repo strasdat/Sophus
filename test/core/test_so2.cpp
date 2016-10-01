@@ -92,7 +92,9 @@ int test_so2() {
   tests<double>();
   cerr << "Float tests: " << endl;
   tests<float>();
-  return 0;
+  char *x = (char*)malloc(10 * sizeof(char*));
+  free(x);
+  return x[5];
 }
 }  // namespace Sophus
 
