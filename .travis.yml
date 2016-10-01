@@ -5,19 +5,20 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install libeigen3-dev
 
-# run CI only on pushes to master
-branches:
-  only: 
-    - master
-
 language: cpp
 
 compiler:
   - gcc
   - clang
 
+env:
+  - BUILD_TYPE=Release
+  - BUILD_TYPE=Debug
+
+
 script:
   - mkdir build
   - cd build
-  - cmake .. && make -j
+  - cmake -D CMAKE_BUILD_TYPE=$BUILD_TYPE ..
+  - make -j
   - make test
