@@ -25,6 +25,7 @@
 
 #include <stdexcept>
 
+#include <cmath>
 #include <Eigen/Core>
 
 #include "ensure.hpp"

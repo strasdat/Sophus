@@ -554,9 +554,9 @@ class SO3GroupBase {
     } else {
       if (abs(w) < SophusConstants<Scalar>::epsilon()) {
         if (w > static_cast<Scalar>(0)) {
-          two_atan_nbyw_by_n = M_PI / n;
+          two_atan_nbyw_by_n = SophusConstants<Scalar>::pi() / n;
         } else {
-          two_atan_nbyw_by_n = -M_PI / n;
+          two_atan_nbyw_by_n = -SophusConstants<Scalar>::pi() / n;
         }
       } else {
         two_atan_nbyw_by_n = static_cast<Scalar>(2) * atan(n / w) / n;
