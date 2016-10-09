@@ -300,7 +300,7 @@ class RxSO3GroupBase {
   EIGEN_STRONG_INLINE
   void setScale(const Scalar& scale) {
     quaternion().normalize();
-    quaternion() *= scale;
+    quaternion().coeffs() *= scale;
   }
 
   /**

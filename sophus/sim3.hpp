@@ -300,7 +300,7 @@ class Sim3GroupBase {
    * \brief Scale setter
    */
   EIGEN_STRONG_INLINE
-  void setScale(const Scalar& scale) const { rxso3().setScale(scale); }
+  void setScale(const Scalar& scale) { rxso3().setScale(scale); }
 
   /**
    * \brief Setter of quaternion using scaled rotation matrix
