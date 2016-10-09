@@ -75,6 +75,15 @@ void tests() {
   tests.setPoints(point_vec);
 
   tests.runAllTests();
+
+  // TODO: Add proper unit tests for all functions.
+  RxSO3Type rxso3;
+  Scalar scale(1.2);
+  rxso3.setScale(scale);
+  if (std::abs(scale - rxso3.scale()) > SophusConstants<Scalar>::epsilon()) {
+    std::cerr << "setScale unit test failed." << std::endl;
+	std::exit(-1);
+  }
 }
 
 int test_rxso3() {
