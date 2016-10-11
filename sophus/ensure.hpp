@@ -23,8 +23,11 @@
 #ifndef SOPHUS_ENSURE_HPP
 #define SOPHUS_ENSURE_HPP
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
+
+#include <Eigen/Core>
 
 // following boost's assert.hpp
 #undef SOPHUS_ENSURE
@@ -39,6 +42,12 @@
 #define SOPHUS_FUNCTION __FUNCTION__
 #else
 #define SOPHUS_FUNCTION "unknown"
+#endif
+
+// Make sure this compiles with older versions of Eigen which do not have
+// EIGEN_DEVICE_FUNC defined.
+#ifndef EIGEN_DEVICE_FUNC
+#define EIGEN_DEVICE_FUNC
 #endif
 
 #if defined(SOPHUS_DISABLE_ENSURES)
