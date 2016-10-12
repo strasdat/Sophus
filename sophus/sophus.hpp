@@ -25,16 +25,7 @@
 
 #include <stdexcept>
 
-#include <cmath>
-#include <Eigen/Core>
-
 #include "ensure.hpp"
-
-// Make sure this compiles with older versions of Eigen which do not have
-// EIGEN_DEVICE_FUNC defined.
-#ifndef EIGEN_DEVICE_FUNC
-#define EIGEN_DEVICE_FUNC
-#endif
 
 namespace Sophus {
 
