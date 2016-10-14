@@ -82,7 +82,16 @@ void tests() {
   rxso3.setScale(scale);
   if (std::abs(scale - rxso3.scale()) > SophusConstants<Scalar>::epsilon()) {
     std::cerr << "setScale unit test failed." << std::endl;
-	std::exit(-1);
+    std::exit(-1);
+  }
+  Eigen::Matrix<Scalar, 3, 3> sR =
+      SO3Group<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix() * Scalar(1.3);
+  rxso3.setScaledRotationMatrix(sR);
+  if ((sR - rxso3.matrix()).norm() > SophusConstants<Scalar>::epsilon()) {
+    std::cerr << "setScaleRotationMatrix unit test failed." << std::endl;
+    std::cerr << sR << "\nversus\n";
+    std::cerr << rxso3.matrix() << std::endl;
+    std::exit(-1);
   }
 }
 
