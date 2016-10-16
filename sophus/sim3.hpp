@@ -528,9 +528,9 @@ class Sim3GroupBase {
         RxSO3Group<Scalar>::logAndTheta(other.rxso3(), &theta);
     const Eigen::Matrix<Scalar, 3, 1>& omega = omega_sigma.template head<3>();
     Scalar sigma = omega_sigma[3];
-    Eigen::Matrix<Scalar, 3, 3> W =
-        calcW(theta, sigma, other.scale(), SO3Group<Scalar>::hat(omega));
-    res.segment(0, 3) = W.partialPivLu().solve(other.translation());
+    Eigen::Matrix<Scalar, 3, 3> W_inv =
+        calcWInv(theta, sigma, other.scale(), SO3Group<Scalar>::hat(omega));
+    res.segment(0, 3) = W_inv * other.translation();
     res.segment(3, 3) = omega;
     res[6] = sigma;
     return res;
@@ -592,6 +592,52 @@ class Sim3GroupBase {
     }
     return A * Omega + B * Omega2 + C * I;
   }
+
+  static Eigen::Matrix<Scalar, 3, 3> calcWInv(
+      const Scalar& theta, const Scalar& sigma, const Scalar& scale,
+      const Eigen::Matrix<Scalar, 3, 3>& Omega) {
+    static const Eigen::Matrix<Scalar, 3, 3> I =
+        Eigen::Matrix<Scalar, 3, 3>::Identity();
+    static const Scalar half = static_cast<Scalar>(0.5);
+    static const Scalar one = static_cast<Scalar>(1.);
+    static const Scalar two = static_cast<Scalar>(2.);
+    const Eigen::Matrix<Scalar, 3, 3> Omega2 = Omega * Omega;
+    const Scalar scale_sq = scale * scale;
+    const Scalar theta_sq = theta * theta;
+    const Scalar sin_theta = sin(theta);
+    const Scalar cos_theta = cos(theta);
+
+    Scalar a, b, c;
+    if (abs(sigma * sigma) < SophusConstants<Scalar>::epsilon()) {
+      c = one - half * sigma;
+      a = -half;
+      if (abs(theta_sq) < SophusConstants<Scalar>::epsilon()) {
+        b = Scalar(1. / 12.);
+      } else {
+        b = (theta * sin_theta + two * cos_theta - two) /
+            (two * theta_sq * (cos_theta - one));
+      }
+    } else {
+      const Scalar scale_cu = scale_sq * scale;
+      c = sigma / (scale - one);
+      if (abs(theta_sq) < SophusConstants<Scalar>::epsilon()) {
+        a = (-sigma * scale + scale - one) / ((scale - one) * (scale - one));
+        b = (scale_sq * sigma - two * scale_sq + scale * sigma + two * scale) /
+            (two * scale_cu - Scalar(6) * scale_sq + Scalar(6) * scale - two);
+      } else {
+        const Scalar s_sin_theta = scale * sin_theta;
+        const Scalar s_cos_theta = scale * cos_theta;
+        a = (theta * s_cos_theta - theta - sigma * s_sin_theta) /
+            (theta * (scale_sq - two * s_cos_theta + one));
+        b = -scale *
+            (theta * s_sin_theta - theta * sin_theta + sigma * s_cos_theta -
+             scale * sigma + sigma * cos_theta - sigma) /
+            (theta_sq * (scale_cu - two * scale * s_cos_theta - scale_sq +
+                         two * s_cos_theta + scale - one));
+      }
+    }
+    return a * Omega + b * Omega2 + c * I;
+  }
 };
 
 /**
@@ -616,8 +662,9 @@ class Sim3Group : public Sim3GroupBase<Sim3Group<_Scalar, _Options> > {
   typedef typename Eigen::internal::traits<
       Sim3Group<_Scalar, _Options> >::TranslationType& TranslationReference;
   /** \brief translation const reference type */
-  typedef const typename Eigen::internal::traits<Sim3Group<
-      _Scalar, _Options> >::TranslationType& ConstTranslationReference;
+  typedef const typename Eigen::internal::traits<
+      Sim3Group<_Scalar, _Options> >::TranslationType&
+      ConstTranslationReference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
