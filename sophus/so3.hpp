@@ -24,6 +24,8 @@
 #ifndef SOPHUS_SO3_HPP
 #define SOPHUS_SO3_HPP
 
+#include <iostream>
+
 #include "sophus.hpp"
 
 // Include only the selective set of Eigen headers that we need.
@@ -77,6 +79,29 @@ using std::sqrt;
 using std::abs;
 using std::cos;
 using std::sin;
+
+namespace details {
+// TODO(strasdat) Make this more generic and add it to ENSURE macro.
+template <typename T>
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void PrintQuaterion(
+    const Eigen::Matrix<T, 4, 1>&) {}
+
+template <>
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void PrintQuaterion<double>(
+    const Eigen::Vector4d& q) {
+#ifndef __CUDACC__
+  std::cerr << "quaternion: " << q.transpose() << std::endl;
+#endif
+}
+
+template <>
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void PrintQuaterion<float>(
+    const Eigen::Vector4f& q) {
+#ifndef __CUDACC__
+  std::cerr << "quaternion: " << q.transpose() << std::endl;
+#endif
+}
+}  // namespace details
 
 /**
  * \brief SO3 base type - implements SO3 class but is storage agnostic
@@ -215,8 +240,11 @@ class SO3GroupBase {
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
 
-    SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
-                  "Quaternion should not be close to zero!");
+    bool cond = length >= SophusConstants<Scalar>::epsilon();
+    if (!cond) {
+      details::PrintQuaterion(unit_quaternion_nonconst().coeffs().eval());
+    }
+    SOPHUS_ENSURE(cond, "Quaternion should not be close to zero!");
     unit_quaternion_nonconst().coeffs() /= length;
   }
 
@@ -545,8 +573,11 @@ class SO3GroupBase {
     if (n < SophusConstants<Scalar>::epsilon()) {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
-      SOPHUS_ENSURE(abs(w) >= SophusConstants<Scalar>::epsilon(),
-                    "Quaternion should be normalized!");
+      bool cond = abs(w) >= SophusConstants<Scalar>::epsilon();
+      if (!cond) {
+        details::PrintQuaterion(other.unit_quaternion().coeffs().eval());
+      }
+      SOPHUS_ENSURE(cond, "Quaternion should be normalized!");
       Scalar squared_w = w * w;
       two_atan_nbyw_by_n =
           static_cast<Scalar>(2) / w -
