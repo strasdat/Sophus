@@ -7,6 +7,13 @@ ADD_DEFINITIONS("-DSOPHUS_ENABLE_ENSURE_HANDLER")
 # Tests to run
 SET( TEST_SOURCES test_so2 test_se2 test_so3 test_se3 test_rxso3 test_sim3 )
 
+# git clone https://ceres-solver.googlesource.com/ceres-solver
+find_package( Ceres 1.6.0 QUIET )
+
+if( Ceres_FOUND )
+    add_definitions(-DSOPHUS_CERES_FOUND)
+endif()
+
 FOREACH(test_src ${TEST_SOURCES})
   ADD_EXECUTABLE( ${test_src} ${test_src}.cpp tests.hpp)
   ADD_TEST( ${test_src} ${test_src} )

@@ -29,6 +29,10 @@
 
 #include <Eigen/Core>
 
+#ifdef SOPHUS_CERES_FOUND
+#include <ceres/ceres.h>
+#endif
+
 // following boost's assert.hpp
 #undef SOPHUS_ENSURE
 
@@ -70,16 +74,35 @@ class IsStreamable {
 };
 
 template <typename T>
-typename std::enable_if<IsStreamable<T>::value>::type AddArgToStream(
-    std::stringstream& stream, T&& arg) {
-  stream << std::forward<T>(arg);
-}
+class ArgToStream {
+ public:
+  static void impl(std::stringstream& stream, T arg) { stream << arg; }
+};
 
-template <typename T>
-typename std::enable_if<!IsStreamable<T>::value>::type AddArgToStream(
-    std::stringstream& stream, T) {
-  stream << "[?]";
-}
+// Hack to side-step broken ostream overloads of Eigen types with Jet Scalars.
+template <int N, int Rows, int Cols, int Opts, int MaxRows, int MaxCols>
+class ArgToStream<Eigen::Transpose<
+    Eigen::Matrix<ceres::Jet<double, N>, Rows, Cols, Opts, MaxRows, MaxCols>>> {
+ public:
+  static void impl(
+      std::stringstream& stream,
+      Eigen::Transpose<Eigen::Matrix<ceres::Jet<double, N>, Rows, Cols, Opts,
+                                     MaxRows, MaxCols>>) {
+    stream << "[jet]";
+  }
+};
+
+template <int N, int Rows, int Cols, int Opts, int MaxRows, int MaxCols>
+class ArgToStream<Eigen::Transpose<const Eigen::Matrix<
+    ceres::Jet<double, N>, Rows, Cols, Opts, MaxRows, MaxCols>>> {
+ public:
+  static void impl(
+      std::stringstream& stream,
+      Eigen::Transpose<const Eigen::Matrix<ceres::Jet<double, N>, Rows, Cols,
+                                           Opts, MaxRows, MaxCols>>) {
+    stream << "[jet]";
+  }
+};
 
 inline std::stringstream& FormatStream(std::stringstream& stream,
                                        const char* text) {
@@ -90,11 +113,13 @@ inline std::stringstream& FormatStream(std::stringstream& stream,
 // Following: http://en.cppreference.com/w/cpp/language/parameter_pack
 template <typename T, typename... Args>
 std::stringstream& FormatStream(std::stringstream& stream, const char* text,
-                                T arg, Args&&... args) {
+                                T arg, Args... args) {
+  static_assert(IsStreamable<T>::value,
+                "One of the args has not ostream overload!");
   for (; *text != '\0'; ++text) {
     if (*text == '%') {
-      AddArgToStream(stream, arg);
-      FormatStream(stream, text + 1, std::forward<Args>(args)...);
+      ArgToStream<T>::impl(stream, arg);
+      FormatStream(stream, text + 1, args...);
       return stream;
     }
   }
@@ -103,9 +128,9 @@ std::stringstream& FormatStream(std::stringstream& stream, const char* text,
 }
 
 template <typename... Args>
-std::string FormatString(const char* text, Args&&... args) {
+std::string FormatString(const char* text, Args... args) {
   std::stringstream stream;
-  FormatStream(stream, text, std::forward<Args>(args)...);
+  FormatStream(stream, text, args...);
   return stream.str();
 }
 }  // namespace details
@@ -140,7 +165,8 @@ EIGEN_DEVICE_FUNC inline void defaultEnsure(const char* function,
 #ifdef __CUDACC__
   std::printf("%s", description);
 #else
-  std::cout << details::FormatString(description, std::forward<Args>(args)...) << std::endl;
+  std::cout << details::FormatString(description, std::forward<Args>(args)...)
+            << std::endl;
   std::abort();
 #endif
 }
