@@ -79,6 +79,7 @@ class ArgToStream {
   static void impl(std::stringstream& stream, T arg) { stream << arg; }
 };
 
+#ifdef SOPHUS_CERES_FOUND
 // Hack to side-step broken ostream overloads of Eigen types with Jet Scalars.
 template <int N, int Rows, int Cols, int Opts, int MaxRows, int MaxCols>
 class ArgToStream<Eigen::Transpose<
@@ -103,6 +104,7 @@ class ArgToStream<Eigen::Transpose<const Eigen::Matrix<
     stream << "[jet]";
   }
 };
+#endif // SOPHUS_CERES_FOUND
 
 inline std::stringstream& FormatStream(std::stringstream& stream,
                                        const char* text) {
