@@ -50,9 +50,69 @@
 #define EIGEN_DEVICE_FUNC
 #endif
 
+namespace Sophus {
+namespace details {
+
+// Following: http://stackoverflow.com/a/22759544
+template <typename T>
+class IsStreamable {
+ private:
+  template <typename TT>
+  static auto test(int)
+      -> decltype(std::declval<std::stringstream&>() << std::declval<TT>(),
+                  std::true_type());
+
+  template <typename>
+  static auto test(...) -> std::false_type;
+
+ public:
+  static const bool value = decltype(test<T>(0))::value;
+};
+
+template <typename T>
+typename std::enable_if<IsStreamable<T>::value>::type AddArgToStream(
+    std::stringstream& stream, T&& arg) {
+  stream << std::forward<T>(arg);
+}
+
+template <typename T>
+typename std::enable_if<!IsStreamable<T>::value>::type AddArgToStream(
+    std::stringstream& stream, T) {
+  stream << "[?]";
+}
+
+std::stringstream& FormatStream(std::stringstream& stream, const char* text) {
+  stream << text;
+  return stream;
+}
+
+// Following: http://en.cppreference.com/w/cpp/language/parameter_pack
+template <typename T, typename... Args>
+std::stringstream& FormatStream(std::stringstream& stream, const char* text,
+                                T arg, Args&&... args) {
+  for (; *text != '\0'; ++text) {
+    if (*text == '%') {
+      AddArgToStream(stream, arg);
+      FormatStream(stream, text + 1, std::forward<Args>(args)...);
+      return stream;
+    }
+  }
+  stream << *text;
+  return stream;
+}
+
+template <typename... Args>
+std::string FormatString(const char* text, Args&&... args) {
+  std::stringstream stream;
+  FormatStream(stream, text, std::forward<Args>(args)...);
+  return stream.str();
+}
+}  // namespace details
+}  // namespace Sophus
+
 #if defined(SOPHUS_DISABLE_ENSURES)
 
-#define SOPHUS_ENSURE(expr, description) ((void)0)
+#define SOPHUS_ENSURE(expr, description, ...) ((void)0)
 
 #elif defined(SOPHUS_ENABLE_ENSURE_HANDLER)
 
@@ -61,25 +121,31 @@ void ensureFailed(const char* function, const char* file, int line,
                   const char* description);
 }
 
-#define SOPHUS_ENSURE(expr, description)                                  \
-  ((expr) ? ((void)0) : ::Sophus::ensureFailed(SOPHUS_FUNCTION, __FILE__, \
-                                               __LINE__, (description)))
+#define SOPHUS_ENSURE(expr, description, ...)                               \
+  ((expr) ? ((void)0)                                                       \
+          : ::Sophus::ensureFailed(                                         \
+                SOPHUS_FUNCTION, __FILE__, __LINE__,                        \
+                Sophus::details::FormatString((description), ##__VA_ARGS__) \
+                    .c_str()))
 #else
 namespace Sophus {
+template <typename... Vargs>
 EIGEN_DEVICE_FUNC inline void defaultEnsure(const char* function,
                                             const char* file, int line,
-                                            const char* description) {
+                                            const char* description,
+                                            Vargs... args) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               function, file, line);
-  std::printf("Description: %s\n", description);
+  std::cout << FormatString(description, args);
 #ifndef __CUDACC__
   std::abort();
 #endif
 }
-}
-#define SOPHUS_ENSURE(expr, description)                                 \
-  ((expr) ? ((void)0) : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, \
-                                              __LINE__, (description)))
+}  // namespace Sophus
+#define SOPHUS_ENSURE(expr, description, ...)                          \
+  ((expr) ? ((void)0)                                                  \
+          : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                  (description), ##__VA_ARGS__))
 #endif
 
 #endif  // SOPHUS_ENSURE_HPP
