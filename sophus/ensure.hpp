@@ -81,7 +81,8 @@ typename std::enable_if<!IsStreamable<T>::value>::type AddArgToStream(
   stream << "[?]";
 }
 
-std::stringstream& FormatStream(std::stringstream& stream, const char* text) {
+inline std::stringstream& FormatStream(std::stringstream& stream,
+                                       const char* text) {
   stream << text;
   return stream;
 }
@@ -129,15 +130,17 @@ void ensureFailed(const char* function, const char* file, int line,
                     .c_str()))
 #else
 namespace Sophus {
-template <typename... Vargs>
+template <typename... Args>
 EIGEN_DEVICE_FUNC inline void defaultEnsure(const char* function,
                                             const char* file, int line,
                                             const char* description,
-                                            Vargs... args) {
+                                            Args&&... args) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               function, file, line);
-  std::cout << FormatString(description, args);
-#ifndef __CUDACC__
+#ifdef __CUDACC__
+  std::printf("%s", description);
+#else
+  std::cout << details::FormatString(description, std::forward<Args>(args)...) << std::endl;
   std::abort();
 #endif
 }
