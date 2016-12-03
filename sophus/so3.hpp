@@ -239,12 +239,9 @@ class SO3GroupBase {
    */
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
-
-    bool cond = length >= SophusConstants<Scalar>::epsilon();
-    if (!cond) {
-      details::PrintQuaterion(unit_quaternion_nonconst().coeffs().eval());
-    }
-    SOPHUS_ENSURE(cond, "Quaternion should not be close to zero!");
+    SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
+                  "Quaternion (%) should not be close to zero!",
+                  unit_quaternion_nonconst().coeffs().transpose());
     unit_quaternion_nonconst().coeffs() /= length;
   }
 
@@ -573,11 +570,9 @@ class SO3GroupBase {
     if (n < SophusConstants<Scalar>::epsilon()) {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
-      bool cond = abs(w) >= SophusConstants<Scalar>::epsilon();
-      if (!cond) {
-        details::PrintQuaterion(other.unit_quaternion().coeffs().eval());
-      }
-      SOPHUS_ENSURE(cond, "Quaternion should be normalized!");
+      SOPHUS_ENSURE(abs(w) >= SophusConstants<Scalar>::epsilon(),
+                    "Quaternion (%) should be normalized!",
+                    other.unit_quaternion().coeffs().transpose());
       Scalar squared_w = w * w;
       two_atan_nbyw_by_n =
           static_cast<Scalar>(2) / w -
