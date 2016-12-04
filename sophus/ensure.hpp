@@ -104,29 +104,30 @@ class ArgToStream<Eigen::Transpose<const Eigen::Matrix<
     stream << "[jet]";
   }
 };
-#endif // SOPHUS_CERES_FOUND
+#endif  // SOPHUS_CERES_FOUND
 
-inline std::stringstream& FormatStream(std::stringstream& stream,
-                                       const char* text) {
+inline void FormatStream(std::stringstream& stream, const char* text) {
   stream << text;
-  return stream;
+  return;
 }
 
 // Following: http://en.cppreference.com/w/cpp/language/parameter_pack
 template <typename T, typename... Args>
-std::stringstream& FormatStream(std::stringstream& stream, const char* text,
-                                T arg, Args... args) {
+void FormatStream(std::stringstream& stream, const char* text, T arg,
+                  Args... args) {
   static_assert(IsStreamable<T>::value,
                 "One of the args has not ostream overload!");
   for (; *text != '\0'; ++text) {
     if (*text == '%') {
       ArgToStream<T>::impl(stream, arg);
       FormatStream(stream, text + 1, args...);
-      return stream;
+      return;
     }
+    stream << *text;
   }
-  stream << *text;
-  return stream;
+  stream << "\nFormat-Warning: There are " << sizeof...(Args) + 1
+         << " args unused.";
+  return;
 }
 
 template <typename... Args>
