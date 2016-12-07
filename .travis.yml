@@ -7,20 +7,31 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install eigen          ; fi
 
+install:
+- if [[ "$BUILD_TYPE" == "Coverage" ]]; then wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.11.orig.tar.gz ; fi
+- if [[ "$BUILD_TYPE" == "Coverage" ]]; then tar xf lcov_1.11.orig.tar.gz ; fi
+- if [[ "$BUILD_TYPE" == "Coverage" ]]; then sudo make -C lcov-1.11/ install ; fi
+- if [[ "$BUILD_TYPE" == "Coverage" ]]; then gem install coveralls-lcov ; fi
+
 language: cpp
 
-compiler:
-  - gcc
-  - clang
-
-os:
-  - linux
-  - osx
-
-env:
-  - BUILD_TYPE=Release
-  - BUILD_TYPE=Debug
-
+matrix:
+  include:
+  - compiler: gcc
+    os: linux
+    env: BUILD_TYPE=Coverage
+  - compiler: gcc
+    os: linux
+    env: BUILD_TYPE=Release
+  - compiler: clang
+    os: linux
+    env: BUILD_TYPE=Debug
+  - compiler: clang
+    os: linux
+    env: BUILD_TYPE=Release
+  - compiler: clang
+    os: osx
+    env: BUILD_TYPE=Release
 
 script:
   - mkdir build
@@ -29,6 +40,12 @@ script:
   - make -j
   - make test
 
+after_success:
+ - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --directory . --capture --output-file coverage.info ; fi
+ - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --remove coverage.info 'test/*' '/usr/*' --output-file coverage.info ; fi
+ - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --list coverage.info ; fi
+ - if [[ "$BUILD_TYPE" == "Coverage" ]]; then coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info; fi
+  
 branches:
   only:
     - master

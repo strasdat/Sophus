@@ -1,5 +1,6 @@
 linux, os x: [![Build Status](https://travis-ci.org/strasdat/Sophus.svg?branch=master)](https://travis-ci.org/strasdat/Sophus) 
 windows: [![Build status](https://ci.appveyor.com/api/projects/status/um4285lwhs8ci7pt/branch/master?svg=true)](https://ci.appveyor.com/project/strasdat/sophus/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/strasdat/Sophus/badge.svg?branch=master)](https://coveralls.io/github/strasdat/Sophus?branch=master)
 
 Sophus
 ------
