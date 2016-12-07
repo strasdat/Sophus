@@ -5,7 +5,7 @@ INCLUDE_DIRECTORIES( BEFORE ${Sophus_INCLUDE_DIR} )
 ADD_DEFINITIONS("-DSOPHUS_ENABLE_ENSURE_HANDLER")
 
 # Tests to run
-SET( TEST_SOURCES test_so2 test_se2 test_so3 test_se3 test_rxso3 test_sim3 )
+SET( TEST_SOURCES test_so2 test_se2 test_so3 test_se3 test_rxso3 test_sim3)
 
 # git clone https://ceres-solver.googlesource.com/ceres-solver
 find_package( Ceres 1.6.0 QUIET )
