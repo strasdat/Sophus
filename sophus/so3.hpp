@@ -80,29 +80,6 @@ using std::abs;
 using std::cos;
 using std::sin;
 
-namespace details {
-// TODO(strasdat) Make this more generic and add it to ENSURE macro.
-template <typename T>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void PrintQuaterion(
-    const Eigen::Matrix<T, 4, 1>&) {}
-
-template <>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void PrintQuaterion<double>(
-    const Eigen::Vector4d& q) {
-#ifndef __CUDACC__
-  std::cerr << "quaternion: " << q.transpose() << std::endl;
-#endif
-}
-
-template <>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void PrintQuaterion<float>(
-    const Eigen::Vector4f& q) {
-#ifndef __CUDACC__
-  std::cerr << "quaternion: " << q.transpose() << std::endl;
-#endif
-}
-}  // namespace details
-
 /**
  * \brief SO3 base type - implements SO3 class but is storage agnostic
  *
@@ -147,13 +124,13 @@ class SO3GroupBase {
    *
    * For SO3, it simply returns the rotation matrix corresponding to \f$ A \f$.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Adjoint Adj() const { return matrix(); }
+  SOPHUS_FUNC Adjoint Adj() const { return matrix(); }
 
   /**
    * \returns copy of instance casted to NewScalarType
    */
   template <typename NewScalarType>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3Group<NewScalarType> cast() const {
+  SOPHUS_FUNC SO3Group<NewScalarType> cast() const {
     return SO3Group<NewScalarType>(
         unit_quaternion().template cast<NewScalarType>());
   }
@@ -170,7 +147,7 @@ class SO3GroupBase {
    *
    * \see normalize()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar* data() {
+  SOPHUS_FUNC Scalar* data() {
     return unit_quaternion_nonconst().coeffs().data();
   }
 
@@ -179,7 +156,7 @@ class SO3GroupBase {
    *
    * Const version of data().
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar* data() const {
+  SOPHUS_FUNC const Scalar* data() const {
     return unit_quaternion().coeffs().data();
   }
 
@@ -190,7 +167,7 @@ class SO3GroupBase {
    *
    * \see internalGenerator
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Eigen::Matrix<Scalar, num_parameters, 1>
+  SOPHUS_FUNC Eigen::Matrix<Scalar, num_parameters, 1>
   internalMultiplyByGenerator(int i) const {
     Eigen::Matrix<Scalar, num_parameters, 1> res;
     Eigen::Quaternion<Scalar> internal_gen_q;
@@ -204,9 +181,8 @@ class SO3GroupBase {
    *
    * \see internalMultiplyByGenerator
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-      Eigen::Matrix<Scalar, num_parameters, DoF>
-      internalJacobian() const {
+  SOPHUS_FUNC
+  Eigen::Matrix<Scalar, num_parameters, DoF> internalJacobian() const {
     Eigen::Matrix<Scalar, num_parameters, DoF> J;
     for (int i = 0; i < DoF; ++i) {
       J.col(i) = internalMultiplyByGenerator(i);
@@ -217,7 +193,7 @@ class SO3GroupBase {
   /**
    * \returns group inverse of instance
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3Group<Scalar> inverse() const {
+  SOPHUS_FUNC SO3Group<Scalar> inverse() const {
     return SO3Group<Scalar>(unit_quaternion().conjugate());
   }
 
@@ -228,16 +204,14 @@ class SO3GroupBase {
    *
    * \see  log().
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Tangent log() const {
-    return SO3Group<Scalar>::log(*this);
-  }
+  SOPHUS_FUNC Tangent log() const { return SO3Group<Scalar>::log(*this); }
 
   /**
    * \brief Normalize quaternion
    *
    * It re-normalizes unit_quaternion to unit length.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void normalize() {
+  SOPHUS_FUNC void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
     SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
                   "Quaternion (%) should not be close to zero!",
@@ -251,7 +225,7 @@ class SO3GroupBase {
    * For SO3, the matrix representation is an orthogonal matrix R with det(R)=1,
    * thus the so-called rotation matrix.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Transformation matrix() const {
+  SOPHUS_FUNC Transformation matrix() const {
     return unit_quaternion().toRotationMatrix();
   }
 
@@ -259,7 +233,7 @@ class SO3GroupBase {
    * \brief Assignment operator
    */
   template <typename OtherDerived>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3GroupBase<Derived>& operator=(
+  SOPHUS_FUNC SO3GroupBase<Derived>& operator=(
       const SO3GroupBase<OtherDerived>& other) {
     unit_quaternion_nonconst() = other.unit_quaternion();
     return *this;
@@ -269,8 +243,7 @@ class SO3GroupBase {
    * \brief Group multiplication
    * \see operator*=()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3Group<Scalar> operator*(
-      const SO3Group<Scalar>& other) const {
+  SOPHUS_FUNC SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
     SO3Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -295,7 +268,7 @@ class SO3GroupBase {
    *
    * \see log()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Point operator*(const Point& p) const {
+  SOPHUS_FUNC Point operator*(const Point& p) const {
     return unit_quaternion()._transformVector(p);
   }
 
@@ -304,8 +277,7 @@ class SO3GroupBase {
    *
    * \see operator*()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3GroupBase<Derived>& operator*=(
-      const SO3Group<Scalar>& other) {
+  SOPHUS_FUNC SO3GroupBase<Derived>& operator*=(const SO3Group<Scalar>& other) {
     unit_quaternion_nonconst() *= other.unit_quaternion();
 
     Scalar squared_norm = unit_quaternion().squaredNorm();
@@ -332,8 +304,7 @@ class SO3GroupBase {
    *
    * The quaternion is normalized to unit length.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void setQuaternion(
-      const Eigen::Quaternion<Scalar>& quaternion) {
+  SOPHUS_FUNC void setQuaternion(const Eigen::Quaternion<Scalar>& quaternion) {
     unit_quaternion_nonconst() = quaternion;
     normalize();
   }
@@ -343,8 +314,7 @@ class SO3GroupBase {
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE ConstQuaternionReference
-  unit_quaternion() const {
+  SOPHUS_FUNC ConstQuaternionReference unit_quaternion() const {
     return static_cast<const Derived*>(this)->unit_quaternion();
   }
 
@@ -361,8 +331,7 @@ class SO3GroupBase {
    *
    * \see lieBracket()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static Adjoint d_lieBracketab_by_d_a(
-      const Tangent& b) {
+  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(const Tangent& b) {
     return -hat(b);
   }
 
@@ -380,8 +349,7 @@ class SO3GroupBase {
    * \see hat()
    * \see log()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static SO3Group<Scalar> exp(
-      const Tangent& omega) {
+  SOPHUS_FUNC static SO3Group<Scalar> exp(const Tangent& omega) {
     Scalar theta;
     return expAndTheta(omega, &theta);
   }
@@ -395,8 +363,8 @@ class SO3GroupBase {
    *
    * \see exp() for details
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static SO3Group<Scalar> expAndTheta(
-      const Tangent& omega, Scalar* theta) {
+  SOPHUS_FUNC static SO3Group<Scalar> expAndTheta(const Tangent& omega,
+                                                  Scalar* theta) {
     Scalar theta_sq = omega.squaredNorm();
     *theta = sqrt(theta_sq);
     Scalar half_theta = static_cast<Scalar>(0.5) * (*theta);
@@ -449,7 +417,7 @@ class SO3GroupBase {
    * \f$
    * \see hat()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static Transformation generator(int i) {
+  SOPHUS_FUNC static Transformation generator(int i) {
     SOPHUS_ENSURE(i >= 0 && i <= 2, "i should be in range [0,2].");
     Tangent e;
     e.setZero();
@@ -462,7 +430,7 @@ class SO3GroupBase {
    *
    * The internal representation is the Lie group SU(2) (unit quaternions)
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static void internalGenerator(
+  SOPHUS_FUNC static void internalGenerator(
       int i, Eigen::Quaternion<Scalar>* internal_gen_q) {
     SOPHUS_ENSURE(i >= 0 && i <= 2, "i should be in range [0,2]");
     SOPHUS_ENSURE(internal_gen_q != NULL,
@@ -485,8 +453,7 @@ class SO3GroupBase {
    * \see generator()
    * \see vee()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static Transformation hat(
-      const Tangent& omega) {
+  SOPHUS_FUNC static Transformation hat(const Tangent& omega) {
     Transformation Omega;
     Omega << static_cast<Scalar>(0), -omega(2), omega(1), omega(2),
         static_cast<Scalar>(0), -omega(0), -omega(1), omega(0),
@@ -515,8 +482,8 @@ class SO3GroupBase {
    * \see hat()
    * \see vee()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static Tangent lieBracket(
-      const Tangent& omega1, const Tangent& omega2) {
+  SOPHUS_FUNC static Tangent lieBracket(const Tangent& omega1,
+                                        const Tangent& omega2) {
     return omega1.cross(omega2);
   }
 
@@ -536,8 +503,7 @@ class SO3GroupBase {
    * \see logAndTheta()
    * \see vee()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static Tangent log(
-      const SO3Group<Scalar>& other) {
+  SOPHUS_FUNC static Tangent log(const SO3Group<Scalar>& other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
@@ -552,8 +518,8 @@ class SO3GroupBase {
    *
    * \see log() for details
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static Tangent logAndTheta(
-      const SO3Group<Scalar>& other, Scalar* theta) {
+  SOPHUS_FUNC static Tangent logAndTheta(const SO3Group<Scalar>& other,
+                                         Scalar* theta) {
     Scalar squared_n = other.unit_quaternion().vec().squaredNorm();
     Scalar n = sqrt(squared_n);
     Scalar w = other.unit_quaternion().w();
@@ -605,8 +571,7 @@ class SO3GroupBase {
    *
    * \see hat()
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE static Tangent vee(
-      const Transformation& Omega) {
+  SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
     return static_cast<Scalar>(0.5) * Tangent(Omega(2, 1) - Omega(1, 2),
                                               Omega(0, 2) - Omega(2, 0),
                                               Omega(1, 0) - Omega(0, 1));
@@ -615,8 +580,7 @@ class SO3GroupBase {
  private:
   // Mutator of unit_quaternion is private so users are hampered
   // from setting non-unit quaternions.
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE QuaternionReference
-  unit_quaternion_nonconst() {
+  SOPHUS_FUNC QuaternionReference unit_quaternion_nonconst() {
     return static_cast<Derived*>(this)->unit_quaternion_nonconst();
   }
 };
@@ -657,7 +621,7 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
    *
    * Initialize Quaternion to identity rotation.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3Group()
+  SOPHUS_FUNC SO3Group()
       : unit_quaternion_(static_cast<Scalar>(1), static_cast<Scalar>(0),
                          static_cast<Scalar>(0), static_cast<Scalar>(0)) {}
 
@@ -665,8 +629,7 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
    * \brief Copy constructor
    */
   template <typename OtherDerived>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-  SO3Group(const SO3GroupBase<OtherDerived>& other)
+  SOPHUS_FUNC SO3Group(const SO3GroupBase<OtherDerived>& other)
       : unit_quaternion_(other.unit_quaternion()) {}
 
   /**
@@ -674,16 +637,14 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
    *
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3Group(const Transformation& R)
-      : unit_quaternion_(R) {}
+  SOPHUS_FUNC SO3Group(const Transformation& R) : unit_quaternion_(R) {}
 
   /**
    * \brief Constructor from quaternion
    *
    * \pre quaternion must not be zero
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE explicit SO3Group(
-      const Eigen::Quaternion<Scalar>& quat)
+  SOPHUS_FUNC explicit SO3Group(const Eigen::Quaternion<Scalar>& quat)
       : unit_quaternion_(quat) {
     Base::normalize();
   }
@@ -702,8 +663,7 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
    *    \cdot   \exp\left(\begin{array}{c}0\\ \alpha_2\\ 0\end{array}\right)
    *    \cdot   \exp\left(\begin{array}{c}0\\ 0\\ \alpha_3\end{array}\right)\f$.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE SO3Group(Scalar alpha1, Scalar alpha2,
-                                                 Scalar alpha3) {
+  SOPHUS_FUNC SO3Group(Scalar alpha1, Scalar alpha2, Scalar alpha3) {
     const static Scalar zero = static_cast<Scalar>(0);
     unit_quaternion_ = (SO3Group::exp(Tangent(alpha1, zero, zero)) *
                         SO3Group::exp(Tangent(zero, alpha2, zero)) *
@@ -716,16 +676,14 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE ConstQuaternionReference
-  unit_quaternion() const {
+  SOPHUS_FUNC ConstQuaternionReference unit_quaternion() const {
     return unit_quaternion_;
   }
 
  protected:
   // Mutator of unit_quaternion is protected so users are hampered
   // from setting non-unit quaternions.
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE QuaternionReference
-  unit_quaternion_nonconst() {
+  SOPHUS_FUNC QuaternionReference unit_quaternion_nonconst() {
     return unit_quaternion_;
   }
 
@@ -772,24 +730,21 @@ class Map<Sophus::SO3Group<_Scalar>, _Options>
   using Base::operator*=;
   using Base::operator*;
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Map(Scalar* coeffs)
-      : unit_quaternion_(coeffs) {}
+  SOPHUS_FUNC Map(Scalar* coeffs) : unit_quaternion_(coeffs) {}
 
   /**
    * \brief Accessor of unit quaternion
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE ConstQuaternionReference
-  unit_quaternion() const {
+  SOPHUS_FUNC ConstQuaternionReference unit_quaternion() const {
     return unit_quaternion_;
   }
 
  protected:
   // Mutator of unit_quaternion is protected so users are hampered
   // from setting non-unit quaternions.
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE QuaternionReference
-  unit_quaternion_nonconst() {
+  SOPHUS_FUNC QuaternionReference unit_quaternion_nonconst() {
     return unit_quaternion_;
   }
 
@@ -829,16 +784,14 @@ class Map<const Sophus::SO3Group<_Scalar>, _Options>
   using Base::operator*=;
   using Base::operator*;
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Map(const Scalar* coeffs)
-      : unit_quaternion_(coeffs) {}
+  SOPHUS_FUNC Map(const Scalar* coeffs) : unit_quaternion_(coeffs) {}
 
   /**
    * \brief Accessor of unit quaternion
    *
    * No direct write access is given to ensure the quaternion stays normalized.
    */
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE ConstQuaternionReference
-  unit_quaternion() const {
+  SOPHUS_FUNC ConstQuaternionReference unit_quaternion() const {
     return unit_quaternion_;
   }
 

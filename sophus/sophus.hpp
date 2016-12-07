@@ -31,22 +31,22 @@ namespace Sophus {
 
 template <typename Scalar>
 struct SophusConstants {
-  EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE static Scalar epsilon() {
+  SOPHUS_FUNC static Scalar epsilon() {
     return static_cast<Scalar>(1e-10);
   }
 
-  EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE static Scalar pi() {
+  SOPHUS_FUNC static Scalar pi() {
     return static_cast<Scalar>(M_PI);
   }
 };
 
 template <>
 struct SophusConstants<float> {
-  EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE static float epsilon() {
+  SOPHUS_FUNC static float epsilon() {
     return static_cast<float>(1e-5);
   }
 
-  EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE static float pi() {
+  SOPHUS_FUNC static float pi() {
     return static_cast<float>(M_PI);
   }
 };

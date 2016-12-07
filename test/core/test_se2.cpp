@@ -26,7 +26,16 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include "tests.hpp"
 
+// Explicit instantiate all class templates so that all member methods
+// get compiled and for code coverage analysis.
+namespace Eigen {
+template class Map<Sophus::SE2Group<double>>;
+template class Map<const Sophus::SE2Group<double>>;
+}
+
 namespace Sophus {
+
+template class SE2Group<double>;
 
 template <class Scalar>
 void tests() {

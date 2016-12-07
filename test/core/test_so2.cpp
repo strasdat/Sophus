@@ -31,7 +31,16 @@
 #include <sophus/so2.hpp>
 #include "tests.hpp"
 
+// Explicit instantiate all class templates so that all member methods
+// get compiled and for code coverage analysis.
+namespace Eigen {
+template class Map<Sophus::SO2Group<double>>;
+template class Map<const Sophus::SO2Group<double>>;
+}
+
 namespace Sophus {
+
+template class SO2Group<double>;
 
 template <class Scalar>
 void tests() {

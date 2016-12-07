@@ -30,7 +30,7 @@ tests.hpp:170:9: note: candidates are:
 /usr/include/c++/4.6/cmath:544:3: note: bool std::isnan(float)
 */
 
-inline void ensureFailed(const char* function, const char* file, int line,
+SOPHUS_FUNC void ensureFailed(const char* function, const char* file, int line,
                          const char* description) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               file, function, line);
