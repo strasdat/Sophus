@@ -117,7 +117,7 @@ class SE2GroupBase {
    * it holds that \f$ \widehat{Ad_A\cdot x} = A\widehat{x}A^{-1} \f$
    * with \f$\ \widehat{\cdot} \f$ being the hat()-operator.
    */
-  inline Adjoint Adj() const {
+  SOPHUS_FUNC Adjoint Adj() const {
     const Eigen::Matrix<Scalar, 2, 2>& R = so2().matrix();
     Transformation res;
     res.setIdentity();
@@ -131,7 +131,7 @@ class SE2GroupBase {
    * \returns copy of instance casted to NewScalarType
    */
   template <typename NewScalarType>
-  inline SE2Group<NewScalarType> cast() const {
+  SOPHUS_FUNC SE2Group<NewScalarType> cast() const {
     return SE2Group<NewScalarType>(
         so2().template cast<NewScalarType>(),
         translation().template cast<NewScalarType>());
@@ -140,7 +140,7 @@ class SE2GroupBase {
   /**
    * \returns Group inverse of instance
    */
-  inline SE2Group<Scalar> inverse() const {
+  SOPHUS_FUNC SE2Group<Scalar> inverse() const {
     const SO2Group<Scalar> invR = so2().inverse();
     return SE2Group<Scalar>(invR,
                             invR * (translation() * static_cast<Scalar>(-1)));
@@ -154,19 +154,19 @@ class SE2GroupBase {
    *
    * \see  log().
    */
-  inline Tangent log() const { return log(*this); }
+  SOPHUS_FUNC Tangent log() const { return log(*this); }
 
   /**
    * \brief Normalize SO2 element
    *
    * It re-normalizes the SO2 element.
    */
-  inline void normalize() { so2().normalize(); }
+  SOPHUS_FUNC void normalize() { so2().normalize(); }
 
   /**
    * \returns 3x3 matrix representation of instance
    */
-  inline Transformation matrix() const {
+  SOPHUS_FUNC Transformation matrix() const {
     Transformation homogenious_matrix;
     homogenious_matrix.setIdentity();
     homogenious_matrix.block(0, 0, 2, 2) = rotationMatrix();
@@ -179,7 +179,7 @@ class SE2GroupBase {
    *
    * It returns the three first row of matrix().
    */
-  inline Eigen::Matrix<Scalar, 2, 3> matrix2x3() const {
+  SOPHUS_FUNC Eigen::Matrix<Scalar, 2, 3> matrix2x3() const {
     Eigen::Matrix<Scalar, 2, 3> matrix;
     matrix.block(0, 0, 2, 2) = rotationMatrix();
     matrix.col(2) = translation();
@@ -190,7 +190,7 @@ class SE2GroupBase {
    * \brief Assignment operator
    */
   template <typename OtherDerived>
-  inline SE2GroupBase<Derived>& operator=(
+  SOPHUS_FUNC SE2GroupBase<Derived>& operator=(
       const SE2GroupBase<OtherDerived>& other) {
     so2() = other.so2();
     translation() = other.translation();
@@ -201,7 +201,7 @@ class SE2GroupBase {
    * \brief Group multiplication
    * \see operator*=()
    */
-  inline SE2Group<Scalar> operator*(const SE2Group<Scalar>& other) const {
+  SOPHUS_FUNC SE2Group<Scalar> operator*(const SE2Group<Scalar>& other) const {
     SE2Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -218,7 +218,7 @@ class SE2GroupBase {
    * in \f$ \mathbf{R}^2 \f$ by the SE2 transformation \f$R,t\f$
    * (=rotation matrix, translation vector): \f$ p' = R\cdot p + t \f$.
    */
-  inline Point operator*(const Point& p) const {
+  SOPHUS_FUNC Point operator*(const Point& p) const {
     return so2() * p + translation();
   }
 
@@ -227,7 +227,7 @@ class SE2GroupBase {
    *
    * \see operator*()
    */
-  inline SE2GroupBase<Derived>& operator*=(const SE2Group<Scalar>& other) {
+  SOPHUS_FUNC SE2GroupBase<Derived>& operator*=(const SE2Group<Scalar>& other) {
     translation() += so2() * (other.translation());
     so2() *= other.so2();
     return *this;
@@ -236,7 +236,7 @@ class SE2GroupBase {
   /**
    * \returns Rotation matrix
    */
-  inline Eigen::Matrix<Scalar, 2, 2> rotationMatrix() const {
+  SOPHUS_FUNC Eigen::Matrix<Scalar, 2, 2> rotationMatrix() const {
     return so2().matrix();
   }
 
@@ -248,7 +248,7 @@ class SE2GroupBase {
    *
    * The complex number is normalized to unit length.
    */
-  inline void setComplex(const Eigen::Matrix<Scalar, 2, 1>& complex) {
+  SOPHUS_FUNC void setComplex(const Eigen::Matrix<Scalar, 2, 1>& complex) {
     return so2().setComplex(complex);
   }
 
@@ -258,7 +258,7 @@ class SE2GroupBase {
    * \param R a 2x2 matrix
    * \pre     the 2x2 matrix should be orthogonal and have a determinant of 1
    */
-  inline void setRotationMatrix(const Eigen::Matrix<Scalar, 2, 2>& R) {
+  SOPHUS_FUNC void setRotationMatrix(const Eigen::Matrix<Scalar, 2, 2>& R) {
     so2().setComplex(static_cast<Scalar>(0.5) * (R(0, 0) + R(1, 1)),
                      static_cast<Scalar>(0.5) * (R(1, 0) - R(0, 1)));
   }
@@ -266,13 +266,13 @@ class SE2GroupBase {
   /**
    * \brief Mutator of SO2 group
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   SO2Reference so2() { return static_cast<Derived*>(this)->so2(); }
 
   /**
    * \brief Accessor of SO2 group
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstSO2Reference so2() const {
     return static_cast<const Derived*>(this)->so2();
   }
@@ -280,7 +280,7 @@ class SE2GroupBase {
   /**
    * \brief Mutator of translation vector
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   TranslationReference translation() {
     return static_cast<Derived*>(this)->translation();
   }
@@ -288,7 +288,7 @@ class SE2GroupBase {
   /**
    * \brief Accessor of translation vector
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstTranslationReference translation() const {
     return static_cast<const Derived*>(this)->translation();
   }
@@ -299,9 +299,9 @@ class SE2GroupBase {
    * No direct write access is given to ensure the complex number stays
    * normalized.
    */
-  inline
-      typename Eigen::internal::traits<Derived>::SO2Type::ConstComplexReference
-      unit_complex() const {
+  SOPHUS_FUNC
+  typename Eigen::internal::traits<Derived>::SO2Type::ConstComplexReference
+  unit_complex() const {
     return so2().unit_complex();
   }
 
@@ -318,7 +318,7 @@ class SE2GroupBase {
    *
    * \see lieBracket()
    */
-  inline static Transformation d_lieBracketab_by_d_a(const Tangent& b) {
+  SOPHUS_FUNC static Transformation d_lieBracketab_by_d_a(const Tangent& b) {
     static const Scalar zero = static_cast<Scalar>(0);
     Eigen::Matrix<Scalar, 2, 1> upsilon2 = b.template head<2>();
     Scalar theta2 = b[2];
@@ -346,7 +346,7 @@ class SE2GroupBase {
    * \see hat()
    * \see log()
    */
-  inline static SE2Group<Scalar> exp(const Tangent& a) {
+  SOPHUS_FUNC static SE2Group<Scalar> exp(const Tangent& a) {
     Scalar theta = a[2];
     SO2Group<Scalar> so2 = SO2Group<Scalar>::exp(theta);
     Scalar sin_theta_by_theta;
@@ -395,7 +395,7 @@ class SE2GroupBase {
    * \f]
    * \see hat()
    */
-  inline static Transformation generator(int i) {
+  SOPHUS_FUNC static Transformation generator(int i) {
     SOPHUS_ENSURE(i >= 0 || i <= 2, "i should be in range [0,2].");
     Tangent e;
     e.setZero();
@@ -417,7 +417,7 @@ class SE2GroupBase {
    * \see generator()
    * \see vee()
    */
-  inline static Transformation hat(const Tangent& v) {
+  SOPHUS_FUNC static Transformation hat(const Tangent& v) {
     Transformation Omega;
     Omega.setZero();
     Omega.template topLeftCorner<2, 2>() = SO2Group<Scalar>::hat(v[2]);
@@ -442,7 +442,7 @@ class SE2GroupBase {
    * \see hat()
    * \see vee()
    */
-  inline static Tangent lieBracket(const Tangent& a, const Tangent& b) {
+  SOPHUS_FUNC static Tangent lieBracket(const Tangent& a, const Tangent& b) {
     Eigen::Matrix<Scalar, 2, 1> upsilon1 = a.template head<2>();
     Eigen::Matrix<Scalar, 2, 1> upsilon2 = b.template head<2>();
     Scalar theta1 = a[2];
@@ -469,7 +469,7 @@ class SE2GroupBase {
    * \see exp()
    * \see vee()
    */
-  inline static Tangent log(const SE2Group<Scalar>& other) {
+  SOPHUS_FUNC static Tangent log(const SE2Group<Scalar>& other) {
     Tangent upsilon_theta;
     const SO2Group<Scalar>& so2 = other.so2();
     Scalar theta = SO2Group<Scalar>::log(so2);
@@ -503,7 +503,7 @@ class SE2GroupBase {
    *
    * \see hat()
    */
-  inline static Tangent vee(const Transformation& Omega) {
+  SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
     Tangent upsilon_omega;
     upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
     upsilon_omega[2] =
@@ -552,21 +552,21 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
    *
    * Initialize Complex to identity rotation and translation to zero.
    */
-  inline SE2Group() : translation_(Eigen::Matrix<Scalar, 2, 1>::Zero()) {}
+  SOPHUS_FUNC SE2Group() : translation_(Eigen::Matrix<Scalar, 2, 1>::Zero()) {}
 
   /**
    * \brief Copy constructor
    */
   template <typename OtherDerived>
-  inline SE2Group(const SE2GroupBase<OtherDerived>& other)
+  SOPHUS_FUNC SE2Group(const SE2GroupBase<OtherDerived>& other)
       : so2_(other.so2()), translation_(other.translation()) {}
 
   /**
    * \brief Constructor from SO2 and translation vector
    */
   template <typename OtherDerived>
-  inline SE2Group(const SO2GroupBase<OtherDerived>& so2,
-                  const Point& translation)
+  SOPHUS_FUNC SE2Group(const SO2GroupBase<OtherDerived>& so2,
+                       const Point& translation)
       : so2_(so2), translation_(translation) {}
 
   /**
@@ -574,7 +574,7 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
    *
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
-  inline SE2Group(
+  SOPHUS_FUNC SE2Group(
       const typename SO2Group<Scalar>::Transformation& rotation_matrix,
       const Point& translation)
       : so2_(rotation_matrix), translation_(translation) {}
@@ -582,7 +582,7 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
   /**
    * \brief Constructor from rotation angle and translation vector
    */
-  inline SE2Group(const Scalar& theta, const Point& translation)
+  SOPHUS_FUNC SE2Group(const Scalar& theta, const Point& translation)
       : so2_(theta), translation_(translation) {}
 
   /**
@@ -590,7 +590,8 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
    *
    * \pre complex must not be zero
    */
-  inline SE2Group(const std::complex<Scalar>& complex, const Point& translation)
+  SOPHUS_FUNC SE2Group(const std::complex<Scalar>& complex,
+                       const Point& translation)
       : so2_(complex), translation_(translation) {}
 
   /**
@@ -598,8 +599,8 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
    *
    * \pre 2x2 sub-matrix need to be orthogonal with determinant of 1
    */
-  inline explicit SE2Group(const Transformation& T)
-      : so2_(T.template topLeftCorner<2, 2>()),
+  SOPHUS_FUNC explicit SE2Group(const Transformation& T)
+      : so2_(T.template topLeftCorner<2, 2>().eval()),
         translation_(T.template block<2, 1>(0, 2)) {}
 
   /**
@@ -612,7 +613,7 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
    *
    * /see normalize()
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   Scalar* data() {
     // so2_ and translation_ are layed out sequentially with no padding
     return so2_.data();
@@ -623,7 +624,7 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
    *
    * Const version of data().
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   const Scalar* data() const {
     // so2_ and translation_ are layed out sequentially with no padding
     return so2_.data();
@@ -632,25 +633,25 @@ class SE2Group : public SE2GroupBase<SE2Group<_Scalar, _Options> > {
   /**
    * \brief Accessor of SO2
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   SO2Reference so2() { return so2_; }
 
   /**
    * \brief Mutator of SO2
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstSO2Reference so2() const { return so2_; }
 
   /**
    * \brief Mutator of translation vector
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   TranslationReference translation() { return translation_; }
 
   /**
    * \brief Accessor of translation vector
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstTranslationReference translation() const { return translation_; }
 
  protected:
@@ -700,7 +701,7 @@ class Map<Sophus::SE2Group<_Scalar>, _Options>
   using Base::operator*=;
   using Base::operator*;
 
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   Map(Scalar* coeffs)
       : so2_(coeffs),
         translation_(coeffs + Sophus::SO2Group<Scalar>::num_parameters) {}
@@ -708,25 +709,25 @@ class Map<Sophus::SE2Group<_Scalar>, _Options>
   /**
    * \brief Mutator of SO2
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   SO2Reference so2() { return so2_; }
 
   /**
    * \brief Accessor of SO2
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstSO2Reference so2() const { return so2_; }
 
   /**
    * \brief Mutator of translation vector
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   TranslationReference translation() { return translation_; }
 
   /**
    * \brief Accessor of translation vector
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstTranslationReference translation() const { return translation_; }
 
  protected:
@@ -770,25 +771,25 @@ class Map<const Sophus::SE2Group<_Scalar>, _Options>
   using Base::operator*=;
   using Base::operator*;
 
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   Map(const Scalar* coeffs)
       : so2_(coeffs),
         translation_(coeffs + Sophus::SO2Group<Scalar>::num_parameters) {}
 
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   Map(const Scalar* trans_coeffs, const Scalar* rot_coeffs)
-      : translation_(trans_coeffs), so2_(rot_coeffs) {}
+      : so2_(rot_coeffs), translation_(trans_coeffs) {}
 
   /**
    * \brief Accessor of SO2
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstSO2Reference so2() const { return so2_; }
 
   /**
    * \brief Accessor of translation vector
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstTranslationReference translation() const { return translation_; }
 
  protected:

@@ -17,7 +17,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE OUSE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
 #ifndef SOPHUS_ENSURE_HPP
@@ -53,6 +53,8 @@
 #ifndef EIGEN_DEVICE_FUNC
 #define EIGEN_DEVICE_FUNC
 #endif
+
+#define SOPHUS_FUNC EIGEN_DEVICE_FUNC
 
 namespace Sophus {
 namespace details {
@@ -106,7 +108,7 @@ class ArgToStream<Eigen::Transpose<const Eigen::Matrix<
 };
 #endif  // SOPHUS_CERES_FOUND
 
-inline void FormatStream(std::stringstream& stream, const char* text) {
+SOPHUS_FUNC void FormatStream(std::stringstream& stream, const char* text) {
   stream << text;
   return;
 }
@@ -159,7 +161,7 @@ void ensureFailed(const char* function, const char* file, int line,
 #else
 namespace Sophus {
 template <typename... Args>
-EIGEN_DEVICE_FUNC inline void defaultEnsure(const char* function,
+SOPHUS_FUNC void defaultEnsure(const char* function,
                                             const char* file, int line,
                                             const char* description,
                                             Args&&... args) {

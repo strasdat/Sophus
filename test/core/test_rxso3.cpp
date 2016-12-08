@@ -25,7 +25,16 @@
 #include <sophus/rxso3.hpp>
 #include "tests.hpp"
 
+// Explicit instantiate all class templates so that all member methods
+// get compiled and for code coverage analysis.
+namespace Eigen {
+template class Map<Sophus::RxSO3Group<double>>;
+template class Map<const Sophus::RxSO3Group<double>>;
+}
+
 namespace Sophus {
+
+template class RxSO3Group<double>;
 
 template <class Scalar>
 void tests() {

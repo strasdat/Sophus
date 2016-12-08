@@ -27,7 +27,16 @@
 #include <sophus/sim3.hpp>
 #include "tests.hpp"
 
+// Explicit instantiate all class templates so that all member methods
+// get compiled and for code coverage analysis.
+namespace Eigen {
+template class Map<Sophus::Sim3Group<double>>;
+template class Map<const Sophus::Sim3Group<double>>;
+}
+
 namespace Sophus {
+
+template class Sim3Group<double>;
 
 template <class Scalar>
 void tests() {

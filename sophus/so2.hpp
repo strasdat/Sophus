@@ -120,13 +120,13 @@ class SO2GroupBase {
    *
    * For SO2, it simply returns 1.
    */
-  inline Adjoint Adj() const { return 1; }
+  SOPHUS_FUNC Adjoint Adj() const { return 1; }
 
   /**
    * \returns copy of instance casted to NewScalarType
    */
   template <typename NewScalarType>
-  inline SO2Group<NewScalarType> cast() const {
+  SOPHUS_FUNC SO2Group<NewScalarType> cast() const {
     return SO2Group<NewScalarType>(
         unit_complex().template cast<NewScalarType>());
   }
@@ -141,19 +141,19 @@ class SO2GroupBase {
    *
    * \see normalize()
    */
-  inline Scalar* data() { return unit_complex_nonconst().data(); }
+  SOPHUS_FUNC Scalar* data() { return unit_complex_nonconst().data(); }
 
   /**
    * \returns const pointer to internal data
    *
    * Const version of data().
    */
-  inline const Scalar* data() const { return unit_complex().data(); }
+  SOPHUS_FUNC const Scalar* data() const { return unit_complex().data(); }
 
   /**
    * \returns group inverse of instance
    */
-  inline SO2Group<Scalar> inverse() const {
+  SOPHUS_FUNC SO2Group<Scalar> inverse() const {
     return SO2Group<Scalar>(unit_complex().x(), -unit_complex().y());
   }
 
@@ -164,14 +164,14 @@ class SO2GroupBase {
    *
    * \see  log().
    */
-  inline Scalar log() const { return SO2Group<Scalar>::log(*this); }
+  SOPHUS_FUNC Scalar log() const { return SO2Group<Scalar>::log(*this); }
 
   /**
    * \brief Normalize complex number
    *
    * It re-normalizes complex number to unit length.
    */
-  inline void normalize() {
+  SOPHUS_FUNC void normalize() {
     Scalar length = std::sqrt(unit_complex().x() * unit_complex().x() +
                               unit_complex().y() * unit_complex().y());
     SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
@@ -186,7 +186,7 @@ class SO2GroupBase {
    * For SO2, the matrix representation is an orthogonal matrix R with det(R)=1,
    * thus the so-called rotation matrix.
    */
-  inline Transformation matrix() const {
+  SOPHUS_FUNC Transformation matrix() const {
     const Scalar& real = unit_complex().x();
     const Scalar& imag = unit_complex().y();
     Transformation R;
@@ -198,7 +198,7 @@ class SO2GroupBase {
    * \brief Assignment operator
    */
   template <typename OtherDerived>
-  inline SO2GroupBase<Derived>& operator=(
+  SOPHUS_FUNC SO2GroupBase<Derived>& operator=(
       const SO2GroupBase<OtherDerived>& other) {
     unit_complex_nonconst() = other.unit_complex();
     return *this;
@@ -208,7 +208,7 @@ class SO2GroupBase {
    * \brief Group multiplication
    * \see operator*=()
    */
-  inline SO2Group<Scalar> operator*(const SO2Group<Scalar>& other) const {
+  SOPHUS_FUNC SO2Group<Scalar> operator*(const SO2Group<Scalar>& other) const {
     SO2Group<Scalar> result(*this);
     result *= other;
     return result;
@@ -223,7 +223,7 @@ class SO2GroupBase {
    * This function rotates a point \f$ p \f$ in  \f$ \mathbf{R}^2 \f$ by the
    * SO2 transformation \f$R\f$ (=rotation matrix): \f$ p' = R\cdot p \f$.
    */
-  inline Point operator*(const Point& p) const {
+  SOPHUS_FUNC Point operator*(const Point& p) const {
     const Scalar& real = unit_complex().x();
     const Scalar& imag = unit_complex().y();
     return Point(real * p[0] - imag * p[1], imag * p[0] + real * p[1]);
@@ -234,7 +234,7 @@ class SO2GroupBase {
    *
    * \see operator*()
    */
-  inline SO2GroupBase<Derived> operator*=(const SO2Group<Scalar>& other) {
+  SOPHUS_FUNC SO2GroupBase<Derived> operator*=(const SO2Group<Scalar>& other) {
     Scalar lhs_real = unit_complex().x();
     Scalar lhs_imag = unit_complex().y();
     const Scalar& rhs_real = other.unit_complex().x();
@@ -265,7 +265,7 @@ class SO2GroupBase {
    *
    * The complex number is normalized to unit length.
    */
-  inline void setComplex(const Point& complex) {
+  SOPHUS_FUNC void setComplex(const Point& complex) {
     unit_complex_nonconst() = complex;
     normalize();
   }
@@ -275,7 +275,7 @@ class SO2GroupBase {
    *
    * No direct write access is given to ensure the complex stays normalized.
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstComplexReference unit_complex() const {
     return static_cast<const Derived*>(this)->unit_complex();
   }
@@ -297,7 +297,7 @@ class SO2GroupBase {
    * \see hat()
    * \see log()
    */
-  inline static SO2Group<Scalar> exp(const Tangent& theta) {
+  SOPHUS_FUNC static SO2Group<Scalar> exp(const Tangent& theta) {
     return SO2Group<Scalar>(std::cos(theta), std::sin(theta));
   }
 
@@ -313,7 +313,7 @@ class SO2GroupBase {
    * \f$
    * \see hat()
    */
-  inline static Transformation generator() { return hat(1); }
+  SOPHUS_FUNC static Transformation generator() { return hat(1); }
 
   /**
    * \brief hat-operator
@@ -329,7 +329,7 @@ class SO2GroupBase {
    * \see generator()
    * \see vee()
    */
-  inline static Transformation hat(const Tangent& theta) {
+  SOPHUS_FUNC static Transformation hat(const Tangent& theta) {
     Transformation Omega;
     Omega << static_cast<Scalar>(0), -theta, theta, static_cast<Scalar>(0);
     return Omega;
@@ -347,7 +347,7 @@ class SO2GroupBase {
    * \see hat()
    * \see vee()
    */
-  inline static Tangent lieBracket(const Tangent&, const Tangent&) {
+  SOPHUS_FUNC static Tangent lieBracket(const Tangent&, const Tangent&) {
     return static_cast<Scalar>(0);
   }
 
@@ -366,7 +366,7 @@ class SO2GroupBase {
    * \see exp()
    * \see vee()
    */
-  inline static Tangent log(const SO2Group<Scalar>& other) {
+  SOPHUS_FUNC static Tangent log(const SO2Group<Scalar>& other) {
     // todo: general implementation for Scalar not being float or double.
     return atan2(other.unit_complex_.y(), other.unit_complex().x());
   }
@@ -382,14 +382,14 @@ class SO2GroupBase {
    *
    * \see hat()
    */
-  inline static Tangent vee(const Transformation& Omega) {
+  SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
     return static_cast<Scalar>(0.5) * (Omega(1, 0) - Omega(0, 1));
   }
 
  private:
   // Mutator of complex number is private so users are hampered
   // from setting non-unit complex numbers.
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ComplexReference unit_complex_nonconst() {
     return static_cast<Derived*>(this)->unit_complex_nonconst();
   }
@@ -432,14 +432,14 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
    *
    * Initialize complex number to identity rotation.
    */
-  inline SO2Group()
+  SOPHUS_FUNC SO2Group()
       : unit_complex_(static_cast<Scalar>(1), static_cast<Scalar>(0)) {}
 
   /**
    * \brief Copy constructor
    */
   template <typename OtherDerived>
-  inline SO2Group(const SO2GroupBase<OtherDerived>& other)
+  SOPHUS_FUNC SO2Group(const SO2GroupBase<OtherDerived>& other)
       : unit_complex_(other.unit_complex()) {}
 
   /**
@@ -447,7 +447,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
    *
    * \pre rotation matrix need to be orthogonal with determinant of 1
    */
-  inline explicit SO2Group(const Transformation& R)
+  SOPHUS_FUNC explicit SO2Group(const Transformation& R)
       : unit_complex_(static_cast<Scalar>(0.5) * (R(0, 0) + R(1, 1)),
                       static_cast<Scalar>(0.5) * (R(1, 0) - R(0, 1))) {
     SOPHUS_ENSURE(std::abs(R.determinant() - static_cast<Scalar>(1)) <=
@@ -460,7 +460,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
    *
    * \pre pair must not be zero
    */
-  inline SO2Group(const Scalar& real, const Scalar& imag)
+  SOPHUS_FUNC SO2Group(const Scalar& real, const Scalar& imag)
       : unit_complex_(real, imag) {
     Base::normalize();
   }
@@ -470,7 +470,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
    *
    * \pre vector must not be zero
    */
-  inline explicit SO2Group(const Eigen::Matrix<Scalar, 2, 1>& complex)
+  SOPHUS_FUNC explicit SO2Group(const Eigen::Matrix<Scalar, 2, 1>& complex)
       : unit_complex_(complex) {
     Base::normalize();
   }
@@ -480,7 +480,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
    *
    * \pre complex number must not be zero
    */
-  inline explicit SO2Group(const std::complex<Scalar>& complex)
+  SOPHUS_FUNC explicit SO2Group(const std::complex<Scalar>& complex)
       : unit_complex_(complex.real(), complex.imag()) {
     Base::normalize();
   }
@@ -488,7 +488,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
   /**
    * \brief Constructor from an angle
    */
-  inline explicit SO2Group(Scalar theta) {
+  SOPHUS_FUNC explicit SO2Group(Scalar theta) {
     unit_complex_nonconst() = SO2Group<Scalar>::exp(theta).unit_complex();
   }
 
@@ -498,13 +498,13 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
    * No direct write access is given to ensure the complex number stays
    * normalized.
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstComplexReference unit_complex() const { return unit_complex_; }
 
  protected:
   // Mutator of complex number is protected so users are hampered
   // from setting non-unit complex numbers.
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ComplexReference unit_complex_nonconst() { return unit_complex_; }
 
   static bool isNearZero(const Scalar& real, const Scalar& imag) {
@@ -553,7 +553,7 @@ class Map<Sophus::SO2Group<_Scalar>, _Options>
   using Base::operator*=;
   using Base::operator*;
 
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   Map(Scalar* coeffs) : unit_complex_(coeffs) {}
 
   /**
@@ -562,13 +562,13 @@ class Map<Sophus::SO2Group<_Scalar>, _Options>
    * No direct write access is given to ensure the complex number stays
    * normalized.
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstComplexReference unit_complex() const { return unit_complex_; }
 
  protected:
   // Mutator of complex number is protected so users are hampered
   // from setting non-unit complex number.
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ComplexReference unit_complex_nonconst() { return unit_complex_; }
 
   Map<Matrix<Scalar, 2, 1>, _Options> unit_complex_;
@@ -607,7 +607,7 @@ class Map<const Sophus::SO2Group<_Scalar>, _Options>
   using Base::operator*=;
   using Base::operator*;
 
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   Map(const Scalar* coeffs) : unit_complex_(coeffs) {}
 
   /**
@@ -616,7 +616,7 @@ class Map<const Sophus::SO2Group<_Scalar>, _Options>
    * No direct write access is given to ensure the complex number stays
    * normalized.
    */
-  EIGEN_STRONG_INLINE
+  SOPHUS_FUNC
   ConstComplexReference unit_complex() const { return unit_complex_; }
 
  protected:
