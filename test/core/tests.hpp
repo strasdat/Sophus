@@ -31,7 +31,7 @@ tests.hpp:170:9: note: candidates are:
 */
 
 SOPHUS_FUNC void ensureFailed(const char* function, const char* file, int line,
-                         const char* description) {
+                              const char* description) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               file, function, line);
   std::printf("Description: %s\n", description);
@@ -54,12 +54,14 @@ class Tests {
   Tests() : SMALL_EPS(SophusConstants<Scalar>::epsilon()) {}
 
   void setGroupElements(
-      const std::vector<LieGroup, Eigen::aligned_allocator<LieGroup> >& group_vec) {
+      const std::vector<LieGroup, Eigen::aligned_allocator<LieGroup> >&
+          group_vec) {
     group_vec_ = group_vec;
   }
 
   void setTangentVectors(
-      const std::vector<Tangent, Eigen::aligned_allocator<Tangent> >& tangent_vec) {
+      const std::vector<Tangent, Eigen::aligned_allocator<Tangent> >&
+          tangent_vec) {
     tangent_vec_ = tangent_vec;
   }
 
@@ -246,14 +248,15 @@ class Tests {
   }
 
  private:
-  Eigen::Matrix<Scalar, N - 1, 1> map(const Eigen::Matrix<Scalar, N, N>& T,
-                               const Eigen::Matrix<Scalar, N - 1, 1>& p) {
+  Eigen::Matrix<Scalar, N - 1, 1> map(
+      const Eigen::Matrix<Scalar, N, N>& T,
+      const Eigen::Matrix<Scalar, N - 1, 1>& p) {
     return T.template topLeftCorner<N - 1, N - 1>() * p +
            T.template topRightCorner<N - 1, 1>();
   }
 
   Eigen::Matrix<Scalar, N, 1> map(const Eigen::Matrix<Scalar, N, N>& T,
-                           const Eigen::Matrix<Scalar, N, 1>& p) {
+                                  const Eigen::Matrix<Scalar, N, 1>& p) {
     return T * p;
   }
 

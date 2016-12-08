@@ -45,21 +45,21 @@ namespace Eigen {
 namespace internal {
 
 template <typename _Scalar, int _Options>
-struct traits<Sophus::RxSO3Group<_Scalar, _Options> > {
+struct traits<Sophus::RxSO3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Eigen::Quaternion<Scalar> QuaternionType;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<Sophus::RxSO3Group<_Scalar>, _Options> >
-    : traits<Sophus::RxSO3Group<_Scalar, _Options> > {
+struct traits<Map<Sophus::RxSO3Group<_Scalar>, _Options>>
+    : traits<Sophus::RxSO3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<Eigen::Quaternion<Scalar>, _Options> QuaternionType;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<const Sophus::RxSO3Group<_Scalar>, _Options> >
-    : traits<const Sophus::RxSO3Group<_Scalar, _Options> > {
+struct traits<Map<const Sophus::RxSO3Group<_Scalar>, _Options>>
+    : traits<const Sophus::RxSO3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<const Eigen::Quaternion<Scalar>, _Options> QuaternionType;
 };
@@ -574,19 +574,19 @@ class RxSO3GroupBase {
  * \brief RxSO3 default type - Constructors and default storage for RxSO3 Type
  */
 template <typename _Scalar, int _Options>
-class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options> > {
-  typedef RxSO3GroupBase<RxSO3Group<_Scalar, _Options> > Base;
+class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> {
+  typedef RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> Base;
 
  public:
   /** \brief scalar type */
-  typedef typename Eigen::internal::traits<SO3Group<_Scalar, _Options> >::Scalar
+  typedef typename Eigen::internal::traits<SO3Group<_Scalar, _Options>>::Scalar
       Scalar;
   /** \brief quaternion reference type */
   typedef typename Eigen::internal::traits<
-      SO3Group<_Scalar, _Options> >::QuaternionType& QuaternionReference;
+      SO3Group<_Scalar, _Options>>::QuaternionType& QuaternionReference;
   /** \brief quaternion const reference type */
   typedef const typename Eigen::internal::traits<
-      SO3Group<_Scalar, _Options> >::QuaternionType& ConstQuaternionReference;
+      SO3Group<_Scalar, _Options>>::QuaternionType& ConstQuaternionReference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
@@ -691,8 +691,8 @@ namespace Eigen {
 template <typename _Scalar, int _Options>
 class Map<Sophus::RxSO3Group<_Scalar>, _Options>
     : public Sophus::RxSO3GroupBase<
-          Map<Sophus::RxSO3Group<_Scalar>, _Options> > {
-  typedef Sophus::RxSO3GroupBase<Map<Sophus::RxSO3Group<_Scalar>, _Options> >
+          Map<Sophus::RxSO3Group<_Scalar>, _Options>> {
+  typedef Sophus::RxSO3GroupBase<Map<Sophus::RxSO3Group<_Scalar>, _Options>>
       Base;
 
  public:
@@ -746,9 +746,9 @@ class Map<Sophus::RxSO3Group<_Scalar>, _Options>
 template <typename _Scalar, int _Options>
 class Map<const Sophus::RxSO3Group<_Scalar>, _Options>
     : public Sophus::RxSO3GroupBase<
-          Map<const Sophus::RxSO3Group<_Scalar>, _Options> > {
+          Map<const Sophus::RxSO3Group<_Scalar>, _Options>> {
   typedef Sophus::RxSO3GroupBase<
-      Map<const Sophus::RxSO3Group<_Scalar>, _Options> >
+      Map<const Sophus::RxSO3Group<_Scalar>, _Options>>
       Base;
 
  public:

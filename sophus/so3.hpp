@@ -53,21 +53,21 @@ namespace Eigen {
 namespace internal {
 
 template <typename _Scalar, int _Options>
-struct traits<Sophus::SO3Group<_Scalar, _Options> > {
+struct traits<Sophus::SO3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Eigen::Quaternion<Scalar> QuaternionType;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<Sophus::SO3Group<_Scalar>, _Options> >
-    : traits<Sophus::SO3Group<_Scalar, _Options> > {
+struct traits<Map<Sophus::SO3Group<_Scalar>, _Options>>
+    : traits<Sophus::SO3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<Eigen::Quaternion<Scalar>, _Options> QuaternionType;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<const Sophus::SO3Group<_Scalar>, _Options> >
-    : traits<const Sophus::SO3Group<_Scalar, _Options> > {
+struct traits<Map<const Sophus::SO3Group<_Scalar>, _Options>>
+    : traits<const Sophus::SO3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<const Eigen::Quaternion<Scalar>, _Options> QuaternionType;
 };
@@ -589,18 +589,18 @@ class SO3GroupBase {
  * \brief SO3 default type - Constructors and default storage for SO3 Type
  */
 template <typename _Scalar, int _Options>
-class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
-  typedef SO3GroupBase<SO3Group<_Scalar, _Options> > Base;
+class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options>> {
+  typedef SO3GroupBase<SO3Group<_Scalar, _Options>> Base;
 
  public:
   /** \brief scalar type */
-  typedef typename Eigen::internal::traits<SO3Group<_Scalar, _Options> >::Scalar
+  typedef typename Eigen::internal::traits<SO3Group<_Scalar, _Options>>::Scalar
       Scalar;
   /** \brief quaternion type */
   typedef typename Eigen::internal::traits<
-      SO3Group<_Scalar, _Options> >::QuaternionType& QuaternionReference;
+      SO3Group<_Scalar, _Options>>::QuaternionType& QuaternionReference;
   typedef const typename Eigen::internal::traits<
-      SO3Group<_Scalar, _Options> >::QuaternionType& ConstQuaternionReference;
+      SO3Group<_Scalar, _Options>>::QuaternionType& ConstQuaternionReference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
@@ -612,7 +612,7 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options> > {
   typedef typename Base::Adjoint Adjoint;
 
   // base is friend so unit_quaternion_nonconst can be accessed from base
-  friend class SO3GroupBase<SO3Group<_Scalar, _Options> >;
+  friend class SO3GroupBase<SO3Group<_Scalar, _Options>>;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -701,8 +701,8 @@ namespace Eigen {
  */
 template <typename _Scalar, int _Options>
 class Map<Sophus::SO3Group<_Scalar>, _Options>
-    : public Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> > {
-  typedef Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> > Base;
+    : public Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options>> {
+  typedef Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options>> Base;
 
  public:
   /** \brief scalar type */
@@ -724,7 +724,7 @@ class Map<Sophus::SO3Group<_Scalar>, _Options>
   typedef typename Base::Adjoint Adjoint;
 
   // base is friend so unit_quaternion_nonconst can be accessed from base
-  friend class Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options> >;
+  friend class Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options>>;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
@@ -760,8 +760,8 @@ class Map<Sophus::SO3Group<_Scalar>, _Options>
 template <typename _Scalar, int _Options>
 class Map<const Sophus::SO3Group<_Scalar>, _Options>
     : public Sophus::SO3GroupBase<
-          Map<const Sophus::SO3Group<_Scalar>, _Options> > {
-  typedef Sophus::SO3GroupBase<Map<const Sophus::SO3Group<_Scalar>, _Options> >
+          Map<const Sophus::SO3Group<_Scalar>, _Options>> {
+  typedef Sophus::SO3GroupBase<Map<const Sophus::SO3Group<_Scalar>, _Options>>
       Base;
 
  public:

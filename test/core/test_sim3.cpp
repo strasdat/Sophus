@@ -47,7 +47,7 @@ void tests() {
   typedef typename Sim3Group<Scalar>::Tangent Tangent;
   typedef Eigen::Matrix<Scalar, 4, 1> Vector4Type;
 
-  vector<Sim3Type, Eigen::aligned_allocator<Sim3Type> > sim3_vec;
+  vector<Sim3Type, Eigen::aligned_allocator<Sim3Type>> sim3_vec;
   sim3_vec.push_back(
       Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0, 1.)), Point(0, 0, 0)));
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, -1.0, 1.1)),
@@ -75,7 +75,7 @@ void tests() {
       Sim3Type(RxSO3Type::exp(Vector4Type(M_PI, 0, 0, 0)), Point(0, 0, 0)) *
       Sim3Type(RxSO3Type::exp(Vector4Type(-0.3, -0.5, -0.1, 0)),
                Point(0, 6, 0)));
-  vector<Tangent, Eigen::aligned_allocator<Tangent> > tangent_vec;
+  vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
   Tangent tmp;
   tmp << 0, 0, 0, 0, 0, 0, 0;
   tangent_vec.push_back(tmp);
@@ -92,7 +92,7 @@ void tests() {
   tmp << 30, 5, -1, 20, -1, 0, 1.5;
   tangent_vec.push_back(tmp);
 
-  vector<Point, Eigen::aligned_allocator<Point> > point_vec;
+  vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2, 4));
 
   Tests<Sim3Type> tests;

@@ -49,23 +49,23 @@ namespace Eigen {
 namespace internal {
 
 template <typename _Scalar, int _Options>
-struct traits<Sophus::SE3Group<_Scalar, _Options> > {
+struct traits<Sophus::SE3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Eigen::Matrix<Scalar, 3, 1> TranslationType;
   typedef Sophus::SO3Group<Scalar> SO3Type;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<Sophus::SE3Group<_Scalar>, _Options> >
-    : traits<Sophus::SE3Group<_Scalar, _Options> > {
+struct traits<Map<Sophus::SE3Group<_Scalar>, _Options>>
+    : traits<Sophus::SE3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<Eigen::Matrix<Scalar, 3, 1>, _Options> TranslationType;
   typedef Map<Sophus::SO3Group<Scalar>, _Options> SO3Type;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<const Sophus::SE3Group<_Scalar>, _Options> >
-    : traits<const Sophus::SE3Group<_Scalar, _Options> > {
+struct traits<Map<const Sophus::SE3Group<_Scalar>, _Options>>
+    : traits<const Sophus::SE3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<const Eigen::Matrix<Scalar, 3, 1>, _Options> TranslationType;
   typedef Map<const Sophus::SO3Group<Scalar>, _Options> SO3Type;
@@ -638,26 +638,26 @@ class SE3GroupBase {
  * \brief SE3 default type - Constructors and default storage for SE3 Type
  */
 template <typename _Scalar, int _Options>
-class SE3Group : public SE3GroupBase<SE3Group<_Scalar, _Options> > {
-  typedef SE3GroupBase<SE3Group<_Scalar, _Options> > Base;
+class SE3Group : public SE3GroupBase<SE3Group<_Scalar, _Options>> {
+  typedef SE3GroupBase<SE3Group<_Scalar, _Options>> Base;
 
  public:
   /** \brief scalar type */
-  typedef typename Eigen::internal::traits<SE3Group<_Scalar, _Options> >::Scalar
+  typedef typename Eigen::internal::traits<SE3Group<_Scalar, _Options>>::Scalar
       Scalar;
   /** \brief SO3 reference type */
   typedef
-      typename Eigen::internal::traits<SE3Group<_Scalar, _Options> >::SO3Type&
+      typename Eigen::internal::traits<SE3Group<_Scalar, _Options>>::SO3Type&
           SO3Reference;
   /** \brief SO3 const reference type */
   typedef const typename Eigen::internal::traits<
-      SE3Group<_Scalar, _Options> >::SO3Type& ConstSO3Reference;
+      SE3Group<_Scalar, _Options>>::SO3Type& ConstSO3Reference;
   /** \brief translation reference type */
   typedef typename Eigen::internal::traits<
-      SE3Group<_Scalar, _Options> >::TranslationType& TranslationReference;
+      SE3Group<_Scalar, _Options>>::TranslationType& TranslationReference;
   /** \brief translation const reference type */
   typedef const typename Eigen::internal::traits<
-      SE3Group<_Scalar, _Options> >::TranslationType& ConstTranslationReference;
+      SE3Group<_Scalar, _Options>>::TranslationType& ConstTranslationReference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
@@ -796,8 +796,8 @@ namespace Eigen {
  */
 template <typename _Scalar, int _Options>
 class Map<Sophus::SE3Group<_Scalar>, _Options>
-    : public Sophus::SE3GroupBase<Map<Sophus::SE3Group<_Scalar>, _Options> > {
-  typedef Sophus::SE3GroupBase<Map<Sophus::SE3Group<_Scalar>, _Options> > Base;
+    : public Sophus::SE3GroupBase<Map<Sophus::SE3Group<_Scalar>, _Options>> {
+  typedef Sophus::SE3GroupBase<Map<Sophus::SE3Group<_Scalar>, _Options>> Base;
 
  public:
   /** \brief scalar type */
@@ -867,8 +867,8 @@ class Map<Sophus::SE3Group<_Scalar>, _Options>
 template <typename _Scalar, int _Options>
 class Map<const Sophus::SE3Group<_Scalar>, _Options>
     : public Sophus::SE3GroupBase<
-          Map<const Sophus::SE3Group<_Scalar>, _Options> > {
-  typedef Sophus::SE3GroupBase<Map<const Sophus::SE3Group<_Scalar>, _Options> >
+          Map<const Sophus::SE3Group<_Scalar>, _Options>> {
+  typedef Sophus::SE3GroupBase<Map<const Sophus::SE3Group<_Scalar>, _Options>>
       Base;
 
  public:
