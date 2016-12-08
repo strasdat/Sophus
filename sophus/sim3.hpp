@@ -48,23 +48,23 @@ namespace Eigen {
 namespace internal {
 
 template <typename _Scalar, int _Options>
-struct traits<Sophus::Sim3Group<_Scalar, _Options> > {
+struct traits<Sophus::Sim3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Eigen::Matrix<Scalar, 3, 1> TranslationType;
   typedef Sophus::RxSO3Group<Scalar> RxSO3Type;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<Sophus::Sim3Group<_Scalar>, _Options> >
-    : traits<Sophus::Sim3Group<_Scalar, _Options> > {
+struct traits<Map<Sophus::Sim3Group<_Scalar>, _Options>>
+    : traits<Sophus::Sim3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<Eigen::Matrix<Scalar, 3, 1>, _Options> TranslationType;
   typedef Map<Sophus::RxSO3Group<Scalar>, _Options> RxSO3Type;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<const Sophus::Sim3Group<_Scalar>, _Options> >
-    : traits<const Sophus::Sim3Group<_Scalar, _Options> > {
+struct traits<Map<const Sophus::Sim3Group<_Scalar>, _Options>>
+    : traits<const Sophus::Sim3Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<const Eigen::Matrix<Scalar, 3, 1>, _Options> TranslationType;
   typedef Map<const Sophus::RxSO3Group<Scalar>, _Options> RxSO3Type;
@@ -647,26 +647,26 @@ class Sim3GroupBase {
  * \brief Sim3 default type - Constructors and default storage for Sim3 Type
  */
 template <typename _Scalar, int _Options>
-class Sim3Group : public Sim3GroupBase<Sim3Group<_Scalar, _Options> > {
-  typedef Sim3GroupBase<Sim3Group<_Scalar, _Options> > Base;
+class Sim3Group : public Sim3GroupBase<Sim3Group<_Scalar, _Options>> {
+  typedef Sim3GroupBase<Sim3Group<_Scalar, _Options>> Base;
 
  public:
   /** \brief scalar type */
-  typedef
-      typename Eigen::internal::traits<Sim3Group<_Scalar, _Options> >::Scalar
-          Scalar;
+  typedef typename Eigen::internal::traits<Sim3Group<_Scalar, _Options>>::Scalar
+      Scalar;
   /** \brief RxSO3 reference type */
-  typedef typename Eigen::internal::traits<
-      Sim3Group<_Scalar, _Options> >::RxSO3Type& RxSO3Reference;
+  typedef
+      typename Eigen::internal::traits<Sim3Group<_Scalar, _Options>>::RxSO3Type&
+          RxSO3Reference;
   /** \brief RxSO3 const reference type */
   typedef const typename Eigen::internal::traits<
-      Sim3Group<_Scalar, _Options> >::RxSO3Type& ConstRxSO3Reference;
+      Sim3Group<_Scalar, _Options>>::RxSO3Type& ConstRxSO3Reference;
   /** \brief translation reference type */
   typedef typename Eigen::internal::traits<
-      Sim3Group<_Scalar, _Options> >::TranslationType& TranslationReference;
+      Sim3Group<_Scalar, _Options>>::TranslationType& TranslationReference;
   /** \brief translation const reference type */
-  typedef const typename Eigen::internal::traits<Sim3Group<
-      _Scalar, _Options> >::TranslationType& ConstTranslationReference;
+  typedef const typename Eigen::internal::traits<
+      Sim3Group<_Scalar, _Options>>::TranslationType& ConstTranslationReference;
 
   /** \brief group transfomation type */
   typedef typename Base::Transformation Transformation;
@@ -786,9 +786,8 @@ namespace Eigen {
  */
 template <typename _Scalar, int _Options>
 class Map<Sophus::Sim3Group<_Scalar>, _Options>
-    : public Sophus::Sim3GroupBase<Map<Sophus::Sim3Group<_Scalar>, _Options> > {
-  typedef Sophus::Sim3GroupBase<Map<Sophus::Sim3Group<_Scalar>, _Options> >
-      Base;
+    : public Sophus::Sim3GroupBase<Map<Sophus::Sim3Group<_Scalar>, _Options>> {
+  typedef Sophus::Sim3GroupBase<Map<Sophus::Sim3Group<_Scalar>, _Options>> Base;
 
  public:
   /** \brief scalar type */
@@ -861,9 +860,8 @@ class Map<Sophus::Sim3Group<_Scalar>, _Options>
 template <typename _Scalar, int _Options>
 class Map<const Sophus::Sim3Group<_Scalar>, _Options>
     : public Sophus::Sim3GroupBase<
-          Map<const Sophus::Sim3Group<_Scalar>, _Options> > {
-  typedef Sophus::Sim3GroupBase<
-      Map<const Sophus::Sim3Group<_Scalar>, _Options> >
+          Map<const Sophus::Sim3Group<_Scalar>, _Options>> {
+  typedef Sophus::Sim3GroupBase<Map<const Sophus::Sim3Group<_Scalar>, _Options>>
       Base;
 
  public:

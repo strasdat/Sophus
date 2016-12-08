@@ -161,10 +161,8 @@ void ensureFailed(const char* function, const char* file, int line,
 #else
 namespace Sophus {
 template <typename... Args>
-SOPHUS_FUNC void defaultEnsure(const char* function,
-                                            const char* file, int line,
-                                            const char* description,
-                                            Args&&... args) {
+SOPHUS_FUNC void defaultEnsure(const char* function, const char* file, int line,
+                               const char* description, Args&&... args) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               function, file, line);
 #ifdef __CUDACC__

@@ -54,21 +54,21 @@ namespace Eigen {
 namespace internal {
 
 template <typename _Scalar, int _Options>
-struct traits<Sophus::SO2Group<_Scalar, _Options> > {
+struct traits<Sophus::SO2Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Matrix<Scalar, 2, 1> ComplexType;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<Sophus::SO2Group<_Scalar>, _Options> >
-    : traits<Sophus::SO2Group<_Scalar, _Options> > {
+struct traits<Map<Sophus::SO2Group<_Scalar>, _Options>>
+    : traits<Sophus::SO2Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<Matrix<Scalar, 2, 1>, _Options> ComplexType;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<const Sophus::SO2Group<_Scalar>, _Options> >
-    : traits<const Sophus::SO2Group<_Scalar, _Options> > {
+struct traits<Map<const Sophus::SO2Group<_Scalar>, _Options>>
+    : traits<const Sophus::SO2Group<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<const Matrix<Scalar, 2, 1>, _Options> ComplexType;
 };
@@ -399,19 +399,19 @@ class SO2GroupBase {
  * \brief SO2 default type - Constructors and default storage for SO2 Type
  */
 template <typename _Scalar, int _Options>
-class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
-  typedef SO2GroupBase<SO2Group<_Scalar, _Options> > Base;
+class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options>> {
+  typedef SO2GroupBase<SO2Group<_Scalar, _Options>> Base;
 
  public:
   /** \brief scalar type */
   using Scalar =
-      typename Eigen::internal::traits<SO2Group<_Scalar, _Options> >::Scalar;
+      typename Eigen::internal::traits<SO2Group<_Scalar, _Options>>::Scalar;
   /** \brief complex number reference type */
   using ComplexReference = typename Eigen::internal::traits<
-      SO2Group<_Scalar, _Options> >::ComplexType&;
+      SO2Group<_Scalar, _Options>>::ComplexType&;
   /** \brief complex number const reference type */
   using ConstComplexReference = const typename Eigen::internal::traits<
-      SO2Group<_Scalar, _Options> >::ComplexType&;
+      SO2Group<_Scalar, _Options>>::ComplexType&;
 
   /** \brief group transfomation type */
   using Transformation = typename Base::Transformation;
@@ -423,7 +423,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options> > {
   using Adjoint = typename Base::Adjoint;
 
   // base is friend so unit_complex_nonconst can be accessed from base
-  friend class SO2GroupBase<SO2Group<_Scalar, _Options> >;
+  friend class SO2GroupBase<SO2Group<_Scalar, _Options>>;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -525,8 +525,8 @@ namespace Eigen {
  */
 template <typename _Scalar, int _Options>
 class Map<Sophus::SO2Group<_Scalar>, _Options>
-    : public Sophus::SO2GroupBase<Map<Sophus::SO2Group<_Scalar>, _Options> > {
-  typedef Sophus::SO2GroupBase<Map<Sophus::SO2Group<_Scalar>, _Options> > Base;
+    : public Sophus::SO2GroupBase<Map<Sophus::SO2Group<_Scalar>, _Options>> {
+  typedef Sophus::SO2GroupBase<Map<Sophus::SO2Group<_Scalar>, _Options>> Base;
 
  public:
   /** \brief scalar type */
@@ -547,7 +547,7 @@ class Map<Sophus::SO2Group<_Scalar>, _Options>
   using Adjoint = typename Base::Adjoint;
 
   // base is friend so unit_complex_nonconst can be accessed from base
-  friend class Sophus::SO2GroupBase<Map<Sophus::SO2Group<_Scalar>, _Options> >;
+  friend class Sophus::SO2GroupBase<Map<Sophus::SO2Group<_Scalar>, _Options>>;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
@@ -583,8 +583,8 @@ class Map<Sophus::SO2Group<_Scalar>, _Options>
 template <typename _Scalar, int _Options>
 class Map<const Sophus::SO2Group<_Scalar>, _Options>
     : public Sophus::SO2GroupBase<
-          Map<const Sophus::SO2Group<_Scalar>, _Options> > {
-  typedef Sophus::SO2GroupBase<Map<const Sophus::SO2Group<_Scalar>, _Options> >
+          Map<const Sophus::SO2Group<_Scalar>, _Options>> {
+  typedef Sophus::SO2GroupBase<Map<const Sophus::SO2Group<_Scalar>, _Options>>
       Base;
 
  public:
