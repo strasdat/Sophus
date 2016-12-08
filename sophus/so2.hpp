@@ -174,7 +174,7 @@ class SO2GroupBase {
   SOPHUS_FUNC void normalize() {
     Scalar length = std::sqrt(unit_complex().x() * unit_complex().x() +
                               unit_complex().y() * unit_complex().y());
-    SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
+    SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
                   "Complex number should not be close to zero!");
     unit_complex_nonconst().x() /= length;
     unit_complex_nonconst().y() /= length;
@@ -451,7 +451,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options>> {
       : unit_complex_(static_cast<Scalar>(0.5) * (R(0, 0) + R(1, 1)),
                       static_cast<Scalar>(0.5) * (R(1, 0) - R(0, 1))) {
     SOPHUS_ENSURE(std::abs(R.determinant() - static_cast<Scalar>(1)) <=
-                      SophusConstants<Scalar>::epsilon(),
+                      Constants<Scalar>::epsilon(),
                   "det(R) should be (close to) 1.");
   }
 
@@ -508,7 +508,7 @@ class SO2Group : public SO2GroupBase<SO2Group<_Scalar, _Options>> {
   ComplexReference unit_complex_nonconst() { return unit_complex_; }
 
   static bool isNearZero(const Scalar& real, const Scalar& imag) {
-    return (real * real + imag * imag < SophusConstants<Scalar>::epsilon());
+    return (real * real + imag * imag < Constants<Scalar>::epsilon());
   }
 
   Eigen::Matrix<Scalar, 2, 1> unit_complex_;

@@ -352,7 +352,7 @@ class SE2GroupBase {
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;
 
-    if (std::abs(theta) < SophusConstants<Scalar>::epsilon()) {
+    if (std::abs(theta) < Constants<Scalar>::epsilon()) {
       Scalar theta_sq = theta * theta;
       sin_theta_by_theta =
           static_cast<Scalar>(1.) - static_cast<Scalar>(1. / 6.) * theta_sq;
@@ -479,7 +479,7 @@ class SE2GroupBase {
 
     const Eigen::Matrix<Scalar, 2, 1>& z = so2.unit_complex();
     Scalar real_minus_one = z.x() - static_cast<Scalar>(1.);
-    if (std::abs(real_minus_one) < SophusConstants<Scalar>::epsilon()) {
+    if (std::abs(real_minus_one) < Constants<Scalar>::epsilon()) {
       halftheta_by_tan_of_halftheta =
           static_cast<Scalar>(1.) -
           static_cast<Scalar>(1. / 12) * theta * theta;

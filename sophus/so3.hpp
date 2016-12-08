@@ -213,7 +213,7 @@ class SO3GroupBase {
    */
   SOPHUS_FUNC void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
-    SOPHUS_ENSURE(length >= SophusConstants<Scalar>::epsilon(),
+    SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
                   "Quaternion (%) should not be close to zero!",
                   unit_quaternion_nonconst().coeffs().transpose());
     unit_quaternion_nonconst().coeffs() /= length;
@@ -372,7 +372,7 @@ class SO3GroupBase {
     Scalar imag_factor;
     Scalar real_factor;
     ;
-    if ((*theta) < SophusConstants<Scalar>::epsilon()) {
+    if ((*theta) < Constants<Scalar>::epsilon()) {
       Scalar theta_po4 = theta_sq * theta_sq;
       imag_factor = static_cast<Scalar>(0.5) -
                     static_cast<Scalar>(1.0 / 48.0) * theta_sq +
@@ -533,10 +533,10 @@ class SO3GroupBase {
     // Representation through Encapsulation of Manifolds"
     // Information Fusion, 2011
 
-    if (n < SophusConstants<Scalar>::epsilon()) {
+    if (n < Constants<Scalar>::epsilon()) {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
-      SOPHUS_ENSURE(abs(w) >= SophusConstants<Scalar>::epsilon(),
+      SOPHUS_ENSURE(abs(w) >= Constants<Scalar>::epsilon(),
                     "Quaternion (%) should be normalized!",
                     other.unit_quaternion().coeffs().transpose());
       Scalar squared_w = w * w;
@@ -544,11 +544,11 @@ class SO3GroupBase {
           static_cast<Scalar>(2) / w -
           static_cast<Scalar>(2) * (squared_n) / (w * squared_w);
     } else {
-      if (abs(w) < SophusConstants<Scalar>::epsilon()) {
+      if (abs(w) < Constants<Scalar>::epsilon()) {
         if (w > static_cast<Scalar>(0)) {
-          two_atan_nbyw_by_n = SophusConstants<Scalar>::pi() / n;
+          two_atan_nbyw_by_n = Constants<Scalar>::pi() / n;
         } else {
-          two_atan_nbyw_by_n = -SophusConstants<Scalar>::pi() / n;
+          two_atan_nbyw_by_n = -Constants<Scalar>::pi() / n;
         }
       } else {
         two_atan_nbyw_by_n = static_cast<Scalar>(2) * atan(n / w) / n;

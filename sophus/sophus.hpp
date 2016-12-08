@@ -30,14 +30,14 @@
 namespace Sophus {
 
 template <typename Scalar>
-struct SophusConstants {
+struct Constants {
   SOPHUS_FUNC static Scalar epsilon() { return static_cast<Scalar>(1e-10); }
 
   SOPHUS_FUNC static Scalar pi() { return static_cast<Scalar>(M_PI); }
 };
 
 template <>
-struct SophusConstants<float> {
+struct Constants<float> {
   SOPHUS_FUNC static float epsilon() { return static_cast<float>(1e-5); }
 
   SOPHUS_FUNC static float pi() { return static_cast<float>(M_PI); }

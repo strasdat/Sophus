@@ -43,6 +43,8 @@ void tests() {
   typedef typename RxSO3Group<Scalar>::Point Point;
   typedef typename RxSO3Group<Scalar>::Tangent Tangent;
 
+  const Scalar PI = Constants<Scalar>::pi();
+
   vector<RxSO3Type, Eigen::aligned_allocator<RxSO3Type>> rxso3_vec;
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 1.)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, -1.0, 1.1)));
@@ -50,12 +52,12 @@ void tests() {
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.00001)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(M_PI, 0, 0, 0.9)));
+  rxso3_vec.push_back(RxSO3Type::exp(Tangent(PI, 0, 0, 0.9)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 0)) *
-                      RxSO3Type::exp(Tangent(M_PI, 0, 0, 0.0)) *
+                      RxSO3Type::exp(Tangent(PI, 0, 0, 0.0)) *
                       RxSO3Type::exp(Tangent(-0.2, -0.5, -0.0, 0)));
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.3, 0.5, 0.1, 0)) *
-                      RxSO3Type::exp(Tangent(M_PI, 0, 0, 0)) *
+                      RxSO3Type::exp(Tangent(PI, 0, 0, 0)) *
                       RxSO3Type::exp(Tangent(-0.3, -0.5, -0.1, 0)));
 
   vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
@@ -78,30 +80,25 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2, 4));
 
-  Tests<RxSO3Type> tests;
+  GenericTests<RxSO3Type> tests;
   tests.setGroupElements(rxso3_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
-  tests.runAllTests();
+  bool passed = tests.doAllTestsPass();
 
   // TODO: Add proper unit tests for all functions.
   RxSO3Type rxso3;
   Scalar scale(1.2);
   rxso3.setScale(scale);
-  if (std::abs(scale - rxso3.scale()) > SophusConstants<Scalar>::epsilon()) {
-    std::cerr << "setScale unit test failed." << std::endl;
-    std::exit(-1);
-  }
+  SOPHUS_TEST_APPROX(passed, scale, rxso3.scale(), Constants<Scalar>::epsilon(),
+                     "setScale");
   Eigen::Matrix<Scalar, 3, 3> sR =
       SO3Group<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix() * Scalar(1.3);
   rxso3.setScaledRotationMatrix(sR);
-  if ((sR - rxso3.matrix()).norm() > SophusConstants<Scalar>::epsilon()) {
-    std::cerr << "setScaleRotationMatrix unit test failed." << std::endl;
-    std::cerr << sR << "\nversus\n";
-    std::cerr << rxso3.matrix() << std::endl;
-    std::exit(-1);
-  }
+  SOPHUS_TEST_APPROX(passed, sR, rxso3.matrix(), Constants<Scalar>::epsilon(),
+                     "setScaleRotationMatrix");
+  processTestResult(passed);
 }
 
 int test_rxso3() {

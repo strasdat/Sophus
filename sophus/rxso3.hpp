@@ -270,11 +270,11 @@ class RxSO3GroupBase {
 
     quaternion() *= other.quaternion();
     Scalar scale = this->scale();
-    if (scale < SophusConstants<Scalar>::epsilon()) {
+    if (scale < Constants<Scalar>::epsilon()) {
       SOPHUS_ENSURE(scale > 0, "Scale must be greater zero.");
       // Saturation to ensure class invariant.
       quaternion().normalize();
-      quaternion().coeffs() *= sqrt(SophusConstants<Scalar>::epsilon());
+      quaternion().coeffs() *= sqrt(Constants<Scalar>::epsilon());
     }
     return *this;
   }
@@ -344,8 +344,8 @@ class RxSO3GroupBase {
     Scalar squared_scale =
         static_cast<Scalar>(1. / 3.) *
         (squared_sR(0, 0) + squared_sR(1, 1) + squared_sR(2, 2));
-    SOPHUS_ENSURE(squared_scale > SophusConstants<Scalar>::epsilon() *
-                                      SophusConstants<Scalar>::epsilon(),
+    SOPHUS_ENSURE(squared_scale > Constants<Scalar>::epsilon() *
+                                      Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
     Scalar scale = sqrt(squared_scale);
     quaternion() = sR / scale;
@@ -632,7 +632,7 @@ class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> {
    */
   SOPHUS_FUNC RxSO3Group(const Scalar& scale, const Transformation& R)
       : quaternion_(R) {
-    SOPHUS_ENSURE(scale >= SophusConstants<Scalar>::epsilon(),
+    SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
@@ -645,7 +645,7 @@ class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> {
    */
   SOPHUS_FUNC RxSO3Group(const Scalar& scale, const SO3Group<Scalar>& so3)
       : quaternion_(so3.unit_quaternion()) {
-    SOPHUS_ENSURE(scale >= SophusConstants<Scalar>::epsilon(),
+    SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
     quaternion_.normalize();
     quaternion_.coeffs() *= scale;
@@ -659,7 +659,7 @@ class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> {
   SOPHUS_FUNC explicit RxSO3Group(const Eigen::Quaternion<Scalar>& quat)
       : quaternion_(quat) {
     SOPHUS_ENSURE(
-        quaternion_.squaredNorm() > SophusConstants<Scalar>::epsilon(),
+        quaternion_.squaredNorm() > Constants<Scalar>::epsilon(),
         "Scale factor must be greater-equal epsilon.");
   }
 

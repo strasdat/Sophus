@@ -46,6 +46,7 @@ void tests() {
   typedef typename Sim3Group<Scalar>::Point Point;
   typedef typename Sim3Group<Scalar>::Tangent Tangent;
   typedef Eigen::Matrix<Scalar, 4, 1> Vector4Type;
+  const Scalar PI = Constants<Scalar>::pi();
 
   vector<Sim3Type, Eigen::aligned_allocator<Sim3Type>> sim3_vec;
   sim3_vec.push_back(
@@ -64,15 +65,15 @@ void tests() {
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0)),
                               Point(0.01, 0, 0)));
   sim3_vec.push_back(
-      Sim3Type(RxSO3Type::exp(Vector4Type(M_PI, 0, 0, 0.9)), Point(4, -5, 0)));
+      Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0, 0.9)), Point(4, -5, 0)));
   sim3_vec.push_back(
       Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0, 0)), Point(0, 0, 0)) *
-      Sim3Type(RxSO3Type::exp(Vector4Type(M_PI, 0, 0, 0)), Point(0, 0, 0)) *
+      Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0, 0)), Point(0, 0, 0)) *
       Sim3Type(RxSO3Type::exp(Vector4Type(-0.2, -0.5, -0.0, 0)),
                Point(0, 0, 0)));
   sim3_vec.push_back(
       Sim3Type(RxSO3Type::exp(Vector4Type(0.3, 0.5, 0.1, 0)), Point(2, 0, -7)) *
-      Sim3Type(RxSO3Type::exp(Vector4Type(M_PI, 0, 0, 0)), Point(0, 0, 0)) *
+      Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0, 0)), Point(0, 0, 0)) *
       Sim3Type(RxSO3Type::exp(Vector4Type(-0.3, -0.5, -0.1, 0)),
                Point(0, 6, 0)));
   vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
@@ -95,21 +96,19 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2, 4));
 
-  Tests<Sim3Type> tests;
+  GenericTests<Sim3Type> tests;
   tests.setGroupElements(sim3_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
-  tests.runAllTests();
+  bool passed = tests.doAllTestsPass();
 
-  // TODO: Add proper unit tests for all functions.
   Sim3Type sim3;
   Scalar scale(1.2);
   sim3.setScale(scale);
-  if (std::abs(scale - sim3.scale()) > SophusConstants<Scalar>::epsilon()) {
-    std::cerr << "setScale unit test failed." << std::endl;
-    std::exit(-1);
-  }
+  SOPHUS_TEST_APPROX(passed, scale, sim3.scale(), Constants<Scalar>::epsilon(),
+                     "setScale");
+  processTestResult(passed);
 }
 
 int test_sim3() {
