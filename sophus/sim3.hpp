@@ -568,9 +568,9 @@ class Sim3GroupBase {
     Eigen::Matrix<Scalar, 3, 3> Omega2 = Omega * Omega;
 
     Scalar A, B, C;
-    if (abs(sigma) < SophusConstants<Scalar>::epsilon()) {
+    if (abs(sigma) < Constants<Scalar>::epsilon()) {
       C = one;
-      if (abs(theta) < SophusConstants<Scalar>::epsilon()) {
+      if (abs(theta) < Constants<Scalar>::epsilon()) {
         A = half;
         B = static_cast<Scalar>(1. / 6.);
       } else {
@@ -580,7 +580,7 @@ class Sim3GroupBase {
       }
     } else {
       C = (scale - one) / sigma;
-      if (abs(theta) < SophusConstants<Scalar>::epsilon()) {
+      if (abs(theta) < Constants<Scalar>::epsilon()) {
         Scalar sigma_sq = sigma * sigma;
         A = ((sigma - one) * scale + one) / sigma_sq;
         B = ((half * sigma * sigma - sigma + one) * scale) / (sigma_sq * sigma);
@@ -611,10 +611,10 @@ class Sim3GroupBase {
     const Scalar cos_theta = cos(theta);
 
     Scalar a, b, c;
-    if (abs(sigma * sigma) < SophusConstants<Scalar>::epsilon()) {
+    if (abs(sigma * sigma) < Constants<Scalar>::epsilon()) {
       c = one - half * sigma;
       a = -half;
-      if (abs(theta_sq) < SophusConstants<Scalar>::epsilon()) {
+      if (abs(theta_sq) < Constants<Scalar>::epsilon()) {
         b = Scalar(1. / 12.);
       } else {
         b = (theta * sin_theta + two * cos_theta - two) /
@@ -623,7 +623,7 @@ class Sim3GroupBase {
     } else {
       const Scalar scale_cu = scale_sq * scale;
       c = sigma / (scale - one);
-      if (abs(theta_sq) < SophusConstants<Scalar>::epsilon()) {
+      if (abs(theta_sq) < Constants<Scalar>::epsilon()) {
         a = (-sigma * scale + scale - one) / ((scale - one) * (scale - one));
         b = (scale_sq * sigma - two * scale_sq + scale * sigma + two * scale) /
             (two * scale_cu - Scalar(6) * scale_sq + Scalar(6) * scale - two);

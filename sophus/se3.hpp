@@ -426,7 +426,7 @@ class SE3GroupBase {
     Eigen::Matrix<Scalar, 3, 3> Omega_sq = Omega * Omega;
     Eigen::Matrix<Scalar, 3, 3> V;
 
-    if (theta < SophusConstants<Scalar>::epsilon()) {
+    if (theta < Constants<Scalar>::epsilon()) {
       V = so3.matrix();
       // Note: That is an accurate expansion!
     } else {
@@ -592,7 +592,7 @@ class SE3GroupBase {
     upsilon_omega.template tail<3>() =
         SO3Group<Scalar>::logAndTheta(se3.so3(), &theta);
 
-    if (abs(theta) < SophusConstants<Scalar>::epsilon()) {
+    if (abs(theta) < Constants<Scalar>::epsilon()) {
       Eigen::Matrix<Scalar, 3, 3> Omega =
           SO3Group<Scalar>::hat(upsilon_omega.template tail<3>());
       Eigen::Matrix<Scalar, 3, 3> V_inv =

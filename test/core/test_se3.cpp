@@ -43,6 +43,7 @@ void tests() {
   typedef SE3Group<Scalar> SE3Type;
   typedef typename SE3Group<Scalar>::Point Point;
   typedef typename SE3Group<Scalar>::Tangent Tangent;
+  const Scalar PI = Constants<Scalar>::pi();
 
   vector<SE3Type, Eigen::aligned_allocator<SE3Type>> se3_vec;
   se3_vec.push_back(
@@ -56,14 +57,14 @@ void tests() {
                             Point(0, -0.00000001, 0.0000000001)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(4, -5, 0)));
+  se3_vec.push_back(SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(4, -5, 0)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
-      SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
       SE3Type(SO3Type::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
-      SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
       SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
 
   vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
@@ -86,12 +87,13 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2, 4));
 
-  Tests<SE3Type> tests;
+  GenericTests<SE3Type> tests;
   tests.setGroupElements(se3_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
-  tests.runAllTests();
+  bool passed = tests.doAllTestsPass();
+  processTestResult(passed);
 }
 
 int test_se3() {

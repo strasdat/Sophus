@@ -44,6 +44,7 @@ void tests() {
   typedef SE2Group<Scalar> SE2Type;
   typedef typename SE2Group<Scalar>::Point Point;
   typedef typename SE2Group<Scalar>::Tangent Tangent;
+  const Scalar PI = Constants<Scalar>::pi();
 
   vector<SE2Type, Eigen::aligned_allocator<SE2Type>> se2_vec;
   se2_vec.push_back(SE2Type(SO2Type(0.0), Point(0, 0)));
@@ -53,10 +54,10 @@ void tests() {
   se2_vec.push_back(
       SE2Type(SO2Type(0.00001), Point(-0.00000001, 0.0000000001)));
   se2_vec.push_back(SE2Type(SO2Type(0.2), Point(0, 0)) *
-                    SE2Type(SO2Type(M_PI), Point(0, 0)) *
+                    SE2Type(SO2Type(PI), Point(0, 0)) *
                     SE2Type(SO2Type(-0.2), Point(0, 0)));
   se2_vec.push_back(SE2Type(SO2Type(0.3), Point(2, 0)) *
-                    SE2Type(SO2Type(M_PI), Point(0, 0)) *
+                    SE2Type(SO2Type(PI), Point(0, 0)) *
                     SE2Type(SO2Type(-0.3), Point(0, 6)));
 
   vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
@@ -77,12 +78,13 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2));
 
-  Tests<SE2Type> tests;
+  GenericTests<SE2Type> tests;
   tests.setGroupElements(se2_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
-  tests.runAllTests();
+  bool passed = tests.doAllTestsPass();
+  processTestResult(passed);
 }
 
 int test_se2() {

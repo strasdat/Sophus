@@ -42,9 +42,9 @@ bool test(const Sophus::SE3d& T_w_targ, const Sophus::SE3d& T_w_init) {
   // Set solver options (precision / method)
   ceres::Solver::Options options;
   options.gradient_tolerance =
-      0.01 * Sophus::SophusConstants<double>::epsilon();
+      0.01 * Sophus::Constants<double>::epsilon();
   options.function_tolerance =
-      0.01 * Sophus::SophusConstants<double>::epsilon();
+      0.01 * Sophus::Constants<double>::epsilon();
   options.linear_solver_type = ceres::DENSE_QR;
 
   // Solve
@@ -54,7 +54,7 @@ bool test(const Sophus::SE3d& T_w_targ, const Sophus::SE3d& T_w_init) {
 
   // Difference between target and parameter
   const double mse = (T_w_targ.inverse() * T_wr).log().squaredNorm();
-  const bool passed = mse < 10. * Sophus::SophusConstants<double>::epsilon();
+  const bool passed = mse < 10. * Sophus::Constants<double>::epsilon();
   return passed;
 }
 
@@ -62,6 +62,7 @@ int main(int, char**) {
   typedef Sophus::SE3Group<double> SE3Type;
   typedef Sophus::SO3Group<double> SO3Type;
   typedef SE3Type::Point Point;
+  const double PI = Constants<double>::pi();
 
   std::vector<SE3Type> se3_vec;
   se3_vec.push_back(
@@ -75,14 +76,14 @@ int main(int, char**) {
                             Point(0, -0.00000001, 0.0000000001)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(4, -5, 0)));
+  se3_vec.push_back(SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(4, -5, 0)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
-      SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
       SE3Type(SO3Type::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
-      SE3Type(SO3Type::exp(Point(M_PI, 0, 0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
       SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
 
   for (size_t i = 0; i < se3_vec.size(); ++i) {

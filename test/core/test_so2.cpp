@@ -22,12 +22,6 @@
 
 #include <iostream>
 
-// These definitions are not standard C++ and are missing on some compilers.
-#if !defined(M_PI) || !defined(M_PI_2)
-#define M_PI 3.14159265358979323846264338328
-#define M_PI_2 1.57079632679489661923132169164
-#endif
-
 #include <sophus/so2.hpp>
 #include "tests.hpp"
 
@@ -48,35 +42,36 @@ void tests() {
   typedef SO2Group<Scalar> SO2Type;
   typedef typename SO2Group<Scalar>::Point Point;
   typedef typename SO2Group<Scalar>::Tangent Tangent;
+  const Scalar PI = Constants<Scalar>::pi();
 
   vector<SO2Type, Eigen::aligned_allocator<SO2Type>> so2_vec;
   so2_vec.push_back(SO2Type::exp(0.0));
   so2_vec.push_back(SO2Type::exp(0.2));
   so2_vec.push_back(SO2Type::exp(10.));
   so2_vec.push_back(SO2Type::exp(0.00001));
-  so2_vec.push_back(SO2Type::exp(M_PI));
-  so2_vec.push_back(SO2Type::exp(0.2) * SO2Type::exp(M_PI) *
+  so2_vec.push_back(SO2Type::exp(PI));
+  so2_vec.push_back(SO2Type::exp(0.2) * SO2Type::exp(PI) *
                     SO2Type::exp(-0.2));
-  so2_vec.push_back(SO2Type::exp(-0.3) * SO2Type::exp(M_PI) *
+  so2_vec.push_back(SO2Type::exp(-0.3) * SO2Type::exp(PI) *
                     SO2Type::exp(0.3));
 
   vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
   tangent_vec.push_back(Tangent(0));
   tangent_vec.push_back(Tangent(1));
-  tangent_vec.push_back(Tangent(M_PI_2));
+  tangent_vec.push_back(Tangent(PI/2.));
   tangent_vec.push_back(Tangent(-1));
   tangent_vec.push_back(Tangent(20));
-  tangent_vec.push_back(Tangent(M_PI_2 + 0.0001));
+  tangent_vec.push_back(Tangent(PI/2. + 0.0001));
 
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2));
 
-  Tests<SO2Type> tests;
+  GenericTests<SO2Type> tests;
   tests.setGroupElements(so2_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
 
-  tests.runAllTests();
+  bool passed = tests.doAllTestsPass();
 
   // Test that the complex number magnitude stays close to one.
   SO2Type current_z;
@@ -85,11 +80,9 @@ void tests() {
       current_z *= z;
     }
   }
-  if (!(std::abs(current_z.unit_complex().norm() - Scalar(1)) <
-        SophusConstants<Scalar>::epsilon())) {
-    std::cerr << "There was a magnitude drift\n";
-    std::exit(-1);
-  }
+  SOPHUS_TEST_APPROX(passed, current_z.unit_complex().norm(), Scalar(1),
+                     Constants<Scalar>::epsilon(), "Magnitude drift");
+  processTestResult(passed);
 }
 
 int test_so2() {
