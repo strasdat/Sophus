@@ -62,7 +62,7 @@ int main(int, char**) {
   typedef Sophus::SE3Group<double> SE3Type;
   typedef Sophus::SO3Group<double> SO3Type;
   typedef SE3Type::Point Point;
-  const double PI = Constants<double>::pi();
+  const double PI = Sophus::Constants<double>::pi();
 
   std::vector<SE3Type> se3_vec;
   se3_vec.push_back(

@@ -69,6 +69,36 @@ void processTestResult(bool passed) {
 
 #define SOPHUS_STRINGIFY(x) #x
 
+// GenericTests whether left is equal to right given a threshold.
+// The in-out parameter passed will be set to false if test fails.
+#define SOPHUS_TEST_EQUAL(passed, left, right, ...)                            \
+  do {                                                                         \
+    if (left != right) {                                                       \
+      std::string msg = Sophus::details::FormatString(                         \
+          "% (=%) is not equal to % (=%)\n", SOPHUS_STRINGIFY(left),           \
+          Sophus::details::pretty(left), SOPHUS_STRINGIFY(right),              \
+          Sophus::details::pretty(right));                                     \
+      msg += Sophus::details::FormatString(__VA_ARGS__);                       \
+      Sophus::details::testFailed(passed, SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                  msg);                                        \
+    }                                                                          \
+  } while (false)
+
+// GenericTests whether left is equal to right given a threshold.
+// The in-out parameter passed will be set to false if test fails.
+#define SOPHUS_TEST_NEQ(passed, left, right, ...)                            \
+  do {                                                                         \
+    if (left == right) {                                                       \
+      std::string msg = Sophus::details::FormatString(                         \
+          "% (=%) shoudl not be equal to % (=%)\n", SOPHUS_STRINGIFY(left),           \
+          Sophus::details::pretty(left), SOPHUS_STRINGIFY(right),              \
+          Sophus::details::pretty(right));                                     \
+      msg += Sophus::details::FormatString(__VA_ARGS__);                       \
+      Sophus::details::testFailed(passed, SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                  msg);                                        \
+    }                                                                          \
+  } while (false)
+
 // GenericTests whether left is approximatly equal to right given a threshold.
 // The in-out parameter passed will be set to false if test fails.
 #define SOPHUS_TEST_APPROX(passed, left, right, thr, ...)                      \

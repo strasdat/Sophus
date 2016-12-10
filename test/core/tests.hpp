@@ -42,8 +42,6 @@ class GenericTests {
 
   bool adjointTest() {
     bool passed = true;
-    using std::cerr;
-    using std::endl;
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       Transformation T = group_vec_[i].matrix();
       Adjoint Ad = group_vec_[i].Adj();
@@ -63,8 +61,6 @@ class GenericTests {
   }
 
   bool expLogTest() {
-    using std::cerr;
-    using std::endl;
     bool passed = true;
 
     for (size_t i = 0; i < group_vec_.size(); ++i) {
@@ -77,8 +73,6 @@ class GenericTests {
   }
 
   bool expMapTest() {
-    using std::cerr;
-    using std::endl;
     bool passed = true;
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
       Tangent omega = tangent_vec_[i];
@@ -91,8 +85,6 @@ class GenericTests {
   }
 
   bool groupActionTest() {
-    using std::cerr;
-    using std::endl;
     bool passed = true;
 
     for (size_t i = 0; i < group_vec_.size(); ++i) {
@@ -109,8 +101,6 @@ class GenericTests {
   }
 
   bool lieBracketTest() {
-    using std::cerr;
-    using std::endl;
     bool passed = true;
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
       for (size_t j = 0; j < tangent_vec_.size(); ++j) {
@@ -128,8 +118,6 @@ class GenericTests {
   }
 
   bool veeHatTest() {
-    using std::cerr;
-    using std::endl;
     bool passed = true;
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
       SOPHUS_TEST_APPROX(passed, tangent_vec_[i],
