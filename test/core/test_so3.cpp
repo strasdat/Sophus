@@ -109,6 +109,10 @@ class Tests {
                        raw, Constants<Scalar>::epsilon());
     SOPHUS_TEST_EQUAL(passed, const_so3_map.unit_quaternion().coeffs().data(),
                       raw.data());
+    Eigen::Map<const SO3Type> const_shallow_copy = const_so3_map;
+    SOPHUS_TEST_EQUAL(passed,
+                      const_shallow_copy.unit_quaternion().coeffs().eval(),
+                      const_so3_map.unit_quaternion().coeffs().eval());
 
     Eigen::Matrix<Scalar, 4, 1> raw2 = {1, 0, 0, 0};
     Eigen::Map<SO3Type> so3_map(raw.data());
@@ -121,6 +125,9 @@ class Tests {
                       raw.data());
     SOPHUS_TEST_NEQ(passed, so3_map.unit_quaternion().coeffs().data(),
                     quat.coeffs().data());
+    Eigen::Map<SO3Type> shallow_copy = so3_map;
+    SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_quaternion().coeffs().eval(),
+                      so3_map.unit_quaternion().coeffs().eval());
 
     const SO3Type const_so3(quat);
     for (int i = 0; i < 4; ++i) {
@@ -129,11 +136,11 @@ class Tests {
 
     SO3Type so3(quat);
     for (int i = 0; i < 4; ++i) {
-        so3.data()[i] = raw[i];
+      so3.data()[i] = raw[i];
     }
 
     for (int i = 0; i < 4; ++i) {
-         SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i]);
     }
     return passed;
   }

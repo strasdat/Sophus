@@ -127,6 +127,15 @@ class GenericTests {
     return passed;
   }
 
+  bool newDeleteSmokeTest() {
+    bool passed = true;
+    LieGroup* raw_ptr = nullptr;
+    raw_ptr = new LieGroup();
+    SOPHUS_TEST_NEQ(passed, reinterpret_cast<std::uintptr_t>(raw_ptr), 0);
+    delete raw_ptr;
+    return passed;
+  }
+
   bool doAllTestsPass() {
     bool passed = adjointTest();
     passed &= expLogTest();
@@ -134,6 +143,7 @@ class GenericTests {
     passed &= groupActionTest();
     passed &= lieBracketTest();
     passed &= veeHatTest();
+    passed &= newDeleteSmokeTest();
     return passed;
   }
 
