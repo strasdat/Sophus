@@ -50,18 +50,16 @@ void tests() {
   so2_vec.push_back(SO2Type::exp(10.));
   so2_vec.push_back(SO2Type::exp(0.00001));
   so2_vec.push_back(SO2Type::exp(PI));
-  so2_vec.push_back(SO2Type::exp(0.2) * SO2Type::exp(PI) *
-                    SO2Type::exp(-0.2));
-  so2_vec.push_back(SO2Type::exp(-0.3) * SO2Type::exp(PI) *
-                    SO2Type::exp(0.3));
+  so2_vec.push_back(SO2Type::exp(0.2) * SO2Type::exp(PI) * SO2Type::exp(-0.2));
+  so2_vec.push_back(SO2Type::exp(-0.3) * SO2Type::exp(PI) * SO2Type::exp(0.3));
 
   vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
   tangent_vec.push_back(Tangent(0));
   tangent_vec.push_back(Tangent(1));
-  tangent_vec.push_back(Tangent(PI/2.));
+  tangent_vec.push_back(Tangent(PI / 2.));
   tangent_vec.push_back(Tangent(-1));
   tangent_vec.push_back(Tangent(20));
-  tangent_vec.push_back(Tangent(PI/2. + 0.0001));
+  tangent_vec.push_back(Tangent(PI / 2. + 0.0001));
 
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2));

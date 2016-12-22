@@ -139,9 +139,7 @@ std::string FormatString(const char* text, Args... args) {
   return stream.str();
 }
 
-inline std::string FormatString() {
-    return std::string();
-}
+inline std::string FormatString() { return std::string(); }
 }  // namespace details
 }  // namespace Sophus
 

@@ -663,8 +663,8 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options>> {
    *    \cdot   \exp\left(\begin{array}{c}0\\ \alpha_2\\ 0\end{array}\right)
    *    \cdot   \exp\left(\begin{array}{c}0\\ 0\\ \alpha_3\end{array}\right)\f$.
    */
-  SOPHUS_FUNC EIGEN_DEPRECATED
-  SO3Group(Scalar alpha1, Scalar alpha2, Scalar alpha3) {
+  SOPHUS_FUNC EIGEN_DEPRECATED SO3Group(Scalar alpha1, Scalar alpha2,
+                                        Scalar alpha3) {
     const static Scalar zero = static_cast<Scalar>(0);
     unit_quaternion_ = (SO3Group::exp(Tangent(alpha1, zero, zero)) *
                         SO3Group::exp(Tangent(zero, alpha2, zero)) *
