@@ -86,11 +86,11 @@ void processTestResult(bool passed) {
 
 // GenericTests whether left is equal to right given a threshold.
 // The in-out parameter passed will be set to false if test fails.
-#define SOPHUS_TEST_NEQ(passed, left, right, ...)                            \
+#define SOPHUS_TEST_NEQ(passed, left, right, ...)                              \
   do {                                                                         \
     if (left == right) {                                                       \
       std::string msg = Sophus::details::FormatString(                         \
-          "% (=%) shoudl not be equal to % (=%)\n", SOPHUS_STRINGIFY(left),           \
+          "% (=%) shoudl not be equal to % (=%)\n", SOPHUS_STRINGIFY(left),    \
           Sophus::details::pretty(left), SOPHUS_STRINGIFY(right),              \
           Sophus::details::pretty(right));                                     \
       msg += Sophus::details::FormatString(__VA_ARGS__);                       \

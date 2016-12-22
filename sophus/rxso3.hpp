@@ -658,9 +658,8 @@ class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> {
    */
   SOPHUS_FUNC explicit RxSO3Group(const Eigen::Quaternion<Scalar>& quat)
       : quaternion_(quat) {
-    SOPHUS_ENSURE(
-        quaternion_.squaredNorm() > Constants<Scalar>::epsilon(),
-        "Scale factor must be greater-equal epsilon.");
+    SOPHUS_ENSURE(quaternion_.squaredNorm() > Constants<Scalar>::epsilon(),
+                  "Scale factor must be greater-equal epsilon.");
   }
 
   /**
