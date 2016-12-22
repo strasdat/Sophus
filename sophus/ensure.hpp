@@ -26,6 +26,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 
 #include <Eigen/Core>
 
@@ -87,7 +88,7 @@ template <typename T, typename... Args>
 void FormatStream(std::stringstream& stream, const char* text, T arg,
                   Args... args) {
   static_assert(IsStreamable<T>::value,
-                "One of the args has not ostream overload!");
+                "One of the args has no ostream overload!");
   for (; *text != '\0'; ++text) {
     if (*text == '%') {
       ArgToStream<T>::impl(stream, arg);
