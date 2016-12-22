@@ -29,10 +29,6 @@
 
 #include <Eigen/Core>
 
-#ifdef SOPHUS_CERES_FOUND
-#include <ceres/ceres.h>
-#endif
-
 // following boost's assert.hpp
 #undef SOPHUS_ENSURE
 
@@ -80,33 +76,6 @@ class ArgToStream {
  public:
   static void impl(std::stringstream& stream, T arg) { stream << arg; }
 };
-
-#ifdef SOPHUS_CERES_FOUND
-// Hack to side-step broken ostream overloads of Eigen types with Jet Scalars.
-template <int N, int Rows, int Cols, int Opts, int MaxRows, int MaxCols>
-class ArgToStream<Eigen::Transpose<
-    Eigen::Matrix<ceres::Jet<double, N>, Rows, Cols, Opts, MaxRows, MaxCols>>> {
- public:
-  static void impl(
-      std::stringstream& stream,
-      Eigen::Transpose<Eigen::Matrix<ceres::Jet<double, N>, Rows, Cols, Opts,
-                                     MaxRows, MaxCols>>) {
-    stream << "[jet]";
-  }
-};
-
-template <int N, int Rows, int Cols, int Opts, int MaxRows, int MaxCols>
-class ArgToStream<Eigen::Transpose<const Eigen::Matrix<
-    ceres::Jet<double, N>, Rows, Cols, Opts, MaxRows, MaxCols>>> {
- public:
-  static void impl(
-      std::stringstream& stream,
-      Eigen::Transpose<const Eigen::Matrix<ceres::Jet<double, N>, Rows, Cols,
-                                           Opts, MaxRows, MaxCols>>) {
-    stream << "[jet]";
-  }
-};
-#endif  // SOPHUS_CERES_FOUND
 
 inline void FormatStream(std::stringstream& stream, const char* text) {
   stream << text;

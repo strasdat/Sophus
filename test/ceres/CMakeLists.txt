@@ -9,7 +9,6 @@ if( Ceres_FOUND )
   INCLUDE_DIRECTORIES( BEFORE ${Sophus_INCLUDE_DIR} ${CERES_INCLUDES})
 
   MESSAGE(STATUS "CERES found")
-  add_definitions(-DSOPHUS_CERES_FOUND)
 
   # Tests to run
   SET( TEST_SOURCES test_ceres_se3 )
