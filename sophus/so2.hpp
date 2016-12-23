@@ -29,7 +29,7 @@
 // This helps when using Sophus with unusual compilers, like nvcc.
 #include <Eigen/LU>
 
-#include "sophus.hpp"
+#include "common.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // Forward Declarations / typedefs

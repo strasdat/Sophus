@@ -1,7 +1,7 @@
 #ifndef SOPUHS_TESTS_MACROS_HPP
 #define SOPUHS_TESTS_MACROS_HPP
 
-#include <sophus/sophus.hpp>
+#include <sophus/common.hpp>
 
 namespace Sophus {
 namespace details {

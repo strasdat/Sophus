@@ -24,7 +24,6 @@
 #define SOPHUS_RXSO3_HPP
 
 #include "so3.hpp"
-#include "sophus.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // Forward Declarations / typedefs

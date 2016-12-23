@@ -51,7 +51,7 @@ SET( TEMPLATES so2
                sim3
 )
 
-SET( SOURCES ${SOURCE_DIR}/sophus.hpp ${SOURCE_DIR}/ensure.hpp
+SET( SOURCES ${SOURCE_DIR}/common.hpp
              ${SOURCE_DIR}/example_ensure_handler.cpp )
 
 FOREACH(templ ${TEMPLATES})

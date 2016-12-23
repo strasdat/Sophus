@@ -24,9 +24,7 @@
 #ifndef SOPHUS_SO3_HPP
 #define SOPHUS_SO3_HPP
 
-#include <iostream>
-
-#include "sophus.hpp"
+#include "common.hpp"
 
 // Include only the selective set of Eigen headers that we need.
 // This helps when using Sophus with unusual compilers, like nvcc.
