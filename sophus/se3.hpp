@@ -718,7 +718,12 @@ class SE3Group : public SE3GroupBase<SE3Group<_Scalar, _Options>> {
    */
   SOPHUS_FUNC explicit SE3Group(const Eigen::Matrix<Scalar, 4, 4>& T)
       : so3_(T.template topLeftCorner<3, 3>()),
-        translation_(T.template block<3, 1>(0, 3)) {}
+        translation_(T.template block<3, 1>(0, 3)) {
+    SOPHUS_ENSURE(
+        (T.row(3) - Eigen::Matrix<Scalar, 1, 4>(0, 0, 0, 1)).squaredNorm() <
+            Constants<Scalar>::epsilon(),
+        "Last row is not (0,0,0,1), but (%).", T.row(3));
+  }
 
   /**
    * \brief Constructor from Affine3
