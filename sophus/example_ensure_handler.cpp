@@ -20,7 +20,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-#include "ensure.hpp"
+#include "common.hpp"
 
 #include <cstdio>
 #include <cstdlib>
