@@ -1,3 +1,6 @@
+linux, os x: |ci|_ windows: |win_ci|_ code coverage: |ci_cov|_
+
+
 Sophus
 ======
 
@@ -20,18 +23,16 @@ Sophus supports clang and gcc on Linux and OS X as well as msvc on Windows.
 The specific compiler and operating system versions which are supported are the
 ones which are used in the Continuous Integration (CI):
 
-linux, os x:
-
-.. image:: https://travis-ci.org/strasdat/Sophus.svg?branch=master
-
-windows:
-
-.. image:: https://travis-ci.org/strasdat/Sophus.svg?branch=master
-
-Code coverage:
-
-.. image:: https://coveralls.io/repos/github/strasdat/Sophus/badge.svg?branch=master
-
+linux, os x: |ci|_ windows: |win_ci|_ code coverage: |ci_cov|_
 
 However, it should work (with no to minor modification) on many other
 modern configurations which support CMake and c++11 as well.
+
+.. |ci| image:: https://travis-ci.org/strasdat/Sophus.svg?branch=master
+.. _ci: https://travis-ci.org/strasdat/Sophus
+
+.. |win_ci| image:: https://ci.appveyor.com/api/projects/status/um4285lwhs8ci7pt/branch/master?svg=true
+.. _win_ci: https://ci.appveyor.com/project/strasdat/sophus/branch/master
+
+.. |ci_cov| image:: https://coveralls.io/repos/github/strasdat/Sophus/badge.svg?branch=master
+.. _ci_cov: https://coveralls.io/github/strasdat/Sophus?branch=master
