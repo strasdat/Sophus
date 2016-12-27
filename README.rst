@@ -1,4 +1,4 @@
-linux, os x: |ci|_ windows: |win_ci|_ code coverage: |ci_cov|_
+linux, os x: |TravisCI|_ windows: |AppVeyor|_ code coverage: |ci_cov|_
 
 
 Sophus
@@ -17,22 +17,19 @@ translations) in 2d and 3d.
 Cross platform support
 ----------------------
 
-Sophus supports clang and gcc on Linux and OS X as well as msvc on Windows.
-
-
-The specific compiler and operating system versions which are supported are the
-ones which are used in the Continuous Integration (CI):
-
-linux, os x: |ci|_ windows: |win_ci|_ code coverage: |ci_cov|_
+Sophus compiles with clang and gcc on Linux and OS X as well as msvc on Windows.
+The specific compiler and operating system versions which are supported are
+the ones which are used in the Continuous Integration (CI): See TravisCI_ and
+AppVeyor_ for details.
 
 However, it should work (with no to minor modification) on many other
-modern configurations which support CMake and c++11 as well.
+modern configurations as long they support c++11, CMake, and Eigen 3.X.
 
-.. |ci| image:: https://travis-ci.org/strasdat/Sophus.svg?branch=master
-.. _ci: https://travis-ci.org/strasdat/Sophus
+.. |TravisCI| image:: https://travis-ci.org/strasdat/Sophus.svg?branch=master
+.. _TravisCI: https://travis-ci.org/strasdat/Sophus
 
-.. |win_ci| image:: https://ci.appveyor.com/api/projects/status/um4285lwhs8ci7pt/branch/master?svg=true
-.. _win_ci: https://ci.appveyor.com/project/strasdat/sophus/branch/master
+.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/um4285lwhs8ci7pt/branch/master?svg=true
+.. _AppVeyor: https://ci.appveyor.com/project/strasdat/sophus/branch/master
 
 .. |ci_cov| image:: https://coveralls.io/repos/github/strasdat/Sophus/badge.svg?branch=master
 .. _ci_cov: https://coveralls.io/github/strasdat/Sophus?branch=master
