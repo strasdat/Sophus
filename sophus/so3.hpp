@@ -330,9 +330,13 @@ class SO3GroupBase {
       real_factor = cos(half_theta);
     }
 
-    return SO3Group<Scalar>(Eigen::Quaternion<Scalar>(
-        real_factor, imag_factor * omega.x(), imag_factor * omega.y(),
-        imag_factor * omega.z()));
+   SO3Group<Scalar> q;
+   q.unit_quaternion_nonconst() = Eigen::Quaternion<Scalar>(
+               real_factor, imag_factor * omega.x(), imag_factor * omega.y(),
+               imag_factor * omega.z());
+   SOPHUS_ENSURE(abs(q.unit_quaternion().squaredNorm() - Scalar(1)) < Sophus::Constants<Scalar>::epsilon(),
+                 "SO3::exp failed! omega: %, real: %, img: %", omega.transpose(), real_factor, imag_factor);
+    return q;
   }
 
   // Returns the ith infinitesimal generators of SO(3).
