@@ -53,7 +53,9 @@ class IsStreamable {
 template <typename T>
 class ArgToStream {
  public:
-  static void impl(std::stringstream& stream, T arg) { stream << arg; }
+  static void impl(std::stringstream& stream, T&& arg) { 
+	stream << std::forward<T>(arg); 
+  }
 };
 
 inline void FormatStream(std::stringstream& stream, const char* text) {
@@ -63,14 +65,14 @@ inline void FormatStream(std::stringstream& stream, const char* text) {
 
 // Following: http://en.cppreference.com/w/cpp/language/parameter_pack
 template <typename T, typename... Args>
-void FormatStream(std::stringstream& stream, const char* text, T arg,
-                  Args... args) {
+void FormatStream(std::stringstream& stream, const char* text, T&& arg,
+                  Args&&... args) {
   static_assert(IsStreamable<T>::value,
                 "One of the args has no ostream overload!");
   for (; *text != '\0'; ++text) {
     if (*text == '%') {
-      ArgToStream<T>::impl(stream, arg);
-      FormatStream(stream, text + 1, args...);
+      ArgToStream<T&&>::impl(stream, std::forward<T>(arg));
+      FormatStream(stream, text + 1, std::forward<Args>(args)...);
       return;
     }
     stream << *text;
@@ -81,9 +83,9 @@ void FormatStream(std::stringstream& stream, const char* text, T arg,
 }
 
 template <typename... Args>
-std::string FormatString(const char* text, Args... args) {
+std::string FormatString(const char* text, Args&&... args) {
   std::stringstream stream;
-  FormatStream(stream, text, args...);
+  FormatStream(stream, text, std::forward<Args>(args)...);
   return stream.str();
 }
 
