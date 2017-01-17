@@ -219,19 +219,17 @@ class Sim3GroupBase {
     return *this;
   }
 
-  // Mutator of quaternion.
+  // Setter of non-zero quaternion.
   //
-  SOPHUS_FUNC
-  typename Eigen::internal::traits<Derived>::RxSO3Type::QuaternionReference
-  quaternion() {
-    return rxso3().quaternion();
+  // Precondition: ``quat`` must not be close to zero.
+  //
+  SOPHUS_FUNC void setQuaternion(const Eigen::Quaternion<Scalar>& quat) {
+    rxso3().setQuaternion(quat);
   }
 
   // Accessor of quaternion.
   //
-  SOPHUS_FUNC typename Eigen::internal::traits<
-      Derived>::RxSO3Type::ConstQuaternionReference
-  quaternion() const {
+  SOPHUS_FUNC const Eigen::Quaternion<Scalar>& quaternion() const {
     return rxso3().quaternion();
   }
 

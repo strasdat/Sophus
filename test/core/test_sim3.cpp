@@ -108,6 +108,12 @@ void tests() {
   sim3.setScale(scale);
   SOPHUS_TEST_APPROX(passed, scale, sim3.scale(), Constants<Scalar>::epsilon(),
                      "setScale");
+
+  sim3.setQuaternion(sim3_vec[0].rxso3().quaternion());
+  SOPHUS_TEST_APPROX(passed, sim3_vec[0].rxso3().quaternion().coeffs(),
+                     sim3_vec[0].rxso3().quaternion().coeffs(),
+                     Constants<Scalar>::epsilon(), "setQuaternion");
+
   processTestResult(passed);
 }
 

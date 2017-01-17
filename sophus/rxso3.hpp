@@ -134,7 +134,7 @@ class RxSO3GroupBase {
   // Note: The first three Scalars represent the imaginary parts, while the
   // forth Scalar represent the real part.
   //
-  SOPHUS_FUNC Scalar* data() { return quaternion().coeffs().data(); }
+  SOPHUS_FUNC Scalar* data() { return quaternion_nonconst().coeffs().data(); }
 
   // Const version of data() above.
   //
@@ -245,23 +245,25 @@ class RxSO3GroupBase {
       const RxSO3Group<Scalar>& other) {
     using std::sqrt;
 
-    quaternion() *= other.quaternion();
+    quaternion_nonconst() *= other.quaternion();
     Scalar scale = this->scale();
     if (scale < Constants<Scalar>::epsilon()) {
       SOPHUS_ENSURE(scale > 0, "Scale must be greater zero.");
       // Saturation to ensure class invariant.
-      quaternion().normalize();
-      quaternion().coeffs() *= sqrt(Constants<Scalar>::epsilon());
+      quaternion_nonconst().normalize();
+      quaternion_nonconst().coeffs() *= sqrt(Constants<Scalar>::epsilon());
     }
     return *this;
   }
 
-  // Mutator of quaternion.
+  // Sets non-zero quaternion
   //
-  // TODO: Replace this be a setter to ensure class invariant.
-  //
-  SOPHUS_FUNC QuaternionReference quaternion() {
-    return static_cast<Derived*>(this)->quaternion();
+  // Precondition: ``quat`` must not be close to zero.
+  SOPHUS_FUNC void setQuaternion(ConstQuaternionReference quat) {
+    SOPHUS_ENSURE(quat.squaredNorm() > Constants<Scalar>::epsilon() *
+                                           Constants<Scalar>::epsilon(),
+                  "Scale factor must be greater-equal epsilon.");
+    static_cast<Derived*>(this)->quaternion_nonconst() = quat;
   }
 
   // Accessor of quaternion.
@@ -299,8 +301,8 @@ class RxSO3GroupBase {
   SOPHUS_FUNC
   void setScale(const Scalar& scale) {
     using std::sqrt;
-    quaternion().normalize();
-    quaternion().coeffs() *= sqrt(scale);
+    quaternion_nonconst().normalize();
+    quaternion_nonconst().coeffs() *= sqrt(scale);
   }
 
   // Setter of quaternion using scaled rotation matrix ``sR``.
@@ -317,8 +319,8 @@ class RxSO3GroupBase {
                                       Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
     Scalar scale = sqrt(squared_scale);
-    quaternion() = sR / scale;
-    quaternion().coeffs() *= sqrt(scale);
+    quaternion_nonconst() = sR / scale;
+    quaternion_nonconst().coeffs() *= sqrt(scale);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -490,6 +492,13 @@ class RxSO3GroupBase {
                    static_cast<Scalar>(1. / 3.) *
                        (Omega(0, 0) + Omega(1, 1) + Omega(2, 2)));
   }
+
+ protected:
+  // Mutator of quaternion is private to ensure class invariant.
+  //
+  SOPHUS_FUNC QuaternionReference quaternion_nonconst() {
+    return static_cast<Derived*>(this)->quaternion_nonconst();
+  }
 };
 
 // RxSO3 default type - Constructors and default storage for RxSO3 Type.
@@ -498,17 +507,21 @@ class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> {
   typedef RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> Base;
 
  public:
-  typedef typename Eigen::internal::traits<SO3Group<_Scalar, _Options>>::Scalar
-      Scalar;
+  typedef
+      typename Eigen::internal::traits<RxSO3Group<_Scalar, _Options>>::Scalar
+          Scalar;
   typedef typename Eigen::internal::traits<
-      SO3Group<_Scalar, _Options>>::QuaternionType& QuaternionReference;
+      RxSO3Group<_Scalar, _Options>>::QuaternionType& QuaternionReference;
   typedef const typename Eigen::internal::traits<
-      SO3Group<_Scalar, _Options>>::QuaternionType& ConstQuaternionReference;
+      RxSO3Group<_Scalar, _Options>>::QuaternionType& ConstQuaternionReference;
 
   typedef typename Base::Transformation Transformation;
   typedef typename Base::Point Point;
   typedef typename Base::Tangent Tangent;
   typedef typename Base::Adjoint Adjoint;
+
+  // ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
+  friend class RxSO3GroupBase<RxSO3Group<_Scalar, _Options>>;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -568,17 +581,15 @@ class RxSO3Group : public RxSO3GroupBase<RxSO3Group<_Scalar, _Options>> {
                   "Scale factor must be greater-equal epsilon.");
   }
 
-  // Mutator of quaternion
-  //
-  SOPHUS_FUNC
-  QuaternionReference quaternion() { return quaternion_; }
-
   // Accessor of quaternion.
   //
-  SOPHUS_FUNC
-  ConstQuaternionReference quaternion() const { return quaternion_; }
+  SOPHUS_FUNC ConstQuaternionReference quaternion() const {
+    return quaternion_;
+  }
 
  protected:
+  SOPHUS_FUNC QuaternionReference quaternion_nonconst() { return quaternion_; }
+
   Eigen::Quaternion<Scalar> quaternion_;
 };
 
@@ -609,15 +620,14 @@ class Map<Sophus::RxSO3Group<_Scalar>, _Options>
   typedef typename Base::Tangent Tangent;
   typedef typename Base::Adjoint Adjoint;
 
+  // ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
+  friend class Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options>>;
+
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 
   SOPHUS_FUNC Map(Scalar* coeffs) : quaternion_(coeffs) {}
-
-  // Mutator of quaternion
-  //
-  SOPHUS_FUNC QuaternionReference quaternion() { return quaternion_; }
 
   // Accessor of quaternion.
   //
@@ -625,6 +635,8 @@ class Map<Sophus::RxSO3Group<_Scalar>, _Options>
   ConstQuaternionReference quaternion() const { return quaternion_; }
 
  protected:
+  SOPHUS_FUNC QuaternionReference quaternion_nonconst() { return quaternion_; }
+
   Map<Eigen::Quaternion<Scalar>, _Options> quaternion_;
 };
 
