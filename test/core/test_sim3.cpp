@@ -30,21 +30,21 @@
 // Explicit instantiate all class templates so that all member methods
 // get compiled and for code coverage analysis.
 namespace Eigen {
-template class Map<Sophus::Sim3Group<double>>;
-template class Map<const Sophus::Sim3Group<double>>;
+template class Map<Sophus::Sim3<double>>;
+template class Map<const Sophus::Sim3<double>>;
 }
 
 namespace Sophus {
 
-template class Sim3Group<double>;
+template class Sim3<double>;
 
 template <class Scalar>
 void tests() {
   using std::vector;
-  typedef Sim3Group<Scalar> Sim3Type;
-  typedef RxSO3Group<Scalar> RxSO3Type;
-  typedef typename Sim3Group<Scalar>::Point Point;
-  typedef typename Sim3Group<Scalar>::Tangent Tangent;
+  typedef Sim3<Scalar> Sim3Type;
+  typedef RxSO3<Scalar> RxSO3Type;
+  typedef typename Sim3<Scalar>::Point Point;
+  typedef typename Sim3<Scalar>::Tangent Tangent;
   typedef Eigen::Matrix<Scalar, 4, 1> Vector4Type;
   const Scalar PI = Constants<Scalar>::pi();
 

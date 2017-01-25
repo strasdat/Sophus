@@ -27,9 +27,9 @@
 
 namespace Sophus {
 template <typename _Scalar, int _Options = 0>
-class Sim3Group;
-typedef Sim3Group<double> Sim3d;
-typedef Sim3Group<float> Sim3f;
+class Sim3;
+typedef Sim3<double> Sim3d;
+typedef Sim3<float> Sim3f;
 typedef Eigen::Matrix<double, 7, 1> Vector7d;
 typedef Eigen::Matrix<double, 7, 7> Matrix7d;
 typedef Eigen::Matrix<float, 7, 1> Vector7f;
@@ -40,26 +40,26 @@ namespace Eigen {
 namespace internal {
 
 template <typename _Scalar, int _Options>
-struct traits<Sophus::Sim3Group<_Scalar, _Options>> {
+struct traits<Sophus::Sim3<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Eigen::Matrix<Scalar, 3, 1> TranslationType;
-  typedef Sophus::RxSO3Group<Scalar> RxSO3Type;
+  typedef Sophus::RxSO3<Scalar> RxSO3Type;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<Sophus::Sim3Group<_Scalar>, _Options>>
-    : traits<Sophus::Sim3Group<_Scalar, _Options>> {
+struct traits<Map<Sophus::Sim3<_Scalar>, _Options>>
+    : traits<Sophus::Sim3<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<Eigen::Matrix<Scalar, 3, 1>, _Options> TranslationType;
-  typedef Map<Sophus::RxSO3Group<Scalar>, _Options> RxSO3Type;
+  typedef Map<Sophus::RxSO3<Scalar>, _Options> RxSO3Type;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<const Sophus::Sim3Group<_Scalar>, _Options>>
-    : traits<const Sophus::Sim3Group<_Scalar, _Options>> {
+struct traits<Map<const Sophus::Sim3<_Scalar>, _Options>>
+    : traits<const Sophus::Sim3<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<const Eigen::Matrix<Scalar, 3, 1>, _Options> TranslationType;
-  typedef Map<const Sophus::RxSO3Group<Scalar>, _Options> RxSO3Type;
+  typedef Map<const Sophus::RxSO3<Scalar>, _Options> RxSO3Type;
 };
 }
 }
@@ -70,16 +70,16 @@ namespace Sophus {
 //
 // Sim(3) is the group of rotations  and translation and scaling in 3d. It is
 // the semi-direct product of R+xSO(3) and the 3d Euclidean vector space.  The
-// class is represented using a composition of RxSO3Group  for scaling plus
+// class is represented using a composition of RxSO3  for scaling plus
 // rotation and a 3-vector for translation.
 //
 // Sim(3) is neither compact, nor a commutative group.
 //
-// See RxSO3Group for more details of the scaling + rotation representation in
+// See RxSO3 for more details of the scaling + rotation representation in
 // 3d.
 //
 template <typename Derived>
-class Sim3GroupBase {
+class Sim3Base {
  public:
   /** \brief scalar type */
   typedef typename Eigen::internal::traits<Derived>::Scalar Scalar;
@@ -119,7 +119,7 @@ class Sim3GroupBase {
     Adjoint res;
     res.setZero();
     res.block(0, 0, 3, 3) = scale() * R;
-    res.block(0, 3, 3, 3) = SO3Group<Scalar>::hat(translation()) * R;
+    res.block(0, 3, 3, 3) = SO3<Scalar>::hat(translation()) * R;
     res.block(0, 6, 3, 1) = -translation();
     res.block(3, 3, 3, 3) = R;
     res(6, 6) = 1;
@@ -129,17 +129,17 @@ class Sim3GroupBase {
   // Returns copy of instance casted to NewScalarType.
   //
   template <typename NewScalarType>
-  SOPHUS_FUNC Sim3Group<NewScalarType> cast() const {
-    return Sim3Group<NewScalarType>(
+  SOPHUS_FUNC Sim3<NewScalarType> cast() const {
+    return Sim3<NewScalarType>(
         rxso3().template cast<NewScalarType>(),
         translation().template cast<NewScalarType>());
   }
 
   // Returns group inverse.
   //
-  SOPHUS_FUNC Sim3Group<Scalar> inverse() const {
-    RxSO3Group<Scalar> invR = rxso3().inverse();
-    return Sim3Group<Scalar>(invR,
+  SOPHUS_FUNC Sim3<Scalar> inverse() const {
+    RxSO3<Scalar> invR = rxso3().inverse();
+    return Sim3<Scalar>(invR,
                              invR * (translation() * static_cast<Scalar>(-1)));
   }
 
@@ -179,8 +179,8 @@ class Sim3GroupBase {
   // Assignment operator.
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC Sim3GroupBase<Derived>& operator=(
-      const Sim3GroupBase<OtherDerived>& other) {
+  SOPHUS_FUNC Sim3Base<Derived>& operator=(
+      const Sim3Base<OtherDerived>& other) {
     rxso3() = other.rxso3();
     translation() = other.translation();
     return *this;
@@ -188,12 +188,12 @@ class Sim3GroupBase {
 
   // Group multiplication, which is rotation plus scaling concatenation.
   //
-  // Note: That scaling is calculated with saturation. See RxSO3Group for
+  // Note: That scaling is calculated with saturation. See RxSO3 for
   // details.
   //
-  SOPHUS_FUNC Sim3Group<Scalar> operator*(
-      const Sim3Group<Scalar>& other) const {
-    Sim3Group<Scalar> result(*this);
+  SOPHUS_FUNC Sim3<Scalar> operator*(
+      const Sim3<Scalar>& other) const {
+    Sim3<Scalar> result(*this);
     result *= other;
     return result;
   }
@@ -212,8 +212,8 @@ class Sim3GroupBase {
 
   // In-place group multiplication.
   //
-  SOPHUS_FUNC Sim3GroupBase<Derived>& operator*=(
-      const Sim3Group<Scalar>& other) {
+  SOPHUS_FUNC Sim3Base<Derived>& operator*=(
+      const Sim3<Scalar>& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
     return *this;
@@ -312,11 +312,11 @@ class Sim3GroupBase {
     Adjoint res;
     res.setZero();
     res.template topLeftCorner<3, 3>() =
-        -SO3Group<Scalar>::hat(omega2) -
+        -SO3<Scalar>::hat(omega2) -
         sigma2 * Eigen::Matrix<Scalar, 3, 3>::Identity();
-    res.template block<3, 3>(0, 3) = -SO3Group<Scalar>::hat(upsilon2);
+    res.template block<3, 3>(0, 3) = -SO3<Scalar>::hat(upsilon2);
     res.template topRightCorner<3, 1>() = upsilon2;
-    res.template block<3, 3>(3, 3) = -SO3Group<Scalar>::hat(omega2);
+    res.template block<3, 3>(3, 3) = -SO3<Scalar>::hat(omega2);
     return res;
   }
 
@@ -333,16 +333,16 @@ class Sim3GroupBase {
   // ``expmat(.)`` being the matrix exponential and ``hat(.)`` the hat-operator
   // of Sim(3), see below.
   //
-  SOPHUS_FUNC static Sim3Group<Scalar> exp(const Tangent& a) {
+  SOPHUS_FUNC static Sim3<Scalar> exp(const Tangent& a) {
     const Eigen::Matrix<Scalar, 3, 1>& upsilon = a.segment(0, 3);
     const Eigen::Matrix<Scalar, 3, 1>& omega = a.segment(3, 3);
     Scalar sigma = a[6];
     Scalar theta;
-    RxSO3Group<Scalar> rxso3 =
-        RxSO3Group<Scalar>::expAndTheta(a.template tail<4>(), &theta);
-    Eigen::Matrix<Scalar, 3, 3> Omega = SO3Group<Scalar>::hat(omega);
+    RxSO3<Scalar> rxso3 =
+        RxSO3<Scalar>::expAndTheta(a.template tail<4>(), &theta);
+    Eigen::Matrix<Scalar, 3, 3> Omega = SO3<Scalar>::hat(omega);
     Eigen::Matrix<Scalar, 3, 3> W = calcW(theta, sigma, rxso3.scale(), Omega);
-    return Sim3Group<Scalar>(rxso3, W * upsilon);
+    return Sim3<Scalar>(rxso3, W * upsilon);
   }
 
   // Returns the ith infinitesimal generators of Sim(3).
@@ -408,7 +408,7 @@ class Sim3GroupBase {
   SOPHUS_FUNC static Transformation hat(const Tangent& a) {
     Transformation Omega;
     Omega.template topLeftCorner<3, 3>() =
-        RxSO3Group<Scalar>::hat(a.template tail<4>());
+        RxSO3<Scalar>::hat(a.template tail<4>());
     Omega.col(3).template head<3>() = a.template head<3>();
     Omega.row(3).setZero();
     return Omega;
@@ -432,8 +432,8 @@ class Sim3GroupBase {
     Scalar sigma2 = b[6];
 
     Tangent res;
-    res.template head<3>() = SO3Group<Scalar>::hat(omega1) * upsilon2 +
-                             SO3Group<Scalar>::hat(upsilon1) * omega2 +
+    res.template head<3>() = SO3<Scalar>::hat(omega1) * upsilon2 +
+                             SO3<Scalar>::hat(upsilon1) * omega2 +
                              sigma1 * upsilon2 - sigma2 * upsilon1;
     res.template segment<3>(3) = omega1.cross(omega2);
     res[6] = static_cast<Scalar>(0);
@@ -451,15 +451,15 @@ class Sim3GroupBase {
   // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
   // of Sim(3).
   //
-  SOPHUS_FUNC static Tangent log(const Sim3Group<Scalar>& other) {
+  SOPHUS_FUNC static Tangent log(const Sim3<Scalar>& other) {
     Tangent res;
     Scalar theta;
     Eigen::Matrix<Scalar, 4, 1> omega_sigma =
-        RxSO3Group<Scalar>::logAndTheta(other.rxso3(), &theta);
+        RxSO3<Scalar>::logAndTheta(other.rxso3(), &theta);
     const Eigen::Matrix<Scalar, 3, 1>& omega = omega_sigma.template head<3>();
     Scalar sigma = omega_sigma[3];
     Eigen::Matrix<Scalar, 3, 3> W_inv =
-        calcWInv(theta, sigma, other.scale(), SO3Group<Scalar>::hat(omega));
+        calcWInv(theta, sigma, other.scale(), SO3<Scalar>::hat(omega));
     res.segment(0, 3) = W_inv * other.translation();
     res.segment(3, 3) = omega;
     res[6] = sigma;
@@ -477,7 +477,7 @@ class Sim3GroupBase {
     Tangent upsilon_omega_sigma;
     upsilon_omega_sigma.template head<3>() = Omega.col(3).template head<3>();
     upsilon_omega_sigma.template tail<4>() =
-        RxSO3Group<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
+        RxSO3<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
     return upsilon_omega_sigma;
   }
 
@@ -569,21 +569,21 @@ class Sim3GroupBase {
 
 // Sim3 default type - Constructors and default storage for Sim3 Type.
 template <typename _Scalar, int _Options>
-class Sim3Group : public Sim3GroupBase<Sim3Group<_Scalar, _Options>> {
-  typedef Sim3GroupBase<Sim3Group<_Scalar, _Options>> Base;
+class Sim3 : public Sim3Base<Sim3<_Scalar, _Options>> {
+  typedef Sim3Base<Sim3<_Scalar, _Options>> Base;
 
  public:
-  typedef typename Eigen::internal::traits<Sim3Group<_Scalar, _Options>>::Scalar
+  typedef typename Eigen::internal::traits<Sim3<_Scalar, _Options>>::Scalar
       Scalar;
   typedef
-      typename Eigen::internal::traits<Sim3Group<_Scalar, _Options>>::RxSO3Type&
+      typename Eigen::internal::traits<Sim3<_Scalar, _Options>>::RxSO3Type&
           RxSO3Reference;
   typedef const typename Eigen::internal::traits<
-      Sim3Group<_Scalar, _Options>>::RxSO3Type& ConstRxSO3Reference;
+      Sim3<_Scalar, _Options>>::RxSO3Type& ConstRxSO3Reference;
   typedef typename Eigen::internal::traits<
-      Sim3Group<_Scalar, _Options>>::TranslationType& TranslationReference;
+      Sim3<_Scalar, _Options>>::TranslationType& TranslationReference;
   typedef const typename Eigen::internal::traits<
-      Sim3Group<_Scalar, _Options>>::TranslationType& ConstTranslationReference;
+      Sim3<_Scalar, _Options>>::TranslationType& ConstTranslationReference;
 
   typedef typename Base::Transformation Transformation;
   typedef typename Base::Point Point;
@@ -594,18 +594,18 @@ class Sim3Group : public Sim3GroupBase<Sim3Group<_Scalar, _Options>> {
 
   // Default constructor initialize similiraty transform to the identity.
   //
-  SOPHUS_FUNC Sim3Group() : translation_(Eigen::Matrix<Scalar, 3, 1>::Zero()) {}
+  SOPHUS_FUNC Sim3() : translation_(Eigen::Matrix<Scalar, 3, 1>::Zero()) {}
 
   // Copy constructor
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC Sim3Group(const Sim3GroupBase<OtherDerived>& other)
+  SOPHUS_FUNC Sim3(const Sim3Base<OtherDerived>& other)
       : rxso3_(other.rxso3()), translation_(other.translation()) {}
 
   // Constructor from RxSO3 and translation vector
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC Sim3Group(const RxSO3GroupBase<OtherDerived>& rxso3,
+  SOPHUS_FUNC Sim3(const RxSO3Base<OtherDerived>& rxso3,
                         const Point& translation)
       : rxso3_(rxso3), translation_(translation) {}
 
@@ -613,7 +613,7 @@ class Sim3Group : public Sim3GroupBase<Sim3Group<_Scalar, _Options>> {
   //
   // Precondition: quaternion must not be close to zero.
   //
-  SOPHUS_FUNC Sim3Group(const Eigen::Quaternion<Scalar>& quaternion,
+  SOPHUS_FUNC Sim3(const Eigen::Quaternion<Scalar>& quaternion,
                         const Point& translation)
       : rxso3_(quaternion), translation_(translation) {}
 
@@ -622,7 +622,7 @@ class Sim3Group : public Sim3GroupBase<Sim3Group<_Scalar, _Options>> {
   // Precondition: Top-left 3x3 matrix needs to be "scaled-orthogonal" with
   //               positive determinant. The last row must be (0, 0, 0, 1).
   //
-  SOPHUS_FUNC explicit Sim3Group(const Eigen::Matrix<Scalar, 4, 4>& T)
+  SOPHUS_FUNC explicit Sim3(const Eigen::Matrix<Scalar, 4, 4>& T)
       : rxso3_(T.template topLeftCorner<3, 3>()),
         translation_(T.template block<3, 1>(0, 3)) {}
 
@@ -665,21 +665,24 @@ class Sim3Group : public Sim3GroupBase<Sim3Group<_Scalar, _Options>> {
   ConstTranslationReference translation() const { return translation_; }
 
  protected:
-  Sophus::RxSO3Group<Scalar> rxso3_;
+  Sophus::RxSO3<Scalar> rxso3_;
   Eigen::Matrix<Scalar, 3, 1> translation_;
 };
+
+template <typename Scalar, int Options = 0>
+using Sim3Group [[deprecated]] = Sim3<Scalar, Options>;
 
 }  // namespace Sophus
 
 namespace Eigen {
 
-// Specialization of Eigen::Map for Sim3Group.
+// Specialization of Eigen::Map for Sim3.
 //
 // Allows us to wrap Sim3 objects around POD array.
 template <typename _Scalar, int _Options>
-class Map<Sophus::Sim3Group<_Scalar>, _Options>
-    : public Sophus::Sim3GroupBase<Map<Sophus::Sim3Group<_Scalar>, _Options>> {
-  typedef Sophus::Sim3GroupBase<Map<Sophus::Sim3Group<_Scalar>, _Options>> Base;
+class Map<Sophus::Sim3<_Scalar>, _Options>
+    : public Sophus::Sim3Base<Map<Sophus::Sim3<_Scalar>, _Options>> {
+  typedef Sophus::Sim3Base<Map<Sophus::Sim3<_Scalar>, _Options>> Base;
 
  public:
   typedef typename Eigen::internal::traits<Map>::Scalar Scalar;
@@ -703,7 +706,7 @@ class Map<Sophus::Sim3Group<_Scalar>, _Options>
   SOPHUS_FUNC
   Map(Scalar* coeffs)
       : rxso3_(coeffs),
-        translation_(coeffs + Sophus::RxSO3Group<Scalar>::num_parameters) {}
+        translation_(coeffs + Sophus::RxSO3<Scalar>::num_parameters) {}
 
   // Mutator of RxSO3
   //
@@ -723,18 +726,18 @@ class Map<Sophus::Sim3Group<_Scalar>, _Options>
   }
 
  protected:
-  Map<Sophus::RxSO3Group<Scalar>, _Options> rxso3_;
+  Map<Sophus::RxSO3<Scalar>, _Options> rxso3_;
   Map<Eigen::Matrix<Scalar, 3, 1>, _Options> translation_;
 };
 
-// Specialization of Eigen::Map for ``const Sim3GroupBase``
+// Specialization of Eigen::Map for ``const Sim3Base``
 //
 // Allows us to wrap RxSO3 objects around POD array.
 template <typename _Scalar, int _Options>
-class Map<const Sophus::Sim3Group<_Scalar>, _Options>
-    : public Sophus::Sim3GroupBase<
-          Map<const Sophus::Sim3Group<_Scalar>, _Options>> {
-  typedef Sophus::Sim3GroupBase<Map<const Sophus::Sim3Group<_Scalar>, _Options>>
+class Map<const Sophus::Sim3<_Scalar>, _Options>
+    : public Sophus::Sim3Base<
+          Map<const Sophus::Sim3<_Scalar>, _Options>> {
+  typedef Sophus::Sim3Base<Map<const Sophus::Sim3<_Scalar>, _Options>>
       Base;
 
  public:
@@ -755,7 +758,7 @@ class Map<const Sophus::Sim3Group<_Scalar>, _Options>
 
   SOPHUS_FUNC Map(const Scalar* coeffs)
       : rxso3_(coeffs),
-        translation_(coeffs + Sophus::RxSO3Group<Scalar>::num_parameters) {}
+        translation_(coeffs + Sophus::RxSO3<Scalar>::num_parameters) {}
 
   SOPHUS_FUNC Map(const Scalar* trans_coeffs, const Scalar* rot_coeffs)
       : rxso3_(rot_coeffs), translation_(trans_coeffs) {}
@@ -771,7 +774,7 @@ class Map<const Sophus::Sim3Group<_Scalar>, _Options>
   }
 
  protected:
-  const Map<const Sophus::RxSO3Group<Scalar>, _Options> rxso3_;
+  const Map<const Sophus::RxSO3<Scalar>, _Options> rxso3_;
   const Map<const Eigen::Matrix<Scalar, 3, 1>, _Options> translation_;
 };
 }

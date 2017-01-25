@@ -28,20 +28,20 @@
 // Explicit instantiate all class templates so that all member methods
 // get compiled and for code coverage analysis.
 namespace Eigen {
-template class Map<Sophus::SO3Group<double>>;
-template class Map<const Sophus::SO3Group<double>>;
+template class Map<Sophus::SO3<double>>;
+template class Map<const Sophus::SO3<double>>;
 }
 
 namespace Sophus {
 
-template class SO3Group<double>;
+template class SO3<double>;
 
 template <class Scalar>
 class Tests {
  public:
-  using SO3Type = SO3Group<Scalar>;
-  using Point = typename SO3Group<Scalar>::Point;
-  using Tangent = typename SO3Group<Scalar>::Tangent;
+  using SO3Type = SO3<Scalar>;
+  using Point = typename SO3<Scalar>::Point;
+  using Tangent = typename SO3<Scalar>::Tangent;
   const Scalar PI = Constants<Scalar>::pi();
 
   Tests() {
