@@ -7,7 +7,7 @@ Sophus
 Overview
 --------
 
-This is a c++-11 implementation of Lie groups commonly used for 2d and 3d
+This is a c++ implementation of Lie groups commonly used for 2d and 3d
 geometric problems (i.e. for Computer Vision or Robotics applications).
 Among others, this package includes the special orthogonal groups SO(2) and
 SO(3) to present rotations in 2d and 3d as well as the special Euclidean group
@@ -23,7 +23,7 @@ the ones which are used in the Continuous Integration (CI): See TravisCI_ and
 AppVeyor_ for details.
 
 However, it should work (with no to minor modification) on many other
-modern configurations as long they support c++11, CMake, and Eigen 3.X.
+modern configurations as long they support c++14, CMake, and Eigen 3.X.
 
 .. |TravisCI| image:: https://travis-ci.org/strasdat/Sophus.svg?branch=master
 .. _TravisCI: https://travis-ci.org/strasdat/Sophus
