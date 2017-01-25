@@ -28,20 +28,20 @@
 // Explicit instantiate all class templates so that all member methods
 // get compiled and for code coverage analysis.
 namespace Eigen {
-template class Map<Sophus::RxSO3Group<double>>;
-template class Map<const Sophus::RxSO3Group<double>>;
+template class Map<Sophus::RxSO3<double>>;
+template class Map<const Sophus::RxSO3<double>>;
 }
 
 namespace Sophus {
 
-template class RxSO3Group<double>;
+template class RxSO3<double>;
 
 template <class Scalar>
 void tests() {
   using std::vector;
-  typedef RxSO3Group<Scalar> RxSO3Type;
-  typedef typename RxSO3Group<Scalar>::Point Point;
-  typedef typename RxSO3Group<Scalar>::Tangent Tangent;
+  typedef RxSO3<Scalar> RxSO3Type;
+  typedef typename RxSO3<Scalar>::Point Point;
+  typedef typename RxSO3<Scalar>::Tangent Tangent;
 
   const Scalar PI = Constants<Scalar>::pi();
 
@@ -94,7 +94,7 @@ void tests() {
   SOPHUS_TEST_APPROX(passed, scale, rxso3.scale(), Constants<Scalar>::epsilon(),
                      "setScale");
   Eigen::Matrix<Scalar, 3, 3> sR =
-      SO3Group<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix() * Scalar(1.3);
+      SO3<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix() * Scalar(1.3);
   rxso3.setScaledRotationMatrix(sR);
   SOPHUS_TEST_APPROX(passed, sR, rxso3.matrix(), Constants<Scalar>::epsilon(),
                      "setScaleRotationMatrix");

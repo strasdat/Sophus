@@ -32,7 +32,7 @@ struct TestCostFunctor {
 
   template <typename T>
   bool operator()(const T* const sT_wa, T* sResiduals) const {
-    const Eigen::Map<const Sophus::SE3Group<T> > T_wa(sT_wa);
+    const Eigen::Map<const Sophus::SE3<T> > T_wa(sT_wa);
     Eigen::Map<Eigen::Matrix<T, 6, 1> > residuals(sResiduals);
 
     residuals = (T_aw.cast<T>() * T_wa).log();
@@ -80,8 +80,8 @@ bool test(const Sophus::SE3d& T_w_targ, const Sophus::SE3d& T_w_init) {
 }
 
 int main(int, char**) {
-  typedef Sophus::SE3Group<double> SE3Type;
-  typedef Sophus::SO3Group<double> SO3Type;
+  typedef Sophus::SE3<double> SE3Type;
+  typedef Sophus::SO3<double> SO3Type;
   typedef SE3Type::Point Point;
   const double PI = Sophus::Constants<double>::pi();
 

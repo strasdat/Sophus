@@ -28,20 +28,20 @@
 // Explicit instantiate all class templates so that all member methods
 // get compiled and for code coverage analysis.
 namespace Eigen {
-template class Map<Sophus::SO2Group<double>>;
-template class Map<const Sophus::SO2Group<double>>;
+template class Map<Sophus::SO2<double>>;
+template class Map<const Sophus::SO2<double>>;
 }
 
 namespace Sophus {
 
-template class SO2Group<double>;
+template class SO2<double>;
 
 template <class Scalar>
 void tests() {
   using std::vector;
-  typedef SO2Group<Scalar> SO2Type;
-  typedef typename SO2Group<Scalar>::Point Point;
-  typedef typename SO2Group<Scalar>::Tangent Tangent;
+  typedef SO2<Scalar> SO2Type;
+  typedef typename SO2<Scalar>::Point Point;
+  typedef typename SO2<Scalar>::Tangent Tangent;
   const Scalar PI = Constants<Scalar>::pi();
 
   vector<SO2Type, Eigen::aligned_allocator<SO2Type>> so2_vec;

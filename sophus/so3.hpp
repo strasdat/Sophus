@@ -34,30 +34,30 @@
 
 namespace Sophus {
 template <typename _Scalar, int _Options = 0>
-class SO3Group;
-typedef SO3Group<double> SO3d;
-typedef SO3Group<float> SO3f;
+class SO3;
+typedef SO3<double> SO3d;
+typedef SO3<float> SO3f;
 }  // namespace Sophus
 
 namespace Eigen {
 namespace internal {
 
 template <typename _Scalar, int _Options>
-struct traits<Sophus::SO3Group<_Scalar, _Options>> {
+struct traits<Sophus::SO3<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Eigen::Quaternion<Scalar> QuaternionType;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<Sophus::SO3Group<_Scalar>, _Options>>
-    : traits<Sophus::SO3Group<_Scalar, _Options>> {
+struct traits<Map<Sophus::SO3<_Scalar>, _Options>>
+    : traits<Sophus::SO3<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<Eigen::Quaternion<Scalar>, _Options> QuaternionType;
 };
 
 template <typename _Scalar, int _Options>
-struct traits<Map<const Sophus::SO3Group<_Scalar>, _Options>>
-    : traits<const Sophus::SO3Group<_Scalar, _Options>> {
+struct traits<Map<const Sophus::SO3<_Scalar>, _Options>>
+    : traits<const Sophus::SO3<_Scalar, _Options>> {
   typedef _Scalar Scalar;
   typedef Map<const Eigen::Quaternion<Scalar>, _Options> QuaternionType;
 };
@@ -93,7 +93,7 @@ using std::sin;
 //
 //   ``|unit_quaternion().squaredNorm() - 1| <= Constants<Scalar>::epsilon()``.
 template <typename Derived>
-class SO3GroupBase {
+class SO3Base {
  public:
   using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
   using QuaternionReference =
@@ -125,8 +125,8 @@ class SO3GroupBase {
   // Returns copy of instance casted to NewScalarType.
   //
   template <typename NewScalarType>
-  SOPHUS_FUNC SO3Group<NewScalarType> cast() const {
-    return SO3Group<NewScalarType>(
+  SOPHUS_FUNC SO3<NewScalarType> cast() const {
+    return SO3<NewScalarType>(
         unit_quaternion().template cast<NewScalarType>());
   }
 
@@ -172,15 +172,15 @@ class SO3GroupBase {
 
   // Returns group inverse.
   //
-  SOPHUS_FUNC SO3Group<Scalar> inverse() const {
-    return SO3Group<Scalar>(unit_quaternion().conjugate());
+  SOPHUS_FUNC SO3<Scalar> inverse() const {
+    return SO3<Scalar>(unit_quaternion().conjugate());
   }
 
   // Logarithmic map
   //
   // Returns tangent space representation (= rotation vector) of the instance.
   //
-  SOPHUS_FUNC Tangent log() const { return SO3Group<Scalar>::log(*this); }
+  SOPHUS_FUNC Tangent log() const { return SO3<Scalar>::log(*this); }
 
   // It re-normalizes ``unit_quaternion`` to unit length.
   //
@@ -207,16 +207,16 @@ class SO3GroupBase {
   // Assignment operator.
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC SO3GroupBase<Derived>& operator=(
-      const SO3GroupBase<OtherDerived>& other) {
+  SOPHUS_FUNC SO3Base<Derived>& operator=(
+      const SO3Base<OtherDerived>& other) {
     unit_quaternion_nonconst() = other.unit_quaternion();
     return *this;
   }
 
   // Group multiplication, which is rotation concatenation.
   //
-  SOPHUS_FUNC SO3Group<Scalar> operator*(const SO3Group<Scalar>& other) const {
-    SO3Group<Scalar> result(*this);
+  SOPHUS_FUNC SO3<Scalar> operator*(const SO3<Scalar>& other) const {
+    SO3<Scalar> result(*this);
     result *= other;
     return result;
   }
@@ -241,7 +241,7 @@ class SO3GroupBase {
 
   // In-place group multiplication.
   //
-  SOPHUS_FUNC SO3GroupBase<Derived>& operator*=(const SO3Group<Scalar>& other) {
+  SOPHUS_FUNC SO3Base<Derived>& operator*=(const SO3<Scalar>& other) {
     unit_quaternion_nonconst() *= other.unit_quaternion();
 
     Scalar squared_norm = unit_quaternion().squaredNorm();
@@ -299,7 +299,7 @@ class SO3GroupBase {
   // with ``expmat(.)`` being the matrix exponential and ``hat(.)`` being the
   // hat()-operator of SO(3).
   //
-  SOPHUS_FUNC static SO3Group<Scalar> exp(const Tangent& omega) {
+  SOPHUS_FUNC static SO3<Scalar> exp(const Tangent& omega) {
     Scalar theta;
     return expAndTheta(omega, &theta);
   }
@@ -308,7 +308,7 @@ class SO3GroupBase {
   //
   // Precondition: ``theta`` must not be ``nullptr``.
   //
-  SOPHUS_FUNC static SO3Group<Scalar> expAndTheta(const Tangent& omega,
+  SOPHUS_FUNC static SO3<Scalar> expAndTheta(const Tangent& omega,
                                                   Scalar* theta) {
     Scalar theta_sq = omega.squaredNorm();
     *theta = sqrt(theta_sq);
@@ -330,7 +330,7 @@ class SO3GroupBase {
       real_factor = cos(half_theta);
     }
 
-   SO3Group<Scalar> q;
+   SO3<Scalar> q;
    q.unit_quaternion_nonconst() = Eigen::Quaternion<Scalar>(
                real_factor, imag_factor * omega.x(), imag_factor * omega.y(),
                imag_factor * omega.z());
@@ -431,14 +431,14 @@ class SO3GroupBase {
   // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
   // of SO(3).
   //
-  SOPHUS_FUNC static Tangent log(const SO3Group<Scalar>& other) {
+  SOPHUS_FUNC static Tangent log(const SO3<Scalar>& other) {
     Scalar theta;
     return logAndTheta(other, &theta);
   }
 
   // As above, but also returns ``theta = |omega|`` as out-parameter.
   //
-  SOPHUS_FUNC static Tangent logAndTheta(const SO3Group<Scalar>& other,
+  SOPHUS_FUNC static Tangent logAndTheta(const SO3<Scalar>& other,
                                          Scalar* theta) {
     Scalar squared_n = other.unit_quaternion().vec().squaredNorm();
     Scalar n = sqrt(squared_n);
@@ -504,16 +504,16 @@ class SO3GroupBase {
 
 // SO3 default type - Constructors and default storage for SO3 Type.
 template <typename _Scalar, int _Options>
-class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options>> {
-  typedef SO3GroupBase<SO3Group<_Scalar, _Options>> Base;
+class SO3 : public SO3Base<SO3<_Scalar, _Options>> {
+  typedef SO3Base<SO3<_Scalar, _Options>> Base;
 
  public:
-  typedef typename Eigen::internal::traits<SO3Group<_Scalar, _Options>>::Scalar
+  typedef typename Eigen::internal::traits<SO3<_Scalar, _Options>>::Scalar
       Scalar;
   typedef typename Eigen::internal::traits<
-      SO3Group<_Scalar, _Options>>::QuaternionType& QuaternionReference;
+      SO3<_Scalar, _Options>>::QuaternionType& QuaternionReference;
   typedef const typename Eigen::internal::traits<
-      SO3Group<_Scalar, _Options>>::QuaternionType& ConstQuaternionReference;
+      SO3<_Scalar, _Options>>::QuaternionType& ConstQuaternionReference;
 
   typedef typename Base::Transformation Transformation;
   typedef typename Base::Point Point;
@@ -522,33 +522,33 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options>> {
 
   // ``Base`` is friend so unit_quaternion_nonconst can be accessed from
   // ``Base``.
-  friend class SO3GroupBase<SO3Group<_Scalar, _Options>>;
+  friend class SO3Base<SO3<_Scalar, _Options>>;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   // Default constructor initialize unit quaternion to identity rotation.
   //
-  SOPHUS_FUNC SO3Group()
+  SOPHUS_FUNC SO3()
       : unit_quaternion_(static_cast<Scalar>(1), static_cast<Scalar>(0),
                          static_cast<Scalar>(0), static_cast<Scalar>(0)) {}
 
   // Copy constructor
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC SO3Group(const SO3GroupBase<OtherDerived>& other)
+  SOPHUS_FUNC SO3(const SO3Base<OtherDerived>& other)
       : unit_quaternion_(other.unit_quaternion()) {}
 
   // Constructor from rotation matrix
   //
   // Precondition: rotation matrix needs to be orthogonal with determinant of 1.
   //
-  SOPHUS_FUNC SO3Group(const Transformation& R) : unit_quaternion_(R) {}
+  SOPHUS_FUNC SO3(const Transformation& R) : unit_quaternion_(R) {}
 
   // Constructor from quaternion
   //
   // Precondition: quaternion must not be close to zero.
   //
-  SOPHUS_FUNC explicit SO3Group(const Eigen::Quaternion<Scalar>& quat)
+  SOPHUS_FUNC explicit SO3(const Eigen::Quaternion<Scalar>& quat)
       : unit_quaternion_(quat) {
     Base::normalize();
   }
@@ -569,18 +569,21 @@ class SO3Group : public SO3GroupBase<SO3Group<_Scalar, _Options>> {
   Eigen::Quaternion<Scalar> unit_quaternion_;
 };
 
+template <typename Scalar, int Options = 0>
+using SO3Group [[deprecated]] = SO3<Scalar, Options>;
+
 }  // namespace Sophus
 
 namespace Eigen {
 
-// Specialization of Eigen::Map for SO3GroupBase
+// Specialization of Eigen::Map for SO3Base
 //
 // Allows us to wrap SO3 objects around POD array (e.g. external c style
 // quaternion).
 template <typename _Scalar, int _Options>
-class Map<Sophus::SO3Group<_Scalar>, _Options>
-    : public Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options>> {
-  typedef Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options>> Base;
+class Map<Sophus::SO3<_Scalar>, _Options>
+    : public Sophus::SO3Base<Map<Sophus::SO3<_Scalar>, _Options>> {
+  typedef Sophus::SO3Base<Map<Sophus::SO3<_Scalar>, _Options>> Base;
 
  public:
   typedef typename Eigen::internal::traits<Map>::Scalar Scalar;
@@ -596,7 +599,7 @@ class Map<Sophus::SO3Group<_Scalar>, _Options>
 
   // ``Base`` is friend so unit_quaternion_nonconst can be accessed from
   // ``Base``.
-  friend class Sophus::SO3GroupBase<Map<Sophus::SO3Group<_Scalar>, _Options>>;
+  friend class Sophus::SO3Base<Map<Sophus::SO3<_Scalar>, _Options>>;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
@@ -620,15 +623,15 @@ class Map<Sophus::SO3Group<_Scalar>, _Options>
   Map<Eigen::Quaternion<Scalar>, _Options> unit_quaternion_;
 };
 
-// Specialization of Eigen::Map for ``const SO3GroupBase``
+// Specialization of Eigen::Map for ``const SO3Base``
 //
 // Allows us to wrap SO3 objects around POD array (e.g. external c style
 // quaternion).
 template <typename _Scalar, int _Options>
-class Map<const Sophus::SO3Group<_Scalar>, _Options>
-    : public Sophus::SO3GroupBase<
-          Map<const Sophus::SO3Group<_Scalar>, _Options>> {
-  typedef Sophus::SO3GroupBase<Map<const Sophus::SO3Group<_Scalar>, _Options>>
+class Map<const Sophus::SO3<_Scalar>, _Options>
+    : public Sophus::SO3Base<
+          Map<const Sophus::SO3<_Scalar>, _Options>> {
+  typedef Sophus::SO3Base<Map<const Sophus::SO3<_Scalar>, _Options>>
       Base;
 
  public:
