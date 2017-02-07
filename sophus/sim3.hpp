@@ -130,17 +130,15 @@ class Sim3Base {
   //
   template <typename NewScalarType>
   SOPHUS_FUNC Sim3<NewScalarType> cast() const {
-    return Sim3<NewScalarType>(
-        rxso3().template cast<NewScalarType>(),
-        translation().template cast<NewScalarType>());
+    return Sim3<NewScalarType>(rxso3().template cast<NewScalarType>(),
+                               translation().template cast<NewScalarType>());
   }
 
   // Returns group inverse.
   //
   SOPHUS_FUNC Sim3<Scalar> inverse() const {
     RxSO3<Scalar> invR = rxso3().inverse();
-    return Sim3<Scalar>(invR,
-                             invR * (translation() * static_cast<Scalar>(-1)));
+    return Sim3<Scalar>(invR, invR * (translation() * static_cast<Scalar>(-1)));
   }
 
   // Logarithmic map
@@ -191,8 +189,7 @@ class Sim3Base {
   // Note: That scaling is calculated with saturation. See RxSO3 for
   // details.
   //
-  SOPHUS_FUNC Sim3<Scalar> operator*(
-      const Sim3<Scalar>& other) const {
+  SOPHUS_FUNC Sim3<Scalar> operator*(const Sim3<Scalar>& other) const {
     Sim3<Scalar> result(*this);
     result *= other;
     return result;
@@ -212,8 +209,7 @@ class Sim3Base {
 
   // In-place group multiplication.
   //
-  SOPHUS_FUNC Sim3Base<Derived>& operator*=(
-      const Sim3<Scalar>& other) {
+  SOPHUS_FUNC Sim3Base<Derived>& operator*=(const Sim3<Scalar>& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
     return *this;
@@ -473,7 +469,17 @@ class Sim3Base {
   //
   // This is the inverse of the hat-operator, see above.
   //
+  // Precondition: ``Omega`` must have the following structure:
+  //
+  //                |  g -f  e  a |
+  //                |  f  g -d  b |
+  //                | -e  d  g  c |
+  //                |  0  0  0  0 | .
+  //
   SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
+    SOPHUS_ENSURE(
+        Omega.row(3).template lpNorm<1>() < Constants<Scalar>::epsilon(),
+        "Omega: \n%", Omega);
     Tangent upsilon_omega_sigma;
     upsilon_omega_sigma.template head<3>() = Omega.col(3).template head<3>();
     upsilon_omega_sigma.template tail<4>() =
@@ -573,11 +579,10 @@ class Sim3 : public Sim3Base<Sim3<_Scalar, _Options>> {
   typedef Sim3Base<Sim3<_Scalar, _Options>> Base;
 
  public:
-  typedef typename Eigen::internal::traits<Sim3<_Scalar, _Options>>::Scalar
-      Scalar;
   typedef
-      typename Eigen::internal::traits<Sim3<_Scalar, _Options>>::RxSO3Type&
-          RxSO3Reference;
+      typename Eigen::internal::traits<Sim3<_Scalar, _Options>>::Scalar Scalar;
+  typedef typename Eigen::internal::traits<Sim3<_Scalar, _Options>>::RxSO3Type&
+      RxSO3Reference;
   typedef const typename Eigen::internal::traits<
       Sim3<_Scalar, _Options>>::RxSO3Type& ConstRxSO3Reference;
   typedef typename Eigen::internal::traits<
@@ -606,7 +611,7 @@ class Sim3 : public Sim3Base<Sim3<_Scalar, _Options>> {
   //
   template <typename OtherDerived>
   SOPHUS_FUNC Sim3(const RxSO3Base<OtherDerived>& rxso3,
-                        const Point& translation)
+                   const Point& translation)
       : rxso3_(rxso3), translation_(translation) {}
 
   // Constructor from quaternion and translation vector.
@@ -614,7 +619,7 @@ class Sim3 : public Sim3Base<Sim3<_Scalar, _Options>> {
   // Precondition: quaternion must not be close to zero.
   //
   SOPHUS_FUNC Sim3(const Eigen::Quaternion<Scalar>& quaternion,
-                        const Point& translation)
+                   const Point& translation)
       : rxso3_(quaternion), translation_(translation) {}
 
   // Constructor from 4x4 matrix
@@ -670,7 +675,7 @@ class Sim3 : public Sim3Base<Sim3<_Scalar, _Options>> {
 };
 
 template <typename Scalar, int Options = 0>
-using Sim3Group [[deprecated]] = Sim3<Scalar, Options>;
+using Sim3Group[[deprecated]] = Sim3<Scalar, Options>;
 
 }  // namespace Sophus
 
@@ -735,10 +740,8 @@ class Map<Sophus::Sim3<_Scalar>, _Options>
 // Allows us to wrap RxSO3 objects around POD array.
 template <typename _Scalar, int _Options>
 class Map<const Sophus::Sim3<_Scalar>, _Options>
-    : public Sophus::Sim3Base<
-          Map<const Sophus::Sim3<_Scalar>, _Options>> {
-  typedef Sophus::Sim3Base<Map<const Sophus::Sim3<_Scalar>, _Options>>
-      Base;
+    : public Sophus::Sim3Base<Map<const Sophus::Sim3<_Scalar>, _Options>> {
+  typedef Sophus::Sim3Base<Map<const Sophus::Sim3<_Scalar>, _Options>> Base;
 
  public:
   typedef typename Eigen::internal::traits<Map>::Scalar Scalar;

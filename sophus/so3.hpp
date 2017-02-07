@@ -126,8 +126,7 @@ class SO3Base {
   //
   template <typename NewScalarType>
   SOPHUS_FUNC SO3<NewScalarType> cast() const {
-    return SO3<NewScalarType>(
-        unit_quaternion().template cast<NewScalarType>());
+    return SO3<NewScalarType>(unit_quaternion().template cast<NewScalarType>());
   }
 
   // This provides unsafe read/write access to internal data. SO(3) is
@@ -207,8 +206,7 @@ class SO3Base {
   // Assignment operator.
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC SO3Base<Derived>& operator=(
-      const SO3Base<OtherDerived>& other) {
+  SOPHUS_FUNC SO3Base<Derived>& operator=(const SO3Base<OtherDerived>& other) {
     unit_quaternion_nonconst() = other.unit_quaternion();
     return *this;
   }
@@ -309,7 +307,7 @@ class SO3Base {
   // Precondition: ``theta`` must not be ``nullptr``.
   //
   SOPHUS_FUNC static SO3<Scalar> expAndTheta(const Tangent& omega,
-                                                  Scalar* theta) {
+                                             Scalar* theta) {
     Scalar theta_sq = omega.squaredNorm();
     *theta = sqrt(theta_sq);
     Scalar half_theta = static_cast<Scalar>(0.5) * (*theta);
@@ -330,12 +328,14 @@ class SO3Base {
       real_factor = cos(half_theta);
     }
 
-   SO3<Scalar> q;
-   q.unit_quaternion_nonconst() = Eigen::Quaternion<Scalar>(
-               real_factor, imag_factor * omega.x(), imag_factor * omega.y(),
-               imag_factor * omega.z());
-   SOPHUS_ENSURE(abs(q.unit_quaternion().squaredNorm() - Scalar(1)) < Sophus::Constants<Scalar>::epsilon(),
-                 "SO3::exp failed! omega: %, real: %, img: %", omega.transpose(), real_factor, imag_factor);
+    SO3<Scalar> q;
+    q.unit_quaternion_nonconst() = Eigen::Quaternion<Scalar>(
+        real_factor, imag_factor * omega.x(), imag_factor * omega.y(),
+        imag_factor * omega.z());
+    SOPHUS_ENSURE(abs(q.unit_quaternion().squaredNorm() - Scalar(1)) <
+                      Sophus::Constants<Scalar>::epsilon(),
+                  "SO3::exp failed! omega: %, real: %, img: %",
+                  omega.transpose(), real_factor, imag_factor);
     return q;
   }
 
@@ -487,10 +487,24 @@ class SO3Base {
   //
   // This is the inverse of the hat-operator, see above.
   //
+  // Precondition: ``Omega`` must have the following structure:
+  //
+  //                |  0 -c  b |
+  //                |  c  0 -a |
+  //                | -b  a  0 | .
+  //
   SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
-    return static_cast<Scalar>(0.5) * Tangent(Omega(2, 1) - Omega(1, 2),
-                                              Omega(0, 2) - Omega(2, 0),
-                                              Omega(1, 0) - Omega(0, 1));
+    using std::abs;
+    SOPHUS_ENSURE(
+        Omega.diagonal().template lpNorm<1>() < Constants<Scalar>::epsilon(),
+        "Omega: \n%", Omega);
+    SOPHUS_ENSURE(abs(Omega(2, 1) + Omega(1, 2)) < Constants<Scalar>::epsilon(),
+                  "Omega: %s", Omega);
+    SOPHUS_ENSURE(abs(Omega(0, 2) + Omega(2, 0)) < Constants<Scalar>::epsilon(),
+                  "Omega: %s", Omega);
+    SOPHUS_ENSURE(abs(Omega(1, 0) + Omega(0, 1)) < Constants<Scalar>::epsilon(),
+                  "Omega: %s", Omega);
+    return Tangent(Omega(2, 1), Omega(0, 2), Omega(1, 0));
   }
 
  private:
@@ -508,10 +522,11 @@ class SO3 : public SO3Base<SO3<_Scalar, _Options>> {
   typedef SO3Base<SO3<_Scalar, _Options>> Base;
 
  public:
-  typedef typename Eigen::internal::traits<SO3<_Scalar, _Options>>::Scalar
-      Scalar;
-  typedef typename Eigen::internal::traits<
-      SO3<_Scalar, _Options>>::QuaternionType& QuaternionReference;
+  typedef
+      typename Eigen::internal::traits<SO3<_Scalar, _Options>>::Scalar Scalar;
+  typedef
+      typename Eigen::internal::traits<SO3<_Scalar, _Options>>::QuaternionType&
+          QuaternionReference;
   typedef const typename Eigen::internal::traits<
       SO3<_Scalar, _Options>>::QuaternionType& ConstQuaternionReference;
 
@@ -570,7 +585,7 @@ class SO3 : public SO3Base<SO3<_Scalar, _Options>> {
 };
 
 template <typename Scalar, int Options = 0>
-using SO3Group [[deprecated]] = SO3<Scalar, Options>;
+using SO3Group[[deprecated]] = SO3<Scalar, Options>;
 
 }  // namespace Sophus
 
@@ -629,10 +644,8 @@ class Map<Sophus::SO3<_Scalar>, _Options>
 // quaternion).
 template <typename _Scalar, int _Options>
 class Map<const Sophus::SO3<_Scalar>, _Options>
-    : public Sophus::SO3Base<
-          Map<const Sophus::SO3<_Scalar>, _Options>> {
-  typedef Sophus::SO3Base<Map<const Sophus::SO3<_Scalar>, _Options>>
-      Base;
+    : public Sophus::SO3Base<Map<const Sophus::SO3<_Scalar>, _Options>> {
+  typedef Sophus::SO3Base<Map<const Sophus::SO3<_Scalar>, _Options>> Base;
 
  public:
   typedef typename Eigen::internal::traits<Map>::Scalar Scalar;

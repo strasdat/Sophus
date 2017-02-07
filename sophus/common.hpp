@@ -53,8 +53,8 @@ class IsStreamable {
 template <typename T>
 class ArgToStream {
  public:
-  static void impl(std::stringstream& stream, T&& arg) { 
-	stream << std::forward<T>(arg); 
+  static void impl(std::stringstream& stream, T&& arg) {
+    stream << std::forward<T>(arg);
   }
 };
 
