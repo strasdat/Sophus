@@ -1,9 +1,21 @@
 sudo: required
 dist: trusty
 
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
+    packages:
+      - gcc-5
+      - g++-5
+
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libeigen3-dev libc++-dev ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libeigen3-dev libc++-dev; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then gcc --version; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then g++ --version; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install eigen          ; fi
 
