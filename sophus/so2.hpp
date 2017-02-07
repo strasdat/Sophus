@@ -125,8 +125,7 @@ class SO2Base {
   //
   template <typename NewScalarType>
   SOPHUS_FUNC SO2<NewScalarType> cast() const {
-    return SO2<NewScalarType>(
-        unit_complex().template cast<NewScalarType>());
+    return SO2<NewScalarType>(unit_complex().template cast<NewScalarType>());
   }
 
   // This provides unsafe read/write access to internal data. SO(2) is
@@ -186,8 +185,7 @@ class SO2Base {
   // Assignment operator
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC SO2Base<Derived>& operator=(
-      const SO2Base<OtherDerived>& other) {
+  SOPHUS_FUNC SO2Base<Derived>& operator=(const SO2Base<OtherDerived>& other) {
     unit_complex_nonconst() = other.unit_complex();
     return *this;
   }
@@ -328,8 +326,19 @@ class SO2Base {
   //
   // This is the inverse of the hat-operator, see above.
   //
+  // Precondition: ``Omega`` must have the following structure:
+  //
+  //                |  0 -a |
+  //                |  a  0 |
+  //
   SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
-    return static_cast<Scalar>(0.5) * (Omega(1, 0) - Omega(0, 1));
+    using std::abs;
+    SOPHUS_ENSURE(
+        Omega.diagonal().template lpNorm<1>() < Constants<Scalar>::epsilon(),
+        "Omega: \n%", Omega);
+    SOPHUS_ENSURE(abs(Omega(1, 0) + Omega(0, 1)) < Constants<Scalar>::epsilon(),
+                  "Omega: %s", Omega);
+    return Omega(1, 0);
   }
 
  private:
@@ -350,8 +359,8 @@ class SO2 : public SO2Base<SO2<_Scalar, _Options>> {
  public:
   using Scalar =
       typename Eigen::internal::traits<SO2<_Scalar, _Options>>::Scalar;
-  using ComplexReference = typename Eigen::internal::traits<
-      SO2<_Scalar, _Options>>::ComplexType&;
+  using ComplexReference =
+      typename Eigen::internal::traits<SO2<_Scalar, _Options>>::ComplexType&;
   using ConstComplexReference = const typename Eigen::internal::traits<
       SO2<_Scalar, _Options>>::ComplexType&;
 
@@ -439,9 +448,8 @@ class SO2 : public SO2Base<SO2<_Scalar, _Options>> {
   Eigen::Matrix<Scalar, 2, 1> unit_complex_;
 };
 
-
 template <typename Scalar, int Options = 0>
-using SO2Group [[deprecated]] = SO2<Scalar, Options>;
+using SO2Group[[deprecated]] = SO2<Scalar, Options>;
 
 }  // namespace Sophus
 
@@ -497,10 +505,8 @@ class Map<Sophus::SO2<_Scalar>, _Options>
 // complex number / tuple).
 template <typename _Scalar, int _Options>
 class Map<const Sophus::SO2<_Scalar>, _Options>
-    : public Sophus::SO2Base<
-          Map<const Sophus::SO2<_Scalar>, _Options>> {
-  typedef Sophus::SO2Base<Map<const Sophus::SO2<_Scalar>, _Options>>
-      Base;
+    : public Sophus::SO2Base<Map<const Sophus::SO2<_Scalar>, _Options>> {
+  typedef Sophus::SO2Base<Map<const Sophus::SO2<_Scalar>, _Options>> Base;
 
  public:
   typedef typename internal::traits<Map>::Scalar Scalar;
@@ -529,7 +535,6 @@ class Map<const Sophus::SO2<_Scalar>, _Options>
   //
   const Map<const Matrix<Scalar, 2, 1>, _Options> unit_complex_;
 };
-
 }
 
 #endif  // SOPHUS_SO2_HPP

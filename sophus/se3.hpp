@@ -130,9 +130,8 @@ class SE3Base {
   //
   template <typename NewScalarType>
   SOPHUS_FUNC SE3<NewScalarType> cast() const {
-    return SE3<NewScalarType>(
-        so3().template cast<NewScalarType>(),
-        translation().template cast<NewScalarType>());
+    return SE3<NewScalarType>(so3().template cast<NewScalarType>(),
+                              translation().template cast<NewScalarType>());
   }
 
   // Returns ``*this`` times the ith generator of internal representation.
@@ -166,8 +165,7 @@ class SE3Base {
   //
   SOPHUS_FUNC SE3<Scalar> inverse() const {
     SO3<Scalar> invR = so3().inverse();
-    return SE3<Scalar>(invR,
-                            invR * (translation() * static_cast<Scalar>(-1)));
+    return SE3<Scalar>(invR, invR * (translation() * static_cast<Scalar>(-1)));
   }
 
   // Logarithmic map
@@ -213,8 +211,7 @@ class SE3Base {
   // Assignment operator.
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC SE3Base<Derived>& operator=(
-      const SE3Base<OtherDerived>& other) {
+  SOPHUS_FUNC SE3Base<Derived>& operator=(const SE3Base<OtherDerived>& other) {
     so3() = other.so3();
     translation() = other.translation();
     return *this;
@@ -526,7 +523,17 @@ class SE3Base {
   //
   // This is the inverse of the hat-operator, see above.
   //
+  // Precondition: ``Omega`` must have the following structure:
+  //
+  //                |  0 -f  e  a |
+  //                |  f  0 -d  b |
+  //                | -e  d  0  c |
+  //                |  0  0  0  0 | .
+  //
   SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
+    SOPHUS_ENSURE(
+        Omega.row(3).template lpNorm<1>() < Constants<Scalar>::epsilon(),
+        "Omega: \n%", Omega);
     Tangent upsilon_omega;
     upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
     upsilon_omega.template tail<3>() =
@@ -541,15 +548,15 @@ class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
   typedef SE3Base<SE3<_Scalar, _Options>> Base;
 
  public:
-  typedef typename Eigen::internal::traits<SE3<_Scalar, _Options>>::Scalar
-      Scalar;
   typedef
-      typename Eigen::internal::traits<SE3<_Scalar, _Options>>::SO3Type&
-          SO3Reference;
+      typename Eigen::internal::traits<SE3<_Scalar, _Options>>::Scalar Scalar;
+  typedef typename Eigen::internal::traits<SE3<_Scalar, _Options>>::SO3Type&
+      SO3Reference;
   typedef const typename Eigen::internal::traits<
       SE3<_Scalar, _Options>>::SO3Type& ConstSO3Reference;
-  typedef typename Eigen::internal::traits<
-      SE3<_Scalar, _Options>>::TranslationType& TranslationReference;
+  typedef
+      typename Eigen::internal::traits<SE3<_Scalar, _Options>>::TranslationType&
+          TranslationReference;
   typedef const typename Eigen::internal::traits<
       SE3<_Scalar, _Options>>::TranslationType& ConstTranslationReference;
 
@@ -573,8 +580,7 @@ class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
   // Constructor from SO3 and translation vector
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC SE3(const SO3Base<OtherDerived>& so3,
-                       const Point& translation)
+  SOPHUS_FUNC SE3(const SO3Base<OtherDerived>& so3, const Point& translation)
       : so3_(so3), translation_(translation) {}
 
   // Constructor from rotation matrix and translation vector
@@ -583,7 +589,7 @@ class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
   //
   SOPHUS_FUNC
   SE3(const Eigen::Matrix<Scalar, 3, 3>& rotation_matrix,
-           const Point& translation)
+      const Point& translation)
       : so3_(rotation_matrix), translation_(translation) {}
 
   // Constructor from quaternion and translation vector.
@@ -591,7 +597,7 @@ class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
   // Precondition: quaternion must not be close to zero.
   //
   SOPHUS_FUNC SE3(const Eigen::Quaternion<Scalar>& quaternion,
-                       const Point& translation)
+                  const Point& translation)
       : so3_(quaternion), translation_(translation) {}
 
   // Constructor from 4x4 matrix
@@ -658,7 +664,7 @@ class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
 };
 
 template <typename Scalar, int Options = 0>
-using SE3Group [[deprecated]] = SE3<Scalar, Options>;
+using SE3Group[[deprecated]] = SE3<Scalar, Options>;
 
 }  // namespace Sophus
 
@@ -723,10 +729,8 @@ class Map<Sophus::SE3<_Scalar>, _Options>
 // Allows us to wrap SE3 objects around POD array.
 template <typename _Scalar, int _Options>
 class Map<const Sophus::SE3<_Scalar>, _Options>
-    : public Sophus::SE3Base<
-          Map<const Sophus::SE3<_Scalar>, _Options>> {
-  typedef Sophus::SE3Base<Map<const Sophus::SE3<_Scalar>, _Options>>
-      Base;
+    : public Sophus::SE3Base<Map<const Sophus::SE3<_Scalar>, _Options>> {
+  typedef Sophus::SE3Base<Map<const Sophus::SE3<_Scalar>, _Options>> Base;
 
  public:
   typedef typename Eigen::internal::traits<Map>::Scalar Scalar;

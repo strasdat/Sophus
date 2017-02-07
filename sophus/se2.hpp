@@ -117,17 +117,15 @@ class SE2Base {
   //
   template <typename NewScalarType>
   SOPHUS_FUNC SE2<NewScalarType> cast() const {
-    return SE2<NewScalarType>(
-        so2().template cast<NewScalarType>(),
-        translation().template cast<NewScalarType>());
+    return SE2<NewScalarType>(so2().template cast<NewScalarType>(),
+                              translation().template cast<NewScalarType>());
   }
 
   // Returns group inverse.
   //
   SOPHUS_FUNC SE2<Scalar> inverse() const {
     const SO2<Scalar> invR = so2().inverse();
-    return SE2<Scalar>(invR,
-                            invR * (translation() * static_cast<Scalar>(-1)));
+    return SE2<Scalar>(invR, invR * (translation() * static_cast<Scalar>(-1)));
   }
 
   // Logarithmic map
@@ -173,8 +171,7 @@ class SE2Base {
   // Assignment operator.
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC SE2Base<Derived>& operator=(
-      const SE2Base<OtherDerived>& other) {
+  SOPHUS_FUNC SE2Base<Derived>& operator=(const SE2Base<OtherDerived>& other) {
     so2() = other.so2();
     translation() = other.translation();
     return *this;
@@ -428,11 +425,19 @@ class SE2Base {
   //
   // This is the inverse of the hat-operator, see above.
   //
+  // Precondition: ``Omega`` must have the following structure:
+  //
+  //                |  0 -d  a |
+  //                |  d  0  b |
+  //                |  0  0  0 | .
+  //
   SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
+    SOPHUS_ENSURE(
+        Omega.row(2).template lpNorm<1>() < Constants<Scalar>::epsilon(),
+        "Omega: \n%", Omega);
     Tangent upsilon_omega;
     upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
-    upsilon_omega[2] =
-        SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
+    upsilon_omega[2] = SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
     return upsilon_omega;
   }
 };
@@ -443,15 +448,15 @@ class SE2 : public SE2Base<SE2<_Scalar, _Options>> {
   typedef SE2Base<SE2<_Scalar, _Options>> Base;
 
  public:
-  typedef typename Eigen::internal::traits<SE2<_Scalar, _Options>>::Scalar
-      Scalar;
-  typedef typename Eigen::internal::traits<
-      SE2<_Scalar, _Options>>::TranslationType& TranslationReference;
+  typedef
+      typename Eigen::internal::traits<SE2<_Scalar, _Options>>::Scalar Scalar;
+  typedef
+      typename Eigen::internal::traits<SE2<_Scalar, _Options>>::TranslationType&
+          TranslationReference;
   typedef const typename Eigen::internal::traits<
       SE2<_Scalar, _Options>>::TranslationType& ConstTranslationReference;
-  typedef
-      typename Eigen::internal::traits<SE2<_Scalar, _Options>>::SO2Type&
-          SO2Reference;
+  typedef typename Eigen::internal::traits<SE2<_Scalar, _Options>>::SO2Type&
+      SO2Reference;
   typedef const typename Eigen::internal::traits<
       SE2<_Scalar, _Options>>::SO2Type& ConstSO2Reference;
 
@@ -475,8 +480,7 @@ class SE2 : public SE2Base<SE2<_Scalar, _Options>> {
   // Constructor from SO3 and translation vector
   //
   template <typename OtherDerived>
-  SOPHUS_FUNC SE2(const SO2Base<OtherDerived>& so2,
-                       const Point& translation)
+  SOPHUS_FUNC SE2(const SO2Base<OtherDerived>& so2, const Point& translation)
       : so2_(so2), translation_(translation) {}
 
   // Constructor from rotation matrix and translation vector
@@ -485,7 +489,7 @@ class SE2 : public SE2Base<SE2<_Scalar, _Options>> {
   //
   SOPHUS_FUNC
   SE2(const typename SO2<Scalar>::Transformation& rotation_matrix,
-           const Point& translation)
+      const Point& translation)
       : so2_(rotation_matrix), translation_(translation) {}
 
   // Constructor from rotation angle and translation vector.
@@ -496,8 +500,7 @@ class SE2 : public SE2Base<SE2<_Scalar, _Options>> {
   // Constructor from complex number and translation vector
   //
   // Precondition: ``complex` must not be close to zero.
-  SOPHUS_FUNC SE2(const std::complex<Scalar>& complex,
-                       const Point& translation)
+  SOPHUS_FUNC SE2(const std::complex<Scalar>& complex, const Point& translation)
       : so2_(complex), translation_(translation) {}
 
   // Constructor from 3x3 matrix
@@ -550,7 +553,7 @@ class SE2 : public SE2Base<SE2<_Scalar, _Options>> {
 };
 
 template <typename Scalar, int Options = 0>
-using SE2Group [[deprecated]] = SE2<Scalar, Options>;
+using SE2Group[[deprecated]] = SE2<Scalar, Options>;
 
 }  // end namespace
 
@@ -617,10 +620,8 @@ class Map<Sophus::SE2<_Scalar>, _Options>
 // Allows us to wrap SE2 objects around POD array.
 template <typename _Scalar, int _Options>
 class Map<const Sophus::SE2<_Scalar>, _Options>
-    : public Sophus::SE2Base<
-          Map<const Sophus::SE2<_Scalar>, _Options>> {
-  typedef Sophus::SE2Base<Map<const Sophus::SE2<_Scalar>, _Options>>
-      Base;
+    : public Sophus::SE2Base<Map<const Sophus::SE2<_Scalar>, _Options>> {
+  typedef Sophus::SE2Base<Map<const Sophus::SE2<_Scalar>, _Options>> Base;
 
  public:
   typedef typename Eigen::internal::traits<Map>::Scalar Scalar;
