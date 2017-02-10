@@ -285,9 +285,10 @@ class RxSO3Base {
   // Setter of quaternion using rotation matrix ``R``, leaves scale as is.
   //
   SOPHUS_FUNC void setRotationMatrix(const Transformation& R) {
+    using std::sqrt;
     Scalar saved_scale = scale();
-    quaternion() = R;
-    quaternion() *= saved_scale;
+    quaternion_nonconst() = R;
+    quaternion_nonconst().coeffs() *= std::sqrt(saved_scale);
   }
 
   // Sets scale and leaves rotation as is.
@@ -319,6 +320,17 @@ class RxSO3Base {
     quaternion_nonconst() = sR / scale;
     quaternion_nonconst().coeffs() *= sqrt(scale);
   }
+
+  // Setter of SO(3) rotations, leaves scale as is.
+  //
+  SOPHUS_FUNC void setSO3(const SO3<Scalar>& so3) {
+    using std::sqrt;
+    Scalar saved_scale = scale();
+    quaternion_nonconst() = so3.unit_quaternion();
+    quaternion_nonconst().coeffs() *= sqrt(saved_scale);
+  }
+
+  SOPHUS_FUNC SO3<Scalar> so3() const { return SO3<Scalar>(quaternion()); }
 
   ////////////////////////////////////////////////////////////////////////////
   // public static functions
@@ -564,8 +576,7 @@ class RxSO3 : public RxSO3Base<RxSO3<_Scalar, _Options>> {
       : quaternion_(R) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
-    quaternion_.normalize();
-    quaternion_.coeffs() *= scale;
+    quaternion_.coeffs() *= std::sqrt(scale);
   }
 
   // Constructor from scale factor and SO3
@@ -576,8 +587,7 @@ class RxSO3 : public RxSO3Base<RxSO3<_Scalar, _Options>> {
       : quaternion_(so3.unit_quaternion()) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
-    quaternion_.normalize();
-    quaternion_.coeffs() *= scale;
+    quaternion_.coeffs() *= std::sqrt(scale);
   }
 
   // Constructor from quaternion

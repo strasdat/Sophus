@@ -93,11 +93,27 @@ void tests() {
   rxso3.setScale(scale);
   SOPHUS_TEST_APPROX(passed, scale, rxso3.scale(), Constants<Scalar>::epsilon(),
                      "setScale");
-  Eigen::Matrix<Scalar, 3, 3> sR =
-      SO3<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix() * Scalar(1.3);
+  auto so3 = rxso3_vec[0].so3();
+  rxso3.setSO3(so3);
+  SOPHUS_TEST_APPROX(passed, scale, rxso3.scale(), Constants<Scalar>::epsilon(),
+                     "setScale");
+  SOPHUS_TEST_APPROX(passed, RxSO3Type(scale, so3).matrix(), rxso3.matrix(),
+                     Constants<Scalar>::epsilon(), "RxSO3(scale, SO3)");
+  SOPHUS_TEST_APPROX(passed, RxSO3Type(scale, so3.matrix()).matrix(),
+                     rxso3.matrix(), Constants<Scalar>::epsilon(),
+                     "RxSO3(scale, SO3)");
+  Eigen::Matrix<Scalar, 3, 3> R =
+      SO3<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix();
+  Eigen::Matrix<Scalar, 3, 3> sR = R * Scalar(1.3);
   rxso3.setScaledRotationMatrix(sR);
   SOPHUS_TEST_APPROX(passed, sR, rxso3.matrix(), Constants<Scalar>::epsilon(),
                      "setScaleRotationMatrix");
+  rxso3.setScale(scale);
+  rxso3.setRotationMatrix(R);
+  SOPHUS_TEST_APPROX(passed, R, rxso3.rotationMatrix(),
+                     Constants<Scalar>::epsilon(), "setRotationMatrix");
+  SOPHUS_TEST_APPROX(passed, scale, rxso3.scale(), Constants<Scalar>::epsilon(),
+                     "setScale");
   processTestResult(passed);
 }
 
