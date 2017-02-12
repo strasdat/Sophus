@@ -35,22 +35,22 @@ namespace Sophus {
 namespace details {
 
 // Following: http://stackoverflow.com/a/22759544
-template <typename T>
+template <class T>
 class IsStreamable {
  private:
-  template <typename TT>
+  template <class TT>
   static auto test(int)
       -> decltype(std::declval<std::stringstream&>() << std::declval<TT>(),
                   std::true_type());
 
-  template <typename>
+  template <class>
   static auto test(...) -> std::false_type;
 
  public:
-  static const bool value = decltype(test<T>(0))::value;
+  static bool const value = decltype(test<T>(0))::value;
 };
 
-template <typename T>
+template <class T>
 class ArgToStream {
  public:
   static void impl(std::stringstream& stream, T&& arg) {
@@ -58,14 +58,14 @@ class ArgToStream {
   }
 };
 
-inline void FormatStream(std::stringstream& stream, const char* text) {
+inline void FormatStream(std::stringstream& stream, char const* text) {
   stream << text;
   return;
 }
 
 // Following: http://en.cppreference.com/w/cpp/language/parameter_pack
-template <typename T, typename... Args>
-void FormatStream(std::stringstream& stream, const char* text, T&& arg,
+template <class T, typename... Args>
+void FormatStream(std::stringstream& stream, char const* text, T&& arg,
                   Args&&... args) {
   static_assert(IsStreamable<T>::value,
                 "One of the args has no ostream overload!");
@@ -82,8 +82,8 @@ void FormatStream(std::stringstream& stream, const char* text, T&& arg,
   return;
 }
 
-template <typename... Args>
-std::string FormatString(const char* text, Args&&... args) {
+template <class... Args>
+std::string FormatString(char const* text, Args&&... args) {
   std::stringstream stream;
   FormatStream(stream, text, std::forward<Args>(args)...);
   return stream.str();
@@ -100,8 +100,8 @@ inline std::string FormatString() { return std::string(); }
 #elif defined(SOPHUS_ENABLE_ENSURE_HANDLER)
 
 namespace Sophus {
-void ensureFailed(const char* function, const char* file, int line,
-                  const char* description);
+void ensureFailed(char const* function, char const* file, int line,
+                  char const* description);
 }
 
 #define SOPHUS_ENSURE(expr, description, ...)                               \
@@ -112,9 +112,9 @@ void ensureFailed(const char* function, const char* file, int line,
                     .c_str()))
 #else
 namespace Sophus {
-template <typename... Args>
-SOPHUS_FUNC void defaultEnsure(const char* function, const char* file, int line,
-                               const char* description, Args&&... args) {
+template <class... Args>
+SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
+                               char const* description, Args&&... args) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               function, file, line);
 #ifdef __CUDACC__
@@ -134,11 +134,11 @@ SOPHUS_FUNC void defaultEnsure(const char* function, const char* file, int line,
 
 namespace Sophus {
 
-template <typename Scalar>
+template <class Scalar>
 struct Constants {
-  SOPHUS_FUNC static Scalar epsilon() { return static_cast<Scalar>(1e-10); }
+  SOPHUS_FUNC static Scalar epsilon() { return Scalar(1e-10); }
 
-  SOPHUS_FUNC static Scalar pi() { return static_cast<Scalar>(M_PI); }
+  SOPHUS_FUNC static Scalar pi() { return Scalar(M_PI); }
 };
 
 template <>

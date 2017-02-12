@@ -7,7 +7,7 @@
 // get compiled and for code coverage analysis.
 namespace Eigen {
 template class Map<Sophus::SO3<double>>;
-template class Map<const Sophus::SO3<double>>;
+template class Map<Sophus::SO3<double> const>;
 }
 
 namespace Sophus {
@@ -20,7 +20,7 @@ class Tests {
   using SO3Type = SO3<Scalar>;
   using Point = typename SO3<Scalar>::Point;
   using Tangent = typename SO3<Scalar>::Tangent;
-  const Scalar PI = Constants<Scalar>::pi();
+  Scalar const PI = Constants<Scalar>::pi();
 
   Tests() {
     so3_vec.push_back(SO3Type(Eigen::Quaternion<Scalar>(0.1e-11, 0., 1., 0.)));
@@ -58,7 +58,7 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    GenericTests<SO3Type> tests;
+    LieGroupTests<SO3Type> tests;
     tests.setGroupElements(so3_vec);
     tests.setTangentVectors(tangent_vec);
     tests.setPoints(point_vec);
@@ -70,7 +70,7 @@ class Tests {
     // Test that the complex number magnitude stays close to one.
     SO3Type current_q;
     for (std::size_t i = 0; i < 1000; ++i) {
-      for (const auto& q : so3_vec) {
+      for (SO3Type const& q : so3_vec) {
         current_q *= q;
       }
     }
@@ -82,12 +82,12 @@ class Tests {
   bool testRawDataAcces() {
     bool passed = true;
     Eigen::Matrix<Scalar, 4, 1> raw = {0, 1, 0, 0};
-    Eigen::Map<const SO3Type> const_so3_map(raw.data());
+    Eigen::Map<SO3Type const> const_so3_map(raw.data());
     SOPHUS_TEST_APPROX(passed, const_so3_map.unit_quaternion().coeffs().eval(),
                        raw, Constants<Scalar>::epsilon());
     SOPHUS_TEST_EQUAL(passed, const_so3_map.unit_quaternion().coeffs().data(),
                       raw.data());
-    Eigen::Map<const SO3Type> const_shallow_copy = const_so3_map;
+    Eigen::Map<SO3Type const> const_shallow_copy = const_so3_map;
     SOPHUS_TEST_EQUAL(passed,
                       const_shallow_copy.unit_quaternion().coeffs().eval(),
                       const_so3_map.unit_quaternion().coeffs().eval());
@@ -107,7 +107,7 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_quaternion().coeffs().eval(),
                       so3_map.unit_quaternion().coeffs().eval());
 
-    const SO3Type const_so3(quat);
+    SO3Type const const_so3(quat);
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, const_so3.data()[i], raw2.data()[i]);
     }

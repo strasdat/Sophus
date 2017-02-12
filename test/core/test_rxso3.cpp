@@ -7,7 +7,7 @@
 // get compiled and for code coverage analysis.
 namespace Eigen {
 template class Map<Sophus::RxSO3<double>>;
-template class Map<const Sophus::RxSO3<double>>;
+template class Map<Sophus::RxSO3<double> const>;
 }
 
 namespace Sophus {
@@ -17,11 +17,11 @@ template class RxSO3<double>;
 template <class Scalar>
 void tests() {
   using std::vector;
-  typedef RxSO3<Scalar> RxSO3Type;
-  typedef typename RxSO3<Scalar>::Point Point;
-  typedef typename RxSO3<Scalar>::Tangent Tangent;
+  using RxSO3Type = RxSO3<Scalar>;
+  using Point = typename RxSO3<Scalar>::Point;
+  using Tangent = typename RxSO3<Scalar>::Tangent;
 
-  const Scalar PI = Constants<Scalar>::pi();
+  Scalar const PI = Constants<Scalar>::pi();
 
   vector<RxSO3Type, Eigen::aligned_allocator<RxSO3Type>> rxso3_vec;
   rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 1.)));
@@ -58,7 +58,7 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2, 4));
 
-  GenericTests<RxSO3Type> tests;
+  LieGroupTests<RxSO3Type> tests;
   tests.setGroupElements(rxso3_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);

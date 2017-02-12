@@ -9,34 +9,34 @@
 namespace Sophus {
 
 template <class LieGroup>
-class GenericTests {
+class LieGroupTests {
  public:
-  typedef typename LieGroup::Scalar Scalar;
-  typedef typename LieGroup::Transformation Transformation;
-  typedef typename LieGroup::Tangent Tangent;
-  typedef typename LieGroup::Point Point;
-  typedef typename LieGroup::Adjoint Adjoint;
-  static const int N = LieGroup::N;
-  static const int DoF = LieGroup::DoF;
+  using Scalar = typename LieGroup::Scalar;
+  using Transformation = typename LieGroup::Transformation;
+  using Tangent = typename LieGroup::Tangent;
+  using Point = typename LieGroup::Point;
+  using Adjoint = typename LieGroup::Adjoint;
+  static int constexpr N = LieGroup::N;
+  static int constexpr DoF = LieGroup::DoF;
 
   Scalar SMALL_EPS;
 
-  GenericTests() : SMALL_EPS(Constants<Scalar>::epsilon()) {}
+  LieGroupTests() : SMALL_EPS(Constants<Scalar>::epsilon()) {}
 
   void setGroupElements(
-      const std::vector<LieGroup, Eigen::aligned_allocator<LieGroup>>&
+      std::vector<LieGroup, Eigen::aligned_allocator<LieGroup>> const&
           group_vec) {
     group_vec_ = group_vec;
   }
 
   void setTangentVectors(
-      const std::vector<Tangent, Eigen::aligned_allocator<Tangent>>&
+      std::vector<Tangent, Eigen::aligned_allocator<Tangent>> const&
           tangent_vec) {
     tangent_vec_ = tangent_vec;
   }
 
   void setPoints(
-      const std::vector<Point, Eigen::aligned_allocator<Point>>& point_vec) {
+      std::vector<Point, Eigen::aligned_allocator<Point>> const& point_vec) {
     point_vec_ = point_vec;
   }
 
@@ -89,7 +89,7 @@ class GenericTests {
 
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       for (size_t j = 0; j < point_vec_.size(); ++j) {
-        const Point& p = point_vec_[j];
+        Point const& p = point_vec_[j];
         Transformation T = group_vec_[i].matrix();
         Point point1 = group_vec_[i] * p;
         Point point2 = map(T, p);
@@ -149,14 +149,14 @@ class GenericTests {
 
  private:
   Eigen::Matrix<Scalar, N - 1, 1> map(
-      const Eigen::Matrix<Scalar, N, N>& T,
-      const Eigen::Matrix<Scalar, N - 1, 1>& p) {
+      Eigen::Matrix<Scalar, N, N> const& T,
+      Eigen::Matrix<Scalar, N - 1, 1> const& p) {
     return T.template topLeftCorner<N - 1, N - 1>() * p +
            T.template topRightCorner<N - 1, 1>();
   }
 
-  Eigen::Matrix<Scalar, N, 1> map(const Eigen::Matrix<Scalar, N, N>& T,
-                                  const Eigen::Matrix<Scalar, N, 1>& p) {
+  Eigen::Matrix<Scalar, N, 1> map(Eigen::Matrix<Scalar, N, N> const& T,
+                                  Eigen::Matrix<Scalar, N, 1> const& p) {
     return T * p;
   }
 
