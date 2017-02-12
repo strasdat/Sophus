@@ -433,6 +433,11 @@ class SE3Base {
   // of SE(3).
   //
   SOPHUS_FUNC static Tangent log(SE3<Scalar> const& se3) {
+    // For the derivation of the logarithm of SE(3), see
+    // J. Gallier, D. Xu, "Computing exponentials of skew symmetric matrices and
+    // logarithms of orthogonal matrices", IJRA 2002.
+    // https://pdfs.semanticscholar.org/cfe3/e4b39de63c8cabd89bf3feff7f5449fc981d.pdf
+    // (Sec. 6., pp. 8)
     using std::abs;
     Tangent upsilon_omega;
     Scalar theta;
