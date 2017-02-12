@@ -447,7 +447,7 @@ class Sim3Base {
   // of Sim(3).
   //
   SOPHUS_FUNC static Tangent log(Sim3<Scalar> const& other) {
-    // The closed-form derivation of the logarithm for Sim(3) follows is done
+    // The derivation of the closed-form Sim(3) logarithm for is done
     // analogously to the closed-form solution of the SE(3) logarithm, see
     // J. Gallier, D. Xu, "Computing exponentials of skew symmetric matrices and
     // logarithms of orthogonal matrices", IJRA 2002.

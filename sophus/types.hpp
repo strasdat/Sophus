@@ -38,28 +38,28 @@ using Matrix = Eigen::Matrix<Scalar, M, N>;
 
 template <class Scalar>
 using Matrix2 = Matrix<Scalar, 2, 2>;
-using Matrix2f = Vector2<float>;
-using Matrix2d = Vector2<double>;
+using Matrix2f = Matrix2<float>;
+using Matrix2d = Matrix2<double>;
 
 template <class Scalar>
 using Matrix3 = Matrix<Scalar, 3, 3>;
-using Matrix3f = Vector2<float>;
-using Matrix3d = Vector2<double>;
+using Matrix3f = Matrix3<float>;
+using Matrix3d = Matrix3<double>;
 
 template <class Scalar>
 using Matrix4 = Matrix<Scalar, 4, 4>;
-using Matrix4f = Vector2<float>;
-using Matrix4d = Vector2<double>;
+using Matrix4f = Matrix4<float>;
+using Matrix4d = Matrix4<double>;
 
 template <class Scalar>
 using Matrix6 = Matrix<Scalar, 6, 6>;
-using Matrix6f = Vector2<float>;
-using Matrix6d = Vector2<double>;
+using Matrix6f = Matrix6<float>;
+using Matrix6d = Matrix6<double>;
 
 template <class Scalar>
 using Matrix7 = Matrix<Scalar, 7, 7>;
-using Matrix7f = Vector2<float>;
-using Matrix7d = Vector2<double>;
+using Matrix7f = Matrix7<float>;
+using Matrix7d = Matrix7<double>;
 
 }  // namespace Sophus
 
