@@ -29,8 +29,8 @@ struct traits<Map<Sophus::Sim3<Scalar_>, Options>>
 };
 
 template <class Scalar_, int Options>
-struct traits<Map<const Sophus::Sim3<Scalar_>, Options>>
-    : traits<const Sophus::Sim3<Scalar_, Options>> {
+struct traits<Map<Sophus::Sim3<Scalar_> const, Options>>
+    : traits<Sophus::Sim3<Scalar_, Options> const> {
   using Scalar = Scalar_;
   using TranslationType = Map<Sophus::Vector3<Scalar> const, Options>;
   using RxSO3Type = Map<Sophus::RxSO3<Scalar> const, Options>;
@@ -143,7 +143,7 @@ class Sim3Base {
   //
   template <class OtherDerived>
   SOPHUS_FUNC Sim3Base<Derived>& operator=(
-      const Sim3Base<OtherDerived>& other) {
+      Sim3Base<OtherDerived> const& other) {
     rxso3() = other.rxso3();
     translation() = other.translation();
     return *this;
@@ -154,7 +154,7 @@ class Sim3Base {
   // Note: That scaling is calculated with saturation. See RxSO3 for
   // details.
   //
-  SOPHUS_FUNC Sim3<Scalar> operator*(const Sim3<Scalar>& other) const {
+  SOPHUS_FUNC Sim3<Scalar> operator*(Sim3<Scalar> const& other) const {
     Sim3<Scalar> result(*this);
     result *= other;
     return result;
@@ -168,13 +168,13 @@ class Sim3Base {
   //
   //   ``p_bar = bar_sR_foo * p_foo + t_bar``.
   //
-  SOPHUS_FUNC Point operator*(const Point& p) const {
+  SOPHUS_FUNC Point operator*(Point const& p) const {
     return rxso3() * p + translation();
   }
 
   // In-place group multiplication.
   //
-  SOPHUS_FUNC Sim3Base<Derived>& operator*=(const Sim3<Scalar>& other) {
+  SOPHUS_FUNC Sim3Base<Derived>& operator*=(Sim3<Scalar> const& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
     return *this;
@@ -184,13 +184,13 @@ class Sim3Base {
   //
   // Precondition: ``quat`` must not be close to zero.
   //
-  SOPHUS_FUNC void setQuaternion(const Eigen::Quaternion<Scalar>& quat) {
+  SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quat) {
     rxso3().setQuaternion(quat);
   }
 
   // Accessor of quaternion.
   //
-  SOPHUS_FUNC const Eigen::Quaternion<Scalar>& quaternion() const {
+  SOPHUS_FUNC Eigen::Quaternion<Scalar> const& quaternion() const {
     return rxso3().quaternion();
   }
 
@@ -209,7 +209,7 @@ class Sim3Base {
   // Accessor of SO3 group.
   //
   SOPHUS_FUNC RxSO3Type const& rxso3() const {
-    return static_cast<const Derived*>(this)->rxso3();
+    return static_cast<Derived const*>(this)->rxso3();
   }
 
   // Returns scale.
@@ -227,8 +227,7 @@ class Sim3Base {
   // Note: This function as a significant computational cost, since it has to
   // call the square root twice.
   //
-  SOPHUS_FUNC
-  void setScale(const Scalar& scale) { rxso3().setScale(scale); }
+  SOPHUS_FUNC void setScale(Scalar const& scale) { rxso3().setScale(scale); }
 
   // Setter of quaternion using scaled rotation matrix ``sR``.
   //
@@ -248,7 +247,7 @@ class Sim3Base {
   // Accessor of translation vector
   //
   SOPHUS_FUNC TranslationType const& translation() const {
-    return static_cast<const Derived*>(this)->translation();
+    return static_cast<Derived const*>(this)->translation();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -262,7 +261,7 @@ class Sim3Base {
   // bracket of the Lie algebra sim(3).
   // See ``lieBracket()`` below.
   //
-  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(const Tangent& b) {
+  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(Tangent const& b) {
     Vector3<Scalar> const upsilon2 = b.template head<3>();
     Vector3<Scalar> const omega2 = b.template segment<3>(3);
     Scalar const sigma2 = b[6];
@@ -290,7 +289,11 @@ class Sim3Base {
   // ``expmat(.)`` being the matrix exponential and ``hat(.)`` the hat-operator
   // of Sim(3), see below.
   //
-  SOPHUS_FUNC static Sim3<Scalar> exp(const Tangent& a) {
+  SOPHUS_FUNC static Sim3<Scalar> exp(Tangent const& a) {
+    // For the derivation of the exponential map of Sim(3) see
+    // H. Strasdat, "Local Accuracy and Global Consistency for Efficient Visual
+    // SLAM", PhD thesis, 2012.
+    // http://hauke.strasdat.net/files/strasdat_thesis_2012.pdf (A.5, pp. 186)
     Vector3<Scalar> const upsilon = a.segment(0, 3);
     Vector3<Scalar> const omega = a.segment(3, 3);
     Scalar const sigma = a[6];
@@ -298,7 +301,42 @@ class Sim3Base {
     RxSO3<Scalar> rxso3 =
         RxSO3<Scalar>::expAndTheta(a.template tail<4>(), &theta);
     Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
-    Matrix3<Scalar> const W = calcW(theta, sigma, rxso3.scale(), Omega);
+
+    using std::abs;
+    using std::sin;
+    using std::cos;
+    static Matrix3<Scalar> const I = Matrix3<Scalar>::Identity();
+    static Scalar const one(1);
+    static Scalar const half(0.5);
+    Matrix3<Scalar> const Omega2 = Omega * Omega;
+    Scalar const scale = rxso3.scale();
+    Scalar A, B, C;
+    if (abs(sigma) < Constants<Scalar>::epsilon()) {
+      C = one;
+      if (abs(theta) < Constants<Scalar>::epsilon()) {
+        A = half;
+        B = Scalar(1. / 6.);
+      } else {
+        Scalar theta_sq = theta * theta;
+        A = (one - cos(theta)) / theta_sq;
+        B = (theta - sin(theta)) / (theta_sq * theta);
+      }
+    } else {
+      C = (scale - one) / sigma;
+      if (abs(theta) < Constants<Scalar>::epsilon()) {
+        Scalar sigma_sq = sigma * sigma;
+        A = ((sigma - one) * scale + one) / sigma_sq;
+        B = ((half * sigma * sigma - sigma + one) * scale) / (sigma_sq * sigma);
+      } else {
+        Scalar theta_sq = theta * theta;
+        Scalar a = scale * sin(theta);
+        Scalar b = scale * cos(theta);
+        Scalar c = theta_sq + sigma * sigma;
+        A = (a * sigma + (one - b) * theta) / (theta * c);
+        B = (C - ((b - one) * sigma + a * theta) / (c)) * one / (theta_sq);
+      }
+    }
+    Matrix3<Scalar> const W = A * Omega + B * Omega2 + C * I;
     return Sim3<Scalar>(rxso3, W * upsilon);
   }
 
@@ -362,7 +400,7 @@ class Sim3Base {
   //
   // with ``G_i`` being the ith infinitesimal generator of Sim(3).
   //
-  SOPHUS_FUNC static Transformation hat(const Tangent& a) {
+  SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
     Omega.template topLeftCorner<3, 3>() =
         RxSO3<Scalar>::hat(a.template tail<4>());
@@ -380,7 +418,7 @@ class Sim3Base {
   // with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
   // hat-operator and ``vee(.)`` the vee-operator of Sim(3).
   //
-  SOPHUS_FUNC static Tangent lieBracket(const Tangent& a, const Tangent& b) {
+  SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
     Vector3<Scalar> const upsilon1 = a.template head<3>();
     Vector3<Scalar> const upsilon2 = b.template head<3>();
     Vector3<Scalar> const omega1 = a.template segment<3>(3);
@@ -408,15 +446,67 @@ class Sim3Base {
   // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
   // of Sim(3).
   //
-  SOPHUS_FUNC static Tangent log(const Sim3<Scalar>& other) {
+  SOPHUS_FUNC static Tangent log(Sim3<Scalar> const& other) {
+    // The closed-form derivation of the logarithm for Sim(3) follows is done
+    // analogously to the closed-form solution of the SE(3) logarithm, see
+    // J. Gallier, D. Xu, "Computing exponentials of skew symmetric matrices and
+    // logarithms of orthogonal matrices", IJRA 2002.
+    // https://pdfs.semanticscholar.org/cfe3/e4b39de63c8cabd89bf3feff7f5449fc981d.pdf
+    // (Sec. 6., pp. 8)
     Tangent res;
     Scalar theta;
     Vector4<Scalar> const omega_sigma =
         RxSO3<Scalar>::logAndTheta(other.rxso3(), &theta);
     Vector3<Scalar> const omega = omega_sigma.template head<3>();
+
     Scalar sigma = omega_sigma[3];
-    Matrix3<Scalar> const W_inv =
-        calcWInv(theta, sigma, other.scale(), SO3<Scalar>::hat(omega));
+
+    using std::abs;
+    using std::sin;
+    using std::abs;
+    static Matrix3<Scalar> const I = Matrix3<Scalar>::Identity();
+    static Scalar const half(0.5);
+    static Scalar const one(1);
+    static Scalar const two(2);
+    Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
+    Matrix3<Scalar> const Omega2 = Omega * Omega;
+    Scalar const scale = other.scale();
+    Scalar const scale_sq = scale * scale;
+    Scalar const theta_sq = theta * theta;
+    Scalar const sin_theta = sin(theta);
+    Scalar const cos_theta = cos(theta);
+
+    Scalar a, b, c;
+    if (abs(sigma * sigma) < Constants<Scalar>::epsilon()) {
+      c = one - half * sigma;
+      a = -half;
+      if (abs(theta_sq) < Constants<Scalar>::epsilon()) {
+        b = Scalar(1. / 12.);
+      } else {
+        b = (theta * sin_theta + two * cos_theta - two) /
+            (two * theta_sq * (cos_theta - one));
+      }
+    } else {
+      Scalar const scale_cu = scale_sq * scale;
+      c = sigma / (scale - one);
+      if (abs(theta_sq) < Constants<Scalar>::epsilon()) {
+        a = (-sigma * scale + scale - one) / ((scale - one) * (scale - one));
+        b = (scale_sq * sigma - two * scale_sq + scale * sigma + two * scale) /
+            (two * scale_cu - Scalar(6) * scale_sq + Scalar(6) * scale - two);
+      } else {
+        Scalar const s_sin_theta = scale * sin_theta;
+        Scalar const s_cos_theta = scale * cos_theta;
+        a = (theta * s_cos_theta - theta - sigma * s_sin_theta) /
+            (theta * (scale_sq - two * s_cos_theta + one));
+        b = -scale *
+            (theta * s_sin_theta - theta * sin_theta + sigma * s_cos_theta -
+             scale * sigma + sigma * cos_theta - sigma) /
+            (theta_sq * (scale_cu - two * scale * s_cos_theta - scale_sq +
+                         two * s_cos_theta + scale - one));
+      }
+    }
+    Matrix3<Scalar> const W_inv = a * Omega + b * Omega2 + c * I;
+
     res.segment(0, 3) = W_inv * other.translation();
     res.segment(3, 3) = omega;
     res[6] = sigma;
@@ -437,7 +527,7 @@ class Sim3Base {
   //                | -e  d  g  c |
   //                |  0  0  0  0 | .
   //
-  SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
+  SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     SOPHUS_ENSURE(
         Omega.row(3).template lpNorm<1>() < Constants<Scalar>::epsilon(),
         "Omega: \n%", Omega);
@@ -446,95 +536,6 @@ class Sim3Base {
     upsilon_omega_sigma.template tail<4>() =
         RxSO3<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
     return upsilon_omega_sigma;
-  }
-
- private:
-  static Matrix3<Scalar> calcW(Scalar const& theta, Scalar const& sigma,
-                               Scalar const& scale,
-                               Matrix3<Scalar> const& Omega) {
-    using std::abs;
-    using std::sin;
-    using std::cos;
-    static Matrix3<Scalar> const I = Matrix3<Scalar>::Identity();
-    static Scalar const one(1.);
-    static Scalar const half(0.5);
-    Matrix3<Scalar> const Omega2 = Omega * Omega;
-
-    Scalar A, B, C;
-    if (abs(sigma) < Constants<Scalar>::epsilon()) {
-      C = one;
-      if (abs(theta) < Constants<Scalar>::epsilon()) {
-        A = half;
-        B = Scalar(1. / 6.);
-      } else {
-        Scalar theta_sq = theta * theta;
-        A = (one - cos(theta)) / theta_sq;
-        B = (theta - sin(theta)) / (theta_sq * theta);
-      }
-    } else {
-      C = (scale - one) / sigma;
-      if (abs(theta) < Constants<Scalar>::epsilon()) {
-        Scalar sigma_sq = sigma * sigma;
-        A = ((sigma - one) * scale + one) / sigma_sq;
-        B = ((half * sigma * sigma - sigma + one) * scale) / (sigma_sq * sigma);
-      } else {
-        Scalar theta_sq = theta * theta;
-        Scalar a = scale * sin(theta);
-        Scalar b = scale * cos(theta);
-        Scalar c = theta_sq + sigma * sigma;
-        A = (a * sigma + (one - b) * theta) / (theta * c);
-        B = (C - ((b - one) * sigma + a * theta) / (c)) * one / (theta_sq);
-      }
-    }
-    return A * Omega + B * Omega2 + C * I;
-  }
-
-  static Matrix3<Scalar> calcWInv(Scalar const& theta, Scalar const& sigma,
-                                  Scalar const& scale,
-                                  Matrix3<Scalar> const& Omega) {
-    using std::abs;
-    using std::sin;
-    using std::abs;
-    static Matrix3<Scalar> const I = Matrix3<Scalar>::Identity();
-    static Scalar const half(0.5);
-    static Scalar const one(1.);
-    static Scalar const two(2.);
-    Matrix3<Scalar> const Omega2 = Omega * Omega;
-    Scalar const scale_sq = scale * scale;
-    Scalar const theta_sq = theta * theta;
-    Scalar const sin_theta = sin(theta);
-    Scalar const cos_theta = cos(theta);
-
-    Scalar a, b, c;
-    if (abs(sigma * sigma) < Constants<Scalar>::epsilon()) {
-      c = one - half * sigma;
-      a = -half;
-      if (abs(theta_sq) < Constants<Scalar>::epsilon()) {
-        b = Scalar(1. / 12.);
-      } else {
-        b = (theta * sin_theta + two * cos_theta - two) /
-            (two * theta_sq * (cos_theta - one));
-      }
-    } else {
-      const Scalar scale_cu = scale_sq * scale;
-      c = sigma / (scale - one);
-      if (abs(theta_sq) < Constants<Scalar>::epsilon()) {
-        a = (-sigma * scale + scale - one) / ((scale - one) * (scale - one));
-        b = (scale_sq * sigma - two * scale_sq + scale * sigma + two * scale) /
-            (two * scale_cu - Scalar(6) * scale_sq + Scalar(6) * scale - two);
-      } else {
-        const Scalar s_sin_theta = scale * sin_theta;
-        const Scalar s_cos_theta = scale * cos_theta;
-        a = (theta * s_cos_theta - theta - sigma * s_sin_theta) /
-            (theta * (scale_sq - two * s_cos_theta + one));
-        b = -scale *
-            (theta * s_sin_theta - theta * sin_theta + sigma * s_cos_theta -
-             scale * sigma + sigma * cos_theta - sigma) /
-            (theta_sq * (scale_cu - two * scale * s_cos_theta - scale_sq +
-                         two * s_cos_theta + scale - one));
-      }
-    }
-    return a * Omega + b * Omega2 + c * I;
   }
 };
 
@@ -559,22 +560,22 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   // Copy constructor
   //
   template <class OtherDerived>
-  SOPHUS_FUNC Sim3(const Sim3Base<OtherDerived>& other)
+  SOPHUS_FUNC Sim3(Sim3Base<OtherDerived> const& other)
       : rxso3_(other.rxso3()), translation_(other.translation()) {}
 
   // Constructor from RxSO3 and translation vector
   //
   template <class OtherDerived>
-  SOPHUS_FUNC Sim3(const RxSO3Base<OtherDerived>& rxso3,
-                   const Point& translation)
+  SOPHUS_FUNC Sim3(RxSO3Base<OtherDerived> const& rxso3,
+                   Point const& translation)
       : rxso3_(rxso3), translation_(translation) {}
 
   // Constructor from quaternion and translation vector.
   //
   // Precondition: quaternion must not be close to zero.
   //
-  SOPHUS_FUNC Sim3(const Eigen::Quaternion<Scalar>& quaternion,
-                   const Point& translation)
+  SOPHUS_FUNC Sim3(Eigen::Quaternion<Scalar> const& quaternion,
+                   Point const& translation)
       : rxso3_(quaternion), translation_(translation) {}
 
   // Constructor from 4x4 matrix
@@ -598,7 +599,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
 
   // Const version of data() above.
   //
-  SOPHUS_FUNC const Scalar* data() const {
+  SOPHUS_FUNC Scalar const* data() const {
     // rxso3_ and translation_ are laid out sequentially with no padding
     return rxso3_.data();
   }
@@ -686,9 +687,9 @@ class Map<Sophus::Sim3<Scalar_>, Options>
 //
 // Allows us to wrap RxSO3 objects around POD array.
 template <class Scalar_, int Options>
-class Map<const Sophus::Sim3<Scalar_>, Options>
-    : public Sophus::Sim3Base<Map<const Sophus::Sim3<Scalar_>, Options>> {
-  using Base = Sophus::Sim3Base<Map<const Sophus::Sim3<Scalar_>, Options>>;
+class Map<Sophus::Sim3<Scalar_> const, Options>
+    : public Sophus::Sim3Base<Map<Sophus::Sim3<Scalar_> const, Options>> {
+  using Base = Sophus::Sim3Base<Map<Sophus::Sim3<Scalar_> const, Options>>;
 
  public:
   using Scalar = Scalar_;
@@ -701,11 +702,11 @@ class Map<const Sophus::Sim3<Scalar_>, Options>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC Map(const Scalar* coeffs)
+  SOPHUS_FUNC Map(Scalar const* coeffs)
       : rxso3_(coeffs),
         translation_(coeffs + Sophus::RxSO3<Scalar>::num_parameters) {}
 
-  SOPHUS_FUNC Map(const Scalar* trans_coeffs, const Scalar* rot_coeffs)
+  SOPHUS_FUNC Map(Scalar const* trans_coeffs, Scalar const* rot_coeffs)
       : rxso3_(rot_coeffs), translation_(trans_coeffs) {}
 
   // Accessor of RxSO3
