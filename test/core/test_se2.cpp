@@ -8,7 +8,7 @@
 // get compiled and for code coverage analysis.
 namespace Eigen {
 template class Map<Sophus::SE2<double>>;
-template class Map<const Sophus::SE2<double>>;
+template class Map<Sophus::SE2<double> const>;
 }
 
 namespace Sophus {
@@ -18,11 +18,11 @@ template class SE2<double>;
 template <class Scalar>
 void tests() {
   using std::vector;
-  typedef SO2<Scalar> SO2Type;
-  typedef SE2<Scalar> SE2Type;
-  typedef typename SE2<Scalar>::Point Point;
-  typedef typename SE2<Scalar>::Tangent Tangent;
-  const Scalar PI = Constants<Scalar>::pi();
+  using SO2Type = SO2<Scalar>;
+  using SE2Type = SE2<Scalar>;
+  using Point = typename SE2<Scalar>::Point;
+  using Tangent = typename SE2<Scalar>::Tangent;
+  Scalar const PI = Constants<Scalar>::pi();
 
   vector<SE2Type, Eigen::aligned_allocator<SE2Type>> se2_vec;
   se2_vec.push_back(SE2Type(SO2Type(0.0), Point(0, 0)));
@@ -56,7 +56,7 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2));
 
-  GenericTests<SE2Type> tests;
+  LieGroupTests<SE2Type> tests;
   tests.setGroupElements(se2_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);

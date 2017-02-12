@@ -4,40 +4,36 @@
 #include "so3.hpp"
 
 namespace Sophus {
-template <typename _Scalar, int _Options = 0>
+template <class Scalar_, int Options = 0>
 class SE3;
-typedef SE3<double> SE3d; /**< double precision SE3 */
-typedef SE3<float> SE3f;  /**< single precision SE3 */
-typedef Eigen::Matrix<double, 6, 1> Vector6d;
-typedef Eigen::Matrix<double, 6, 6> Matrix6d;
-typedef Eigen::Matrix<float, 6, 1> Vector6f;
-typedef Eigen::Matrix<float, 6, 6> Matrix6f;
+using SE3d = SE3<double>;
+using SE3f = SE3<float>;
 }  // namespace Sophus
 
 namespace Eigen {
 namespace internal {
 
-template <typename _Scalar, int _Options>
-struct traits<Sophus::SE3<_Scalar, _Options>> {
-  typedef _Scalar Scalar;
-  typedef Eigen::Matrix<Scalar, 3, 1> TranslationType;
-  typedef Sophus::SO3<Scalar> SO3Type;
+template <class Scalar_, int Options>
+struct traits<Sophus::SE3<Scalar_, Options>> {
+  using Scalar = Scalar_;
+  using TranslationType = Sophus::Vector3<Scalar>;
+  using SO3Type = Sophus::SO3<Scalar>;
 };
 
-template <typename _Scalar, int _Options>
-struct traits<Map<Sophus::SE3<_Scalar>, _Options>>
-    : traits<Sophus::SE3<_Scalar, _Options>> {
-  typedef _Scalar Scalar;
-  typedef Map<Eigen::Matrix<Scalar, 3, 1>, _Options> TranslationType;
-  typedef Map<Sophus::SO3<Scalar>, _Options> SO3Type;
+template <class Scalar_, int Options>
+struct traits<Map<Sophus::SE3<Scalar_>, Options>>
+    : traits<Sophus::SE3<Scalar_, Options>> {
+  using Scalar = Scalar_;
+  using TranslationType = Map<Sophus::Vector3<Scalar>, Options>;
+  using SO3Type = Map<Sophus::SO3<Scalar>, Options>;
 };
 
-template <typename _Scalar, int _Options>
-struct traits<Map<const Sophus::SE3<_Scalar>, _Options>>
-    : traits<const Sophus::SE3<_Scalar, _Options>> {
-  typedef _Scalar Scalar;
-  typedef Map<const Eigen::Matrix<Scalar, 3, 1>, _Options> TranslationType;
-  typedef Map<const Sophus::SO3<Scalar>, _Options> SO3Type;
+template <class Scalar_, int Options>
+struct traits<Map<Sophus::SE3<Scalar_> const, Options>>
+    : traits<Sophus::SE3<Scalar_, Options> const> {
+  using Scalar = Scalar_;
+  using TranslationType = Map<Sophus::Vector3<Scalar> const, Options>;
+  using SO3Type = Map<Sophus::SO3<Scalar> const, Options>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -55,31 +51,26 @@ namespace Sophus {
 //
 // See SO3 for more details of the rotation representation in 3d.
 //
-template <typename Derived>
+template <class Derived>
 class SE3Base {
  public:
-  typedef typename Eigen::internal::traits<Derived>::Scalar Scalar;
-  typedef typename Eigen::internal::traits<Derived>::TranslationType&
-      TranslationReference;
-  typedef const typename Eigen::internal::traits<Derived>::TranslationType&
-      ConstTranslationReference;
-  typedef typename Eigen::internal::traits<Derived>::SO3Type& SO3Reference;
-  typedef const typename Eigen::internal::traits<Derived>::SO3Type&
-      ConstSO3Reference;
-
+  using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
+  using TranslationType =
+      typename Eigen::internal::traits<Derived>::TranslationType;
+  using SO3Type = typename Eigen::internal::traits<Derived>::SO3Type;
+  using QuaternionType = typename SO3Type::QuaternionType;
   // Degrees of freedom of manifold, number of dimensions in tangent space
   // (two for translation, two for rotation).
-  static const int DoF = 6;
+  static int constexpr DoF = 6;
   // Number of internal parameters used (4-tuple for quaternion, three for
   // translation).
-  static const int num_parameters = 7;
+  static int constexpr num_parameters = 7;
   // Group transformations are 4x4 matrices.
-  static const int N = 4;
-  typedef Eigen::Matrix<Scalar, N, N> Transformation;
-  typedef Eigen::Matrix<Scalar, 3, 1> Point;
-  typedef Eigen::Matrix<Scalar, DoF, 1> Tangent;
-  typedef Eigen::Matrix<Scalar, DoF, DoF> Adjoint;
-
+  static int constexpr N = 4;
+  using Transformation = Matrix<Scalar, N, N>;
+  using Point = Vector3<Scalar>;
+  using Tangent = Vector<Scalar, DoF>;
+  using Adjoint = Matrix<Scalar, DoF, DoF>;
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -87,25 +78,18 @@ class SE3Base {
   // ``hat(Ad_A * x) = A * hat(x) A^{-1}``. See hat-operator below.
   //
   SOPHUS_FUNC Adjoint Adj() const {
-    const Eigen::Matrix<Scalar, 3, 3>& R = so3().matrix();
+    Sophus::Matrix3<Scalar> const R = so3().matrix();
     Adjoint res;
     res.block(0, 0, 3, 3) = R;
     res.block(3, 3, 3, 3) = R;
     res.block(0, 3, 3, 3) = SO3<Scalar>::hat(translation()) * R;
-    res.block(3, 0, 3, 3) = Eigen::Matrix<Scalar, 3, 3>::Zero(3, 3);
+    res.block(3, 0, 3, 3) = Matrix3<Scalar>::Zero(3, 3);
     return res;
-  }
-
-  // Returns Affine3 representation.
-  //
-  SOPHUS_FUNC
-  Eigen::Transform<Scalar, 3, Eigen::Affine> affine3() const {
-    return Eigen::Transform<Scalar, 3, Eigen::Affine>(matrix());
   }
 
   // Returns copy of instance casted to NewScalarType.
   //
-  template <typename NewScalarType>
+  template <class NewScalarType>
   SOPHUS_FUNC SE3<NewScalarType> cast() const {
     return SE3<NewScalarType>(so3().template cast<NewScalarType>(),
                               translation().template cast<NewScalarType>());
@@ -113,25 +97,25 @@ class SE3Base {
 
   // Returns ``*this`` times the ith generator of internal representation.
   //
-  SOPHUS_FUNC Eigen::Matrix<Scalar, num_parameters, 1>
-  internalMultiplyByGenerator(int i) const {
-    Eigen::Matrix<Scalar, num_parameters, 1> res;
+  SOPHUS_FUNC Vector<Scalar, num_parameters> internalMultiplyByGenerator(
+      int i) const {
+    Vector<Scalar, num_parameters> res;
 
     Eigen::Quaternion<Scalar> internal_gen_q;
-    Eigen::Matrix<Scalar, 3, 1> internal_gen_t;
+    Vector<Scalar, 3> internal_gen_t;
 
     internalGenerator(i, &internal_gen_q, &internal_gen_t);
 
-    res.template head<4>() = (unit_quaternion() * internal_gen_q).coeffs();
-    res.template tail<3>() = unit_quaternion() * internal_gen_t;
+    res.template head<4>() =
+        (so3().unit_quaternion() * internal_gen_q).coeffs();
+    res.template tail<3>() = so3().unit_quaternion() * internal_gen_t;
     return res;
   }
 
   // Returns Jacobian of generator of internal SU(2) representation.
   //
-  SOPHUS_FUNC Eigen::Matrix<Scalar, num_parameters, DoF> internalJacobian()
-      const {
-    Eigen::Matrix<Scalar, num_parameters, DoF> J;
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> internalJacobian() const {
+    Matrix<Scalar, num_parameters, DoF> J;
     for (int i = 0; i < DoF; ++i) {
       J.col(i) = internalMultiplyByGenerator(i);
     }
@@ -142,7 +126,7 @@ class SE3Base {
   //
   SOPHUS_FUNC SE3<Scalar> inverse() const {
     SO3<Scalar> invR = so3().inverse();
-    return SE3<Scalar>(invR, invR * (translation() * static_cast<Scalar>(-1)));
+    return SE3<Scalar>(invR, invR * (translation() * Scalar(-1)));
   }
 
   // Logarithmic map
@@ -170,25 +154,25 @@ class SE3Base {
   //
   SOPHUS_FUNC Transformation matrix() const {
     Transformation homogenious_matrix;
-    homogenious_matrix.setIdentity();
-    homogenious_matrix.block(0, 0, 3, 3) = rotationMatrix();
-    homogenious_matrix.col(3).head(3) = translation();
+    homogenious_matrix.template topLeftCorner<3, 4>() = matrix3x4();
+    homogenious_matrix.row(3) =
+        Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0), Scalar(0), Scalar(1));
     return homogenious_matrix;
   }
 
   // Returns the significant first three rows of the matrix above.
   //
-  SOPHUS_FUNC Eigen::Matrix<Scalar, 3, 4> matrix3x4() const {
-    Eigen::Matrix<Scalar, 3, 4> matrix;
-    matrix.block(0, 0, 3, 3) = rotationMatrix();
+  SOPHUS_FUNC Matrix<Scalar, 3, 4> matrix3x4() const {
+    Matrix<Scalar, 3, 4> matrix;
+    matrix.template topLeftCorner<3, 3>() = rotationMatrix();
     matrix.col(3) = translation();
     return matrix;
   }
 
   // Assignment operator.
   //
-  template <typename OtherDerived>
-  SOPHUS_FUNC SE3Base<Derived>& operator=(const SE3Base<OtherDerived>& other) {
+  template <class OtherDerived>
+  SOPHUS_FUNC SE3Base<Derived>& operator=(SE3Base<OtherDerived> const& other) {
     so3() = other.so3();
     translation() = other.translation();
     return *this;
@@ -196,7 +180,7 @@ class SE3Base {
 
   // Group multiplication, which is rotation concatenation.
   //
-  SOPHUS_FUNC SE3<Scalar> operator*(const SE3<Scalar>& other) const {
+  SOPHUS_FUNC SE3<Scalar> operator*(SE3<Scalar> const& other) const {
     SE3<Scalar> result(*this);
     result *= other;
     return result;
@@ -210,13 +194,13 @@ class SE3Base {
   //
   //   ``p_bar = bar_R_foo * p_foo + t_bar``.
   //
-  SOPHUS_FUNC Point operator*(const Point& p) const {
+  SOPHUS_FUNC Point operator*(Point const& p) const {
     return so3() * p + translation();
   }
 
   // In-place group multiplication.
   //
-  SOPHUS_FUNC SE3Base<Derived>& operator*=(const SE3<Scalar>& other) {
+  SOPHUS_FUNC SE3Base<Derived>& operator*=(SE3<Scalar> const& other) {
     translation() += so3() * (other.translation());
     so3() *= other.so3();
     return *this;
@@ -224,35 +208,23 @@ class SE3Base {
 
   // Returns rotation matrix.
   //
-  SOPHUS_FUNC Eigen::Matrix<Scalar, 3, 3> rotationMatrix() const {
-    return so3().matrix();
-  }
+  SOPHUS_FUNC Matrix3<Scalar> rotationMatrix() const { return so3().matrix(); }
 
   // Mutator of SO3 group.
   //
-  SOPHUS_FUNC SO3Reference so3() { return static_cast<Derived*>(this)->so3(); }
+  SOPHUS_FUNC SO3Type& so3() { return static_cast<Derived*>(this)->so3(); }
 
   // Accessor of SO3 group.
   //
-  SOPHUS_FUNC ConstSO3Reference so3() const {
+  SOPHUS_FUNC SO3Type const& so3() const {
     return static_cast<const Derived*>(this)->so3();
-  }
-
-  // Setter using Affine3
-  //
-  // Precondition: 3x3 sub-matrix needs to be orthogonal with determinant of 1.
-  //
-  SOPHUS_FUNC void setAffine3(
-      const Eigen::Transform<Scalar, 3, Eigen::Affine>& affine3) {
-    so3().setRotationMatrix(affine3.matrix().template topLeftCorner<3, 3>());
-    translation() = affine3.matrix().template topRightCorner<3, 1>();
   }
 
   // Takes in quaternion, and normalizes it.
   //
   // Precondition: The quaternion must not be close to zero.
   //
-  SOPHUS_FUNC void setQuaternion(const Eigen::Quaternion<Scalar>& quat) {
+  SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quat) {
     so3().setQuaternion(quat);
   }
 
@@ -260,29 +232,26 @@ class SE3Base {
   //
   // Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   //
-  SOPHUS_FUNC void setRotationMatrix(
-      const Eigen::Matrix<Scalar, 3, 3>& rotation_matrix) {
+  SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar> const& rotation_matrix) {
     so3().setQuaternion(Eigen::Quaternion<Scalar>(rotation_matrix));
   }
 
   // Mutator of translation vector.
   //
-  SOPHUS_FUNC TranslationReference translation() {
+  SOPHUS_FUNC TranslationType& translation() {
     return static_cast<Derived*>(this)->translation();
   }
 
   // Accessor of translation vector
   //
-  SOPHUS_FUNC ConstTranslationReference translation() const {
-    return static_cast<const Derived*>(this)->translation();
+  SOPHUS_FUNC TranslationType const& translation() const {
+    return static_cast<Derived const*>(this)->translation();
   }
 
   // Accessor of unit quaternion.
   //
-  SOPHUS_FUNC typename Eigen::internal::traits<
-      Derived>::SO3Type::ConstQuaternionReference
-  unit_quaternion() const {
-    return so3().unit_quaternion();
+  SOPHUS_FUNC QuaternionType const& unit_quaternion() const {
+    return this->so3().unit_quaternion();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -296,12 +265,12 @@ class SE3Base {
   // bracket of the Lie algebra se(3).
   // See ``lieBracket()`` below.
   //
-  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(const Tangent& b) {
+  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(Tangent const& b) {
     Adjoint res;
     res.setZero();
 
-    const Eigen::Matrix<Scalar, 3, 1>& upsilon2 = b.template head<3>();
-    const Eigen::Matrix<Scalar, 3, 1>& omega2 = b.template tail<3>();
+    Vector3<Scalar> const upsilon2 = b.template head<3>();
+    Vector3<Scalar> const omega2 = b.template tail<3>();
 
     res.template topLeftCorner<3, 3>() = -SO3<Scalar>::hat(omega2);
     res.template topRightCorner<3, 3>() = -SO3<Scalar>::hat(upsilon2);
@@ -321,24 +290,24 @@ class SE3Base {
   // ``expmat(.)`` being the matrix exponential and ``hat(.)`` the hat-operator
   // of SE(3), see below.
   //
-  SOPHUS_FUNC static SE3<Scalar> exp(const Tangent& a) {
+  SOPHUS_FUNC static SE3<Scalar> exp(Tangent const& a) {
     using std::cos;
     using std::sin;
-    const Eigen::Matrix<Scalar, 3, 1> omega = a.template tail<3>();
+    Vector3<Scalar> const omega = a.template tail<3>();
 
     Scalar theta;
-    SO3<Scalar> so3 = SO3<Scalar>::expAndTheta(omega, &theta);
-    Eigen::Matrix<Scalar, 3, 3> Omega = SO3<Scalar>::hat(omega);
-    Eigen::Matrix<Scalar, 3, 3> Omega_sq = Omega * Omega;
-    Eigen::Matrix<Scalar, 3, 3> V;
+    SO3<Scalar> const so3 = SO3<Scalar>::expAndTheta(omega, &theta);
+    Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
+    Matrix3<Scalar> const Omega_sq = Omega * Omega;
+    Matrix3<Scalar> V;
 
     if (theta < Constants<Scalar>::epsilon()) {
       V = so3.matrix();
       // Note: That is an accurate expansion!
     } else {
       Scalar theta_sq = theta * theta;
-      V = (Eigen::Matrix<Scalar, 3, 3>::Identity() +
-           (static_cast<Scalar>(1) - cos(theta)) / (theta_sq)*Omega +
+      V = (Matrix3<Scalar>::Identity() +
+           (Scalar(1) - cos(theta)) / (theta_sq)*Omega +
            (theta - sin(theta)) / (theta_sq * theta) * Omega_sq);
     }
     return SE3<Scalar>(so3, V * a.template head<3>());
@@ -384,7 +353,7 @@ class SE3Base {
     SOPHUS_ENSURE(i >= 0 && i <= 5, "i should be in range [0,5].");
     Tangent e;
     e.setZero();
-    e[i] = static_cast<Scalar>(1);
+    e[i] = Scalar(1);
     return hat(e);
   }
 
@@ -394,7 +363,7 @@ class SE3Base {
   //
   SOPHUS_FUNC static void internalGenerator(
       int i, Eigen::Quaternion<Scalar>* internal_gen_q,
-      Eigen::Matrix<Scalar, 3, 1>* internal_gen_t) {
+      Vector3<Scalar>* internal_gen_t) {
     SOPHUS_ENSURE(i >= 0 && i <= 5, "i should be in range [0,5]");
     SOPHUS_ENSURE(internal_gen_q != NULL,
                   "internal_gen_q must not be the null pointer");
@@ -404,7 +373,7 @@ class SE3Base {
     internal_gen_q->coeffs().setZero();
     internal_gen_t->setZero();
     if (i < 3) {
-      (*internal_gen_t)[i] = static_cast<Scalar>(1);
+      (*internal_gen_t)[i] = Scalar(1);
     } else {
       SO3<Scalar>::internalGenerator(i - 3, internal_gen_q);
       ;
@@ -422,7 +391,7 @@ class SE3Base {
   //
   // with ``G_i`` being the ith infinitesimal generator of SE(3).
   //
-  SOPHUS_FUNC static Transformation hat(const Tangent& a) {
+  SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
     Omega.setZero();
     Omega.template topLeftCorner<3, 3>() =
@@ -440,11 +409,11 @@ class SE3Base {
   // with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
   // hat-operator and ``vee(.)`` the vee-operator of SE(3).
   //
-  SOPHUS_FUNC static Tangent lieBracket(const Tangent& a, const Tangent& b) {
-    const Eigen::Matrix<Scalar, 3, 1>& upsilon1 = a.template head<3>();
-    const Eigen::Matrix<Scalar, 3, 1>& upsilon2 = b.template head<3>();
-    Eigen::Matrix<Scalar, 3, 1> omega1 = a.template tail<3>();
-    Eigen::Matrix<Scalar, 3, 1> omega2 = b.template tail<3>();
+  SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
+    Vector3<Scalar> const upsilon1 = a.template head<3>();
+    Vector3<Scalar> const upsilon2 = b.template head<3>();
+    Vector3<Scalar> const omega1 = a.template tail<3>();
+    Vector3<Scalar> const omega2 = b.template tail<3>();
 
     Tangent res;
     res.template head<3>() = omega1.cross(upsilon2) + upsilon1.cross(omega2);
@@ -463,7 +432,7 @@ class SE3Base {
   // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
   // of SE(3).
   //
-  SOPHUS_FUNC static Tangent log(const SE3<Scalar>& se3) {
+  SOPHUS_FUNC static Tangent log(SE3<Scalar> const& se3) {
     using std::abs;
     Tangent upsilon_omega;
     Scalar theta;
@@ -471,22 +440,19 @@ class SE3Base {
         SO3<Scalar>::logAndTheta(se3.so3(), &theta);
 
     if (abs(theta) < Constants<Scalar>::epsilon()) {
-      Eigen::Matrix<Scalar, 3, 3> Omega =
+      Matrix3<Scalar> const Omega =
           SO3<Scalar>::hat(upsilon_omega.template tail<3>());
-      Eigen::Matrix<Scalar, 3, 3> V_inv =
-          Eigen::Matrix<Scalar, 3, 3>::Identity() -
-          static_cast<Scalar>(0.5) * Omega +
-          static_cast<Scalar>(1. / 12.) * (Omega * Omega);
+      Matrix3<Scalar> const V_inv = Matrix3<Scalar>::Identity() -
+                                    Scalar(0.5) * Omega +
+                                    Scalar(1. / 12.) * (Omega * Omega);
 
       upsilon_omega.template head<3>() = V_inv * se3.translation();
     } else {
-      Eigen::Matrix<Scalar, 3, 3> Omega =
+      Matrix3<Scalar> const Omega =
           SO3<Scalar>::hat(upsilon_omega.template tail<3>());
-      Eigen::Matrix<Scalar, 3, 3> V_inv =
-          (Eigen::Matrix<Scalar, 3, 3>::Identity() -
-           static_cast<Scalar>(0.5) * Omega +
-           (static_cast<Scalar>(1) -
-            theta / (static_cast<Scalar>(2) * tan(theta / Scalar(2)))) /
+      Matrix3<Scalar> const V_inv =
+          (Matrix3<Scalar>::Identity() - Scalar(0.5) * Omega +
+           (Scalar(1) - theta / (Scalar(2) * tan(theta / Scalar(2)))) /
                (theta * theta) * (Omega * Omega));
       upsilon_omega.template head<3>() = V_inv * se3.translation();
     }
@@ -507,7 +473,7 @@ class SE3Base {
   //                | -e  d  0  c |
   //                |  0  0  0  0 | .
   //
-  SOPHUS_FUNC static Tangent vee(const Transformation& Omega) {
+  SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     SOPHUS_ENSURE(
         Omega.row(3).template lpNorm<1>() < Constants<Scalar>::epsilon(),
         "Omega: \n%", Omega);
@@ -520,44 +486,33 @@ class SE3Base {
 };
 
 // SE3 default type - Constructors and default storage for SE3 Type.
-template <typename _Scalar, int _Options>
-class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
-  typedef SE3Base<SE3<_Scalar, _Options>> Base;
+template <class Scalar_, int Options>
+class SE3 : public SE3Base<SE3<Scalar_, Options>> {
+  using Base = SE3Base<SE3<Scalar_, Options>>;
 
  public:
-  typedef
-      typename Eigen::internal::traits<SE3<_Scalar, _Options>>::Scalar Scalar;
-  typedef typename Eigen::internal::traits<SE3<_Scalar, _Options>>::SO3Type&
-      SO3Reference;
-  typedef const typename Eigen::internal::traits<
-      SE3<_Scalar, _Options>>::SO3Type& ConstSO3Reference;
-  typedef
-      typename Eigen::internal::traits<SE3<_Scalar, _Options>>::TranslationType&
-          TranslationReference;
-  typedef const typename Eigen::internal::traits<
-      SE3<_Scalar, _Options>>::TranslationType& ConstTranslationReference;
-
-  typedef typename Base::Transformation Transformation;
-  typedef typename Base::Point Point;
-  typedef typename Base::Tangent Tangent;
-  typedef typename Base::Adjoint Adjoint;
+  using Scalar = Scalar_;
+  using Transformation = typename Base::Transformation;
+  using Point = typename Base::Point;
+  using Tangent = typename Base::Tangent;
+  using Adjoint = typename Base::Adjoint;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   // Default constructor initialize rigid body motion to the identity.
   //
-  SOPHUS_FUNC SE3() : translation_(Eigen::Matrix<Scalar, 3, 1>::Zero()) {}
+  SOPHUS_FUNC SE3() : translation_(Vector3<Scalar>::Zero()) {}
 
   // Copy constructor
   //
-  template <typename OtherDerived>
-  SOPHUS_FUNC SE3(const SE3Base<OtherDerived>& other)
+  template <class OtherDerived>
+  SOPHUS_FUNC SE3(SE3Base<OtherDerived> const& other)
       : so3_(other.so3()), translation_(other.translation()) {}
 
   // Constructor from SO3 and translation vector
   //
-  template <typename OtherDerived>
-  SOPHUS_FUNC SE3(const SO3Base<OtherDerived>& so3, const Point& translation)
+  template <class OtherDerived>
+  SOPHUS_FUNC SE3(SO3Base<OtherDerived> const& so3, Point const& translation)
       : so3_(so3), translation_(translation) {}
 
   // Constructor from rotation matrix and translation vector
@@ -565,16 +520,15 @@ class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
   // Precondition: Rotation matrix needs to be orthogonal with determinant of 1.
   //
   SOPHUS_FUNC
-  SE3(const Eigen::Matrix<Scalar, 3, 3>& rotation_matrix,
-      const Point& translation)
+  SE3(Matrix3<Scalar> const& rotation_matrix, Point const& translation)
       : so3_(rotation_matrix), translation_(translation) {}
 
   // Constructor from quaternion and translation vector.
   //
   // Precondition: quaternion must not be close to zero.
   //
-  SOPHUS_FUNC SE3(const Eigen::Quaternion<Scalar>& quaternion,
-                  const Point& translation)
+  SOPHUS_FUNC SE3(Eigen::Quaternion<Scalar> const& quaternion,
+                  Point const& translation)
       : so3_(quaternion), translation_(translation) {}
 
   // Constructor from 4x4 matrix
@@ -582,23 +536,13 @@ class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
   // Precondition: Rotation matrix needs to be orthogonal with determinant of 1.
   //               The last row must be (0, 0, 0, 1).
   //
-  SOPHUS_FUNC explicit SE3(const Eigen::Matrix<Scalar, 4, 4>& T)
+  SOPHUS_FUNC explicit SE3(Matrix4<Scalar> const& T)
       : so3_(T.template topLeftCorner<3, 3>()),
         translation_(T.template block<3, 1>(0, 3)) {
-    SOPHUS_ENSURE(
-        (T.row(3) - Eigen::Matrix<Scalar, 1, 4>(0, 0, 0, 1)).squaredNorm() <
-            Constants<Scalar>::epsilon(),
-        "Last row is not (0,0,0,1), but (%).", T.row(3));
+    SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>(0, 0, 0, 1)).squaredNorm() <
+                      Constants<Scalar>::epsilon(),
+                  "Last row is not (0,0,0,1), but (%).", T.row(3));
   }
-
-  // Constructor from Affine3
-  //
-  // Precondition: Rotation matrix needs to be orthogonal with determinant of 1.
-  //
-  SOPHUS_FUNC explicit SE3(
-      const Eigen::Transform<Scalar, 3, Eigen::Affine>& affine3)
-      : so3_(affine3.matrix().template topLeftCorner<3, 3>()),
-        translation_(affine3.matrix().template block<3, 1>(0, 3)) {}
 
   // This provides unsafe read/write access to internal data. SO(3) is
   // represented by an Eigen::Quaternion (four parameters). When using direct
@@ -612,63 +556,55 @@ class SE3 : public SE3Base<SE3<_Scalar, _Options>> {
 
   // Const version of data() above.
   //
-  SOPHUS_FUNC const Scalar* data() const {
+  SOPHUS_FUNC Scalar const* data() const {
     // so3_ and translation_ are laid out sequentially with no padding
     return so3_.data();
   }
 
   // Accessor of SO3
   //
-  SOPHUS_FUNC SO3Reference so3() { return so3_; }
+  SOPHUS_FUNC SO3<Scalar>& so3() { return so3_; }
 
   // Mutator of SO3
   //
-  SOPHUS_FUNC ConstSO3Reference so3() const { return so3_; }
+  SOPHUS_FUNC SO3<Scalar> const& so3() const { return so3_; }
 
   // Mutator of translation vector
   //
-  SOPHUS_FUNC TranslationReference translation() { return translation_; }
+  SOPHUS_FUNC Vector3<Scalar>& translation() { return translation_; }
 
   // Accessor of translation vector
   //
-  SOPHUS_FUNC ConstTranslationReference translation() const {
+  SOPHUS_FUNC Vector3<Scalar> const& translation() const {
     return translation_;
   }
 
  protected:
   Sophus::SO3<Scalar> so3_;
-  Eigen::Matrix<Scalar, 3, 1> translation_;
+  Vector<Scalar, 3> translation_;
 };
 
-template <typename Scalar, int Options = 0>
+template <class Scalar, int Options = 0>
 using SE3Group[[deprecated]] = SE3<Scalar, Options>;
 
 }  // namespace Sophus
 
 namespace Eigen {
 
-// Specialization of Eigen::Map for ``SE3Base``.
+// Specialization of Eigen::Map for ``SE3``.
 //
 // Allows us to wrap SE3 objects around POD array.
-template <typename _Scalar, int _Options>
-class Map<Sophus::SE3<_Scalar>, _Options>
-    : public Sophus::SE3Base<Map<Sophus::SE3<_Scalar>, _Options>> {
-  typedef Sophus::SE3Base<Map<Sophus::SE3<_Scalar>, _Options>> Base;
+template <class Scalar_, int Options>
+class Map<Sophus::SE3<Scalar_>, Options>
+    : public Sophus::SE3Base<Map<Sophus::SE3<Scalar_>, Options>> {
+  using Base = Sophus::SE3Base<Map<Sophus::SE3<Scalar_>, Options>>;
 
  public:
-  typedef typename Eigen::internal::traits<Map>::Scalar Scalar;
-  typedef typename Eigen::internal::traits<Map>::TranslationType&
-      TranslationReference;
-  typedef const typename Eigen::internal::traits<Map>::TranslationType&
-      ConstTranslationReference;
-  typedef typename Eigen::internal::traits<Map>::SO3Type& SO3Reference;
-  typedef const typename Eigen::internal::traits<Map>::SO3Type&
-      ConstSO3Reference;
-
-  typedef typename Base::Transformation Transformation;
-  typedef typename Base::Point Point;
-  typedef typename Base::Tangent Tangent;
-  typedef typename Base::Adjoint Adjoint;
+  using Scalar = Scalar_;
+  using Transformation = typename Base::Transformation;
+  using Point = typename Base::Point;
+  using Tangent = typename Base::Tangent;
+  using Adjoint = typename Base::Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
@@ -680,71 +616,73 @@ class Map<Sophus::SE3<_Scalar>, _Options>
 
   // Mutator of SO3
   //
-  SOPHUS_FUNC SO3Reference so3() { return so3_; }
+  SOPHUS_FUNC Map<Sophus::SO3<Scalar>, Options>& so3() { return so3_; }
 
   // Accessor of SO3
   //
-  SOPHUS_FUNC ConstSO3Reference so3() const { return so3_; }
+  SOPHUS_FUNC Map<Sophus::SO3<Scalar>, Options> const& so3() const {
+    return so3_;
+  }
 
   // Mutator of translation vector
   //
-  SOPHUS_FUNC TranslationReference translation() { return translation_; }
+  SOPHUS_FUNC Map<Sophus::Vector3<Scalar>>& translation() {
+    return translation_;
+  }
 
   // Accessor of translation vector
   //
-  SOPHUS_FUNC ConstTranslationReference translation() const {
+  SOPHUS_FUNC Map<Sophus::Vector3<Scalar>> const& translation() const {
     return translation_;
   }
 
  protected:
-  Map<Sophus::SO3<Scalar>, _Options> so3_;
-  Map<Eigen::Matrix<Scalar, 3, 1>, _Options> translation_;
+  Map<Sophus::SO3<Scalar>, Options> so3_;
+  Map<Sophus::Vector3<Scalar>, Options> translation_;
 };
 
-// Specialization of Eigen::Map for ``const SE3Base``
+// Specialization of Eigen::Map for ``SE3 const``.
 //
 // Allows us to wrap SE3 objects around POD array.
-template <typename _Scalar, int _Options>
-class Map<const Sophus::SE3<_Scalar>, _Options>
-    : public Sophus::SE3Base<Map<const Sophus::SE3<_Scalar>, _Options>> {
-  typedef Sophus::SE3Base<Map<const Sophus::SE3<_Scalar>, _Options>> Base;
+template <class Scalar_, int Options>
+class Map<Sophus::SE3<Scalar_> const, Options>
+    : public Sophus::SE3Base<Map<Sophus::SE3<Scalar_> const, Options>> {
+  using Base = Sophus::SE3Base<Map<Sophus::SE3<Scalar_> const, Options>>;
 
  public:
-  typedef typename Eigen::internal::traits<Map>::Scalar Scalar;
-  typedef const typename Eigen::internal::traits<Map>::TranslationType&
-      ConstTranslationReference;
-  typedef const typename Eigen::internal::traits<Map>::SO3Type&
-      ConstSO3Reference;
-
-  typedef typename Base::Transformation Transformation;
-  typedef typename Base::Point Point;
-  typedef typename Base::Tangent Tangent;
-  typedef typename Base::Adjoint Adjoint;
+  using Scalar = Scalar_;
+  using Transformation = typename Base::Transformation;
+  using Point = typename Base::Point;
+  using Tangent = typename Base::Tangent;
+  using Adjoint = typename Base::Adjoint;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC Map(const Scalar* coeffs)
+  SOPHUS_FUNC Map(Scalar const* coeffs)
       : so3_(coeffs),
         translation_(coeffs + Sophus::SO3<Scalar>::num_parameters) {}
 
-  SOPHUS_FUNC Map(const Scalar* trans_coeffs, const Scalar* rot_coeffs)
+  SOPHUS_FUNC Map(Scalar const* trans_coeffs, Scalar const* rot_coeffs)
       : so3_(rot_coeffs), translation_(trans_coeffs) {}
 
   // Accessor of SO3
   //
-  SOPHUS_FUNC ConstSO3Reference so3() const { return so3_; }
+  SOPHUS_FUNC Map<Sophus::SO3<Scalar> const, Options> const& so3() const {
+    return so3_;
+  }
 
   // Accessor of translation vector
   //
-  SOPHUS_FUNC ConstTranslationReference translation() const {
+  SOPHUS_FUNC Map<Sophus::Vector3<Scalar> const, Options> const& translation()
+      const {
     return translation_;
   }
 
  protected:
-  const Map<const Sophus::SO3<Scalar>, _Options> so3_;
-  const Map<const Eigen::Matrix<Scalar, 3, 1>, _Options> translation_;
+  Map<Sophus::SO3<Scalar> const, Options> const so3_;
+  Map<Sophus::Vector3<Scalar> const, Options> const translation_;
 };
 }
 

@@ -9,7 +9,7 @@
 // get compiled and for code coverage analysis.
 namespace Eigen {
 template class Map<Sophus::Sim3<double>>;
-template class Map<const Sophus::Sim3<double>>;
+template class Map<Sophus::Sim3<double> const>;
 }
 
 namespace Sophus {
@@ -19,12 +19,12 @@ template class Sim3<double>;
 template <class Scalar>
 void tests() {
   using std::vector;
-  typedef Sim3<Scalar> Sim3Type;
-  typedef RxSO3<Scalar> RxSO3Type;
-  typedef typename Sim3<Scalar>::Point Point;
-  typedef typename Sim3<Scalar>::Tangent Tangent;
-  typedef Eigen::Matrix<Scalar, 4, 1> Vector4Type;
-  const Scalar PI = Constants<Scalar>::pi();
+  using Sim3Type = Sim3<Scalar>;
+  using RxSO3Type = RxSO3<Scalar>;
+  using Point = typename Sim3<Scalar>::Point;
+  using Tangent = typename Sim3<Scalar>::Tangent;
+  using Vector4Type = Eigen::Matrix<Scalar, 4, 1>;
+  Scalar const PI = Constants<Scalar>::pi();
 
   vector<Sim3Type, Eigen::aligned_allocator<Sim3Type>> sim3_vec;
   sim3_vec.push_back(
@@ -74,7 +74,7 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2, 4));
 
-  GenericTests<Sim3Type> tests;
+  LieGroupTests<Sim3Type> tests;
   tests.setGroupElements(sim3_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);

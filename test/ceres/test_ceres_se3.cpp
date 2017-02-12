@@ -16,10 +16,10 @@
 namespace Eigen {
 namespace internal {
 
-template <typename T, int N, typename NewType>
+template <class T, int N, typename NewType>
 struct cast_impl<ceres::Jet<T, N>, NewType> {
   EIGEN_DEVICE_FUNC
-  static inline NewType run(const ceres::Jet<T, N>& x) {
+  static inline NewType run(ceres::Jet<T, N> const& x) {
     return static_cast<NewType>(x.a);
   }
 };
@@ -30,9 +30,9 @@ struct cast_impl<ceres::Jet<T, N>, NewType> {
 struct TestCostFunctor {
   TestCostFunctor(Sophus::SE3d T_aw) : T_aw(T_aw) {}
 
-  template <typename T>
-  bool operator()(const T* const sT_wa, T* sResiduals) const {
-    const Eigen::Map<const Sophus::SE3<T> > T_wa(sT_wa);
+  template <class T>
+  bool operator()(T const* const sT_wa, T* sResiduals) const {
+    Eigen::Map<Sophus::SE3<T> const> const T_wa(sT_wa);
     Eigen::Map<Eigen::Matrix<T, 6, 1> > residuals(sResiduals);
 
     residuals = (T_aw.cast<T>() * T_wa).log();
@@ -42,7 +42,7 @@ struct TestCostFunctor {
   Sophus::SE3d T_aw;
 };
 
-bool test(const Sophus::SE3d& T_w_targ, const Sophus::SE3d& T_w_init) {
+bool test(Sophus::SE3d const& T_w_targ, Sophus::SE3d const& T_w_init) {
   // Optimisation parameter
   Sophus::SE3d T_wr = T_w_init;
 
@@ -74,16 +74,16 @@ bool test(const Sophus::SE3d& T_w_targ, const Sophus::SE3d& T_w_init) {
   std::cout << summary.BriefReport() << std::endl;
 
   // Difference between target and parameter
-  const double mse = (T_w_targ.inverse() * T_wr).log().squaredNorm();
-  const bool passed = mse < 10. * Sophus::Constants<double>::epsilon();
+  double const mse = (T_w_targ.inverse() * T_wr).log().squaredNorm();
+  bool const passed = mse < 10. * Sophus::Constants<double>::epsilon();
   return passed;
 }
 
 int main(int, char**) {
-  typedef Sophus::SE3<double> SE3Type;
-  typedef Sophus::SO3<double> SO3Type;
-  typedef SE3Type::Point Point;
-  const double PI = Sophus::Constants<double>::pi();
+  using SE3Type = Sophus::SE3<double>;
+  using SO3Type = Sophus::SO3<double>;
+  using Point = SE3Type::Point;
+  double const PI = Sophus::Constants<double>::pi();
 
   std::vector<SE3Type> se3_vec;
   se3_vec.push_back(
@@ -108,7 +108,7 @@ int main(int, char**) {
       SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
 
   for (size_t i = 0; i < se3_vec.size(); ++i) {
-    const bool passed = test(se3_vec[i], se3_vec[(i + 3) % se3_vec.size()]);
+    bool const passed = test(se3_vec[i], se3_vec[(i + 3) % se3_vec.size()]);
     if (!passed) {
       std::cerr << "failed!" << std::endl << std::endl;
       exit(-1);

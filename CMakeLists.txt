@@ -53,6 +53,7 @@ SET( TEMPLATES so2
 )
 
 SET( SOURCES ${SOURCE_DIR}/common.hpp
+             ${SOURCE_DIR}/types.hpp
              ${SOURCE_DIR}/example_ensure_handler.cpp )
 
 FOREACH(templ ${TEMPLATES})

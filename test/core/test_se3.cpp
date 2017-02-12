@@ -7,7 +7,7 @@
 // get compiled and for code coverage analysis.
 namespace Eigen {
 template class Map<Sophus::SE3<double>>;
-template class Map<const Sophus::SE3<double>>;
+template class Map<Sophus::SE3<double> const>;
 }
 
 namespace Sophus {
@@ -21,7 +21,7 @@ class Tests {
   using SO3Type = SO3<Scalar>;
   using Point = typename SE3<Scalar>::Point;
   using Tangent = typename SE3<Scalar>::Tangent;
-  const Scalar PI = Constants<Scalar>::pi();
+  Scalar const PI = Constants<Scalar>::pi();
 
   Tests() {
     se3_vec.push_back(
@@ -75,7 +75,7 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    GenericTests<SE3Type> tests;
+    LieGroupTests<SE3Type> tests;
     tests.setGroupElements(se3_vec);
     tests.setTangentVectors(tangent_vec);
     tests.setPoints(point_vec);
@@ -86,7 +86,7 @@ class Tests {
     bool passed = true;
     Eigen::Matrix<Scalar, 7, 1> raw;
     raw << 0, 1, 0, 0, 1, 3, 2;
-    Eigen::Map<const SE3Type> const_se3_map(raw.data());
+    Eigen::Map<SE3Type const> const_se3_map(raw.data());
     SOPHUS_TEST_APPROX(passed, const_se3_map.unit_quaternion().coeffs().eval(),
                        raw.template head<4>().eval(),
                        Constants<Scalar>::epsilon());
@@ -97,7 +97,7 @@ class Tests {
                       raw.data());
     SOPHUS_TEST_EQUAL(passed, const_se3_map.translation().data(),
                       raw.data() + 4);
-    Eigen::Map<const SE3Type> const_shallow_copy = const_se3_map;
+    Eigen::Map<SE3Type const> const_shallow_copy = const_se3_map;
     SOPHUS_TEST_EQUAL(passed,
                       const_shallow_copy.unit_quaternion().coeffs().eval(),
                       const_se3_map.unit_quaternion().coeffs().eval());
@@ -128,7 +128,7 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, shallow_copy.translation().eval(),
                       se3_map.translation().eval());
 
-    const SE3Type const_se3(quat, raw2.template tail<3>().eval());
+    SE3Type const const_se3(quat, raw2.template tail<3>().eval());
     for (int i = 0; i < 7; ++i) {
       SOPHUS_TEST_EQUAL(passed, const_se3.data()[i], raw2.data()[i]);
     }
@@ -162,11 +162,6 @@ class Tests {
                        se3.matrix(), Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, SE3Type(se3.matrix()).matrix(), se3.matrix(),
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_APPROX(
-        passed,
-        SE3Type(Eigen::Transform<Scalar, 3, Eigen::Affine>(se3.matrix()))
-            .matrix(),
-        se3.matrix(), Constants<Scalar>::epsilon());
     return passed;
   }
 

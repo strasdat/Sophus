@@ -7,7 +7,7 @@
 // get compiled and for code coverage analysis.
 namespace Eigen {
 template class Map<Sophus::SO2<double>>;
-template class Map<const Sophus::SO2<double>>;
+template class Map<Sophus::SO2<double> const>;
 }
 
 namespace Sophus {
@@ -17,10 +17,10 @@ template class SO2<double>;
 template <class Scalar>
 void tests() {
   using std::vector;
-  typedef SO2<Scalar> SO2Type;
-  typedef typename SO2<Scalar>::Point Point;
-  typedef typename SO2<Scalar>::Tangent Tangent;
-  const Scalar PI = Constants<Scalar>::pi();
+  using SO2Type = SO2<Scalar>;
+  using Point = typename SO2<Scalar>::Point;
+  using Tangent = typename SO2<Scalar>::Tangent;
+  Scalar const PI = Constants<Scalar>::pi();
 
   vector<SO2Type, Eigen::aligned_allocator<SO2Type>> so2_vec;
   so2_vec.push_back(SO2Type::exp(0.0));
@@ -42,7 +42,7 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2));
 
-  GenericTests<SO2Type> tests;
+  LieGroupTests<SO2Type> tests;
   tests.setGroupElements(so2_vec);
   tests.setTangentVectors(tangent_vec);
   tests.setPoints(point_vec);
@@ -52,7 +52,7 @@ void tests() {
   // Test that the complex number magnitude stays close to one.
   SO2Type current_z;
   for (std::size_t i = 0; i < 1000; ++i) {
-    for (const auto& z : so2_vec) {
+    for (SO2Type const& z : so2_vec) {
       current_z *= z;
     }
   }
