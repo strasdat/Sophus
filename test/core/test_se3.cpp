@@ -21,7 +21,7 @@ class Tests {
   using SO3Type = SO3<Scalar>;
   using Point = typename SE3<Scalar>::Point;
   using Tangent = typename SE3<Scalar>::Tangent;
-  Scalar const PI = Constants<Scalar>::pi();
+  Scalar const kPi = Constants<Scalar>::pi();
 
   Tests() {
     se3_vec_.push_back(
@@ -36,14 +36,15 @@ class Tests {
                                Point(0, -0.00000001, 0.0000000001)));
     se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
-    se3_vec_.push_back(SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(4, -5, 0)));
+    se3_vec_.push_back(
+        SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(4, -5, 0)));
     se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
-        SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
+        SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(0, 0, 0)) *
         SE3Type(SO3Type::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
     se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
-        SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
+        SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(0, 0, 0)) *
         SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
 
     Tangent tmp;
@@ -75,10 +76,7 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    LieGroupTests<SE3Type> tests;
-    tests.setGroupElements(se3_vec_);
-    tests.setTangentVectors(tangent_vec_);
-    tests.setPoints(point_vec_);
+    LieGroupTests<SE3Type> tests(se3_vec_, tangent_vec_, point_vec_);
     return tests.doAllTestsPass();
   }
 
@@ -86,52 +84,53 @@ class Tests {
     bool passed = true;
     Eigen::Matrix<Scalar, 7, 1> raw;
     raw << 0, 1, 0, 0, 1, 3, 2;
-    Eigen::Map<SE3Type const> const_se3_map(raw.data());
-    SOPHUS_TEST_APPROX(passed, const_se3_map.unit_quaternion().coeffs().eval(),
-                       raw.template head<4>().eval(),
-                       Constants<Scalar>::epsilon());
-    SOPHUS_TEST_APPROX(passed, const_se3_map.translation().eval(),
+    Eigen::Map<SE3Type const> map_of_const_se3(raw.data());
+    SOPHUS_TEST_APPROX(
+        passed, map_of_const_se3.unit_quaternion().coeffs().eval(),
+        raw.template head<4>().eval(), Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, map_of_const_se3.translation().eval(),
                        raw.template tail<3>().eval(),
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, const_se3_map.unit_quaternion().coeffs().data(),
-                      raw.data());
-    SOPHUS_TEST_EQUAL(passed, const_se3_map.translation().data(),
+    SOPHUS_TEST_EQUAL(
+        passed, map_of_const_se3.unit_quaternion().coeffs().data(), raw.data());
+    SOPHUS_TEST_EQUAL(passed, map_of_const_se3.translation().data(),
                       raw.data() + 4);
-    Eigen::Map<SE3Type const> const_shallow_copy = const_se3_map;
+    Eigen::Map<SE3Type const> const_shallow_copy = map_of_const_se3;
     SOPHUS_TEST_EQUAL(passed,
                       const_shallow_copy.unit_quaternion().coeffs().eval(),
-                      const_se3_map.unit_quaternion().coeffs().eval());
+                      map_of_const_se3.unit_quaternion().coeffs().eval());
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.translation().eval(),
-                      const_se3_map.translation().eval());
+                      map_of_const_se3.translation().eval());
 
     Eigen::Matrix<Scalar, 7, 1> raw2;
     raw2 << 1, 0, 0, 0, 3, 2, 1;
-    Eigen::Map<SE3Type> se3_map(raw.data());
+    Eigen::Map<SE3Type> map_of_se3(raw.data());
     Eigen::Quaternion<Scalar> quat;
     quat.coeffs() = raw2.template head<4>();
-    se3_map.setQuaternion(quat);
-    se3_map.translation() = raw2.template tail<3>();
-    SOPHUS_TEST_APPROX(passed, se3_map.unit_quaternion().coeffs().eval(),
+    map_of_se3.setQuaternion(quat);
+    map_of_se3.translation() = raw2.template tail<3>();
+    SOPHUS_TEST_APPROX(passed, map_of_se3.unit_quaternion().coeffs().eval(),
                        raw2.template head<4>().eval(),
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_APPROX(passed, se3_map.translation().eval(),
+    SOPHUS_TEST_APPROX(passed, map_of_se3.translation().eval(),
                        raw2.template tail<3>().eval(),
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, se3_map.unit_quaternion().coeffs().data(),
+    SOPHUS_TEST_EQUAL(passed, map_of_se3.unit_quaternion().coeffs().data(),
                       raw.data());
-    SOPHUS_TEST_EQUAL(passed, se3_map.translation().data(), raw.data() + 4);
-    SOPHUS_TEST_NEQ(passed, se3_map.unit_quaternion().coeffs().data(),
+    SOPHUS_TEST_EQUAL(passed, map_of_se3.translation().data(), raw.data() + 4);
+    SOPHUS_TEST_NEQ(passed, map_of_se3.unit_quaternion().coeffs().data(),
                     quat.coeffs().data());
-    Eigen::Map<SE3Type> shallow_copy = se3_map;
+    Eigen::Map<SE3Type> shallow_copy = map_of_se3;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_quaternion().coeffs().eval(),
-                      se3_map.unit_quaternion().coeffs().eval());
+                      map_of_se3.unit_quaternion().coeffs().eval());
     SOPHUS_TEST_EQUAL(passed, shallow_copy.translation().eval(),
-                      se3_map.translation().eval());
-    Eigen::Map<SE3Type> const shallow_copy2 = se3_map;
-    SOPHUS_TEST_EQUAL(passed, shallow_copy2.unit_quaternion().coeffs().eval(),
-                      se3_map.unit_quaternion().coeffs().eval());
-    SOPHUS_TEST_EQUAL(passed, shallow_copy2.translation().eval(),
-                      se3_map.translation().eval());
+                      map_of_se3.translation().eval());
+    Eigen::Map<SE3Type> const const_map_of_se3 = map_of_se3;
+    SOPHUS_TEST_EQUAL(passed,
+                      const_map_of_se3.unit_quaternion().coeffs().eval(),
+                      map_of_se3.unit_quaternion().coeffs().eval());
+    SOPHUS_TEST_EQUAL(passed, const_map_of_se3.translation().eval(),
+                      map_of_se3.translation().eval());
 
     SE3Type const const_se3(quat, raw2.template tail<3>().eval());
     for (int i = 0; i < 7; ++i) {

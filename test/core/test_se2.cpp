@@ -22,7 +22,7 @@ class Tests {
   using SO2Type = SO2<Scalar>;
   using Point = typename SE2<Scalar>::Point;
   using Tangent = typename SE2<Scalar>::Tangent;
-  Scalar const PI = Constants<Scalar>::pi();
+  Scalar const kPi = Constants<Scalar>::pi();
 
   Tests() {
     se2_vec_.push_back(SE2Type(SO2Type(0.0), Point(0, 0)));
@@ -32,10 +32,10 @@ class Tests {
     se2_vec_.push_back(
         SE2Type(SO2Type(0.00001), Point(-0.00000001, 0.0000000001)));
     se2_vec_.push_back(SE2Type(SO2Type(0.2), Point(0, 0)) *
-                       SE2Type(SO2Type(PI), Point(0, 0)) *
+                       SE2Type(SO2Type(kPi), Point(0, 0)) *
                        SE2Type(SO2Type(-0.2), Point(0, 0)));
     se2_vec_.push_back(SE2Type(SO2Type(0.3), Point(2, 0)) *
-                       SE2Type(SO2Type(PI), Point(0, 0)) *
+                       SE2Type(SO2Type(kPi), Point(0, 0)) *
                        SE2Type(SO2Type(-0.3), Point(0, 6)));
 
     Tangent tmp;
@@ -64,10 +64,7 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    LieGroupTests<SE2Type> tests;
-    tests.setGroupElements(se2_vec_);
-    tests.setTangentVectors(tangent_vec_);
-    tests.setPoints(point_vec_);
+    LieGroupTests<SE2Type> tests(se2_vec_, tangent_vec_, point_vec_);
     return tests.doAllTestsPass();
   }
 
@@ -93,28 +90,28 @@ class Tests {
 
     Eigen::Matrix<Scalar, 4, 1> raw2;
     raw2 << 1, 0, 3, 1;
-    Eigen::Map<SE2Type> se2_map(raw.data());
-    se2_map.setComplex(raw2.template head<2>());
-    se2_map.translation() = raw2.template tail<2>();
-    SOPHUS_TEST_APPROX(passed, se2_map.unit_complex().eval(),
+    Eigen::Map<SE2Type> map_of_se3(raw.data());
+    map_of_se3.setComplex(raw2.template head<2>());
+    map_of_se3.translation() = raw2.template tail<2>();
+    SOPHUS_TEST_APPROX(passed, map_of_se3.unit_complex().eval(),
                        raw2.template head<2>().eval(),
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_APPROX(passed, se2_map.translation().eval(),
+    SOPHUS_TEST_APPROX(passed, map_of_se3.translation().eval(),
                        raw2.template tail<2>().eval(),
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, se2_map.unit_complex().data(), raw.data());
-    SOPHUS_TEST_EQUAL(passed, se2_map.translation().data(), raw.data() + 2);
-    SOPHUS_TEST_NEQ(passed, se2_map.unit_complex().data(), raw2.data());
-    Eigen::Map<SE2Type> shallow_copy = se2_map;
+    SOPHUS_TEST_EQUAL(passed, map_of_se3.unit_complex().data(), raw.data());
+    SOPHUS_TEST_EQUAL(passed, map_of_se3.translation().data(), raw.data() + 2);
+    SOPHUS_TEST_NEQ(passed, map_of_se3.unit_complex().data(), raw2.data());
+    Eigen::Map<SE2Type> shallow_copy = map_of_se3;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_complex().eval(),
-                      se2_map.unit_complex().eval());
+                      map_of_se3.unit_complex().eval());
     SOPHUS_TEST_EQUAL(passed, shallow_copy.translation().eval(),
-                      se2_map.translation().eval());
-    Eigen::Map<SE2Type> const shallow_copy2 = se2_map;
-    SOPHUS_TEST_EQUAL(passed, shallow_copy2.unit_complex().eval(),
-                      se2_map.unit_complex().eval());
-    SOPHUS_TEST_EQUAL(passed, shallow_copy2.translation().eval(),
-                      se2_map.translation().eval());
+                      map_of_se3.translation().eval());
+    Eigen::Map<SE2Type> const const_map_of_se2 = map_of_se3;
+    SOPHUS_TEST_EQUAL(passed, const_map_of_se2.unit_complex().eval(),
+                      map_of_se3.unit_complex().eval());
+    SOPHUS_TEST_EQUAL(passed, const_map_of_se2.translation().eval(),
+                      map_of_se3.translation().eval());
 
     SE2Type const const_se2(raw2.template head<2>().eval(),
                             raw2.template tail<2>().eval());

@@ -20,7 +20,7 @@ class Tests {
   using SO3Type = SO3<Scalar>;
   using Point = typename SO3<Scalar>::Point;
   using Tangent = typename SO3<Scalar>::Tangent;
-  Scalar const PI = Constants<Scalar>::pi();
+  Scalar const kPi = Constants<Scalar>::pi();
 
   Tests() {
     so3_vec_.push_back(SO3Type(Eigen::Quaternion<Scalar>(0.1e-11, 0., 1., 0.)));
@@ -30,17 +30,17 @@ class Tests {
     so3_vec_.push_back(SO3Type::exp(Point(0.2, 0.5, -1.0)));
     so3_vec_.push_back(SO3Type::exp(Point(0., 0., 0.)));
     so3_vec_.push_back(SO3Type::exp(Point(0., 0., 0.00001)));
-    so3_vec_.push_back(SO3Type::exp(Point(PI, 0, 0)));
+    so3_vec_.push_back(SO3Type::exp(Point(kPi, 0, 0)));
     so3_vec_.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)) *
-                       SO3Type::exp(Point(PI, 0, 0)) *
+                       SO3Type::exp(Point(kPi, 0, 0)) *
                        SO3Type::exp(Point(-0.2, -0.5, -0.0)));
     so3_vec_.push_back(SO3Type::exp(Point(0.3, 0.5, 0.1)) *
-                       SO3Type::exp(Point(PI, 0, 0)) *
+                       SO3Type::exp(Point(kPi, 0, 0)) *
                        SO3Type::exp(Point(-0.3, -0.5, -0.1)));
     tangent_vec_.push_back(Tangent(0, 0, 0));
     tangent_vec_.push_back(Tangent(1, 0, 0));
     tangent_vec_.push_back(Tangent(0, 1, 0));
-    tangent_vec_.push_back(Tangent(PI / 2., PI / 2., 0.0));
+    tangent_vec_.push_back(Tangent(kPi / 2., kPi / 2., 0.0));
     tangent_vec_.push_back(Tangent(-1, 1, 0));
     tangent_vec_.push_back(Tangent(20, -1, 0));
     tangent_vec_.push_back(Tangent(30, 5, -1));
@@ -58,10 +58,7 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    LieGroupTests<SO3Type> tests;
-    tests.setGroupElements(so3_vec_);
-    tests.setTangentVectors(tangent_vec_);
-    tests.setPoints(point_vec_);
+    LieGroupTests<SO3Type> tests(so3_vec_, tangent_vec_, point_vec_);
     return tests.doAllTestsPass();
   }
 
@@ -82,30 +79,31 @@ class Tests {
   bool testRawDataAcces() {
     bool passed = true;
     Eigen::Matrix<Scalar, 4, 1> raw = {0, 1, 0, 0};
-    Eigen::Map<SO3Type const> const_so3_map(raw.data());
-    SOPHUS_TEST_APPROX(passed, const_so3_map.unit_quaternion().coeffs().eval(),
-                       raw, Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, const_so3_map.unit_quaternion().coeffs().data(),
-                      raw.data());
-    Eigen::Map<SO3Type const> const_shallow_copy = const_so3_map;
+    Eigen::Map<SO3Type const> map_of_const_so3(raw.data());
+    SOPHUS_TEST_APPROX(passed,
+                       map_of_const_so3.unit_quaternion().coeffs().eval(), raw,
+                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_EQUAL(
+        passed, map_of_const_so3.unit_quaternion().coeffs().data(), raw.data());
+    Eigen::Map<SO3Type const> const_shallow_copy = map_of_const_so3;
     SOPHUS_TEST_EQUAL(passed,
                       const_shallow_copy.unit_quaternion().coeffs().eval(),
-                      const_so3_map.unit_quaternion().coeffs().eval());
+                      map_of_const_so3.unit_quaternion().coeffs().eval());
 
     Eigen::Matrix<Scalar, 4, 1> raw2 = {1, 0, 0, 0};
-    Eigen::Map<SO3Type> so3_map(raw.data());
+    Eigen::Map<SO3Type> map_so3(raw.data());
     Eigen::Quaternion<Scalar> quat;
     quat.coeffs() = raw2;
-    so3_map.setQuaternion(quat);
-    SOPHUS_TEST_APPROX(passed, so3_map.unit_quaternion().coeffs().eval(), raw2,
+    map_so3.setQuaternion(quat);
+    SOPHUS_TEST_APPROX(passed, map_so3.unit_quaternion().coeffs().eval(), raw2,
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, so3_map.unit_quaternion().coeffs().data(),
+    SOPHUS_TEST_EQUAL(passed, map_so3.unit_quaternion().coeffs().data(),
                       raw.data());
-    SOPHUS_TEST_NEQ(passed, so3_map.unit_quaternion().coeffs().data(),
+    SOPHUS_TEST_NEQ(passed, map_so3.unit_quaternion().coeffs().data(),
                     quat.coeffs().data());
-    Eigen::Map<SO3Type> shallow_copy = so3_map;
+    Eigen::Map<SO3Type> shallow_copy = map_so3;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_quaternion().coeffs().eval(),
-                      so3_map.unit_quaternion().coeffs().eval());
+                      map_so3.unit_quaternion().coeffs().eval());
 
     SO3Type const const_so3(quat);
     for (int i = 0; i < 4; ++i) {
