@@ -669,9 +669,6 @@ class Map<Sophus::SE3<Scalar_> const, Options>
       : so3_(coeffs),
         translation_(coeffs + Sophus::SO3<Scalar>::num_parameters) {}
 
-  SOPHUS_FUNC Map(Scalar const* trans_coeffs, Scalar const* rot_coeffs)
-      : so3_(rot_coeffs), translation_(trans_coeffs) {}
-
   // Accessor of SO3
   //
   SOPHUS_FUNC Map<Sophus::SO3<Scalar> const, Options> const& so3() const {

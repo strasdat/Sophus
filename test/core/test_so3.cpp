@@ -23,29 +23,29 @@ class Tests {
   Scalar const PI = Constants<Scalar>::pi();
 
   Tests() {
-    so3_vec.push_back(SO3Type(Eigen::Quaternion<Scalar>(0.1e-11, 0., 1., 0.)));
-    so3_vec.push_back(
+    so3_vec_.push_back(SO3Type(Eigen::Quaternion<Scalar>(0.1e-11, 0., 1., 0.)));
+    so3_vec_.push_back(
         SO3Type(Eigen::Quaternion<Scalar>(-1, 0.00001, 0.0, 0.0)));
-    so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)));
-    so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, -1.0)));
-    so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.)));
-    so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.00001)));
-    so3_vec.push_back(SO3Type::exp(Point(PI, 0, 0)));
-    so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)) *
-                      SO3Type::exp(Point(PI, 0, 0)) *
-                      SO3Type::exp(Point(-0.2, -0.5, -0.0)));
-    so3_vec.push_back(SO3Type::exp(Point(0.3, 0.5, 0.1)) *
-                      SO3Type::exp(Point(PI, 0, 0)) *
-                      SO3Type::exp(Point(-0.3, -0.5, -0.1)));
-    tangent_vec.push_back(Tangent(0, 0, 0));
-    tangent_vec.push_back(Tangent(1, 0, 0));
-    tangent_vec.push_back(Tangent(0, 1, 0));
-    tangent_vec.push_back(Tangent(PI / 2., PI / 2., 0.0));
-    tangent_vec.push_back(Tangent(-1, 1, 0));
-    tangent_vec.push_back(Tangent(20, -1, 0));
-    tangent_vec.push_back(Tangent(30, 5, -1));
+    so3_vec_.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)));
+    so3_vec_.push_back(SO3Type::exp(Point(0.2, 0.5, -1.0)));
+    so3_vec_.push_back(SO3Type::exp(Point(0., 0., 0.)));
+    so3_vec_.push_back(SO3Type::exp(Point(0., 0., 0.00001)));
+    so3_vec_.push_back(SO3Type::exp(Point(PI, 0, 0)));
+    so3_vec_.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)) *
+                       SO3Type::exp(Point(PI, 0, 0)) *
+                       SO3Type::exp(Point(-0.2, -0.5, -0.0)));
+    so3_vec_.push_back(SO3Type::exp(Point(0.3, 0.5, 0.1)) *
+                       SO3Type::exp(Point(PI, 0, 0)) *
+                       SO3Type::exp(Point(-0.3, -0.5, -0.1)));
+    tangent_vec_.push_back(Tangent(0, 0, 0));
+    tangent_vec_.push_back(Tangent(1, 0, 0));
+    tangent_vec_.push_back(Tangent(0, 1, 0));
+    tangent_vec_.push_back(Tangent(PI / 2., PI / 2., 0.0));
+    tangent_vec_.push_back(Tangent(-1, 1, 0));
+    tangent_vec_.push_back(Tangent(20, -1, 0));
+    tangent_vec_.push_back(Tangent(30, 5, -1));
 
-    point_vec.push_back(Point(1, 2, 4));
+    point_vec_.push_back(Point(1, 2, 4));
   }
 
   void runAll() {
@@ -59,9 +59,9 @@ class Tests {
  private:
   bool testLieProperties() {
     LieGroupTests<SO3Type> tests;
-    tests.setGroupElements(so3_vec);
-    tests.setTangentVectors(tangent_vec);
-    tests.setPoints(point_vec);
+    tests.setGroupElements(so3_vec_);
+    tests.setTangentVectors(tangent_vec_);
+    tests.setPoints(point_vec_);
     return tests.doAllTestsPass();
   }
 
@@ -70,7 +70,7 @@ class Tests {
     // Test that the complex number magnitude stays close to one.
     SO3Type current_q;
     for (std::size_t i = 0; i < 1000; ++i) {
-      for (SO3Type const& q : so3_vec) {
+      for (SO3Type const& q : so3_vec_) {
         current_q *= q;
       }
     }
@@ -125,15 +125,15 @@ class Tests {
 
   bool testConstructors() {
     bool passed = true;
-    Eigen::Matrix<Scalar, 3, 3> R = so3_vec.front().matrix();
+    Matrix3<Scalar> R = so3_vec_.front().matrix();
     SO3Type so3(R);
     SOPHUS_TEST_APPROX(passed, R, so3.matrix(), Constants<Scalar>::epsilon());
     return passed;
   }
 
-  std::vector<SO3Type, Eigen::aligned_allocator<SO3Type>> so3_vec;
-  std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
-  std::vector<Point, Eigen::aligned_allocator<Point>> point_vec;
+  std::vector<SO3Type, Eigen::aligned_allocator<SO3Type>> so3_vec_;
+  std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec_;
+  std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
 };
 
 int test_so3() {

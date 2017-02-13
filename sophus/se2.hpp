@@ -459,7 +459,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   // Constructor from complex number and translation vector
   //
   // Precondition: ``complex` must not be close to zero.
-  SOPHUS_FUNC SE2(std::complex<Scalar> const& complex, Point const& translation)
+  SOPHUS_FUNC SE2(Vector2<Scalar> const& complex, Point const& translation)
       : so2_(complex), translation_(translation) {}
 
   // Constructor from 3x3 matrix
@@ -591,9 +591,6 @@ class Map<Sophus::SE2<Scalar_> const, Options>
   SOPHUS_FUNC Map(Scalar const* coeffs)
       : so2_(coeffs),
         translation_(coeffs + Sophus::SO2<Scalar>::num_parameters) {}
-
-  SOPHUS_FUNC Map(Scalar const* trans_coeffs, Scalar const* rot_coeffs)
-      : so2_(rot_coeffs), translation_(trans_coeffs) {}
 
   // Accessor of SO3
   //

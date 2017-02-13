@@ -20,13 +20,13 @@ using Vector3d = Vector3<double>;
 
 template <class Scalar>
 using Vector4 = Vector<Scalar, 4>;
-using Vector4f = Vector3<float>;
-using Vector4d = Vector3<double>;
+using Vector4f = Vector4<float>;
+using Vector4d = Vector4<double>;
 
 template <class Scalar>
 using Vector6 = Vector<Scalar, 6>;
-using Vector6f = Vector3<float>;
-using Vector6d = Vector3<double>;
+using Vector6f = Vector6<float>;
+using Vector6d = Vector6<double>;
 
 template <class Scalar>
 using Vector7 = Vector<Scalar, 7>;

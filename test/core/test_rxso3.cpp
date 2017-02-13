@@ -80,9 +80,8 @@ void tests() {
   SOPHUS_TEST_APPROX(passed, RxSO3Type(scale, so3.matrix()).matrix(),
                      rxso3.matrix(), Constants<Scalar>::epsilon(),
                      "RxSO3(scale, SO3)");
-  Eigen::Matrix<Scalar, 3, 3> R =
-      SO3<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix();
-  Eigen::Matrix<Scalar, 3, 3> sR = R * Scalar(1.3);
+  Matrix3<Scalar> R = SO3<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix();
+  Matrix3<Scalar> sR = R * Scalar(1.3);
   rxso3.setScaledRotationMatrix(sR);
   SOPHUS_TEST_APPROX(passed, sR, rxso3.matrix(), Constants<Scalar>::epsilon(),
                      "setScaleRotationMatrix");
