@@ -20,25 +20,25 @@ class Tests {
   using SO2Type = SO2<Scalar>;
   using Point = typename SO2<Scalar>::Point;
   using Tangent = typename SO2<Scalar>::Tangent;
-  Scalar const PI = Constants<Scalar>::pi();
+  Scalar const kPi = Constants<Scalar>::pi();
 
   Tests() {
     so2_vec_.push_back(SO2Type::exp(0.0));
     so2_vec_.push_back(SO2Type::exp(0.2));
     so2_vec_.push_back(SO2Type::exp(10.));
     so2_vec_.push_back(SO2Type::exp(0.00001));
-    so2_vec_.push_back(SO2Type::exp(PI));
-    so2_vec_.push_back(SO2Type::exp(0.2) * SO2Type::exp(PI) *
+    so2_vec_.push_back(SO2Type::exp(kPi));
+    so2_vec_.push_back(SO2Type::exp(0.2) * SO2Type::exp(kPi) *
                        SO2Type::exp(-0.2));
-    so2_vec_.push_back(SO2Type::exp(-0.3) * SO2Type::exp(PI) *
+    so2_vec_.push_back(SO2Type::exp(-0.3) * SO2Type::exp(kPi) *
                        SO2Type::exp(0.3));
 
     tangent_vec_.push_back(Tangent(0));
     tangent_vec_.push_back(Tangent(1));
-    tangent_vec_.push_back(Tangent(PI / 2.));
+    tangent_vec_.push_back(Tangent(kPi / 2.));
     tangent_vec_.push_back(Tangent(-1));
     tangent_vec_.push_back(Tangent(20));
-    tangent_vec_.push_back(Tangent(PI / 2. + 0.0001));
+    tangent_vec_.push_back(Tangent(kPi / 2. + 0.0001));
 
     point_vec_.push_back(Point(1, 2));
   }
@@ -53,10 +53,7 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    LieGroupTests<SO2Type> tests;
-    tests.setGroupElements(so2_vec_);
-    tests.setTangentVectors(tangent_vec_);
-    tests.setPoints(point_vec_);
+    LieGroupTests<SO2Type> tests(so2_vec_, tangent_vec_, point_vec_);
     return tests.doAllTestsPass();
   }
 
@@ -77,24 +74,25 @@ class Tests {
   bool testRawDataAcces() {
     bool passed = true;
     Vector2<Scalar> raw = {0, 1};
-    Eigen::Map<SO2Type const> const_so2_map(raw.data());
-    SOPHUS_TEST_APPROX(passed, const_so2_map.unit_complex().eval(), raw,
+    Eigen::Map<SO2Type const> map_of_const_so2(raw.data());
+    SOPHUS_TEST_APPROX(passed, map_of_const_so2.unit_complex().eval(), raw,
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, const_so2_map.unit_complex().data(), raw.data());
-    Eigen::Map<SO2Type const> const_shallow_copy = const_so2_map;
+    SOPHUS_TEST_EQUAL(passed, map_of_const_so2.unit_complex().data(),
+                      raw.data());
+    Eigen::Map<SO2Type const> const_shallow_copy = map_of_const_so2;
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.unit_complex().eval(),
-                      const_so2_map.unit_complex().eval());
+                      map_of_const_so2.unit_complex().eval());
 
     Vector2<Scalar> raw2 = {1, 0};
-    Eigen::Map<SO2Type> so2_map(raw.data());
-    so2_map.setComplex(raw2);
-    SOPHUS_TEST_APPROX(passed, so2_map.unit_complex().eval(), raw2,
+    Eigen::Map<SO2Type> map_of_so2(raw.data());
+    map_of_so2.setComplex(raw2);
+    SOPHUS_TEST_APPROX(passed, map_of_so2.unit_complex().eval(), raw2,
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, so2_map.unit_complex().data(), raw.data());
-    SOPHUS_TEST_NEQ(passed, so2_map.unit_complex().data(), raw2.data());
-    Eigen::Map<SO2Type> shallow_copy = so2_map;
+    SOPHUS_TEST_EQUAL(passed, map_of_so2.unit_complex().data(), raw.data());
+    SOPHUS_TEST_NEQ(passed, map_of_so2.unit_complex().data(), raw2.data());
+    Eigen::Map<SO2Type> shallow_copy = map_of_so2;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_complex().eval(),
-                      so2_map.unit_complex().eval());
+                      map_of_so2.unit_complex().eval());
 
     SO2Type const const_so2(raw2);
     for (int i = 0; i < 2; ++i) {

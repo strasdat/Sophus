@@ -19,26 +19,15 @@ class LieGroupTests {
   static int constexpr N = LieGroup::N;
   static int constexpr DoF = LieGroup::DoF;
 
-  Scalar SMALL_EPS;
-
-  LieGroupTests() : SMALL_EPS(Constants<Scalar>::epsilon()) {}
-
-  void setGroupElements(
+  LieGroupTests(
       std::vector<LieGroup, Eigen::aligned_allocator<LieGroup>> const&
-          group_vec) {
-    group_vec_ = group_vec;
-  }
-
-  void setTangentVectors(
+          group_vec,
       std::vector<Tangent, Eigen::aligned_allocator<Tangent>> const&
-          tangent_vec) {
-    tangent_vec_ = tangent_vec;
-  }
-
-  void setPoints(
-      std::vector<Point, Eigen::aligned_allocator<Point>> const& point_vec) {
-    point_vec_ = point_vec;
-  }
+          tangent_vec,
+      std::vector<Point, Eigen::aligned_allocator<Point>> const& point_vec)
+      : group_vec_(group_vec),
+        tangent_vec_(tangent_vec),
+        point_vec_(point_vec) {}
 
   bool adjointTest() {
     bool passed = true;
@@ -53,7 +42,7 @@ class LieGroupTests {
         Tangent ad1 = Ad * x;
         Tangent ad2 = LieGroup::vee(T * LieGroup::hat(x) *
                                     group_vec_[i].inverse().matrix());
-        SOPHUS_TEST_APPROX(passed, ad1, ad2, 20. * SMALL_EPS,
+        SOPHUS_TEST_APPROX(passed, ad1, ad2, 20. * kSmallEps,
                            "Adjoint case %, %", i, j);
       }
     }
@@ -66,7 +55,7 @@ class LieGroupTests {
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       Transformation T1 = group_vec_[i].matrix();
       Transformation T2 = LieGroup::exp(group_vec_[i].log()).matrix();
-      SOPHUS_TEST_APPROX(passed, T1, T2, SMALL_EPS, "G - exp(log(G)) case: %",
+      SOPHUS_TEST_APPROX(passed, T1, T2, kSmallEps, "G - exp(log(G)) case: %",
                          i);
     }
     return passed;
@@ -78,7 +67,7 @@ class LieGroupTests {
       Tangent omega = tangent_vec_[i];
       Transformation exp_x = LieGroup::exp(omega).matrix();
       Transformation expmap_hat_x = (LieGroup::hat(omega)).exp();
-      SOPHUS_TEST_APPROX(passed, exp_x, expmap_hat_x, 10. * SMALL_EPS,
+      SOPHUS_TEST_APPROX(passed, exp_x, expmap_hat_x, 10. * kSmallEps,
                          "expmap(hat(x)) - exp(x) case: %", i);
     }
     return passed;
@@ -93,7 +82,7 @@ class LieGroupTests {
         Transformation T = group_vec_[i].matrix();
         Point point1 = group_vec_[i] * p;
         Point point2 = map(T, p);
-        SOPHUS_TEST_APPROX(passed, point1, point2, SMALL_EPS,
+        SOPHUS_TEST_APPROX(passed, point1, point2, kSmallEps,
                            "Transform point case: %", i);
       }
     }
@@ -110,7 +99,7 @@ class LieGroupTests {
         Transformation hatj = LieGroup::hat(tangent_vec_[j]);
 
         Tangent tangent2 = LieGroup::vee(hati * hatj - hatj * hati);
-        SOPHUS_TEST_APPROX(passed, tangent1, tangent2, SMALL_EPS,
+        SOPHUS_TEST_APPROX(passed, tangent1, tangent2, kSmallEps,
                            "Lie Bracket case: %", i);
       }
     }
@@ -122,7 +111,7 @@ class LieGroupTests {
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
       SOPHUS_TEST_APPROX(passed, tangent_vec_[i],
                          LieGroup::vee(LieGroup::hat(tangent_vec_[i])),
-                         SMALL_EPS, "Hat-vee case: %", i);
+                         kSmallEps, "Hat-vee case: %", i);
     }
     return passed;
   }
@@ -148,6 +137,8 @@ class LieGroupTests {
   }
 
  private:
+  Scalar const kSmallEps = Constants<Scalar>::epsilon();
+
   Eigen::Matrix<Scalar, N - 1, 1> map(
       Eigen::Matrix<Scalar, N, N> const& T,
       Eigen::Matrix<Scalar, N - 1, 1> const& p) {

@@ -607,7 +607,7 @@ class Map<Sophus::RxSO3<Scalar_>, Options>
   using Adjoint = typename Base::Adjoint;
 
   // ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
-  friend class Sophus::SO3Base<Map<Sophus::SO3<Scalar_>, Options>>;
+  friend class Sophus::RxSO3Base<Map<Sophus::RxSO3<Scalar_>, Options>>;
 
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;

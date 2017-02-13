@@ -83,7 +83,7 @@ int main(int, char**) {
   using SE3Type = Sophus::SE3<double>;
   using SO3Type = Sophus::SO3<double>;
   using Point = SE3Type::Point;
-  double const PI = Sophus::Constants<double>::pi();
+  double const kPi = Sophus::Constants<double>::pi();
 
   std::vector<SE3Type> se3_vec;
   se3_vec.push_back(
@@ -97,14 +97,14 @@ int main(int, char**) {
                             Point(0, -0.00000001, 0.0000000001)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
-  se3_vec.push_back(SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(4, -5, 0)));
+  se3_vec.push_back(SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(4, -5, 0)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
-      SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(0, 0, 0)) *
       SE3Type(SO3Type::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
-      SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
+      SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(0, 0, 0)) *
       SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
 
   for (size_t i = 0; i < se3_vec.size(); ++i) {

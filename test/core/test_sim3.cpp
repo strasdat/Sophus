@@ -24,7 +24,7 @@ void tests() {
   using Point = typename Sim3<Scalar>::Point;
   using Tangent = typename Sim3<Scalar>::Tangent;
   using Vector4Type = Eigen::Matrix<Scalar, 4, 1>;
-  Scalar const PI = Constants<Scalar>::pi();
+  Scalar const kPi = Constants<Scalar>::pi();
 
   vector<Sim3Type, Eigen::aligned_allocator<Sim3Type>> sim3_vec;
   sim3_vec.push_back(
@@ -43,15 +43,15 @@ void tests() {
   sim3_vec.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0)),
                               Point(0.01, 0, 0)));
   sim3_vec.push_back(
-      Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0, 0.9)), Point(4, -5, 0)));
+      Sim3Type(RxSO3Type::exp(Vector4Type(kPi, 0, 0, 0.9)), Point(4, -5, 0)));
   sim3_vec.push_back(
       Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0, 0)), Point(0, 0, 0)) *
-      Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0, 0)), Point(0, 0, 0)) *
+      Sim3Type(RxSO3Type::exp(Vector4Type(kPi, 0, 0, 0)), Point(0, 0, 0)) *
       Sim3Type(RxSO3Type::exp(Vector4Type(-0.2, -0.5, -0.0, 0)),
                Point(0, 0, 0)));
   sim3_vec.push_back(
       Sim3Type(RxSO3Type::exp(Vector4Type(0.3, 0.5, 0.1, 0)), Point(2, 0, -7)) *
-      Sim3Type(RxSO3Type::exp(Vector4Type(PI, 0, 0, 0)), Point(0, 0, 0)) *
+      Sim3Type(RxSO3Type::exp(Vector4Type(kPi, 0, 0, 0)), Point(0, 0, 0)) *
       Sim3Type(RxSO3Type::exp(Vector4Type(-0.3, -0.5, -0.1, 0)),
                Point(0, 6, 0)));
   vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
@@ -74,10 +74,7 @@ void tests() {
   vector<Point, Eigen::aligned_allocator<Point>> point_vec;
   point_vec.push_back(Point(1, 2, 4));
 
-  LieGroupTests<Sim3Type> tests;
-  tests.setGroupElements(sim3_vec);
-  tests.setTangentVectors(tangent_vec);
-  tests.setPoints(point_vec);
+  LieGroupTests<Sim3Type> tests(sim3_vec, tangent_vec, point_vec);
 
   bool passed = tests.doAllTestsPass();
 
