@@ -17,10 +17,10 @@ class LocalParameterizationSE3 : public ceres::LocalParameterization {
   //
   virtual bool Plus(double const* T_raw, double const* delta_raw,
                     double* T_plus_delta_raw) const {
-    Eigen::Map<Sophus::SE3d const> const T(T_raw);
-    Eigen::Map<Eigen::Matrix<double, 6, 1> const> const delta(delta_raw);
-    Eigen::Map<Sophus::SE3d> T_plus_delta(T_plus_delta_raw);
-    T_plus_delta = T * Sophus::SE3d::exp(delta);
+    Eigen::Map<SE3d const> const T(T_raw);
+    Eigen::Map<Vector6d const> const delta(delta_raw);
+    Eigen::Map<SE3d> T_plus_delta(T_plus_delta_raw);
+    T_plus_delta = T * SE3d::exp(delta);
     return true;
   }
 
@@ -30,17 +30,17 @@ class LocalParameterizationSE3 : public ceres::LocalParameterization {
   //
   virtual bool ComputeJacobian(double const* T_raw,
                                double* jacobian_raw) const {
-    Eigen::Map<Sophus::SE3d const> T(T_raw);
-    Eigen::Map<Eigen::Matrix<double, 6, 7> > jacobian(jacobian_raw);
+    Eigen::Map<SE3d const> T(T_raw);
+    Eigen::Map<Matrix<double, 6, 7> > jacobian(jacobian_raw);
     jacobian = T.internalJacobian().transpose();
     return true;
   }
 
-  virtual int GlobalSize() const { return Sophus::SE3d::num_parameters; }
+  virtual int GlobalSize() const { return SE3d::num_parameters; }
 
-  virtual int LocalSize() const { return Sophus::SE3d::DoF; }
+  virtual int LocalSize() const { return SE3d::DoF; }
 };
-}
-}
+}  // namespace test
+}  // namespace Sophus
 
 #endif

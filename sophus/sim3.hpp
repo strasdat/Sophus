@@ -706,9 +706,6 @@ class Map<Sophus::Sim3<Scalar_> const, Options>
       : rxso3_(coeffs),
         translation_(coeffs + Sophus::RxSO3<Scalar>::num_parameters) {}
 
-  SOPHUS_FUNC Map(Scalar const* trans_coeffs, Scalar const* rot_coeffs)
-      : rxso3_(rot_coeffs), translation_(trans_coeffs) {}
-
   // Accessor of RxSO3
   //
   SOPHUS_FUNC Map<Sophus::RxSO3<Scalar> const, Options> const& rxso3() const {

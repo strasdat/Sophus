@@ -387,15 +387,6 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
     Base::normalize();
   }
 
-  // Constructor from std::complex
-  //
-  // Precondition: ``complex`` number must not be zero
-  //
-  SOPHUS_FUNC explicit SO2(std::complex<Scalar> const& complex)
-      : unit_complex_(complex.real(), complex.imag()) {
-    Base::normalize();
-  }
-
   // Constructor from an rotation angle.
   //
   SOPHUS_FUNC explicit SO2(Scalar theta) {
@@ -412,10 +403,6 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   // Mutator of complex number is protected to ensure class invariant.
   //
   SOPHUS_FUNC Vector2<Scalar>& unit_complex_nonconst() { return unit_complex_; }
-
-  static bool isNearZero(Scalar const& real, Scalar const& imag) {
-    return (real * real + imag * imag < Constants<Scalar>::epsilon());
-  }
 
   Sophus::Vector2<Scalar> unit_complex_;
 };

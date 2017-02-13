@@ -24,46 +24,46 @@ class Tests {
   Scalar const PI = Constants<Scalar>::pi();
 
   Tests() {
-    se3_vec.push_back(
+    se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)));
-    se3_vec.push_back(
+    se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0.2, 0.5, -1.0)), Point(10, 0, 0)));
-    se3_vec.push_back(
+    se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0., 0., 0.)), Point(0, 100, 5)));
-    se3_vec.push_back(
+    se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0, 0, 0)));
-    se3_vec.push_back(SE3Type(SO3Type::exp(Point(0., 0., 0.00001)),
-                              Point(0, -0.00000001, 0.0000000001)));
-    se3_vec.push_back(
+    se3_vec_.push_back(SE3Type(SO3Type::exp(Point(0., 0., 0.00001)),
+                               Point(0, -0.00000001, 0.0000000001)));
+    se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
-    se3_vec.push_back(SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(4, -5, 0)));
-    se3_vec.push_back(
+    se3_vec_.push_back(SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(4, -5, 0)));
+    se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
         SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
         SE3Type(SO3Type::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
-    se3_vec.push_back(
+    se3_vec_.push_back(
         SE3Type(SO3Type::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
         SE3Type(SO3Type::exp(Point(PI, 0, 0)), Point(0, 0, 0)) *
         SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
 
     Tangent tmp;
     tmp << 0, 0, 0, 0, 0, 0;
-    tangent_vec.push_back(tmp);
+    tangent_vec_.push_back(tmp);
     tmp << 1, 0, 0, 0, 0, 0;
-    tangent_vec.push_back(tmp);
+    tangent_vec_.push_back(tmp);
     tmp << 0, 1, 0, 1, 0, 0;
-    tangent_vec.push_back(tmp);
+    tangent_vec_.push_back(tmp);
     tmp << 0, -5, 10, 0, 0, 0;
-    tangent_vec.push_back(tmp);
+    tangent_vec_.push_back(tmp);
     tmp << -1, 1, 0, 0, 0, 1;
-    tangent_vec.push_back(tmp);
+    tangent_vec_.push_back(tmp);
     tmp << 20, -1, 0, -1, 1, 0;
-    tangent_vec.push_back(tmp);
+    tangent_vec_.push_back(tmp);
     tmp << 30, 5, -1, 20, -1, 0;
-    tangent_vec.push_back(tmp);
+    tangent_vec_.push_back(tmp);
 
-    point_vec.push_back(Point(1, 2, 4));
-    point_vec.push_back(Point(1, -3, 0.5));
+    point_vec_.push_back(Point(1, 2, 4));
+    point_vec_.push_back(Point(1, -3, 0.5));
   }
 
   void runAll() {
@@ -76,9 +76,9 @@ class Tests {
  private:
   bool testLieProperties() {
     LieGroupTests<SE3Type> tests;
-    tests.setGroupElements(se3_vec);
-    tests.setTangentVectors(tangent_vec);
-    tests.setPoints(point_vec);
+    tests.setGroupElements(se3_vec_);
+    tests.setTangentVectors(tangent_vec_);
+    tests.setPoints(point_vec_);
     return tests.doAllTestsPass();
   }
 
@@ -127,6 +127,11 @@ class Tests {
                       se3_map.unit_quaternion().coeffs().eval());
     SOPHUS_TEST_EQUAL(passed, shallow_copy.translation().eval(),
                       se3_map.translation().eval());
+    Eigen::Map<SE3Type> const shallow_copy2 = se3_map;
+    SOPHUS_TEST_EQUAL(passed, shallow_copy2.unit_quaternion().coeffs().eval(),
+                      se3_map.unit_quaternion().coeffs().eval());
+    SOPHUS_TEST_EQUAL(passed, shallow_copy2.translation().eval(),
+                      se3_map.translation().eval());
 
     SE3Type const const_se3(quat, raw2.template tail<3>().eval());
     for (int i = 0; i < 7; ++i) {
@@ -149,7 +154,7 @@ class Tests {
     Eigen::Matrix<Scalar, 4, 4> I = Eigen::Matrix<Scalar, 4, 4>::Identity();
     SOPHUS_TEST_EQUAL(passed, SE3Type().matrix(), I);
 
-    SE3Type se3 = se3_vec.front();
+    SE3Type se3 = se3_vec_.front();
     Point translation = se3.translation();
     SO3Type so3 = se3.so3();
 
@@ -165,9 +170,9 @@ class Tests {
     return passed;
   }
 
-  std::vector<SE3Type, Eigen::aligned_allocator<SE3Type>> se3_vec;
-  std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
-  std::vector<Point, Eigen::aligned_allocator<Point>> point_vec;
+  std::vector<SE3Type, Eigen::aligned_allocator<SE3Type>> se3_vec_;
+  std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec_;
+  std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
 };
 
 int test_se3() {
