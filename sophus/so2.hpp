@@ -13,7 +13,7 @@ namespace Sophus {
 template <class Scalar_, int Options = 0>
 class SO2;
 using SO2d = SO2<double>;
-using SO3f = SO2<float>;
+using SO2f = SO2<float>;
 }  // namespace Sophus
 
 namespace Eigen {
