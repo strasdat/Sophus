@@ -59,6 +59,7 @@ class Sim3Base {
   using TranslationType =
       typename Eigen::internal::traits<Derived>::TranslationType;
   using RxSO3Type = typename Eigen::internal::traits<Derived>::RxSO3Type;
+  using QuaternionType = typename RxSO3Type::QuaternionType;
 
   // Degrees of freedom of manifold, number of dimensions in tangent space
   // (three for translation, three for rotation and one for scaling).
@@ -190,7 +191,7 @@ class Sim3Base {
 
   // Accessor of quaternion.
   //
-  SOPHUS_FUNC Eigen::Quaternion<Scalar> const& quaternion() const {
+  SOPHUS_FUNC QuaternionType const& quaternion() const {
     return rxso3().quaternion();
   }
 
