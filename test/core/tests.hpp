@@ -109,7 +109,7 @@ class LieGroupTests {
   bool veeHatTest() {
     bool passed = true;
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
-      SOPHUS_TEST_APPROX(passed, tangent_vec_[i],
+      SOPHUS_TEST_APPROX(passed, Tangent(tangent_vec_[i]),
                          LieGroup::vee(LieGroup::hat(tangent_vec_[i])),
                          kSmallEps, "Hat-vee case: %", i);
     }
