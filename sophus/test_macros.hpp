@@ -1,56 +1,33 @@
 #ifndef SOPUHS_TESTS_MACROS_HPP
 #define SOPUHS_TESTS_MACROS_HPP
 
-#include <sophus/common.hpp>
+#include <sophus/types.hpp>
 
 namespace Sophus {
 namespace details {
 
-template <typename Scalar>
-class Metric {
- public:
-  static Scalar impl(Scalar s0, Scalar s1) {
-    using std::abs;
-    return abs(s0 - s1);
-  }
-};
-
-template <typename Scalar, int M, int N>
-class Metric<Eigen::Matrix<Scalar, M, N>> {
- public:
-  static Scalar impl(const Eigen::Matrix<Scalar, M, N>& v0,
-                     const Eigen::Matrix<Scalar, M, N>& v1) {
-    return (v0 - v1).norm();
-  }
-};
-
-template <typename T>
-auto metric(const T& v0, const T& v1) -> decltype(Metric<T>::impl(v0, v1)) {
-  return Metric<T>::impl(v0, v1);
-}
-
-template <typename Scalar>
+template <class Scalar>
 class Pretty {
  public:
   static std::string impl(Scalar s) { return FormatString("%", s); }
 };
 
-template <typename Scalar, int M, int N>
+template <class Scalar, int M, int N>
 class Pretty<Eigen::Matrix<Scalar, M, N>> {
  public:
-  static std::string impl(const Eigen::Matrix<Scalar, M, N>& v) {
+  static std::string impl(Matrix<Scalar, M, N> const& v) {
     return FormatString("\n%\n", v);
   }
 };
 
-template <typename T>
-std::string pretty(const T& v) {
+template <class T>
+std::string pretty(T const& v) {
   return Pretty<T>::impl(v);
 }
 
-template <typename... Args>
-void testFailed(bool& passed, const char* func, const char* file, int line,
-                const std::string& msg) {
+template <class... Args>
+void testFailed(bool& passed, char const* func, char const* file, int line,
+                std::string const& msg) {
   std::cerr << FormatString("Test failed in function %, file %, line %\n", func,
                             file, line);
   std::cerr << msg << "\n\n";
@@ -68,6 +45,19 @@ void processTestResult(bool passed) {
 }  // namespace Sophus
 
 #define SOPHUS_STRINGIFY(x) #x
+
+// GenericTests whether condition is true.
+// The in-out parameter passed will be set to false if test fails.
+#define SOPHUS_TEST(passed, condition, ...)                                    \
+  do {                                                                         \
+    if (!(condition)) {                                                        \
+      std::string msg = Sophus::details::FormatString(                         \
+          "condition ``%`` is false\n", SOPHUS_STRINGIFY(condition));          \
+      msg += Sophus::details::FormatString(__VA_ARGS__);                       \
+      Sophus::details::testFailed(passed, SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                  msg);                                        \
+    }                                                                          \
+  } while (false)
 
 // GenericTests whether left is equal to right given a threshold.
 // The in-out parameter passed will be set to false if test fails.
@@ -103,7 +93,7 @@ void processTestResult(bool passed) {
 // The in-out parameter passed will be set to false if test fails.
 #define SOPHUS_TEST_APPROX(passed, left, right, thr, ...)                      \
   do {                                                                         \
-    auto nrm = Sophus::details::metric((left), (right));                       \
+    auto nrm = Sophus::metric((left), (right));                                \
     if (!(nrm < (thr))) {                                                      \
       std::string msg = Sophus::details::FormatString(                         \
           "% (=%) is not approx % (=%); % is % \n", SOPHUS_STRINGIFY(left),    \

@@ -61,6 +61,95 @@ using Matrix7 = Matrix<Scalar, 7, 7>;
 using Matrix7f = Matrix7<float>;
 using Matrix7d = Matrix7<double>;
 
+namespace details {
+template <class Scalar>
+class Metric {
+ public:
+  static Scalar impl(Scalar s0, Scalar s1) {
+    using std::abs;
+    return abs(s0 - s1);
+  }
+};
+
+template <class Scalar, int M, int N>
+class Metric<Matrix<Scalar, M, N>> {
+ public:
+  static Scalar impl(Matrix<Scalar, M, N> const& p0,
+                     Matrix<Scalar, M, N> const& p1) {
+    return (p0 - p1).norm();
+  }
+};
+
+template <typename Scalar>
+class SetToZero {
+ public:
+  static void impl(Scalar& s) { s = Scalar(0); }
+};
+
+template <typename Scalar, int M, int N>
+class SetToZero<Matrix<Scalar, M, N>> {
+ public:
+  static void impl(Matrix<Scalar, M, N>& v) { v.setZero(); }
+};
+
+template <typename Scalar>
+class SquaredNorm {
+ public:
+  static Scalar impl(Scalar const& s) { return s * s; }
+};
+
+template <typename Scalar, int N>
+class SquaredNorm<Matrix<Scalar, N, 1>> {
+ public:
+  static Scalar impl(Matrix<Scalar, N, 1> const& s) { return s.squaredNorm(); }
+};
+
+template <typename Scalar>
+class Transpose {
+ public:
+  static Scalar impl(Scalar const& s) { return s; }
+};
+
+template <typename Scalar, int M, int N>
+class Transpose<Matrix<Scalar, M, N>> {
+ public:
+  static Matrix<Scalar, M, N> impl(Matrix<Scalar, M, N> const& s) {
+    return s.transpose();
+  }
+};
+}  // namespace details
+
+// Returns Euclidiean metric between two points ``p0`` and ``p1``, with ``p``
+// being a matrix or a scalar.
+//
+template <class T>
+auto metric(T const& p0, T const& p1)
+    -> decltype(details::Metric<T>::impl(p0, p1)) {
+  return details::Metric<T>::impl(p0, p1);
+}
+
+// Sets point ``p`` to zero, with ``p`` being a matrix or a scalar.
+//
+template <class T>
+auto setToZero(T& p) -> decltype(details::SetToZero<T>::impl(p)) {
+  return details::SetToZero<T>::impl(p);
+}
+
+// Returns the squared 2-norm of ``p``, with ``p`` being a vector or a scalar.
+//
+template <class T>
+auto squaredNorm(T const& p) -> decltype(details::SquaredNorm<T>::impl(p)) {
+  return details::SquaredNorm<T>::impl(p);
+}
+
+// Returns ``p.transpose()`` if ``p`` is a matrix, and simply ``p`` if m is a
+// scalar.
+//
+template <typename T>
+auto transpose(T const& p) -> decltype(details::Transpose<T>::impl(T())) {
+  return details::Transpose<T>::impl(p);
+}
+
 }  // namespace Sophus
 
 #endif  // SOPHUS_TYEPES_HPP
