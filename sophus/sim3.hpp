@@ -628,9 +628,6 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   Vector3<Scalar> translation_;
 };
 
-template <class Scalar, int Options = 0>
-using Sim3Group[[deprecated]] = Sim3<Scalar, Options>;
-
 }  // namespace Sophus
 
 namespace Eigen {

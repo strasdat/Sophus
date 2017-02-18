@@ -407,9 +407,6 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   Sophus::Vector2<Scalar> unit_complex_;
 };
 
-template <class Scalar, int Options = 0>
-using SO2Group[[deprecated]] = SO2<Scalar, Options>;
-
 }  // namespace Sophus
 
 namespace Eigen {

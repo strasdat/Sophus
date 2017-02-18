@@ -196,6 +196,9 @@ class optional {
   T type_;
   bool is_valid_;
 };
+
+template <bool B, class T = void>
+using enable_if_t = typename std::enable_if<B, T>::type;
 }  // namespace Sophus
 
 #endif  // SOPHUS_COMMON_HPP

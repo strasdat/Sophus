@@ -46,7 +46,7 @@ optional<typename SequenceContainer::value_type> iterativeMean(
 // Mean implementation for SO(2).
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-std::enable_if_t<
+enable_if_t<
     std::is_same<typename SequenceContainer::value_type, SO2<Scalar>>::value,
     optional<typename SequenceContainer::value_type>>
 average(SequenceContainer const& foo_Ts_bar) {
@@ -122,7 +122,7 @@ Eigen::Quaternion<Scalar> averageUnitQuaternion(
 // TODO: Detect degenerated cases and return nullopt.
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-std::enable_if_t<
+enable_if_t<
     std::is_same<typename SequenceContainer::value_type, SO3<Scalar>>::value,
     optional<typename SequenceContainer::value_type>>
 average(SequenceContainer const& foo_Ts_bar) {
@@ -132,7 +132,7 @@ average(SequenceContainer const& foo_Ts_bar) {
 // Mean implementation for R x SO(3).
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-std::enable_if_t<
+enable_if_t<
     std::is_same<typename SequenceContainer::value_type, RxSO3<Scalar>>::value,
     optional<typename SequenceContainer::value_type>>
 average(SequenceContainer const& foo_Ts_bar) {
@@ -151,7 +151,7 @@ average(SequenceContainer const& foo_Ts_bar) {
 
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-std::enable_if_t<
+enable_if_t<
     std::is_same<typename SequenceContainer::value_type, SE2<Scalar>>::value,
     optional<typename SequenceContainer::value_type>>
 average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
@@ -162,7 +162,7 @@ average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
 
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-std::enable_if_t<
+enable_if_t<
     std::is_same<typename SequenceContainer::value_type, SE3<Scalar>>::value,
     optional<typename SequenceContainer::value_type>>
 average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
@@ -171,7 +171,7 @@ average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
 
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-std::enable_if_t<
+enable_if_t<
     std::is_same<typename SequenceContainer::value_type, Sim3<Scalar>>::value,
     optional<typename SequenceContainer::value_type>>
 average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {

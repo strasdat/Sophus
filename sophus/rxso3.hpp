@@ -583,9 +583,6 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   Eigen::Quaternion<Scalar> quaternion_;
 };
 
-template <class Scalar, int Options = 0>
-using RxSO3Group[[deprecated]] = RxSO3<Scalar, Options>;
-
 }  // namespace Sophus
 
 namespace Eigen {
