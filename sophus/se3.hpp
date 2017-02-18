@@ -589,9 +589,6 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   Vector<Scalar, 3> translation_;
 };
 
-template <class Scalar, int Options = 0>
-using SE3Group[[deprecated]] = SE3<Scalar, Options>;
-
 }  // namespace Sophus
 
 namespace Eigen {

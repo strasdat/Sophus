@@ -550,9 +550,6 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   Eigen::Quaternion<Scalar> unit_quaternion_;
 };
 
-template <class Scalar, int Options = 0>
-using SO3Group[[deprecated]] = SO3<Scalar, Options>;
-
 }  // namespace Sophus
 
 namespace Eigen {

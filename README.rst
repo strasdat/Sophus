@@ -23,7 +23,7 @@ the ones which are used in the Continuous Integration (CI): See TravisCI_ and
 AppVeyor_ for details.
 
 However, it should work (with no to minor modification) on many other
-modern configurations as long they support c++14, CMake, and Eigen 3.X.
+modern configurations as long they support c++11, CMake, and Eigen 3.X.
 
 .. |TravisCI| image:: https://travis-ci.org/strasdat/Sophus.svg?branch=master
 .. _TravisCI: https://travis-ci.org/strasdat/Sophus

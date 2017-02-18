@@ -511,9 +511,6 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   Vector2<Scalar> translation_;
 };
 
-template <class Scalar, int Options = 0>
-using SE2Group[[deprecated]] = SE2<Scalar, Options>;
-
 }  // end namespace
 
 namespace Eigen {
