@@ -143,10 +143,59 @@ struct Constants {
 
 template <>
 struct Constants<float> {
-  SOPHUS_FUNC static float epsilon() { return static_cast<float>(1e-5); }
+  SOPHUS_FUNC static float constexpr epsilon() {
+    return static_cast<float>(1e-5);
+  }
 
-  SOPHUS_FUNC static float pi() { return static_cast<float>(M_PI); }
+  SOPHUS_FUNC static float constexpr pi() { return static_cast<float>(M_PI); }
 };
-}
+
+// Leightweight optional implementation which require ``T`` to have a
+// default constructor.
+//
+// TODO: Replace with std::optional once Sophus moves to c++17.
+//
+struct nullopt_t {
+  explicit constexpr nullopt_t() {}
+};
+
+constexpr nullopt_t nullopt{};
+template <class T>
+
+class optional {
+ public:
+  optional() : is_valid_(false) {}
+
+  optional(nullopt_t) : is_valid_(false) {}
+
+  optional(T const& type) : type_(type), is_valid_(true) {}
+
+  explicit operator bool() const { return is_valid_; }
+
+  T const* operator->() const {
+    SOPHUS_ENSURE(is_valid_, "must be valid");
+    return &type_;
+  }
+
+  T* operator->() {
+    SOPHUS_ENSURE(is_valid_, "must be valid");
+    return &type_;
+  }
+
+  T const& operator*() const {
+    SOPHUS_ENSURE(is_valid_, "must be valid");
+    return type_;
+  }
+
+  T& operator*() {
+    SOPHUS_ENSURE(is_valid_, "must be valid");
+    return type_;
+  }
+
+ private:
+  T type_;
+  bool is_valid_;
+};
+}  // namespace Sophus
 
 #endif  // SOPHUS_COMMON_HPP

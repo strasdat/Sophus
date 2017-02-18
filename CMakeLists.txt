@@ -54,6 +54,9 @@ SET( TEMPLATES so2
 
 SET( SOURCES ${SOURCE_DIR}/common.hpp
              ${SOURCE_DIR}/types.hpp
+             ${SOURCE_DIR}/interpolate.hpp
+             ${SOURCE_DIR}/interpolate_details.hpp
+             ${SOURCE_DIR}/average.hpp
              ${SOURCE_DIR}/example_ensure_handler.cpp )
 
 FOREACH(templ ${TEMPLATES})

@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <sophus/interpolate.hpp>
 #include <sophus/so3.hpp>
 #include "tests.hpp"
 
