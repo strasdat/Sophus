@@ -39,7 +39,6 @@ SET( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
 
 ################################################################################
 FIND_PACKAGE( Eigen3 REQUIRED )
-LIST( APPEND Sophus_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR} )
 
 ################################################################################
 SET( SOURCE_DIR "sophus")
