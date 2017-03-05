@@ -1,5 +1,5 @@
-#ifndef SOPHUS_MEAN_H
-#define SOPHUS_MEAN_H
+#ifndef SOPHUS_AVERAGE_HPP
+#define SOPHUS_AVERAGE_HPP
 
 #include "common.hpp"
 #include "rxso3.hpp"
@@ -180,4 +180,4 @@ average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
 
 }  // namespace Sophus
 
-#endif  // SOPHUS_MEAN_H
+#endif  // SOPHUS_AVERAGE_HPP

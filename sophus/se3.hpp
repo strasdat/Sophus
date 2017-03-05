@@ -439,25 +439,28 @@ class SE3Base {
     // https://pdfs.semanticscholar.org/cfe3/e4b39de63c8cabd89bf3feff7f5449fc981d.pdf
     // (Sec. 6., pp. 8)
     using std::abs;
+    using std::cos;
+    using std::sin;
     Tangent upsilon_omega;
     Scalar theta;
     upsilon_omega.template tail<3>() =
         SO3<Scalar>::logAndTheta(se3.so3(), &theta);
+    Matrix3<Scalar> const Omega =
+        SO3<Scalar>::hat(upsilon_omega.template tail<3>());
 
     if (abs(theta) < Constants<Scalar>::epsilon()) {
-      Matrix3<Scalar> const Omega =
-          SO3<Scalar>::hat(upsilon_omega.template tail<3>());
       Matrix3<Scalar> const V_inv = Matrix3<Scalar>::Identity() -
                                     Scalar(0.5) * Omega +
                                     Scalar(1. / 12.) * (Omega * Omega);
 
       upsilon_omega.template head<3>() = V_inv * se3.translation();
     } else {
-      Matrix3<Scalar> const Omega =
-          SO3<Scalar>::hat(upsilon_omega.template tail<3>());
+      Scalar const half_theta = Scalar(0.5) * theta;
+
       Matrix3<Scalar> const V_inv =
           (Matrix3<Scalar>::Identity() - Scalar(0.5) * Omega +
-           (Scalar(1) - theta / (Scalar(2) * tan(theta / Scalar(2)))) /
+           (Scalar(1) -
+            theta * cos(half_theta) / (Scalar(2) * sin(half_theta))) /
                (theta * theta) * (Omega * Omega));
       upsilon_omega.template head<3>() = V_inv * se3.translation();
     }
