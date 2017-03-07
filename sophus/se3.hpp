@@ -60,7 +60,7 @@ class SE3Base {
   using SO3Type = typename Eigen::internal::traits<Derived>::SO3Type;
   using QuaternionType = typename SO3Type::QuaternionType;
   // Degrees of freedom of manifold, number of dimensions in tangent space
-  // (two for translation, two for rotation).
+  // (three for translation, three for rotation).
   static int constexpr DoF = 6;
   // Number of internal parameters used (4-tuple for quaternion, three for
   // translation).
