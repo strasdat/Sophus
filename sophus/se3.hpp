@@ -552,6 +552,49 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
                   "Last row is not (0,0,0,1), but (%).", T.row(3));
   }
 
+  // Construct a translation only SE3 instance.
+  //
+  template <class T0, class T1, class T2>
+  static SOPHUS_FUNC SE3 trans(T0 const& x, T1 const& y, T2 const& z) {
+    return SE3(SO3<Scalar>(), Vector3<Scalar>(x, y, z));
+  }
+
+  // Contruct x-axis translation.
+  //
+  static SOPHUS_FUNC SE3 transX(Scalar const& x) {
+    return SE3::trans(x, Scalar(0), Scalar(0));
+  }
+
+  // Contruct y-axis translation.
+  //
+  static SOPHUS_FUNC SE3 transY(Scalar const& y) {
+    return SE3::trans(Scalar(0), y, Scalar(0));
+  }
+
+  // Contruct z-axis translation.
+  //
+  static SOPHUS_FUNC SE3 transZ(Scalar const& z) {
+    return SE3::trans(Scalar(0), Scalar(0), z);
+  }
+
+  // Contruct x-axis rotation.
+  //
+  static SOPHUS_FUNC SE3 rotX(Scalar const& x) {
+    return SE3(SO3<Scalar>::rotX(x), Sophus::Vector3<Scalar>::Zero());
+  }
+
+  // Contruct y-axis rotation.
+  //
+  static SOPHUS_FUNC SE3 rotY(Scalar const& y) {
+    return SE3(SO3<Scalar>::rotY(y), Sophus::Vector3<Scalar>::Zero());
+  }
+
+  // Contruct z-axis rotation.
+  //
+  static SOPHUS_FUNC SE3 rotZ(Scalar const& z) {
+    return SE3(SO3<Scalar>::rotZ(z), Sophus::Vector3<Scalar>::Zero());
+  }
+
   // This provides unsafe read/write access to internal data. SO(3) is
   // represented by an Eigen::Quaternion (four parameters). When using direct
   // write access, the user needs to take care of that the quaternion stays
