@@ -119,6 +119,14 @@ class Tests {
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i]);
     }
+
+    SOPHUS_TEST_EQUAL(passed, SO3Type::rotX(0.2).matrix(),
+                      SO3Type::exp(Point(0.2, 0, 0)).matrix());
+    SOPHUS_TEST_EQUAL(passed, SO3Type::rotY(-0.2).matrix(),
+                      SO3Type::exp(Point(0, -0.2, 0)).matrix());
+    SOPHUS_TEST_EQUAL(passed, SO3Type::rotZ(1.1).matrix(),
+                      SO3Type::exp(Point(0, 0, 1.1)).matrix());
+
     return passed;
   }
 

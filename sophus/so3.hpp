@@ -534,6 +534,24 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     Base::normalize();
   }
 
+  // Contruct x-axis rotation.
+  //
+  static SOPHUS_FUNC SO3 rotX(Scalar const& x) {
+    return SO3::exp(Sophus::Vector3<Scalar>(x, Scalar(0), Scalar(0)));
+  }
+
+  // Contruct y-axis rotation.
+  //
+  static SOPHUS_FUNC SO3 rotY(Scalar const& y) {
+    return SO3::exp(Sophus::Vector3<Scalar>(Scalar(0), y, Scalar(0)));
+  }
+
+  // Contruct z-axis rotation.
+  //
+  static SOPHUS_FUNC SO3 rotZ(Scalar const& z) {
+    return SO3::exp(Sophus::Vector3<Scalar>(Scalar(0), Scalar(0), z));
+  }
+
   // Accessor of unit quaternion.
   //
   SOPHUS_FUNC Eigen::Quaternion<Scalar> const& unit_quaternion() const {

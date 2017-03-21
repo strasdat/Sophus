@@ -145,6 +145,28 @@ class Tests {
     for (int i = 0; i < 7; ++i) {
       SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i]);
     }
+
+    SE3Type trans = SE3Type::transX(0.2);
+    SOPHUS_TEST_APPROX(passed, trans.translation().x(), Scalar(0.2),
+                       Constants<Scalar>::epsilon());
+    trans = SE3Type::transY(0.7);
+    SOPHUS_TEST_APPROX(passed, trans.translation().y(), Scalar(0.7),
+                       Constants<Scalar>::epsilon());
+    trans = SE3Type::transZ(-0.2);
+    SOPHUS_TEST_APPROX(passed, trans.translation().z(), Scalar(-0.2),
+                       Constants<Scalar>::epsilon());
+
+    Tangent t;
+    t << 0, 0, 0, 0.2, 0, 0;
+    SOPHUS_TEST_EQUAL(passed, SE3Type::rotX(0.2).matrix(),
+                      SE3Type::exp(t).matrix());
+    t << 0, 0, 0, 0, -0.2, 0;
+    SOPHUS_TEST_EQUAL(passed, SE3Type::rotY(-0.2).matrix(),
+                      SE3Type::exp(t).matrix());
+    t << 0, 0, 0, 0, 0, 1.1;
+    SOPHUS_TEST_EQUAL(passed, SE3Type::rotZ(1.1).matrix(),
+                      SE3Type::exp(t).matrix());
+
     return passed;
   }
 
