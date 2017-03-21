@@ -147,14 +147,11 @@ class Tests {
     }
 
     SE3Type trans = SE3Type::transX(0.2);
-    SOPHUS_TEST_APPROX(passed, trans.translation().x(), Scalar(0.2),
-                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_EQUAL(passed, trans.translation().x(), 0.2);
     trans = SE3Type::transY(0.7);
-    SOPHUS_TEST_APPROX(passed, trans.translation().y(), Scalar(0.7),
-                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_EQUAL(passed, trans.translation().y(), 0.7);
     trans = SE3Type::transZ(-0.2);
-    SOPHUS_TEST_APPROX(passed, trans.translation().z(), Scalar(-0.2),
-                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_EQUAL(passed, trans.translation().z(), -0.2);
 
     Tangent t;
     t << 0, 0, 0, 0.2, 0, 0;
