@@ -95,7 +95,7 @@ inline std::string FormatString() { return std::string(); }
 
 #if defined(SOPHUS_DISABLE_ENSURES)
 
-#define SOPHUS_ENSURE(expr, description, ...) ((void)0)
+#define SOPHUS_ENSURE(expr, ...) ((void)0)
 
 #elif defined(SOPHUS_ENABLE_ENSURE_HANDLER)
 
