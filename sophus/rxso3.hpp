@@ -478,16 +478,6 @@ class RxSO3Base {
   //
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     using std::abs;
-    SOPHUS_ENSURE(abs(Omega(0, 0) - Omega(1, 1)) < Constants<Scalar>::epsilon(),
-                  "Omega: \n%", Omega);
-    SOPHUS_ENSURE(abs(Omega(0, 0) - Omega(2, 2)) < Constants<Scalar>::epsilon(),
-                  "Omega: \n%", Omega);
-    SOPHUS_ENSURE(abs(Omega(2, 1) + Omega(1, 2)) < Constants<Scalar>::epsilon(),
-                  "Omega: %s", Omega);
-    SOPHUS_ENSURE(abs(Omega(0, 2) + Omega(2, 0)) < Constants<Scalar>::epsilon(),
-                  "Omega: %s", Omega);
-    SOPHUS_ENSURE(abs(Omega(1, 0) + Omega(0, 1)) < Constants<Scalar>::epsilon(),
-                  "Omega: %s", Omega);
     return Tangent(Omega(2, 1), Omega(0, 2), Omega(1, 0), Omega(0, 0));
   }
 

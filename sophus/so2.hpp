@@ -312,11 +312,6 @@ class SO2Base {
   //
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     using std::abs;
-    SOPHUS_ENSURE(
-        Omega.diagonal().template lpNorm<1>() < Constants<Scalar>::epsilon(),
-        "Omega: \n%", Omega);
-    SOPHUS_ENSURE(abs(Omega(1, 0) + Omega(0, 1)) < Constants<Scalar>::epsilon(),
-                  "Omega: %s", Omega);
     return Omega(1, 0);
   }
 

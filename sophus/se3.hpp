@@ -482,9 +482,6 @@ class SE3Base {
   //                |  0  0  0  0 | .
   //
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
-    SOPHUS_ENSURE(
-        Omega.row(3).template lpNorm<1>() < Constants<Scalar>::epsilon(),
-        "Omega: \n%", Omega);
     Tangent upsilon_omega;
     upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
     upsilon_omega.template tail<3>() =
