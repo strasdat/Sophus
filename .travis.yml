@@ -1,0 +1,63 @@
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
+    packages:
+      - gcc-5
+      - g++-5
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libeigen3-dev libc++-dev; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then gcc --version; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then g++ --version; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install eigen          ; fi
+
+install:
+- if [[ "$BUILD_TYPE" == "Coverage" ]]; then wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.11.orig.tar.gz ; fi
+- if [[ "$BUILD_TYPE" == "Coverage" ]]; then tar xf lcov_1.11.orig.tar.gz ; fi
+- if [[ "$BUILD_TYPE" == "Coverage" ]]; then sudo make -C lcov-1.11/ install ; fi
+- if [[ "$BUILD_TYPE" == "Coverage" ]]; then gem install coveralls-lcov ; fi
+
+language: cpp
+
+matrix:
+  include:
+  - compiler: gcc
+    os: linux
+    env: BUILD_TYPE=Coverage
+  - compiler: gcc
+    os: linux
+    env: BUILD_TYPE=Release
+  - compiler: clang
+    os: linux
+    env: BUILD_TYPE=Debug
+  - compiler: clang
+    os: linux
+    env: BUILD_TYPE=Release
+  - compiler: clang
+    os: osx
+    env: BUILD_TYPE=Release
+
+script:
+  - mkdir build
+  - cd build
+  - cmake -D CMAKE_BUILD_TYPE=$BUILD_TYPE ..
+  - make -j
+  - make test
+
+after_success:
+ - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --directory . --capture --output-file coverage.info ; fi
+ - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --remove coverage.info 'test/*' '/usr/*' --output-file coverage.info ; fi
+ - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --list coverage.info ; fi
+ - if [[ "$BUILD_TYPE" == "Coverage" ]]; then coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info; fi
+
+branches:
+  only:
+    - master
