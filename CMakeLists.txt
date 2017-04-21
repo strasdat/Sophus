@@ -3,8 +3,6 @@ SET(PROJECT_NAME Sophus)
 PROJECT(${PROJECT_NAME})
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-SET( CMAKE_VERBOSE_MAKEFILE ON)
-
 ################################################################################
 # Release by default
 # Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"
