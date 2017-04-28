@@ -16,8 +16,8 @@ namespace internal {
 template <class Scalar_, int Options>
 struct traits<Sophus::SE3<Scalar_, Options>> {
   using Scalar = Scalar_;
-  using TranslationType = Sophus::Vector3<Scalar>;
-  using SO3Type = Sophus::SO3<Scalar>;
+  using TranslationType = Sophus::Vector3<Scalar, Options>;
+  using SO3Type = Sophus::SO3<Scalar, Options>;
 };
 
 template <class Scalar_, int Options>
@@ -482,9 +482,6 @@ class SE3Base {
   //                |  0  0  0  0 | .
   //
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
-    SOPHUS_ENSURE(
-        Omega.row(3).template lpNorm<1>() < Constants<Scalar>::epsilon(),
-        "Omega: \n%", Omega);
     Tangent upsilon_omega;
     upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
     upsilon_omega.template tail<3>() =
@@ -504,6 +501,8 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   using Point = typename Base::Point;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
+  using SO3Member = SO3<Scalar, Options>;
+  using TranslationMember = Vector3<Scalar, Options>;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -515,13 +514,22 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   //
   template <class OtherDerived>
   SOPHUS_FUNC SE3(SE3Base<OtherDerived> const& other)
-      : so3_(other.so3()), translation_(other.translation()) {}
+      : so3_(other.so3()), translation_(other.translation()) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
   // Constructor from SO3 and translation vector
   //
-  template <class OtherDerived>
-  SOPHUS_FUNC SE3(SO3Base<OtherDerived> const& so3, Point const& translation)
-      : so3_(so3), translation_(translation) {}
+  template <class OtherDerived, class D>
+  SOPHUS_FUNC SE3(SO3Base<OtherDerived> const& so3,
+                  Eigen::MatrixBase<D> const& translation)
+      : so3_(so3), translation_(translation) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
   // Constructor from rotation matrix and translation vector
   //
@@ -614,25 +622,25 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
 
   // Accessor of SO3
   //
-  SOPHUS_FUNC SO3<Scalar>& so3() { return so3_; }
+  SOPHUS_FUNC SO3Member& so3() { return so3_; }
 
   // Mutator of SO3
   //
-  SOPHUS_FUNC SO3<Scalar> const& so3() const { return so3_; }
+  SOPHUS_FUNC SO3Member const& so3() const { return so3_; }
 
   // Mutator of translation vector
   //
-  SOPHUS_FUNC Vector3<Scalar>& translation() { return translation_; }
+  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
 
   // Accessor of translation vector
   //
-  SOPHUS_FUNC Vector3<Scalar> const& translation() const {
+  SOPHUS_FUNC TranslationMember const& translation() const {
     return translation_;
   }
 
  protected:
-  Sophus::SO3<Scalar> so3_;
-  Vector<Scalar, 3> translation_;
+  SO3Member so3_;
+  TranslationMember translation_;
 };
 
 }  // namespace Sophus

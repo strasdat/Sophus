@@ -22,7 +22,7 @@ namespace internal {
 template <class Scalar_, int Options>
 struct traits<Sophus::SO3<Scalar_, Options>> {
   using Scalar = Scalar_;
-  using QuaternionType = Eigen::Quaternion<Scalar>;
+  using QuaternionType = Eigen::Quaternion<Scalar, Options>;
 };
 
 template <class Scalar_, int Options>
@@ -300,10 +300,10 @@ class SO3Base {
       real_factor = cos(half_theta);
     }
 
-    SO3<Scalar> q;
-    q.unit_quaternion_nonconst() = Eigen::Quaternion<Scalar>(
-        real_factor, imag_factor * omega.x(), imag_factor * omega.y(),
-        imag_factor * omega.z());
+    Derived q;
+    q.unit_quaternion_nonconst() =
+        QuaternionType(real_factor, imag_factor * omega.x(),
+                       imag_factor * omega.y(), imag_factor * omega.z());
     SOPHUS_ENSURE(abs(q.unit_quaternion().squaredNorm() - Scalar(1)) <
                       Sophus::Constants<Scalar>::epsilon(),
                   "SO3::exp failed! omega: %, real: %, img: %",
@@ -469,15 +469,6 @@ class SO3Base {
   //
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     using std::abs;
-    SOPHUS_ENSURE(
-        Omega.diagonal().template lpNorm<1>() < Constants<Scalar>::epsilon(),
-        "Omega: \n%", Omega);
-    SOPHUS_ENSURE(abs(Omega(2, 1) + Omega(1, 2)) < Constants<Scalar>::epsilon(),
-                  "Omega: %s", Omega);
-    SOPHUS_ENSURE(abs(Omega(0, 2) + Omega(2, 0)) < Constants<Scalar>::epsilon(),
-                  "Omega: %s", Omega);
-    SOPHUS_ENSURE(abs(Omega(1, 0) + Omega(0, 1)) < Constants<Scalar>::epsilon(),
-                  "Omega: %s", Omega);
     return Tangent(Omega(2, 1), Omega(0, 2), Omega(1, 0));
   }
 
@@ -501,6 +492,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   using Point = typename Base::Point;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
+  using QuaternionMember = Eigen::Quaternion<Scalar, Options>;
 
   // ``Base`` is friend so unit_quaternion_nonconst can be accessed from
   // ``Base``.
@@ -529,8 +521,12 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   //
   // Precondition: quaternion must not be close to zero.
   //
-  SOPHUS_FUNC explicit SO3(Eigen::Quaternion<Scalar> const& quat)
+  template <class D>
+  SOPHUS_FUNC explicit SO3(Eigen::QuaternionBase<D> const& quat)
       : unit_quaternion_(quat) {
+    static_assert(
+        std::is_same<typename Eigen::QuaternionBase<D>::Scalar, Scalar>::value,
+        "Input must be of same scalar type");
     Base::normalize();
   }
 
@@ -554,18 +550,18 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 
   // Accessor of unit quaternion.
   //
-  SOPHUS_FUNC Eigen::Quaternion<Scalar> const& unit_quaternion() const {
+  SOPHUS_FUNC QuaternionMember const& unit_quaternion() const {
     return unit_quaternion_;
   }
 
  protected:
   // Mutator of unit_quaternion is protected to ensure class invariant.
   //
-  SOPHUS_FUNC Eigen::Quaternion<Scalar>& unit_quaternion_nonconst() {
+  SOPHUS_FUNC QuaternionMember& unit_quaternion_nonconst() {
     return unit_quaternion_;
   }
 
-  Eigen::Quaternion<Scalar> unit_quaternion_;
+  QuaternionMember unit_quaternion_;
 };
 
 }  // namespace Sophus

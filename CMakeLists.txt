@@ -24,8 +24,8 @@ ELSEIF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    SET(CMAKE_CXX_FLAGS_COVERAGE "${CMAKE_CXX_FLAGS_DEBUG} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline")
    SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE "${CMAKE_EXE_LINKER_FLAGS_DEBUG} --coverage")
    SET(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} --coverage")
-ELSEIF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-   ADD_DEFINITIONS("-D _USE_MATH_DEFINES /wd4305 /wd4244")
+ELSEIF(CMAKE_CXX_COMPILER_ID MATCHES "^MSVC$")
+   ADD_DEFINITIONS("-D _USE_MATH_DEFINES /bigobj /wd4305 /wd4244 /MP")
 ENDIF()
 
 ################################################################################

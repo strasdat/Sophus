@@ -16,8 +16,8 @@ namespace internal {
 template <class Scalar_, int Options>
 struct traits<Sophus::SE2<Scalar_, Options>> {
   using Scalar = Scalar_;
-  using TranslationType = Sophus::Vector2<Scalar>;
-  using SO2Type = Sophus::SO2<Scalar>;
+  using TranslationType = Sophus::Vector2<Scalar, Options>;
+  using SO2Type = Sophus::SO2<Scalar, Options>;
 };
 
 template <class Scalar_, int Options>
@@ -423,6 +423,8 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   using Point = typename Base::Point;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
+  using SO2Member = SO2<Scalar, Options>;
+  using TranslationMember = Vector2<Scalar, Options>;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -434,13 +436,22 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   //
   template <class OtherDerived>
   SOPHUS_FUNC SE2(SE2Base<OtherDerived> const& other)
-      : so2_(other.so2()), translation_(other.translation()) {}
+      : so2_(other.so2()), translation_(other.translation()) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
   // Constructor from SO3 and translation vector
   //
-  template <class OtherDerived>
-  SOPHUS_FUNC SE2(SO2Base<OtherDerived> const& so2, Point const& translation)
-      : so2_(so2), translation_(translation) {}
+  template <class OtherDerived, class D>
+  SOPHUS_FUNC SE2(SO2Base<OtherDerived> const& so2,
+                  Eigen::MatrixBase<D> const& translation)
+      : so2_(so2), translation_(translation) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
   // Constructor from rotation matrix and translation vector
   //
@@ -490,25 +501,25 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
 
   // Accessor of SO3
   //
-  SOPHUS_FUNC SO2<Scalar>& so2() { return so2_; }
+  SOPHUS_FUNC SO2Member& so2() { return so2_; }
 
   // Mutator of SO3
   //
-  SOPHUS_FUNC SO2<Scalar> const& so2() const { return so2_; }
+  SOPHUS_FUNC SO2Member const& so2() const { return so2_; }
 
   // Mutator of translation vector
   //
-  SOPHUS_FUNC Vector2<Scalar>& translation() { return translation_; }
+  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
 
   // Accessor of translation vector
   //
-  SOPHUS_FUNC Vector2<Scalar> const& translation() const {
+  SOPHUS_FUNC TranslationMember const& translation() const {
     return translation_;
   }
 
  protected:
-  Sophus::SO2<Scalar> so2_;
-  Vector2<Scalar> translation_;
+  SO2Member so2_;
+  TranslationMember translation_;
 };
 
 }  // end namespace

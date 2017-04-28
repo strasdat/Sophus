@@ -22,7 +22,7 @@ namespace internal {
 template <class Scalar_, int Options>
 struct traits<Sophus::SO2<Scalar_, Options>> {
   using Scalar = Scalar_;
-  using ComplexType = Sophus::Vector2<Scalar>;
+  using ComplexType = Sophus::Vector2<Scalar, Options>;
 };
 
 template <class Scalar_, int Options>
@@ -312,11 +312,6 @@ class SO2Base {
   //
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     using std::abs;
-    SOPHUS_ENSURE(
-        Omega.diagonal().template lpNorm<1>() < Constants<Scalar>::epsilon(),
-        "Omega: \n%", Omega);
-    SOPHUS_ENSURE(abs(Omega(1, 0) + Omega(0, 1)) < Constants<Scalar>::epsilon(),
-                  "Omega: %s", Omega);
     return Omega(1, 0);
   }
 
@@ -341,6 +336,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   using Point = typename Base::Point;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
+  using ComplexMember = Vector2<Scalar, Options>;
 
   // ``Base`` is friend so unit_complex_nonconst can be accessed from ``Base``.
   friend class SO2Base<SO2<Scalar, Options>>;
@@ -382,8 +378,11 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   //
   // Precondition: The vector must not be close to zero.
   //
-  SOPHUS_FUNC explicit SO2(Vector2<Scalar> const& complex)
+  template <class D>
+  SOPHUS_FUNC explicit SO2(Eigen::MatrixBase<D> const& complex)
       : unit_complex_(complex) {
+    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
+                  "must be same Scalar type");
     Base::normalize();
   }
 
@@ -395,16 +394,16 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   // Accessor of unit complex number
   //
-  SOPHUS_FUNC Vector2<Scalar> const& unit_complex() const {
+  SOPHUS_FUNC ComplexMember const& unit_complex() const {
     return unit_complex_;
   }
 
  protected:
   // Mutator of complex number is protected to ensure class invariant.
   //
-  SOPHUS_FUNC Vector2<Scalar>& unit_complex_nonconst() { return unit_complex_; }
+  SOPHUS_FUNC ComplexMember& unit_complex_nonconst() { return unit_complex_; }
 
-  Sophus::Vector2<Scalar> unit_complex_;
+  ComplexMember unit_complex_;
 };
 
 }  // namespace Sophus

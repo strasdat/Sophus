@@ -12,7 +12,8 @@ template class Map<Sophus::SE3<double> const>;
 
 namespace Sophus {
 
-template class SE3<double>;
+template class SE3<double, Eigen::AutoAlign>;
+template class SE3<float, Eigen::DontAlign>;
 
 template <class Scalar>
 class Tests {
@@ -145,7 +146,6 @@ class Tests {
     for (int i = 0; i < 7; ++i) {
       SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i]);
     }
-
     SE3Type trans = SE3Type::transX(0.2);
     SOPHUS_TEST_APPROX(passed, trans.translation().x(), Scalar(0.2),
                        Constants<Scalar>::epsilon());
@@ -155,7 +155,6 @@ class Tests {
     trans = SE3Type::transZ(-0.2);
     SOPHUS_TEST_APPROX(passed, trans.translation().z(), Scalar(-0.2),
                        Constants<Scalar>::epsilon());
-
     Tangent t;
     t << 0, 0, 0, 0.2, 0, 0;
     SOPHUS_TEST_EQUAL(passed, SE3Type::rotX(0.2).matrix(),

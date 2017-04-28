@@ -5,16 +5,16 @@
 
 namespace Sophus {
 
-template <class Scalar, int M>
-using Vector = Eigen::Matrix<Scalar, M, 1>;
+template <class Scalar, int M, int Options = 0>
+using Vector = Eigen::Matrix<Scalar, M, 1, Options>;
 
-template <class Scalar>
-using Vector2 = Vector<Scalar, 2>;
+template <class Scalar, int Options = 0>
+using Vector2 = Vector<Scalar, 2, Options>;
 using Vector2f = Vector2<float>;
 using Vector2d = Vector2<double>;
 
-template <class Scalar>
-using Vector3 = Vector<Scalar, 3>;
+template <class Scalar, int Options = 0>
+using Vector3 = Vector<Scalar, 3, Options>;
 using Vector3f = Vector3<float>;
 using Vector3d = Vector3<double>;
 
