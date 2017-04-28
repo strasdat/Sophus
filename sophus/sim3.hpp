@@ -16,8 +16,8 @@ namespace internal {
 template <class Scalar_, int Options>
 struct traits<Sophus::Sim3<Scalar_, Options>> {
   using Scalar = Scalar_;
-  using TranslationType = Sophus::Vector3<Scalar>;
-  using RxSO3Type = Sophus::RxSO3<Scalar>;
+  using TranslationType = Sophus::Vector3<Scalar, Options>;
+  using RxSO3Type = Sophus::RxSO3<Scalar, Options>;
 };
 
 template <class Scalar_, int Options>
@@ -548,6 +548,8 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   using Point = typename Base::Point;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
+  using RxSo3Member = RxSO3<Scalar, Options>;
+  using TranslationMember = Vector3<Scalar, Options>;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -559,22 +561,36 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   //
   template <class OtherDerived>
   SOPHUS_FUNC Sim3(Sim3Base<OtherDerived> const& other)
-      : rxso3_(other.rxso3()), translation_(other.translation()) {}
+      : rxso3_(other.rxso3()), translation_(other.translation()) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
   // Constructor from RxSO3 and translation vector
   //
-  template <class OtherDerived>
+  template <class OtherDerived, class D>
   SOPHUS_FUNC Sim3(RxSO3Base<OtherDerived> const& rxso3,
-                   Point const& translation)
-      : rxso3_(rxso3), translation_(translation) {}
+                   Eigen::MatrixBase<D> const& translation)
+      : rxso3_(rxso3), translation_(translation) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
   // Constructor from quaternion and translation vector.
   //
   // Precondition: quaternion must not be close to zero.
   //
-  SOPHUS_FUNC Sim3(Eigen::Quaternion<Scalar> const& quaternion,
-                   Point const& translation)
-      : rxso3_(quaternion), translation_(translation) {}
+  template <class D1, class D2>
+  SOPHUS_FUNC Sim3(Eigen::QuaternionBase<D1> const& quaternion,
+                   Eigen::MatrixBase<D2> const& translation)
+      : rxso3_(quaternion), translation_(translation) {
+    static_assert(std::is_same<typename D1::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+    static_assert(std::is_same<typename D2::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
   // Constructor from 4x4 matrix
   //
@@ -604,25 +620,25 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
 
   // Accessor of RxSO3
   //
-  SOPHUS_FUNC RxSO3<Scalar>& rxso3() { return rxso3_; }
+  SOPHUS_FUNC RxSo3Member& rxso3() { return rxso3_; }
 
   // Mutator of RxSO3
   //
-  SOPHUS_FUNC RxSO3<Scalar> const& rxso3() const { return rxso3_; }
+  SOPHUS_FUNC RxSo3Member const& rxso3() const { return rxso3_; }
 
   // Mutator of translation vector
   //
-  SOPHUS_FUNC Vector3<Scalar>& translation() { return translation_; }
+  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
 
   // Accessor of translation vector
   //
-  SOPHUS_FUNC Vector3<Scalar> const& translation() const {
+  SOPHUS_FUNC TranslationMember const& translation() const {
     return translation_;
   }
 
  protected:
-  RxSO3<Scalar> rxso3_;
-  Vector3<Scalar> translation_;
+  RxSo3Member rxso3_;
+  TranslationMember translation_;
 };
 
 }  // namespace Sophus

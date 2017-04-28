@@ -13,7 +13,8 @@ template class Map<Sophus::SE2<double> const>;
 
 namespace Sophus {
 
-template class SE2<double>;
+template class SE2<double, Eigen::AutoAlign>;
+template class SE2<double, Eigen::DontAlign>;
 
 template <class Scalar>
 class Tests {

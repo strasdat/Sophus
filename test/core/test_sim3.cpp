@@ -14,7 +14,8 @@ template class Map<Sophus::Sim3<double> const>;
 
 namespace Sophus {
 
-template class Sim3<double>;
+template class Sim3<double, Eigen::AutoAlign>;
+template class Sim3<float, Eigen::DontAlign>;
 
 template <class Scalar>
 class Tests {
