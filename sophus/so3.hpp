@@ -347,6 +347,7 @@ class SO3Base {
     SOPHUS_ENSURE(internal_gen_q != NULL,
                   "internal_gen_q must not be the null pointer");
     // Factor of 0.5 since SU(2) is a double cover of SO(3).
+    internal_gen_q->coeffs().setZero();
     internal_gen_q->coeffs()[i] = Scalar(0.5);
   }
 
