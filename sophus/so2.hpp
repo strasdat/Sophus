@@ -72,7 +72,7 @@ template <class Derived>
 class SO2Base {
  public:
   using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
-  using Complex = typename Eigen::internal::traits<Derived>::ComplexType;
+  using ComplexT = typename Eigen::internal::traits<Derived>::ComplexType;
 
   // Degrees of freedom of manifold, number of dimensions in tangent space (one
   // since we only have in-plane rotations).
@@ -135,7 +135,7 @@ class SO2Base {
     Scalar length = std::sqrt(unit_complex().x() * unit_complex().x() +
                               unit_complex().y() * unit_complex().y());
     SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
-                  "Complex number should not be close to zero!");
+                  "ComplexT number should not be close to zero!");
     unit_complex_nonconst().x() /= length;
     unit_complex_nonconst().y() /= length;
   }
@@ -221,7 +221,7 @@ class SO2Base {
   // Accessor of unit quaternion.
   //
   SOPHUS_FUNC
-  Complex const& unit_complex() const {
+  ComplexT const& unit_complex() const {
     return static_cast<Derived const*>(this)->unit_complex();
   }
 
@@ -320,7 +320,7 @@ class SO2Base {
   // the complex number must stay close to unit length.
   //
   SOPHUS_FUNC
-  Complex& unit_complex_nonconst() {
+  ComplexT& unit_complex_nonconst() {
     return static_cast<Derived*>(this)->unit_complex_nonconst();
   }
 };
