@@ -482,6 +482,31 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
       : so2_(T.template topLeftCorner<2, 2>().eval()),
         translation_(T.template block<2, 1>(0, 2)) {}
 
+  // Construct a translation only SE3 instance.
+  //
+  template <class T0, class T1>
+  static SOPHUS_FUNC SE2 trans(T0 const& x, T1 const& y) {
+    return SE2(SO2<Scalar>(), Vector2<Scalar>(x, y));
+  }
+
+  // Contruct x-axis translation.
+  //
+  static SOPHUS_FUNC SE2 transX(Scalar const& x) {
+    return SE2::trans(x, Scalar(0));
+  }
+
+  // Contruct y-axis translation.
+  //
+  static SOPHUS_FUNC SE2 transY(Scalar const& y) {
+    return SE2::trans(Scalar(0), y);
+  }
+
+  // Contruct pure rotation.
+  //
+  static SOPHUS_FUNC SE2 rot(Scalar const& x) {
+    return SE2(SO2<Scalar>(x), Sophus::Vector2<Scalar>::Zero());
+  }
+
   // This provides unsafe read/write access to internal data. SO(2) is
   // represented by a complex number (two parameters). When using direct write
   // access, the user needs to take care of that the complex number stays
