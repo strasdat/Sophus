@@ -43,7 +43,8 @@ FIND_PACKAGE( Eigen3 REQUIRED )
 ################################################################################
 SET( SOURCE_DIR "sophus")
 
-SET( TEMPLATES so2
+SET( TEMPLATES geometry
+               so2
                se2
                so3
                se3

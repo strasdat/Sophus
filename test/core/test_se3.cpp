@@ -25,28 +25,7 @@ class Tests {
   Scalar const kPi = Constants<Scalar>::pi();
 
   Tests() {
-    se3_vec_.push_back(
-        SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)));
-    se3_vec_.push_back(
-        SE3Type(SO3Type::exp(Point(0.2, 0.5, -1.0)), Point(10, 0, 0)));
-    se3_vec_.push_back(
-        SE3Type(SO3Type::exp(Point(0., 0., 0.)), Point(0, 100, 5)));
-    se3_vec_.push_back(
-        SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0, 0, 0)));
-    se3_vec_.push_back(SE3Type(SO3Type::exp(Point(0., 0., 0.00001)),
-                               Point(0, -0.00000001, 0.0000000001)));
-    se3_vec_.push_back(
-        SE3Type(SO3Type::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
-    se3_vec_.push_back(
-        SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(4, -5, 0)));
-    se3_vec_.push_back(
-        SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
-        SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(0, 0, 0)) *
-        SE3Type(SO3Type::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
-    se3_vec_.push_back(
-        SE3Type(SO3Type::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
-        SE3Type(SO3Type::exp(Point(kPi, 0, 0)), Point(0, 0, 0)) *
-        SE3Type(SO3Type::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
+    se3_vec_ = getTestSE3s<Scalar>();
 
     Tangent tmp;
     tmp << 0, 0, 0, 0, 0, 0;

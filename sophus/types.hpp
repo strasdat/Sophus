@@ -1,6 +1,7 @@
 #ifndef SOPHUS_TYEPES_HPP
 #define SOPHUS_TYEPES_HPP
 
+#include <Eigen/Geometry>
 #include "common.hpp"
 
 namespace Sophus {
@@ -149,6 +150,18 @@ template <typename T>
 auto transpose(T const& p) -> decltype(details::Transpose<T>::impl(T())) {
   return details::Transpose<T>::impl(p);
 }
+
+// Planes in 3d are hyperplanes.
+template <class T>
+using Plane3 = Eigen::Hyperplane<T, 3>;
+using Plane3d = Plane3<double>;
+using Plane3f = Plane3<float>;
+
+// Lines in 2d are hyperplanes.
+template <class T>
+using Line2 = Eigen::Hyperplane<T, 2>;
+using Line2d = Line2<double>;
+using Line2f = Line2<float>;
 
 }  // namespace Sophus
 

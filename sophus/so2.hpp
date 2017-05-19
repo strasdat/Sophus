@@ -150,9 +150,9 @@ class SO2Base {
     Scalar const& imag = unit_complex().y();
     Transformation R;
     // clang-format off
-        R <<
-             real, -imag,
-                imag,  real;
+    R <<
+      real, -imag,
+      imag,  real;
     // clang-format on
     return R;
   }

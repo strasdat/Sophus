@@ -276,5 +276,45 @@ class LieGroupTests {
   std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec_;
   std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
 };
+
+template <class T>
+std::vector<SE3<T>, Eigen::aligned_allocator<SE3<T>>> getTestSE3s() {
+  T const kPi = Constants<T>::pi();
+  std::vector<SE3<T>, Eigen::aligned_allocator<SE3<T>>> se3_vec;
+  se3_vec.push_back(
+      SE3<T>(SO3<T>::exp(Vector3<T>(0.2, 0.5, 0.0)), Vector3<T>(0, 0, 0)));
+  se3_vec.push_back(
+      SE3<T>(SO3<T>::exp(Vector3<T>(0.2, 0.5, -1.0)), Vector3<T>(10, 0, 0)));
+  se3_vec.push_back(SE3<T>::trans(0, 100, 5));
+  se3_vec.push_back(SE3<T>::rotZ(0.00001));
+  se3_vec.push_back(SE3<T>::trans(0, -0.00000001, 0.0000000001) *
+                    SE3<T>::rotZ(0.00001));
+  se3_vec.push_back(SE3<T>::transX(0.01) * SE3<T>::rotZ(0.00001));
+  se3_vec.push_back(SE3<T>::trans(4, -5, 0) * SE3<T>::rotX(kPi));
+  se3_vec.push_back(
+      SE3<T>(SO3<T>::exp(Vector3<T>(0.2, 0.5, 0.0)), Vector3<T>(0, 0, 0)) *
+      SE3<T>::rotX(kPi) *
+      SE3<T>(SO3<T>::exp(Vector3<T>(-0.2, -0.5, -0.0)), Vector3<T>(0, 0, 0)));
+  se3_vec.push_back(
+      SE3<T>(SO3<T>::exp(Vector3<T>(0.3, 0.5, 0.1)), Vector3<T>(2, 0, -7)) *
+      SE3<T>::rotX(kPi) *
+      SE3<T>(SO3<T>::exp(Vector3<T>(-0.3, -0.5, -0.1)), Vector3<T>(0, 6, 0)));
+  return se3_vec;
+}
+
+template <class T>
+std::vector<SE2<T>, Eigen::aligned_allocator<SE2<T>>> getTestSE2s() {
+  T const kPi = Constants<T>::pi();
+  std::vector<SE2<T>, Eigen::aligned_allocator<SE2<T>>> se2_vec;
+  se2_vec.push_back(SE2<T>());
+  se2_vec.push_back(SE2<T>(SO2<T>(0.2), Vector2<T>(10, 0)));
+  se2_vec.push_back(SE2<T>::transY(100));
+  se2_vec.push_back(SE2<T>(SO2<T>(-1.), Vector2<T>(20, -1)));
+  se2_vec.push_back(
+      SE2<T>(SO2<T>(0.00001), Vector2<T>(-0.00000001, 0.0000000001)));
+  se2_vec.push_back(SE2<T>(SO2<T>(0.3), Vector2<T>(2, 0)) * SE2<T>::rot(kPi) *
+                    SE2<T>(SO2<T>(-0.3), Vector2<T>(0, 6)));
+  return se2_vec;
+}
 }
 #endif  // TESTS_HPP
