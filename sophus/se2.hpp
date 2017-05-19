@@ -231,7 +231,7 @@ class SE2Base {
   // Accessor of unit complex number.
   //
   SOPHUS_FUNC
-  typename Eigen::internal::traits<Derived>::SO2Type::Complex const&
+  typename Eigen::internal::traits<Derived>::SO2Type::ComplexT const&
   unit_complex() const {
     return so2().unit_complex();
   }
