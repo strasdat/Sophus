@@ -1,7 +1,6 @@
 #ifndef SOPHUS_TYEPES_HPP
 #define SOPHUS_TYEPES_HPP
 
-#include <Eigen/Geometry>
 #include "common.hpp"
 
 namespace Sophus {
