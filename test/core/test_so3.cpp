@@ -136,6 +136,15 @@ class Tests {
     Matrix3<Scalar> R = so3_vec_.front().matrix();
     SO3Type so3(R);
     SOPHUS_TEST_APPROX(passed, R, so3.matrix(), Constants<Scalar>::epsilon());
+
+    for (int i = 0; i < 100; ++i) {
+      Matrix3<Scalar> R = Matrix3<Scalar>::Random();
+      SO3Type so3 = SO3Type::fromNonOrthogonal(R);
+      SO3Type so3_2 = SO3Type::fromNonOrthogonal(so3.matrix());
+
+      SOPHUS_TEST_APPROX(passed, so3.matrix(), so3_2.matrix(),
+                         Constants<Scalar>::epsilon());
+    }
     return passed;
   }
 

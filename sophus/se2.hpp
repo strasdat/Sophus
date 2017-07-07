@@ -198,6 +198,9 @@ class SE2Base {
   // Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   //
   SOPHUS_FUNC void setRotationMatrix(Matrix<Scalar, 2, 2> const& R) {
+    SOPHUS_ENSURE(isOrthogoal(R), "R is not orthogonal:\n %", R);
+    SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
+                  R.determinant());
     so2().setComplex(Scalar(0.5) * (R(0, 0) + R(1, 1)),
                      Scalar(0.5) * (R(1, 0) - R(0, 1)));
   }
