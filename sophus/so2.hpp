@@ -361,7 +361,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   SOPHUS_FUNC explicit SO2(Transformation const& R)
       : unit_complex_(Scalar(0.5) * (R(0, 0) + R(1, 1)),
                       Scalar(0.5) * (R(1, 0) - R(0, 1))) {
-    SOPHUS_ENSURE(isOrthogoal(R), "R is not orthogonal:\n %", R);
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
     SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
                   R.determinant());
   }

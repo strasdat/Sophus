@@ -11,7 +11,7 @@ namespace Sophus {
 // Takes in arbiray square matrix and returns true if it is
 // orthogonal.
 template <class D>
-EIGEN_DEVICE_FUNC bool isOrthogoal(Eigen::MatrixBase<D> const& R) {
+EIGEN_DEVICE_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
   using Scalar = typename D::Scalar;
   static int const N = D::RowsAtCompileTime;
   static int const M = D::ColsAtCompileTime;

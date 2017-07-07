@@ -233,7 +233,7 @@ class SE3Base {
   // Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   //
   SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar> const& R) {
-    SOPHUS_ENSURE(isOrthogoal(R), "R is not orthogonal:\n %", R);
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
     SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
                   R.determinant());
     so3().setQuaternion(Eigen::Quaternion<Scalar>(R));

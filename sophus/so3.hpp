@@ -518,7 +518,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   // Precondition: rotation matrix needs to be orthogonal with determinant of 1.
   //
   SOPHUS_FUNC SO3(Transformation const& R) : unit_quaternion_(R) {
-    SOPHUS_ENSURE(isOrthogoal(R), "R is not orthogonal:\n %", R);
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
     SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
                   R.determinant());
   }
