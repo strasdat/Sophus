@@ -7,6 +7,7 @@
 // This helps when using Sophus with unusual compilers, like nvcc.
 #include <Eigen/LU>
 
+#include "rotation_matrix.hpp"
 #include "types.hpp"
 
 namespace Sophus {
@@ -135,7 +136,7 @@ class SO2Base {
     Scalar length = std::sqrt(unit_complex().x() * unit_complex().x() +
                               unit_complex().y() * unit_complex().y());
     SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
-                  "ComplexT number should not be close to zero!");
+                  "Complex number should not be close to zero!");
     unit_complex_nonconst().x() /= length;
     unit_complex_nonconst().y() /= length;
   }
@@ -360,9 +361,14 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   SOPHUS_FUNC explicit SO2(Transformation const& R)
       : unit_complex_(Scalar(0.5) * (R(0, 0) + R(1, 1)),
                       Scalar(0.5) * (R(1, 0) - R(0, 1))) {
-    SOPHUS_ENSURE(
-        std::abs(R.determinant() - Scalar(1)) <= Constants<Scalar>::epsilon(),
-        "det(R) should be (close to) 1.");
+    SOPHUS_ENSURE(isOrthogoal(R), "R is not orthogonal:\n %", R);
+    SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
+                  R.determinant());
+  }
+
+  // Returns closed SO2 given arbirary 2x2 matrix.
+  static SO2 fromNonOrthogonal(Transformation const& R) {
+    return SO2(makeRotationMatrix(R));
   }
 
   // Constructor from pair of real and imaginary number.
