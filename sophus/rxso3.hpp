@@ -129,14 +129,6 @@ class RxSO3Base {
   //
   SOPHUS_FUNC Tangent log() const { return RxSO3<Scalar>::log(*this); }
 
-  /**
-   * \returns 3x3 matrix representation of instance
-   *
-   * For RxSO3, the matrix representation is a scaled orthogonal
-   * matrix \f$ sR \f$ with \f$ det(sR)=s^3 \f$, thus a scaled rotation
-   * matrix \f$ R \f$  with scale s.
-   */
-
   // Returns 3x3 matrix representation of the instance.
   //
   // For RxSO3, the matrix representation is an scaled orthogonal matrix ``sR``

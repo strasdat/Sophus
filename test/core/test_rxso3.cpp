@@ -128,6 +128,20 @@ class Tests {
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i]);
     }
+
+    for (int i = 0; i < 10; ++i) {
+      Matrix3<Scalar> M = Matrix3<Scalar>::Random();
+      for (Scalar scale : {Scalar(0.01), Scalar(0.99), Scalar(1), Scalar(10)}) {
+        Matrix3<Scalar> R = makeRotationMatrix(M);
+        Matrix3<Scalar> sR = scale * R;
+        SOPHUS_TEST(passed, isScaledOrthogonalAndPositive(sR),
+                    "isScaledOrthogonalAndPositive(sR): % *\n%", scale, R);
+        Matrix3<Scalar> sR_cols_swapped;
+        sR_cols_swapped << sR.col(1), sR.col(0), sR.col(2);
+        SOPHUS_TEST(passed, !isScaledOrthogonalAndPositive(sR_cols_swapped),
+                    "isScaledOrthogonalAndPositive(-sR): % *\n%", scale, R);
+      }
+    }
     return passed;
   }
 
@@ -168,62 +182,6 @@ class Tests {
   std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec_;
   std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
 };
-
-template <class Scalar>
-void tests() {
-  using std::vector;
-  using RxSO3Type = RxSO3<Scalar>;
-  using Point = typename RxSO3<Scalar>::Point;
-  using Tangent = typename RxSO3<Scalar>::Tangent;
-
-  Scalar const kPi = Constants<Scalar>::pi();
-
-  vector<RxSO3Type, Eigen::aligned_allocator<RxSO3Type>> rxso3_vec;
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 1.)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, -1.0, 1.1)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0., 1.1)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.00001)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(kPi, 0, 0, 0.9)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 0)) *
-                      RxSO3Type::exp(Tangent(kPi, 0, 0, 0.0)) *
-                      RxSO3Type::exp(Tangent(-0.2, -0.5, -0.0, 0)));
-  rxso3_vec.push_back(RxSO3Type::exp(Tangent(0.3, 0.5, 0.1, 0)) *
-                      RxSO3Type::exp(Tangent(kPi, 0, 0, 0)) *
-                      RxSO3Type::exp(Tangent(-0.3, -0.5, -0.1, 0)));
-
-  vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec;
-  Tangent tmp;
-  tmp << 0, 0, 0, 0;
-  tangent_vec.push_back(tmp);
-  tmp << 1, 0, 0, 0;
-  tangent_vec.push_back(tmp);
-  tmp << 1, 0, 0, 0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 0, 1, 0, 0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 0, 0, 1, -0.1;
-  tangent_vec.push_back(tmp);
-  tmp << -1, 1, 0, -0.1;
-  tangent_vec.push_back(tmp);
-  tmp << 20, -1, 0, 2;
-  tangent_vec.push_back(tmp);
-
-  vector<Point, Eigen::aligned_allocator<Point>> point_vec;
-  point_vec.push_back(Point(1, 2, 4));
-
-  LieGroupTests<RxSO3Type> tests;
-  tests.setGroupElements(rxso3_vec);
-  tests.setTangentVectors(tangent_vec);
-  tests.setPoints(point_vec);
-
-  bool passed = tests.doAllTestsPass();
-
-  // TODO: Add proper unit tests for all functions.
-
-  processTestResult(passed);
-}
 
 int test_rxso3() {
   using std::cerr;
