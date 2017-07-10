@@ -11,7 +11,7 @@ namespace Sophus {
 // Takes in arbiray square matrix and returns true if it is
 // orthogonal.
 template <class D>
-EIGEN_DEVICE_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
+SOPHUS_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
   using Scalar = typename D::Scalar;
   static int const N = D::RowsAtCompileTime;
   static int const M = D::ColsAtCompileTime;
@@ -23,10 +23,37 @@ EIGEN_DEVICE_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
          Constants<Scalar>::epsilon();
 }
 
-// Takes in arbiray square matrix (2x2 or larger) and returns closed
+// Takes in arbiray square matrix and returns true if it is
+// "scaled-orthogonal" with positive determinant.
+//
+template <class D>
+SOPHUS_FUNC bool isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
+  using Scalar = typename D::Scalar;
+  static int const N = D::RowsAtCompileTime;
+  static int const M = D::ColsAtCompileTime;
+  using std::pow;
+  using std::sqrt;
+
+  Scalar det = sR.determinant();
+
+  if (det <= 0) {
+    return false;
+  }
+
+  Scalar scale_sqr = pow(det, Scalar(2. / N));
+
+  static_assert(N == M, "must be a square matrix");
+  static_assert(N >= 2, "must have compile time dimension >= 2");
+
+  return (sR * sR.transpose() - scale_sqr * Matrix<Scalar, N, N>::Identity())
+             .template lpNorm<Eigen::Infinity>() <
+         sqrt(Constants<Scalar>::epsilon());
+}
+
+// Takes in arbiray square matrix (2x2 or larger) and returns closest
 // orthogonal matrix with positive determinant.
 template <class D>
-EIGEN_DEVICE_FUNC
+SOPHUS_FUNC
     Matrix<typename D::Scalar, D::RowsAtCompileTime, D::RowsAtCompileTime>
     makeRotationMatrix(Eigen::MatrixBase<D> const& R) {
   using Scalar = typename D::Scalar;

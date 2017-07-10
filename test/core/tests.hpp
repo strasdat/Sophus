@@ -246,7 +246,8 @@ class LieGroupTests {
   }
 
   bool doAllTestsPass() {
-    bool passed = adjointTest();
+    bool passed = true;
+    passed &= adjointTest();
     passed &= expLogTest();
     passed &= expMapTest();
     passed &= groupActionTest();

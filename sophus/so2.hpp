@@ -61,7 +61,7 @@ namespace Sophus {
 //
 // SO(2) is a compact and commutative group. First it is compact since the set
 // of rotation matrices is a closed and bounded set. Second it is commutative
-// since ``R(alpha) * R(beta) = R(beta) * R(alpha``,  simply because ``alpha +
+// since ``R(alpha) * R(beta) = R(beta) * R(alpha)``,  simply because ``alpha +
 // beta = beta + alpha`` with ``alpha`` and ``beta`` being rotation angles
 // (about the same axis).
 //
@@ -115,7 +115,7 @@ class SO2Base {
   //
   SOPHUS_FUNC Scalar const* data() const { return unit_complex().data(); }
 
-  // Returns ``*this`` times the ith generator of internal U(1) representation.
+  // Returns group inverse.
   //
   SOPHUS_FUNC SO2<Scalar> inverse() const {
     return SO2<Scalar>(unit_complex().x(), -unit_complex().y());

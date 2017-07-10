@@ -1,9 +1,11 @@
 #ifndef SOPHUS_INTERPOLATE_DETAILS_HPP
 #define SOPHUS_INTERPOLATE_DETAILS_HPP
 
+#include "rxso2.hpp"
 #include "rxso3.hpp"
 #include "se2.hpp"
 #include "se3.hpp"
+#include "sim2.hpp"
 #include "sim3.hpp"
 #include "so2.hpp"
 #include "so3.hpp"
@@ -23,6 +25,15 @@ struct Traits<SO2<Scalar>> {
     Scalar angle = SO2<Scalar>::log(foo_T_bar);
     return abs(abs(angle) - Constants<Scalar>::pi()) <
            Constants<Scalar>::epsilon();
+  }
+};
+
+template <class Scalar>
+struct Traits<RxSO2<Scalar>> {
+  static bool constexpr supported = true;
+
+  static bool hasShortestPathAmbiguity(RxSO2<Scalar> const& foo_T_bar) {
+    return Traits<SO2<Scalar>>::hasShortestPathAmbiguity(foo_T_bar.so2());
   }
 };
 
@@ -63,6 +74,17 @@ struct Traits<SE3<Scalar>> {
 
   static bool hasShortestPathAmbiguity(SE3<Scalar> const& foo_T_bar) {
     return Traits<SO3<Scalar>>::hasShortestPathAmbiguity(foo_T_bar.so3());
+  }
+};
+
+template <class Scalar>
+struct Traits<Sim2<Scalar>> {
+  static bool constexpr supported = true;
+
+  static bool hasShortestPathAmbiguity(Sim2<Scalar> const& foo_T_bar) {
+    return Traits<SO2<Scalar>>::hasShortestPathAmbiguity(
+        foo_T_bar.rxso2().so2());
+    ;
   }
 };
 
