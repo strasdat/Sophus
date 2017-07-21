@@ -81,6 +81,7 @@ class SO3Base {
   static int constexpr N = 3;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector3<Scalar>;
+  using Line = ParametrizedLine3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -206,6 +207,17 @@ class SO3Base {
   //
   SOPHUS_FUNC Point operator*(Point const& p) const {
     return unit_quaternion()._transformVector(p);
+  }
+
+  // Group action on lines.
+  //
+  // This function rotates a parametrized line ``l(t) = o + t * d`` by the SO3
+  // element:
+  //
+  // Both direction ``d`` and origin ``o`` are rotated as a 3 dimensional point
+  //
+  SOPHUS_FUNC Line operator*(Line const& l) const {
+    return Line((*this) * l.origin(), (*this) * l.direction());
   }
 
   // In-place group multiplication.

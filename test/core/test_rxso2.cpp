@@ -55,6 +55,7 @@ class Tests {
     tangent_vec_.push_back(tmp);
 
     point_vec_.push_back(Point(1, 4));
+    point_vec_.push_back(Point(1, -3));
   }
 
   void runAll() {

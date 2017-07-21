@@ -84,6 +84,7 @@ class RxSO2Base {
   static int constexpr N = 2;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector2<Scalar>;
+  using Line = ParametrizedLine2<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -179,6 +180,18 @@ class RxSO2Base {
   //   ``p_bar = s * (bar_R_foo * p_foo)``.
   //
   SOPHUS_FUNC Point operator*(Point const& p) const { return matrix() * p; }
+
+  // Group action on lines.
+  //
+  // This function rotates a parametrized line ``l(t) = o + t * d`` by the SO2
+  // element and scales it by the scale factor
+  //
+  // Origin ``o`` is rotated and scaled
+  // Direction ``d`` is rotated (preserving it's norm)
+  //
+  SOPHUS_FUNC Line operator*(Line const& l) const {
+    return Line((*this) * l.origin(), (*this) * l.direction() / scale());
+  }
 
   // In-place group multiplication.
   //

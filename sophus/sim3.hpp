@@ -72,6 +72,7 @@ class Sim3Base {
   static int constexpr N = 4;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector3<Scalar>;
+  using Line = ParametrizedLine3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -174,6 +175,19 @@ class Sim3Base {
   //
   SOPHUS_FUNC Point operator*(Point const& p) const {
     return rxso3() * p + translation();
+  }
+
+  // Group action on lines.
+  //
+  // This function rotates, scales and translates a parametrized line
+  // ``l(t) = o + t * d`` by the Sim(3) element:
+  //
+  // Origin ``o`` is rotated, scaled and translated
+  // Direction ``d`` is rotated
+  //
+  SOPHUS_FUNC Line operator*(Line const& l) const {
+    Line rotatedLine = rxso3() * l;
+    return Line(rotatedLine.origin() + translation(), rotatedLine.direction());
   }
 
   // In-place group multiplication.
