@@ -42,6 +42,7 @@ class Tests {
     tangent_vec_.push_back(Tangent(kPi / 2. + 0.0001));
 
     point_vec_.push_back(Point(1, 2));
+    point_vec_.push_back(Point(1, -3));
   }
 
   void runAll() {

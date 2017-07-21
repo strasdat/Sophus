@@ -68,6 +68,7 @@ class SE2Base {
   static int constexpr N = 3;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector2<Scalar>;
+  using Line = ParametrizedLine2<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -169,6 +170,18 @@ class SE2Base {
   //
   SOPHUS_FUNC Point operator*(Point const& p) const {
     return so2() * p + translation();
+  }
+
+  // Group action on lines.
+  //
+  // This function rotates and translates a parametrized line
+  // ``l(t) = o + t * d`` by the SE(2) element:
+  //
+  // Origin ``o`` is rotated and translated using SE(2) action
+  // Direction ``d`` is rotated using SO(2) action
+  //
+  SOPHUS_FUNC Line operator*(Line const& l) const {
+    return Line((*this) * l.origin(), so2() * l.direction());
   }
 
   // In-place group multiplication.

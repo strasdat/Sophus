@@ -84,6 +84,7 @@ class SO2Base {
   static int constexpr N = 2;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector2<Scalar>;
+  using Line = ParametrizedLine2<Scalar>;
   using Tangent = Scalar;
   using Adjoint = Scalar;
 
@@ -183,6 +184,17 @@ class SO2Base {
     Scalar const& real = unit_complex().x();
     Scalar const& imag = unit_complex().y();
     return Point(real * p[0] - imag * p[1], imag * p[0] + real * p[1]);
+  }
+
+  // Group action on lines.
+  //
+  // This function rotates a parametrized line ``l(t) = o + t * d`` by the SO3
+  // element:
+  //
+  // Both direction ``d`` and origin ``o`` are rotated as a 3 dimensional point
+  //
+  SOPHUS_FUNC Line operator*(Line const& l) const {
+    return Line((*this) * l.origin(), (*this) * l.direction());
   }
 
   // In-place group multiplication.
