@@ -87,6 +87,18 @@ class SE3Base {
     return res;
   }
 
+  // Extract rotation angle about canonical X-axis
+  //
+  Scalar angleX() { return so3().angleX(); }
+
+  // Extract rotation angle about canonical Y-axis
+  //
+  Scalar angleY() { return so3().angleY(); }
+
+  // Extract rotation angle about canonical Z-axis
+  //
+  Scalar angleZ() { return so3().angleZ(); }
+
   // Returns copy of instance casted to NewScalarType.
   //
   template <class NewScalarType>

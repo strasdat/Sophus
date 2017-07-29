@@ -128,6 +128,15 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, SO3Type::rotZ(1.1).matrix(),
                       SO3Type::exp(Point(0, 0, 1.1)).matrix());
 
+    for (Scalar const angle : {0.0, 0.1, 0.3, -0.7}) {
+      SOPHUS_TEST_APPROX(passed, SO3Type::rotX(angle).angleX(), angle,
+                         Constants<Scalar>::epsilon());
+      SOPHUS_TEST_APPROX(passed, SO3Type::rotY(angle).angleY(), angle,
+                         Constants<Scalar>::epsilon());
+      SOPHUS_TEST_APPROX(passed, SO3Type::rotZ(angle).angleZ(), angle,
+                         Constants<Scalar>::epsilon());
+    }
+
     return passed;
   }
 

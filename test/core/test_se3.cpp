@@ -166,6 +166,15 @@ class Tests {
                        se3.matrix(), Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, SE3Type(se3.matrix()).matrix(), se3.matrix(),
                        Constants<Scalar>::epsilon());
+
+    for (Scalar const angle : {0.0, 0.1, 0.3, -0.7}) {
+      SOPHUS_TEST_APPROX(passed, SE3Type::rotX(angle).angleX(), angle,
+                         Constants<Scalar>::epsilon());
+      SOPHUS_TEST_APPROX(passed, SE3Type::rotY(angle).angleY(), angle,
+                         Constants<Scalar>::epsilon());
+      SOPHUS_TEST_APPROX(passed, SE3Type::rotZ(angle).angleZ(), angle,
+                         Constants<Scalar>::epsilon());
+    }
     return passed;
   }
 

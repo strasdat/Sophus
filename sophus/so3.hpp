@@ -2,6 +2,7 @@
 #define SOPHUS_SO3_HPP
 
 #include "rotation_matrix.hpp"
+#include "so2.hpp"
 #include "types.hpp"
 
 // Include only the selective set of Eigen headers that we need.
@@ -93,6 +94,36 @@ class SO3Base {
   // For SO(3), it simply returns the rotation matrix corresponding to ``A``.
   //
   SOPHUS_FUNC Adjoint Adj() const { return matrix(); }
+
+  // Extract rotation angle about canonical X-axis
+  //
+  Scalar angleX() {
+    Sophus::Matrix3<Scalar> R = matrix();
+    Sophus::Matrix2<Scalar> Rx = R.template block<2, 2>(1, 1);
+    return SO2<Scalar>(makeRotationMatrix(Rx)).log();
+  }
+
+  // Extract rotation angle about canonical Y-axis
+  //
+  Scalar angleY() {
+    Sophus::Matrix3<Scalar> R = matrix();
+    Sophus::Matrix2<Scalar> Ry;
+    // clang-format off
+    Ry <<
+      R(0, 0), R(2, 0),
+      R(0, 2), R(2, 2);
+    // clang-format on
+    return SO2<Scalar>(makeRotationMatrix(Ry)).log();
+  }
+
+  // Extract rotation angle about canonical Z-axis
+  //
+  Scalar angleZ() {
+    Sophus::Matrix3<Scalar> R = matrix();
+    Sophus::Matrix2<Scalar> Rz = R.template block<2, 2>(0, 0);
+    return SO2<Scalar>(makeRotationMatrix(Rz)).log();
+  }
+
 
   // Returns copy of instance casted to NewScalarType.
   //
