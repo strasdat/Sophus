@@ -104,11 +104,11 @@ void ensureFailed(char const* function, char const* file, int line,
                   char const* description);
 }
 
-#define SOPHUS_ENSURE(expr, description, ...)                               \
+#define SOPHUS_ENSURE(expr, ...)                                            \
   ((expr) ? ((void)0)                                                       \
           : ::Sophus::ensureFailed(                                         \
                 SOPHUS_FUNCTION, __FILE__, __LINE__,                        \
-                Sophus::details::FormatString((description), ##__VA_ARGS__) \
+                Sophus::details::FormatString(##__VA_ARGS__)                \
                     .c_str()))
 #else
 namespace Sophus {
@@ -126,10 +126,10 @@ SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
 #endif
 }
 }  // namespace Sophus
-#define SOPHUS_ENSURE(expr, description, ...)                          \
+#define SOPHUS_ENSURE(expr, ...)                                       \
   ((expr) ? ((void)0)                                                  \
           : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, __LINE__, \
-                                  (description), ##__VA_ARGS__))
+                                  ##__VA_ARGS__))
 #endif
 
 namespace Sophus {
