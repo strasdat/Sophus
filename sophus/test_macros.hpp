@@ -96,10 +96,28 @@ void processTestResult(bool passed) {
     auto nrm = Sophus::metric((left), (right));                                \
     if (!(nrm < (thr))) {                                                      \
       std::string msg = Sophus::details::FormatString(                         \
-          "% (=%) is not approx % (=%); % is % \n", SOPHUS_STRINGIFY(left),    \
-          Sophus::details::pretty(left), SOPHUS_STRINGIFY(right),              \
-          Sophus::details::pretty(right), SOPHUS_STRINGIFY(thr),               \
-          Sophus::details::pretty(thr));                                       \
+          "% (=%) is not approx % (=%); % is %; nrm is %\n",                   \
+          SOPHUS_STRINGIFY(left), Sophus::details::pretty(left),               \
+          SOPHUS_STRINGIFY(right), Sophus::details::pretty(right),             \
+          SOPHUS_STRINGIFY(thr), Sophus::details::pretty(thr), nrm);           \
+      msg += Sophus::details::FormatString(__VA_ARGS__);                       \
+      Sophus::details::testFailed(passed, SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                  msg);                                        \
+    }                                                                          \
+  } while (false)
+
+// GenericTests whether left is NOT approximatly equal to right given a
+// threshold.
+// The in-out parameter passed will be set to false if test fails.
+#define SOPHUS_TEST_NOT_APPROX(passed, left, right, thr, ...)                  \
+  do {                                                                         \
+    auto nrm = Sophus::metric((left), (right));                                \
+    if (nrm < (thr)) {                                                         \
+      std::string msg = Sophus::details::FormatString(                         \
+          "% (=%) is approx % (=%), but it should not!\n % is %; nrm is %\n",  \
+          SOPHUS_STRINGIFY(left), Sophus::details::pretty(left),               \
+          SOPHUS_STRINGIFY(right), Sophus::details::pretty(right),             \
+          SOPHUS_STRINGIFY(thr), Sophus::details::pretty(thr), nrm);           \
       msg += Sophus::details::FormatString(__VA_ARGS__);                       \
       Sophus::details::testFailed(passed, SOPHUS_FUNCTION, __FILE__, __LINE__, \
                                   msg);                                        \

@@ -20,7 +20,7 @@ namespace Sophus {
 //
 // Precondition: ``p`` must be in [0, 1].
 //
-template <class G, class Scalar2>
+template <class G, class Scalar2 = typename G::Scalar>
 enable_if_t<interp_details::Traits<G>::supported, G> interpolate(
     G const& foo_T_bar, G const& foo_T_baz, Scalar2 p = Scalar2(0.5f)) {
   using Scalar = typename G::Scalar;
