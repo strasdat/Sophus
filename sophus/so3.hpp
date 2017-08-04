@@ -125,7 +125,6 @@ class SO3Base {
     return SO2<Scalar>(makeRotationMatrix(Rz)).log();
   }
 
-
   // Returns copy of instance casted to NewScalarType.
   //
   template <class NewScalarType>
@@ -513,7 +512,6 @@ class SO3Base {
   //                | -b  a  0 | .
   //
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
-    using std::abs;
     return Tangent(Omega(2, 1), Omega(0, 2), Omega(1, 0));
   }
 
