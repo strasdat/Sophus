@@ -56,6 +56,14 @@ bool test3dGeometry() {
   Vector3<T> normal_foo = Vector3<T>(1, 2, 0).normalized();
   Matrix3<T> R_foo_plane = rotationFromNormal(normal_foo);
   SOPHUS_TEST_APPROX(passed, normal_foo, R_foo_plane.col(2).eval(), eps);
+  // Just testing that the function normalizes the input normal and hint
+  // direction correctly:
+  Matrix3<T> R2_foo_plane = rotationFromNormal((T(0.9) * normal_foo).eval());
+  SOPHUS_TEST_APPROX(passed, normal_foo, R2_foo_plane.col(2).eval(), eps);
+  Matrix3<T> R3_foo_plane =
+      rotationFromNormal(normal_foo, Vector3<T>(T(0.9), T(0), T(0)),
+                         Vector3<T>(T(0), T(1.1), T(0)));
+  SOPHUS_TEST_APPROX(passed, normal_foo, R3_foo_plane.col(2).eval(), eps);
 
   normal_foo = Vector3<T>(1, 0, 0);
   R_foo_plane = rotationFromNormal(normal_foo);
