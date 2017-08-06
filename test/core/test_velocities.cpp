@@ -62,11 +62,12 @@ bool tests_rotational_velocities() {
 
   // One parameter subgroup of SE3, motion through space given time t.
   auto bar_T_baz = [](Scalar t) -> SE3<Scalar> {
-    return SE3<Scalar>::rotX(t * 0.01) * SE3<Scalar>::rotY(t * 0.0001) *
-           SE3<Scalar>::transX(t * 0.0001);
+    return SE3<Scalar>::rotX(t * Scalar(0.01)) *
+           SE3<Scalar>::rotY(t * Scalar(0.0001)) *
+           SE3<Scalar>::transX(t * Scalar(0.0001));
   };
 
-  std::vector<Scalar> ts = {0, 0.3, 1};
+  std::vector<Scalar> ts = {Scalar(0), Scalar(0.3), Scalar(1)};
 
   Scalar h = Constants<Scalar>::epsilon();
   for (Scalar t : ts) {
