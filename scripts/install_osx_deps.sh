@@ -3,7 +3,6 @@
 set -x # echo on
 set -e # exit on error
 brew update
-brew install eigen
 brew install cmake
 brew install glog
 brew install suite-sparse

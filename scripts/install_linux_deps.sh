@@ -13,7 +13,7 @@ wget http://ceres-solver.org/ceres-solver-1.12.0.tar.gz
 tar zxf ceres-solver-1.12.0.tar.gz
 mkdir ceres-bin
 cd ceres-bin
-cmake ../ceres-solver-1.12.0
+cmake -DCXX11=On ../ceres-solver-1.12.0
 make -j3
 make test
 sudo make install
