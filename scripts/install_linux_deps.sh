@@ -15,5 +15,4 @@ mkdir ceres-bin
 cd ceres-bin
 cmake -DCXX11=On ../ceres-solver-1.12.0
 make -j3
-make test
 sudo make install
