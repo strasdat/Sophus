@@ -9,10 +9,11 @@ sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
 sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++
 gcc --version
 g++ --version
-wget http://ceres-solver.org/ceres-solver-1.12.0.tar.gz
-tar zxf ceres-solver-1.12.0.tar.gz
-mkdir ceres-bin
-cd ceres-bin
-cmake -DCXX11=On ../ceres-solver-1.12.0
+git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
+cd ceres-solver
+git reset --hard afe93546b67cee0ad205fe8044325646ed5deea9
+mkdir build
+cd build
+cmake -DCXX11=On ..
 make -j3
 sudo make install
