@@ -45,7 +45,7 @@ Vector3<Scalar> finiteDifferenceRotationalVelocity(
   //
   // W = dR(t)/dt * R^{-1}(t)
   Matrix3<Scalar> dR_dt_in_frame_foo =
-      ((foo_R_bar(t - h)).matrix() - foo_R_bar(t + h).matrix()) /
+      ((foo_R_bar(t + h)).matrix() - foo_R_bar(t - h).matrix()) /
       (Scalar(2) * h);
   // velocity tensor
   Matrix3<Scalar> W_in_frame_foo =
