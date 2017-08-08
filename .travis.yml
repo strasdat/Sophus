@@ -1,6 +1,7 @@
 sudo: required
 dist: trusty
 
+
 addons:
   apt:
     sources:
@@ -20,6 +21,8 @@ install:
 - if [[ "$BUILD_TYPE" == "Coverage" ]]; then gem install coveralls-lcov ; fi
 
 language: cpp
+
+cache: ccache
 
 matrix:
   include:
@@ -42,7 +45,7 @@ matrix:
 script:
   - mkdir build
   - cd build
-  - cmake -D CMAKE_BUILD_TYPE=$BUILD_TYPE ..
+  - cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
   - make -j
   - make test
 
