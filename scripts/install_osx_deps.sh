@@ -9,6 +9,7 @@ git clone https://github.com/RLovelett/eigen.git eigen3
 cd eigen3
 mkdir build
 cmake ..
+make install
 cd ../..
 wget http://ceres-solver.org/ceres-solver-1.12.0.tar.gz
 tar zxf ceres-solver-1.12.0.tar.gz
