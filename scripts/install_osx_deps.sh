@@ -17,7 +17,7 @@ git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
 cd ceres-solver
 git reset --hard afe93546b67cee0ad205fe8044325646ed5deea9
 mkdir build
-cmake -DCXX11=On ..
 cd build
+cmake -DCXX11=On ..
 make -j3
 make install
