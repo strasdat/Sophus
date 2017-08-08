@@ -163,6 +163,26 @@ auto transpose(T const& p) -> decltype(details::Transpose<T>::impl(T())) {
   return details::Transpose<T>::impl(p);
 }
 
+template <class Scalar>
+struct IsFloatingPoint {
+  static bool const value = std::is_floating_point<Scalar>::value;
+};
+
+template <class Scalar, int M, int N>
+struct IsFloatingPoint<Matrix<Scalar, M, N>> {
+  static bool const value = std::is_floating_point<Scalar>::value;
+};
+
+template <class Scalar_>
+struct GetScalar {
+  using Scalar = Scalar_;
+};
+
+template <class Scalar_, int M, int N>
+struct GetScalar<Matrix<Scalar_, M, N>> {
+  using Scalar = Scalar_;
+};
+
 // Planes in 3d are hyperplanes.
 template <class T>
 using Plane3 = Eigen::Hyperplane<T, 3>;
