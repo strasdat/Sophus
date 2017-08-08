@@ -13,10 +13,11 @@ cd build
 cmake ..
 make install
 cd ../..
-wget http://ceres-solver.org/ceres-solver-1.12.0.tar.gz
-tar zxf ceres-solver-1.12.0.tar.gz
-mkdir ceres-bin
-cd ceres-bin
-cmake -DCXX11=On ../ceres-solver-1.12.0
+git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
+cd ceres-solver
+git reset --hard afe93546b67cee0ad205fe8044325646ed5deea9
+mkdir build
+cmake -DCXX11=On ..
+cd build
 make -j3
 make install
