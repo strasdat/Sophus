@@ -1,7 +1,7 @@
 SET(PROJECT_NAME Sophus)
 
 PROJECT(${PROJECT_NAME})
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.4)
 
 SET( CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD 11)
 IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
-   SET(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Wno-deprecated-register -Wno-deprecated-register")
+   SET(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Wno-deprecated-register -Wno-deprecated-register -Qunused-arguments -fcolor-diagnostics")
 ELSEIF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")

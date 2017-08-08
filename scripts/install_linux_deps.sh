@@ -3,6 +3,14 @@
 set -x # echo on
 set -e # exit on error
 
+wget https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.sh
+chmod +x cmake-3.9.0-Linux-x86_64.sh 
+set +x # echo off
+sudo ./cmake-3.9.0-Linux-x86_64.sh  --skip-license --prefix=/usr/local
+set -x # echo on
+sudo update-alternatives --install /usr/bin/cmake cmake /usr/local/bin/cmake 1 --force
+cmake --version 
+
 sudo apt-get -qq update 
 sudo apt-get install libeigen3-dev libc++-dev libgoogle-glog-dev libatlas-base-dev libsuitesparse-dev
 sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
@@ -14,6 +22,8 @@ cd ceres-solver
 git reset --hard afe93546b67cee0ad205fe8044325646ed5deea9
 mkdir build
 cd build
-cmake -DCXX11=On ..
+ccache -M 50G
+ccache -s
+cmake -DCXX11=On -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ..
 make -j3
 sudo make install
