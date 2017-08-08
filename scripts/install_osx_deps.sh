@@ -9,6 +9,7 @@ git clone https://github.com/RLovelett/eigen.git eigen3
 cd eigen3
 git reset --hard abd0909838886c1c7a3c261c23a02950affee243
 mkdir build
+cd build
 cmake ..
 make install
 cd ../..
