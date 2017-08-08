@@ -10,14 +10,8 @@ addons:
       - g++-5
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libeigen3-dev libc++-dev; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then gcc --version; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then g++ --version; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install eigen          ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then scripts/install_linux_deps.sh ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then scripts/install_osx_deps.sh ; fi
 
 install:
 - if [[ "$BUILD_TYPE" == "Coverage" ]]; then wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.11.orig.tar.gz ; fi
