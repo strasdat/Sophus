@@ -2,6 +2,8 @@
 #define SOPHUS_VELOCITIES_HPP
 
 #include <functional>
+
+#include "num_diff.hpp"
 #include "se3.hpp"
 
 namespace Sophus {
@@ -44,9 +46,11 @@ Vector3<Scalar> finiteDifferenceRotationalVelocity(
   // https://en.wikipedia.org/w/index.php?title=Angular_velocity&oldid=791867792#Angular_velocity_tensor
   //
   // W = dR(t)/dt * R^{-1}(t)
-  Matrix3<Scalar> dR_dt_in_frame_foo =
-      ((foo_R_bar(t + h)).matrix() - foo_R_bar(t - h).matrix()) /
-      (Scalar(2) * h);
+  Matrix3<Scalar> dR_dt_in_frame_foo = NumDiff<Scalar>::curve(
+      [&foo_R_bar](Scalar t0) -> Matrix3<Scalar> {
+        return foo_R_bar(t0).matrix();
+      },
+      t, h);
   // velocity tensor
   Matrix3<Scalar> W_in_frame_foo =
       dR_dt_in_frame_foo * (foo_R_bar(t)).inverse().matrix();

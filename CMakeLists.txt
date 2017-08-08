@@ -61,6 +61,7 @@ SET( SOURCES ${SOURCE_DIR}/common.hpp
              ${SOURCE_DIR}/rotation_matrix.hpp
              ${SOURCE_DIR}/sim_details.hpp
              ${SOURCE_DIR}/average.hpp
+             ${SOURCE_DIR}/num_diff.hpp
              ${SOURCE_DIR}/velocities.hpp
              ${SOURCE_DIR}/example_ensure_handler.cpp )
 
