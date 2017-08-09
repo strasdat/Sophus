@@ -559,13 +559,15 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   // Precondition: rotation matrix needs to be orthogonal with determinant of 1.
   //
   SOPHUS_FUNC SO3(Transformation const& R) : unit_quaternion_(R) {
-    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %",
+                  R * R.transpose());
     SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
                   R.determinant());
   }
 
-  // Returns closed SO3 given arbirary 3x3 matrix.
-  static SOPHUS_FUNC SO3 fromNonOrthogonal(Transformation const& R) {
+  // Returns closest SO3 given arbirary 3x3 matrix.
+  //
+  static SOPHUS_FUNC SO3 fitToSO3(Transformation const& R) {
     return SO3(::Sophus::makeRotationMatrix(R));
   }
 

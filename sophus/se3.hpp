@@ -588,6 +588,13 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
                   "Last row is not (0,0,0,1), but (%).", T.row(3));
   }
 
+  // Returns closest SE3 given arbirary 4x4 matrix.
+  //
+  SOPHUS_FUNC static SE3 fitToSE3(Matrix4<Scalar> const& T) {
+    return SE3(SO3<Scalar>::fitToSO3(T.template block<3, 3>(0, 0)),
+               T.template block<3, 1>(0, 3));
+  }
+
   // Construct a translation only SE3 instance.
   //
   template <class T0, class T1, class T2>
