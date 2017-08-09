@@ -120,8 +120,8 @@ class Tests {
 
     for (int i = 0; i < 100; ++i) {
       Matrix2<Scalar> R = Matrix2<Scalar>::Random();
-      SO2Type so2 = SO2Type::fromNonOrthogonal(R);
-      SO2Type so2_2 = SO2Type::fromNonOrthogonal(so2.matrix());
+      SO2Type so2 = SO2Type::fitToSO2(R);
+      SO2Type so2_2 = SO2Type::fitToSO2(so2.matrix());
 
       SOPHUS_TEST_APPROX(passed, so2.matrix(), so2_2.matrix(),
                          Constants<Scalar>::epsilon());

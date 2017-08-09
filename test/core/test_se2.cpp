@@ -152,6 +152,15 @@ class Tests {
                        se2.matrix(), Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, SE2Type(se2.matrix()).matrix(), se2.matrix(),
                        Constants<Scalar>::epsilon());
+
+    for (int i = 0; i < 100; ++i) {
+      Matrix3<Scalar> T = Matrix3<Scalar>::Random();
+      SE2Type se2 = SE2Type::fitToSE2(T);
+      SE2Type se2_2 = SE2Type::fitToSE2(se2.matrix());
+
+      SOPHUS_TEST_APPROX(passed, se2.matrix(), se2_2.matrix(),
+                         Constants<Scalar>::epsilon());
+    }
     return passed;
   }
 

@@ -379,7 +379,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   }
 
   // Returns closed SO2 given arbirary 2x2 matrix.
-  static SO2 fromNonOrthogonal(Transformation const& R) {
+  static SO2 fitToSO2(Transformation const& R) {
     return SO2(makeRotationMatrix(R));
   }
 

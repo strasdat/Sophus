@@ -149,8 +149,8 @@ class Tests {
 
     for (int i = 0; i < 100; ++i) {
       Matrix3<Scalar> R = Matrix3<Scalar>::Random();
-      SO3Type so3 = SO3Type::fromNonOrthogonal(R);
-      SO3Type so3_2 = SO3Type::fromNonOrthogonal(so3.matrix());
+      SO3Type so3 = SO3Type::fitToSO3(R);
+      SO3Type so3_2 = SO3Type::fitToSO3(so3.matrix());
 
       SOPHUS_TEST_APPROX(passed, so3.matrix(), so3_2.matrix(),
                          Constants<Scalar>::epsilon());

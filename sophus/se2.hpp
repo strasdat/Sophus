@@ -498,6 +498,13 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
       : so2_(T.template topLeftCorner<2, 2>().eval()),
         translation_(T.template block<2, 1>(0, 2)) {}
 
+  // Returns closest SE3 given arbirary 4x4 matrix.
+  //
+  SOPHUS_FUNC static SE2 fitToSE2(Matrix3<Scalar> const& T) {
+    return SE2(SO2<Scalar>::fitToSO2(T.template block<2, 2>(0, 0)),
+               T.template block<2, 1>(0, 2));
+  }
+
   // Construct a translation only SE3 instance.
   //
   template <class T0, class T1>

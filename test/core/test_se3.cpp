@@ -167,6 +167,14 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, SE3Type(se3.matrix()).matrix(), se3.matrix(),
                        Constants<Scalar>::epsilon());
 
+    for (int i = 0; i < 100; ++i) {
+      Matrix4<Scalar> T = Matrix4<Scalar>::Random();
+      SE3Type se3 = SE3Type::fitToSE3(T);
+      SE3Type se3_2 = SE3Type::fitToSE3(se3.matrix());
+
+      SOPHUS_TEST_APPROX(passed, se3.matrix(), se3_2.matrix(),
+                         Constants<Scalar>::epsilon());
+    }
     for (Scalar const angle : {0.0, 0.1, 0.3, -0.7}) {
       SOPHUS_TEST_APPROX(passed, SE3Type::rotX(angle).angleX(), angle,
                          Constants<Scalar>::epsilon());
