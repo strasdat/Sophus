@@ -98,7 +98,7 @@ class SO3Base {
 
   // Extract rotation angle about canonical X-axis
   //
-  Scalar angleX() {
+  Scalar angleX() const {
     Sophus::Matrix3<Scalar> R = matrix();
     Sophus::Matrix2<Scalar> Rx = R.template block<2, 2>(1, 1);
     return SO2<Scalar>(makeRotationMatrix(Rx)).log();
@@ -106,7 +106,7 @@ class SO3Base {
 
   // Extract rotation angle about canonical Y-axis
   //
-  Scalar angleY() {
+  Scalar angleY() const {
     Sophus::Matrix3<Scalar> R = matrix();
     Sophus::Matrix2<Scalar> Ry;
     // clang-format off
@@ -119,7 +119,7 @@ class SO3Base {
 
   // Extract rotation angle about canonical Z-axis
   //
-  Scalar angleZ() {
+  Scalar angleZ() const {
     Sophus::Matrix3<Scalar> R = matrix();
     Sophus::Matrix2<Scalar> Rz = R.template block<2, 2>(0, 0);
     return SO2<Scalar>(makeRotationMatrix(Rz)).log();
