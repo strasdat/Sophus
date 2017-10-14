@@ -326,7 +326,7 @@ class Sim2Base {
   //
   // The infinitesimal generators of Sim(2) are:
   //
-  //         |  0  0  1 |1111111
+  //         |  0  0  1 |
   //   G_0 = |  0  0  0 |
   //         |  0  0  0 |
   //
