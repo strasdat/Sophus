@@ -560,7 +560,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   // Draw uniform sample from Sim(3) manifold.
   //
   // Translations are drawn component-wise from the range [-1, 1].
-  // The 2-exponential of the scale factor is drawn uniformly from [-1, 1],
+  // The scale factor is drawn uniformly in log2-space from [-1, 1],
   // hence the scale is in [0.5, 2].
   //
   template <class UniformRandomBitGenerator>
