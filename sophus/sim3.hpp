@@ -557,6 +557,20 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
     return rxso3_.data();
   }
 
+  // Draw uniform sample from Sim(3) manifold.
+  //
+  // Translations are drawn component-wise from the range [-1, 1].
+  // The exponential of the scale factor is drawn uniformly from [-1, 1],
+  // hence the scale is in [exp(-1), exp(1)].
+  //
+  template <class UniformRandomBitGenerator>
+  static Sim3 sampleUniform(UniformRandomBitGenerator& generator) {
+    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
+    return Sim3(RxSO3<Scalar>::sampleUniform(generator),
+                Vector3<Scalar>(uniform(generator), uniform(generator),
+                                uniform(generator)));
+  }
+
   // Accessor of RxSO3
   //
   SOPHUS_FUNC RxSo3Member& rxso3() { return rxso3_; }

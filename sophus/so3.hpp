@@ -602,6 +602,27 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     return SO3::exp(Sophus::Vector3<Scalar>(Scalar(0), Scalar(0), z));
   }
 
+  // Draw uniform sample from SO(3) manifold.
+  //
+  template <class UniformRandomBitGenerator>
+  static SO3 sampleUniform(UniformRandomBitGenerator& generator) {
+    static_assert(IsUniformRandomBitGenerator<UniformRandomBitGenerator>::value,
+                  "generator must meet the UniformRandomBitGenerator concept");
+    std::uniform_real_distribution<Scalar> uniform(-Constants<Scalar>::pi(),
+                                                   Constants<Scalar>::pi());
+    std::normal_distribution<Scalar> normal(0, 1);
+    Sophus::Vector3<Scalar> axis;
+    Scalar nrm;
+    do {
+      axis.x() = normal(generator);
+      axis.y() = normal(generator);
+      axis.z() = normal(generator);
+      nrm = axis.norm();
+    } while (nrm < Constants<Scalar>::epsilon());
+    axis /= nrm;
+    return SO3::exp(uniform(generator) * axis);
+  }
+
   // Accessor of unit quaternion.
   //
   SOPHUS_FUNC QuaternionMember const& unit_quaternion() const {
