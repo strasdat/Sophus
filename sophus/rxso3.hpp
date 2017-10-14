@@ -571,14 +571,14 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
   // Draw uniform sample from RxSO(3) manifold.
   //
-  // The exponential of the scale factor is drawn uniformly from [-1, 1],
-  // hence the scale is in [exp(-1), exp(1)].
+  // The 2-exponential of the scale factor is drawn uniformly from [-1, 1],
+  // hence the scale is in [0.5, 2].
   //
   template <class UniformRandomBitGenerator>
   static RxSO3 sampleUniform(UniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
-    using std::exp;
-    return RxSO3(exp(uniform(generator)),
+    using std::exp2;
+    return RxSO3(exp2(uniform(generator)),
                  SO3<Scalar>::sampleUniform(generator));
   }
 
