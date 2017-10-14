@@ -272,6 +272,16 @@ class LieGroupTests {
     return passed;
   }
 
+  bool testRandomSmoke() {
+    bool passed = true;
+    std::default_random_engine engine;
+    for (int i = 0; i < 100; ++i) {
+      LieGroup g = LieGroup::sampleUniform(engine);
+      std::cout << g.matrix() << std::endl << std::endl;
+    }
+    return passed;
+  }
+
   bool doAllTestsPass() {
     bool passed = true;
     passed &= adjointTest();
@@ -283,6 +293,7 @@ class LieGroupTests {
     passed &= veeHatTest();
     passed &= newDeleteSmokeTest();
     passed &= interpolateAndMeanTest();
+    passed &= testRandomSmoke();
     return passed;
   }
 

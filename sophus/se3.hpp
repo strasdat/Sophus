@@ -655,6 +655,18 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return so3_.data();
   }
 
+  // Draw uniform sample from SE(3) manifold.
+  //
+  // Translations are drawn component-wise from the range [-1, 1].
+  //
+  template <class UniformRandomBitGenerator>
+  static SE3 sampleUniform(UniformRandomBitGenerator& generator) {
+    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
+    return SE3(SO3<Scalar>::sampleUniform(generator),
+               Vector3<Scalar>(uniform(generator), uniform(generator),
+                               uniform(generator)));
+  }
+
   // Accessor of SO3
   //
   SOPHUS_FUNC SO3Member& so3() { return so3_; }

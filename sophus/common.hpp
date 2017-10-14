@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <random>
+#include <type_traits>
 
 #include <Eigen/Core>
 
@@ -197,6 +199,13 @@ class optional {
 
 template <bool B, class T = void>
 using enable_if_t = typename std::enable_if<B, T>::type;
+
+template <class G>
+struct IsUniformRandomBitGenerator {
+  static const bool value = std::is_unsigned<typename G::result_type>::value &&
+                            std::is_unsigned<decltype(G::min())>::value &&
+                            std::is_unsigned<decltype(G::max())>::value;
+};
 }  // namespace Sophus
 
 #endif  // SOPHUS_COMMON_HPP

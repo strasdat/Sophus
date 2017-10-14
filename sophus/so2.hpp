@@ -379,6 +379,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   }
 
   // Returns closed SO2 given arbirary 2x2 matrix.
+  //
   static SO2 fitToSO2(Transformation const& R) {
     return SO2(makeRotationMatrix(R));
   }
@@ -402,6 +403,17 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
     static_assert(std::is_same<typename D::Scalar, Scalar>::value,
                   "must be same Scalar type");
     Base::normalize();
+  }
+
+  // Draw uniform sample from SO(2) manifold.
+  //
+  template <class UniformRandomBitGenerator>
+  static SO2 sampleUniform(UniformRandomBitGenerator& generator) {
+    static_assert(IsUniformRandomBitGenerator<UniformRandomBitGenerator>::value,
+                  "generator must meet the UniformRandomBitGenerator concept");
+    std::uniform_real_distribution<Scalar> uniform(-Constants<Scalar>::pi(),
+                                                   Constants<Scalar>::pi());
+    return SO2(uniform(generator));
   }
 
   // Constructor from an rotation angle.

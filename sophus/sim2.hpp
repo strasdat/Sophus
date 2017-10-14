@@ -532,6 +532,19 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
     return rxso2_.data();
   }
 
+  // Draw uniform sample from Sim(2) manifold.
+  //
+  // Translations are drawn component-wise from the range [-1, 1].
+  // The exponential of the scale factor is drawn uniformly from [-1, 1],
+  // hence the scale is in [exp(-1), exp(1)].
+  //
+  template <class UniformRandomBitGenerator>
+  static Sim2 sampleUniform(UniformRandomBitGenerator& generator) {
+    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
+    return Sim2(RxSO2<Scalar>::sampleUniform(generator),
+                Vector2<Scalar>(uniform(generator), uniform(generator)));
+  }
+
   // Accessor of RxSO2
   //
   SOPHUS_FUNC RxSo2Member& rxso2() { return rxso2_; }
