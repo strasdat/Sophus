@@ -504,7 +504,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   // Draw uniform sample from RxSO(2) manifold.
   //
-  // The 2-exponential of the scale factor is drawn uniformly from [-1, 1],
+  // The scale factor is drawn uniformly in log2-space from [-1, 1],
   // hence the scale is in [0.5, 2)].
   //
   template <class UniformRandomBitGenerator>
