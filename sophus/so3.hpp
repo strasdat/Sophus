@@ -53,7 +53,7 @@ namespace Sophus {
 // determinant is 1. Internally, the group is represented as a unit quaternion.
 // Unit quaternion can be seen as members of the special unitary group SU(2).
 // SU(2) is a double cover of SO(3). Hence, for every rotation matrix ``R``,
-// there exists two unit quaternion: ``(r, v)`` and ``(r, -v)``, with ``r`` the
+// there exist two unit quaternions: ``(r, v)`` and ``(-r, -v)``, with ``r`` the
 // real part and ``v`` being the imaginary 3-vector part of the quaternion.
 //
 // SO(3) is a compact, but non-commutative group. First it is compact since the
@@ -63,7 +63,7 @@ namespace Sophus {
 // and then by some degrees about its y axis, does not lead to the same
 // orienation when rotation first about ``y`` and then about ``x``.
 //
-// Class invairant: The 2-norm of ``unit_quaternion`` must be close to 1.
+// Class invariant: The 2-norm of ``unit_quaternion`` must be close to 1.
 // Technically speaking, it must hold that:
 //
 //   ``|unit_quaternion().squaredNorm() - 1| <= Constants<Scalar>::epsilon()``.
