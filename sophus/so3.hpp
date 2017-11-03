@@ -336,7 +336,7 @@ class SO3Base {
       imag_factor = Scalar(0.5) - Scalar(1.0 / 48.0) * theta_sq +
                     Scalar(1.0 / 3840.0) * theta_po4;
       real_factor =
-          Scalar(1) - Scalar(0.5) * theta_sq + Scalar(1.0 / 384.0) * theta_po4;
+          Scalar(1) - Scalar(1.0 / 8.0) * theta_sq + Scalar(1.0 / 384.0) * theta_po4;
     } else {
       Scalar sin_half_theta = sin(half_theta);
       imag_factor = sin_half_theta / (*theta);
