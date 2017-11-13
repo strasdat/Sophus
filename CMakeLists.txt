@@ -1,18 +1,17 @@
-SET(PROJECT_NAME Sophus)
+cmake_minimum_required(VERSION 3.4)
+project(Sophus VERSION 1.0.0)
 
-PROJECT(${PROJECT_NAME})
-CMAKE_MINIMUM_REQUIRED(VERSION 3.4)
+include(CMakePackageConfigHelpers)
 
-SET( CMAKE_VERBOSE_MAKEFILE ON)
-
-################################################################################
 # Release by default
 # Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"
-IF( NOT CMAKE_BUILD_TYPE )
-   SET( CMAKE_BUILD_TYPE Release )
-ENDIF()
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 
 set(CMAKE_CXX_STANDARD 11)
+
+# Set compiler specific settings (FixMe: Should not cmake do this for us automatically?)
 IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -28,83 +27,125 @@ ELSEIF(CMAKE_CXX_COMPILER_ID MATCHES "^MSVC$")
    ADD_DEFINITIONS("-D _USE_MATH_DEFINES /bigobj /wd4305 /wd4244 /MP")
 ENDIF()
 
-################################################################################
 # Add local path for finding packages, set the local version first
-SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
-################################################################################
-# Create variables used for exporting (from build tree) in SophusConfig.cmake
-SET( Sophus_LIBRARIES "" )
-SET( Sophus_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
+# Find Eigen 3 (dependency)
+find_package(Eigen3 REQUIRED)
 
-################################################################################
-FIND_PACKAGE( Eigen3 REQUIRED )
+# Define interface library target
+add_library(sophus INTERFACE)
 
-################################################################################
-SET( SOURCE_DIR "sophus")
-
-SET( TEMPLATES geometry
-               so2
-               se2
-               rxso2
-               sim2
-               so3
-               se3
-               rxso3
-               sim3
+set(SOPHUS_HEADER_FILES
+  sophus/average.hpp
+  sophus/common.hpp
+  sophus/geometry.hpp
+  sophus/interpolate.hpp
+  sophus/interpolate_details.hpp
+  sophus/num_diff.hpp
+  sophus/rotation_matrix.hpp
+  sophus/rxso2.hpp
+  sophus/rxso3.hpp
+  sophus/se2.hpp
+  sophus/se3.hpp
+  sophus/sim2.hpp
+  sophus/sim3.hpp
+  sophus/sim_details.hpp
+  sophus/so2.hpp
+  sophus/so3.hpp
+  sophus/types.hpp
+  sophus/velocities.hpp
 )
 
-SET( SOURCES ${SOURCE_DIR}/common.hpp
-             ${SOURCE_DIR}/types.hpp
-             ${SOURCE_DIR}/interpolate.hpp
-             ${SOURCE_DIR}/interpolate_details.hpp
-             ${SOURCE_DIR}/rotation_matrix.hpp
-             ${SOURCE_DIR}/sim_details.hpp
-             ${SOURCE_DIR}/average.hpp
-             ${SOURCE_DIR}/num_diff.hpp
-             ${SOURCE_DIR}/velocities.hpp
-             ${SOURCE_DIR}/example_ensure_handler.cpp )
+set(SOPHUS_OTHER_FILES
+  sophus/test_macros.hpp
+  sophus/example_ensure_handler.cpp
+)
 
-FOREACH(templ ${TEMPLATES})
-  LIST(APPEND SOURCES ${SOURCE_DIR}/${templ}.hpp)
-ENDFOREACH(templ)
+if(MSVC)
+  # Define common math constants if we compile with MSVC
+  target_compile_definitions (sophus INTERFACE _USE_MATH_DEFINES)
+endif (MSVC)
+
+# Add Eigen interface dependency, depending on available cmake info
+if(TARGET Eigen3::Eigen)
+  target_link_libraries(sophus INTERFACE Eigen3::Eigen)
+  set(Eigen3_DEPENDENCY "find_dependency (Eigen3 ${Eigen3_VERSION})")
+else(TARGET Eigen3::Eigen)
+  target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
+endif(TARGET Eigen3::Eigen)
+
+# Associate target with include directory
+target_include_directories(sophus INTERFACE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
+# Declare all used C++11 features
+target_compile_features (sophus INTERFACE
+  cxx_auto_type
+  cxx_decltype
+  cxx_nullptr
+  cxx_right_angle_brackets
+  cxx_variadic_macros
+  cxx_variadic_templates
+)
 
 # Add sources as custom target so that they are shown in IDE's
-ADD_CUSTOM_TARGET( libsophus SOURCES ${SOURCES} )
+add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES})
 
-################################################################################
 # Create 'test' make target using ctest
 option(BUILD_TESTS "Build tests." ON)
 if(BUILD_TESTS)
-    ENABLE_TESTING()
-    ADD_SUBDIRECTORY( test )
+    enable_testing()
+    add_subdirectory(test)
 endif()
 
-################################################################################
 # Export package for use from the build tree
-EXPORT( PACKAGE Sophus )
+include(GNUInstallDirs)
+set(SOPHUS_CMAKE_EXPORT_DIR ${CMAKE_INSTALL_DATADIR}/sophus/cmake)
 
-# Create the SophusConfig.cmake file for other cmake projects.
-# ... for the build tree
-SET( CONFIG_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-SET( CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR})
-CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake @ONLY )
-# ... for the install tree
-SET( CMAKECONFIG_INSTALL_DIR lib/cmake/Sophus )
-FILE( RELATIVE_PATH REL_INCLUDE_DIR
-    "${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR}"
-    "${CMAKE_INSTALL_PREFIX}/include" )
+set_target_properties(sophus PROPERTIES EXPORT_NAME Sophus)
 
-SET( Sophus_INCLUDE_DIR "\${Sophus_CMAKE_DIR}/${REL_INCLUDE_DIR}" )
-SET( CONFIG_SOURCE_DIR )
-SET( CONFIG_DIR )
-CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/SophusConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SophusConfig.cmake @ONLY )
+install(TARGETS sophus EXPORT SophusTargets)
+install(EXPORT SophusTargets
+  NAMESPACE Sophus::
+  DESTINATION ${SOPHUS_CMAKE_EXPORT_DIR}
+)
 
-INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SophusConfig.cmake"
-        DESTINATION ${CMAKECONFIG_INSTALL_DIR} )
+export(TARGETS sophus NAMESPACE Sophus:: FILE SophusTargets.cmake)
+export(PACKAGE Sophus)
 
-# Install headers
-INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-        FILES_MATCHING PATTERN "*.hpp" )
+configure_package_config_file(
+  SophusConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake
+  INSTALL_DESTINATION ${SOPHUS_CMAKE_EXPORT_DIR}
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO
+)
+
+# Remove architecture dependence. Sophus is a header-only library.
+set(TEMP_SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P})
+unset(CMAKE_SIZEOF_VOID_P)
+
+# Write version to file
+write_basic_package_version_file (
+  SophusConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
+# Recover architecture dependence
+set(CMAKE_SIZEOF_VOID_P ${TEMP_SIZEOF_VOID_P})
+
+# Install cmake targets
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/SophusConfigVersion.cmake
+  DESTINATION ${SOPHUS_CMAKE_EXPORT_DIR}
+)
+
+# Install header files
+install(
+  FILES ${SOPHUS_HEADER_FILES}
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sophus
+)
