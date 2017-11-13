@@ -1,14 +1,7 @@
-################################################################################
-# Sophus source dir
-set( Sophus_SOURCE_DIR "@CONFIG_SOURCE_DIR@")
+@PACKAGE_INIT@
 
-################################################################################
-# Sophus build dir
-set( Sophus_DIR "@CONFIG_DIR@")
+include (CMakeFindDependencyMacro)
 
-################################################################################
-# Compute paths
-get_filename_component(Sophus_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+@Eigen3_DEPENDENCY@
 
-set( Sophus_INCLUDE_DIR  "@Sophus_INCLUDE_DIR@" )
-set( Sophus_INCLUDE_DIRS  "@Sophus_INCLUDE_DIR@" )
+include ("${CMAKE_CURRENT_LIST_DIR}/SophusTargets.cmake")
