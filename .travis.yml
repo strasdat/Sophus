@@ -47,7 +47,7 @@ script:
   - cd build
   - cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
   - make -j
-  - make test
+  - make CTEST_OUTPUT_ON_FAILURE=1 test
 
 after_success:
  - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --directory . --capture --output-file coverage.info ; fi

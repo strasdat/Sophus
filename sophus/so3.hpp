@@ -561,7 +561,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   SOPHUS_FUNC SO3(Transformation const& R) : unit_quaternion_(R) {
     SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %",
                   R * R.transpose());
-    SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
+    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
                   R.determinant());
   }
 

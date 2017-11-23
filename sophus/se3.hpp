@@ -583,8 +583,9 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   SOPHUS_FUNC explicit SE3(Matrix4<Scalar> const& T)
       : so3_(T.template topLeftCorner<3, 3>()),
         translation_(T.template block<3, 1>(0, 3)) {
-    SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>(0, 0, 0, 1)).squaredNorm() <
-                      Constants<Scalar>::epsilon(),
+    SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0),
+                                                   Scalar(0), Scalar(1)))
+                          .squaredNorm() < Constants<Scalar>::epsilon(),
                   "Last row is not (0,0,0,1), but (%).", T.row(3));
   }
 

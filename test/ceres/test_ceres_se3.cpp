@@ -79,6 +79,13 @@ bool test(Sophus::SE3d const& T_w_targ, Sophus::SE3d const& T_w_init) {
   return passed;
 }
 
+template <typename Scalar>
+bool CreateSE3FromMatrix(Eigen::Matrix<Scalar, 4, 4> mat) {
+  auto se3 = Sophus::SE3<Scalar>(mat);
+  se3 = se3;
+  return true;
+}
+
 int main(int, char**) {
   using SE3Type = Sophus::SE3<double>;
   using SO3Type = Sophus::SO3<double>;
@@ -114,6 +121,10 @@ int main(int, char**) {
       exit(-1);
     }
   }
+
+  Eigen::Matrix<ceres::Jet<double, 28>, 4, 4> mat;
+  mat.setIdentity();
+  std::cout << CreateSE3FromMatrix(mat) << std::endl;
 
   return 0;
 }
