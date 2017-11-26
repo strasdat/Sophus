@@ -34,7 +34,8 @@ Matrix<Scalar, N, N> calcW(Matrix<Scalar, N, N> const& Omega,
     if (abs(theta) < Constants<Scalar>::epsilon()) {
       Scalar sigma_sq = sigma * sigma;
       A = ((sigma - one) * scale + one) / sigma_sq;
-      B = ((half * sigma * sigma - sigma + one) * scale) / (sigma_sq * sigma);
+      B = (scale * half * sigma_sq + scale - one - sigma * scale) /
+          (sigma_sq * sigma);
     } else {
       Scalar theta_sq = theta * theta;
       Scalar a = scale * sin(theta);
