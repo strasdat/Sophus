@@ -133,9 +133,21 @@ class RxSO2Base {
 
   // Logarithmic map
   //
-  // Returns tangent space representation of the instance.
+  // Computes the logarithm, the inverse of the group exponential which maps
+  // element of the group (scaled rotation matrices) to elements of the tangent
+  // space (rotation-vector plus logarithm of scale factor).
   //
-  SOPHUS_FUNC Tangent log() const { return RxSO2<Scalar>::log(*this); }
+  // To be specific, this function computes ``vee(logmat(.))`` with
+  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
+  // of RxSO2.
+  //
+  SOPHUS_FUNC Tangent log() const {
+    using std::log;
+    Tangent theta_sigma;
+    theta_sigma[1] = log(scale());
+    theta_sigma[0] = SO2<Scalar>(complex()).log();
+    return theta_sigma;
+  }
 
   // Returns 2x2 matrix representation of the instance.
   //
@@ -289,22 +301,89 @@ class RxSO2Base {
 
   SOPHUS_FUNC SO2<Scalar> so2() const { return SO2<Scalar>(complex()); }
 
-  ////////////////////////////////////////////////////////////////////////////
-  // public static functions
-  ////////////////////////////////////////////////////////////////////////////
-
-  // Derivative of Lie bracket with respect to first element.
+ protected:
+  // Mutator of complex is private to ensure class invariant.
   //
-  // This function returns ``D_a [a, b]`` with ``D_a`` being the
-  // differential operator with respect to ``a``, ``[a, b]`` being the lie
-  // bracket of the Lie algebra rxso2.
-  // See ``lieBracket()`` below.
-  //
-  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(Tangent const&) {
-    Adjoint res;
-    res.setZero();
-    return res;
+  SOPHUS_FUNC ComplexType& complex_nonconst() {
+    return static_cast<Derived*>(this)->complex_nonconst();
   }
+};
+
+// RxSO2 default type - Constructors and default storage for RxSO2 Type.
+template <class Scalar_, int Options>
+class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
+  using Base = RxSO2Base<RxSO2<Scalar_, Options>>;
+
+ public:
+  using Scalar = Scalar_;
+  using Transformation = typename Base::Transformation;
+  using Point = typename Base::Point;
+  using Tangent = typename Base::Tangent;
+  using Adjoint = typename Base::Adjoint;
+  using ComplexMember = Eigen::Matrix<Scalar, 2, 1, Options>;
+
+  // ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
+  friend class RxSO2Base<RxSO2<Scalar_, Options>>;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  // Default constructor initialize complex number to identity rotation and
+  // scale.
+  //
+  SOPHUS_FUNC RxSO2() : complex_(Scalar(1), Scalar(0)) {}
+
+  // Copy constructor
+  //
+  template <class OtherDerived>
+  SOPHUS_FUNC RxSO2(RxSO2Base<OtherDerived> const& other)
+      : complex_(other.complex()) {}
+
+  // Constructor from scaled rotation matrix
+  //
+  // Precondition: rotation matrix need to be scaled orthogonal with determinant
+  // of s^2.
+  //
+  SOPHUS_FUNC explicit RxSO2(Transformation const& sR) {
+    this->setScaledRotationMatrix(sR);
+  }
+
+  // Constructor from scale factor and rotation matrix ``R``.
+  //
+  // Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
+  //               of 1 and ``scale`` must to be close to zero.
+  //
+  SOPHUS_FUNC RxSO2(Scalar const& scale, Transformation const& R)
+      : RxSO2((scale * SO2<Scalar>(R).unit_complex()).eval()) {}
+
+  // Constructor from scale factor and SO2
+  //
+  // Precondition: ``scale`` must to be close to zero.
+  //
+  SOPHUS_FUNC RxSO2(Scalar const& scale, SO2<Scalar> const& so2)
+      : RxSO2((scale * so2.unit_complex()).eval()) {}
+
+  // Constructor from complex number.
+  //
+  // Precondition: complex number must not be close to zero.
+  //
+  SOPHUS_FUNC explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
+    SOPHUS_ENSURE(complex_.squaredNorm() > Constants<Scalar>::epsilon() *
+                                               Constants<Scalar>::epsilon(),
+                  "Scale factor must be greater-equal epsilon: % vs %",
+                  complex_.squaredNorm(),
+                  Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
+  }
+
+  // Constructor from complex number.
+  //
+  // Precondition: complex number must not be close to zero.
+  //
+  SOPHUS_FUNC explicit RxSO2(Scalar const& real, Scalar const& imag)
+      : RxSO2(Vector2<Scalar>(real, imag)) {}
+
+  // Accessor of complex.
+  //
+  SOPHUS_FUNC ComplexMember const& complex() const { return complex_; }
 
   // Group exponential
   //
@@ -386,23 +465,17 @@ class RxSO2Base {
     return res;
   }
 
-  // Logarithmic map
+  // Draw uniform sample from RxSO(2) manifold.
   //
-  // Computes the logarithm, the inverse of the group exponential which maps
-  // element of the group (scaled rotation matrices) to elements of the tangent
-  // space (rotation-vector plus logarithm of scale factor).
+  // The scale factor is drawn uniformly in log2-space from [-1, 1],
+  // hence the scale is in [0.5, 2)].
   //
-  // To be specific, this function computes ``vee(logmat(.))`` with
-  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
-  // of RxSO2.
-  //
-  SOPHUS_FUNC static Tangent log(RxSO2<Scalar> const& other) {
-    using std::log;
-    Scalar scale = other.scale();
-    Tangent theta_sigma;
-    theta_sigma[1] = log(scale);
-    theta_sigma[0] = SO2<Scalar>::log(SO2<Scalar>(other.complex()));
-    return theta_sigma;
+  template <class UniformRandomBitGenerator>
+  static RxSO2 sampleUniform(UniformRandomBitGenerator& generator) {
+    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
+    using std::exp2;
+    return RxSO2(exp2(uniform(generator)),
+                 SO2<Scalar>::sampleUniform(generator));
   }
 
   // vee-operator
@@ -421,103 +494,6 @@ class RxSO2Base {
     using std::abs;
     return Tangent(Omega(1, 0), Omega(0, 0));
   }
-
- protected:
-  // Mutator of complex is private to ensure class invariant.
-  //
-  SOPHUS_FUNC ComplexType& complex_nonconst() {
-    return static_cast<Derived*>(this)->complex_nonconst();
-  }
-};
-
-// RxSO2 default type - Constructors and default storage for RxSO2 Type.
-template <class Scalar_, int Options>
-class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
-  using Base = RxSO2Base<RxSO2<Scalar_, Options>>;
-
- public:
-  using Scalar = Scalar_;
-  using Transformation = typename Base::Transformation;
-  using Point = typename Base::Point;
-  using Tangent = typename Base::Tangent;
-  using Adjoint = typename Base::Adjoint;
-  using ComplexMember = Eigen::Matrix<Scalar, 2, 1, Options>;
-
-  // ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
-  friend class RxSO2Base<RxSO2<Scalar_, Options>>;
-
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-  // Default constructor initialize complex number to identity rotation and
-  // scale.
-  //
-  SOPHUS_FUNC RxSO2() : complex_(Scalar(1), Scalar(0)) {}
-
-  // Copy constructor
-  //
-  template <class OtherDerived>
-  SOPHUS_FUNC RxSO2(RxSO2Base<OtherDerived> const& other)
-      : complex_(other.complex()) {}
-
-  // Constructor from scaled rotation matrix
-  //
-  // Precondition: rotation matrix need to be scaled orthogonal with determinant
-  // of s^2.
-  //
-  SOPHUS_FUNC explicit RxSO2(Transformation const& sR) {
-    this->setScaledRotationMatrix(sR);
-  }
-
-  // Constructor from scale factor and rotation matrix ``R``.
-  //
-  // Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
-  //               of 1 and ``scale`` must to be close to zero.
-  //
-  SOPHUS_FUNC RxSO2(Scalar const& scale, Transformation const& R)
-      : RxSO2((scale * SO2<Scalar>(R).unit_complex()).eval()) {}
-
-  // Constructor from scale factor and SO2
-  //
-  // Precondition: ``scale`` must to be close to zero.
-  //
-  SOPHUS_FUNC RxSO2(Scalar const& scale, SO2<Scalar> const& so2)
-      : RxSO2((scale * so2.unit_complex()).eval()) {}
-
-  // Constructor from complex number.
-  //
-  // Precondition: complex number must not be close to zero.
-  //
-  SOPHUS_FUNC explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
-    SOPHUS_ENSURE(complex_.squaredNorm() > Constants<Scalar>::epsilon() *
-                                               Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon: % vs %",
-                  complex_.squaredNorm(),
-                  Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
-  }
-
-  // Constructor from complex number.
-  //
-  // Precondition: complex number must not be close to zero.
-  //
-  SOPHUS_FUNC explicit RxSO2(Scalar const& real, Scalar const& imag)
-      : RxSO2(Vector2<Scalar>(real, imag)) {}
-
-  // Draw uniform sample from RxSO(2) manifold.
-  //
-  // The scale factor is drawn uniformly in log2-space from [-1, 1],
-  // hence the scale is in [0.5, 2)].
-  //
-  template <class UniformRandomBitGenerator>
-  static RxSO2 sampleUniform(UniformRandomBitGenerator& generator) {
-    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
-    using std::exp2;
-    return RxSO2(exp2(uniform(generator)),
-                 SO2<Scalar>::sampleUniform(generator));
-  }
-
-  // Accessor of complex.
-  //
-  SOPHUS_FUNC ComplexMember const& complex() const { return complex_; }
 
  protected:
   SOPHUS_FUNC ComplexMember& complex_nonconst() { return complex_; }

@@ -105,9 +105,35 @@ class SE2Base {
 
   // Logarithmic map
   //
-  // Returns tangent space representation (= twist) of the instance.
+  // Computes the logarithm, the inverse of the group exponential which maps
+  // element of the group (rigid body transformations) to elements of the
+  // tangent space (twist).
   //
-  SOPHUS_FUNC Tangent log() const { return log(*this); }
+  // To be specific, this function computes ``vee(logmat(.))`` with
+  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
+  // of SE(2).
+  //
+  SOPHUS_FUNC Tangent log() const {
+    Tangent upsilon_theta;
+    Scalar theta = so2().log();
+    upsilon_theta[2] = theta;
+    Scalar halftheta = Scalar(0.5) * theta;
+    Scalar halftheta_by_tan_of_halftheta;
+
+    Vector2<Scalar> z = so2().unit_complex();
+    Scalar real_minus_one = z.x() - Scalar(1.);
+    if (std::abs(real_minus_one) < Constants<Scalar>::epsilon()) {
+      halftheta_by_tan_of_halftheta =
+          Scalar(1.) - Scalar(1. / 12) * theta * theta;
+    } else {
+      halftheta_by_tan_of_halftheta = -(halftheta * z.y()) / (real_minus_one);
+    }
+    Matrix<Scalar, 2, 2> V_inv;
+    V_inv << halftheta_by_tan_of_halftheta, halftheta, -halftheta,
+        halftheta_by_tan_of_halftheta;
+    upsilon_theta.template head<2>() = V_inv * translation();
+    return upsilon_theta;
+  }
 
   /**
    * \brief Normalize SO2 element
@@ -251,181 +277,6 @@ class SE2Base {
   unit_complex() const {
     return so2().unit_complex();
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // public static functions
-  ////////////////////////////////////////////////////////////////////////////
-
-  // Derivative of Lie bracket with respect to first element.
-  //
-  // This function returns ``D_a [a, b]`` with ``D_a`` being the
-  // differential operator with respect to ``a``, ``[a, b]`` being the lie
-  // bracket of the Lie algebra se3.
-  // See ``lieBracket()`` below.
-  //
-  SOPHUS_FUNC static Transformation d_lieBracketab_by_d_a(Tangent const& b) {
-    static Scalar const zero = Scalar(0);
-    Vector2<Scalar> upsilon2 = b.template head<2>();
-    Scalar theta2 = b[2];
-
-    Transformation res;
-    res << zero, theta2, -upsilon2[1], -theta2, zero, upsilon2[0], zero, zero,
-        zero;
-    return res;
-  }
-
-  // Group exponential
-  //
-  // This functions takes in an element of tangent space (= twist ``a``) and
-  // returns the corresponding element of the group SE(2).
-  //
-  // The first two components of ``a`` represent the translational part
-  // ``upsilon`` in the tangent space of SE(2), while the last three components
-  // of ``a`` represents the rotation vector ``omega``.
-  // To be more specific, this function computes ``expmat(hat(a))`` with
-  // ``expmat(.)`` being the matrix exponential and ``hat(.)`` the hat-operator
-  // of SE(2), see below.
-  //
-  SOPHUS_FUNC static SE2<Scalar> exp(Tangent const& a) {
-    Scalar theta = a[2];
-    SO2<Scalar> so2 = SO2<Scalar>::exp(theta);
-    Scalar sin_theta_by_theta;
-    Scalar one_minus_cos_theta_by_theta;
-
-    if (std::abs(theta) < Constants<Scalar>::epsilon()) {
-      Scalar theta_sq = theta * theta;
-      sin_theta_by_theta = Scalar(1.) - Scalar(1. / 6.) * theta_sq;
-      one_minus_cos_theta_by_theta =
-          Scalar(0.5) * theta - Scalar(1. / 24.) * theta * theta_sq;
-    } else {
-      sin_theta_by_theta = so2.unit_complex().y() / theta;
-      one_minus_cos_theta_by_theta =
-          (Scalar(1.) - so2.unit_complex().x()) / theta;
-    }
-    Vector2<Scalar> trans(
-        sin_theta_by_theta * a[0] - one_minus_cos_theta_by_theta * a[1],
-        one_minus_cos_theta_by_theta * a[0] + sin_theta_by_theta * a[1]);
-    return SE2<Scalar>(so2, trans);
-  }
-
-  // Returns the ith infinitesimal generators of SE(2).
-  //
-  // The infinitesimal generators of SE(2) are:
-  //
-  //         |  0  0  1 |
-  //   G_0 = |  0  0  0 |
-  //         |  0  0  0 |
-  //
-  //         |  0  0  0 |
-  //   G_1 = |  0  0  1 |
-  //         |  0  0  0 |
-  //
-  //         |  0 -1  0 |
-  //   G_2 = |  1  0  0 |
-  //         |  0  0  0 |
-  // Precondition: ``i`` must be in 0, 1 or 2.
-  //
-  SOPHUS_FUNC static Transformation generator(int i) {
-    SOPHUS_ENSURE(i >= 0 || i <= 2, "i should be in range [0,2].");
-    Tangent e;
-    e.setZero();
-    e[i] = Scalar(1);
-    return hat(e);
-  }
-
-  // hat-operator
-  //
-  // It takes in the 3-vector representation (= twist) and returns the
-  // corresponding matrix representation of Lie algebra element.
-  //
-  // Formally, the ``hat()`` operator of SE(3) is defined as
-  //
-  //   ``hat(.): R^3 -> R^{3x33},  hat(a) = sum_i a_i * G_i``  (for i=0,1,2)
-  //
-  // with ``G_i`` being the ith infinitesimal generator of SE(2).
-  //
-  SOPHUS_FUNC static Transformation hat(Tangent const& a) {
-    Transformation Omega;
-    Omega.setZero();
-    Omega.template topLeftCorner<2, 2>() = SO2<Scalar>::hat(a[2]);
-    Omega.col(2).template head<2>() = a.template head<2>();
-    return Omega;
-  }
-
-  // Lie bracket
-  //
-  // It computes the Lie bracket of SE(2). To be more specific, it computes
-  //
-  //   ``[omega_1, omega_2]_se2 := vee([hat(omega_1), hat(omega_2)])``
-  //
-  // with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
-  // hat-operator and ``vee(.)`` the vee-operator of SE(2).
-  //
-  SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
-    Vector2<Scalar> upsilon1 = a.template head<2>();
-    Vector2<Scalar> upsilon2 = b.template head<2>();
-    Scalar theta1 = a[2];
-    Scalar theta2 = b[2];
-
-    return Tangent(-theta1 * upsilon2[1] + theta2 * upsilon1[1],
-                   theta1 * upsilon2[0] - theta2 * upsilon1[0], Scalar(0));
-  }
-
-  // Logarithmic map
-  //
-  // Computes the logarithm, the inverse of the group exponential which maps
-  // element of the group (rigid body transformations) to elements of the
-  // tangent space (twist).
-  //
-  // To be specific, this function computes ``vee(logmat(.))`` with
-  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
-  // of SE(2).
-  //
-  SOPHUS_FUNC static Tangent log(SE2<Scalar> const& other) {
-    Tangent upsilon_theta;
-    SO2<Scalar> const& so2 = other.so2();
-    Scalar theta = SO2<Scalar>::log(so2);
-    upsilon_theta[2] = theta;
-    Scalar halftheta = Scalar(0.5) * theta;
-    Scalar halftheta_by_tan_of_halftheta;
-
-    Vector2<Scalar> const& z = so2.unit_complex();
-    Scalar real_minus_one = z.x() - Scalar(1.);
-    if (std::abs(real_minus_one) < Constants<Scalar>::epsilon()) {
-      halftheta_by_tan_of_halftheta =
-          Scalar(1.) - Scalar(1. / 12) * theta * theta;
-    } else {
-      halftheta_by_tan_of_halftheta = -(halftheta * z.y()) / (real_minus_one);
-    }
-    Matrix<Scalar, 2, 2> V_inv;
-    V_inv << halftheta_by_tan_of_halftheta, halftheta, -halftheta,
-        halftheta_by_tan_of_halftheta;
-    upsilon_theta.template head<2>() = V_inv * other.translation();
-    return upsilon_theta;
-  }
-
-  // vee-operator
-  //
-  // It takes the 3x3-matrix representation ``Omega`` and maps it to the
-  // corresponding 3-vector representation of Lie algebra.
-  //
-  // This is the inverse of the hat-operator, see above.
-  //
-  // Precondition: ``Omega`` must have the following structure:
-  //
-  //                |  0 -d  a |
-  //                |  d  0  b |
-  //                |  0  0  0 | .
-  //
-  SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
-    SOPHUS_ENSURE(
-        Omega.row(2).template lpNorm<1>() < Constants<Scalar>::epsilon(),
-        "Omega: \n%", Omega);
-    Tangent upsilon_omega;
-    upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
-    upsilon_omega[2] = SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
-    return upsilon_omega;
-  }
 };
 
 // SE2 default type - Constructors and default storage for SE3 Type.
@@ -498,38 +349,6 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
       : so2_(T.template topLeftCorner<2, 2>().eval()),
         translation_(T.template block<2, 1>(0, 2)) {}
 
-  // Returns closest SE3 given arbirary 4x4 matrix.
-  //
-  SOPHUS_FUNC static SE2 fitToSE2(Matrix3<Scalar> const& T) {
-    return SE2(SO2<Scalar>::fitToSO2(T.template block<2, 2>(0, 0)),
-               T.template block<2, 1>(0, 2));
-  }
-
-  // Construct a translation only SE3 instance.
-  //
-  template <class T0, class T1>
-  static SOPHUS_FUNC SE2 trans(T0 const& x, T1 const& y) {
-    return SE2(SO2<Scalar>(), Vector2<Scalar>(x, y));
-  }
-
-  // Contruct x-axis translation.
-  //
-  static SOPHUS_FUNC SE2 transX(Scalar const& x) {
-    return SE2::trans(x, Scalar(0));
-  }
-
-  // Contruct y-axis translation.
-  //
-  static SOPHUS_FUNC SE2 transY(Scalar const& y) {
-    return SE2::trans(Scalar(0), y);
-  }
-
-  // Contruct pure rotation.
-  //
-  static SOPHUS_FUNC SE2 rot(Scalar const& x) {
-    return SE2(SO2<Scalar>(x), Sophus::Vector2<Scalar>::Zero());
-  }
-
   // This provides unsafe read/write access to internal data. SO(2) is
   // represented by a complex number (two parameters). When using direct write
   // access, the user needs to take care of that the complex number stays
@@ -545,17 +364,6 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   SOPHUS_FUNC Scalar const* data() const {
     // so2_ and translation_ are layed out sequentially with no padding
     return so2_.data();
-  }
-
-  // Draw uniform sample from SE(3) manifold.
-  //
-  // Translations are drawn component-wise from the range [-1, 1].
-  //
-  template <class UniformRandomBitGenerator>
-  static SE2 sampleUniform(UniformRandomBitGenerator& generator) {
-    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
-    return SE2(SO2<Scalar>::sampleUniform(generator),
-               Vector2<Scalar>(uniform(generator), uniform(generator)));
   }
 
   // Accessor of SO3
@@ -574,6 +382,169 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   //
   SOPHUS_FUNC TranslationMember const& translation() const {
     return translation_;
+  }
+
+  // Group exponential
+  //
+  // This functions takes in an element of tangent space (= twist ``a``) and
+  // returns the corresponding element of the group SE(2).
+  //
+  // The first two components of ``a`` represent the translational part
+  // ``upsilon`` in the tangent space of SE(2), while the last three components
+  // of ``a`` represents the rotation vector ``omega``.
+  // To be more specific, this function computes ``expmat(hat(a))`` with
+  // ``expmat(.)`` being the matrix exponential and ``hat(.)`` the hat-operator
+  // of SE(2), see below.
+  //
+  SOPHUS_FUNC static SE2<Scalar> exp(Tangent const& a) {
+    Scalar theta = a[2];
+    SO2<Scalar> so2 = SO2<Scalar>::exp(theta);
+    Scalar sin_theta_by_theta;
+    Scalar one_minus_cos_theta_by_theta;
+
+    if (std::abs(theta) < Constants<Scalar>::epsilon()) {
+      Scalar theta_sq = theta * theta;
+      sin_theta_by_theta = Scalar(1.) - Scalar(1. / 6.) * theta_sq;
+      one_minus_cos_theta_by_theta =
+          Scalar(0.5) * theta - Scalar(1. / 24.) * theta * theta_sq;
+    } else {
+      sin_theta_by_theta = so2.unit_complex().y() / theta;
+      one_minus_cos_theta_by_theta =
+          (Scalar(1.) - so2.unit_complex().x()) / theta;
+    }
+    Vector2<Scalar> trans(
+        sin_theta_by_theta * a[0] - one_minus_cos_theta_by_theta * a[1],
+        one_minus_cos_theta_by_theta * a[0] + sin_theta_by_theta * a[1]);
+    return SE2<Scalar>(so2, trans);
+  }
+
+  // Returns closest SE3 given arbirary 4x4 matrix.
+  //
+  SOPHUS_FUNC static SE2 fitToSE2(Matrix3<Scalar> const& T) {
+    return SE2(SO2<Scalar>::fitToSO2(T.template block<2, 2>(0, 0)),
+               T.template block<2, 1>(0, 2));
+  }
+
+  // Returns the ith infinitesimal generators of SE(2).
+  //
+  // The infinitesimal generators of SE(2) are:
+  //
+  //         |  0  0  1 |
+  //   G_0 = |  0  0  0 |
+  //         |  0  0  0 |
+  //
+  //         |  0  0  0 |
+  //   G_1 = |  0  0  1 |
+  //         |  0  0  0 |
+  //
+  //         |  0 -1  0 |
+  //   G_2 = |  1  0  0 |
+  //         |  0  0  0 |
+  // Precondition: ``i`` must be in 0, 1 or 2.
+  //
+  SOPHUS_FUNC static Transformation generator(int i) {
+    SOPHUS_ENSURE(i >= 0 || i <= 2, "i should be in range [0,2].");
+    Tangent e;
+    e.setZero();
+    e[i] = Scalar(1);
+    return hat(e);
+  }
+
+  // hat-operator
+  //
+  // It takes in the 3-vector representation (= twist) and returns the
+  // corresponding matrix representation of Lie algebra element.
+  //
+  // Formally, the ``hat()`` operator of SE(3) is defined as
+  //
+  //   ``hat(.): R^3 -> R^{3x33},  hat(a) = sum_i a_i * G_i``  (for i=0,1,2)
+  //
+  // with ``G_i`` being the ith infinitesimal generator of SE(2).
+  //
+  SOPHUS_FUNC static Transformation hat(Tangent const& a) {
+    Transformation Omega;
+    Omega.setZero();
+    Omega.template topLeftCorner<2, 2>() = SO2<Scalar>::hat(a[2]);
+    Omega.col(2).template head<2>() = a.template head<2>();
+    return Omega;
+  }
+
+  // Lie bracket
+  //
+  // It computes the Lie bracket of SE(2). To be more specific, it computes
+  //
+  //   ``[omega_1, omega_2]_se2 := vee([hat(omega_1), hat(omega_2)])``
+  //
+  // with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
+  // hat-operator and ``vee(.)`` the vee-operator of SE(2).
+  //
+  SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
+    Vector2<Scalar> upsilon1 = a.template head<2>();
+    Vector2<Scalar> upsilon2 = b.template head<2>();
+    Scalar theta1 = a[2];
+    Scalar theta2 = b[2];
+
+    return Tangent(-theta1 * upsilon2[1] + theta2 * upsilon1[1],
+                   theta1 * upsilon2[0] - theta2 * upsilon1[0], Scalar(0));
+  }
+
+  // Construct pure rotation.
+  //
+  static SOPHUS_FUNC SE2 rot(Scalar const& x) {
+    return SE2(SO2<Scalar>(x), Sophus::Vector2<Scalar>::Zero());
+  }
+
+  // Draw uniform sample from SE(2) manifold.
+  //
+  // Translations are drawn component-wise from the range [-1, 1].
+  //
+  template <class UniformRandomBitGenerator>
+  static SE2 sampleUniform(UniformRandomBitGenerator& generator) {
+    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
+    return SE2(SO2<Scalar>::sampleUniform(generator),
+               Vector2<Scalar>(uniform(generator), uniform(generator)));
+  }
+
+  // Construct a translation only SE(2) instance.
+  //
+  template <class T0, class T1>
+  static SOPHUS_FUNC SE2 trans(T0 const& x, T1 const& y) {
+    return SE2(SO2<Scalar>(), Vector2<Scalar>(x, y));
+  }
+
+  // Contruct x-axis translation.
+  //
+  static SOPHUS_FUNC SE2 transX(Scalar const& x) {
+    return SE2::trans(x, Scalar(0));
+  }
+
+  // Contruct y-axis translation.
+  //
+  static SOPHUS_FUNC SE2 transY(Scalar const& y) {
+    return SE2::trans(Scalar(0), y);
+  }
+
+  // vee-operator
+  //
+  // It takes the 3x3-matrix representation ``Omega`` and maps it to the
+  // corresponding 3-vector representation of Lie algebra.
+  //
+  // This is the inverse of the hat-operator, see above.
+  //
+  // Precondition: ``Omega`` must have the following structure:
+  //
+  //                |  0 -d  a |
+  //                |  d  0  b |
+  //                |  0  0  0 | .
+  //
+  SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
+    SOPHUS_ENSURE(
+        Omega.row(2).template lpNorm<1>() < Constants<Scalar>::epsilon(),
+        "Omega: \n%", Omega);
+    Tangent upsilon_omega;
+    upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
+    upsilon_omega[2] = SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
+    return upsilon_omega;
   }
 
  protected:

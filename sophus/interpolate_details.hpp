@@ -22,7 +22,7 @@ struct Traits<SO2<Scalar>> {
 
   static bool hasShortestPathAmbiguity(SO2<Scalar> const& foo_T_bar) {
     using std::abs;
-    Scalar angle = SO2<Scalar>::log(foo_T_bar);
+    Scalar angle = foo_T_bar.log();
     return abs(abs(angle) - Constants<Scalar>::pi()) <
            Constants<Scalar>::epsilon();
   }
@@ -43,8 +43,7 @@ struct Traits<SO3<Scalar>> {
 
   static bool hasShortestPathAmbiguity(SO3<Scalar> const& foo_T_bar) {
     using std::abs;
-    Scalar angle;
-    SO3<Scalar>::logAndTheta(foo_T_bar, &angle);
+    Scalar angle = foo_T_bar.logAndTheta().theta;
     return abs(abs(angle) - Constants<Scalar>::pi()) <
            Constants<Scalar>::epsilon();
   }

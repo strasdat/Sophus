@@ -80,6 +80,13 @@ class RxSO3Base {
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
+  struct TangentAndTheta {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    Tangent tangent;
+    Scalar theta;
+  };
+
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -126,10 +133,29 @@ class RxSO3Base {
 
   // Logarithmic map
   //
-  // Returns tangent space representation of the instance.
+  // Computes the logarithm, the inverse of the group exponential which maps
+  // element of the group (scaled rotation matrices) to elements of the tangent
+  // space (rotation-vector plus logarithm of scale factor).
   //
-  SOPHUS_FUNC Tangent log() const { return RxSO3<Scalar>::log(*this); }
+  // To be specific, this function computes ``vee(logmat(.))`` with
+  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
+  // of RxSO3.
+  //
+  SOPHUS_FUNC Tangent log() const { return logAndTheta().tangent; }
 
+  // As above, but also returns ``theta = |omega|``.
+  //
+  SOPHUS_FUNC TangentAndTheta logAndTheta() const {
+    using std::log;
+
+    Scalar scale = quaternion().squaredNorm();
+    TangentAndTheta result;
+    result.tangent[3] = log(scale);
+    auto omega_and_theta = SO3<Scalar>(quaternion()).logAndTheta();
+    result.tangent.template head<3>() = omega_and_theta.tangent;
+    result.theta = omega_and_theta.theta;
+    return result;
+  }
   // Returns 3x3 matrix representation of the instance.
   //
   // For RxSO3, the matrix representation is an scaled orthogonal matrix ``sR``
@@ -314,24 +340,91 @@ class RxSO3Base {
 
   SOPHUS_FUNC SO3<Scalar> so3() const { return SO3<Scalar>(quaternion()); }
 
-  ////////////////////////////////////////////////////////////////////////////
-  // public static functions
-  ////////////////////////////////////////////////////////////////////////////
-
-  // Derivative of Lie bracket with respect to first element.
+ protected:
+  // Mutator of quaternion is private to ensure class invariant.
   //
-  // This function returns ``D_a [a, b]`` with ``D_a`` being the
-  // differential operator with respect to ``a``, ``[a, b]`` being the lie
-  // bracket of the Lie algebra rxso3.
-  // See ``lieBracket()`` below.
-  //
-  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(Tangent const& b) {
-    Adjoint res;
-    res.setZero();
-    res.template topLeftCorner<3, 3>() =
-        -SO3<Scalar>::hat(b.template head<3>());
-    return res;
+  SOPHUS_FUNC QuaternionType& quaternion_nonconst() {
+    return static_cast<Derived*>(this)->quaternion_nonconst();
   }
+};
+
+// RxSO3 default type - Constructors and default storage for RxSO3 Type.
+template <class Scalar_, int Options>
+class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
+  using Base = RxSO3Base<RxSO3<Scalar_, Options>>;
+
+ public:
+  using Scalar = Scalar_;
+  using Transformation = typename Base::Transformation;
+  using Point = typename Base::Point;
+  using Tangent = typename Base::Tangent;
+  using Adjoint = typename Base::Adjoint;
+  using QuaternionMember = Eigen::Quaternion<Scalar, Options>;
+
+  // ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
+  friend class RxSO3Base<RxSO3<Scalar_, Options>>;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  // Default constructor initialize quaternion to identity rotation and scale.
+  //
+  SOPHUS_FUNC RxSO3()
+      : quaternion_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
+
+  // Copy constructor
+  //
+  template <class OtherDerived>
+  SOPHUS_FUNC RxSO3(RxSO3Base<OtherDerived> const& other)
+      : quaternion_(other.quaternion()) {}
+
+  // Constructor from scaled rotation matrix
+  //
+  // Precondition: rotation matrix need to be scaled orthogonal with determinant
+  // of s^3.
+  //
+  SOPHUS_FUNC explicit RxSO3(Transformation const& sR) {
+    this->setScaledRotationMatrix(sR);
+  }
+
+  // Constructor from scale factor and rotation matrix ``R``.
+  //
+  // Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
+  //               of 1 and ``scale`` must to be close to zero.
+  //
+  SOPHUS_FUNC RxSO3(Scalar const& scale, Transformation const& R)
+      : quaternion_(R) {
+    SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
+                  "Scale factor must be greater-equal epsilon.");
+    quaternion_.coeffs() *= std::sqrt(scale);
+  }
+
+  // Constructor from scale factor and SO3
+  //
+  // Precondition: ``scale`` must to be close to zero.
+  //
+  SOPHUS_FUNC RxSO3(Scalar const& scale, SO3<Scalar> const& so3)
+      : quaternion_(so3.unit_quaternion()) {
+    SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
+                  "Scale factor must be greater-equal epsilon.");
+    quaternion_.coeffs() *= std::sqrt(scale);
+  }
+
+  // Constructor from quaternion
+  //
+  // Precondition: quaternion must not be close to zero.
+  //
+  template <class D>
+  SOPHUS_FUNC explicit RxSO3(Eigen::QuaternionBase<D> const& quat)
+      : quaternion_(quat) {
+    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
+                  "must be same Scalar type.");
+    SOPHUS_ENSURE(quaternion_.squaredNorm() > Constants<Scalar>::epsilon(),
+                  "Scale factor must be greater-equal epsilon.");
+  }
+
+  // Accessor of quaternion.
+  //
+  SOPHUS_FUNC QuaternionMember const& quaternion() const { return quaternion_; }
 
   // Group exponential
   //
@@ -440,33 +533,17 @@ class RxSO3Base {
     return res;
   }
 
-  // Logarithmic map
+  // Draw uniform sample from RxSO(3) manifold.
   //
-  // Computes the logarithm, the inverse of the group exponential which maps
-  // element of the group (scaled rotation matrices) to elements of the tangent
-  // space (rotation-vector plus logarithm of scale factor).
+  // The scale factor is drawn uniformly in log2-space from [-1, 1],
+  // hence the scale is in [0.5, 2].
   //
-  // To be specific, this function computes ``vee(logmat(.))`` with
-  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
-  // of RxSO3.
-  //
-  SOPHUS_FUNC static Tangent log(RxSO3<Scalar> const& other) {
-    Scalar theta;
-    return logAndTheta(other, &theta);
-  }
-
-  // As above, but also returns ``theta = |omega|`` as out-parameter.
-  //
-  SOPHUS_FUNC static Tangent logAndTheta(RxSO3<Scalar> const& other,
-                                         Scalar* theta) {
-    using std::log;
-
-    Scalar scale = other.quaternion().squaredNorm();
-    Tangent omega_sigma;
-    omega_sigma[3] = log(scale);
-    omega_sigma.template head<3>() =
-        SO3<Scalar>::logAndTheta(SO3<Scalar>(other.quaternion()), theta);
-    return omega_sigma;
+  template <class UniformRandomBitGenerator>
+  static RxSO3 sampleUniform(UniformRandomBitGenerator& generator) {
+    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
+    using std::exp2;
+    return RxSO3(exp2(uniform(generator)),
+                 SO3<Scalar>::sampleUniform(generator));
   }
 
   // vee-operator
@@ -486,105 +563,6 @@ class RxSO3Base {
     using std::abs;
     return Tangent(Omega(2, 1), Omega(0, 2), Omega(1, 0), Omega(0, 0));
   }
-
- protected:
-  // Mutator of quaternion is private to ensure class invariant.
-  //
-  SOPHUS_FUNC QuaternionType& quaternion_nonconst() {
-    return static_cast<Derived*>(this)->quaternion_nonconst();
-  }
-};
-
-// RxSO3 default type - Constructors and default storage for RxSO3 Type.
-template <class Scalar_, int Options>
-class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
-  using Base = RxSO3Base<RxSO3<Scalar_, Options>>;
-
- public:
-  using Scalar = Scalar_;
-  using Transformation = typename Base::Transformation;
-  using Point = typename Base::Point;
-  using Tangent = typename Base::Tangent;
-  using Adjoint = typename Base::Adjoint;
-  using QuaternionMember = Eigen::Quaternion<Scalar, Options>;
-
-  // ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
-  friend class RxSO3Base<RxSO3<Scalar_, Options>>;
-
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-  // Default constructor initialize quaternion to identity rotation and scale.
-  //
-  SOPHUS_FUNC RxSO3()
-      : quaternion_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
-
-  // Copy constructor
-  //
-  template <class OtherDerived>
-  SOPHUS_FUNC RxSO3(RxSO3Base<OtherDerived> const& other)
-      : quaternion_(other.quaternion()) {}
-
-  // Constructor from scaled rotation matrix
-  //
-  // Precondition: rotation matrix need to be scaled orthogonal with determinant
-  // of s^3.
-  //
-  SOPHUS_FUNC explicit RxSO3(Transformation const& sR) {
-    this->setScaledRotationMatrix(sR);
-  }
-
-  // Constructor from scale factor and rotation matrix ``R``.
-  //
-  // Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
-  //               of 1 and ``scale`` must to be close to zero.
-  //
-  SOPHUS_FUNC RxSO3(Scalar const& scale, Transformation const& R)
-      : quaternion_(R) {
-    SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon.");
-    quaternion_.coeffs() *= std::sqrt(scale);
-  }
-
-  // Constructor from scale factor and SO3
-  //
-  // Precondition: ``scale`` must to be close to zero.
-  //
-  SOPHUS_FUNC RxSO3(Scalar const& scale, SO3<Scalar> const& so3)
-      : quaternion_(so3.unit_quaternion()) {
-    SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon.");
-    quaternion_.coeffs() *= std::sqrt(scale);
-  }
-
-  // Constructor from quaternion
-  //
-  // Precondition: quaternion must not be close to zero.
-  //
-  template <class D>
-  SOPHUS_FUNC explicit RxSO3(Eigen::QuaternionBase<D> const& quat)
-      : quaternion_(quat) {
-    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
-                  "must be same Scalar type.");
-    SOPHUS_ENSURE(quaternion_.squaredNorm() > Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon.");
-  }
-
-  // Draw uniform sample from RxSO(3) manifold.
-  //
-  // The scale factor is drawn uniformly in log2-space from [-1, 1],
-  // hence the scale is in [0.5, 2].
-  //
-  template <class UniformRandomBitGenerator>
-  static RxSO3 sampleUniform(UniformRandomBitGenerator& generator) {
-    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
-    using std::exp2;
-    return RxSO3(exp2(uniform(generator)),
-                 SO3<Scalar>::sampleUniform(generator));
-  }
-
-  // Accessor of quaternion.
-  //
-  SOPHUS_FUNC QuaternionMember const& quaternion() const { return quaternion_; }
 
  protected:
   SOPHUS_FUNC QuaternionMember& quaternion_nonconst() { return quaternion_; }
