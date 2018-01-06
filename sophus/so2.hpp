@@ -124,9 +124,18 @@ class SO2Base {
 
   // Logarithmic map
   //
-  // Returns tangent space representation (= rotation angle) of the instance.
+  // Computes the logarithm, the inverse of the group exponential which maps
+  // element of the group (rotation matrices) to elements of the tangent space
+  // (rotation angles).
   //
-  SOPHUS_FUNC Scalar log() const { return SO2<Scalar>::log(*this); }
+  // To be specific, this function computes ``vee(logmat(.))`` with
+  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
+  // of SO(2).
+  //
+  SOPHUS_FUNC Scalar log() const {
+    using std::atan2;
+    return atan2(unit_complex().y(), unit_complex().x());
+  }
 
   // It re-normalizes ``unit_complex`` to unit length.
   //
@@ -238,96 +247,6 @@ class SO2Base {
     return static_cast<Derived const*>(this)->unit_complex();
   }
 
-  ////////////////////////////////////////////////////////////////////////////
-  // public static functions
-  ////////////////////////////////////////////////////////////////////////////
-
-  // Group exponential
-  //
-  // This functions takes in an element of tangent space (= rotation angle
-  // ``theta``) and returns the corresponding element of the group SO(2).
-  //
-  // To be more specific, this function computes ``expmat(hat(omega))``
-  // with ``expmat(.)`` being the matrix exponential and ``hat(.)`` being the
-  // hat()-operator of SO(2).
-  //
-  SOPHUS_FUNC static SO2<Scalar> exp(Tangent const& theta) {
-    return SO2<Scalar>(std::cos(theta), std::sin(theta));
-  }
-
-  // Returns the infinitesimal generators of SO3.
-  //
-  // The infinitesimal generators of SO(2) is:
-  //
-  //   |  0  1 |
-  //   | -1  0 |
-  //
-  SOPHUS_FUNC static Transformation generator() { return hat(1); }
-
-  // hat-operator
-  //
-  // It takes in the scalar representation ``theta`` (= rotation angle) and
-  // returns the corresponding matrix representation of Lie algebra element.
-  //
-  // Formally, the ``hat()`` operator of SO(2) is defined as
-  //
-  //   ``hat(.): R^2 -> R^{2x2},  hat(theta) = theta * G``
-  //
-  // with ``G`` being the infinitesimal generator of SO(2).
-  //
-  // The corresponding inverse is the ``vee``-operator, see below.
-  //
-  SOPHUS_FUNC static Transformation hat(Tangent const& theta) {
-    Transformation Omega;
-    // clang-format off
-    Omega <<
-        Scalar(0),   -theta,
-            theta, Scalar(0);
-    // clang-format on
-    return Omega;
-  }
-
-  // Lie bracket
-  //
-  // It returns the Lie bracket of SO(2). Since SO(2) is a commutative group,
-  // the Lie bracket is simple ``0``.
-  //
-  SOPHUS_FUNC static Tangent lieBracket(Tangent const&, Tangent const&) {
-    return Scalar(0);
-  }
-
-  // Logarithmic map
-  //
-  // Computes the logarithm, the inverse of the group exponential which maps
-  // element of the group (rotation matrices) to elements of the tangent space
-  // (rotation angles).
-  //
-  // To be specific, this function computes ``vee(logmat(.))`` with
-  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
-  // of SO(2).
-  //
-  SOPHUS_FUNC static Tangent log(SO2<Scalar> const& other) {
-    using std::atan2;
-    return atan2(other.unit_complex_.y(), other.unit_complex().x());
-  }
-
-  // vee-operator
-  //
-  // It takes the 2x2-matrix representation ``Omega`` and maps it to the
-  // corresponding scalar representation of Lie algebra.
-  //
-  // This is the inverse of the hat-operator, see above.
-  //
-  // Precondition: ``Omega`` must have the following structure:
-  //
-  //                |  0 -a |
-  //                |  a  0 |
-  //
-  SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
-    using std::abs;
-    return Omega(1, 0);
-  }
-
  private:
   // Mutator of unit_complex is private to ensure class invariant. That is
   // the complex number must stay close to unit length.
@@ -378,12 +297,6 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
                   R.determinant());
   }
 
-  // Returns closed SO2 given arbirary 2x2 matrix.
-  //
-  static SO2 fitToSO2(Transformation const& R) {
-    return SO2(makeRotationMatrix(R));
-  }
-
   // Constructor from pair of real and imaginary number.
   //
   // Precondition: The pair must not be close to zero.
@@ -405,6 +318,78 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
     Base::normalize();
   }
 
+  // Constructor from an rotation angle.
+  //
+  SOPHUS_FUNC explicit SO2(Scalar theta) {
+    unit_complex_nonconst() = SO2<Scalar>::exp(theta).unit_complex();
+  }
+
+  // Accessor of unit complex number
+  //
+  SOPHUS_FUNC ComplexMember const& unit_complex() const {
+    return unit_complex_;
+  }
+
+  // Group exponential
+  //
+  // This functions takes in an element of tangent space (= rotation angle
+  // ``theta``) and returns the corresponding element of the group SO(2).
+  //
+  // To be more specific, this function computes ``expmat(hat(omega))``
+  // with ``expmat(.)`` being the matrix exponential and ``hat(.)`` being the
+  // hat()-operator of SO(2).
+  //
+  SOPHUS_FUNC static SO2<Scalar> exp(Tangent const& theta) {
+    return SO2<Scalar>(std::cos(theta), std::sin(theta));
+  }
+
+  // Returns the infinitesimal generators of SO3.
+  //
+  // The infinitesimal generators of SO(2) is:
+  //
+  //   |  0  1 |
+  //   | -1  0 |
+  //
+  SOPHUS_FUNC static Transformation generator() { return hat(1); }
+
+  // hat-operator
+  //
+  // It takes in the scalar representation ``theta`` (= rotation angle) and
+  // returns the corresponding matrix representation of Lie algebra element.
+  //
+  // Formally, the ``hat()`` operator of SO(2) is defined as
+  //
+  //   ``hat(.): R^2 -> R^{2x2},  hat(theta) = theta * G``
+  //
+  // with ``G`` being the infinitesimal generator of SO(2).
+  //
+  // The corresponding inverse is the ``vee``-operator, see below.
+  //
+  SOPHUS_FUNC static Transformation hat(Tangent const& theta) {
+    Transformation Omega;
+    // clang-format off
+    Omega <<
+        Scalar(0),   -theta,
+            theta, Scalar(0);
+    // clang-format on
+    return Omega;
+  }
+
+  // Returns closed SO2 given arbirary 2x2 matrix.
+  //
+  static SO2 fitToSO2(Transformation const& R) {
+    return SO2(makeRotationMatrix(R));
+  }
+
+  // Lie bracket
+  //
+  // It returns the Lie bracket of SO(2). Since SO(2) is a commutative group,
+  // the Lie bracket is simple ``0``.
+  //
+  SOPHUS_FUNC static Tangent lieBracket(Tangent const&, Tangent const&) {
+    return Scalar(0);
+  }
+
   // Draw uniform sample from SO(2) manifold.
   //
   template <class UniformRandomBitGenerator>
@@ -416,16 +401,21 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
     return SO2(uniform(generator));
   }
 
-  // Constructor from an rotation angle.
+  // vee-operator
   //
-  SOPHUS_FUNC explicit SO2(Scalar theta) {
-    unit_complex_nonconst() = SO2<Scalar>::exp(theta).unit_complex();
-  }
-
-  // Accessor of unit complex number
+  // It takes the 2x2-matrix representation ``Omega`` and maps it to the
+  // corresponding scalar representation of Lie algebra.
   //
-  SOPHUS_FUNC ComplexMember const& unit_complex() const {
-    return unit_complex_;
+  // This is the inverse of the hat-operator, see above.
+  //
+  // Precondition: ``Omega`` must have the following structure:
+  //
+  //                |  0 -a |
+  //                |  a  0 |
+  //
+  SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
+    using std::abs;
+    return Omega(1, 0);
   }
 
  protected:

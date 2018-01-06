@@ -113,9 +113,35 @@ class Sim3Base {
 
   // Logarithmic map
   //
-  // Returns tangent space representation of the instance.
+  // Computes the logarithm, the inverse of the group exponential which maps
+  // element of the group (rigid body transformations) to elements of the
+  // tangent space (twist).
   //
-  SOPHUS_FUNC Tangent log() const { return log(*this); }
+  // To be specific, this function computes ``vee(logmat(.))`` with
+  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
+  // of Sim(3).
+  //
+  SOPHUS_FUNC Tangent log() const {
+    // The derivation of the closed-form Sim(3) logarithm for is done
+    // analogously to the closed-form solution of the SE(3) logarithm, see
+    // J. Gallier, D. Xu, "Computing exponentials of skew symmetric matrices and
+    // logarithms of orthogonal matrices", IJRA 2002.
+    // https://pdfs.semanticscholar.org/cfe3/e4b39de63c8cabd89bf3feff7f5449fc981d.pdf
+    // (Sec. 6., pp. 8)
+    Tangent res;
+    auto omega_sigma_and_theta = rxso3().logAndTheta();
+    Vector3<Scalar> const omega =
+        omega_sigma_and_theta.tangent.template head<3>();
+    Scalar sigma = omega_sigma_and_theta.tangent[3];
+    Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
+    Matrix3<Scalar> const W_inv = details::calcWInv<Scalar, 3>(
+        Omega, omega_sigma_and_theta.theta, sigma, scale());
+
+    res.segment(0, 3) = W_inv * translation();
+    res.segment(3, 3) = omega;
+    res[6] = sigma;
+    return res;
+  }
 
   // Returns 4x4 matrix representation of the instance.
   //
@@ -271,27 +297,105 @@ class Sim3Base {
   ////////////////////////////////////////////////////////////////////////////
   // public static functions
   ////////////////////////////////////////////////////////////////////////////
+};
 
-  // Derivative of Lie bracket with respect to first element.
-  //
-  // This function returns ``D_a [a, b]`` with ``D_a`` being the
-  // differential operator with respect to ``a``, ``[a, b]`` being the lie
-  // bracket of the Lie algebra sim(3).
-  // See ``lieBracket()`` below.
-  //
-  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(Tangent const& b) {
-    Vector3<Scalar> const upsilon2 = b.template head<3>();
-    Vector3<Scalar> const omega2 = b.template segment<3>(3);
-    Scalar const sigma2 = b[6];
+// Sim3 default type - Constructors and default storage for Sim3 Type.
+template <class Scalar_, int Options>
+class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
+  using Base = Sim3Base<Sim3<Scalar_, Options>>;
 
-    Adjoint res;
-    res.setZero();
-    res.template topLeftCorner<3, 3>() =
-        -SO3<Scalar>::hat(omega2) - sigma2 * Matrix3<Scalar>::Identity();
-    res.template block<3, 3>(0, 3) = -SO3<Scalar>::hat(upsilon2);
-    res.template topRightCorner<3, 1>() = upsilon2;
-    res.template block<3, 3>(3, 3) = -SO3<Scalar>::hat(omega2);
-    return res;
+ public:
+  using Scalar = Scalar_;
+  using Transformation = typename Base::Transformation;
+  using Point = typename Base::Point;
+  using Tangent = typename Base::Tangent;
+  using Adjoint = typename Base::Adjoint;
+  using RxSo3Member = RxSO3<Scalar, Options>;
+  using TranslationMember = Vector3<Scalar, Options>;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  // Default constructor initialize similiraty transform to the identity.
+  //
+  SOPHUS_FUNC Sim3() : translation_(Vector3<Scalar>::Zero()) {}
+
+  // Copy constructor
+  //
+  template <class OtherDerived>
+  SOPHUS_FUNC Sim3(Sim3Base<OtherDerived> const& other)
+      : rxso3_(other.rxso3()), translation_(other.translation()) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
+
+  // Constructor from RxSO3 and translation vector
+  //
+  template <class OtherDerived, class D>
+  SOPHUS_FUNC Sim3(RxSO3Base<OtherDerived> const& rxso3,
+                   Eigen::MatrixBase<D> const& translation)
+      : rxso3_(rxso3), translation_(translation) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
+
+  // Constructor from quaternion and translation vector.
+  //
+  // Precondition: quaternion must not be close to zero.
+  //
+  template <class D1, class D2>
+  SOPHUS_FUNC Sim3(Eigen::QuaternionBase<D1> const& quaternion,
+                   Eigen::MatrixBase<D2> const& translation)
+      : rxso3_(quaternion), translation_(translation) {
+    static_assert(std::is_same<typename D1::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+    static_assert(std::is_same<typename D2::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
+
+  // Constructor from 4x4 matrix
+  //
+  // Precondition: Top-left 3x3 matrix needs to be "scaled-orthogonal" with
+  //               positive determinant. The last row must be (0, 0, 0, 1).
+  //
+  SOPHUS_FUNC explicit Sim3(Matrix<Scalar, 4, 4> const& T)
+      : rxso3_(T.template topLeftCorner<3, 3>()),
+        translation_(T.template block<3, 1>(0, 3)) {}
+
+  // This provides unsafe read/write access to internal data. Sim(3) is
+  // represented by an Eigen::Quaternion (four parameters) and a 3-vector. When
+  // using direct write access, the user needs to take care of that the
+  // quaternion is not set close to zero.
+  //
+  SOPHUS_FUNC Scalar* data() {
+    // rxso3_ and translation_ are laid out sequentially with no padding
+    return rxso3_.data();
+  }
+
+  // Const version of data() above.
+  //
+  SOPHUS_FUNC Scalar const* data() const {
+    // rxso3_ and translation_ are laid out sequentially with no padding
+    return rxso3_.data();
+  }
+
+  // Accessor of RxSO3
+  //
+  SOPHUS_FUNC RxSo3Member& rxso3() { return rxso3_; }
+
+  // Mutator of RxSO3
+  //
+  SOPHUS_FUNC RxSo3Member const& rxso3() const { return rxso3_; }
+
+  // Mutator of translation vector
+  //
+  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
+
+  // Accessor of translation vector
+  //
+  SOPHUS_FUNC TranslationMember const& translation() const {
+    return translation_;
   }
 
   // Group exponential
@@ -420,37 +524,18 @@ class Sim3Base {
     return res;
   }
 
-  // Logarithmic map
+  // Draw uniform sample from Sim(3) manifold.
   //
-  // Computes the logarithm, the inverse of the group exponential which maps
-  // element of the group (rigid body transformations) to elements of the
-  // tangent space (twist).
+  // Translations are drawn component-wise from the range [-1, 1].
+  // The scale factor is drawn uniformly in log2-space from [-1, 1],
+  // hence the scale is in [0.5, 2].
   //
-  // To be specific, this function computes ``vee(logmat(.))`` with
-  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
-  // of Sim(3).
-  //
-  SOPHUS_FUNC static Tangent log(Sim3<Scalar> const& other) {
-    // The derivation of the closed-form Sim(3) logarithm for is done
-    // analogously to the closed-form solution of the SE(3) logarithm, see
-    // J. Gallier, D. Xu, "Computing exponentials of skew symmetric matrices and
-    // logarithms of orthogonal matrices", IJRA 2002.
-    // https://pdfs.semanticscholar.org/cfe3/e4b39de63c8cabd89bf3feff7f5449fc981d.pdf
-    // (Sec. 6., pp. 8)
-    Tangent res;
-    Scalar theta;
-    Vector4<Scalar> const omega_sigma =
-        RxSO3<Scalar>::logAndTheta(other.rxso3(), &theta);
-    Vector3<Scalar> const omega = omega_sigma.template head<3>();
-    Scalar sigma = omega_sigma[3];
-    Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
-    Matrix3<Scalar> const W_inv =
-        details::calcWInv<Scalar, 3>(Omega, theta, sigma, other.scale());
-
-    res.segment(0, 3) = W_inv * other.translation();
-    res.segment(3, 3) = omega;
-    res[6] = sigma;
-    return res;
+  template <class UniformRandomBitGenerator>
+  static Sim3 sampleUniform(UniformRandomBitGenerator& generator) {
+    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
+    return Sim3(RxSO3<Scalar>::sampleUniform(generator),
+                Vector3<Scalar>(uniform(generator), uniform(generator),
+                                uniform(generator)));
   }
 
   // vee-operator
@@ -473,120 +558,6 @@ class Sim3Base {
     upsilon_omega_sigma.template tail<4>() =
         RxSO3<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
     return upsilon_omega_sigma;
-  }
-};
-
-// Sim3 default type - Constructors and default storage for Sim3 Type.
-template <class Scalar_, int Options>
-class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
-  using Base = Sim3Base<Sim3<Scalar_, Options>>;
-
- public:
-  using Scalar = Scalar_;
-  using Transformation = typename Base::Transformation;
-  using Point = typename Base::Point;
-  using Tangent = typename Base::Tangent;
-  using Adjoint = typename Base::Adjoint;
-  using RxSo3Member = RxSO3<Scalar, Options>;
-  using TranslationMember = Vector3<Scalar, Options>;
-
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-  // Default constructor initialize similiraty transform to the identity.
-  //
-  SOPHUS_FUNC Sim3() : translation_(Vector3<Scalar>::Zero()) {}
-
-  // Copy constructor
-  //
-  template <class OtherDerived>
-  SOPHUS_FUNC Sim3(Sim3Base<OtherDerived> const& other)
-      : rxso3_(other.rxso3()), translation_(other.translation()) {
-    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
-                  "must be same Scalar type");
-  }
-
-  // Constructor from RxSO3 and translation vector
-  //
-  template <class OtherDerived, class D>
-  SOPHUS_FUNC Sim3(RxSO3Base<OtherDerived> const& rxso3,
-                   Eigen::MatrixBase<D> const& translation)
-      : rxso3_(rxso3), translation_(translation) {
-    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
-                  "must be same Scalar type");
-    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
-                  "must be same Scalar type");
-  }
-
-  // Constructor from quaternion and translation vector.
-  //
-  // Precondition: quaternion must not be close to zero.
-  //
-  template <class D1, class D2>
-  SOPHUS_FUNC Sim3(Eigen::QuaternionBase<D1> const& quaternion,
-                   Eigen::MatrixBase<D2> const& translation)
-      : rxso3_(quaternion), translation_(translation) {
-    static_assert(std::is_same<typename D1::Scalar, Scalar>::value,
-                  "must be same Scalar type");
-    static_assert(std::is_same<typename D2::Scalar, Scalar>::value,
-                  "must be same Scalar type");
-  }
-
-  // Constructor from 4x4 matrix
-  //
-  // Precondition: Top-left 3x3 matrix needs to be "scaled-orthogonal" with
-  //               positive determinant. The last row must be (0, 0, 0, 1).
-  //
-  SOPHUS_FUNC explicit Sim3(Matrix<Scalar, 4, 4> const& T)
-      : rxso3_(T.template topLeftCorner<3, 3>()),
-        translation_(T.template block<3, 1>(0, 3)) {}
-
-  // This provides unsafe read/write access to internal data. Sim(3) is
-  // represented by an Eigen::Quaternion (four parameters) and a 3-vector. When
-  // using direct write access, the user needs to take care of that the
-  // quaternion is not set close to zero.
-  //
-  SOPHUS_FUNC Scalar* data() {
-    // rxso3_ and translation_ are laid out sequentially with no padding
-    return rxso3_.data();
-  }
-
-  // Const version of data() above.
-  //
-  SOPHUS_FUNC Scalar const* data() const {
-    // rxso3_ and translation_ are laid out sequentially with no padding
-    return rxso3_.data();
-  }
-
-  // Draw uniform sample from Sim(3) manifold.
-  //
-  // Translations are drawn component-wise from the range [-1, 1].
-  // The scale factor is drawn uniformly in log2-space from [-1, 1],
-  // hence the scale is in [0.5, 2].
-  //
-  template <class UniformRandomBitGenerator>
-  static Sim3 sampleUniform(UniformRandomBitGenerator& generator) {
-    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
-    return Sim3(RxSO3<Scalar>::sampleUniform(generator),
-                Vector3<Scalar>(uniform(generator), uniform(generator),
-                                uniform(generator)));
-  }
-
-  // Accessor of RxSO3
-  //
-  SOPHUS_FUNC RxSo3Member& rxso3() { return rxso3_; }
-
-  // Mutator of RxSO3
-  //
-  SOPHUS_FUNC RxSo3Member const& rxso3() const { return rxso3_; }
-
-  // Mutator of translation vector
-  //
-  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
-
-  // Accessor of translation vector
-  //
-  SOPHUS_FUNC TranslationMember const& translation() const {
-    return translation_;
   }
 
  protected:

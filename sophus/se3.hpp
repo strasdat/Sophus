@@ -117,7 +117,7 @@ class SE3Base {
     Eigen::Quaternion<Scalar> internal_gen_q;
     Vector<Scalar, 3> internal_gen_t;
 
-    internalGenerator(i, &internal_gen_q, &internal_gen_t);
+    SE3<Scalar>::internalGenerator(i, &internal_gen_q, &internal_gen_t);
 
     res.template head<4>() =
         (so3().unit_quaternion() * internal_gen_q).coeffs();
@@ -144,9 +144,48 @@ class SE3Base {
 
   // Logarithmic map
   //
-  // Returns tangent space representation (= twist) of the instance.
+  // Computes the logarithm, the inverse of the group exponential which maps
+  // element of the group (rigid body transformations) to elements of the
+  // tangent space (twist).
   //
-  SOPHUS_FUNC Tangent log() const { return log(*this); }
+  // To be specific, this function computes ``vee(logmat(.))`` with
+  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
+  // of SE(3).
+  //
+  SOPHUS_FUNC Tangent log() const {
+    // For the derivation of the logarithm of SE(3), see
+    // J. Gallier, D. Xu, "Computing exponentials of skew symmetric matrices and
+    // logarithms of orthogonal matrices", IJRA 2002.
+    // https://pdfs.semanticscholar.org/cfe3/e4b39de63c8cabd89bf3feff7f5449fc981d.pdf
+    // (Sec. 6., pp. 8)
+    using std::abs;
+    using std::cos;
+    using std::sin;
+    Tangent upsilon_omega;
+    auto omega_and_theta = so3().logAndTheta();
+    Scalar theta = omega_and_theta.theta;
+    upsilon_omega.template tail<3>() = omega_and_theta.tangent;
+    Matrix3<Scalar> const Omega =
+        SO3<Scalar>::hat(upsilon_omega.template tail<3>());
+
+    if (abs(theta) < Constants<Scalar>::epsilon()) {
+      Matrix3<Scalar> const V_inv = Matrix3<Scalar>::Identity() -
+                                    Scalar(0.5) * Omega +
+                                    Scalar(1. / 12.) * (Omega * Omega);
+
+      upsilon_omega.template head<3>() = V_inv * translation();
+    } else {
+      Scalar const half_theta = Scalar(0.5) * theta;
+
+      Matrix3<Scalar> const V_inv =
+          (Matrix3<Scalar>::Identity() - Scalar(0.5) * Omega +
+           (Scalar(1) -
+            theta * cos(half_theta) / (Scalar(2) * sin(half_theta))) /
+               (theta * theta) * (Omega * Omega));
+      upsilon_omega.template head<3>() = V_inv * translation();
+    }
+    return upsilon_omega;
+  }
 
   // It re-normalizes the SO3 element.
   //
@@ -281,29 +320,112 @@ class SE3Base {
   SOPHUS_FUNC QuaternionType const& unit_quaternion() const {
     return this->so3().unit_quaternion();
   }
+};
 
-  ////////////////////////////////////////////////////////////////////////////
-  // public static functions
-  ////////////////////////////////////////////////////////////////////////////
+// SE3 default type - Constructors and default storage for SE3 Type.
+template <class Scalar_, int Options>
+class SE3 : public SE3Base<SE3<Scalar_, Options>> {
+  using Base = SE3Base<SE3<Scalar_, Options>>;
 
-  // Derivative of Lie bracket with respect to first element.
+ public:
+  using Scalar = Scalar_;
+  using Transformation = typename Base::Transformation;
+  using Point = typename Base::Point;
+  using Tangent = typename Base::Tangent;
+  using Adjoint = typename Base::Adjoint;
+  using SO3Member = SO3<Scalar, Options>;
+  using TranslationMember = Vector3<Scalar, Options>;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  // Default constructor initialize rigid body motion to the identity.
   //
-  // This function returns ``D_a [a, b]`` with ``D_a`` being the
-  // differential operator with respect to ``a``, ``[a, b]`` being the lie
-  // bracket of the Lie algebra se(3).
-  // See ``lieBracket()`` below.
+  SOPHUS_FUNC SE3() : translation_(Vector3<Scalar>::Zero()) {}
+
+  // Copy constructor
   //
-  SOPHUS_FUNC static Adjoint d_lieBracketab_by_d_a(Tangent const& b) {
-    Adjoint res;
-    res.setZero();
+  template <class OtherDerived>
+  SOPHUS_FUNC SE3(SE3Base<OtherDerived> const& other)
+      : so3_(other.so3()), translation_(other.translation()) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
-    Vector3<Scalar> const upsilon2 = b.template head<3>();
-    Vector3<Scalar> const omega2 = b.template tail<3>();
+  // Constructor from SO3 and translation vector
+  //
+  template <class OtherDerived, class D>
+  SOPHUS_FUNC SE3(SO3Base<OtherDerived> const& so3,
+                  Eigen::MatrixBase<D> const& translation)
+      : so3_(so3), translation_(translation) {
+    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
+                  "must be same Scalar type");
+  }
 
-    res.template topLeftCorner<3, 3>() = -SO3<Scalar>::hat(omega2);
-    res.template topRightCorner<3, 3>() = -SO3<Scalar>::hat(upsilon2);
-    res.template bottomRightCorner<3, 3>() = -SO3<Scalar>::hat(omega2);
-    return res;
+  // Constructor from rotation matrix and translation vector
+  //
+  // Precondition: Rotation matrix needs to be orthogonal with determinant of 1.
+  //
+  SOPHUS_FUNC
+  SE3(Matrix3<Scalar> const& rotation_matrix, Point const& translation)
+      : so3_(rotation_matrix), translation_(translation) {}
+
+  // Constructor from quaternion and translation vector.
+  //
+  // Precondition: quaternion must not be close to zero.
+  //
+  SOPHUS_FUNC SE3(Eigen::Quaternion<Scalar> const& quaternion,
+                  Point const& translation)
+      : so3_(quaternion), translation_(translation) {}
+
+  // Constructor from 4x4 matrix
+  //
+  // Precondition: Rotation matrix needs to be orthogonal with determinant of 1.
+  //               The last row must be (0, 0, 0, 1).
+  //
+  SOPHUS_FUNC explicit SE3(Matrix4<Scalar> const& T)
+      : so3_(T.template topLeftCorner<3, 3>()),
+        translation_(T.template block<3, 1>(0, 3)) {
+    SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0),
+                                                   Scalar(0), Scalar(1)))
+                          .squaredNorm() < Constants<Scalar>::epsilon(),
+                  "Last row is not (0,0,0,1), but (%).", T.row(3));
+  }
+
+  // This provides unsafe read/write access to internal data. SO(3) is
+  // represented by an Eigen::Quaternion (four parameters). When using direct
+  // write access, the user needs to take care of that the quaternion stays
+  // normalized.
+  //
+  SOPHUS_FUNC Scalar* data() {
+    // so3_ and translation_ are laid out sequentially with no padding
+    return so3_.data();
+  }
+
+  // Const version of data() above.
+  //
+  SOPHUS_FUNC Scalar const* data() const {
+    // so3_ and translation_ are laid out sequentially with no padding
+    return so3_.data();
+  }
+
+  // Accessor of SO3
+  //
+  SOPHUS_FUNC SO3Member& so3() { return so3_; }
+
+  // Mutator of SO3
+  //
+  SOPHUS_FUNC SO3Member const& so3() const { return so3_; }
+
+  // Mutator of translation vector
+  //
+  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
+
+  // Accessor of translation vector
+  //
+  SOPHUS_FUNC TranslationMember const& translation() const {
+    return translation_;
   }
 
   // Group exponential
@@ -339,6 +461,13 @@ class SE3Base {
            (theta - sin(theta)) / (theta_sq * theta) * Omega_sq);
     }
     return SE3<Scalar>(so3, V * a.template head<3>());
+  }
+
+  // Returns closest SE3 given arbirary 4x4 matrix.
+  //
+  SOPHUS_FUNC static SE3 fitToSE3(Matrix4<Scalar> const& T) {
+    return SE3(SO3<Scalar>::fitToSO3(T.template block<3, 3>(0, 0)),
+               T.template block<3, 1>(0, 3));
   }
 
   // Returns the ith infinitesimal generators of SE(3).
@@ -450,49 +579,59 @@ class SE3Base {
     return res;
   }
 
-  // Logarithmic map
+  // Construct x-axis rotation.
   //
-  // Computes the logarithm, the inverse of the group exponential which maps
-  // element of the group (rigid body transformations) to elements of the
-  // tangent space (twist).
+  static SOPHUS_FUNC SE3 rotX(Scalar const& x) {
+    return SE3(SO3<Scalar>::rotX(x), Sophus::Vector3<Scalar>::Zero());
+  }
+
+  // Construct y-axis rotation.
   //
-  // To be specific, this function computes ``vee(logmat(.))`` with
-  // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
-  // of SE(3).
+  static SOPHUS_FUNC SE3 rotY(Scalar const& y) {
+    return SE3(SO3<Scalar>::rotY(y), Sophus::Vector3<Scalar>::Zero());
+  }
+
+  // Construct z-axis rotation.
   //
-  SOPHUS_FUNC static Tangent log(SE3<Scalar> const& se3) {
-    // For the derivation of the logarithm of SE(3), see
-    // J. Gallier, D. Xu, "Computing exponentials of skew symmetric matrices and
-    // logarithms of orthogonal matrices", IJRA 2002.
-    // https://pdfs.semanticscholar.org/cfe3/e4b39de63c8cabd89bf3feff7f5449fc981d.pdf
-    // (Sec. 6., pp. 8)
-    using std::abs;
-    using std::cos;
-    using std::sin;
-    Tangent upsilon_omega;
-    Scalar theta;
-    upsilon_omega.template tail<3>() =
-        SO3<Scalar>::logAndTheta(se3.so3(), &theta);
-    Matrix3<Scalar> const Omega =
-        SO3<Scalar>::hat(upsilon_omega.template tail<3>());
+  static SOPHUS_FUNC SE3 rotZ(Scalar const& z) {
+    return SE3(SO3<Scalar>::rotZ(z), Sophus::Vector3<Scalar>::Zero());
+  }
 
-    if (abs(theta) < Constants<Scalar>::epsilon()) {
-      Matrix3<Scalar> const V_inv = Matrix3<Scalar>::Identity() -
-                                    Scalar(0.5) * Omega +
-                                    Scalar(1. / 12.) * (Omega * Omega);
+  // Draw uniform sample from SE(3) manifold.
+  //
+  // Translations are drawn component-wise from the range [-1, 1].
+  //
+  template <class UniformRandomBitGenerator>
+  static SE3 sampleUniform(UniformRandomBitGenerator& generator) {
+    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
+    return SE3(SO3<Scalar>::sampleUniform(generator),
+               Vector3<Scalar>(uniform(generator), uniform(generator),
+                               uniform(generator)));
+  }
 
-      upsilon_omega.template head<3>() = V_inv * se3.translation();
-    } else {
-      Scalar const half_theta = Scalar(0.5) * theta;
+  // Construct a translation only SE3 instance.
+  //
+  template <class T0, class T1, class T2>
+  static SOPHUS_FUNC SE3 trans(T0 const& x, T1 const& y, T2 const& z) {
+    return SE3(SO3<Scalar>(), Vector3<Scalar>(x, y, z));
+  }
 
-      Matrix3<Scalar> const V_inv =
-          (Matrix3<Scalar>::Identity() - Scalar(0.5) * Omega +
-           (Scalar(1) -
-            theta * cos(half_theta) / (Scalar(2) * sin(half_theta))) /
-               (theta * theta) * (Omega * Omega));
-      upsilon_omega.template head<3>() = V_inv * se3.translation();
-    }
-    return upsilon_omega;
+  // Construct x-axis translation.
+  //
+  static SOPHUS_FUNC SE3 transX(Scalar const& x) {
+    return SE3::trans(x, Scalar(0), Scalar(0));
+  }
+
+  // Construct y-axis translation.
+  //
+  static SOPHUS_FUNC SE3 transY(Scalar const& y) {
+    return SE3::trans(Scalar(0), y, Scalar(0));
+  }
+
+  // Construct z-axis translation.
+  //
+  static SOPHUS_FUNC SE3 transZ(Scalar const& z) {
+    return SE3::trans(Scalar(0), Scalar(0), z);
   }
 
   // vee-operator
@@ -515,175 +654,6 @@ class SE3Base {
     upsilon_omega.template tail<3>() =
         SO3<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
     return upsilon_omega;
-  }
-};
-
-// SE3 default type - Constructors and default storage for SE3 Type.
-template <class Scalar_, int Options>
-class SE3 : public SE3Base<SE3<Scalar_, Options>> {
-  using Base = SE3Base<SE3<Scalar_, Options>>;
-
- public:
-  using Scalar = Scalar_;
-  using Transformation = typename Base::Transformation;
-  using Point = typename Base::Point;
-  using Tangent = typename Base::Tangent;
-  using Adjoint = typename Base::Adjoint;
-  using SO3Member = SO3<Scalar, Options>;
-  using TranslationMember = Vector3<Scalar, Options>;
-
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-  // Default constructor initialize rigid body motion to the identity.
-  //
-  SOPHUS_FUNC SE3() : translation_(Vector3<Scalar>::Zero()) {}
-
-  // Copy constructor
-  //
-  template <class OtherDerived>
-  SOPHUS_FUNC SE3(SE3Base<OtherDerived> const& other)
-      : so3_(other.so3()), translation_(other.translation()) {
-    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
-                  "must be same Scalar type");
-  }
-
-  // Constructor from SO3 and translation vector
-  //
-  template <class OtherDerived, class D>
-  SOPHUS_FUNC SE3(SO3Base<OtherDerived> const& so3,
-                  Eigen::MatrixBase<D> const& translation)
-      : so3_(so3), translation_(translation) {
-    static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
-                  "must be same Scalar type");
-    static_assert(std::is_same<typename D::Scalar, Scalar>::value,
-                  "must be same Scalar type");
-  }
-
-  // Constructor from rotation matrix and translation vector
-  //
-  // Precondition: Rotation matrix needs to be orthogonal with determinant of 1.
-  //
-  SOPHUS_FUNC
-  SE3(Matrix3<Scalar> const& rotation_matrix, Point const& translation)
-      : so3_(rotation_matrix), translation_(translation) {}
-
-  // Constructor from quaternion and translation vector.
-  //
-  // Precondition: quaternion must not be close to zero.
-  //
-  SOPHUS_FUNC SE3(Eigen::Quaternion<Scalar> const& quaternion,
-                  Point const& translation)
-      : so3_(quaternion), translation_(translation) {}
-
-  // Constructor from 4x4 matrix
-  //
-  // Precondition: Rotation matrix needs to be orthogonal with determinant of 1.
-  //               The last row must be (0, 0, 0, 1).
-  //
-  SOPHUS_FUNC explicit SE3(Matrix4<Scalar> const& T)
-      : so3_(T.template topLeftCorner<3, 3>()),
-        translation_(T.template block<3, 1>(0, 3)) {
-    SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0),
-                                                   Scalar(0), Scalar(1)))
-                          .squaredNorm() < Constants<Scalar>::epsilon(),
-                  "Last row is not (0,0,0,1), but (%).", T.row(3));
-  }
-
-  // Returns closest SE3 given arbirary 4x4 matrix.
-  //
-  SOPHUS_FUNC static SE3 fitToSE3(Matrix4<Scalar> const& T) {
-    return SE3(SO3<Scalar>::fitToSO3(T.template block<3, 3>(0, 0)),
-               T.template block<3, 1>(0, 3));
-  }
-
-  // Construct a translation only SE3 instance.
-  //
-  template <class T0, class T1, class T2>
-  static SOPHUS_FUNC SE3 trans(T0 const& x, T1 const& y, T2 const& z) {
-    return SE3(SO3<Scalar>(), Vector3<Scalar>(x, y, z));
-  }
-
-  // Contruct x-axis translation.
-  //
-  static SOPHUS_FUNC SE3 transX(Scalar const& x) {
-    return SE3::trans(x, Scalar(0), Scalar(0));
-  }
-
-  // Contruct y-axis translation.
-  //
-  static SOPHUS_FUNC SE3 transY(Scalar const& y) {
-    return SE3::trans(Scalar(0), y, Scalar(0));
-  }
-
-  // Contruct z-axis translation.
-  //
-  static SOPHUS_FUNC SE3 transZ(Scalar const& z) {
-    return SE3::trans(Scalar(0), Scalar(0), z);
-  }
-
-  // Contruct x-axis rotation.
-  //
-  static SOPHUS_FUNC SE3 rotX(Scalar const& x) {
-    return SE3(SO3<Scalar>::rotX(x), Sophus::Vector3<Scalar>::Zero());
-  }
-
-  // Contruct y-axis rotation.
-  //
-  static SOPHUS_FUNC SE3 rotY(Scalar const& y) {
-    return SE3(SO3<Scalar>::rotY(y), Sophus::Vector3<Scalar>::Zero());
-  }
-
-  // Contruct z-axis rotation.
-  //
-  static SOPHUS_FUNC SE3 rotZ(Scalar const& z) {
-    return SE3(SO3<Scalar>::rotZ(z), Sophus::Vector3<Scalar>::Zero());
-  }
-
-  // This provides unsafe read/write access to internal data. SO(3) is
-  // represented by an Eigen::Quaternion (four parameters). When using direct
-  // write access, the user needs to take care of that the quaternion stays
-  // normalized.
-  //
-  SOPHUS_FUNC Scalar* data() {
-    // so3_ and translation_ are laid out sequentially with no padding
-    return so3_.data();
-  }
-
-  // Const version of data() above.
-  //
-  SOPHUS_FUNC Scalar const* data() const {
-    // so3_ and translation_ are laid out sequentially with no padding
-    return so3_.data();
-  }
-
-  // Draw uniform sample from SE(3) manifold.
-  //
-  // Translations are drawn component-wise from the range [-1, 1].
-  //
-  template <class UniformRandomBitGenerator>
-  static SE3 sampleUniform(UniformRandomBitGenerator& generator) {
-    std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
-    return SE3(SO3<Scalar>::sampleUniform(generator),
-               Vector3<Scalar>(uniform(generator), uniform(generator),
-                               uniform(generator)));
-  }
-
-  // Accessor of SO3
-  //
-  SOPHUS_FUNC SO3Member& so3() { return so3_; }
-
-  // Mutator of SO3
-  //
-  SOPHUS_FUNC SO3Member const& so3() const { return so3_; }
-
-  // Mutator of translation vector
-  //
-  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
-
-  // Accessor of translation vector
-  //
-  SOPHUS_FUNC TranslationMember const& translation() const {
-    return translation_;
   }
 
  protected:
