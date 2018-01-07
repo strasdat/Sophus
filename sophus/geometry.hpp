@@ -163,7 +163,7 @@ SE3<T> SE3FromPlane(Plane3<T> const& plane_foo) {
 //
 template <class T, int N>
 Eigen::Hyperplane<T, N> makeHyperplaneUnique(
-    const Eigen::Hyperplane<T, N>& plane) {
+    Eigen::Hyperplane<T, N> const& plane) {
   if (plane.offset() >= 0) {
     return plane;
   }
