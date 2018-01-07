@@ -415,6 +415,12 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     return unit_quaternion_;
   }
 
+  // Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
+    return generator(i);
+  }
+
   // Group exponential
   //
   // This functions takes in an element of tangent space (= rotation vector

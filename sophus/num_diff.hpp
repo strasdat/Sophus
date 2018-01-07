@@ -19,7 +19,7 @@ class NumDiff {
   //
   template <class Fn>
   static auto curve(Fn const& curve, Scalar t,
-                    Scalar h = Constants<Scalar>::epsilon)
+                    Scalar h = Constants<Scalar>::epsilon())
       -> decltype(curve(t)) {
     using ReturnType = decltype(curve(t));
     static_assert(IsFloatingPoint<ReturnType>::value,

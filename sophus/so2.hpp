@@ -343,6 +343,12 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
     return SO2<Scalar>(std::cos(theta), std::sin(theta));
   }
 
+  // Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int) {
+    return generator();
+  }
+
   // Returns the infinitesimal generators of SO3.
   //
   // The infinitesimal generators of SO(2) is:

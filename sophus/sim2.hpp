@@ -392,6 +392,12 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
     return translation_;
   }
 
+  // Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
+    return generator(i);
+  }
+
   // Derivative of Lie bracket with respect to first element.
   //
   // This function returns ``D_a [a, b]`` with ``D_a`` being the

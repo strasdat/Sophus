@@ -428,6 +428,12 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return translation_;
   }
 
+  // Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
+    return generator(i);
+  }
+
   // Group exponential
   //
   // This functions takes in an element of tangent space (= twist ``a``) and

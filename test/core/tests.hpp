@@ -8,6 +8,7 @@
 
 #include <sophus/average.hpp>
 #include <sophus/interpolate.hpp>
+#include <sophus/num_diff.hpp>
 #include <sophus/test_macros.hpp>
 
 namespace Sophus {
@@ -47,10 +48,31 @@ class LieGroupTests {
         Tangent ad1 = Ad * x;
         Tangent ad2 = LieGroup::vee(T * LieGroup::hat(x) *
                                     group_vec_[i].inverse().matrix());
-        SOPHUS_TEST_APPROX(passed, ad1, ad2, 20. * kSmallEps,
+        SOPHUS_TEST_APPROX(passed, ad1, ad2, 10 * kSmallEps,
                            "Adjoint case %, %", i, j);
       }
     }
+    return passed;
+  }
+
+  bool derivativeTest() {
+    bool passed = true;
+
+    LieGroup g;
+    for (int i = 0; i < DoF; ++i) {
+      Transformation Gi = g.Dxi_exp_x_matrix_at_0(i);
+      Transformation Gi2 = NumDiff<Scalar>::curve(
+          [i](Scalar xi) -> Transformation {
+            Tangent x;
+            setToZero(x);
+            setElementAt(x, xi, i);
+            return LieGroup::exp(x).matrix();
+          },
+          0);
+      SOPHUS_TEST_APPROX(passed, Gi, Gi2, kSmallEpsSquare,
+                         "Dxi_exp_x_matrix_at_ case %", i);
+    }
+
     return passed;
   }
 
@@ -72,7 +94,7 @@ class LieGroupTests {
       Tangent omega = tangent_vec_[i];
       Transformation exp_x = LieGroup::exp(omega).matrix();
       Transformation expmap_hat_x = (LieGroup::hat(omega)).exp();
-      SOPHUS_TEST_APPROX(passed, exp_x, expmap_hat_x, 10. * kSmallEps,
+      SOPHUS_TEST_APPROX(passed, exp_x, expmap_hat_x, 10 * kSmallEps,
                          "expmap(hat(x)) - exp(x) case: %", i);
     }
     return passed;
@@ -285,6 +307,7 @@ class LieGroupTests {
   bool doAllTestsPass() {
     bool passed = true;
     passed &= adjointTest();
+    passed &= derivativeTest();
     passed &= expLogTest();
     passed &= expMapTest();
     passed &= groupActionTest();
@@ -299,6 +322,7 @@ class LieGroupTests {
 
  private:
   Scalar const kSmallEps = Constants<Scalar>::epsilon();
+  Scalar const kSmallEpsSquare = std::sqrt(kSmallEps);
 
   Eigen::Matrix<Scalar, N - 1, 1> map(
       Eigen::Matrix<Scalar, N, N> const& T,
