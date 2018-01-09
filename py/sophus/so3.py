@@ -162,7 +162,7 @@ class So3:
                              ).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
 
-class TestQuaternion(unittest.TestCase):
+class TestSo3(unittest.TestCase):
     def setUp(self):
         omega0, omega1, omega2 = sympy.symbols(
             'o0, o1, o2', real=True)

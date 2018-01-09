@@ -33,7 +33,7 @@ class Quaternion:
         return Quaternion(self.real / scalar, self.vec / scalar)
 
     def __repr__(self):
-        return "[" + repr(self[3]) + " " + repr(self.vec) + "]"
+        return "( " + repr(self[3]) + " + " + repr(self.vec) + "i )"
 
     def __getitem__(self, key):
         """ We use the following convention [vec0, vec1, vec2, real] """
@@ -63,6 +63,19 @@ class Quaternion:
     def zero():
         return Quaternion(0, sophus.Vector3(0, 0, 0))
 
+    def subs(self, x, y):
+        return Quaternion(self.real.subs(x, y), self.vec.subs(x, y))
+
+    def simplify(self):
+        v = sympy.simplify(self.vec)
+        return Quaternion(sympy.simplify(self.real),
+                          sophus.Vector3(v[0], v[1], v[2]))
+
+    def __eq__(self, other):
+        if isinstance(self, other.__class__):
+            return self.real == other.real and self.vec == other.vec
+        return False
+
     @staticmethod
     def Da_a_mul_b(a, b):
         """ derivatice of quaternion muliplication wrt left multiplier a """
@@ -75,14 +88,6 @@ class Quaternion:
                               [v1, -v0, y, v2],
                               [-v0, -v1, -v2, y]])
 
-    def subs(self, x, y):
-        return Quaternion(self.real.subs(x, y), self.vec.subs(x, y))
-
-    def simplify(self):
-        v = sympy.simplify(self.vec)
-        return Quaternion(sympy.simplify(self.real),
-                          sophus.Vector3(v[0], v[1], v[2]))
-
     @staticmethod
     def Db_a_mul_b(a, b):
         """ derivatice of quaternion muliplication wrt right multiplicand b """
@@ -94,11 +99,6 @@ class Quaternion:
                               [u2, x, -u0, u1],
                               [-u1, u0, x, u2],
                               [-u0, -u1, -u2, x]])
-
-    def __eq__(self, other):
-        if isinstance(self, other.__class__):
-            return self.real == other.real and self.vec == other.vec
-        return False
 
 
 class TestQuaternion(unittest.TestCase):

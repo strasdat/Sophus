@@ -24,8 +24,8 @@ class DualQuaternion:
         return DualQuaternion(self.real_q / scalar, self.inf_q / scalar)
 
     def __repr__(self):
-        return "[ real: " + repr(self.real_q) + \
-               ", inf: " + repr(self.inf_q) + "]"
+        return "( " + repr(self.real_q) + \
+               " + " + repr(self.inf_q) + ")"
 
     def __getitem__(self, key):
         assert (key >= 0 and key < 8)

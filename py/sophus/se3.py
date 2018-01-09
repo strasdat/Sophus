@@ -245,7 +245,7 @@ class Se3:
                                subs(x[3], 0).subs(x[4], 0).limit(x[5], 0)
 
 
-class TestQuaternion(unittest.TestCase):
+class TestSe3(unittest.TestCase):
     def setUp(self):
         u0, u1, u2, o0, o1, o2 = sympy.symbols(
             'u0, u1, u2, o0, o1, o2', real=True)
