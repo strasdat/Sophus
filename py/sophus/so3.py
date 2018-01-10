@@ -71,34 +71,6 @@ class So3:
         return self.q[key]
 
     @staticmethod
-    def Dx_exp_x(x):
-        o0 = x[0]
-        o1 = x[1]
-        o2 = x[2]
-        n_sq = x.squared_norm()
-        n = sympy.sqrt(n_sq)
-        A = 0.5 * sympy.cos(0.5 * n) / n_sq - \
-            sympy.sin(0.5 * n) * n_sq**sympy.Rational(-3, 2)
-        B = sympy.sin(0.5 * n) / n
-
-        return sophus.Matrix([[
-            o0**2 * A + B,
-            o0 * o1 * A,
-            o0 * o2 * A,
-            -0.5 * o0 * B
-        ], [
-            o1 * o0 * A,
-            o1**2 * A + B,
-            o1 * o2 * A,
-            -0.5 * o1 * B
-        ], [
-            o2 * o0 * A,
-            o2 * o1 * A,
-            o2**2 * A + B,
-            -0.5 * o2 * B
-        ]])
-
-    @staticmethod
     def calc_Dx_exp_x(x):
         return sophus.Matrix(3, 4, lambda r, c:
                              sympy.diff(So3.exp(x)[c], x[r, 0]))
@@ -111,7 +83,7 @@ class So3:
 
     @staticmethod
     def calc_Dx_exp_x_at_0(x):
-        return So3.Dx_exp_x(x).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
+        return So3.calc_Dx_exp_x(x).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
     @staticmethod
     def Dxi_x_matrix(x, i):
@@ -140,7 +112,7 @@ class So3:
     @staticmethod
     def Dxi_exp_x_matrix(x, i):
         R = So3.exp(x)
-        Dx_exp_x = So3.Dx_exp_x(x)
+        Dx_exp_x = So3.calc_Dx_exp_x(x)
         l = [So3.Dxi_x_matrix(R, j) * Dx_exp_x[i, j] for j in [0, 1, 2, 3]]
         return functools.reduce((lambda a, b: a + b), l)
 
@@ -165,11 +137,11 @@ class So3:
 class TestSo3(unittest.TestCase):
     def setUp(self):
         omega0, omega1, omega2 = sympy.symbols(
-            'o0, o1, o2', real=True)
+            'omega[0], omega[1], omega[2]', real=True)
         x, v0, v1, v2 = sympy.symbols('x v0 v1 v2', real=True)
         p0, p1, p2 = sympy.symbols('p0 p1 p2', real=True)
         v = sophus.Vector3(v0, v1, v2)
-        self.o = sophus.Vector3(omega0, omega1, omega2)
+        self.omega = sophus.Vector3(omega0, omega1, omega2)
         self.a = So3(sophus.Quaternion(x, v))
         self.p = sophus.Vector3(p0, p1, p2)
 
@@ -182,7 +154,7 @@ class TestSo3(unittest.TestCase):
                 self.assertAlmostEqual(o[i], w[i])
 
     def test_matrix(self):
-        R_foo_bar = So3.exp(self.o)
+        R_foo_bar = So3.exp(self.omega)
         Rmat_foo_bar = R_foo_bar.matrix()
         point_bar = self.p
         p1_foo = R_foo_bar * point_bar
@@ -191,10 +163,7 @@ class TestSo3(unittest.TestCase):
                          sophus.Vector3.zero())
 
     def test_derivatives(self):
-        self.assertEqual(sympy.simplify(So3.calc_Dx_exp_x(self.o) -
-                                        So3.Dx_exp_x(self.o)),
-                         sophus.Matrix.zeros(3, 4))
-        self.assertEqual(sympy.simplify(So3.calc_Dx_exp_x_at_0(self.o) -
+        self.assertEqual(sympy.simplify(So3.calc_Dx_exp_x_at_0(self.omega) -
                                         So3.Dx_exp_x_at_0()),
                          sophus.Matrix.zeros(3, 4))
         for i in [0, 1, 2, 3]:
@@ -203,13 +172,31 @@ class TestSo3(unittest.TestCase):
                              sophus.Matrix.zeros(3, 3))
         for i in [0, 1, 2]:
             self.assertEqual(sympy.simplify(
-                So3.Dxi_exp_x_matrix(self.o, i) -
-                So3.calc_Dxi_exp_x_matrix(self.o, i)),
+                So3.Dxi_exp_x_matrix(self.omega, i) -
+                So3.calc_Dxi_exp_x_matrix(self.omega, i)),
                 sophus.Matrix.zeros(3, 3))
             self.assertEqual(sympy.simplify(
                 So3.Dxi_exp_x_matrix_at_0(i) -
-                So3.calc_Dxi_exp_x_matrix_at_0(self.o, i)),
+                So3.calc_Dxi_exp_x_matrix_at_0(self.omega, i)),
                 sophus.Matrix.zeros(3, 3))
+
+    def test_codegen(self):
+        stream = sophus.cse_codegen(So3.calc_Dx_exp_x(self.omega))
+        filename = "cpp_gencode/So3_Dx_exp_x.cpp"
+
+        # set to true to generate codegen files
+        if False:
+            file = open(filename, "w")
+            for line in stream:
+                file.write(line)
+            file.close()
+        else:
+            file = open(filename, "r")
+            file_lines = file.readlines()
+            for i, line in enumerate(stream):
+                self.assertEqual(line, file_lines[i])
+            file.close()
+        stream.close
 
 
 if __name__ == '__main__':
