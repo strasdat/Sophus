@@ -19,6 +19,15 @@ class Matrix(sympy.Matrix):
         return self.dot(self)
 
 
+class Vector2(Matrix):
+    def __new__(cls, x, y):
+        return Matrix.__new__(cls, [x, y])
+
+    @staticmethod
+    def zero():
+        return Vector2(0, 0)
+
+
 class Vector3(Matrix):
     def __new__(cls, x, y, z):
         return Matrix.__new__(cls, [x, y, z])

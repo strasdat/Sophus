@@ -9,7 +9,7 @@ class Se3:
     """ 3 dimensional group of rigid body transformations """
 
     def __init__(self, so3, t):
-        """ internally represented by a unit quaternion q and a trnslation
+        """ internally represented by a unit quaternion q and a translation
             3-vector """
         self.so3 = so3
         self.t = t
