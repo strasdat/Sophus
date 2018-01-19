@@ -108,30 +108,76 @@ class SE3Base {
                               translation().template cast<NewScalarType>());
   }
 
-  // Returns ``*this`` times the ith generator of internal representation.
+  // Returns derivative of  this * exp(x)  wrt x at x=0.
   //
-  SOPHUS_FUNC Vector<Scalar, num_parameters> internalMultiplyByGenerator(
-      int i) const {
-    Vector<Scalar, num_parameters> res;
-
-    Eigen::Quaternion<Scalar> internal_gen_q;
-    Vector<Scalar, 3> internal_gen_t;
-
-    SE3<Scalar>::internalGenerator(i, &internal_gen_q, &internal_gen_t);
-
-    res.template head<4>() =
-        (so3().unit_quaternion() * internal_gen_q).coeffs();
-    res.template tail<3>() = so3().unit_quaternion() * internal_gen_t;
-    return res;
-  }
-
-  // Returns Jacobian of generator of internal SU(2) representation.
-  //
-  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> internalJacobian() const {
-    Matrix<Scalar, num_parameters, DoF> J;
-    for (int i = 0; i < DoF; ++i) {
-      J.col(i) = internalMultiplyByGenerator(i);
-    }
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_this_mul_exp_x_at_0()
+      const {
+    Matrix<Scalar, DoF, num_parameters> J;
+    Eigen::Quaternion<Scalar> const q = unit_quaternion();
+    Scalar const c0 = q.w() * q.w();
+    Scalar const c1 = q.x() * q.x();
+    Scalar const c2 = q.y() * q.y();
+    Scalar const c3 = -c2;
+    Scalar const c4 = q.z() * q.z();
+    Scalar const c5 = -c4;
+    Scalar const c6 = Scalar(2) * q.w();
+    Scalar const c7 = c6 * q.z();
+    Scalar const c8 = Scalar(2) * q.x();
+    Scalar const c9 = c8 * q.y();
+    Scalar const c10 = c6 * q.y();
+    Scalar const c11 = c8 * q.z();
+    Scalar const c12 = c0 - c1;
+    Scalar const c13 = c6 * q.x();
+    Scalar const c14 = 2 * q.y() * q.z();
+    Scalar const c15 = Scalar(0.5) * q.w();
+    Scalar const c16 = Scalar(0.5) * q.z();
+    Scalar const c17 = Scalar(0.5) * q.y();
+    Scalar const c18 = -c17;
+    Scalar const c19 = Scalar(0.5) * q.x();
+    Scalar const c20 = -c19;
+    Scalar const c21 = -c16;
+    J(0, 0) = 0;
+    J(0, 1) = 0;
+    J(0, 2) = 0;
+    J(0, 3) = 0;
+    J(0, 4) = c0 + c1 + c3 + c5;
+    J(0, 5) = c7 + c9;
+    J(0, 6) = -c10 + c11;
+    J(1, 0) = 0;
+    J(1, 1) = 0;
+    J(1, 2) = 0;
+    J(1, 3) = 0;
+    J(1, 4) = -c7 + c9;
+    J(1, 5) = c12 + c2 + c5;
+    J(1, 6) = c13 + c14;
+    J(2, 0) = 0;
+    J(2, 1) = 0;
+    J(2, 2) = 0;
+    J(2, 3) = 0;
+    J(2, 4) = c10 + c11;
+    J(2, 5) = -c13 + c14;
+    J(2, 6) = c12 + c3 + c4;
+    J(3, 0) = c15;
+    J(3, 1) = c16;
+    J(3, 2) = c18;
+    J(3, 3) = c20;
+    J(3, 4) = 0;
+    J(3, 5) = 0;
+    J(3, 6) = 0;
+    J(4, 0) = c21;
+    J(4, 1) = c15;
+    J(4, 2) = c19;
+    J(4, 3) = c18;
+    J(4, 4) = 0;
+    J(4, 5) = 0;
+    J(4, 6) = 0;
+    J(5, 0) = c17;
+    J(5, 1) = c20;
+    J(5, 2) = c15;
+    J(5, 3) = c21;
+    J(5, 4) = 0;
+    J(5, 5) = 0;
+    J(5, 6) = 0;
     return J;
   }
 
@@ -303,6 +349,17 @@ class SE3Base {
     so3().setQuaternion(Eigen::Quaternion<Scalar>(R));
   }
 
+  // Returns internal parameters of SE(3).
+  //
+  // It returns (q.imag[0], q.imag[1], q.imag[2], q.real, t[0], t[1], t[2]),
+  // with q being the unit quaternion, t the translation 3-vector.
+  //
+  SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
+    Sophus::Vector<Scalar, num_parameters> p;
+    p << so3().params(), translation();
+    return p;
+  }
+
   // Mutator of translation vector.
   //
   SOPHUS_FUNC TranslationType& translation() {
@@ -328,6 +385,9 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   using Base = SE3Base<SE3<Scalar_, Options>>;
 
  public:
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -426,6 +486,212 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   //
   SOPHUS_FUNC TranslationMember const& translation() const {
     return translation_;
+  }
+
+  // Returns derivative of exp(x) wrt. x.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
+      Tangent const& upsilon_omega) {
+    using std::pow;
+    using std::sin;
+    using std::cos;
+    using std::sqrt;
+    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Sophus::Vector<Scalar, 3> upsilon = upsilon_omega.template head<3>();
+    Sophus::Vector<Scalar, 3> omega = upsilon_omega.template tail<3>();
+
+    Scalar const c0 = omega[1] * omega[1];
+    Scalar const c2 = omega[2] * omega[2];
+    Scalar const c5 = omega[0] * omega[0];
+    Scalar const c6 = c0 + c2 + c5;
+
+    if (c6 < Constants<Scalar>::epsilon()) {
+      Scalar const o(0);
+      Scalar const h(0.5);
+      Scalar const i(1);
+      Scalar const ux = Scalar(0.5) * upsilon[0];
+      Scalar const uy = Scalar(0.5) * upsilon[1];
+      Scalar const uz = Scalar(0.5) * upsilon[2];
+
+      // clang-format off
+      J << o, o, o, o,  i,    o,   o,
+           o, o, o, o,  o,    i,   o,
+           o, o, o, o,  o,    o,   i,
+           h, o, o, o,  o,  -uz,  uy,
+           o, h, o, o,  uz,   o, -ux,
+           o, o, h, o, -uy,  ux,   o;
+      // clang-format on
+      return J;
+    }
+
+    Scalar const c1 = -c0;
+    Scalar const c3 = -c2;
+    Scalar const c4 = c1 + c3;
+    Scalar const c7 = pow(c6, Scalar(-3.0 / 2.0));
+    Scalar const c8 = sqrt(c6);
+    Scalar const c9 = sin(c8);
+    Scalar const c10 = c8 - c9;
+    Scalar const c11 = c10 * c7;
+    Scalar const c12 = 1.0 / c6;
+    Scalar const c13 = cos(c8);
+    Scalar const c14 = -c13 + 1;
+    Scalar const c15 = c12 * c14;
+    Scalar const c16 = c15 * omega[2];
+    Scalar const c17 = c11 * omega[0];
+    Scalar const c18 = c17 * omega[1];
+    Scalar const c19 = c15 * omega[1];
+    Scalar const c20 = c17 * omega[2];
+    Scalar const c21 = -c5;
+    Scalar const c22 = c21 + c3;
+    Scalar const c23 = c15 * omega[0];
+    Scalar const c24 = omega[1] * omega[2];
+    Scalar const c25 = c11 * c24;
+    Scalar const c26 = c1 + c21;
+    Scalar const c27 = 1.0 / c8;
+    Scalar const c28 = 0.5 * c8;
+    Scalar const c29 = sin(c28);
+    Scalar const c30 = c27 * c29;
+    Scalar const c31 = c29 * c7;
+    Scalar const c32 = cos(c28);
+    Scalar const c33 = 0.5 * c12 * c32;
+    Scalar const c34 = c29 * c7 * omega[0];
+    Scalar const c35 = 0.5 * c12 * c32 * omega[0];
+    Scalar const c36 = -c34 * omega[1] + c35 * omega[1];
+    Scalar const c37 = -c34 * omega[2] + c35 * omega[2];
+    Scalar const c38 = c27 * omega[0];
+    Scalar const c39 = 0.5 * c29;
+    Scalar const c40 = pow(c6, -5.0L / 2.0L);
+    Scalar const c41 = 3 * c10 * c40 * omega[0];
+    Scalar const c42 = c4 * c7;
+    Scalar const c43 = -c13 * c38 + c38;
+    Scalar const c44 = c7 * c9 * omega[0];
+    Scalar const c45 = c44 * omega[1];
+    Scalar const c46 = pow(c6, -2);
+    Scalar const c47 = 2 * c14 * c46 * omega[0];
+    Scalar const c48 = c47 * omega[1];
+    Scalar const c49 = c11 * omega[2];
+    Scalar const c50 = c45 - c48 + c49;
+    Scalar const c51 = 3 * c10 * c40 * c5;
+    Scalar const c52 = c7 * omega[0] * omega[2];
+    Scalar const c53 = c43 * c52 - c51 * omega[2];
+    Scalar const c54 = c7 * omega[0] * omega[1];
+    Scalar const c55 = c43 * c54 - c51 * omega[1];
+    Scalar const c56 = c44 * omega[2];
+    Scalar const c57 = c47 * omega[2];
+    Scalar const c58 = c11 * omega[1];
+    Scalar const c59 = -c56 + c57 + c58;
+    Scalar const c60 = -2 * c17;
+    Scalar const c61 = c22 * c7;
+    Scalar const c62 = -c24 * c41;
+    Scalar const c63 = -c15 + c62;
+    Scalar const c64 = c7 * c9;
+    Scalar const c65 = c5 * c64;
+    Scalar const c66 = 2 * c14 * c46;
+    Scalar const c67 = c5 * c66;
+    Scalar const c68 = c7 * omega[1] * omega[2];
+    Scalar const c69 = c43 * c68;
+    Scalar const c70 = c56 - c57 + c58;
+    Scalar const c71 = c26 * c7;
+    Scalar const c72 = c15 + c62;
+    Scalar const c73 = -c45 + c48 + c49;
+    Scalar const c74 = -c24 * c31 + c24 * c33;
+    Scalar const c75 = c27 * omega[1];
+    Scalar const c76 = -2 * c58;
+    Scalar const c77 = 3 * c10 * c40 * omega[1];
+    Scalar const c78 = -c13 * c75 + c75;
+    Scalar const c79 = c0 * c64;
+    Scalar const c80 = c0 * c66;
+    Scalar const c81 = c52 * c78;
+    Scalar const c82 = -c0 * c41 + c54 * c78;
+    Scalar const c83 = c24 * c64;
+    Scalar const c84 = c24 * c66;
+    Scalar const c85 = c17 - c83 + c84;
+    Scalar const c86 = c17 + c83 - c84;
+    Scalar const c87 = 3 * c10 * c40 * omega[2];
+    Scalar const c88 = -c0 * c87 + c68 * c78;
+    Scalar const c89 = c27 * omega[2];
+    Scalar const c90 = -2 * c49;
+    Scalar const c91 = -c13 * c89 + c89;
+    Scalar const c92 = c2 * c64;
+    Scalar const c93 = c2 * c66;
+    Scalar const c94 = c54 * c91;
+    Scalar const c95 = -c2 * c41 + c52 * c91;
+    Scalar const c96 = -c2 * c77 + c68 * c91;
+    J(0, 0) = 0;
+    J(0, 1) = 0;
+    J(0, 2) = 0;
+    J(0, 3) = 0;
+    J(0, 4) = c11 * c4 + 1;
+    J(0, 5) = c16 + c18;
+    J(0, 6) = -c19 + c20;
+    J(1, 0) = 0;
+    J(1, 1) = 0;
+    J(1, 2) = 0;
+    J(1, 3) = 0;
+    J(1, 4) = -c16 + c18;
+    J(1, 5) = c11 * c22 + 1;
+    J(1, 6) = c23 + c25;
+    J(2, 0) = 0;
+    J(2, 1) = 0;
+    J(2, 2) = 0;
+    J(2, 3) = 0;
+    J(2, 4) = c19 + c20;
+    J(2, 5) = -c23 + c25;
+    J(2, 6) = c11 * c26 + 1;
+    J(3, 0) = c30 - c31 * c5 + c33 * c5;
+    J(3, 1) = c36;
+    J(3, 2) = c37;
+    J(3, 3) = -c38 * c39;
+    J(3, 4) = upsilon[0] * (-c4 * c41 + c42 * c43) + upsilon[1] * (c55 + c59) +
+              upsilon[2] * (c50 + c53);
+    J(3, 5) = upsilon[0] * (c55 + c70) +
+              upsilon[1] * (-c22 * c41 + c43 * c61 + c60) +
+              upsilon[2] * (c63 - c65 + c67 + c69);
+    J(3, 6) = upsilon[0] * (c53 + c73) + upsilon[1] * (c65 - c67 + c69 + c72) +
+              upsilon[2] * (-c26 * c41 + c43 * c71 + c60);
+    J(4, 0) = c36;
+    J(4, 1) = -c0 * c31 + c0 * c33 + c30;
+    J(4, 2) = c74;
+    J(4, 3) = -c39 * c75;
+    J(4, 4) = upsilon[0] * (-c4 * c77 + c42 * c78 + c76) +
+              upsilon[1] * (c82 + c85) + upsilon[2] * (c72 + c79 - c80 + c81);
+    J(4, 5) = upsilon[0] * (c82 + c86) + upsilon[1] * (-c22 * c77 + c61 * c78) +
+              upsilon[2] * (c73 + c88);
+    J(4, 6) = upsilon[0] * (c63 - c79 + c80 + c81) + upsilon[1] * (c50 + c88) +
+              upsilon[2] * (-c26 * c77 + c71 * c78 + c76);
+    J(5, 0) = c37;
+    J(5, 1) = c74;
+    J(5, 2) = -c2 * c31 + c2 * c33 + c30;
+    J(5, 3) = -c39 * c89;
+    J(5, 4) = upsilon[0] * (-c4 * c87 + c42 * c91 + c90) +
+              upsilon[1] * (c63 - c92 + c93 + c94) + upsilon[2] * (c86 + c95);
+    J(5, 5) = upsilon[0] * (c72 + c92 - c93 + c94) +
+              upsilon[1] * (-c22 * c87 + c61 * c91 + c90) +
+              upsilon[2] * (c59 + c96);
+    J(5, 6) = upsilon[0] * (c85 + c95) + upsilon[1] * (c70 + c96) +
+              upsilon[2] * (-c26 * c87 + c71 * c91);
+
+    return J;
+  }
+
+  // Returns derivative of exp(x) wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters>
+  Dx_exp_x_at_0() {
+    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Scalar const o(0);
+    Scalar const h(0.5);
+    Scalar const i(1);
+
+    // clang-format off
+    J << o, o, o, o, i, o, o,
+         o, o, o, o, o, i, o,
+         o, o, o, o, o, o, i,
+         h, o, o, o, o, o, o,
+         o, h, o, o, o, o, o,
+         o, o, h, o, o, o, o;
+    // clang-format on
+    return J;
   }
 
   // Returns derivative of exp(x).matrix() wrt. x_i at x=0.

@@ -231,6 +231,22 @@ class SO2Base {
     return *this;
   }
 
+  // Returns derivative of  this * SO2::exp(x)  wrt. x at x=0.
+  //
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_this_mul_exp_x_at_0()
+      const {
+    return Matrix<Scalar, DoF, num_parameters>(-unit_complex()[1],
+                                               unit_complex()[0]);
+  }
+
+  // Returns internal parameters of SO(2).
+  //
+  // It returns (c[0], c[1]), with c being the unit complex number.
+  //
+  SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
+    return unit_complex();
+  }
+
   // Takes in complex number / tuple and normalizes it.
   //
   // Precondition: The complex number must not be close to zero.
@@ -263,6 +279,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   using Base = SO2Base<SO2<Scalar_, Options>>;
 
  public:
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -341,6 +360,22 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   //
   SOPHUS_FUNC static SO2<Scalar> exp(Tangent const& theta) {
     return SO2<Scalar>(std::cos(theta), std::sin(theta));
+  }
+
+  // Returns derivative of exp(x) wrt. x.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
+      Tangent const& theta) {
+    using std::sin;
+    using std::cos;
+    return Sophus::Matrix<Scalar, DoF, num_parameters>(-sin(theta), cos(theta));
+  }
+
+  // Returns derivative of exp(x) wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters>
+  Dx_exp_x_at_0() {
+    return Sophus::Matrix<Scalar, DoF, num_parameters>(Scalar(0), Scalar(1));
   }
 
   // Returns derivative of exp(x).matrix() wrt. x_i at x=0.

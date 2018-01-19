@@ -11,7 +11,8 @@ class Quaternion:
 
     def __init__(self, real, vec):
         """ Quaternion consists of a real scalar, and an imaginary 3-vector """
-        assert isinstance(vec, sophus.Vector3)
+        assert isinstance(vec, sympy.Matrix)
+        assert vec.shape == (3, 1), vec.shape
         self.real = real
         self.vec = vec
 
@@ -45,7 +46,7 @@ class Quaternion:
 
     def squared_norm(self):
         """ squared norm when considering the quaternion as 4-tuple """
-        return self.vec.squared_norm() + self.real**2
+        return sophus.squared_norm(self.vec) + self.real**2
 
     def conj(self):
         """ quaternion conjugate """
@@ -83,10 +84,10 @@ class Quaternion:
         v1 = b.vec[1]
         v2 = b.vec[2]
         y = b.real
-        return sophus.Matrix([[y, v2, -v1, v0],
-                              [-v2, y, v0, v1],
-                              [v1, -v0, y, v2],
-                              [-v0, -v1, -v2, y]])
+        return sympy.Matrix([[y, v2, -v1, v0],
+                             [-v2, y, v0, v1],
+                             [v1, -v0, y, v2],
+                             [-v0, -v1, -v2, y]])
 
     @staticmethod
     def Db_a_mul_b(a, b):
@@ -95,10 +96,10 @@ class Quaternion:
         u1 = a.vec[1]
         u2 = a.vec[2]
         x = a.real
-        return sophus.Matrix([[x, -u2, u1, u0],
-                              [u2, x, -u0, u1],
-                              [-u1, u0, x, u2],
-                              [-u0, -u1, -u2, x]])
+        return sympy.Matrix([[x, -u2, u1, u0],
+                             [u2, x, -u0, u1],
+                             [-u1, u0, x, u2],
+                             [-u0, -u1, -u2, x]])
 
 
 class TestQuaternion(unittest.TestCase):
@@ -119,11 +120,11 @@ class TestQuaternion(unittest.TestCase):
                          Quaternion.identity())
 
     def test_derivatives(self):
-        d = sophus.Matrix(4, 4, lambda r, c: sympy.diff(
+        d = sympy.Matrix(4, 4, lambda r, c: sympy.diff(
             (self.a * self.b)[r], self.a[c]))
         self.assertEqual(d,
                          Quaternion.Da_a_mul_b(self.a, self.b))
-        d = sophus.Matrix(4, 4, lambda r, c: sympy.diff(
+        d = sympy.Matrix(4, 4, lambda r, c: sympy.diff(
             (self.a * self.b)[r], self.b[c]))
         self.assertEqual(d,
                          Quaternion.Db_a_mul_b(self.a, self.b))

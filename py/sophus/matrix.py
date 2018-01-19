@@ -4,60 +4,53 @@ import sys
 assert sys.version_info >= (3, 5)
 
 
-class Matrix(sympy.Matrix):
-    def __new__(cls, *args, **kwargs):
-        return sympy.Matrix.__new__(cls, *args, **kwargs)
+def dot(left, right):
+    assert(isinstance(left, sympy.Matrix))
+    assert(isinstance(right, sympy.Matrix))
 
-    def dot(self, right):
-        sum = 0
-        for c in range(0, self.cols):
-            for r in range(0, self.rows):
-                sum += self[r, c] * right[r, c]
-        return sum
-
-    def squared_norm(self):
-        return self.dot(self)
+    sum = 0
+    for c in range(0, left.cols):
+        for r in range(0, left.rows):
+            sum += left[r, c] * right[r, c]
+    return sum
 
 
-class Vector2(Matrix):
-    def __new__(cls, x, y):
-        return Matrix.__new__(cls, [x, y])
-
-    @staticmethod
-    def zero():
-        return Vector2(0, 0)
+def squared_norm(m):
+    assert(isinstance(m, sympy.Matrix))
+    return dot(m, m)
 
 
-class Vector3(Matrix):
-    def __new__(cls, x, y, z):
-        return Matrix.__new__(cls, [x, y, z])
-
-    def cross(self, right):
-        return Vector3(self.y() * right.z() - self.z() * right.y(),
-                       self.z() * right.x() - self.x() * right.z(),
-                       self.x() * right.y() - self.y() * right.x())
-
-    def x(self):
-        return self[0, 0]
-
-    def y(self):
-        return self[1, 0]
-
-    def z(self):
-        return self[2, 0]
-
-    @staticmethod
-    def zero():
-        return Vector3(0, 0, 0)
+def Vector2(x, y):
+    return sympy.Matrix([x, y])
 
 
-class Vector6(Matrix):
-    def __new__(cls, a, b, c, d, e, f):
-        return Matrix.__new__(cls, [a, b, c, d, e, f])
+def ZeroVector2():
+    return Vector2(0, 0)
 
-    @staticmethod
-    def zero():
-        return Vector6(0, 0, 0, 0, 0, 0)
+
+def Vector3(x, y, z):
+    return sympy.Matrix([x, y, z])
+
+
+def ZeroVector3():
+    return Vector3(0, 0, 0)
+
+
+def cross(left, right):
+    assert(isinstance(m, sympy.Matrix))
+    assert(m.shape == (3, 1))
+
+    return Vector3(left.y() * right.z() - left.z() * right.y(),
+                   left.z() * right.x() - left.x() * right.z(),
+                   left.x() * right.y() - left.y() * right.x())
+
+
+def Vector6(a, b, c, d, e, f):
+    return sympy.Matrix([a, b, c, d, e, f])
+
+
+def ZeroVector6():
+    return Vector6(0, 0, 0, 0, 0, 0)
 
 
 def proj(v):

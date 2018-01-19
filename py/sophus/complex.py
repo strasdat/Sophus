@@ -71,14 +71,14 @@ class Complex:
     @staticmethod
     def Da_a_mul_b(a, b):
         """ derivatice of complex muliplication wrt left multiplier a """
-        return sophus.Matrix([[b.real, -b.imag],
-                              [b.imag, b.real]])
+        return sympy.Matrix([[b.real, -b.imag],
+                             [b.imag, b.real]])
 
     @staticmethod
     def Db_a_mul_b(a, b):
         """ derivatice of complex muliplication wrt right multiplicand b """
-        return sophus.Matrix([[a.real, -a.imag],
-                              [a.imag, a.real]])
+        return sympy.Matrix([[a.real, -a.imag],
+                             [a.imag, a.real]])
 
 
 class TestComplex(unittest.TestCase):
@@ -97,11 +97,11 @@ class TestComplex(unittest.TestCase):
                          Complex.identity())
 
     def test_derivatives(self):
-        d = sophus.Matrix(2, 2, lambda r, c: sympy.diff(
+        d = sympy.Matrix(2, 2, lambda r, c: sympy.diff(
             (self.a * self.b)[r], self.a[c]))
         self.assertEqual(d,
                          Complex.Da_a_mul_b(self.a, self.b))
-        d = sophus.Matrix(2, 2, lambda r, c: sympy.diff(
+        d = sympy.Matrix(2, 2, lambda r, c: sympy.diff(
             (self.a * self.b)[r], self.b[c]))
         self.assertEqual(d,
                          Complex.Db_a_mul_b(self.a, self.b))

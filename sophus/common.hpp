@@ -138,6 +138,8 @@ template <class Scalar>
 struct Constants {
   SOPHUS_FUNC static Scalar epsilon() { return Scalar(1e-10); }
 
+  SOPHUS_FUNC static Scalar epsilonSqrt() { return std::sqrt(epsilon()); }
+
   SOPHUS_FUNC static Scalar pi() { return Scalar(M_PI); }
 };
 
@@ -146,6 +148,8 @@ struct Constants<float> {
   SOPHUS_FUNC static float constexpr epsilon() {
     return static_cast<float>(1e-5);
   }
+
+  SOPHUS_FUNC static float epsilonSqrt() { return std::sqrt(epsilon()); }
 
   SOPHUS_FUNC static float constexpr pi() { return static_cast<float>(M_PI); }
 };

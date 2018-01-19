@@ -29,22 +29,23 @@ class So2:
 
     @staticmethod
     def hat(theta):
-        return sophus.Matrix([[0, -theta],
-                              [theta, 0]])
+        return sympy.Matrix([[0, -theta],
+                             [theta, 0]])
 
     def matrix(self):
         """ returns matrix representation """
-        return sophus.Matrix([
+        return sympy.Matrix([
             [self.z.real, -self.z.imag],
             [self.z.imag,  self.z.real]])
 
     def __mul__(self, right):
         """ left-multiplication
             either rotation concatenation or point-transform """
-        if isinstance(right, sophus.Vector2):
+        if isinstance(right, sympy.Matrix):
+            assert right.shape == (2, 1), right.shape
             return self.matrix() * right
         elif isinstance(right, So2):
-            return So3(self.z * right.z)
+            return So2(self.z * right.z)
         assert False, "unsupported type: {0}".format(type(right))
 
     def __getitem__(self, key):
@@ -52,30 +53,35 @@ class So2:
 
     @staticmethod
     def calc_Dx_exp_x(x):
-        return sophus.Matrix(1, 2, lambda r, c:
-                             sympy.diff(So2.exp(x)[c], x))
+        return sympy.Matrix(1, 2, lambda r, c:
+                            sympy.diff(So2.exp(x)[c], x))
 
     @staticmethod
     def Dx_exp_x_at_0():
-        return sophus.Matrix([[0, 1]])
+        return sympy.Matrix([[0, 1]])
 
     @staticmethod
     def calc_Dx_exp_x_at_0(x):
         return So2.calc_Dx_exp_x(x).limit(x, 0)
 
+    def calc_Dx_this_mul_exp_x_at_0(self, x):
+        return sympy.Matrix(1, 2, lambda r, c:
+                            sympy.diff((self * So2.exp(x))[c], x))\
+            .limit(x, 0)
+
     @staticmethod
     def Dxi_x_matrix(x, i):
         if i == 0:
-            return sophus.Matrix([[1, 0],
-                                  [0, 1]])
+            return sympy.Matrix([[1, 0],
+                                 [0, 1]])
         if i == 1:
-            return sophus.Matrix([[0, -1],
-                                  [1, 0]])
+            return sympy.Matrix([[0, -1],
+                                 [1, 0]])
 
     @staticmethod
     def calc_Dxi_x_matrix(x, i):
-        return sophus.Matrix(2, 2, lambda r, c:
-                             sympy.diff(x.matrix()[r, c], x[i]))
+        return sympy.Matrix(2, 2, lambda r, c:
+                            sympy.diff(x.matrix()[r, c], x[i]))
 
     @staticmethod
     def Dx_exp_x_matrix(x):
@@ -86,8 +92,8 @@ class So2:
 
     @staticmethod
     def calc_Dx_exp_x_matrix(x):
-        return sophus.Matrix(2, 2, lambda r, c:
-                             sympy.diff(So2.exp(x).matrix()[r, c], x))
+        return sympy.Matrix(2, 2, lambda r, c:
+                            sympy.diff(So2.exp(x).matrix()[r, c], x))
 
     @staticmethod
     def Dx_exp_x_matrix_at_0():
@@ -95,16 +101,16 @@ class So2:
 
     @staticmethod
     def calc_Dx_exp_x_matrix_at_0(x):
-        return sophus.Matrix(2, 2, lambda r, c:
-                             sympy.diff(So2.exp(x).matrix()[r, c], x)
-                             ).limit(x, 0)
+        return sympy.Matrix(2, 2, lambda r, c:
+                            sympy.diff(So2.exp(x).matrix()[r, c], x)
+                            ).limit(x, 0)
 
 
 class TestSo2(unittest.TestCase):
     def setUp(self):
         self.theta = sympy.symbols(
             'theta', real=True)
-        x, y = sympy.symbols('x y', real=True)
+        x, y = sympy.symbols('c[0] c[1]', real=True)
         p0, p1 = sympy.symbols('p0 p1', real=True)
         self.a = So2(sophus.Complex(x, y))
         self.p = sophus.Vector2(p0, p1)
@@ -121,30 +127,46 @@ class TestSo2(unittest.TestCase):
         p1_foo = R_foo_bar * point_bar
         p2_foo = Rmat_foo_bar * point_bar
         self.assertEqual(sympy.simplify(p1_foo - p2_foo),
-                         sophus.Vector2.zero())
+                         sophus.ZeroVector2())
 
     def test_derivatives(self):
         self.assertEqual(sympy.simplify(So2.calc_Dx_exp_x_at_0(self.theta) -
                                         So2.Dx_exp_x_at_0()),
-                         sophus.Matrix.zeros(1, 2))
+                         sympy.Matrix.zeros(1, 2))
         for i in [0, 1]:
             self.assertEqual(sympy.simplify(So2.calc_Dxi_x_matrix(self.a, i) -
                                             So2.Dxi_x_matrix(self.a, i)),
-                             sophus.Matrix.zeros(2, 2))
+                             sympy.Matrix.zeros(2, 2))
 
         self.assertEqual(sympy.simplify(
             So2.Dx_exp_x_matrix(self.theta) -
             So2.calc_Dx_exp_x_matrix(self.theta)),
-            sophus.Matrix.zeros(2, 2))
+            sympy.Matrix.zeros(2, 2))
         self.assertEqual(sympy.simplify(
             So2.Dx_exp_x_matrix_at_0() -
             So2.calc_Dx_exp_x_matrix_at_0(self.theta)),
-            sophus.Matrix.zeros(2, 2))
+            sympy.Matrix.zeros(2, 2))
 
     def test_codegen(self):
         stream = sophus.cse_codegen(So2.calc_Dx_exp_x(self.theta))
         filename = "cpp_gencode/So2_Dx_exp_x.cpp"
+        # set to true to generate codegen files
+        if False:
+            file = open(filename, "w")
+            for line in stream:
+                file.write(line)
+            file.close()
+        else:
+            file = open(filename, "r")
+            file_lines = file.readlines()
+            for i, line in enumerate(stream):
+                self.assertEqual(line, file_lines[i])
+            file.close()
+        stream.close
 
+        stream = sophus.cse_codegen(
+            self.a.calc_Dx_this_mul_exp_x_at_0(self.theta))
+        filename = "cpp_gencode/So2_Dx_this_mul_exp_x_at_0.cpp"
         # set to true to generate codegen files
         if False:
             file = open(filename, "w")

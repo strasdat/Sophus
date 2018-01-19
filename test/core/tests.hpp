@@ -13,9 +13,10 @@
 
 namespace Sophus {
 
-template <class LieGroup>
+template <class LieGroup_>
 class LieGroupTests {
  public:
+  using LieGroup = LieGroup_;
   using Scalar = typename LieGroup::Scalar;
   using Transformation = typename LieGroup::Transformation;
   using Tangent = typename LieGroup::Tangent;
@@ -24,6 +25,7 @@ class LieGroupTests {
   using Adjoint = typename LieGroup::Adjoint;
   static int constexpr N = LieGroup::N;
   static int constexpr DoF = LieGroup::DoF;
+  static int constexpr num_parameters = LieGroup::num_parameters;
 
   LieGroupTests(
       std::vector<LieGroup, Eigen::aligned_allocator<LieGroup>> const&
@@ -61,19 +63,80 @@ class LieGroupTests {
     LieGroup g;
     for (int i = 0; i < DoF; ++i) {
       Transformation Gi = g.Dxi_exp_x_matrix_at_0(i);
-      Transformation Gi2 = NumDiff<Scalar>::curve(
+      Transformation Gi2 = curveNumDiff(
           [i](Scalar xi) -> Transformation {
             Tangent x;
             setToZero(x);
             setElementAt(x, xi, i);
             return LieGroup::exp(x).matrix();
           },
-          0);
-      SOPHUS_TEST_APPROX(passed, Gi, Gi2, kSmallEpsSquare,
+          Scalar(0));
+      SOPHUS_TEST_APPROX(passed, Gi, Gi2, kSmallEpsSqrt,
                          "Dxi_exp_x_matrix_at_ case %", i);
     }
 
     return passed;
+  }
+
+  template <class G = LieGroup>
+  enable_if_t<std::is_same<G, Sophus::SO2<Scalar>>::value ||
+                  std::is_same<G, Sophus::SO3<Scalar>>::value ||
+                  std::is_same<G, Sophus::SE2<Scalar>>::value ||
+                  std::is_same<G, Sophus::SE3<Scalar>>::value,
+              bool>
+  additionalDerivativeTest() {
+    bool passed = true;
+    for (size_t j = 0; j < tangent_vec_.size(); ++j) {
+      Tangent a = tangent_vec_[j];
+      Eigen::Matrix<Scalar, DoF, num_parameters> J = LieGroup::Dx_exp_x(a);
+      Eigen::Matrix<Scalar, DoF, num_parameters> J_num =
+          vectorFieldNumDiff<Scalar, DoF, num_parameters>(
+              [](Tangent const& x) -> Sophus::Vector<Scalar, num_parameters> {
+                return LieGroup::exp(x).params();
+              },
+              a);
+
+      SOPHUS_TEST_APPROX(passed, J, J_num, 3 * kSmallEpsSqrt,
+                         "Dx_exp_x case: %", j);
+    }
+
+    Tangent o;
+    setToZero(o);
+    Eigen::Matrix<Scalar, DoF, num_parameters> J = LieGroup::Dx_exp_x_at_0();
+    Eigen::Matrix<Scalar, DoF, num_parameters> J_num =
+        vectorFieldNumDiff<Scalar, DoF, num_parameters>(
+            [](Tangent const& x) -> Sophus::Vector<Scalar, num_parameters> {
+              return LieGroup::exp(x).params();
+            },
+            o);
+    SOPHUS_TEST_APPROX(passed, J, J_num, kSmallEpsSqrt, "Dx_exp_x_at_0");
+
+    for (size_t i = 0; i < group_vec_.size(); ++i) {
+      LieGroup T = group_vec_[i];
+
+      Eigen::Matrix<Scalar, DoF, num_parameters> J = T.Dx_this_mul_exp_x_at_0();
+      Eigen::Matrix<Scalar, DoF, num_parameters> J_num =
+          vectorFieldNumDiff<Scalar, DoF, num_parameters>(
+              [T](Tangent const& x) -> Sophus::Vector<Scalar, num_parameters> {
+                return (T * LieGroup::exp(x)).params();
+              },
+              o);
+
+      SOPHUS_TEST_APPROX(passed, J, J_num, kSmallEpsSqrt,
+                         "Dx_this_mul_exp_x_at_0 case: %", i);
+    }
+
+    return passed;
+  }
+
+  template <class G = LieGroup>
+  enable_if_t<!std::is_same<G, Sophus::SO2<Scalar>>::value &&
+                  !std::is_same<G, Sophus::SO3<Scalar>>::value &&
+                  !std::is_same<G, Sophus::SE2<Scalar>>::value &&
+                  !std::is_same<G, Sophus::SE3<Scalar>>::value,
+              bool>
+  additionalDerivativeTest() {
+    return true;
   }
 
   bool expLogTest() {
@@ -299,7 +362,7 @@ class LieGroupTests {
     std::default_random_engine engine;
     for (int i = 0; i < 100; ++i) {
       LieGroup g = LieGroup::sampleUniform(engine);
-      std::cout << g.matrix() << std::endl << std::endl;
+      SOPHUS_TEST_EQUAL(passed, g.params(), g.params());
     }
     return passed;
   }
@@ -308,6 +371,7 @@ class LieGroupTests {
     bool passed = true;
     passed &= adjointTest();
     passed &= derivativeTest();
+    passed &= additionalDerivativeTest();
     passed &= expLogTest();
     passed &= expMapTest();
     passed &= groupActionTest();
@@ -322,7 +386,7 @@ class LieGroupTests {
 
  private:
   Scalar const kSmallEps = Constants<Scalar>::epsilon();
-  Scalar const kSmallEpsSquare = std::sqrt(kSmallEps);
+  Scalar const kSmallEpsSqrt = Constants<Scalar>::epsilonSqrt();
 
   Eigen::Matrix<Scalar, N - 1, 1> map(
       Eigen::Matrix<Scalar, N, N> const& T,

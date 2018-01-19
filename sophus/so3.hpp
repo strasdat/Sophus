@@ -157,25 +157,41 @@ class SO3Base {
     return unit_quaternion().coeffs().data();
   }
 
-  // Returns ``*this`` times the ith generator of internal SU(2) representation.
+  // Returns derivative of  this * SO3::exp(x)  wrt. x at x=0.
   //
-  SOPHUS_FUNC Vector<Scalar, num_parameters> internalMultiplyByGenerator(
-      int i) const {
-    Vector<Scalar, num_parameters> res;
-    Eigen::Quaternion<Scalar> internal_gen_q;
-    internalGenerator(i, &internal_gen_q);
-    res.template head<4>() = (unit_quaternion() * internal_gen_q).coeffs();
-    return res;
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_this_mul_exp_x_at_0()
+      const {
+    Matrix<Scalar, DoF, num_parameters> J;
+    Eigen::Quaternion<Scalar> const q = unit_quaternion();
+    Scalar const c0 = Scalar(0.5) * q.w();
+    Scalar const c1 = Scalar(0.5) * q.z();
+    Scalar const c2 = Scalar(0.5) * q.y();
+    Scalar const c3 = -c2;
+    Scalar const c4 = Scalar(0.5) * q.x();
+    Scalar const c5 = -c4;
+    Scalar const c6 = -c1;
+    J(0, 0) = c0;
+    J(0, 1) = c1;
+    J(0, 2) = c3;
+    J(0, 3) = c5;
+    J(1, 0) = c6;
+    J(1, 1) = c0;
+    J(1, 2) = c4;
+    J(1, 3) = c3;
+    J(2, 0) = c2;
+    J(2, 1) = c5;
+    J(2, 2) = c0;
+    J(2, 3) = c6;
+    return J;
   }
 
-  // Returns Jacobian of generator of internal SU(2) representation.
+  // Returns internal parameters of SO(3).
   //
-  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> internalJacobian() const {
-    Matrix<Scalar, num_parameters, DoF> J;
-    for (int i = 0; i < DoF; ++i) {
-      J.col(i) = internalMultiplyByGenerator(i);
-    }
-    return J;
+  // It returns (q.imag[0], q.imag[1], q.imag[2], q.real), with q being the unit
+  // quaternion.
+  //
+  SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
+    return unit_quaternion().coeffs();
   }
 
   // Returns group inverse.
@@ -199,7 +215,7 @@ class SO3Base {
   // As above, but also returns ``theta = |omega|``.
   //
   SOPHUS_FUNC TangentAndTheta logAndTheta() const {
-    TangentAndTheta result;
+    TangentAndTheta J;
     using std::sqrt;
     using std::atan;
     using std::abs;
@@ -237,10 +253,10 @@ class SO3Base {
       }
     }
 
-    result.theta = two_atan_nbyw_by_n * n;
+    J.theta = two_atan_nbyw_by_n * n;
 
-    result.tangent = two_atan_nbyw_by_n * unit_quaternion().vec();
-    return result;
+    J.tangent = two_atan_nbyw_by_n * unit_quaternion().vec();
+    return J;
   }
 
   // It re-normalizes ``unit_quaternion`` to unit length.
@@ -276,9 +292,9 @@ class SO3Base {
   // Group multiplication, which is rotation concatenation.
   //
   SOPHUS_FUNC SO3<Scalar> operator*(SO3<Scalar> const& other) const {
-    SO3<Scalar> result(*this);
-    result *= other;
-    return result;
+    SO3<Scalar> J(*this);
+    J *= other;
+    return J;
   }
 
   // Group action on 3-points.
@@ -361,6 +377,9 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   using Base = SO3Base<SO3<Scalar_, Options>>;
 
  public:
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -413,6 +432,68 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   //
   SOPHUS_FUNC QuaternionMember const& unit_quaternion() const {
     return unit_quaternion_;
+  }
+
+  // Returns derivative of exp(x) wrt. x.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
+      Tangent const& omega) {
+    using std::exp;
+    using std::sin;
+    using std::cos;
+    using std::sqrt;
+    Scalar const c0 = omega[0] * omega[0];
+    Scalar const c1 = omega[1] * omega[1];
+    Scalar const c2 = omega[2] * omega[2];
+    Scalar const c3 = c0 + c1 + c2;
+
+    if (c3 < Constants<Scalar>::epsilon()) {
+      return Dx_exp_x_at_0();
+    }
+    Scalar const c4 = sqrt(c3);
+    Scalar const c5 = Scalar(1) / c4;
+    Scalar const c6 = Scalar(0.5) * c4;
+    Scalar const c7 = sin(c6);
+    Scalar const c8 = c5 * c7;
+    Scalar const c9 = pow(c3, Scalar(-3.0 / 2.0));
+    Scalar const c10 = c7 * c9;
+    Scalar const c11 = Scalar(1.0) / c3;
+    Scalar const c12 = cos(c6);
+    Scalar const c13 = Scalar(0.5) * c11 * c12;
+    Scalar const c14 = c7 * c9 * omega[0];
+    Scalar const c15 = Scalar(0.5) * c11 * c12 * omega[0];
+    Scalar const c16 = -c14 * omega[1] + c15 * omega[1];
+    Scalar const c17 = -c14 * omega[2] + c15 * omega[2];
+    Scalar const c18 = Scalar(0.5) * c5 * c7;
+    Scalar const c19 = omega[1] * omega[2];
+    Scalar const c20 = -c10 * c19 + c13 * c19;
+    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    J(0, 0) = -c0 * c10 + c0 * c13 + c8;
+    J(0, 1) = c16;
+    J(0, 2) = c17;
+    J(0, 3) = -c18 * omega[0];
+    J(1, 0) = c16;
+    J(1, 1) = -c1 * c10 + c1 * c13 + c8;
+    J(1, 2) = c20;
+    J(1, 3) = -c18 * omega[1];
+    J(2, 0) = c17;
+    J(2, 1) = c20;
+    J(2, 2) = -c10 * c2 + c13 * c2 + c8;
+    J(2, 3) = -c18 * omega[2];
+    return J;
+  }
+
+  // Returns derivative of exp(x) wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters>
+  Dx_exp_x_at_0() {
+    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    // clang-format off
+    J <<  Scalar(0.5),   Scalar(0),   Scalar(0), Scalar(0),
+            Scalar(0), Scalar(0.5),   Scalar(0), Scalar(0),
+            Scalar(0),   Scalar(0), Scalar(0.5), Scalar(0);
+    // clang-format on
+    return J;
   }
 
   // Returns derivative of exp(x).matrix() wrt. x_i at x=0.
@@ -633,7 +714,6 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 }  // namespace Sophus
 
 namespace Eigen {
-
 // Specialization of Eigen::Map for ``SO3``.
 //
 // Allows us to wrap SO3 objects around POD array (e.g. external c style

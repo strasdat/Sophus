@@ -15,7 +15,7 @@ class So3:
     @staticmethod
     def exp(v):
         """ exponential map """
-        theta_sq = v.squared_norm()
+        theta_sq = sophus.squared_norm(v)
         theta = sympy.sqrt(theta_sq)
         return So3(
             sophus.Quaternion(
@@ -24,7 +24,7 @@ class So3:
 
     def log(self):
         """ logarithmic map"""
-        n = sympy.sqrt(self.q.vec.squared_norm())
+        n = sympy.sqrt(sophus.squared_norm(self.q.vec))
         return 2 * sympy.atan(n / self.q.real) / n * self.q.vec
 
     def __repr__(self):
@@ -32,36 +32,37 @@ class So3:
 
     @staticmethod
     def hat(o):
-        return sophus.Matrix([[0, -o[2], o[1]],
-                              [o[2], 0, -o[0]],
-                              [-o[1], o[0], 0]])
+        return sympy.Matrix([[0, -o[2], o[1]],
+                             [o[2], 0, -o[0]],
+                             [-o[1], o[0], 0]])
 
     def matrix(self):
         """ returns matrix representation """
-        return sophus.Matrix([[
-            1 - 2 * self.q.vec.y()**2 - 2 * self.q.vec.z()**2,
-            2 * self.q.vec.x() * self.q.vec.y() -
-            2 * self.q.vec.z() * self.q[3],
-            2 * self.q.vec.x() * self.q.vec.z() +
-            2 * self.q.vec.y() * self.q[3]
+        return sympy.Matrix([[
+            1 - 2 * self.q.vec[1]**2 - 2 * self.q.vec[2]**2,
+            2 * self.q.vec[0] * self.q.vec[1] -
+            2 * self.q.vec[2] * self.q[3],
+            2 * self.q.vec[0] * self.q.vec[2] +
+            2 * self.q.vec[1] * self.q[3]
         ], [
-            2 * self.q.vec.x() * self.q.vec.y() +
-            2 * self.q.vec.z() * self.q[3],
-            1 - 2 * self.q.vec.x()**2 - 2 * self.q.vec.z()**2,
-            2 * self.q.vec.y() * self.q.vec.z() -
-            2 * self.q.vec.x() * self.q[3]
+            2 * self.q.vec[0] * self.q.vec[1] +
+            2 * self.q.vec[2] * self.q[3],
+            1 - 2 * self.q.vec[0]**2 - 2 * self.q.vec[2]**2,
+            2 * self.q.vec[1] * self.q.vec[2] -
+            2 * self.q.vec[0] * self.q[3]
         ], [
-            2 * self.q.vec.x() * self.q.vec.z() -
-            2 * self.q.vec.y() * self.q[3],
-            2 * self.q.vec.y() * self.q.vec.z() +
-            2 * self.q.vec.x() * self.q[3],
-            1 - 2 * self.q.vec.x()**2 - 2 * self.q.vec.y()**2
+            2 * self.q.vec[0] * self.q.vec[2] -
+            2 * self.q.vec[1] * self.q[3],
+            2 * self.q.vec[1] * self.q.vec[2] +
+            2 * self.q.vec[0] * self.q[3],
+            1 - 2 * self.q.vec[0]**2 - 2 * self.q.vec[1]**2
         ]])
 
     def __mul__(self, right):
         """ left-multiplication
             either rotation concatenation or point-transform """
-        if isinstance(right, sophus.Vector3):
+        if isinstance(right, sympy.Matrix):
+            assert right.shape == (3, 1), right.shape
             return (self.q * sophus.Quaternion(0, right) * self.q.conj()).vec
         elif isinstance(right, So3):
             return So3(self.q * right.q)
@@ -72,42 +73,52 @@ class So3:
 
     @staticmethod
     def calc_Dx_exp_x(x):
-        return sophus.Matrix(3, 4, lambda r, c:
-                             sympy.diff(So3.exp(x)[c], x[r, 0]))
+        return sympy.Matrix(3, 4, lambda r, c:
+                            sympy.diff(So3.exp(x)[c], x[r, 0]))
 
     @staticmethod
     def Dx_exp_x_at_0():
-        return sophus.Matrix([[0.5, 0.0, 0.0, 0.0],
-                              [0.0, 0.5, 0.0, 0.0],
-                              [0.0, 0.0, 0.5, 0.0]])
+        return sympy.Matrix([[0.5, 0.0, 0.0, 0.0],
+                             [0.0, 0.5, 0.0, 0.0],
+                             [0.0, 0.0, 0.5, 0.0]])
 
     @staticmethod
     def calc_Dx_exp_x_at_0(x):
         return So3.calc_Dx_exp_x(x).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
+    def calc_Dx_this_mul_exp_x_at_0(self, x):
+        return sympy.Matrix(3, 4, lambda r, c:
+                            sympy.diff((self * So3.exp(x))[c], x[r, 0]))\
+            .subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
+
+    def calc_Dx_exp_x_mul_this_at_0(self, x):
+        return sympy.Matrix(3, 4, lambda r, c:
+                            sympy.diff((self * So3.exp(x))[c], x[r, 0]))\
+            .subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
+
     @staticmethod
     def Dxi_x_matrix(x, i):
         if i == 0:
-            return sophus.Matrix([[0, 2 * x[1], 2 * x[2]],
-                                  [2 * x[1], -4 * x[0], -2 * x[3]],
-                                  [2 * x[2], 2 * x[3], -4 * x[0]]])
+            return sympy.Matrix([[0, 2 * x[1], 2 * x[2]],
+                                 [2 * x[1], -4 * x[0], -2 * x[3]],
+                                 [2 * x[2], 2 * x[3], -4 * x[0]]])
         if i == 1:
-            return sophus.Matrix([[-4 * x[1], 2 * x[0], 2 * x[3]],
-                                  [2 * x[0], 0, 2 * x[2]],
-                                  [-2 * x[3], 2 * x[2], -4 * x[1]]])
+            return sympy.Matrix([[-4 * x[1], 2 * x[0], 2 * x[3]],
+                                 [2 * x[0], 0, 2 * x[2]],
+                                 [-2 * x[3], 2 * x[2], -4 * x[1]]])
         if i == 2:
-            return sophus.Matrix([[-4 * x[2], -2 * x[3], 2 * x[0]],
-                                  [2 * x[3], -4 * x[2], 2 * x[1]],
-                                  [2 * x[0], 2 * x[1], 0]])
+            return sympy.Matrix([[-4 * x[2], -2 * x[3], 2 * x[0]],
+                                 [2 * x[3], -4 * x[2], 2 * x[1]],
+                                 [2 * x[0], 2 * x[1], 0]])
         if i == 3:
-            return sophus.Matrix([[0, -2 * x[2], 2 * x[1]],
-                                  [2 * x[2], 0, -2 * x[0]],
-                                  [-2 * x[1], 2 * x[0], 0]])
+            return sympy.Matrix([[0, -2 * x[2], 2 * x[1]],
+                                 [2 * x[2], 0, -2 * x[0]],
+                                 [-2 * x[1], 2 * x[0], 0]])
 
     @staticmethod
     def calc_Dxi_x_matrix(x, i):
-        return sophus.Matrix(3, 3, lambda r, c:
-                             sympy.diff(x.matrix()[r, c], x[i]))
+        return sympy.Matrix(3, 3, lambda r, c:
+                            sympy.diff(x.matrix()[r, c], x[i]))
 
     @staticmethod
     def Dxi_exp_x_matrix(x, i):
@@ -118,27 +129,27 @@ class So3:
 
     @staticmethod
     def calc_Dxi_exp_x_matrix(x, i):
-        return sophus.Matrix(3, 3, lambda r, c:
-                             sympy.diff(So3.exp(x).matrix()[r, c], x[i]))
+        return sympy.Matrix(3, 3, lambda r, c:
+                            sympy.diff(So3.exp(x).matrix()[r, c], x[i]))
 
     @staticmethod
     def Dxi_exp_x_matrix_at_0(i):
-        v = sophus.Vector3.zero()
+        v = sophus.ZeroVector3()
         v[i] = 1
         return So3.hat(v)
 
     @staticmethod
     def calc_Dxi_exp_x_matrix_at_0(x, i):
-        return sophus.Matrix(3, 3, lambda r, c:
-                             sympy.diff(So3.exp(x).matrix()[r, c], x[i])
-                             ).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
+        return sympy.Matrix(3, 3, lambda r, c:
+                            sympy.diff(So3.exp(x).matrix()[r, c], x[i])
+                            ).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
 
 class TestSo3(unittest.TestCase):
     def setUp(self):
         omega0, omega1, omega2 = sympy.symbols(
             'omega[0], omega[1], omega[2]', real=True)
-        x, v0, v1, v2 = sympy.symbols('x v0 v1 v2', real=True)
+        x, v0, v1, v2 = sympy.symbols('q.w() q.x() q.y() q.z()', real=True)
         p0, p1, p2 = sympy.symbols('p0 p1 p2', real=True)
         v = sophus.Vector3(v0, v1, v2)
         self.omega = sophus.Vector3(omega0, omega1, omega2)
@@ -160,30 +171,47 @@ class TestSo3(unittest.TestCase):
         p1_foo = R_foo_bar * point_bar
         p2_foo = Rmat_foo_bar * point_bar
         self.assertEqual(sympy.simplify(p1_foo - p2_foo),
-                         sophus.Vector3.zero())
+                         sophus.ZeroVector3())
 
     def test_derivatives(self):
         self.assertEqual(sympy.simplify(So3.calc_Dx_exp_x_at_0(self.omega) -
                                         So3.Dx_exp_x_at_0()),
-                         sophus.Matrix.zeros(3, 4))
+                         sympy.Matrix.zeros(3, 4))
+
         for i in [0, 1, 2, 3]:
             self.assertEqual(sympy.simplify(So3.calc_Dxi_x_matrix(self.a, i) -
                                             So3.Dxi_x_matrix(self.a, i)),
-                             sophus.Matrix.zeros(3, 3))
+                             sympy.Matrix.zeros(3, 3))
         for i in [0, 1, 2]:
             self.assertEqual(sympy.simplify(
                 So3.Dxi_exp_x_matrix(self.omega, i) -
                 So3.calc_Dxi_exp_x_matrix(self.omega, i)),
-                sophus.Matrix.zeros(3, 3))
+                sympy.Matrix.zeros(3, 3))
             self.assertEqual(sympy.simplify(
                 So3.Dxi_exp_x_matrix_at_0(i) -
                 So3.calc_Dxi_exp_x_matrix_at_0(self.omega, i)),
-                sophus.Matrix.zeros(3, 3))
+                sympy.Matrix.zeros(3, 3))
 
     def test_codegen(self):
         stream = sophus.cse_codegen(So3.calc_Dx_exp_x(self.omega))
         filename = "cpp_gencode/So3_Dx_exp_x.cpp"
+        # set to true to generate codegen files
+        if False:
+            file = open(filename, "w")
+            for line in stream:
+                file.write(line)
+            file.close()
+        else:
+            file = open(filename, "r")
+            file_lines = file.readlines()
+            for i, line in enumerate(stream):
+                self.assertEqual(line, file_lines[i])
+            file.close()
+        stream.close
 
+        stream = sophus.cse_codegen(
+            self.a.calc_Dx_this_mul_exp_x_at_0(self.omega))
+        filename = "cpp_gencode/So3_Dx_this_mul_exp_x_at_0.cpp"
         # set to true to generate codegen files
         if False:
             file = open(filename, "w")

@@ -261,6 +261,15 @@ class RxSO3Base {
     return *this;
   }
 
+  // Returns internal parameters of RxSO(3).
+  //
+  // It returns (q.imag[0], q.imag[1], q.imag[2], q.real), with q being the
+  // quaternion.
+  //
+  SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
+    return quaternion().coeffs();
+  }
+
   // Sets non-zero quaternion
   //
   // Precondition: ``quat`` must not be close to zero.

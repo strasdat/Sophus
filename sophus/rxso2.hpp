@@ -230,6 +230,14 @@ class RxSO2Base {
     return *this;
   }
 
+  // Returns internal parameters of RxSO(2).
+  //
+  // It returns (c[0], c[1]), with c being the  complex number.
+  //
+  SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
+    return complex();
+  }
+
   // Sets non-zero complex
   //
   // Precondition: ``z`` must not be close to zero.

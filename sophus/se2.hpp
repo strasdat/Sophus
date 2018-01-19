@@ -96,6 +96,27 @@ class SE2Base {
                               translation().template cast<NewScalarType>());
   }
 
+  // Returns derivative of  this * exp(x)  wrt x at x=0.
+  //
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_this_mul_exp_x_at_0()
+      const {
+    Matrix<Scalar, DoF, num_parameters> J;
+    Sophus::Vector2<Scalar> const c = unit_complex();
+    J(0, 0) = 0;
+    J(0, 1) = 0;
+    J(0, 2) = c[0];
+    J(0, 3) = c[1];
+    J(1, 0) = 0;
+    J(1, 1) = 0;
+    J(1, 2) = -c[1];
+    J(1, 3) = c[0];
+    J(2, 0) = -c[1];
+    J(2, 1) = c[0];
+    J(2, 2) = 0;
+    J(2, 3) = 0;
+    return J;
+  }
+
   // Returns group inverse.
   //
   SOPHUS_FUNC SE2<Scalar> inverse() const {
@@ -218,6 +239,17 @@ class SE2Base {
     return *this;
   }
 
+  // Returns internal parameters of SE(2).
+  //
+  // It returns (c[0], c[1], t[0], t[1]),
+  // with c being the unit complex number, t the translation 3-vector.
+  //
+  SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
+    Sophus::Vector<Scalar, num_parameters> p;
+    p << so2().params(), translation();
+    return p;
+  }
+
   // Returns rotation matrix.
   //
   SOPHUS_FUNC Matrix<Scalar, 2, 2> rotationMatrix() const {
@@ -285,6 +317,9 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   using Base = SE2Base<SE2<Scalar_, Options>>;
 
  public:
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -382,6 +417,73 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   //
   SOPHUS_FUNC TranslationMember const& translation() const {
     return translation_;
+  }
+
+  // Returns derivative of exp(x) wrt. x.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
+      Tangent const& upsilon_theta) {
+    using std::pow;
+    using std::sin;
+    using std::cos;
+    using std::abs;
+    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Sophus::Vector<Scalar, 2> upsilon = upsilon_theta.template head<2>();
+    Scalar theta = upsilon_theta[2];
+
+    if (abs(theta) < Constants<Scalar>::epsilon()) {
+      Scalar const o(0);
+      Scalar const i(1);
+
+      // clang-format off
+      J << o, o, i, o,
+           o, o, o, i,
+           o, i, -Scalar(0.5) * upsilon[1], Scalar(0.5) * upsilon[0];
+      // clang-format on
+      return J;
+    }
+
+    Scalar const c0 = sin(theta);
+    Scalar const c1 = 1.0 / theta;
+    Scalar const c2 = c0 * c1;
+    Scalar const c3 = cos(theta);
+    Scalar const c4 = -c3 + 1;
+    Scalar const c5 = c1 * c4;
+    Scalar const c6 = c1 * c3;
+    Scalar const c7 = pow(theta, -2);
+    Scalar const c8 = c0 * c7;
+    Scalar const c9 = c4 * c7;
+    J(0, 0) = 0;
+    J(0, 1) = 0;
+    J(0, 2) = c2;
+    J(0, 3) = c5;
+    J(1, 0) = 0;
+    J(1, 1) = 0;
+    J(1, 2) = -c5;
+    J(1, 3) = c2;
+    J(2, 0) = -c0;
+    J(2, 1) = c3;
+    J(2, 2) =
+        -c2 * upsilon[1] + c6 * upsilon[0] - c8 * upsilon[0] + c9 * upsilon[1];
+    J(2, 3) =
+        c2 * upsilon[0] + c6 * upsilon[1] - c8 * upsilon[1] - c9 * upsilon[0];
+    return J;
+  }
+
+  // Returns derivative of exp(x) wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters>
+  Dx_exp_x_at_0() {
+    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Scalar const o(0);
+    Scalar const i(1);
+
+    // clang-format off
+    J << o, o, i, o,
+         o, o, o, i,
+         o, i, o, o;
+    // clang-format on
+    return J;
   }
 
   // Returns derivative of exp(x).matrix() wrt. x_i at x=0.

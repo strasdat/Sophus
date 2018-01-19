@@ -46,7 +46,7 @@ Vector3<Scalar> finiteDifferenceRotationalVelocity(
   // https://en.wikipedia.org/w/index.php?title=Angular_velocity&oldid=791867792#Angular_velocity_tensor
   //
   // W = dR(t)/dt * R^{-1}(t)
-  Matrix3<Scalar> dR_dt_in_frame_foo = NumDiff<Scalar>::curve(
+  Matrix3<Scalar> dR_dt_in_frame_foo = curveNumDiff(
       [&foo_R_bar](Scalar t0) -> Matrix3<Scalar> {
         return foo_R_bar(t0).matrix();
       },
