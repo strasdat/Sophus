@@ -194,10 +194,14 @@ class RxSO3Base {
 
   // Assignment operator.
   //
+  SOPHUS_FUNC RxSO3Base& operator=(RxSO3Base const& other) = default;
+
+  // Assignment-like operator from OtherDerived.
+  //
   template <class OtherDerived>
   SOPHUS_FUNC RxSO3Base<Derived>& operator=(
       RxSO3Base<OtherDerived> const& other) {
-    quaternion() = other.quaternion();
+    quaternion_nonconst() = other.quaternion();
     return *this;
   }
 
@@ -381,6 +385,10 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
       : quaternion_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
 
   // Copy constructor
+  //
+  SOPHUS_FUNC RxSO3(RxSO3 const& other) = default;
+
+  // Copy-like constructor from OtherDerived
   //
   template <class OtherDerived>
   SOPHUS_FUNC RxSO3(RxSO3Base<OtherDerived> const& other)
@@ -607,7 +615,10 @@ class Map<Sophus::RxSO3<Scalar_>, Options>
   // ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
   friend class Sophus::RxSO3Base<Map<Sophus::RxSO3<Scalar_>, Options>>;
 
+  // LCOV_EXCL_START
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+  // LCOV_EXCL_END
+
   using Base::operator*=;
   using Base::operator*;
 
@@ -644,7 +655,6 @@ class Map<Sophus::RxSO3<Scalar_> const, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 

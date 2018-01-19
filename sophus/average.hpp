@@ -42,7 +42,9 @@ optional<typename SequenceContainer::value_type> iterativeMean(
 
     foo_T_average = foo_T_newaverage;
   }
+  // LCOV_EXCL_START
   return nullopt;
+  // LCOV_EXCL_END
 }
 
 // Mean implementation for SO(2).

@@ -129,6 +129,13 @@ class Tests {
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw.data()[i]);
     }
+
+    SE2Type trans = SE2Type::transX(0.2);
+    SOPHUS_TEST_APPROX(passed, trans.translation().x(), Scalar(0.2),
+                       Constants<Scalar>::epsilon());
+    trans = SE2Type::transY(0.7);
+    SOPHUS_TEST_APPROX(passed, trans.translation().y(), Scalar(0.7),
+                       Constants<Scalar>::epsilon());
     return passed;
   }
 

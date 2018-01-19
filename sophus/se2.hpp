@@ -192,6 +192,10 @@ class SE2Base {
 
   // Assignment operator.
   //
+  SOPHUS_FUNC SE2Base& operator=(SE2Base const& other) = default;
+
+  // Assignment-like operator from OtherDerived.
+  //
   template <class OtherDerived>
   SOPHUS_FUNC SE2Base<Derived>& operator=(SE2Base<OtherDerived> const& other) {
     so2() = other.so2();
@@ -335,6 +339,10 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   SOPHUS_FUNC SE2() : translation_(Vector2<Scalar>::Zero()) {}
 
   // Copy constructor
+  //
+  SOPHUS_FUNC SE2(SE2 const& other) = default;
+
+  // Copy-like constructor from OtherDerived
   //
   template <class OtherDerived>
   SOPHUS_FUNC SE2(SE2Base<OtherDerived> const& other)
@@ -679,7 +687,10 @@ class Map<Sophus::SE2<Scalar_>, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
+  // LCOV_EXCL_START
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+  // LCOV_EXCL_END
+
   using Base::operator*=;
   using Base::operator*;
 
@@ -730,7 +741,6 @@ class Map<Sophus::SE2<Scalar_> const, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 

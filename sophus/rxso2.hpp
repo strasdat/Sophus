@@ -165,10 +165,14 @@ class RxSO2Base {
 
   // Assignment operator.
   //
+  SOPHUS_FUNC RxSO2Base& operator=(RxSO2Base const& other) = default;
+
+  // Assignment-like operator from OtherDerived.
+  //
   template <class OtherDerived>
   SOPHUS_FUNC RxSO2Base<Derived>& operator=(
       RxSO2Base<OtherDerived> const& other) {
-    complex() = other.complex();
+    complex_nonconst() = other.complex();
     return *this;
   }
 
@@ -341,6 +345,10 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   SOPHUS_FUNC RxSO2() : complex_(Scalar(1), Scalar(0)) {}
 
   // Copy constructor
+  //
+  SOPHUS_FUNC RxSO2(RxSO2 const& other) = default;
+
+  // Copy-like constructor from OtherDerived.
   //
   template <class OtherDerived>
   SOPHUS_FUNC RxSO2(RxSO2Base<OtherDerived> const& other)
@@ -537,7 +545,9 @@ class Map<Sophus::RxSO2<Scalar_>, Options>
   // ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
   friend class Sophus::RxSO2Base<Map<Sophus::RxSO2<Scalar_>, Options>>;
 
+  // LCOV_EXCL_START
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+  // LCOV_EXCL_END
   using Base::operator*=;
   using Base::operator*;
 
@@ -574,7 +584,6 @@ class Map<Sophus::RxSO2<Scalar_> const, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 

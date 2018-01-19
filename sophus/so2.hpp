@@ -170,6 +170,10 @@ class SO2Base {
 
   // Assignment operator
   //
+  SOPHUS_FUNC SO2Base& operator=(SO2Base const& other) = default;
+
+  // Assignment-like operator from OtherDerived.
+  //
   template <class OtherDerived>
   SOPHUS_FUNC SO2Base<Derived>& operator=(SO2Base<OtherDerived> const& other) {
     unit_complex_nonconst() = other.unit_complex();
@@ -299,6 +303,10 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   SOPHUS_FUNC SO2() : unit_complex_(Scalar(1), Scalar(0)) {}
 
   // Copy constructor
+  //
+  SOPHUS_FUNC SO2(SO2 const& other) = default;
+
+  // Copy-like constructor from OtherDerived.
   //
   template <class OtherDerived>
   SOPHUS_FUNC SO2(SO2Base<OtherDerived> const& other)
@@ -491,7 +499,10 @@ class Map<Sophus::SO2<Scalar_>, Options>
   // ``Base`` is friend so unit_complex_nonconst can be accessed from ``Base``.
   friend class Sophus::SO2Base<Map<Sophus::SO2<Scalar_>, Options>>;
 
+  // LCOV_EXCL_START
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+  // LCOV_EXCL_END
+
   using Base::operator*=;
   using Base::operator*;
 
@@ -532,7 +543,6 @@ class Map<Sophus::SO2<Scalar_> const, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 

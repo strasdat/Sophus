@@ -269,6 +269,10 @@ class SE3Base {
 
   // Assignment operator.
   //
+  SOPHUS_FUNC SE3Base& operator=(SE3Base const& other) = default;
+
+  // Assignment-like operator from OtherDerived.
+  //
   template <class OtherDerived>
   SOPHUS_FUNC SE3Base<Derived>& operator=(SE3Base<OtherDerived> const& other) {
     so3() = other.so3();
@@ -403,6 +407,10 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   SOPHUS_FUNC SE3() : translation_(Vector3<Scalar>::Zero()) {}
 
   // Copy constructor
+  //
+  SOPHUS_FUNC SE3(SE3 const& other) = default;
+
+  // Copy-like constructor from OtherDerived.
   //
   template <class OtherDerived>
   SOPHUS_FUNC SE3(SE3Base<OtherDerived> const& other)
@@ -786,29 +794,6 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return hat(e);
   }
 
-  // Returns the ith generator of internal representation.
-  //
-  // Precondition: ``i`` must be in [0, 5].
-  //
-  SOPHUS_FUNC static void internalGenerator(
-      int i, Eigen::Quaternion<Scalar>* internal_gen_q,
-      Vector3<Scalar>* internal_gen_t) {
-    SOPHUS_ENSURE(i >= 0 && i <= 5, "i should be in range [0,5]");
-    SOPHUS_ENSURE(internal_gen_q != NULL,
-                  "internal_gen_q must not be the null pointer");
-    SOPHUS_ENSURE(internal_gen_t != NULL,
-                  "internal_gen_t must not be the null pointer");
-
-    internal_gen_q->coeffs().setZero();
-    internal_gen_t->setZero();
-    if (i < 3) {
-      (*internal_gen_t)[i] = Scalar(1);
-    } else {
-      SO3<Scalar>::internalGenerator(i - 3, internal_gen_q);
-      ;
-    }
-  }
-
   // hat-operator
   //
   // It takes in the 6-vector representation (= twist) and returns the
@@ -952,7 +937,10 @@ class Map<Sophus::SE3<Scalar_>, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
+  // LCOV_EXCL_START
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+  // LCOV_EXCL_END
+
   using Base::operator*=;
   using Base::operator*;
 
@@ -1002,7 +990,6 @@ class Map<Sophus::SE3<Scalar_> const, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 
