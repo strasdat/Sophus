@@ -214,6 +214,17 @@ class Sim2Base {
     return Line(rotatedLine.origin() + translation(), rotatedLine.direction());
   }
 
+  // Returns internal parameters of Sim(2).
+  //
+  // It returns (c[0], c[1], t[0], t[1]),
+  // with c being the complex number, t the translation 3-vector.
+  //
+  SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
+    Sophus::Vector<Scalar, num_parameters> p;
+    p << rxso2().params(), translation();
+    return p;
+  }
+
   // In-place group multiplication.
   //
   SOPHUS_FUNC Sim2Base<Derived>& operator*=(Sim2<Scalar> const& other) {

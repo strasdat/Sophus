@@ -26,13 +26,13 @@ class LocalParameterizationSE3 : public ceres::LocalParameterization {
 
   // Jacobian of SE3 plus operation for Ceres
   //
-  // dx T * exp(x)  with  x=0
+  // Dx T * exp(x)  with  x=0
   //
   virtual bool ComputeJacobian(double const* T_raw,
                                double* jacobian_raw) const {
     Eigen::Map<SE3d const> T(T_raw);
     Eigen::Map<Matrix<double, 6, 7> > jacobian(jacobian_raw);
-    jacobian = T.internalJacobian().transpose();
+    jacobian = T.Dx_this_mul_exp_x_at_0();
     return true;
   }
 

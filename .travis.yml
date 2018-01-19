@@ -53,11 +53,11 @@ matrix:
 
 
 script:
-  - if [[ "$language" == "cpp" ]]; then mkdir build ; fi
-  - if [[ "$language" == "cpp" ]]; then cd build ; fi
-  - if [[ "$language" == "cpp" ]]; then cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE .. ; fi
-  - if [[ "$language" == "cpp" ]]; then make -j ; fi
-  - if [[ "$language" == "cpp" ]]; then make CTEST_OUTPUT_ON_FAILURE=1 test ; fi
+  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then mkdir build ; fi
+  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then cd build ; fi
+  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE .. ; fi
+  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then make -j ; fi
+  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then make CTEST_OUTPUT_ON_FAILURE=1 test ; fi
   - if [[ "$BUILD_TYPE" == "Python" ]]; then cd py ; fi
   - if [[ "$BUILD_TYPE" == "Python" ]]; then ./run_tests.sh ; fi
 

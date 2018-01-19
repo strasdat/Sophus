@@ -224,6 +224,17 @@ class Sim3Base {
     return *this;
   }
 
+  // Returns internal parameters of Sim(3).
+  //
+  // It returns (q.imag[0], q.imag[1], q.imag[2], q.real, t[0], t[1], t[2]),
+  // with q being the quaternion, t the translation 3-vector.
+  //
+  SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
+    Sophus::Vector<Scalar, num_parameters> p;
+    p << rxso3().params(), translation();
+    return p;
+  }
+
   // Setter of non-zero quaternion.
   //
   // Precondition: ``quat`` must not be close to zero.
