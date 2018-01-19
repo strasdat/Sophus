@@ -170,6 +170,10 @@ class Sim2Base {
 
   // Assignment operator.
   //
+  SOPHUS_FUNC Sim2Base& operator=(Sim2Base const& other) = default;
+
+  // Assignment-like operator from OtherDerived.
+  //
   template <class OtherDerived>
   SOPHUS_FUNC Sim2Base<Derived>& operator=(
       Sim2Base<OtherDerived> const& other) {
@@ -327,6 +331,10 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   SOPHUS_FUNC Sim2() : translation_(Vector2<Scalar>::Zero()) {}
 
   // Copy constructor
+  //
+  SOPHUS_FUNC Sim2(Sim2 const& other) = default;
+
+  // Copy-like constructor from OtherDerived.
   //
   template <class OtherDerived>
   SOPHUS_FUNC Sim2(Sim2Base<OtherDerived> const& other)
@@ -580,7 +588,10 @@ class Map<Sophus::Sim2<Scalar_>, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
+  // LCOV_EXCL_START
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+  // LCOV_EXCL_END
+
   using Base::operator*=;
   using Base::operator*;
 
@@ -629,7 +640,6 @@ class Map<Sophus::Sim2<Scalar_> const, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 

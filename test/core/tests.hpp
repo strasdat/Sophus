@@ -57,6 +57,53 @@ class LieGroupTests {
     return passed;
   }
 
+  bool contructorAndAssignmentTest() {
+    bool passed = true;
+    for (LieGroup foo_T_bar : group_vec_) {
+      LieGroup foo_T2_bar = foo_T_bar;
+      SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T2_bar.matrix(),
+                         kSmallEps, "Copy constructor: %\nvs\n %",
+                         transpose(foo_T_bar.matrix()),
+                         transpose(foo_T2_bar.matrix()));
+      LieGroup foo_T3_bar;
+      foo_T3_bar = foo_T_bar;
+      SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T3_bar.matrix(),
+                         kSmallEps, "Copy assignment: %\nvs\n %",
+                         transpose(foo_T_bar.matrix()),
+                         transpose(foo_T3_bar.matrix()));
+
+      LieGroup foo_T4_bar(foo_T_bar.matrix());
+      SOPHUS_TEST_APPROX(
+          passed, foo_T_bar.matrix(), foo_T4_bar.matrix(), kSmallEps,
+          "Constructor from homogeneous matrix: %\nvs\n %",
+          transpose(foo_T_bar.matrix()), transpose(foo_T4_bar.matrix()));
+
+      Eigen::Map<LieGroup> foo_Tmap_bar(foo_T_bar.data());
+      LieGroup foo_T5_bar = foo_Tmap_bar;
+      SOPHUS_TEST_APPROX(
+          passed, foo_T_bar.matrix(), foo_T5_bar.matrix(), kSmallEps,
+          "Assignment from Eigen::Map type: %\nvs\n %",
+          transpose(foo_T_bar.matrix()), transpose(foo_T5_bar.matrix()));
+
+      Eigen::Map<LieGroup const> foo_Tcmap_bar(foo_T_bar.data());
+      LieGroup foo_T6_bar;
+      foo_T6_bar = foo_Tcmap_bar;
+      SOPHUS_TEST_APPROX(
+          passed, foo_T_bar.matrix(), foo_T5_bar.matrix(), kSmallEps,
+          "Assignment from Eigen::Map type: %\nvs\n %",
+          transpose(foo_T_bar.matrix()), transpose(foo_T5_bar.matrix()));
+
+      LieGroup I;
+      Eigen::Map<LieGroup> foo_Tmap2_bar(I.data());
+      foo_Tmap2_bar = foo_T_bar;
+      SOPHUS_TEST_APPROX(passed, foo_Tmap2_bar.matrix(), foo_T_bar.matrix(),
+                         kSmallEps, "Assignment to Eigen::Map type: %\nvs\n %",
+                         transpose(foo_Tmap2_bar.matrix()),
+                         transpose(foo_T_bar.matrix()));
+    }
+    return passed;
+  }
+
   bool derivativeTest() {
     bool passed = true;
 
@@ -370,6 +417,7 @@ class LieGroupTests {
   bool doAllTestsPass() {
     bool passed = true;
     passed &= adjointTest();
+    passed &= contructorAndAssignmentTest();
     passed &= derivativeTest();
     passed &= additionalDerivativeTest();
     passed &= expLogTest();

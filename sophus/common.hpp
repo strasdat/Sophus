@@ -112,6 +112,8 @@ void ensureFailed(char const* function, char const* file, int line,
                 SOPHUS_FUNCTION, __FILE__, __LINE__, \
                 Sophus::details::FormatString(##__VA_ARGS__).c_str()))
 #else
+// LCOV_EXCL_START
+
 namespace Sophus {
 template <class... Args>
 SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
@@ -127,6 +129,8 @@ SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
 #endif
 }
 }  // namespace Sophus
+
+// LCOV_EXCL_END
 #define SOPHUS_ENSURE(expr, ...)                                         \
   ((expr) ? ((void)0) : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, \
                                               __LINE__, ##__VA_ARGS__))

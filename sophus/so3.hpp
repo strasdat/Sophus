@@ -283,6 +283,10 @@ class SO3Base {
 
   // Assignment operator.
   //
+  SOPHUS_FUNC SO3Base& operator=(SO3Base const& other) = default;
+
+  // Assignment-like operator from OtherDerived.
+  //
   template <class OtherDerived>
   SOPHUS_FUNC SO3Base<Derived>& operator=(SO3Base<OtherDerived> const& other) {
     unit_quaternion_nonconst() = other.unit_quaternion();
@@ -399,6 +403,10 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
       : unit_quaternion_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
 
   // Copy constructor
+  //
+  SOPHUS_FUNC SO3(SO3 const& other) = default;
+
+  // Copy-like constructor from OtherDerived.
   //
   template <class OtherDerived>
   SOPHUS_FUNC SO3(SO3Base<OtherDerived> const& other)
@@ -588,20 +596,6 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     return hat(e);
   }
 
-  // Returns the ith generator of internal SU(2) representation.
-  //
-  // Precondition: ``i`` must be 0, 1 or 2.
-  //
-  SOPHUS_FUNC static void internalGenerator(
-      int i, Eigen::Quaternion<Scalar>* internal_gen_q) {
-    SOPHUS_ENSURE(i >= 0 && i <= 2, "i should be in range [0,2]");
-    SOPHUS_ENSURE(internal_gen_q != NULL,
-                  "internal_gen_q must not be the null pointer");
-    // Factor of 0.5 since SU(2) is a double cover of SO(3).
-    internal_gen_q->coeffs().setZero();
-    internal_gen_q->coeffs()[i] = Scalar(0.5);
-  }
-
   // hat-operator
   //
   // It takes in the 3-vector representation ``omega`` (= rotation vector) and
@@ -734,7 +728,10 @@ class Map<Sophus::SO3<Scalar_>, Options>
   // ``Base``.
   friend class Sophus::SO3Base<Map<Sophus::SO3<Scalar_>, Options>>;
 
+  // LCOV_EXCL_START
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
+  // LCOV_EXCL_END
+
   using Base::operator*=;
   using Base::operator*;
 
@@ -774,7 +771,6 @@ class Map<Sophus::SO3<Scalar_> const, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
   using Base::operator*=;
   using Base::operator*;
 

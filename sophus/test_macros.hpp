@@ -37,8 +37,10 @@ void testFailed(bool& passed, char const* func, char const* file, int line,
 
 void processTestResult(bool passed) {
   if (!passed) {
+    // LCOV_EXCL_START
     std::cerr << "failed!" << std::endl << std::endl;
     exit(-1);
+    // LCOV_EXCL_END
   }
   std::cerr << "passed." << std::endl << std::endl;
 }
