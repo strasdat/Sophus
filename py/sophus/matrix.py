@@ -36,15 +36,6 @@ def ZeroVector3():
     return Vector3(0, 0, 0)
 
 
-def cross(left, right):
-    assert(isinstance(m, sympy.Matrix))
-    assert(m.shape == (3, 1))
-
-    return Vector3(left.y() * right.z() - left.z() * right.y(),
-                   left.z() * right.x() - left.x() * right.z(),
-                   left.x() * right.y() - left.y() * right.x())
-
-
 def Vector6(a, b, c, d, e, f):
     return sympy.Matrix([a, b, c, d, e, f])
 
