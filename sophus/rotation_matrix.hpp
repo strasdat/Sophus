@@ -36,7 +36,7 @@ SOPHUS_FUNC bool isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
 
   Scalar det = sR.determinant();
 
-  if (det <= 0) {
+  if (det <= Scalar(0)) {
     return false;
   }
 

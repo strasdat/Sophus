@@ -143,8 +143,9 @@ class SO2Base {
   // this function directly.
   //
   SOPHUS_FUNC void normalize() {
-    Scalar length = std::sqrt(unit_complex().x() * unit_complex().x() +
-                              unit_complex().y() * unit_complex().y());
+    using std::sqrt;
+    Scalar length = sqrt(unit_complex().x() * unit_complex().x() +
+                         unit_complex().y() * unit_complex().y());
     SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
                   "Complex number should not be close to zero!");
     unit_complex_nonconst().x() /= length;
@@ -320,7 +321,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
       : unit_complex_(Scalar(0.5) * (R(0, 0) + R(1, 1)),
                       Scalar(0.5) * (R(1, 0) - R(0, 1))) {
     SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
-    SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
+    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
                   R.determinant());
   }
 
@@ -367,7 +368,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   // hat()-operator of SO(2).
   //
   SOPHUS_FUNC static SO2<Scalar> exp(Tangent const& theta) {
-    return SO2<Scalar>(std::cos(theta), std::sin(theta));
+    using std::cos;
+    using std::sin;
+    return SO2<Scalar>(cos(theta), sin(theta));
   }
 
   // Returns derivative of exp(x) wrt. x.
@@ -399,7 +402,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   //   |  0  1 |
   //   | -1  0 |
   //
-  SOPHUS_FUNC static Transformation generator() { return hat(1); }
+  SOPHUS_FUNC static Transformation generator() { return hat(Scalar(1)); }
 
   // hat-operator
   //

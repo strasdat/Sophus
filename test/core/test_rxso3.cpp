@@ -14,6 +14,9 @@ namespace Sophus {
 
 template class RxSO3<double, Eigen::AutoAlign>;
 template class RxSO3<float, Eigen::DontAlign>;
+#if SOPHUS_CERES
+template class RxSO3<ceres::Jet<double, 3>>;
+#endif
 
 template <class Scalar>
 class Tests {

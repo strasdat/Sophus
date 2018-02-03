@@ -11,6 +11,10 @@
 #include <sophus/num_diff.hpp>
 #include <sophus/test_macros.hpp>
 
+#ifdef SOPHUS_CERES
+#include <ceres/jet.h>
+#endif
+
 namespace Sophus {
 
 template <class LieGroup_>

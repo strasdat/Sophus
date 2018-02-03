@@ -412,7 +412,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
       : quaternion_(R) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
-    quaternion_.coeffs() *= std::sqrt(scale);
+    using std::sqrt;
+    quaternion_.coeffs() *= sqrt(scale);
   }
 
   // Constructor from scale factor and SO3
@@ -423,7 +424,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
       : quaternion_(so3.unit_quaternion()) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
-    quaternion_.coeffs() *= std::sqrt(scale);
+    using std::sqrt;
+    quaternion_.coeffs() *= sqrt(scale);
   }
 
   // Constructor from quaternion

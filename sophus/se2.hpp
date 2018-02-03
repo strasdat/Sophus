@@ -102,18 +102,19 @@ class SE2Base {
       const {
     Matrix<Scalar, DoF, num_parameters> J;
     Sophus::Vector2<Scalar> const c = unit_complex();
-    J(0, 0) = 0;
-    J(0, 1) = 0;
+    Scalar o(0);
+    J(0, 0) = o;
+    J(0, 1) = o;
     J(0, 2) = c[0];
     J(0, 3) = c[1];
-    J(1, 0) = 0;
-    J(1, 1) = 0;
+    J(1, 0) = o;
+    J(1, 1) = o;
     J(1, 2) = -c[1];
     J(1, 3) = c[0];
     J(2, 0) = -c[1];
     J(2, 1) = c[0];
-    J(2, 2) = 0;
-    J(2, 3) = 0;
+    J(2, 2) = o;
+    J(2, 3) = o;
     return J;
   }
 
@@ -135,6 +136,8 @@ class SE2Base {
   // of SE(2).
   //
   SOPHUS_FUNC Tangent log() const {
+    using std::abs;
+
     Tangent upsilon_theta;
     Scalar theta = so2().log();
     upsilon_theta[2] = theta;
@@ -143,7 +146,7 @@ class SE2Base {
 
     Vector2<Scalar> z = so2().unit_complex();
     Scalar real_minus_one = z.x() - Scalar(1.);
-    if (std::abs(real_minus_one) < Constants<Scalar>::epsilon()) {
+    if (abs(real_minus_one) < Constants<Scalar>::epsilon()) {
       halftheta_by_tan_of_halftheta =
           Scalar(1.) - Scalar(1. / 12) * theta * theta;
     } else {
@@ -452,21 +455,23 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
     }
 
     Scalar const c0 = sin(theta);
-    Scalar const c1 = 1.0 / theta;
+    Scalar const c1 = Scalar(1.0) / theta;
     Scalar const c2 = c0 * c1;
     Scalar const c3 = cos(theta);
-    Scalar const c4 = -c3 + 1;
+    Scalar const c4 = -c3 + Scalar(1);
     Scalar const c5 = c1 * c4;
     Scalar const c6 = c1 * c3;
     Scalar const c7 = pow(theta, -2);
     Scalar const c8 = c0 * c7;
     Scalar const c9 = c4 * c7;
-    J(0, 0) = 0;
-    J(0, 1) = 0;
+
+    Scalar const o = Scalar(0);
+    J(0, 0) = o;
+    J(0, 1) = o;
     J(0, 2) = c2;
     J(0, 3) = c5;
-    J(1, 0) = 0;
-    J(1, 1) = 0;
+    J(1, 0) = o;
+    J(1, 1) = o;
     J(1, 2) = -c5;
     J(1, 3) = c2;
     J(2, 0) = -c0;
@@ -517,8 +522,9 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
     SO2<Scalar> so2 = SO2<Scalar>::exp(theta);
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;
+    using std::abs;
 
-    if (std::abs(theta) < Constants<Scalar>::epsilon()) {
+    if (abs(theta) < Constants<Scalar>::epsilon()) {
       Scalar theta_sq = theta * theta;
       sin_theta_by_theta = Scalar(1.) - Scalar(1. / 6.) * theta_sq;
       one_minus_cos_theta_by_theta =
