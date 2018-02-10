@@ -44,7 +44,7 @@ optional<typename SequenceContainer::value_type> iterativeMean(
   }
   // LCOV_EXCL_START
   return nullopt;
-  // LCOV_EXCL_END
+  // LCOV_EXCL_STOP
 }
 
 // Mean implementation for SO(2).

@@ -689,7 +689,7 @@ class Map<Sophus::SE2<Scalar_>, Options>
 
   // LCOV_EXCL_START
   EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map)
-  // LCOV_EXCL_END
+  // LCOV_EXCL_STOP
 
   using Base::operator*=;
   using Base::operator*;

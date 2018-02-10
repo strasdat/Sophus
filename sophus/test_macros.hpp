@@ -40,7 +40,7 @@ void processTestResult(bool passed) {
     // LCOV_EXCL_START
     std::cerr << "failed!" << std::endl << std::endl;
     exit(-1);
-    // LCOV_EXCL_END
+    // LCOV_EXCL_STOP
   }
   std::cerr << "passed." << std::endl << std::endl;
 }
