@@ -131,9 +131,10 @@ SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
 }  // namespace Sophus
 
 // LCOV_EXCL_STOP
-#define SOPHUS_ENSURE(expr, ...)                                         \
-  ((expr) ? ((void)0) : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, \
-                                              __LINE__, ##__VA_ARGS__))
+#define SOPHUS_ENSURE(expr, ...)                                       \
+  ((expr) ? ((void)0)                                                  \
+          : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                  ##__VA_ARGS__))
 #endif
 
 namespace Sophus {
@@ -142,7 +143,10 @@ template <class Scalar>
 struct Constants {
   SOPHUS_FUNC static Scalar epsilon() { return Scalar(1e-10); }
 
-  SOPHUS_FUNC static Scalar epsilonSqrt() { return std::sqrt(epsilon()); }
+  SOPHUS_FUNC static Scalar epsilonSqrt() {
+    using std::sqrt;
+    return sqrt(epsilon());
+  }
 
   SOPHUS_FUNC static Scalar pi() { return Scalar(M_PI); }
 };

@@ -96,7 +96,7 @@ class SO2Base {
   //
   // It simply ``1``, since ``SO(2)`` is a commutative group.
   //
-  SOPHUS_FUNC Adjoint Adj() const { return 1; }
+  SOPHUS_FUNC Adjoint Adj() const { return Scalar(1); }
 
   // Returns copy of instance casted to NewScalarType.
   //
@@ -377,8 +377,8 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   //
   SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
       Tangent const& theta) {
-    using std::sin;
     using std::cos;
+    using std::sin;
     return Sophus::Matrix<Scalar, DoF, num_parameters>(-sin(theta), cos(theta));
   }
 
@@ -429,7 +429,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   // Returns closed SO2 given arbirary 2x2 matrix.
   //
-  static SO2 fitToSO2(Transformation const& R) {
+  template <class S = Scalar>
+  static SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, SO2>
+  fitToSO2(Transformation const& R) {
     return SO2(makeRotationMatrix(R));
   }
 
@@ -563,6 +565,6 @@ class Map<Sophus::SO2<Scalar_> const, Options>
   //
   Map<Matrix<Scalar, 2, 1> const, Options> const unit_complex_;
 };
-}
+}  // namespace Eigen
 
 #endif  // SOPHUS_SO2_HPP

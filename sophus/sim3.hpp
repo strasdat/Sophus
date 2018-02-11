@@ -9,7 +9,7 @@ template <class Scalar_, int Options = 0>
 class Sim3;
 using Sim3d = Sim3<double>;
 using Sim3f = Sim3<float>;
-}
+}  // namespace Sophus
 
 namespace Eigen {
 namespace internal {
@@ -92,7 +92,7 @@ class Sim3Base {
 
     res.template block<3, 3>(3, 3) = R;
 
-    res(6, 6) = 1;
+    res(6, 6) = Scalar(1);
     return res;
   }
 
@@ -685,6 +685,6 @@ class Map<Sophus::Sim3<Scalar_> const, Options>
   Map<Sophus::RxSO3<Scalar> const, Options> const rxso3_;
   Map<Sophus::Vector3<Scalar> const, Options> const translation_;
 };
-}
+}  // namespace Eigen
 
 #endif

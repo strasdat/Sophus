@@ -434,10 +434,10 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   //
   SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
       Tangent const& upsilon_theta) {
+    using std::abs;
+    using std::cos;
     using std::pow;
     using std::sin;
-    using std::cos;
-    using std::abs;
     Sophus::Matrix<Scalar, DoF, num_parameters> J;
     Sophus::Vector<Scalar, 2> upsilon = upsilon_theta.template head<2>();
     Scalar theta = upsilon_theta[2];
@@ -542,7 +542,9 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
 
   // Returns closest SE3 given arbirary 4x4 matrix.
   //
-  SOPHUS_FUNC static SE2 fitToSE2(Matrix3<Scalar> const& T) {
+  template <class S = Scalar>
+  static SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, SE2>
+  fitToSE2(Matrix3<Scalar> const& T) {
     return SE2(SO2<Scalar>::fitToSO2(T.template block<2, 2>(0, 0)),
                T.template block<2, 1>(0, 2));
   }
@@ -674,7 +676,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   TranslationMember translation_;
 };
 
-}  // end namespace
+}  // namespace Sophus
 
 namespace Eigen {
 
@@ -771,6 +773,6 @@ class Map<Sophus::SE2<Scalar_> const, Options>
   Map<Sophus::SO2<Scalar> const, Options> const so2_;
   Map<Sophus::Vector2<Scalar> const, Options> const translation_;
 };
-}
+}  // namespace Eigen
 
 #endif

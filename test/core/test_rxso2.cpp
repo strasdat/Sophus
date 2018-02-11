@@ -8,7 +8,7 @@
 namespace Eigen {
 template class Map<Sophus::RxSO2<double>>;
 template class Map<Sophus::RxSO2<double> const>;
-}
+}  // namespace Eigen
 
 namespace Sophus {
 
@@ -42,23 +42,47 @@ class Tests {
                          RxSO2Type::exp(Tangent(-0.3, 0)));
 
     Tangent tmp;
-    tmp << 0, 0;
+    tmp << Scalar(0), Scalar(0);
     tangent_vec_.push_back(tmp);
-    tmp << 1, 0;
+    tmp << Scalar(1), Scalar(0);
     tangent_vec_.push_back(tmp);
-    tmp << 1, 0.1;
+    tmp << Scalar(1), Scalar(0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 0, 0.1;
+    tmp << Scalar(0), Scalar(0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 0, -0.1;
+    tmp << Scalar(0), Scalar(-0.1);
     tangent_vec_.push_back(tmp);
-    tmp << -1, -0.1;
+    tmp << Scalar(-1), Scalar(-0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 20, 2;
+    tmp << Scalar(20), Scalar(2);
     tangent_vec_.push_back(tmp);
 
-    point_vec_.push_back(Point(1, 4));
-    point_vec_.push_back(Point(1, -3));
+    point_vec_.push_back(Point(Scalar(1), Scalar(4)));
+    point_vec_.push_back(Point(Scalar(1), Scalar(-3)));
+  }
+
+  template <class S = Scalar>
+  enable_if_t<std::is_floating_point<S>::value, bool> testFit() {
+    bool passed = true;
+    for (int i = 0; i < 10; ++i) {
+      Matrix2<Scalar> M = Matrix2<Scalar>::Random();
+      for (Scalar scale : {Scalar(0.01), Scalar(0.99), Scalar(1), Scalar(10)}) {
+        Matrix2<Scalar> R = makeRotationMatrix(M);
+        Matrix2<Scalar> sR = scale * R;
+        SOPHUS_TEST(passed, isScaledOrthogonalAndPositive(sR),
+                    "isScaledOrthogonalAndPositive(sR): % *\n%", scale, R);
+        Matrix2<Scalar> sR_cols_swapped;
+        sR_cols_swapped << sR.col(1), sR.col(0);
+        SOPHUS_TEST(passed, !isScaledOrthogonalAndPositive(sR_cols_swapped),
+                    "isScaledOrthogonalAndPositive(-sR): % *\n%", scale, R);
+      }
+    }
+    return passed;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<!std::is_floating_point<S>::value, bool> testFit() {
+    return true;
   }
 
   void runAll() {
@@ -66,6 +90,7 @@ class Tests {
     passed &= testSaturation();
     passed &= testRawDataAcces();
     passed &= testConstructors();
+    passed &= testFit();
     processTestResult(passed);
   }
 
@@ -150,7 +175,7 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, RxSO2Type(scale, so2.matrix()).matrix(),
                        rxso2.matrix(), Constants<Scalar>::epsilon(),
                        "RxSO2(scale, SO2)");
-    Matrix2<Scalar> R = SO2<Scalar>::exp(0.2).matrix();
+    Matrix2<Scalar> R = SO2<Scalar>::exp(Scalar(0.2)).matrix();
     Matrix2<Scalar> sR = R * Scalar(1.3);
     SOPHUS_TEST_APPROX(passed, RxSO2Type(sR).matrix(), sR,
                        Constants<Scalar>::epsilon(), "RxSO2(sR)");
@@ -163,20 +188,6 @@ class Tests {
                        Constants<Scalar>::epsilon(), "setRotationMatrix");
     SOPHUS_TEST_APPROX(passed, scale, rxso2.scale(),
                        Constants<Scalar>::epsilon(), "setScale");
-
-    for (int i = 0; i < 10; ++i) {
-      Matrix2<Scalar> M = Matrix2<Scalar>::Random();
-      for (Scalar scale : {Scalar(0.01), Scalar(0.99), Scalar(1), Scalar(10)}) {
-        Matrix2<Scalar> R = makeRotationMatrix(M);
-        Matrix2<Scalar> sR = scale * R;
-        SOPHUS_TEST(passed, isScaledOrthogonalAndPositive(sR),
-                    "isScaledOrthogonalAndPositive(sR): % *\n%", scale, R);
-        Matrix2<Scalar> sR_cols_swapped;
-        sR_cols_swapped << sR.col(1), sR.col(0);
-        SOPHUS_TEST(passed, !isScaledOrthogonalAndPositive(sR_cols_swapped),
-                    "isScaledOrthogonalAndPositive(-sR): % *\n%", scale, R);
-      }
-    }
 
     return passed;
   }
@@ -195,9 +206,14 @@ int test_rxso2() {
   Tests<double>().runAll();
   cerr << "Float tests: " << endl;
   Tests<float>().runAll();
+
+#if SOPHUS_CERES
+  cerr << "ceres::Jet<double, 3> tests: " << endl;
+  Tests<ceres::Jet<double, 3>>().runAll();
+#endif
   return 0;
 }
 
-}  // Sophus
+}  // namespace Sophus
 
 int main() { return Sophus::test_rxso2(); }

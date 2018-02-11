@@ -105,7 +105,8 @@ class SO3Base {
 
   // Extract rotation angle about canonical X-axis
   //
-  Scalar angleX() const {
+  template <class S = Scalar>
+  SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, S> angleX() const {
     Sophus::Matrix3<Scalar> R = matrix();
     Sophus::Matrix2<Scalar> Rx = R.template block<2, 2>(1, 1);
     return SO2<Scalar>(makeRotationMatrix(Rx)).log();
@@ -113,7 +114,8 @@ class SO3Base {
 
   // Extract rotation angle about canonical Y-axis
   //
-  Scalar angleY() const {
+  template <class S = Scalar>
+  SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, S> angleY() const {
     Sophus::Matrix3<Scalar> R = matrix();
     Sophus::Matrix2<Scalar> Ry;
     // clang-format off
@@ -126,7 +128,8 @@ class SO3Base {
 
   // Extract rotation angle about canonical Z-axis
   //
-  Scalar angleZ() const {
+  template <class S = Scalar>
+  SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, S> angleZ() const {
     Sophus::Matrix3<Scalar> R = matrix();
     Sophus::Matrix2<Scalar> Rz = R.template block<2, 2>(0, 0);
     return SO2<Scalar>(makeRotationMatrix(Rz)).log();
@@ -216,9 +219,9 @@ class SO3Base {
   //
   SOPHUS_FUNC TangentAndTheta logAndTheta() const {
     TangentAndTheta J;
-    using std::sqrt;
-    using std::atan;
     using std::abs;
+    using std::atan;
+    using std::sqrt;
     Scalar squared_n = unit_quaternion().vec().squaredNorm();
     Scalar n = sqrt(squared_n);
     Scalar w = unit_quaternion().w();
@@ -446,9 +449,9 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   //
   SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
       Tangent const& omega) {
+    using std::cos;
     using std::exp;
     using std::sin;
-    using std::cos;
     using std::sqrt;
     Scalar const c0 = omega[0] * omega[0];
     Scalar const c1 = omega[1] * omega[1];
@@ -531,10 +534,10 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   SOPHUS_FUNC static SO3<Scalar> expAndTheta(Tangent const& omega,
                                              Scalar* theta) {
     SOPHUS_ENSURE(theta != nullptr, "must not be nullptr.");
-    using std::sqrt;
     using std::abs;
-    using std::sin;
     using std::cos;
+    using std::sin;
+    using std::sqrt;
     Scalar theta_sq = omega.squaredNorm();
     *theta = sqrt(theta_sq);
     Scalar half_theta = Scalar(0.5) * (*theta);
@@ -566,7 +569,9 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 
   // Returns closest SO3 given arbirary 3x3 matrix.
   //
-  static SOPHUS_FUNC SO3 fitToSO3(Transformation const& R) {
+  template <class S = Scalar>
+  static SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, SO3>
+  fitToSO3(Transformation const& R) {
     return SO3(::Sophus::makeRotationMatrix(R));
   }
 
@@ -788,6 +793,6 @@ class Map<Sophus::SO3<Scalar_> const, Options>
   //
   Map<Eigen::Quaternion<Scalar> const, Options> const unit_quaternion_;
 };
-}
+}  // namespace Eigen
 
 #endif

@@ -163,12 +163,12 @@ average(SequenceContainer const& foo_Ts_bar) {
 
   SOPHUS_ENSURE(N >= 1, "N must be >= 1.");
   Scalar scale_sum = Scalar(0);
-  using std::log;
   using std::exp;
+  using std::log;
   for (RxSO3<Scalar> const& foo_T_bar : foo_Ts_bar) {
     scale_sum += log(foo_T_bar.scale());
   }
-  return RxSO3<Scalar>(exp(scale_sum / N),
+  return RxSO3<Scalar>(exp(scale_sum / Scalar(N)),
                        SO3<Scalar>(details::averageUnitQuaternion(foo_Ts_bar)));
 }
 
