@@ -130,7 +130,7 @@ SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
 }
 }  // namespace Sophus
 
-// LCOV_EXCL_END
+// LCOV_EXCL_STOP
 #define SOPHUS_ENSURE(expr, ...)                                         \
   ((expr) ? ((void)0) : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, \
                                               __LINE__, ##__VA_ARGS__))
