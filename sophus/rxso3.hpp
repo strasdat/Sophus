@@ -257,7 +257,7 @@ class RxSO3Base {
     quaternion_nonconst() *= other.quaternion();
     Scalar scale = this->scale();
     if (scale < Constants<Scalar>::epsilon()) {
-      SOPHUS_ENSURE(scale > 0, "Scale must be greater zero.");
+      SOPHUS_ENSURE(scale > Scalar(0), "Scale must be greater zero.");
       // Saturation to ensure class invariant.
       quaternion_nonconst().normalize();
       quaternion_nonconst().coeffs() *= sqrt(Constants<Scalar>::epsilon());
@@ -309,7 +309,7 @@ class RxSO3Base {
     using std::sqrt;
     Scalar saved_scale = scale();
     quaternion_nonconst() = R;
-    quaternion_nonconst().coeffs() *= std::sqrt(saved_scale);
+    quaternion_nonconst().coeffs() *= sqrt(saved_scale);
   }
 
   // Sets scale and leaves rotation as is.
@@ -412,7 +412,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
       : quaternion_(R) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
-    quaternion_.coeffs() *= std::sqrt(scale);
+    using std::sqrt;
+    quaternion_.coeffs() *= sqrt(scale);
   }
 
   // Constructor from scale factor and SO3
@@ -423,7 +424,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
       : quaternion_(so3.unit_quaternion()) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
-    quaternion_.coeffs() *= std::sqrt(scale);
+    using std::sqrt;
+    quaternion_.coeffs() *= sqrt(scale);
   }
 
   // Constructor from quaternion
@@ -671,6 +673,6 @@ class Map<Sophus::RxSO3<Scalar_> const, Options>
  protected:
   Map<Eigen::Quaternion<Scalar> const, Options> const quaternion_;
 };
-}
+}  // namespace Eigen
 
 #endif  // SOPHUS_RXSO3_HPP

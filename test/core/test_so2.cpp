@@ -8,12 +8,15 @@
 namespace Eigen {
 template class Map<Sophus::SO2<double>>;
 template class Map<Sophus::SO2<double> const>;
-}
+}  // namespace Eigen
 
 namespace Sophus {
 
 template class SO2<double, Eigen::AutoAlign>;
 template class SO2<float, Eigen::DontAlign>;
+#if SOPHUS_CERES
+template class SO2<ceres::Jet<double, 3>>;
+#endif
 
 template <class Scalar>
 class Tests {
@@ -24,25 +27,25 @@ class Tests {
   Scalar const kPi = Constants<Scalar>::pi();
 
   Tests() {
-    so2_vec_.push_back(SO2Type::exp(0.0));
-    so2_vec_.push_back(SO2Type::exp(0.2));
-    so2_vec_.push_back(SO2Type::exp(10.));
-    so2_vec_.push_back(SO2Type::exp(0.00001));
+    so2_vec_.push_back(SO2Type::exp(Scalar(0.0)));
+    so2_vec_.push_back(SO2Type::exp(Scalar(0.2)));
+    so2_vec_.push_back(SO2Type::exp(Scalar(10.)));
+    so2_vec_.push_back(SO2Type::exp(Scalar(0.00001)));
     so2_vec_.push_back(SO2Type::exp(kPi));
-    so2_vec_.push_back(SO2Type::exp(0.2) * SO2Type::exp(kPi) *
-                       SO2Type::exp(-0.2));
-    so2_vec_.push_back(SO2Type::exp(-0.3) * SO2Type::exp(kPi) *
-                       SO2Type::exp(0.3));
+    so2_vec_.push_back(SO2Type::exp(Scalar(0.2)) * SO2Type::exp(kPi) *
+                       SO2Type::exp(Scalar(-0.2)));
+    so2_vec_.push_back(SO2Type::exp(Scalar(-0.3)) * SO2Type::exp(kPi) *
+                       SO2Type::exp(Scalar(0.3)));
 
-    tangent_vec_.push_back(Tangent(0));
-    tangent_vec_.push_back(Tangent(1));
-    tangent_vec_.push_back(Tangent(kPi / 2.));
-    tangent_vec_.push_back(Tangent(-1));
-    tangent_vec_.push_back(Tangent(20));
-    tangent_vec_.push_back(Tangent(kPi / 2. + 0.0001));
+    tangent_vec_.push_back(Tangent(Scalar(0)));
+    tangent_vec_.push_back(Tangent(Scalar(1)));
+    tangent_vec_.push_back(Tangent(Scalar(kPi / 2.)));
+    tangent_vec_.push_back(Tangent(Scalar(-1)));
+    tangent_vec_.push_back(Tangent(Scalar(20)));
+    tangent_vec_.push_back(Tangent(Scalar(kPi / 2. + 0.0001)));
 
-    point_vec_.push_back(Point(1, 2));
-    point_vec_.push_back(Point(1, -3));
+    point_vec_.push_back(Point(Scalar(1), Scalar(2)));
+    point_vec_.push_back(Point(Scalar(1), Scalar(-3)));
   }
 
   void runAll() {
@@ -50,6 +53,7 @@ class Tests {
     passed &= testUnity();
     passed &= testRawDataAcces();
     passed &= testConstructors();
+    passed &= testFit();
     processTestResult(passed);
   }
 
@@ -118,6 +122,13 @@ class Tests {
     SO2Type so2(R);
     SOPHUS_TEST_APPROX(passed, R, so2.matrix(), Constants<Scalar>::epsilon());
 
+    return passed;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<std::is_floating_point<S>::value, bool> testFit() {
+    bool passed = true;
+
     for (int i = 0; i < 100; ++i) {
       Matrix2<Scalar> R = Matrix2<Scalar>::Random();
       SO2Type so2 = SO2Type::fitToSO2(R);
@@ -127,6 +138,11 @@ class Tests {
                          Constants<Scalar>::epsilon());
     }
     return passed;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<!std::is_floating_point<S>::value, bool> testFit() {
+    return true;
   }
 
   std::vector<SO2Type, Eigen::aligned_allocator<SO2Type>> so2_vec_;
@@ -143,6 +159,12 @@ int test_so2() {
   Tests<double>().runAll();
   cerr << "Float tests: " << endl;
   Tests<float>().runAll();
+
+#if SOPHUS_CERES
+  cerr << "ceres::Jet<double, 3> tests: " << endl;
+  Tests<ceres::Jet<double, 3>>().runAll();
+#endif
+
   return 0;
 }
 }  // namespace Sophus

@@ -10,12 +10,15 @@
 namespace Eigen {
 template class Map<Sophus::Sim2<double>>;
 template class Map<Sophus::Sim2<double> const>;
-}
+}  // namespace Eigen
 
 namespace Sophus {
 
 template class Sim2<double, Eigen::AutoAlign>;
 template class Sim2<float, Eigen::DontAlign>;
+#if SOPHUS_CERES
+template class Sim2<ceres::Jet<double, 3>>;
+#endif
 
 template <class Scalar>
 class Tests {
@@ -52,21 +55,21 @@ class Tests {
         Sim2Type(RxSO2Type::exp(Vector2Type(kPi, 0)), Point(0, 0)) *
         Sim2Type(RxSO2Type::exp(Vector2Type(-0.3, 0)), Point(0, 6)));
     Tangent tmp;
-    tmp << 0, 0, 0, 0;
+    tmp << Scalar(0), Scalar(0), Scalar(0), Scalar(0);
     tangent_vec_.push_back(tmp);
-    tmp << 1, 0, 0, 0;
+    tmp << Scalar(1), Scalar(0), Scalar(0), Scalar(0);
     tangent_vec_.push_back(tmp);
-    tmp << 0, 1, 0, 0.1;
+    tmp << Scalar(0), Scalar(1), Scalar(0), Scalar(0.1);
     tangent_vec_.push_back(tmp);
-    tmp << -1, 1, 1, -0.1;
+    tmp << Scalar(-1), Scalar(1), Scalar(1), Scalar(-0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 20, -1, 0, -0.1;
+    tmp << Scalar(20), Scalar(-1), Scalar(0), Scalar(-0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 30, 5, -1, 1.5;
+    tmp << Scalar(30), Scalar(5), Scalar(-1), Scalar(1.5);
     tangent_vec_.push_back(tmp);
 
-    point_vec_.push_back(Point(1, 4));
-    point_vec_.push_back(Point(1, -3));
+    point_vec_.push_back(Point(Scalar(1), Scalar(4)));
+    point_vec_.push_back(Point(Scalar(1), Scalar(-3)));
   }
 
   void runAll() {
@@ -85,7 +88,7 @@ class Tests {
   bool testRawDataAcces() {
     bool passed = true;
     Eigen::Matrix<Scalar, 4, 1> raw;
-    raw << 0, 1, 3, 2;
+    raw << Scalar(0), Scalar(1), Scalar(3), Scalar(2);
     Eigen::Map<Sim2Type const> map_of_const_sim2(raw.data());
     SOPHUS_TEST_APPROX(passed, map_of_const_sim2.complex().eval(),
                        raw.template head<2>().eval(),
@@ -103,7 +106,7 @@ class Tests {
                       map_of_const_sim2.translation().eval());
 
     Eigen::Matrix<Scalar, 4, 1> raw2;
-    raw2 << 1, 0, 2, 1;
+    raw2 << Scalar(1), Scalar(0), Scalar(2), Scalar(1);
     Eigen::Map<Sim2Type> map_of_sim2(raw.data());
     Vector2<Scalar> z;
     z = raw2.template head<2>();
@@ -187,6 +190,12 @@ int test_sim3() {
   Tests<double>().runAll();
   cerr << "Float tests: " << endl;
   Tests<float>().runAll();
+
+#if SOPHUS_CERES
+  cerr << "ceres::Jet<double, 3> tests: " << endl;
+  Tests<ceres::Jet<double, 3>>().runAll();
+#endif
+
   return 0;
 }
 }  // namespace Sophus

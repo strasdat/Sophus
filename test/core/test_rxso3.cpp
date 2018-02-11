@@ -8,16 +8,20 @@
 namespace Eigen {
 template class Map<Sophus::RxSO3<double>>;
 template class Map<Sophus::RxSO3<double> const>;
-}
+}  // namespace Eigen
 
 namespace Sophus {
 
 template class RxSO3<double, Eigen::AutoAlign>;
 template class RxSO3<float, Eigen::DontAlign>;
+#if SOPHUS_CERES
+template class RxSO3<ceres::Jet<double, 3>>;
+#endif
 
-template <class Scalar>
+template <class Scalar_>
 class Tests {
  public:
+  using Scalar = Scalar_;
   using SO3Type = SO3<Scalar>;
   using RxSO3Type = RxSO3<Scalar>;
   using Point = typename RxSO3<Scalar>::Point;
@@ -25,38 +29,51 @@ class Tests {
   Scalar const kPi = Constants<Scalar>::pi();
 
   Tests() {
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 1.)));
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, -1.0, 1.1)));
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(0., 0., 0., 1.1)));
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.)));
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0.00001)));
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(0., 0., 0.00001, 0)));
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(kPi, 0, 0, 0.9)));
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(0.2, 0.5, 0.0, 0)) *
-                         RxSO3Type::exp(Tangent(kPi, 0, 0, 0.0)) *
-                         RxSO3Type::exp(Tangent(-0.2, -0.5, -0.0, 0)));
-    rxso3_vec_.push_back(RxSO3Type::exp(Tangent(0.3, 0.5, 0.1, 0)) *
-                         RxSO3Type::exp(Tangent(kPi, 0, 0, 0)) *
-                         RxSO3Type::exp(Tangent(-0.3, -0.5, -0.1, 0)));
+    rxso3_vec_.push_back(RxSO3Type::exp(
+        Tangent(Scalar(0.2), Scalar(0.5), Scalar(0.0), Scalar(1.))));
+    rxso3_vec_.push_back(RxSO3Type::exp(
+        Tangent(Scalar(0.2), Scalar(0.5), Scalar(-1.0), Scalar(1.1))));
+    rxso3_vec_.push_back(RxSO3Type::exp(
+        Tangent(Scalar(0.), Scalar(0.), Scalar(0.), Scalar(1.1))));
+    rxso3_vec_.push_back(RxSO3Type::exp(
+        Tangent(Scalar(0.), Scalar(0.), Scalar(0.00001), Scalar(0.))));
+    rxso3_vec_.push_back(RxSO3Type::exp(
+        Tangent(Scalar(0.), Scalar(0.), Scalar(0.00001), Scalar(0.00001))));
+    rxso3_vec_.push_back(RxSO3Type::exp(
+        Tangent(Scalar(0.), Scalar(0.), Scalar(0.00001), Scalar(0))));
+    rxso3_vec_.push_back(
+        RxSO3Type::exp(Tangent(kPi, Scalar(0), Scalar(0), Scalar(0.9))));
+    rxso3_vec_.push_back(
+        RxSO3Type::exp(
+            Tangent(Scalar(0.2), Scalar(-0.5), Scalar(0), Scalar(0))) *
+        RxSO3Type::exp(Tangent(kPi, Scalar(0), Scalar(0), Scalar(0))) *
+        RxSO3Type::exp(
+            Tangent(-Scalar(0.2), Scalar(-0.5), Scalar(0), Scalar(0))));
+    rxso3_vec_.push_back(
+        RxSO3Type::exp(
+            Tangent(Scalar(0.3), Scalar(0.5), Scalar(0.1), Scalar(0))) *
+        RxSO3Type::exp(Tangent(kPi, Scalar(0), Scalar(0), Scalar(0))) *
+        RxSO3Type::exp(
+            Tangent(Scalar(-0.3), Scalar(-0.5), Scalar(-0.1), Scalar(0))));
 
     Tangent tmp;
-    tmp << 0, 0, 0, 0;
+    tmp << Scalar(0), Scalar(0), Scalar(0), Scalar(0);
     tangent_vec_.push_back(tmp);
-    tmp << 1, 0, 0, 0;
+    tmp << Scalar(1), Scalar(0), Scalar(0), Scalar(0);
     tangent_vec_.push_back(tmp);
-    tmp << 1, 0, 0, 0.1;
+    tmp << Scalar(1), Scalar(0), Scalar(0), Scalar(0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 0, 1, 0, 0.1;
+    tmp << Scalar(0), Scalar(1), Scalar(0), Scalar(0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 0, 0, 1, -0.1;
+    tmp << Scalar(0), Scalar(0), Scalar(1), Scalar(-0.1);
     tangent_vec_.push_back(tmp);
-    tmp << -1, 1, 0, -0.1;
+    tmp << Scalar(-1), Scalar(1), Scalar(0), Scalar(-0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 20, -1, 0, 2;
+    tmp << Scalar(20), Scalar(-1), Scalar(0), Scalar(2);
     tangent_vec_.push_back(tmp);
 
-    point_vec_.push_back(Point(1, 2, 4));
-    point_vec_.push_back(Point(1, -3, 0.5));
+    point_vec_.push_back(Point(Scalar(1), Scalar(2), Scalar(4)));
+    point_vec_.push_back(Point(Scalar(1), Scalar(-3), Scalar(0.5)));
   }
 
   void runAll() {
@@ -64,6 +81,7 @@ class Tests {
     passed &= testSaturation();
     passed &= testRawDataAcces();
     passed &= testConstructors();
+    passed &= testFit();
     processTestResult(passed);
   }
 
@@ -76,9 +94,9 @@ class Tests {
   bool testSaturation() {
     bool passed = true;
     RxSO3Type small1(Constants<Scalar>::epsilon(), SO3Type());
-    RxSO3Type small2(
-        Constants<Scalar>::epsilon(),
-        SO3Type::exp(Vector3<Scalar>(Constants<Scalar>::pi(), 0, 0)));
+    RxSO3Type small2(Constants<Scalar>::epsilon(),
+                     SO3Type::exp(Vector3<Scalar>(Constants<Scalar>::pi(),
+                                                  Scalar(0), Scalar(0))));
     RxSO3Type saturated_product = small1 * small2;
     SOPHUS_TEST_APPROX(passed, saturated_product.scale(),
                        Constants<Scalar>::epsilon(),
@@ -91,7 +109,8 @@ class Tests {
 
   bool testRawDataAcces() {
     bool passed = true;
-    Eigen::Matrix<Scalar, 4, 1> raw = {0, 1, 0, 0};
+    Eigen::Matrix<Scalar, 4, 1> raw = {Scalar(0), Scalar(1), Scalar(0),
+                                       Scalar(0)};
     Eigen::Map<RxSO3Type const> map_of_const_rxso3(raw.data());
     SOPHUS_TEST_APPROX(passed, map_of_const_rxso3.quaternion().coeffs().eval(),
                        raw, Constants<Scalar>::epsilon());
@@ -101,7 +120,8 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.quaternion().coeffs().eval(),
                       map_of_const_rxso3.quaternion().coeffs().eval());
 
-    Eigen::Matrix<Scalar, 4, 1> raw2 = {1, 0, 0, 0};
+    Eigen::Matrix<Scalar, 4, 1> raw2 = {Scalar(1), Scalar(0), Scalar(0),
+                                        Scalar(0)};
     Eigen::Map<RxSO3Type> map_of_rxso3(raw.data());
     Eigen::Quaternion<Scalar> quat;
     quat.coeffs() = raw2;
@@ -130,19 +150,6 @@ class Tests {
       SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i]);
     }
 
-    for (int i = 0; i < 10; ++i) {
-      Matrix3<Scalar> M = Matrix3<Scalar>::Random();
-      for (Scalar scale : {Scalar(0.01), Scalar(0.99), Scalar(1), Scalar(10)}) {
-        Matrix3<Scalar> R = makeRotationMatrix(M);
-        Matrix3<Scalar> sR = scale * R;
-        SOPHUS_TEST(passed, isScaledOrthogonalAndPositive(sR),
-                    "isScaledOrthogonalAndPositive(sR): % *\n%", scale, R);
-        Matrix3<Scalar> sR_cols_swapped;
-        sR_cols_swapped << sR.col(1), sR.col(0), sR.col(2);
-        SOPHUS_TEST(passed, !isScaledOrthogonalAndPositive(sR_cols_swapped),
-                    "isScaledOrthogonalAndPositive(-sR): % *\n%", scale, R);
-      }
-    }
     return passed;
   }
 
@@ -162,7 +169,9 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, RxSO3Type(scale, so3.matrix()).matrix(),
                        rxso3.matrix(), Constants<Scalar>::epsilon(),
                        "RxSO3(scale, SO3)");
-    Matrix3<Scalar> R = SO3<Scalar>::exp(Point(0.2, 0.5, -1.0)).matrix();
+    Matrix3<Scalar> R =
+        SO3<Scalar>::exp(Point(Scalar(0.2), Scalar(0.5), Scalar(-1.0)))
+            .matrix();
     Matrix3<Scalar> sR = R * Scalar(1.3);
     SOPHUS_TEST_APPROX(passed, RxSO3Type(sR).matrix(), sR,
                        Constants<Scalar>::epsilon(), "RxSO3(sR)");
@@ -179,6 +188,30 @@ class Tests {
     return passed;
   }
 
+  template <class S = Scalar>
+  enable_if_t<std::is_floating_point<S>::value, bool> testFit() {
+    bool passed = true;
+    for (int i = 0; i < 10; ++i) {
+      Matrix3<Scalar> M = Matrix3<Scalar>::Random();
+      for (Scalar scale : {Scalar(0.01), Scalar(0.99), Scalar(1), Scalar(10)}) {
+        Matrix3<Scalar> R = makeRotationMatrix(M);
+        Matrix3<Scalar> sR = scale * R;
+        SOPHUS_TEST(passed, isScaledOrthogonalAndPositive(sR),
+                    "isScaledOrthogonalAndPositive(sR): % *\n%", scale, R);
+        Matrix3<Scalar> sR_cols_swapped;
+        sR_cols_swapped << sR.col(1), sR.col(0), sR.col(2);
+        SOPHUS_TEST(passed, !isScaledOrthogonalAndPositive(sR_cols_swapped),
+                    "isScaledOrthogonalAndPositive(-sR): % *\n%", scale, R);
+      }
+    }
+    return passed;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<!std::is_floating_point<S>::value, bool> testFit() {
+    return true;
+  }
+
   std::vector<RxSO3Type, Eigen::aligned_allocator<RxSO3Type>> rxso3_vec_;
   std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec_;
   std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
@@ -193,9 +226,15 @@ int test_rxso3() {
   Tests<double>().runAll();
   cerr << "Float tests: " << endl;
   Tests<float>().runAll();
+
+#if SOPHUS_CERES
+  cerr << "ceres::Jet<double, 3> tests: " << endl;
+  Tests<ceres::Jet<double, 3>>().runAll();
+#endif
+
   return 0;
 }
 
-}  // Sophus
+}  // namespace Sophus
 
 int main() { return Sophus::test_rxso3(); }

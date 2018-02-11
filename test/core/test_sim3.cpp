@@ -10,12 +10,15 @@
 namespace Eigen {
 template class Map<Sophus::Sim3<double>>;
 template class Map<Sophus::Sim3<double> const>;
-}
+}  // namespace Eigen
 
 namespace Sophus {
 
 template class Sim3<double, Eigen::AutoAlign>;
 template class Sim3<float, Eigen::DontAlign>;
+#if SOPHUS_CERES
+template class Sim3<ceres::Jet<double, 3>>;
+#endif
 
 template <class Scalar>
 class Tests {
@@ -28,53 +31,82 @@ class Tests {
   Scalar const kPi = Constants<Scalar>::pi();
 
   Tests() {
-    sim3_vec_.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0, 1.)),
-                                 Point(0, 0, 0)));
+    sim3_vec_.push_back(
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.2), Scalar(0.5),
+                                            Scalar(0.0), Scalar(1.))),
+                 Point(Scalar(0), Scalar(0), Scalar(0))));
+    sim3_vec_.push_back(
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.2), Scalar(0.5),
+                                            Scalar(-1.0), Scalar(1.1))),
+                 Point(Scalar(10), Scalar(0), Scalar(0))));
+    sim3_vec_.push_back(
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.), Scalar(0.), Scalar(0.),
+                                            Scalar(0.))),
+                 Point(Scalar(0), Scalar(10), Scalar(5))));
+    sim3_vec_.push_back(
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.), Scalar(0.), Scalar(0.),
+                                            Scalar(1.1))),
+                 Point(Scalar(0), Scalar(10), Scalar(5))));
+    sim3_vec_.push_back(
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.), Scalar(0.),
+                                            Scalar(0.00001), Scalar(0.))),
+                 Point(Scalar(0), Scalar(0), Scalar(0))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(Vector4Type(0.2, 0.5, -1.0, 1.1)), Point(10, 0, 0)));
+        RxSO3Type::exp(Vector4Type(Scalar(0.), Scalar(0.), Scalar(0.00001),
+                                   Scalar(0.0000001))),
+        Point(Scalar(1), Scalar(-1.00000001), Scalar(2.0000000001))));
     sim3_vec_.push_back(
-        Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0., 0.)), Point(0, 10, 5)));
-    sim3_vec_.push_back(Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0., 1.1)),
-                                 Point(0, 10, 5)));
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.), Scalar(0.),
+                                            Scalar(0.00001), Scalar(0))),
+                 Point(Scalar(0.01), Scalar(0), Scalar(0))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0.)), Point(0, 0, 0)));
+        RxSO3Type::exp(Vector4Type(kPi, Scalar(0), Scalar(0), Scalar(0.9))),
+        Point(Scalar(4), Scalar(-5), Scalar(0))));
     sim3_vec_.push_back(
-        Sim3Type(RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0.0000001)),
-                 Point(1, -1.00000001, 2.0000000001)));
-    sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(Vector4Type(0., 0., 0.00001, 0)), Point(0.01, 0, 0)));
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.2), Scalar(0.5),
+                                            Scalar(0.0), Scalar(0))),
+                 Point(Scalar(0), Scalar(0), Scalar(0))) *
+        Sim3Type(
+            RxSO3Type::exp(Vector4Type(kPi, Scalar(0), Scalar(0), Scalar(0))),
+            Point(Scalar(0), Scalar(0), Scalar(0))) *
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(-0.2), Scalar(-0.5),
+                                            Scalar(-0.0), Scalar(0))),
+                 Point(Scalar(0), Scalar(0), Scalar(0))));
     sim3_vec_.push_back(
-        Sim3Type(RxSO3Type::exp(Vector4Type(kPi, 0, 0, 0.9)), Point(4, -5, 0)));
-    sim3_vec_.push_back(
-        Sim3Type(RxSO3Type::exp(Vector4Type(0.2, 0.5, 0.0, 0)),
-                 Point(0, 0, 0)) *
-        Sim3Type(RxSO3Type::exp(Vector4Type(kPi, 0, 0, 0)), Point(0, 0, 0)) *
-        Sim3Type(RxSO3Type::exp(Vector4Type(-0.2, -0.5, -0.0, 0)),
-                 Point(0, 0, 0)));
-    sim3_vec_.push_back(
-        Sim3Type(RxSO3Type::exp(Vector4Type(0.3, 0.5, 0.1, 0)),
-                 Point(2, 0, -7)) *
-        Sim3Type(RxSO3Type::exp(Vector4Type(kPi, 0, 0, 0)), Point(0, 0, 0)) *
-        Sim3Type(RxSO3Type::exp(Vector4Type(-0.3, -0.5, -0.1, 0)),
-                 Point(0, 6, 0)));
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.3), Scalar(0.5),
+                                            Scalar(0.1), Scalar(0))),
+                 Point(Scalar(2), Scalar(0), Scalar(-7))) *
+        Sim3Type(
+            RxSO3Type::exp(Vector4Type(kPi, Scalar(0), Scalar(0), Scalar(0))),
+            Point(Scalar(0), Scalar(0), Scalar(0))) *
+        Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(-0.3), Scalar(-0.5),
+                                            Scalar(-0.1), Scalar(0))),
+                 Point(Scalar(0), Scalar(6), Scalar(0))));
     Tangent tmp;
-    tmp << 0, 0, 0, 0, 0, 0, 0;
+    tmp << Scalar(0), Scalar(0), Scalar(0), Scalar(0), Scalar(0), Scalar(0),
+        Scalar(0);
     tangent_vec_.push_back(tmp);
-    tmp << 1, 0, 0, 0, 0, 0, 0;
+    tmp << Scalar(1), Scalar(0), Scalar(0), Scalar(0), Scalar(0), Scalar(0),
+        Scalar(0);
     tangent_vec_.push_back(tmp);
-    tmp << 0, 1, 0, 1, 0, 0, 0.1;
+    tmp << Scalar(0), Scalar(1), Scalar(0), Scalar(1), Scalar(0), Scalar(0),
+        Scalar(0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 0, 0, 1, 0, 1, 0, 0.1;
+    tmp << Scalar(0), Scalar(0), Scalar(1), Scalar(0), Scalar(1), Scalar(0),
+        Scalar(0.1);
     tangent_vec_.push_back(tmp);
-    tmp << -1, 1, 0, 0, 0, 1, -0.1;
+    tmp << Scalar(-1), Scalar(1), Scalar(0), Scalar(0), Scalar(0), Scalar(1),
+        Scalar(-0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 20, -1, 0, -1, 1, 0, -0.1;
+    tmp << Scalar(20), Scalar(-1), Scalar(0), Scalar(-1), Scalar(1), Scalar(0),
+        Scalar(-0.1);
     tangent_vec_.push_back(tmp);
-    tmp << 30, 5, -1, 20, -1, 0, 1.5;
+    tmp << Scalar(30), Scalar(5), Scalar(-1), Scalar(20), Scalar(-1), Scalar(0),
+        Scalar(1.5);
     tangent_vec_.push_back(tmp);
 
-    point_vec_.push_back(Point(1, 2, 4));
-    point_vec_.push_back(Point(1, -3, 0.5));
+    point_vec_.push_back(Point(Scalar(1), Scalar(2), Scalar(4)));
+    point_vec_.push_back(Point(Scalar(1), Scalar(-3), Scalar(0.5)));
   }
 
   void runAll() {
@@ -93,7 +125,8 @@ class Tests {
   bool testRawDataAcces() {
     bool passed = true;
     Eigen::Matrix<Scalar, 7, 1> raw;
-    raw << 0, 1, 0, 0, 1, 3, 2;
+    raw << Scalar(0), Scalar(1), Scalar(0), Scalar(0), Scalar(1), Scalar(3),
+        Scalar(2);
     Eigen::Map<Sim3Type const> map_of_const_sim3(raw.data());
     SOPHUS_TEST_APPROX(passed, map_of_const_sim3.quaternion().coeffs().eval(),
                        raw.template head<4>().eval(),
@@ -112,7 +145,8 @@ class Tests {
                       map_of_const_sim3.translation().eval());
 
     Eigen::Matrix<Scalar, 7, 1> raw2;
-    raw2 << 1, 0, 0, 0, 3, 2, 1;
+    raw2 << Scalar(1), Scalar(0), Scalar(0), Scalar(0), Scalar(3), Scalar(2),
+        Scalar(1);
     Eigen::Map<Sim3Type> map_of_sim3(raw.data());
     Eigen::Quaternion<Scalar> quat;
     quat.coeffs() = raw2.template head<4>();
@@ -199,6 +233,12 @@ int test_sim3() {
   Tests<double>().runAll();
   cerr << "Float tests: " << endl;
   Tests<float>().runAll();
+
+#if SOPHUS_CERES
+  cerr << "ceres::Jet<double, 3> tests: " << endl;
+  Tests<ceres::Jet<double, 3>>().runAll();
+#endif
+
   return 0;
 }
 }  // namespace Sophus

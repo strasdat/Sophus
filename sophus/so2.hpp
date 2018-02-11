@@ -96,7 +96,7 @@ class SO2Base {
   //
   // It simply ``1``, since ``SO(2)`` is a commutative group.
   //
-  SOPHUS_FUNC Adjoint Adj() const { return 1; }
+  SOPHUS_FUNC Adjoint Adj() const { return Scalar(1); }
 
   // Returns copy of instance casted to NewScalarType.
   //
@@ -143,8 +143,9 @@ class SO2Base {
   // this function directly.
   //
   SOPHUS_FUNC void normalize() {
-    Scalar length = std::sqrt(unit_complex().x() * unit_complex().x() +
-                              unit_complex().y() * unit_complex().y());
+    using std::sqrt;
+    Scalar length = sqrt(unit_complex().x() * unit_complex().x() +
+                         unit_complex().y() * unit_complex().y());
     SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
                   "Complex number should not be close to zero!");
     unit_complex_nonconst().x() /= length;
@@ -320,7 +321,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
       : unit_complex_(Scalar(0.5) * (R(0, 0) + R(1, 1)),
                       Scalar(0.5) * (R(1, 0) - R(0, 1))) {
     SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
-    SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
+    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
                   R.determinant());
   }
 
@@ -367,15 +368,17 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   // hat()-operator of SO(2).
   //
   SOPHUS_FUNC static SO2<Scalar> exp(Tangent const& theta) {
-    return SO2<Scalar>(std::cos(theta), std::sin(theta));
+    using std::cos;
+    using std::sin;
+    return SO2<Scalar>(cos(theta), sin(theta));
   }
 
   // Returns derivative of exp(x) wrt. x.
   //
   SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
       Tangent const& theta) {
-    using std::sin;
     using std::cos;
+    using std::sin;
     return Sophus::Matrix<Scalar, DoF, num_parameters>(-sin(theta), cos(theta));
   }
 
@@ -399,7 +402,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   //   |  0  1 |
   //   | -1  0 |
   //
-  SOPHUS_FUNC static Transformation generator() { return hat(1); }
+  SOPHUS_FUNC static Transformation generator() { return hat(Scalar(1)); }
 
   // hat-operator
   //
@@ -426,7 +429,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   // Returns closed SO2 given arbirary 2x2 matrix.
   //
-  static SO2 fitToSO2(Transformation const& R) {
+  template <class S = Scalar>
+  static SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, SO2>
+  fitToSO2(Transformation const& R) {
     return SO2(makeRotationMatrix(R));
   }
 
@@ -560,6 +565,6 @@ class Map<Sophus::SO2<Scalar_> const, Options>
   //
   Map<Matrix<Scalar, 2, 1> const, Options> const unit_complex_;
 };
-}
+}  // namespace Eigen
 
 #endif  // SOPHUS_SO2_HPP
