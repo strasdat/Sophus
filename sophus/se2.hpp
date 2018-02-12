@@ -339,7 +339,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
 
   // Default constructor initialize rigid body motion to the identity.
   //
-  SOPHUS_FUNC SE2() : translation_(Vector2<Scalar>::Zero()) {}
+  SOPHUS_FUNC SE2();
 
   // Copy constructor
   //
@@ -675,6 +675,19 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   SO2Member so2_;
   TranslationMember translation_;
 };
+
+template <class Scalar, int Options>
+SE2<Scalar, Options>::SE2() : translation_(TranslationMember::Zero()) {
+  static_assert(std::is_standard_layout<SE2>::value,
+                "Assume standard layout for the use of offsetof check below.");
+  static_assert(
+      offsetof(SE2, so2_) + sizeof(Scalar) * SO2<Scalar>::num_parameters ==
+          offsetof(SE2, translation_),
+      "This class assumes packed storage and hence will only work "
+      "correctly depending on the compiler (options) - in "
+      "particular when using [this->data(), this-data() + "
+      "num_parameters] to access the raw data in a contiguous fashion.");
+}
 
 }  // namespace Sophus
 

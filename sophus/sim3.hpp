@@ -330,9 +330,9 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  // Default constructor initialize similiraty transform to the identity.
+  // Default constructor initialize similarity transform to the identity.
   //
-  SOPHUS_FUNC Sim3() : translation_(Vector3<Scalar>::Zero()) {}
+  SOPHUS_FUNC Sim3();
 
   // Copy constructor
   //
@@ -589,6 +589,19 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   RxSo3Member rxso3_;
   TranslationMember translation_;
 };
+
+template <class Scalar, int Options>
+Sim3<Scalar, Options>::Sim3() : translation_(TranslationMember::Zero()) {
+  static_assert(std::is_standard_layout<Sim3>::value,
+                "Assume standard layout for the use of offsetof check below.");
+  static_assert(
+      offsetof(Sim3, rxso3_) + sizeof(Scalar) * RxSO3<Scalar>::num_parameters ==
+          offsetof(Sim3, translation_),
+      "This class assumes packed storage and hence will only work "
+      "correctly depending on the compiler (options) - in "
+      "particular when using [this->data(), this-data() + "
+      "num_parameters] to access the raw data in a contiguous fashion.");
+}
 
 }  // namespace Sophus
 

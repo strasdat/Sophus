@@ -9,7 +9,7 @@ template <class Scalar_, int Options = 0>
 class Sim2;
 using Sim2d = Sim2<double>;
 using Sim2f = Sim2<float>;
-}
+}  // namespace Sophus
 
 namespace Eigen {
 namespace internal {
@@ -326,9 +326,9 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  // Default constructor initialize similiraty transform to the identity.
+  // Default constructor initialize similarity transform to the identity.
   //
-  SOPHUS_FUNC Sim2() : translation_(Vector2<Scalar>::Zero()) {}
+  SOPHUS_FUNC Sim2();
 
   // Copy constructor
   //
@@ -569,6 +569,19 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   TranslationMember translation_;
 };
 
+template <class Scalar, int Options>
+Sim2<Scalar, Options>::Sim2() : translation_(TranslationMember::Zero()) {
+  static_assert(std::is_standard_layout<Sim2>::value,
+                "Assume standard layout for the use of offsetof check below.");
+  static_assert(
+      offsetof(Sim2, rxso2_) + sizeof(Scalar) * RxSO2<Scalar>::num_parameters ==
+          offsetof(Sim2, translation_),
+      "This class assumes packed storage and hence will only work "
+      "correctly depending on the compiler (options) - in "
+      "particular when using [this->data(), this-data() + "
+      "num_parameters] to access the raw data in a contiguous fashion.");
+}
+
 }  // namespace Sophus
 
 namespace Eigen {
@@ -664,6 +677,6 @@ class Map<Sophus::Sim2<Scalar_> const, Options>
   Map<Sophus::RxSO2<Scalar> const, Options> const rxso2_;
   Map<Sophus::Vector2<Scalar> const, Options> const translation_;
 };
-}
+}  // namespace Eigen
 
 #endif
