@@ -4,7 +4,7 @@ C++ implementation of Lie Groups using Eigen.
 
 ### Packaging
 
-This is a maintained version of the original code developed by Hauke Strasdat.
+This is a release fork of the upstream repository maintained for the ROS community in order to maintain stability across ROS distros. Please send any non-release related issues or pull requests upstream. 
 
 The current release branch is *indigo*. Ros packages are available for indigo, jade & kinetic (built as a [3rdparty package](http://wiki.ros.org/bloom/Tutorials/ReleaseThirdParty)).
 
@@ -32,11 +32,5 @@ $ cd ~/3rd_party_workspace
 $ catkin_make_isolated -DCMAKE_INSTALL_PREFIX=install_isolated --install
 $ source ~/3rd_party_workspace/install_isolated/setup.bash
 ```
-
-### Errata
-
-Thanks to Steven Lovegrove, Sophus is now fully templated  - using the Curiously Recurring Template Pattern (CRTP).
-
-(In order to go back to the non-templated/double-only version "git checkout a621ff".)
 
 
