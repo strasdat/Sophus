@@ -962,13 +962,13 @@ class Map<Sophus::SE3<Scalar_>, Options>
 
   // Mutator of translation vector
   //
-  SOPHUS_FUNC Map<Sophus::Vector3<Scalar>>& translation() {
+  SOPHUS_FUNC Map<Sophus::Vector3<Scalar, Options>>& translation() {
     return translation_;
   }
 
   // Accessor of translation vector
   //
-  SOPHUS_FUNC Map<Sophus::Vector3<Scalar>> const& translation() const {
+  SOPHUS_FUNC Map<Sophus::Vector3<Scalar, Options>> const& translation() const {
     return translation_;
   }
 
