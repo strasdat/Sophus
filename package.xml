@@ -1,4 +1,6 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
   <name>sophus</name>
   <version>0.9.1</version>
   <description>
@@ -14,8 +16,8 @@
 
   <build_depend>eigen</build_depend>
 
-  <run_depend>catkin</run_depend>
-  <run_depend>eigen</run_depend>
+  <exec_depend>catkin</exec_depend>
+  <exec_depend>eigen</exec_depend>
 
   <export>
     <build_type>cmake</build_type>
