@@ -28,6 +28,7 @@ struct cast_impl<ceres::Jet<T, N>, NewType> {
 }  // namespace Eigen
 
 struct TestCostFunctor {
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   TestCostFunctor(Sophus::SE3d T_aw) : T_aw(T_aw) {}
 
   template <class T>
