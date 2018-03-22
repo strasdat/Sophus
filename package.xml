@@ -6,18 +6,17 @@
   <description>
    C++ implementation of Lie Groups using Eigen.
   </description>
-  <url type="repository">https://github.com/stonier/sophus</url>
-  <url type="bugtracker">https://github.com/stonier/sophus/issues</url>
+  <url type="repository">https://github.com/strasdat/sophus</url>
+  <url type="bugtracker">https://github.com/strasdat/sophus/issues</url>
   <maintainer email="nomail@nomail.com">Hauke Strasdat</maintainer>
   <author>Hauke Strasdat</author>
   <license>BSD</license>
 
   <buildtool_depend>cmake</buildtool_depend>
 
-  <build_depend>eigen</build_depend>
+  <depend>eigen</depend>
 
   <exec_depend>catkin</exec_depend>
-  <exec_depend>eigen</exec_depend>
 
   <export>
     <build_type>cmake</build_type>
