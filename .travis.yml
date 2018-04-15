@@ -30,36 +30,35 @@ matrix:
   - language: cpp
     compiler: gcc
     os: linux
-    env: BUILD_TYPE=Coverage
+    env: BUILD_TYPE=Coverage  ROW_MAJOR_DEFAULT=OFF
   - language: cpp
     compiler: gcc
     os: linux
-    env: BUILD_TYPE=Release
+    env: BUILD_TYPE=Release ROW_MAJOR_DEFAULT=OFF
   - language: cpp
     compiler: clang
     os: linux
-    env: BUILD_TYPE=Debug
+    env: BUILD_TYPE=Debug ROW_MAJOR_DEFAULT=OFF
+  - language: cpp
+    compiler: gcc
+    os: linux
+    env: BUILD_TYPE=Debug ROW_MAJOR_DEFAULT=ON
   - language: cpp
     compiler: clang
     os: linux
-    env: BUILD_TYPE=Release
+    env: BUILD_TYPE=Release ROW_MAJOR_DEFAULT=OFF
   - language: python
     env: BUILD_TYPE=Python
     python: "3.6"
   - language: cpp
     compiler: clang
     os: osx
-    env: BUILD_TYPE=Release
+    env: BUILD_TYPE=Debug
 
 
 script:
-  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then mkdir build ; fi
-  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then cd build ; fi
-  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE .. ; fi
-  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then make -j2 ; fi
-  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then make CTEST_OUTPUT_ON_FAILURE=1 test ; fi
-  - if [[ "$BUILD_TYPE" == "Python" ]]; then cd py ; fi
-  - if [[ "$BUILD_TYPE" == "Python" ]]; then ./run_tests.sh ; fi
+  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then scripts/run_cpp_tests.sh ; fi
+  - if [[ "$BUILD_TYPE" == "Python" ]]; then cd py; ./run_tests.sh ; fi
 
 after_success:
  - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --directory . --capture --output-file coverage.info ; fi
