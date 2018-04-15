@@ -74,19 +74,20 @@ class Se2:
 
     @staticmethod
     def calc_Dx_exp_x(x):
-        return sympy.Matrix(3, 4, lambda r, c:
-                            sympy.diff(Se2.exp(x)[c], x[r, 0]))
+        return sympy.Matrix(4, 3, lambda r, c:
+                            sympy.diff(Se2.exp(x)[r], x[c]))
 
     @staticmethod
     def Dx_exp_x_at_0():
-        return sympy.Matrix([[0, 0, 1, 0],
-                             [0, 0, 0, 1],
-                             [0, 1, 0, 0]])
+        return sympy.Matrix([[0, 0, 0],
+                             [0, 0, 1],
+                             [1, 0, 0],
+                             [0, 1, 0]])
 
     def calc_Dx_this_mul_exp_x_at_0(self, x):
         v = Se2.exp(x)
-        return sympy.Matrix(3, 4, lambda r, c:
-                            sympy.diff((self * Se2.exp(x))[c], x[r, 0])). \
+        return sympy.Matrix(4, 3, lambda r, c:
+                            sympy.diff((self * Se2.exp(x))[r], x[c])). \
             subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
     @staticmethod
@@ -112,7 +113,7 @@ class Se2:
     def Dxi_exp_x_matrix(x, i):
         T = Se2.exp(x)
         Dx_exp_x = Se2.calc_Dx_exp_x(x)
-        l = [Se2.Dxi_x_matrix(T, j) * Dx_exp_x[i, j] for j in range(0, 4)]
+        l = [Dx_exp_x[j, i] * Se2.Dxi_x_matrix(T, j) for j in range(0, 4)]
         return functools.reduce((lambda a, b: a + b), l)
 
     @staticmethod
@@ -168,7 +169,7 @@ class TestSe2(unittest.TestCase):
         self.assertEqual(sympy.simplify(
             Se2.calc_Dx_exp_x_at_0(self.upsilon_theta) -
             Se2.Dx_exp_x_at_0()),
-            sympy.Matrix.zeros(3, 4))
+            sympy.Matrix.zeros(4, 3))
         for i in range(0, 4):
             self.assertEqual(sympy.simplify(Se2.calc_Dxi_x_matrix(self.a, i) -
                                             Se2.Dxi_x_matrix(self.a, i)),

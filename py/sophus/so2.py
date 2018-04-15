@@ -53,20 +53,20 @@ class So2:
 
     @staticmethod
     def calc_Dx_exp_x(x):
-        return sympy.Matrix(1, 2, lambda r, c:
-                            sympy.diff(So2.exp(x)[c], x))
+        return sympy.Matrix(2, 1, lambda r, c:
+                            sympy.diff(So2.exp(x)[r], x))
 
     @staticmethod
     def Dx_exp_x_at_0():
-        return sympy.Matrix([[0, 1]])
+        return sympy.Matrix([0, 1])
 
     @staticmethod
     def calc_Dx_exp_x_at_0(x):
         return So2.calc_Dx_exp_x(x).limit(x, 0)
 
     def calc_Dx_this_mul_exp_x_at_0(self, x):
-        return sympy.Matrix(1, 2, lambda r, c:
-                            sympy.diff((self * So2.exp(x))[c], x))\
+        return sympy.Matrix(2, 1, lambda r, c:
+                            sympy.diff((self * So2.exp(x))[r], x))\
             .limit(x, 0)
 
     @staticmethod
@@ -87,7 +87,7 @@ class So2:
     def Dx_exp_x_matrix(x):
         R = So2.exp(x)
         Dx_exp_x = So2.calc_Dx_exp_x(x)
-        l = [So2.Dxi_x_matrix(R, j) * Dx_exp_x[0, j] for j in [0, 1]]
+        l = [Dx_exp_x[j] * So2.Dxi_x_matrix(R, j) for j in [0, 1]]
         return functools.reduce((lambda a, b: a + b), l)
 
     @staticmethod
@@ -132,7 +132,7 @@ class TestSo2(unittest.TestCase):
     def test_derivatives(self):
         self.assertEqual(sympy.simplify(So2.calc_Dx_exp_x_at_0(self.theta) -
                                         So2.Dx_exp_x_at_0()),
-                         sympy.Matrix.zeros(1, 2))
+                         sympy.Matrix.zeros(2, 1))
         for i in [0, 1]:
             self.assertEqual(sympy.simplify(So2.calc_Dxi_x_matrix(self.a, i) -
                                             So2.Dxi_x_matrix(self.a, i)),

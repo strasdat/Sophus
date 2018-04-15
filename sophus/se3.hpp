@@ -110,74 +110,74 @@ class SE3Base {
 
   // Returns derivative of  this * exp(x)  wrt x at x=0.
   //
-  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_this_mul_exp_x_at_0()
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
       const {
-    Matrix<Scalar, DoF, num_parameters> J;
+    Matrix<Scalar, num_parameters, DoF> J;
     Eigen::Quaternion<Scalar> const q = unit_quaternion();
-    Scalar const c0 = q.w() * q.w();
-    Scalar const c1 = q.x() * q.x();
-    Scalar const c2 = q.y() * q.y();
-    Scalar const c3 = -c2;
-    Scalar const c4 = q.z() * q.z();
+    Scalar const c0 = Scalar(0.5) * q.w();
+    Scalar const c1 = Scalar(0.5) * q.z();
+    Scalar const c2 = -c1;
+    Scalar const c3 = Scalar(0.5) * q.y();
+    Scalar const c4 = Scalar(0.5) * q.x();
     Scalar const c5 = -c4;
-    Scalar const c6 = Scalar(2) * q.w();
-    Scalar const c7 = c6 * q.z();
-    Scalar const c8 = Scalar(2) * q.x();
-    Scalar const c9 = c8 * q.y();
-    Scalar const c10 = c6 * q.y();
-    Scalar const c11 = c8 * q.z();
-    Scalar const c12 = c0 - c1;
-    Scalar const c13 = c6 * q.x();
-    Scalar const c14 = 2 * q.y() * q.z();
-    Scalar const c15 = Scalar(0.5) * q.w();
-    Scalar const c16 = Scalar(0.5) * q.z();
-    Scalar const c17 = Scalar(0.5) * q.y();
-    Scalar const c18 = -c17;
-    Scalar const c19 = Scalar(0.5) * q.x();
-    Scalar const c20 = -c19;
-    Scalar const c21 = -c16;
+    Scalar const c6 = -c3;
+    Scalar const c7 = q.w() * q.w();
+    Scalar const c8 = q.x() * q.x();
+    Scalar const c9 = q.y() * q.y();
+    Scalar const c10 = -c9;
+    Scalar const c11 = q.z() * q.z();
+    Scalar const c12 = -c11;
+    Scalar const c13 = Scalar(2) * q.w();
+    Scalar const c14 = c13 * q.z();
+    Scalar const c15 = Scalar(2) * q.x();
+    Scalar const c16 = c15 * q.y();
+    Scalar const c17 = c13 * q.y();
+    Scalar const c18 = c15 * q.z();
+    Scalar const c19 = c7 - c8;
+    Scalar const c20 = c13 * q.x();
+    Scalar const c21 = Scalar(2) * q.y() * q.z();
     J(0, 0) = 0;
     J(0, 1) = 0;
     J(0, 2) = 0;
-    J(0, 3) = 0;
-    J(0, 4) = c0 + c1 + c3 + c5;
-    J(0, 5) = c7 + c9;
-    J(0, 6) = -c10 + c11;
+    J(0, 3) = c0;
+    J(0, 4) = c2;
+    J(0, 5) = c3;
     J(1, 0) = 0;
     J(1, 1) = 0;
     J(1, 2) = 0;
-    J(1, 3) = 0;
-    J(1, 4) = -c7 + c9;
-    J(1, 5) = c12 + c2 + c5;
-    J(1, 6) = c13 + c14;
+    J(1, 3) = c1;
+    J(1, 4) = c0;
+    J(1, 5) = c5;
     J(2, 0) = 0;
     J(2, 1) = 0;
     J(2, 2) = 0;
-    J(2, 3) = 0;
-    J(2, 4) = c10 + c11;
-    J(2, 5) = -c13 + c14;
-    J(2, 6) = c12 + c3 + c4;
-    J(3, 0) = c15;
-    J(3, 1) = c16;
-    J(3, 2) = c18;
-    J(3, 3) = c20;
-    J(3, 4) = 0;
-    J(3, 5) = 0;
-    J(3, 6) = 0;
-    J(4, 0) = c21;
-    J(4, 1) = c15;
-    J(4, 2) = c19;
-    J(4, 3) = c18;
+    J(2, 3) = c6;
+    J(2, 4) = c4;
+    J(2, 5) = c0;
+    J(3, 0) = 0;
+    J(3, 1) = 0;
+    J(3, 2) = 0;
+    J(3, 3) = c5;
+    J(3, 4) = c6;
+    J(3, 5) = c2;
+    J(4, 0) = c10 + c12 + c7 + c8;
+    J(4, 1) = -c14 + c16;
+    J(4, 2) = c17 + c18;
+    J(4, 3) = 0;
     J(4, 4) = 0;
     J(4, 5) = 0;
-    J(4, 6) = 0;
-    J(5, 0) = c17;
-    J(5, 1) = c20;
-    J(5, 2) = c15;
-    J(5, 3) = c21;
+    J(5, 0) = c14 + c16;
+    J(5, 1) = c12 + c19 + c9;
+    J(5, 2) = -c20 + c21;
+    J(5, 3) = 0;
     J(5, 4) = 0;
     J(5, 5) = 0;
-    J(5, 6) = 0;
+    J(6, 0) = -c17 + c18;
+    J(6, 1) = c20 + c21;
+    J(6, 2) = c10 + c11 + c19;
+    J(6, 3) = 0;
+    J(6, 4) = 0;
+    J(6, 5) = 0;
     return J;
   }
 
@@ -498,206 +498,208 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
 
   // Returns derivative of exp(x) wrt. x.
   //
-  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
       Tangent const& upsilon_omega) {
     using std::cos;
     using std::pow;
     using std::sin;
     using std::sqrt;
-    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
     Sophus::Vector<Scalar, 3> upsilon = upsilon_omega.template head<3>();
     Sophus::Vector<Scalar, 3> omega = upsilon_omega.template tail<3>();
 
-    Scalar const c0 = omega[1] * omega[1];
+    Scalar const c0 = omega[0] * omega[0];
+    Scalar const c1 = omega[1] * omega[1];
     Scalar const c2 = omega[2] * omega[2];
-    Scalar const c5 = omega[0] * omega[0];
-    Scalar const c6 = c0 + c2 + c5;
+    Scalar const c3 = c0 + c1 + c2;
     Scalar const o(0);
     Scalar const h(0.5);
     Scalar const i(1);
 
-    if (c6 < Constants<Scalar>::epsilon()) {
+    if (c3 < Constants<Scalar>::epsilon()) {
       Scalar const ux = Scalar(0.5) * upsilon[0];
       Scalar const uy = Scalar(0.5) * upsilon[1];
       Scalar const uz = Scalar(0.5) * upsilon[2];
 
       // clang-format off
-      J << o, o, o, o,  i,    o,   o,
-           o, o, o, o,  o,    i,   o,
-           o, o, o, o,  o,    o,   i,
-           h, o, o, o,  o,  -uz,  uy,
-           o, h, o, o,  uz,   o, -ux,
-           o, o, h, o, -uy,  ux,   o;
+      J << o, o, o,   h,   o,   o,
+           o, o, o,   o,   h,   o,
+           o, o, o,   o,   o,   h,
+           o, o, o,   o,   o,   o,
+           i, o, o,   o,  uz, -uy,
+           o, i, o, -uz,   o,  ux,
+           o, o, i,  uy, -ux,   o;
       // clang-format on
       return J;
     }
 
-    Scalar const c1 = -c0;
-    Scalar const c3 = -c2;
-    Scalar const c4 = c1 + c3;
-    Scalar const c7 = pow(c6, Scalar(-3.0 / 2.0));
-    Scalar const c8 = sqrt(c6);
-    Scalar const c9 = sin(c8);
-    Scalar const c10 = c8 - c9;
-    Scalar const c11 = c10 * c7;
-    Scalar const c12 = i / c6;
-    Scalar const c13 = cos(c8);
-    Scalar const c14 = -c13 + i;
-    Scalar const c15 = c12 * c14;
-    Scalar const c16 = c15 * omega[2];
-    Scalar const c17 = c11 * omega[0];
-    Scalar const c18 = c17 * omega[1];
-    Scalar const c19 = c15 * omega[1];
-    Scalar const c20 = c17 * omega[2];
-    Scalar const c21 = -c5;
-    Scalar const c22 = c21 + c3;
-    Scalar const c23 = c15 * omega[0];
-    Scalar const c24 = omega[1] * omega[2];
-    Scalar const c25 = c11 * c24;
-    Scalar const c26 = c1 + c21;
-    Scalar const c27 = i / c8;
-    Scalar const c28 = 0.5 * c8;
-    Scalar const c29 = sin(c28);
-    Scalar const c30 = c27 * c29;
-    Scalar const c31 = c29 * c7;
-    Scalar const c32 = cos(c28);
-    Scalar const c33 = 0.5 * c12 * c32;
-    Scalar const c34 = c29 * c7 * omega[0];
-    Scalar const c35 = 0.5 * c12 * c32 * omega[0];
-    Scalar const c36 = -c34 * omega[1] + c35 * omega[1];
-    Scalar const c37 = -c34 * omega[2] + c35 * omega[2];
-    Scalar const c38 = c27 * omega[0];
-    Scalar const c39 = 0.5 * c29;
-    Scalar const c40 = pow(c6, -5.0L / 2.0L);
-    Scalar const c41 = Scalar(3) * c10 * c40 * omega[0];
-    Scalar const c42 = c4 * c7;
-    Scalar const c43 = -c13 * c38 + c38;
-    Scalar const c44 = c7 * c9 * omega[0];
-    Scalar const c45 = c44 * omega[1];
-    Scalar const c46 = pow(c6, -2);
-    Scalar const c47 = Scalar(2) * c14 * c46 * omega[0];
-    Scalar const c48 = c47 * omega[1];
-    Scalar const c49 = c11 * omega[2];
-    Scalar const c50 = c45 - c48 + c49;
-    Scalar const c51 = Scalar(3) * c10 * c40 * c5;
-    Scalar const c52 = c7 * omega[0] * omega[2];
-    Scalar const c53 = c43 * c52 - c51 * omega[2];
-    Scalar const c54 = c7 * omega[0] * omega[1];
-    Scalar const c55 = c43 * c54 - c51 * omega[1];
-    Scalar const c56 = c44 * omega[2];
-    Scalar const c57 = c47 * omega[2];
-    Scalar const c58 = c11 * omega[1];
-    Scalar const c59 = -c56 + c57 + c58;
-    Scalar const c60 = Scalar(-2) * c17;
-    Scalar const c61 = c22 * c7;
-    Scalar const c62 = -c24 * c41;
-    Scalar const c63 = -c15 + c62;
-    Scalar const c64 = c7 * c9;
-    Scalar const c65 = c5 * c64;
-    Scalar const c66 = Scalar(2) * c14 * c46;
-    Scalar const c67 = c5 * c66;
-    Scalar const c68 = c7 * omega[1] * omega[2];
-    Scalar const c69 = c43 * c68;
-    Scalar const c70 = c56 - c57 + c58;
-    Scalar const c71 = c26 * c7;
-    Scalar const c72 = c15 + c62;
-    Scalar const c73 = -c45 + c48 + c49;
-    Scalar const c74 = -c24 * c31 + c24 * c33;
-    Scalar const c75 = c27 * omega[1];
-    Scalar const c76 = Scalar(-2) * c58;
-    Scalar const c77 = Scalar(3) * c10 * c40 * omega[1];
-    Scalar const c78 = -c13 * c75 + c75;
-    Scalar const c79 = c0 * c64;
-    Scalar const c80 = c0 * c66;
-    Scalar const c81 = c52 * c78;
-    Scalar const c82 = -c0 * c41 + c54 * c78;
-    Scalar const c83 = c24 * c64;
-    Scalar const c84 = c24 * c66;
-    Scalar const c85 = c17 - c83 + c84;
-    Scalar const c86 = c17 + c83 - c84;
-    Scalar const c87 = Scalar(3) * c10 * c40 * omega[2];
-    Scalar const c88 = -c0 * c87 + c68 * c78;
-    Scalar const c89 = c27 * omega[2];
-    Scalar const c90 = Scalar(-2) * c49;
-    Scalar const c91 = -c13 * c89 + c89;
-    Scalar const c92 = c2 * c64;
-    Scalar const c93 = c2 * c66;
-    Scalar const c94 = c54 * c91;
-    Scalar const c95 = -c2 * c41 + c52 * c91;
-    Scalar const c96 = -c2 * c77 + c68 * c91;
+    Scalar const c4 = sqrt(c3);
+    Scalar const c5 = Scalar(1.0) / c4;
+    Scalar const c6 = Scalar(0.5) * c4;
+    Scalar const c7 = sin(c6);
+    Scalar const c8 = c5 * c7;
+    Scalar const c9 = pow(c3, -3.0L / 2.0L);
+    Scalar const c10 = c7 * c9;
+    Scalar const c11 = Scalar(1.0) / c3;
+    Scalar const c12 = cos(c6);
+    Scalar const c13 = Scalar(0.5) * c11 * c12;
+    Scalar const c14 = c7 * c9 * omega[0];
+    Scalar const c15 = Scalar(0.5) * c11 * c12 * omega[0];
+    Scalar const c16 = -c14 * omega[1] + c15 * omega[1];
+    Scalar const c17 = -c14 * omega[2] + c15 * omega[2];
+    Scalar const c18 = omega[1] * omega[2];
+    Scalar const c19 = -c10 * c18 + c13 * c18;
+    Scalar const c20 = c5 * omega[0];
+    Scalar const c21 = Scalar(0.5) * c7;
+    Scalar const c22 = c5 * omega[1];
+    Scalar const c23 = c5 * omega[2];
+    Scalar const c24 = -c1;
+    Scalar const c25 = -c2;
+    Scalar const c26 = c24 + c25;
+    Scalar const c27 = sin(c4);
+    Scalar const c28 = -c27 + c4;
+    Scalar const c29 = c28 * c9;
+    Scalar const c30 = cos(c4);
+    Scalar const c31 = -c30 + Scalar(1);
+    Scalar const c32 = c11 * c31;
+    Scalar const c33 = c32 * omega[2];
+    Scalar const c34 = c29 * omega[0];
+    Scalar const c35 = c34 * omega[1];
+    Scalar const c36 = c32 * omega[1];
+    Scalar const c37 = c34 * omega[2];
+    Scalar const c38 = pow(c3, -5.0L / 2.0L);
+    Scalar const c39 = Scalar(3) * c28 * c38 * omega[0];
+    Scalar const c40 = c26 * c9;
+    Scalar const c41 = -c20 * c30 + c20;
+    Scalar const c42 = c27 * c9 * omega[0];
+    Scalar const c43 = c42 * omega[1];
+    Scalar const c44 = pow(c3, -2);
+    Scalar const c45 = Scalar(2) * c31 * c44 * omega[0];
+    Scalar const c46 = c45 * omega[1];
+    Scalar const c47 = c29 * omega[2];
+    Scalar const c48 = c43 - c46 + c47;
+    Scalar const c49 = Scalar(3) * c0 * c28 * c38;
+    Scalar const c50 = c9 * omega[0] * omega[2];
+    Scalar const c51 = c41 * c50 - c49 * omega[2];
+    Scalar const c52 = c9 * omega[0] * omega[1];
+    Scalar const c53 = c41 * c52 - c49 * omega[1];
+    Scalar const c54 = c42 * omega[2];
+    Scalar const c55 = c45 * omega[2];
+    Scalar const c56 = c29 * omega[1];
+    Scalar const c57 = -c54 + c55 + c56;
+    Scalar const c58 = Scalar(-2) * c56;
+    Scalar const c59 = Scalar(3) * c28 * c38 * omega[1];
+    Scalar const c60 = -c22 * c30 + c22;
+    Scalar const c61 = -c18 * c39;
+    Scalar const c62 = c32 + c61;
+    Scalar const c63 = c27 * c9;
+    Scalar const c64 = c1 * c63;
+    Scalar const c65 = Scalar(2) * c31 * c44;
+    Scalar const c66 = c1 * c65;
+    Scalar const c67 = c50 * c60;
+    Scalar const c68 = -c1 * c39 + c52 * c60;
+    Scalar const c69 = c18 * c63;
+    Scalar const c70 = c18 * c65;
+    Scalar const c71 = c34 - c69 + c70;
+    Scalar const c72 = Scalar(-2) * c47;
+    Scalar const c73 = Scalar(3) * c28 * c38 * omega[2];
+    Scalar const c74 = -c23 * c30 + c23;
+    Scalar const c75 = -c32 + c61;
+    Scalar const c76 = c2 * c63;
+    Scalar const c77 = c2 * c65;
+    Scalar const c78 = c52 * c74;
+    Scalar const c79 = c34 + c69 - c70;
+    Scalar const c80 = -c2 * c39 + c50 * c74;
+    Scalar const c81 = -c0;
+    Scalar const c82 = c25 + c81;
+    Scalar const c83 = c32 * omega[0];
+    Scalar const c84 = c18 * c29;
+    Scalar const c85 = Scalar(-2) * c34;
+    Scalar const c86 = c82 * c9;
+    Scalar const c87 = c0 * c63;
+    Scalar const c88 = c0 * c65;
+    Scalar const c89 = c9 * omega[1] * omega[2];
+    Scalar const c90 = c41 * c89;
+    Scalar const c91 = c54 - c55 + c56;
+    Scalar const c92 = -c1 * c73 + c60 * c89;
+    Scalar const c93 = -c43 + c46 + c47;
+    Scalar const c94 = -c2 * c59 + c74 * c89;
+    Scalar const c95 = c24 + c81;
+    Scalar const c96 = c9 * c95;
     J(0, 0) = o;
     J(0, 1) = o;
     J(0, 2) = o;
-    J(0, 3) = o;
-    J(0, 4) = c11 * c4 + i;
-    J(0, 5) = c16 + c18;
-    J(0, 6) = -c19 + c20;
+    J(0, 3) = -c0 * c10 + c0 * c13 + c8;
+    J(0, 4) = c16;
+    J(0, 5) = c17;
     J(1, 0) = o;
     J(1, 1) = o;
     J(1, 2) = o;
-    J(1, 3) = o;
-    J(1, 4) = -c16 + c18;
-    J(1, 5) = c11 * c22 + i;
-    J(1, 6) = c23 + c25;
+    J(1, 3) = c16;
+    J(1, 4) = -c1 * c10 + c1 * c13 + c8;
+    J(1, 5) = c19;
     J(2, 0) = o;
     J(2, 1) = o;
     J(2, 2) = o;
-    J(2, 3) = o;
-    J(2, 4) = c19 + c20;
-    J(2, 5) = -c23 + c25;
-    J(2, 6) = c11 * c26 + i;
-    J(3, 0) = c30 - c31 * c5 + c33 * c5;
-    J(3, 1) = c36;
-    J(3, 2) = c37;
-    J(3, 3) = -c38 * c39;
-    J(3, 4) = upsilon[0] * (-c4 * c41 + c42 * c43) + upsilon[1] * (c55 + c59) +
-              upsilon[2] * (c50 + c53);
-    J(3, 5) = upsilon[0] * (c55 + c70) +
-              upsilon[1] * (-c22 * c41 + c43 * c61 + c60) +
-              upsilon[2] * (c63 - c65 + c67 + c69);
-    J(3, 6) = upsilon[0] * (c53 + c73) + upsilon[1] * (c65 - c67 + c69 + c72) +
-              upsilon[2] * (-c26 * c41 + c43 * c71 + c60);
-    J(4, 0) = c36;
-    J(4, 1) = -c0 * c31 + c0 * c33 + c30;
-    J(4, 2) = c74;
-    J(4, 3) = -c39 * c75;
-    J(4, 4) = upsilon[0] * (-c4 * c77 + c42 * c78 + c76) +
-              upsilon[1] * (c82 + c85) + upsilon[2] * (c72 + c79 - c80 + c81);
-    J(4, 5) = upsilon[0] * (c82 + c86) + upsilon[1] * (-c22 * c77 + c61 * c78) +
-              upsilon[2] * (c73 + c88);
-    J(4, 6) = upsilon[0] * (c63 - c79 + c80 + c81) + upsilon[1] * (c50 + c88) +
-              upsilon[2] * (-c26 * c77 + c71 * c78 + c76);
-    J(5, 0) = c37;
-    J(5, 1) = c74;
-    J(5, 2) = -c2 * c31 + c2 * c33 + c30;
-    J(5, 3) = -c39 * c89;
-    J(5, 4) = upsilon[0] * (-c4 * c87 + c42 * c91 + c90) +
-              upsilon[1] * (c63 - c92 + c93 + c94) + upsilon[2] * (c86 + c95);
-    J(5, 5) = upsilon[0] * (c72 + c92 - c93 + c94) +
-              upsilon[1] * (-c22 * c87 + c61 * c91 + c90) +
-              upsilon[2] * (c59 + c96);
-    J(5, 6) = upsilon[0] * (c85 + c95) + upsilon[1] * (c70 + c96) +
-              upsilon[2] * (-c26 * c87 + c71 * c91);
+    J(2, 3) = c17;
+    J(2, 4) = c19;
+    J(2, 5) = -c10 * c2 + c13 * c2 + c8;
+    J(3, 0) = o;
+    J(3, 1) = o;
+    J(3, 2) = o;
+    J(3, 3) = -c20 * c21;
+    J(3, 4) = -c21 * c22;
+    J(3, 5) = -c21 * c23;
+    J(4, 0) = c26 * c29 + Scalar(1);
+    J(4, 1) = -c33 + c35;
+    J(4, 2) = c36 + c37;
+    J(4, 3) = upsilon[0] * (-c26 * c39 + c40 * c41) + upsilon[1] * (c53 + c57) +
+              upsilon[2] * (c48 + c51);
+    J(4, 4) = upsilon[0] * (-c26 * c59 + c40 * c60 + c58) +
+              upsilon[1] * (c68 + c71) + upsilon[2] * (c62 + c64 - c66 + c67);
+    J(4, 5) = upsilon[0] * (-c26 * c73 + c40 * c74 + c72) +
+              upsilon[1] * (c75 - c76 + c77 + c78) + upsilon[2] * (c79 + c80);
+    J(5, 0) = c33 + c35;
+    J(5, 1) = c29 * c82 + Scalar(1);
+    J(5, 2) = -c83 + c84;
+    J(5, 3) = upsilon[0] * (c53 + c91) +
+              upsilon[1] * (-c39 * c82 + c41 * c86 + c85) +
+              upsilon[2] * (c75 - c87 + c88 + c90);
+    J(5, 4) = upsilon[0] * (c68 + c79) + upsilon[1] * (-c59 * c82 + c60 * c86) +
+              upsilon[2] * (c92 + c93);
+    J(5, 5) = upsilon[0] * (c62 + c76 - c77 + c78) +
+              upsilon[1] * (c72 - c73 * c82 + c74 * c86) +
+              upsilon[2] * (c57 + c94);
+    J(6, 0) = -c36 + c37;
+    J(6, 1) = c83 + c84;
+    J(6, 2) = c29 * c95 + Scalar(1);
+    J(6, 3) = upsilon[0] * (c51 + c93) + upsilon[1] * (c62 + c87 - c88 + c90) +
+              upsilon[2] * (-c39 * c95 + c41 * c96 + c85);
+    J(6, 4) = upsilon[0] * (-c64 + c66 + c67 + c75) + upsilon[1] * (c48 + c92) +
+              upsilon[2] * (c58 - c59 * c95 + c60 * c96);
+    J(6, 5) = upsilon[0] * (c71 + c80) + upsilon[1] * (c91 + c94) +
+              upsilon[2] * (-c73 * c95 + c74 * c96);
 
     return J;
   }
 
   // Returns derivative of exp(x) wrt. x_i at x=0.
   //
-  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters>
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
   Dx_exp_x_at_0() {
-    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
     Scalar const o(0);
     Scalar const h(0.5);
     Scalar const i(1);
 
     // clang-format off
-    J << o, o, o, o, i, o, o,
-         o, o, o, o, o, i, o,
-         o, o, o, o, o, o, i,
-         h, o, o, o, o, o, o,
-         o, h, o, o, o, o, o,
-         o, o, h, o, o, o, o;
+    J << o, o, o, h, o, o,
+         o, o, o, o, h, o,
+         o, o, o, o, o, h,
+         o, o, o, o, o, o,
+         i, o, o, o, o, o,
+         o, i, o, o, o, o,
+         o, o, i, o, o, o;
     // clang-format on
     return J;
   }
