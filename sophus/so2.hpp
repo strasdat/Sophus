@@ -238,9 +238,9 @@ class SO2Base {
 
   // Returns derivative of  this * SO2::exp(x)  wrt. x at x=0.
   //
-  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_this_mul_exp_x_at_0()
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
       const {
-    return Matrix<Scalar, DoF, num_parameters>(-unit_complex()[1],
+    return Matrix<Scalar, num_parameters, DoF>(-unit_complex()[1],
                                                unit_complex()[0]);
   }
 
@@ -375,18 +375,18 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   // Returns derivative of exp(x) wrt. x.
   //
-  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
       Tangent const& theta) {
     using std::cos;
     using std::sin;
-    return Sophus::Matrix<Scalar, DoF, num_parameters>(-sin(theta), cos(theta));
+    return Sophus::Matrix<Scalar, num_parameters, DoF>(-sin(theta), cos(theta));
   }
 
   // Returns derivative of exp(x) wrt. x_i at x=0.
   //
-  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters>
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
   Dx_exp_x_at_0() {
-    return Sophus::Matrix<Scalar, DoF, num_parameters>(Scalar(0), Scalar(1));
+    return Sophus::Matrix<Scalar, num_parameters, DoF>(Scalar(0), Scalar(1));
   }
 
   // Returns derivative of exp(x).matrix() wrt. x_i at x=0.

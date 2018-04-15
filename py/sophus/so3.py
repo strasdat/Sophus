@@ -73,22 +73,23 @@ class So3:
 
     @staticmethod
     def calc_Dx_exp_x(x):
-        return sympy.Matrix(3, 4, lambda r, c:
-                            sympy.diff(So3.exp(x)[c], x[r, 0]))
+        return sympy.Matrix(4, 3, lambda r, c:
+                            sympy.diff(So3.exp(x)[r], x[c]))
 
     @staticmethod
     def Dx_exp_x_at_0():
-        return sympy.Matrix([[0.5, 0.0, 0.0, 0.0],
-                             [0.0, 0.5, 0.0, 0.0],
-                             [0.0, 0.0, 0.5, 0.0]])
+        return sympy.Matrix([[0.5, 0.0, 0.0],
+                             [0.0, 0.5, 0.0],
+                             [0.0, 0.0, 0.5],
+                             [0.0, 0.0, 0.0]])
 
     @staticmethod
     def calc_Dx_exp_x_at_0(x):
         return So3.calc_Dx_exp_x(x).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
     def calc_Dx_this_mul_exp_x_at_0(self, x):
-        return sympy.Matrix(3, 4, lambda r, c:
-                            sympy.diff((self * So3.exp(x))[c], x[r, 0]))\
+        return sympy.Matrix(4, 3, lambda r, c:
+                            sympy.diff((self * So3.exp(x))[r], x[c]))\
             .subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
     def calc_Dx_exp_x_mul_this_at_0(self, x):
@@ -124,7 +125,7 @@ class So3:
     def Dxi_exp_x_matrix(x, i):
         R = So3.exp(x)
         Dx_exp_x = So3.calc_Dx_exp_x(x)
-        l = [So3.Dxi_x_matrix(R, j) * Dx_exp_x[i, j] for j in [0, 1, 2, 3]]
+        l = [Dx_exp_x[j, i] * So3.Dxi_x_matrix(R, j) for j in [0, 1, 2, 3]]
         return functools.reduce((lambda a, b: a + b), l)
 
     @staticmethod
@@ -176,7 +177,7 @@ class TestSo3(unittest.TestCase):
     def test_derivatives(self):
         self.assertEqual(sympy.simplify(So3.calc_Dx_exp_x_at_0(self.omega) -
                                         So3.Dx_exp_x_at_0()),
-                         sympy.Matrix.zeros(3, 4))
+                         sympy.Matrix.zeros(4, 3))
 
         for i in [0, 1, 2, 3]:
             self.assertEqual(sympy.simplify(So3.calc_Dxi_x_matrix(self.a, i) -

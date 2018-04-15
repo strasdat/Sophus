@@ -31,7 +31,8 @@ class LocalParameterizationSE3 : public ceres::LocalParameterization {
   virtual bool ComputeJacobian(double const* T_raw,
                                double* jacobian_raw) const {
     Eigen::Map<SE3d const> T(T_raw);
-    Eigen::Map<Matrix<double, 6, 7> > jacobian(jacobian_raw);
+    Eigen::Map<Eigen::Matrix<double, 7, 6, Eigen::RowMajor>> jacobian(
+        jacobian_raw);
     jacobian = T.Dx_this_mul_exp_x_at_0();
     return true;
   }

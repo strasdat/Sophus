@@ -162,29 +162,30 @@ class SO3Base {
 
   // Returns derivative of  this * SO3::exp(x)  wrt. x at x=0.
   //
-  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_this_mul_exp_x_at_0()
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
       const {
-    Matrix<Scalar, DoF, num_parameters> J;
+    Matrix<Scalar, num_parameters, DoF> J;
     Eigen::Quaternion<Scalar> const q = unit_quaternion();
     Scalar const c0 = Scalar(0.5) * q.w();
     Scalar const c1 = Scalar(0.5) * q.z();
-    Scalar const c2 = Scalar(0.5) * q.y();
-    Scalar const c3 = -c2;
+    Scalar const c2 = -c1;
+    Scalar const c3 = Scalar(0.5) * q.y();
     Scalar const c4 = Scalar(0.5) * q.x();
     Scalar const c5 = -c4;
-    Scalar const c6 = -c1;
+    Scalar const c6 = -c3;
     J(0, 0) = c0;
-    J(0, 1) = c1;
+    J(0, 1) = c2;
     J(0, 2) = c3;
-    J(0, 3) = c5;
-    J(1, 0) = c6;
+    J(1, 0) = c1;
     J(1, 1) = c0;
-    J(1, 2) = c4;
-    J(1, 3) = c3;
-    J(2, 0) = c2;
-    J(2, 1) = c5;
+    J(1, 2) = c5;
+    J(2, 0) = c6;
+    J(2, 1) = c4;
     J(2, 2) = c0;
-    J(2, 3) = c6;
+    J(3, 0) = c5;
+    J(3, 1) = c6;
+    J(3, 2) = c2;
+
     return J;
   }
 
@@ -447,7 +448,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 
   // Returns derivative of exp(x) wrt. x.
   //
-  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
       Tangent const& omega) {
     using std::cos;
     using std::exp;
@@ -461,12 +462,13 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     if (c3 < Constants<Scalar>::epsilon()) {
       return Dx_exp_x_at_0();
     }
+
     Scalar const c4 = sqrt(c3);
-    Scalar const c5 = Scalar(1) / c4;
-    Scalar const c6 = Scalar(0.5) * c4;
+    Scalar const c5 = 1.0 / c4;
+    Scalar const c6 = 0.5 * c4;
     Scalar const c7 = sin(c6);
     Scalar const c8 = c5 * c7;
-    Scalar const c9 = pow(c3, Scalar(-3.0 / 2.0));
+    Scalar const c9 = pow(c3, -3.0L / 2.0L);
     Scalar const c10 = c7 * c9;
     Scalar const c11 = Scalar(1.0) / c3;
     Scalar const c12 = cos(c6);
@@ -475,34 +477,35 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     Scalar const c15 = Scalar(0.5) * c11 * c12 * omega[0];
     Scalar const c16 = -c14 * omega[1] + c15 * omega[1];
     Scalar const c17 = -c14 * omega[2] + c15 * omega[2];
-    Scalar const c18 = Scalar(0.5) * c5 * c7;
-    Scalar const c19 = omega[1] * omega[2];
-    Scalar const c20 = -c10 * c19 + c13 * c19;
-    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Scalar const c18 = omega[1] * omega[2];
+    Scalar const c19 = -c10 * c18 + c13 * c18;
+    Scalar const c20 = Scalar(0.5) * c5 * c7;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
     J(0, 0) = -c0 * c10 + c0 * c13 + c8;
     J(0, 1) = c16;
     J(0, 2) = c17;
-    J(0, 3) = -c18 * omega[0];
     J(1, 0) = c16;
     J(1, 1) = -c1 * c10 + c1 * c13 + c8;
-    J(1, 2) = c20;
-    J(1, 3) = -c18 * omega[1];
+    J(1, 2) = c19;
     J(2, 0) = c17;
-    J(2, 1) = c20;
+    J(2, 1) = c19;
     J(2, 2) = -c10 * c2 + c13 * c2 + c8;
-    J(2, 3) = -c18 * omega[2];
+    J(3, 0) = -c20 * omega[0];
+    J(3, 1) = -c20 * omega[1];
+    J(3, 2) = -c20 * omega[2];
     return J;
   }
 
   // Returns derivative of exp(x) wrt. x_i at x=0.
   //
-  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters>
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
   Dx_exp_x_at_0() {
-    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
     // clang-format off
-    J <<  Scalar(0.5),   Scalar(0),   Scalar(0), Scalar(0),
-            Scalar(0), Scalar(0.5),   Scalar(0), Scalar(0),
-            Scalar(0),   Scalar(0), Scalar(0.5), Scalar(0);
+    J <<  Scalar(0.5),   Scalar(0),   Scalar(0),
+            Scalar(0), Scalar(0.5),   Scalar(0),
+            Scalar(0),   Scalar(0), Scalar(0.5),
+            Scalar(0),   Scalar(0),   Scalar(0);
     // clang-format on
     return J;
   }

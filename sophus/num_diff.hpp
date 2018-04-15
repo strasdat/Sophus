@@ -27,21 +27,21 @@ class Curve {
   }
 };
 
-template <class Scalar, int M, int N>
+template <class Scalar, int N, int M>
 class VectorField {
  public:
-  static Eigen::Matrix<Scalar, M, N> num_diff(
+  static Eigen::Matrix<Scalar, N, M> num_diff(
       std::function<Sophus::Vector<Scalar, N>(Sophus::Vector<Scalar, M>)>
           vector_field,
       Sophus::Vector<Scalar, M> const& a, Scalar eps) {
     static_assert(std::is_floating_point<Scalar>::value,
                   "Scalar must be a floating point type.");
-    Eigen::Matrix<Scalar, M, N> J;
+    Eigen::Matrix<Scalar, N, M> J;
     Sophus::Vector<Scalar, M> h;
     h.setZero();
     for (int i = 0; i < M; ++i) {
       h[i] = eps;
-      J.row(i) =
+      J.col(i) =
           (vector_field(a + h) - vector_field(a - h)) / (Scalar(2) * eps);
       h[i] = Scalar(0);
     }
@@ -51,9 +51,9 @@ class VectorField {
 };
 
 template <class Scalar, int N>
-class VectorField<Scalar, 1, N> {
+class VectorField<Scalar, N, 1> {
  public:
-  static Eigen::Matrix<Scalar, 1, N> num_diff(
+  static Eigen::Matrix<Scalar, N, 1> num_diff(
       std::function<Sophus::Vector<Scalar, N>(Scalar)> vector_field,
       Scalar const& a, Scalar eps) {
     return details::Curve<Scalar>::num_diff(std::move(vector_field), a, eps);
@@ -78,11 +78,11 @@ auto curveNumDiff(Fn curve, Scalar t,
 // Here, a vector field is a function from a vector space to another vector
 // space.
 //
-template <class Scalar, int M, int N, class ScalarOrVector, class Fn>
-Eigen::Matrix<Scalar, M, N> vectorFieldNumDiff(
+template <class Scalar, int N, int M, class ScalarOrVector, class Fn>
+Eigen::Matrix<Scalar, N, M> vectorFieldNumDiff(
     Fn vector_field, ScalarOrVector const& a,
     Scalar eps = Constants<Scalar>::epsilonSqrt()) {
-  return details::VectorField<Scalar, M, N>::num_diff(std::move(vector_field),
+  return details::VectorField<Scalar, N, M>::num_diff(std::move(vector_field),
                                                       a, eps);
 }
 

@@ -98,23 +98,23 @@ class SE2Base {
 
   // Returns derivative of  this * exp(x)  wrt x at x=0.
   //
-  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_this_mul_exp_x_at_0()
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
       const {
-    Matrix<Scalar, DoF, num_parameters> J;
+    Matrix<Scalar, num_parameters, DoF> J;
     Sophus::Vector2<Scalar> const c = unit_complex();
     Scalar o(0);
     J(0, 0) = o;
     J(0, 1) = o;
-    J(0, 2) = c[0];
-    J(0, 3) = c[1];
+    J(0, 2) = -c[1];
     J(1, 0) = o;
     J(1, 1) = o;
-    J(1, 2) = -c[1];
-    J(1, 3) = c[0];
-    J(2, 0) = -c[1];
-    J(2, 1) = c[0];
+    J(1, 2) = c[0];
+    J(2, 0) = c[0];
+    J(2, 1) = -c[1];
     J(2, 2) = o;
-    J(2, 3) = o;
+    J(3, 0) = c[1];
+    J(3, 1) = c[0];
+    J(3, 2) = o;
     return J;
   }
 
@@ -432,13 +432,13 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
 
   // Returns derivative of exp(x) wrt. x.
   //
-  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters> Dx_exp_x(
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
       Tangent const& upsilon_theta) {
     using std::abs;
     using std::cos;
     using std::pow;
     using std::sin;
-    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
     Sophus::Vector<Scalar, 2> upsilon = upsilon_theta.template head<2>();
     Scalar theta = upsilon_theta[2];
 
@@ -447,20 +447,21 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
       Scalar const i(1);
 
       // clang-format off
-      J << o, o, i, o,
-           o, o, o, i,
-           o, i, -Scalar(0.5) * upsilon[1], Scalar(0.5) * upsilon[0];
+      J << o, o,                         o,
+           o, o,                         i,
+           i, o, -Scalar(0.5) * upsilon[1],
+           o, i,  Scalar(0.5) * upsilon[0];
       // clang-format on
       return J;
     }
 
     Scalar const c0 = sin(theta);
-    Scalar const c1 = Scalar(1.0) / theta;
-    Scalar const c2 = c0 * c1;
-    Scalar const c3 = cos(theta);
-    Scalar const c4 = -c3 + Scalar(1);
-    Scalar const c5 = c1 * c4;
-    Scalar const c6 = c1 * c3;
+    Scalar const c1 = cos(theta);
+    Scalar const c2 = 1.0 / theta;
+    Scalar const c3 = c0 * c2;
+    Scalar const c4 = -c1 + Scalar(1);
+    Scalar const c5 = c2 * c4;
+    Scalar const c6 = c1 * c2;
     Scalar const c7 = pow(theta, -2);
     Scalar const c8 = c0 * c7;
     Scalar const c9 = c4 * c7;
@@ -468,33 +469,34 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
     Scalar const o = Scalar(0);
     J(0, 0) = o;
     J(0, 1) = o;
-    J(0, 2) = c2;
-    J(0, 3) = c5;
+    J(0, 2) = -c0;
     J(1, 0) = o;
     J(1, 1) = o;
-    J(1, 2) = -c5;
-    J(1, 3) = c2;
-    J(2, 0) = -c0;
-    J(2, 1) = c3;
+    J(1, 2) = c1;
+    J(2, 0) = c3;
+    J(2, 1) = -c5;
     J(2, 2) =
-        -c2 * upsilon[1] + c6 * upsilon[0] - c8 * upsilon[0] + c9 * upsilon[1];
-    J(2, 3) =
-        c2 * upsilon[0] + c6 * upsilon[1] - c8 * upsilon[1] - c9 * upsilon[0];
+        -c3 * upsilon[1] + c6 * upsilon[0] - c8 * upsilon[0] + c9 * upsilon[1];
+    J(3, 0) = c5;
+    J(3, 1) = c3;
+    J(3, 2) =
+        c3 * upsilon[0] + c6 * upsilon[1] - c8 * upsilon[1] - c9 * upsilon[0];
     return J;
   }
 
   // Returns derivative of exp(x) wrt. x_i at x=0.
   //
-  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters>
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
   Dx_exp_x_at_0() {
-    Sophus::Matrix<Scalar, DoF, num_parameters> J;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
     Scalar const o(0);
     Scalar const i(1);
 
     // clang-format off
-    J << o, o, i, o,
-         o, o, o, i,
-         o, i, o, o;
+    J << o, o, o,
+         o, o, i,
+         i, o, o,
+         o, i, o;
     // clang-format on
     return J;
   }

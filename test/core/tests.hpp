@@ -139,9 +139,9 @@ class LieGroupTests {
     bool passed = true;
     for (size_t j = 0; j < tangent_vec_.size(); ++j) {
       Tangent a = tangent_vec_[j];
-      Eigen::Matrix<Scalar, DoF, num_parameters> J = LieGroup::Dx_exp_x(a);
-      Eigen::Matrix<Scalar, DoF, num_parameters> J_num =
-          vectorFieldNumDiff<Scalar, DoF, num_parameters>(
+      Eigen::Matrix<Scalar, num_parameters, DoF> J = LieGroup::Dx_exp_x(a);
+      Eigen::Matrix<Scalar, num_parameters, DoF> J_num =
+          vectorFieldNumDiff<Scalar, num_parameters, DoF>(
               [](Tangent const& x) -> Sophus::Vector<Scalar, num_parameters> {
                 return LieGroup::exp(x).params();
               },
@@ -153,9 +153,9 @@ class LieGroupTests {
 
     Tangent o;
     setToZero(o);
-    Eigen::Matrix<Scalar, DoF, num_parameters> J = LieGroup::Dx_exp_x_at_0();
-    Eigen::Matrix<Scalar, DoF, num_parameters> J_num =
-        vectorFieldNumDiff<Scalar, DoF, num_parameters>(
+    Eigen::Matrix<Scalar, num_parameters, DoF> J = LieGroup::Dx_exp_x_at_0();
+    Eigen::Matrix<Scalar, num_parameters, DoF> J_num =
+        vectorFieldNumDiff<Scalar, num_parameters, DoF>(
             [](Tangent const& x) -> Sophus::Vector<Scalar, num_parameters> {
               return LieGroup::exp(x).params();
             },
@@ -165,9 +165,9 @@ class LieGroupTests {
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       LieGroup T = group_vec_[i];
 
-      Eigen::Matrix<Scalar, DoF, num_parameters> J = T.Dx_this_mul_exp_x_at_0();
-      Eigen::Matrix<Scalar, DoF, num_parameters> J_num =
-          vectorFieldNumDiff<Scalar, DoF, num_parameters>(
+      Eigen::Matrix<Scalar, num_parameters, DoF> J = T.Dx_this_mul_exp_x_at_0();
+      Eigen::Matrix<Scalar, num_parameters, DoF> J_num =
+          vectorFieldNumDiff<Scalar, num_parameters, DoF>(
               [T](Tangent const& x) -> Sophus::Vector<Scalar, num_parameters> {
                 return (T * LieGroup::exp(x)).params();
               },
