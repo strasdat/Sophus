@@ -51,11 +51,33 @@ class Se3:
 
     @staticmethod
     def hat(v):
+        """ R^6 => R^4x4  """
+        """ returns 4x4-matrix representation ``Omega`` """
         upsilon = sophus.Vector3(v[0], v[1], v[2])
         omega = sophus.Vector3(v[3], v[4], v[5])
         return sophus.So3.hat(omega).\
             row_join(upsilon).\
             col_join(sympy.Matrix.zeros(1, 4))
+    
+    @staticmethod
+    def vee(Omega):
+        """ R^4x4 => R^6 """
+        """ returns 6-vector representation of Lie algebra """
+        """ This is the inverse of the hat-operator """
+        
+        
+        
+        head = sophus.Vector3(Omega[0,3], Omega[1,3], Omega[2,3])
+        tail = sophus.So3.vee(Omega[0:3,0:3])
+        upsilon_omega = \
+            sophus.Vector6(head[0], head[1], head[2], tail[0], tail[1], tail[2])
+        return upsilon_omega
+#         Tangent upsilon_omega;#Vector<Scalar, DoF>
+#         upsilon_omega.template head<3>() = Omega.col(3).template head<3>();#取最右邊
+#         upsilon_omega.template tail<3>() =
+#             SO3<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
+#         return upsilon_omega;
+            
 
     def matrix(self):
         """ returns matrix representation """

@@ -35,6 +35,24 @@ class So3:
         return sympy.Matrix([[0, -o[2], o[1]],
                              [o[2], 0, -o[0]],
                              [-o[1], o[0], 0]])
+    
+    """vee-operator
+   
+    It takes the 3x3-matrix representation ``Omega`` and maps it to the
+    corresponding vector representation of Lie algebra.
+   
+    This is the inverse of the hat-operator, see above.
+   
+    Precondition: ``Omega`` must have the following structure:
+   
+                   |  0 -c  b |
+                   |  c  0 -a |
+                   | -b  a  0 | 
+    """
+    @staticmethod
+    def vee(Omega):
+        v = sophus.Vector3(Omega.row(2).col(1), Omega.row(0).col(2), Omega.row(1).col(0))
+        return v
 
     def matrix(self):
         """ returns matrix representation """
