@@ -65,18 +65,11 @@ class Se3:
         """ returns 6-vector representation of Lie algebra """
         """ This is the inverse of the hat-operator """
         
-        
-        
         head = sophus.Vector3(Omega[0,3], Omega[1,3], Omega[2,3])
         tail = sophus.So3.vee(Omega[0:3,0:3])
         upsilon_omega = \
             sophus.Vector6(head[0], head[1], head[2], tail[0], tail[1], tail[2])
         return upsilon_omega
-#         Tangent upsilon_omega;#Vector<Scalar, DoF>
-#         upsilon_omega.template head<3>() = Omega.col(3).template head<3>();#取最右邊
-#         upsilon_omega.template tail<3>() =
-#             SO3<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
-#         return upsilon_omega;
             
 
     def matrix(self):
