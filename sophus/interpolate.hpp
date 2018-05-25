@@ -1,6 +1,7 @@
 #ifndef SOPHUS_INTERPOLATE_HPP
 #define SOPHUS_INTERPOLATE_HPP
 
+#include "common.hpp"
 #include "interpolate_details.hpp"
 
 namespace Sophus {
