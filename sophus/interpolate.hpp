@@ -12,7 +12,7 @@ namespace Sophus {
 //
 // It returns a pose ``foo_T_quiz`` with ``quiz`` being a frame between ``bar``
 // and ``baz``. If ``alpha=0`` it returns ``foo_T_bar``. If it is 1, it returns
-// ``foo_T_bar``.
+// ``foo_T_baz``.
 //
 // (Since interpolation on Lie groups is inverse-invariant, we can equivalently
 // think of the input arguments as being ``bar_T_foo``, ``baz_T_foo`` and the
