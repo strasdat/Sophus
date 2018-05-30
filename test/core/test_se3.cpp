@@ -206,7 +206,9 @@ class Tests {
     return true;
   }
 
-  bool testInterpolate() {
+
+  template <class S = Scalar>
+  enable_if_t<std::is_floating_point<S>::value, bool> testInterpolate() {
     const SE3Type foo_T_bar = SE3Type::fitToSE3(SE3Type::Transformation::Random());
     const SE3Type foo_T_baz = SE3Type::fitToSE3(SE3Type::Transformation::Random());
     const SE3Type foo_T_quiz0 = Sophus::interpolate(foo_T_bar, foo_T_baz, Scalar(0));
@@ -216,6 +218,11 @@ class Tests {
     const auto mse1 = (foo_T_baz.inverse() * foo_T_quiz1).log().squaredNorm();
     return mse0 < Sophus::Constants<Scalar>::epsilon() &&
            mse1 < Sophus::Constants<Scalar>::epsilon();
+  }
+
+  template <class S = Scalar>
+  enable_if_t<!std::is_floating_point<S>::value, bool> testInterpolate() {
+    return true;
   }
 
   std::vector<SE3Type, Eigen::aligned_allocator<SE3Type>> se3_vec_;
