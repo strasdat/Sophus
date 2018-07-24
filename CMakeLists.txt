@@ -31,7 +31,19 @@ ENDIF()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
 # Find Eigen 3 (dependency)
-find_package(Eigen3 REQUIRED)
+#find_package(Eigen3 REQUIRED eigen3)
+find_package(Eigen3)
+if(Eigen3)
+  find_package(Eigen3 REQUIRED eigen3)
+  MESSAGE(STATUS "Found ${EIGEN3_INCLUDE_DIRS} by FindEigen.cmake")
+else(Eigen3)
+  find_package(PkgConfig)
+  pkg_check_modules(EIGEN3 REQUIRED eigen3)
+  #pkg_search_module(EIGEN3 REQUIRED eigen3)
+  include_directories( ${EIGEN3_INCLUDE_DIRS} )
+  MESSAGE(STATUS "Found ${EIGEN3_INCLUDE_DIRS} by pkg-config")
+endif(Eigen3)
+
 
 # Define interface library target
 add_library(sophus INTERFACE)
@@ -72,7 +84,7 @@ if(TARGET Eigen3::Eigen)
   target_link_libraries(sophus INTERFACE Eigen3::Eigen)
   set(Eigen3_DEPENDENCY "find_dependency (Eigen3 ${Eigen3_VERSION})")
 else(TARGET Eigen3::Eigen)
-  target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
+  target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIRS})
 endif(TARGET Eigen3::Eigen)
 
 # Associate target with include directory
