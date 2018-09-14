@@ -75,6 +75,20 @@ class Sim2Base {
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with SIM2 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using Sim2Product = Sim2<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector2<ReturnScalar<PointDerived>>;
+
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -187,8 +201,10 @@ class Sim2Base {
   // Note: That scaling is calculated with saturation. See RxSO2 for
   // details.
   //
-  SOPHUS_FUNC Sim2<Scalar> operator*(Sim2<Scalar> const& other) const {
-    Sim2<Scalar> result(*this);
+  template <typename OtherDerived>
+  SOPHUS_FUNC Sim2Product<OtherDerived> operator*(
+      Sim2Base<OtherDerived> const& other) const {
+    Sim2Product<OtherDerived> result(*this);
     result *= other;
     return result;
   }
@@ -201,7 +217,11 @@ class Sim2Base {
   //
   //   ``p_bar = bar_sR_foo * p_foo + t_bar``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 2>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
     return rxso2() * p + translation();
   }
 
@@ -229,9 +249,14 @@ class Sim2Base {
     return p;
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO2's Scalar type.
   //
-  SOPHUS_FUNC Sim2Base<Derived>& operator*=(Sim2<Scalar> const& other) {
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC Sim2Base<Derived>& operator*=(
+      Sim2Base<OtherDerived> const& other) {
     translation() += (rxso2() * other.translation());
     rxso2() *= other.rxso2();
     return *this;

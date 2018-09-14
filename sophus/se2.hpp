@@ -72,6 +72,20 @@ class SE2Base {
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with SE2 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using SE2Product = SE2<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector2<ReturnScalar<PointDerived>>;
+
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -208,8 +222,10 @@ class SE2Base {
 
   // Group multiplication, which is rotation concatenation.
   //
-  SOPHUS_FUNC SE2<Scalar> operator*(SE2<Scalar> const& other) const {
-    SE2<Scalar> result(*this);
+  template <typename OtherDerived>
+  SOPHUS_FUNC SE2Product<OtherDerived> operator*(
+      SE2Base<OtherDerived> const& other) const {
+    SE2Product<OtherDerived> result(*this);
     result *= other;
     return result;
   }
@@ -222,7 +238,11 @@ class SE2Base {
   //
   //   ``p_bar = bar_R_foo * p_foo + t_bar``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 2>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
     return so2() * p + translation();
   }
 
@@ -238,9 +258,13 @@ class SE2Base {
     return Line((*this) * l.origin(), so2() * l.direction());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO2's Scalar type.
   //
-  SOPHUS_FUNC SE2Base<Derived>& operator*=(SE2<Scalar> const& other) {
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC SE2Base<Derived>& operator*=(SE2Base<OtherDerived> const& other) {
     translation() += so2() * (other.translation());
     so2() *= other.so2();
     return *this;

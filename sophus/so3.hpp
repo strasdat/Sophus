@@ -93,6 +93,20 @@ class SO3Base {
     Scalar theta;
   };
 
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with SO3 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using SO3Product = SO3<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector3<ReturnScalar<PointDerived>>;
+
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -299,10 +313,21 @@ class SO3Base {
 
   // Group multiplication, which is rotation concatenation.
   //
-  SOPHUS_FUNC SO3<Scalar> operator*(SO3<Scalar> const& other) const {
-    SO3<Scalar> J(*this);
-    J *= other;
-    return J;
+  template <typename OtherDerived>
+  SOPHUS_FUNC SO3Product<OtherDerived> operator*(
+      SO3Base<OtherDerived> const& other) const {
+    using QuaternionProductType =
+        typename SO3Product<OtherDerived>::QuaternionType;
+    const QuaternionType& a = unit_quaternion();
+    const typename OtherDerived::QuaternionType& b = other.unit_quaternion();
+    // NOTE: We cannot use Eigen's Quaternion multiplication because it always
+    // returns a Quaternion of the same Scalar as this object, so it is not able
+    // to multiple Jets and doubles correctly.
+    return SO3Product<OtherDerived>(QuaternionProductType(
+        a.w() * b.w() - a.x() * b.x() - a.y() * b.y() - a.z() * b.z(),
+        a.w() * b.x() + a.x() * b.w() + a.y() * b.z() - a.z() * b.y(),
+        a.w() * b.y() + a.y() * b.w() + a.z() * b.x() - a.x() * b.z(),
+        a.w() * b.z() + a.z() * b.w() + a.x() * b.y() - a.y() * b.x()));
   }
 
   // Group action on 3-points.
@@ -319,8 +344,18 @@ class SO3Base {
   //
   // For ``vee``-operator, see below.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
-    return unit_quaternion()._transformVector(p);
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
+    // NOTE: We cannot use Eigen's Quaternion transformVector because it always
+    // returns a Vector3 of the same Scalar as this quaternion, so it is not
+    // able to be applied to Jets and doubles correctly.
+    const QuaternionType& q = unit_quaternion();
+    PointProduct<PointDerived> uv = q.vec().cross(p);
+    uv += uv;
+    return p + q.w() * uv + q.vec().cross(uv);
   }
 
   // Group action on lines.
@@ -334,24 +369,14 @@ class SO3Base {
     return Line((*this) * l.origin(), (*this) * l.direction());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO3's Scalar type.
   //
-  SOPHUS_FUNC SO3Base<Derived>& operator*=(SO3<Scalar> const& other) {
-    unit_quaternion_nonconst() *= other.unit_quaternion();
-
-    Scalar squared_norm = unit_quaternion().squaredNorm();
-
-    // We can assume that the squared-norm is close to 1 since we deal with a
-    // unit quaternion. Due to numerical precision issues, there might
-    // be a small drift after pose concatenation. Hence, we need to renormalizes
-    // the quaternion here.
-    // Since squared-norm is close to 1, we do not need to calculate the costly
-    // square-root, but can use an approximation around 1 (see
-    // http://stackoverflow.com/a/12934750 for details).
-    if (squared_norm != Scalar(1.0)) {
-      unit_quaternion_nonconst().coeffs() *=
-          Scalar(2.0) / (Scalar(1.0) + squared_norm);
-    }
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC SO3Base<Derived>& operator*=(SO3Base<OtherDerived> const& other) {
+    *this = *this * other;
     return *this;
   }
 

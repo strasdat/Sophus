@@ -88,6 +88,20 @@ class RxSO2Base {
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with RxSO2 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using RxSO2Product = RxSO2<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector2<ReturnScalar<PointDerived>>;
+
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -182,8 +196,10 @@ class RxSO2Base {
   // Note: This function performs saturation for products close to zero in order
   // to ensure the class invariant.
   //
-  SOPHUS_FUNC RxSO2<Scalar> operator*(RxSO2<Scalar> const& other) const {
-    RxSO2<Scalar> result(*this);
+  template <typename OtherDerived>
+  SOPHUS_FUNC RxSO2Product<OtherDerived> operator*(
+      RxSO2Base<OtherDerived> const& other) const {
+    RxSO2Product<OtherDerived> result(*this);
     result *= other;
     return result;
   }
@@ -195,7 +211,13 @@ class RxSO2Base {
   //
   //   ``p_bar = s * (bar_R_foo * p_foo)``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const { return matrix() * p; }
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 2>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
+    return matrix() * p;
+  }
 
   // Group action on lines.
   //
@@ -209,21 +231,26 @@ class RxSO2Base {
     return Line((*this) * l.origin(), (*this) * l.direction() / scale());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO2's Scalar type.
   //
   // Note: This function performs saturation for products close to zero in order
   // to ensure the class invariant.
   //
-  SOPHUS_FUNC RxSO2Base<Derived>& operator*=(RxSO2<Scalar> const& other) {
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC RxSO2Base<Derived>& operator*=(
+      RxSO2Base<OtherDerived> const& other) {
     Scalar lhs_real = complex().x();
     Scalar lhs_imag = complex().y();
-    Scalar const& rhs_real = other.complex().x();
-    Scalar const& rhs_imag = other.complex().y();
+    typename OtherDerived::Scalar const& rhs_real = other.complex().x();
+    typename OtherDerived::Scalar const& rhs_imag = other.complex().y();
     // complex multiplication
     complex_nonconst().x() = lhs_real * rhs_real - lhs_imag * rhs_imag;
     complex_nonconst().y() = lhs_real * rhs_imag + lhs_imag * rhs_real;
 
-    Scalar squared_scale = complex_nonconst().squaredNorm();
+    const Scalar squared_scale = complex_nonconst().squaredNorm();
 
     if (squared_scale <
         Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
@@ -600,6 +627,6 @@ class Map<Sophus::RxSO2<Scalar_> const, Options>
  protected:
   Map<Sophus::Vector2<Scalar> const, Options> const complex_;
 };
-}
+}  // namespace Eigen
 
 #endif  // SOPHUS_RXSO2_HPP

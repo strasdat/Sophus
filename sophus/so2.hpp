@@ -2,6 +2,7 @@
 #define SOPHUS_SO2_HPP
 
 #include <complex>
+#include <type_traits>
 
 // Include only the selective set of Eigen headers that we need.
 // This helps when using Sophus with unusual compilers, like nvcc.
@@ -87,6 +88,20 @@ class SO2Base {
   using Line = ParametrizedLine2<Scalar>;
   using Tangent = Scalar;
   using Adjoint = Scalar;
+
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with SO2 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using SO2Product = SO2<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector2<ReturnScalar<PointDerived>>;
 
   // Adjoint transformation
   //
@@ -183,46 +198,57 @@ class SO2Base {
 
   // Group multiplication, which is rotation concatenation.
   //
-  SOPHUS_FUNC SO2<Scalar> operator*(SO2<Scalar> const& other) const {
-    SO2<Scalar> result(*this);
+  template <typename OtherDerived>
+  SOPHUS_FUNC SO2Product<OtherDerived> operator*(
+      SO2Base<OtherDerived> const& other) const {
+    SO2Product<OtherDerived> result(*this);
     result *= other;
     return result;
   }
 
-  // Group action on 3-points.
+  // Group action on 2-points.
   //
-  // This function rotates a 3 dimensional point ``p`` by the SO3 element
+  // This function rotates a 2 dimensional point ``p`` by the SO2 element
   //  ``bar_R_foo`` (= rotation matrix): ``p_bar = bar_R_foo * p_foo``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 2>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
     Scalar const& real = unit_complex().x();
     Scalar const& imag = unit_complex().y();
-    return Point(real * p[0] - imag * p[1], imag * p[0] + real * p[1]);
+    return PointProduct<Point>(real * p[0] - imag * p[1],
+                               imag * p[0] + real * p[1]);
   }
 
   // Group action on lines.
   //
-  // This function rotates a parametrized line ``l(t) = o + t * d`` by the SO3
+  // This function rotates a parametrized line ``l(t) = o + t * d`` by the SO2
   // element:
   //
-  // Both direction ``d`` and origin ``o`` are rotated as a 3 dimensional point
+  // Both direction ``d`` and origin ``o`` are rotated as a 2 dimensional point
   //
   SOPHUS_FUNC Line operator*(Line const& l) const {
     return Line((*this) * l.origin(), (*this) * l.direction());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO2's Scalar type.
   //
-  SOPHUS_FUNC SO2Base<Derived> operator*=(SO2<Scalar> const& other) {
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC SO2Base<Derived> operator*=(SO2Base<OtherDerived> const& other) {
     Scalar lhs_real = unit_complex().x();
     Scalar lhs_imag = unit_complex().y();
-    Scalar const& rhs_real = other.unit_complex().x();
-    Scalar const& rhs_imag = other.unit_complex().y();
+    typename OtherDerived::Scalar const& rhs_real = other.unit_complex().x();
+    typename OtherDerived::Scalar const& rhs_imag = other.unit_complex().y();
     // complex multiplication
     unit_complex_nonconst().x() = lhs_real * rhs_real - lhs_imag * rhs_imag;
     unit_complex_nonconst().y() = lhs_real * rhs_imag + lhs_imag * rhs_real;
 
-    Scalar squared_norm = unit_complex_nonconst().squaredNorm();
+    const Scalar squared_norm = unit_complex_nonconst().squaredNorm();
     // We can assume that the squared-norm is close to 1 since we deal with a
     // unit complex number. Due to numerical precision issues, there might
     // be a small drift after pose concatenation. Hence, we need to renormalizes

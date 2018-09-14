@@ -87,6 +87,20 @@ class RxSO3Base {
     Scalar theta;
   };
 
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with RxSO3 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using RxSO3Product = RxSO3<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector3<ReturnScalar<PointDerived>>;
+
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -211,8 +225,10 @@ class RxSO3Base {
   // Note: This function performs saturation for products close to zero in order
   // to ensure the class invariant.
   //
-  SOPHUS_FUNC RxSO3<Scalar> operator*(RxSO3<Scalar> const& other) const {
-    RxSO3<Scalar> result(*this);
+  template <typename OtherDerived>
+  SOPHUS_FUNC RxSO3Product<OtherDerived> operator*(
+      RxSO3Base<OtherDerived> const& other) const {
+    RxSO3Product<OtherDerived> result(*this);
     result *= other;
     return result;
   }
@@ -224,10 +240,14 @@ class RxSO3Base {
   //
   //   ``p_bar = s * (bar_R_foo * p_foo)``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
     // Follows http://eigen.tuxfamily.org/bz/show_bug.cgi?id=459
     Scalar scale = quaternion().squaredNorm();
-    Point two_vec_cross_p = quaternion().vec().cross(p);
+    PointProduct<PointDerived> two_vec_cross_p = quaternion().vec().cross(p);
     two_vec_cross_p += two_vec_cross_p;
     return scale * p + (quaternion().w() * two_vec_cross_p +
                         quaternion().vec().cross(two_vec_cross_p));
@@ -246,12 +266,17 @@ class RxSO3Base {
                 (*this) * l.direction() / quaternion().squaredNorm());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO3's Scalar type.
   //
   // Note: This function performs saturation for products close to zero in order
   // to ensure the class invariant.
   //
-  SOPHUS_FUNC RxSO3Base<Derived>& operator*=(RxSO3<Scalar> const& other) {
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC RxSO3Base<Derived>& operator*=(
+      RxSO3Base<OtherDerived> const& other) {
     using std::sqrt;
 
     quaternion_nonconst() *= other.quaternion();

@@ -76,6 +76,20 @@ class Sim3Base {
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with Sim3 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using Sim3Product = Sim3<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector3<ReturnScalar<PointDerived>>;
+
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -189,8 +203,10 @@ class Sim3Base {
   // Note: That scaling is calculated with saturation. See RxSO3 for
   // details.
   //
-  SOPHUS_FUNC Sim3<Scalar> operator*(Sim3<Scalar> const& other) const {
-    Sim3<Scalar> result(*this);
+  template <typename OtherDerived>
+  SOPHUS_FUNC Sim3Product<OtherDerived> operator*(
+      Sim3Base<OtherDerived> const& other) const {
+    Sim3Product<OtherDerived> result(*this);
     result *= other;
     return result;
   }
@@ -203,7 +219,11 @@ class Sim3Base {
   //
   //   ``p_bar = bar_sR_foo * p_foo + t_bar``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
     return rxso3() * p + translation();
   }
 
@@ -220,9 +240,14 @@ class Sim3Base {
     return Line(rotatedLine.origin() + translation(), rotatedLine.direction());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO3's Scalar type.
   //
-  SOPHUS_FUNC Sim3Base<Derived>& operator*=(Sim3<Scalar> const& other) {
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC Sim3Base<Derived>& operator*=(
+      Sim3Base<OtherDerived> const& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
     return *this;

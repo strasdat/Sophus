@@ -72,6 +72,21 @@ class SE3Base {
   using Line = ParametrizedLine3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
+
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with SE3 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using SE3Product = SE3<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector3<ReturnScalar<PointDerived>>;
+
   // Adjoint transformation
   //
   // This function return the adjoint transformation ``Ad`` of the group
@@ -282,10 +297,11 @@ class SE3Base {
 
   // Group multiplication, which is rotation concatenation.
   //
-  SOPHUS_FUNC SE3<Scalar> operator*(SE3<Scalar> const& other) const {
-    SE3<Scalar> result(*this);
-    result *= other;
-    return result;
+  template <typename OtherDerived>
+  SOPHUS_FUNC SE3Product<OtherDerived> operator*(
+      SE3Base<OtherDerived> const& other) const {
+    return SE3Product<OtherDerived>(
+        so3() * other.so3(), translation() + so3() * other.translation());
   }
 
   // Group action on 3-points.
@@ -296,7 +312,11 @@ class SE3Base {
   //
   //   ``p_bar = bar_R_foo * p_foo + t_bar``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
     return so3() * p + translation();
   }
 
@@ -312,12 +332,15 @@ class SE3Base {
     return Line((*this) * l.origin(), so3() * l.direction());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO2's Scalar type.
   //
-  SOPHUS_FUNC SE3Base<Derived>& operator*=(SE3<Scalar> const& other) {
-    translation() += so3() * (other.translation());
-    so3() *= other.so3();
-    return *this;
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC SE3Base<Derived>& operator*=(SE3Base<OtherDerived> const& other) {
+    *this = *this * other;
+    return this;
   }
 
   // Returns rotation matrix.
