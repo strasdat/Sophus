@@ -76,6 +76,7 @@ class RxSO3Base {
   static int constexpr N = 3;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector3<Scalar>;
+  using HomogeneousPoint = Vector4<Scalar>;
   using Line = ParametrizedLine3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
@@ -100,6 +101,9 @@ class RxSO3Base {
 
   template <typename PointDerived>
   using PointProduct = Vector3<ReturnScalar<PointDerived>>;
+
+  template <typename HPointDerived>
+  using HomogeneousPointProduct = Vector4<ReturnScalar<HPointDerived>>;
 
   // Adjoint transformation
   //
@@ -253,6 +257,17 @@ class RxSO3Base {
                         quaternion().vec().cross(two_vec_cross_p));
   }
 
+  // Group action on homogeneous 3-points. See above for more details.
+  //
+  template <typename HPointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<HPointDerived, 4>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
+      Eigen::MatrixBase<HPointDerived> const& p) const {
+    const auto rsp = *this * p.template head<3>();
+    return HomogeneousPointProduct<HPointDerived>(rsp(0), rsp(1), rsp(2), p(3));
+  }
+
   // Group action on lines.
   //
   // This function rotates a parametrized line ``l(t) = o + t * d`` by the SO3
@@ -395,6 +410,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
   using QuaternionMember = Eigen::Quaternion<Scalar, Options>;
@@ -636,6 +652,7 @@ class Map<Sophus::RxSO3<Scalar_>, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
@@ -679,6 +696,7 @@ class Map<Sophus::RxSO3<Scalar_> const, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 

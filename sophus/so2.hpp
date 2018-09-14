@@ -85,6 +85,7 @@ class SO2Base {
   static int constexpr N = 2;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector2<Scalar>;
+  using HomogeneousPoint = Vector3<Scalar>;
   using Line = ParametrizedLine2<Scalar>;
   using Tangent = Scalar;
   using Adjoint = Scalar;
@@ -102,6 +103,9 @@ class SO2Base {
 
   template <typename PointDerived>
   using PointProduct = Vector2<ReturnScalar<PointDerived>>;
+
+  template <typename HPointDerived>
+  using HomogeneousPointProduct = Vector3<ReturnScalar<HPointDerived>>;
 
   // Adjoint transformation
   //
@@ -218,8 +222,24 @@ class SO2Base {
       Eigen::MatrixBase<PointDerived> const& p) const {
     Scalar const& real = unit_complex().x();
     Scalar const& imag = unit_complex().y();
-    return PointProduct<Point>(real * p[0] - imag * p[1],
-                               imag * p[0] + real * p[1]);
+    return PointProduct<PointDerived>(real * p[0] - imag * p[1],
+                                      imag * p[0] + real * p[1]);
+  }
+
+  // Group action on homogeneous 2-points.
+  //
+  // This function rotates a homogeneous 2 dimensional point ``p`` by the SO2
+  // element ``bar_R_foo`` (= rotation matrix): ``p_bar = bar_R_foo * p_foo``.
+  //
+  template <typename HPointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<HPointDerived, 3>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
+      Eigen::MatrixBase<HPointDerived> const& p) const {
+    Scalar const& real = unit_complex().x();
+    Scalar const& imag = unit_complex().y();
+    return HomogeneousPointProduct<HPointDerived>(
+        real * p[0] - imag * p[1], imag * p[0] + real * p[1], p[2]);
   }
 
   // Group action on lines.
@@ -316,6 +336,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
   using ComplexMember = Vector2<Scalar, Options>;
@@ -524,6 +545,7 @@ class Map<Sophus::SO2<Scalar_>, Options>
 
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
@@ -571,6 +593,7 @@ class Map<Sophus::SO2<Scalar_> const, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 

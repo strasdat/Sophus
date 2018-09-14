@@ -68,6 +68,7 @@ class SE2Base {
   static int constexpr N = 3;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector2<Scalar>;
+  using HomogeneousPoint = Vector3<Scalar>;
   using Line = ParametrizedLine2<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
@@ -85,6 +86,9 @@ class SE2Base {
 
   template <typename PointDerived>
   using PointProduct = Vector2<ReturnScalar<PointDerived>>;
+
+  template <typename HPointDerived>
+  using HomogeneousPointProduct = Vector3<ReturnScalar<HPointDerived>>;
 
   // Adjoint transformation
   //
@@ -246,6 +250,18 @@ class SE2Base {
     return so2() * p + translation();
   }
 
+  // Group action on homogeneous 2-points. See above for more details.
+  //
+  template <typename HPointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<HPointDerived, 3>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
+      Eigen::MatrixBase<HPointDerived> const& p) const {
+    const PointProduct<HPointDerived> tp =
+        so2() * p.template head<2>() + p(2) * translation();
+    return HomogeneousPointProduct<HPointDerived>(tp(0), tp(1), p(2));
+  }
+
   // Group action on lines.
   //
   // This function rotates and translates a parametrized line
@@ -354,6 +370,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
   using SO2Member = SO2<Scalar, Options>;
@@ -731,6 +748,7 @@ class Map<Sophus::SE2<Scalar_>, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
@@ -785,6 +803,7 @@ class Map<Sophus::SE2<Scalar_> const, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 

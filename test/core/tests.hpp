@@ -25,6 +25,7 @@ class LieGroupTests {
   using Transformation = typename LieGroup::Transformation;
   using Tangent = typename LieGroup::Tangent;
   using Point = typename LieGroup::Point;
+  using HomogeneousPoint = typename LieGroup::HomogeneousPoint;
   using ConstPointMap = Eigen::Map<const Point>;
   using Line = typename LieGroup::Line;
   using Adjoint = typename LieGroup::Adjoint;
@@ -221,14 +222,22 @@ class LieGroupTests {
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       for (size_t j = 0; j < point_vec_.size(); ++j) {
         Point const& p = point_vec_[j];
-        ConstPointMap p_map(p.data());
-        Transformation T = group_vec_[i].matrix();
         Point point1 = group_vec_[i] * p;
-        Point point2 = group_vec_[i] * p_map;
-        Point point3 = map(T, p);
-        SOPHUS_TEST_APPROX(passed, point1, point3, kSmallEps,
+
+        HomogeneousPoint hp = p.homogeneous();
+        HomogeneousPoint hpoint1 = group_vec_[i] * hp;
+
+        ConstPointMap p_map(p.data());
+        Point pointmap1 = group_vec_[i] * p_map;
+
+        Transformation T = group_vec_[i].matrix();
+        Point gt_point1 = map(T, p);
+
+        SOPHUS_TEST_APPROX(passed, point1, gt_point1, kSmallEps,
                            "Transform point case: %", i);
-        SOPHUS_TEST_APPROX(passed, point2, point3, kSmallEps,
+        SOPHUS_TEST_APPROX(passed, hpoint1.hnormalized().eval(), gt_point1,
+                           kSmallEps, "Transform homogeneous point case: %", i);
+        SOPHUS_TEST_APPROX(passed, pointmap1, gt_point1, kSmallEps,
                            "Transform map point case: %", i);
       }
     }
