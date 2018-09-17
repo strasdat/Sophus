@@ -72,9 +72,27 @@ class Sim3Base {
   static int constexpr N = 4;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector3<Scalar>;
+  using HomogeneousPoint = Vector4<Scalar>;
   using Line = ParametrizedLine3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
+
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with Sim3 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using Sim3Product = Sim3<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector3<ReturnScalar<PointDerived>>;
+
+  template <typename HPointDerived>
+  using HomogeneousPointProduct = Vector4<ReturnScalar<HPointDerived>>;
 
   // Adjoint transformation
   //
@@ -189,8 +207,10 @@ class Sim3Base {
   // Note: That scaling is calculated with saturation. See RxSO3 for
   // details.
   //
-  SOPHUS_FUNC Sim3<Scalar> operator*(Sim3<Scalar> const& other) const {
-    Sim3<Scalar> result(*this);
+  template <typename OtherDerived>
+  SOPHUS_FUNC Sim3Product<OtherDerived> operator*(
+      Sim3Base<OtherDerived> const& other) const {
+    Sim3Product<OtherDerived> result(*this);
     result *= other;
     return result;
   }
@@ -203,8 +223,24 @@ class Sim3Base {
   //
   //   ``p_bar = bar_sR_foo * p_foo + t_bar``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
     return rxso3() * p + translation();
+  }
+
+  // Group action on homogeneous 3-points. See above for more details.
+  //
+  template <typename HPointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<HPointDerived, 4>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
+      Eigen::MatrixBase<HPointDerived> const& p) const {
+    const PointProduct<HPointDerived> tp =
+        rxso3() * p.template head<3>() + p(3) * translation();
+    return HomogeneousPointProduct<HPointDerived>(tp(0), tp(1), tp(2), p(3));
   }
 
   // Group action on lines.
@@ -220,9 +256,14 @@ class Sim3Base {
     return Line(rotatedLine.origin() + translation(), rotatedLine.direction());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO3's Scalar type.
   //
-  SOPHUS_FUNC Sim3Base<Derived>& operator*=(Sim3<Scalar> const& other) {
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC Sim3Base<Derived>& operator*=(
+      Sim3Base<OtherDerived> const& other) {
     translation() += (rxso3() * other.translation());
     rxso3() *= other.rxso3();
     return *this;
@@ -323,6 +364,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
   using RxSo3Member = RxSO3<Scalar, Options>;
@@ -619,6 +661,7 @@ class Map<Sophus::Sim3<Scalar_>, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
@@ -671,6 +714,7 @@ class Map<Sophus::Sim3<Scalar_> const, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 

@@ -76,6 +76,7 @@ class RxSO3Base {
   static int constexpr N = 3;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector3<Scalar>;
+  using HomogeneousPoint = Vector4<Scalar>;
   using Line = ParametrizedLine3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
@@ -86,6 +87,23 @@ class RxSO3Base {
     Tangent tangent;
     Scalar theta;
   };
+
+  // For binary operations the return type is determined with the
+  // ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
+  // types, as well as other compatible scalar types such as Ceres::Jet and
+  // double scalars with RxSO3 operations.
+  template <typename OtherDerived>
+  using ReturnScalar = typename Eigen::ScalarBinaryOpTraits<
+      Scalar, typename OtherDerived::Scalar>::ReturnType;
+
+  template <typename OtherDerived>
+  using RxSO3Product = RxSO3<ReturnScalar<OtherDerived>>;
+
+  template <typename PointDerived>
+  using PointProduct = Vector3<ReturnScalar<PointDerived>>;
+
+  template <typename HPointDerived>
+  using HomogeneousPointProduct = Vector4<ReturnScalar<HPointDerived>>;
 
   // Adjoint transformation
   //
@@ -211,8 +229,10 @@ class RxSO3Base {
   // Note: This function performs saturation for products close to zero in order
   // to ensure the class invariant.
   //
-  SOPHUS_FUNC RxSO3<Scalar> operator*(RxSO3<Scalar> const& other) const {
-    RxSO3<Scalar> result(*this);
+  template <typename OtherDerived>
+  SOPHUS_FUNC RxSO3Product<OtherDerived> operator*(
+      RxSO3Base<OtherDerived> const& other) const {
+    RxSO3Product<OtherDerived> result(*this);
     result *= other;
     return result;
   }
@@ -224,13 +244,28 @@ class RxSO3Base {
   //
   //   ``p_bar = s * (bar_R_foo * p_foo)``.
   //
-  SOPHUS_FUNC Point operator*(Point const& p) const {
+  template <typename PointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<PointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<PointDerived> operator*(
+      Eigen::MatrixBase<PointDerived> const& p) const {
     // Follows http://eigen.tuxfamily.org/bz/show_bug.cgi?id=459
     Scalar scale = quaternion().squaredNorm();
-    Point two_vec_cross_p = quaternion().vec().cross(p);
+    PointProduct<PointDerived> two_vec_cross_p = quaternion().vec().cross(p);
     two_vec_cross_p += two_vec_cross_p;
     return scale * p + (quaternion().w() * two_vec_cross_p +
                         quaternion().vec().cross(two_vec_cross_p));
+  }
+
+  // Group action on homogeneous 3-points. See above for more details.
+  //
+  template <typename HPointDerived,
+            typename = typename std::enable_if<
+                IsFixedSizeVector<HPointDerived, 4>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
+      Eigen::MatrixBase<HPointDerived> const& p) const {
+    const auto rsp = *this * p.template head<3>();
+    return HomogeneousPointProduct<HPointDerived>(rsp(0), rsp(1), rsp(2), p(3));
   }
 
   // Group action on lines.
@@ -246,12 +281,17 @@ class RxSO3Base {
                 (*this) * l.direction() / quaternion().squaredNorm());
   }
 
-  // In-place group multiplication.
+  // In-place group multiplication. This method is only valid if the return type
+  // of the multiplication is compatible with this SO3's Scalar type.
   //
   // Note: This function performs saturation for products close to zero in order
   // to ensure the class invariant.
   //
-  SOPHUS_FUNC RxSO3Base<Derived>& operator*=(RxSO3<Scalar> const& other) {
+  template <typename OtherDerived,
+            typename = typename std::enable_if<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+  SOPHUS_FUNC RxSO3Base<Derived>& operator*=(
+      RxSO3Base<OtherDerived> const& other) {
     using std::sqrt;
 
     quaternion_nonconst() *= other.quaternion();
@@ -370,6 +410,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
   using QuaternionMember = Eigen::Quaternion<Scalar, Options>;
@@ -611,6 +652,7 @@ class Map<Sophus::RxSO3<Scalar_>, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
@@ -654,6 +696,7 @@ class Map<Sophus::RxSO3<Scalar_> const, Options>
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
+  using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 

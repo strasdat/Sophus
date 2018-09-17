@@ -1,6 +1,7 @@
 #ifndef SOPHUS_TYEPES_HPP
 #define SOPHUS_TYEPES_HPP
 
+#include <type_traits>
 #include "common.hpp"
 
 namespace Sophus {
@@ -210,6 +211,14 @@ template <class Scalar_, int M, int N>
 struct GetScalar<Matrix<Scalar_, M, N>> {
   using Scalar = Scalar_;
 };
+
+// If the Vector type is a fixed size, then IsFixedSizeVector::value will be
+// true.
+template <typename Vector, int NumDimensions,
+          typename = typename std::enable_if<
+              Vector::RowsAtCompileTime == NumDimensions &&
+              Vector::ColsAtCompileTime == 1>::type>
+struct IsFixedSizeVector : std::true_type {};
 
 // Planes in 3d are hyperplanes.
 template <class T>
