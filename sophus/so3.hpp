@@ -390,7 +390,7 @@ class SO3Base {
             typename = typename std::enable_if<
                 std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
   SOPHUS_FUNC SO3Base<Derived>& operator*=(SO3Base<OtherDerived> const& other) {
-    *this = *this * other;
+    *static_cast<Derived*>(this) = *this * other;
     return *this;
   }
 

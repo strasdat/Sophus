@@ -210,9 +210,8 @@ class Sim3Base {
   template <typename OtherDerived>
   SOPHUS_FUNC Sim3Product<OtherDerived> operator*(
       Sim3Base<OtherDerived> const& other) const {
-    Sim3Product<OtherDerived> result(*this);
-    result *= other;
-    return result;
+    return Sim3Product<OtherDerived>(
+        rxso3() * other.rxso3(), translation() + rxso3() * other.translation());
   }
 
   // Group action on 3-points.
@@ -264,8 +263,7 @@ class Sim3Base {
                 std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
   SOPHUS_FUNC Sim3Base<Derived>& operator*=(
       Sim3Base<OtherDerived> const& other) {
-    translation() += (rxso3() * other.translation());
-    rxso3() *= other.rxso3();
+    *static_cast<Derived*>(this) = *this * other;
     return *this;
   }
 

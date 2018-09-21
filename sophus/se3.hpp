@@ -349,14 +349,14 @@ class SE3Base {
   }
 
   // In-place group multiplication. This method is only valid if the return type
-  // of the multiplication is compatible with this SO2's Scalar type.
+  // of the multiplication is compatible with this SE3's Scalar type.
   //
   template <typename OtherDerived,
             typename = typename std::enable_if<
                 std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
   SOPHUS_FUNC SE3Base<Derived>& operator*=(SE3Base<OtherDerived> const& other) {
-    *this = *this * other;
-    return this;
+    *static_cast<Derived*>(this) = *this * other;
+    return *this;
   }
 
   // Returns rotation matrix.
@@ -915,6 +915,10 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   template <class T0, class T1, class T2>
   static SOPHUS_FUNC SE3 trans(T0 const& x, T1 const& y, T2 const& z) {
     return SE3(SO3<Scalar>(), Vector3<Scalar>(x, y, z));
+  }
+
+  static SOPHUS_FUNC SE3 trans(Vector3<Scalar> const& xyz) {
+    return SE3(SO3<Scalar>(), xyz);
   }
 
   // Construct x-axis translation.

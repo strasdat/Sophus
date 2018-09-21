@@ -232,9 +232,18 @@ class RxSO3Base {
   template <typename OtherDerived>
   SOPHUS_FUNC RxSO3Product<OtherDerived> operator*(
       RxSO3Base<OtherDerived> const& other) const {
-    RxSO3Product<OtherDerived> result(*this);
-    result *= other;
-    return result;
+    using ResultT = ReturnScalar<OtherDerived>;
+    typename RxSO3Product<OtherDerived>::QuaternionType result_quaternion(
+        quaternion() * other.quaternion());
+
+    ResultT scale = result_quaternion.squaredNorm();
+    if (scale < Constants<ResultT>::epsilon()) {
+      SOPHUS_ENSURE(scale > ResultT(0), "Scale must be greater zero.");
+      // Saturation to ensure class invariant.
+      result_quaternion.normalize();
+      result_quaternion.coeffs() *= sqrt(Constants<Scalar>::epsilon());
+    }
+    return RxSO3Product<OtherDerived>(result_quaternion);
   }
 
   // Group action on 3-points.
@@ -292,16 +301,7 @@ class RxSO3Base {
                 std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
   SOPHUS_FUNC RxSO3Base<Derived>& operator*=(
       RxSO3Base<OtherDerived> const& other) {
-    using std::sqrt;
-
-    quaternion_nonconst() *= other.quaternion();
-    Scalar scale = this->scale();
-    if (scale < Constants<Scalar>::epsilon()) {
-      SOPHUS_ENSURE(scale > Scalar(0), "Scale must be greater zero.");
-      // Saturation to ensure class invariant.
-      quaternion_nonconst().normalize();
-      quaternion_nonconst().coeffs() *= sqrt(Constants<Scalar>::epsilon());
-    }
+    *static_cast<Derived*>(this) = *this * other;
     return *this;
   }
 
@@ -374,8 +374,8 @@ class RxSO3Base {
     Scalar squared_scale =
         Scalar(1. / 3.) *
         (squared_sR(0, 0) + squared_sR(1, 1) + squared_sR(2, 2));
-    SOPHUS_ENSURE(squared_scale > Constants<Scalar>::epsilon() *
-                                      Constants<Scalar>::epsilon(),
+    SOPHUS_ENSURE(squared_scale >= Constants<Scalar>::epsilon() *
+                                       Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
     Scalar scale = sqrt(squared_scale);
     quaternion_nonconst() = sR / scale;
@@ -478,7 +478,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
       : quaternion_(quat) {
     static_assert(std::is_same<typename D::Scalar, Scalar>::value,
                   "must be same Scalar type.");
-    SOPHUS_ENSURE(quaternion_.squaredNorm() > Constants<Scalar>::epsilon(),
+    SOPHUS_ENSURE(quaternion_.squaredNorm() >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
   }
 

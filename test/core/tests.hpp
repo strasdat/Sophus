@@ -192,6 +192,19 @@ class LieGroupTests {
     return true;
   }
 
+  bool productTest() {
+    bool passed = true;
+
+    for (size_t i = 0; i < group_vec_.size() - 1; ++i) {
+      LieGroup T1 = group_vec_[i];
+      LieGroup T2 = group_vec_[i + 1];
+      LieGroup mult = T1 * T2;
+      T1 *= T2;
+      SOPHUS_TEST_APPROX(passed, T1.matrix(), mult.matrix(), kSmallEps, "Product case: %", i);
+    }
+    return passed;
+  }
+
   bool expLogTest() {
     bool passed = true;
 
@@ -449,6 +462,7 @@ class LieGroupTests {
     bool passed = true;
     passed &= adjointTest();
     passed &= contructorAndAssignmentTest();
+    passed &= productTest();
     passed &= expLogTest();
     passed &= groupActionTest();
     passed &= lineActionTest();
