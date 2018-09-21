@@ -205,9 +205,29 @@ class SO2Base {
   template <typename OtherDerived>
   SOPHUS_FUNC SO2Product<OtherDerived> operator*(
       SO2Base<OtherDerived> const& other) const {
-    SO2Product<OtherDerived> result(*this);
-    result *= other;
-    return result;
+    using ResultT = ReturnScalar<OtherDerived>;
+    Scalar const lhs_real = unit_complex().x();
+    Scalar const lhs_imag = unit_complex().y();
+    typename OtherDerived::Scalar const& rhs_real = other.unit_complex().x();
+    typename OtherDerived::Scalar const& rhs_imag = other.unit_complex().y();
+    // complex multiplication
+    ResultT const result_real = lhs_real * rhs_real - lhs_imag * rhs_imag;
+    ResultT const result_imag = lhs_real * rhs_imag + lhs_imag * rhs_real;
+
+    ResultT const squared_norm =
+        result_real * result_real + result_imag * result_imag;
+    // We can assume that the squared-norm is close to 1 since we deal with a
+    // unit complex number. Due to numerical precision issues, there might
+    // be a small drift after pose concatenation. Hence, we need to renormalizes
+    // the complex number here.
+    // Since squared-norm is close to 1, we do not need to calculate the costly
+    // square-root, but can use an approximation around 1 (see
+    // http://stackoverflow.com/a/12934750 for details).
+    if (squared_norm != ResultT(1.0)) {
+      ResultT const scale = ResultT(2.0) / (ResultT(1.0) + squared_norm);
+      return SO2Product<OtherDerived>(result_real * scale, result_imag * scale);
+    }
+    return SO2Product<OtherDerived>(result_real, result_imag);
   }
 
   // Group action on 2-points.
@@ -260,25 +280,7 @@ class SO2Base {
             typename = typename std::enable_if<
                 std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
   SOPHUS_FUNC SO2Base<Derived> operator*=(SO2Base<OtherDerived> const& other) {
-    Scalar lhs_real = unit_complex().x();
-    Scalar lhs_imag = unit_complex().y();
-    typename OtherDerived::Scalar const& rhs_real = other.unit_complex().x();
-    typename OtherDerived::Scalar const& rhs_imag = other.unit_complex().y();
-    // complex multiplication
-    unit_complex_nonconst().x() = lhs_real * rhs_real - lhs_imag * rhs_imag;
-    unit_complex_nonconst().y() = lhs_real * rhs_imag + lhs_imag * rhs_real;
-
-    const Scalar squared_norm = unit_complex_nonconst().squaredNorm();
-    // We can assume that the squared-norm is close to 1 since we deal with a
-    // unit complex number. Due to numerical precision issues, there might
-    // be a small drift after pose concatenation. Hence, we need to renormalizes
-    // the complex number here.
-    // Since squared-norm is close to 1, we do not need to calculate the costly
-    // square-root, but can use an approximation around 1 (see
-    // http://stackoverflow.com/a/12934750 for details).
-    if (squared_norm != Scalar(1.0)) {
-      unit_complex_nonconst() *= Scalar(2.0) / (Scalar(1.0) + squared_norm);
-    }
+    *static_cast<Derived*>(this) = *this * other;
     return *this;
   }
 

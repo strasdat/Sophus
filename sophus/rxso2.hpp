@@ -203,9 +203,26 @@ class RxSO2Base {
   template <typename OtherDerived>
   SOPHUS_FUNC RxSO2Product<OtherDerived> operator*(
       RxSO2Base<OtherDerived> const& other) const {
-    RxSO2Product<OtherDerived> result(*this);
-    result *= other;
-    return result;
+    using ResultT = ReturnScalar<OtherDerived>;
+
+    Scalar lhs_real = complex().x();
+    Scalar lhs_imag = complex().y();
+    typename OtherDerived::Scalar const& rhs_real = other.complex().x();
+    typename OtherDerived::Scalar const& rhs_imag = other.complex().y();
+    // complex multiplication
+    typename RxSO2Product<OtherDerived>::ComplexType result_complex(
+        lhs_real * rhs_real - lhs_imag * rhs_imag,
+        lhs_real * rhs_imag + lhs_imag * rhs_real);
+
+    const ResultT squared_scale = result_complex.squaredNorm();
+
+    if (squared_scale <
+        Constants<ResultT>::epsilon() * Constants<ResultT>::epsilon()) {
+      // Saturation to ensure class invariant.
+      result_complex.normalize();
+      result_complex *= Constants<ResultT>::epsilon();
+    }
+    return RxSO2Product<OtherDerived>(result_complex);
   }
 
   // Group action on 2-points.
@@ -257,22 +274,7 @@ class RxSO2Base {
                 std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
   SOPHUS_FUNC RxSO2Base<Derived>& operator*=(
       RxSO2Base<OtherDerived> const& other) {
-    Scalar lhs_real = complex().x();
-    Scalar lhs_imag = complex().y();
-    typename OtherDerived::Scalar const& rhs_real = other.complex().x();
-    typename OtherDerived::Scalar const& rhs_imag = other.complex().y();
-    // complex multiplication
-    complex_nonconst().x() = lhs_real * rhs_real - lhs_imag * rhs_imag;
-    complex_nonconst().y() = lhs_real * rhs_imag + lhs_imag * rhs_real;
-
-    const Scalar squared_scale = complex_nonconst().squaredNorm();
-
-    if (squared_scale <
-        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
-      // Saturation to ensure class invariant.
-      complex_nonconst().normalize();
-      complex_nonconst() *= Constants<Scalar>::epsilon();
-    }
+    *static_cast<Derived*>(this) = *this * other;
     return *this;
   }
 
@@ -426,8 +428,8 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   // Precondition: complex number must not be close to zero.
   //
   SOPHUS_FUNC explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
-    SOPHUS_ENSURE(complex_.squaredNorm() > Constants<Scalar>::epsilon() *
-                                               Constants<Scalar>::epsilon(),
+    SOPHUS_ENSURE(complex_.squaredNorm() >= Constants<Scalar>::epsilon() *
+                                                Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon: % vs %",
                   complex_.squaredNorm(),
                   Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());

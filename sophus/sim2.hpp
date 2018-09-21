@@ -208,9 +208,8 @@ class Sim2Base {
   template <typename OtherDerived>
   SOPHUS_FUNC Sim2Product<OtherDerived> operator*(
       Sim2Base<OtherDerived> const& other) const {
-    Sim2Product<OtherDerived> result(*this);
-    result *= other;
-    return result;
+    return Sim2Product<OtherDerived>(
+        rxso2() * other.rxso2(), translation() + rxso2() * other.translation());
   }
 
   // Group action on 2-points.
@@ -273,8 +272,7 @@ class Sim2Base {
                 std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
   SOPHUS_FUNC Sim2Base<Derived>& operator*=(
       Sim2Base<OtherDerived> const& other) {
-    translation() += (rxso2() * other.translation());
-    rxso2() *= other.rxso2();
+    *static_cast<Derived*>(this) = *this * other;
     return *this;
   }
 

@@ -229,9 +229,8 @@ class SE2Base {
   template <typename OtherDerived>
   SOPHUS_FUNC SE2Product<OtherDerived> operator*(
       SE2Base<OtherDerived> const& other) const {
-    SE2Product<OtherDerived> result(*this);
-    result *= other;
-    return result;
+    return SE2Product<OtherDerived>(
+        so2() * other.so2(), translation() + so2() * other.translation());
   }
 
   // Group action on 2-points.
@@ -281,8 +280,7 @@ class SE2Base {
             typename = typename std::enable_if<
                 std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
   SOPHUS_FUNC SE2Base<Derived>& operator*=(SE2Base<OtherDerived> const& other) {
-    translation() += so2() * (other.translation());
-    so2() *= other.so2();
+    *static_cast<Derived*>(this) = *this * other;
     return *this;
   }
 
@@ -677,6 +675,10 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   template <class T0, class T1>
   static SOPHUS_FUNC SE2 trans(T0 const& x, T1 const& y) {
     return SE2(SO2<Scalar>(), Vector2<Scalar>(x, y));
+  }
+
+  static SOPHUS_FUNC SE2 trans(Vector2<Scalar> const& xy) {
+    return SE2(SO2<Scalar>(), xy);
   }
 
   // Contruct x-axis translation.
