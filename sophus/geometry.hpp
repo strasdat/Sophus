@@ -96,10 +96,9 @@ Matrix3<T> rotationFromNormal(Vector3<T> const& normal_foo,
     basis_foo.col(0) = yDirHint_foo.cross(basis_foo.col(2)).normalized();
     basis_foo.col(1) = basis_foo.col(2).cross(basis_foo.col(0));
   }
-  T det = basis_foo.determinant();
   // sanity check
-  SOPHUS_ENSURE(abs(det - T(1)) < Constants<T>::epsilon(),
-                "Determinant of basis is not 1, but %. Basis is \n%\n", det,
+  SOPHUS_ENSURE(abs(basis_foo.determinant() - T(1)) < Constants<T>::epsilon(),
+                "Determinant of basis is not 1, but %. Basis is \n%\n", basis_foo.determinant(),
                 basis_foo);
   return basis_foo;
 }

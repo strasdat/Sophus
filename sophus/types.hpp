@@ -114,6 +114,7 @@ class SetElementAt<Scalar, Scalar> {
  public:
   static void impl(Scalar& s, Scalar value, int at) {
     SOPHUS_ENSURE(at == 0, "is %", at);
+    (void)at;
     s = value;
   }
 };
