@@ -206,7 +206,7 @@ class TestSe3(unittest.TestCase):
         stream = sophus.cse_codegen(self.a.calc_Dx_exp_x(self.upsilon_omega))
         filename = "cpp_gencode/Se3_Dx_exp_x.cpp"
         # set to true to generate codegen files
-        if True:
+        if False:
             file = open(filename, "w")
             for line in stream:
                 file.write(line)
@@ -223,7 +223,7 @@ class TestSe3(unittest.TestCase):
             self.upsilon_omega))
         filename = "cpp_gencode/Se3_Dx_this_mul_exp_x_at_0.cpp"
         # set to true to generate codegen files
-        if True:
+        if False:
             file = open(filename, "w")
             for line in stream:
                 file.write(line)
