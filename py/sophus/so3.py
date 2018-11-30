@@ -98,6 +98,16 @@ class So3:
             .subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
     @staticmethod
+    def calc_Dx_log_x(x):
+        return sympy.Matrix(3, 4, lambda r, c:
+                            sympy.diff(So3.log(x)[r], x[c]))
+
+    # FIXME: maybe "_at_1" is more approriate?
+    @staticmethod
+    def calc_Dx_log_x_at_0(x):
+        return So3.calc_Dx_log_x(x).subs(x[3], 1).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
+
+    @staticmethod
     def Dxi_x_matrix(x, i):
         if i == 0:
             return sympy.Matrix([[0, 2 * x[1], 2 * x[2]],
@@ -193,11 +203,11 @@ class TestSo3(unittest.TestCase):
                 So3.calc_Dxi_exp_x_matrix_at_0(self.omega, i)),
                 sympy.Matrix.zeros(3, 3))
 
-    def test_codegen(self):
+    def test_codegen(self, generate_not_test = True):
+
         stream = sophus.cse_codegen(So3.calc_Dx_exp_x(self.omega))
         filename = "cpp_gencode/So3_Dx_exp_x.cpp"
-        # set to true to generate codegen files
-        if False:
+        if generate_not_test:
             file = open(filename, "w")
             for line in stream:
                 file.write(line)
@@ -213,8 +223,39 @@ class TestSo3(unittest.TestCase):
         stream = sophus.cse_codegen(
             self.a.calc_Dx_this_mul_exp_x_at_0(self.omega))
         filename = "cpp_gencode/So3_Dx_this_mul_exp_x_at_0.cpp"
-        # set to true to generate codegen files
-        if False:
+        if generate_not_test:
+            file = open(filename, "w")
+            for line in stream:
+                file.write(line)
+            file.close()
+        else:
+            file = open(filename, "r")
+            file_lines = file.readlines()
+            for i, line in enumerate(stream):
+                self.assertEqual(line, file_lines[i])
+            file.close()
+        stream.close
+
+        stream = sophus.cse_codegen(So3.calc_Dx_log_x(self.a))
+        filename = "cpp_gencode/So3_Dx_log_x.cpp"
+        if generate_not_test:
+            file = open(filename, "w")
+            for line in stream:
+                file.write(line)
+            file.close()
+        else:
+            file = open(filename, "r")
+            file_lines = file.readlines()
+            for i, line in enumerate(stream):
+                self.assertEqual(line, file_lines[i])
+            file.close()
+        stream.close
+        stream.close
+
+        # FIXME: these are actually so simple that there is no need to generate the code...
+        stream = sophus.cse_codegen(So3.calc_Dx_log_x_at_0(self.a))
+        filename = "cpp_gencode/So3_Dx_log_x_at_0.cpp"
+        if generate_not_test:
             file = open(filename, "w")
             for line in stream:
                 file.write(line)
@@ -229,4 +270,9 @@ class TestSo3(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    if len(sys.argv) > 1 and sys.argv[1] == 'codegen':
+        foo = TestSo3()
+        foo.setUp()
+        foo.test_codegen(False)
+    else:
+        unittest.main()

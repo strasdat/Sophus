@@ -1,0 +1,12 @@
+result[0] = 2;
+result[1] = 0;
+result[2] = 0;
+result[3] = 0;
+result[4] = 0;
+result[5] = 2;
+result[6] = 0;
+result[7] = 0;
+result[8] = 0;
+result[9] = 0;
+result[10] = 2;
+result[11] = 0;
