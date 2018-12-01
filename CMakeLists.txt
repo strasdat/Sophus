@@ -24,7 +24,7 @@ ELSEIF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE "${CMAKE_EXE_LINKER_FLAGS_DEBUG} --coverage")
    SET(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} --coverage")
 ELSEIF(CMAKE_CXX_COMPILER_ID MATCHES "^MSVC$")
-   ADD_DEFINITIONS("-D _USE_MATH_DEFINES /bigobj /wd4305 /wd4244 /MP")
+   ADD_DEFINITIONS("/bigobj /wd4305 /wd4244 /MP")
 ENDIF()
 
 # Add local path for finding packages, set the local version first
@@ -61,11 +61,6 @@ set(SOPHUS_OTHER_FILES
   sophus/test_macros.hpp
   sophus/example_ensure_handler.cpp
 )
-
-if(MSVC)
-  # Define common math constants if we compile with MSVC
-  target_compile_definitions (sophus INTERFACE _USE_MATH_DEFINES)
-endif (MSVC)
 
 # Add Eigen interface dependency, depending on available cmake info
 if(TARGET Eigen3::Eigen)
