@@ -63,7 +63,7 @@ average(SequenceContainer const& foo_Ts_bar) {
 
   Scalar average(0);
   for (SO2<Scalar> const& foo_T_bar : foo_Ts_bar) {
-    average += w * (foo_T_average.inverse() * foo_T_bar).log();
+    average += w * (foo_T_average.inverse() * foo_T_bar).log()[0];
   }
   return foo_T_average * SO2<Scalar>::exp(average);
 }

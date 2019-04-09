@@ -87,7 +87,7 @@ class SO2Base {
   using Point = Vector2<Scalar>;
   using HomogeneousPoint = Vector3<Scalar>;
   using Line = ParametrizedLine2<Scalar>;
-  using Tangent = Scalar;
+  using Tangent = Vector1<Scalar>;
   using Adjoint = Scalar;
 
   // For binary operations the return type is determined with the
@@ -151,9 +151,11 @@ class SO2Base {
   // ``logmat(.)`` being the matrix logarithm and ``vee(.)`` the vee-operator
   // of SO(2).
   //
-  SOPHUS_FUNC Scalar log() const {
+  SOPHUS_FUNC Tangent log() const {
     using std::atan2;
-    return atan2(unit_complex().y(), unit_complex().x());
+    Tangent tangent;
+    tangent << atan2(unit_complex().y(), unit_complex().x());
+    return tangent;
   }
 
   // It re-normalizes ``unit_complex`` to unit length.
@@ -400,6 +402,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   SOPHUS_FUNC explicit SO2(Scalar theta) {
     unit_complex_nonconst() = SO2<Scalar>::exp(theta).unit_complex();
   }
+  SOPHUS_FUNC explicit SO2(const Tangent& theta) {
+    unit_complex_nonconst() = SO2<Scalar>::exp(theta[0]).unit_complex();
+  }
 
   // Accessor of unit complex number
   //
@@ -416,19 +421,26 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   // with ``expmat(.)`` being the matrix exponential and ``hat(.)`` being the
   // hat()-operator of SO(2).
   //
-  SOPHUS_FUNC static SO2<Scalar> exp(Tangent const& theta) {
+  SOPHUS_FUNC static SO2<Scalar> exp(Scalar const& theta) {
     using std::cos;
     using std::sin;
     return SO2<Scalar>(cos(theta), sin(theta));
+  }
+  SOPHUS_FUNC static SO2<Scalar> exp(Tangent const& theta) {
+    return exp(theta[0]);
   }
 
   // Returns derivative of exp(x) wrt. x.
   //
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
-      Tangent const& theta) {
+      Scalar const& theta) {
     using std::cos;
     using std::sin;
     return Sophus::Matrix<Scalar, num_parameters, DoF>(-sin(theta), cos(theta));
+  }
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
+      Tangent const& theta) {
+    return Dx_exp_x(theta[0]);
   }
 
   // Returns derivative of exp(x) wrt. x_i at x=0.
@@ -466,7 +478,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   //
   // The corresponding inverse is the ``vee``-operator, see below.
   //
-  SOPHUS_FUNC static Transformation hat(Tangent const& theta) {
+  SOPHUS_FUNC static Transformation hat(Scalar const& theta) {
     Transformation Omega;
     // clang-format off
     Omega <<
@@ -474,6 +486,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
             theta, Scalar(0);
     // clang-format on
     return Omega;
+  }
+  SOPHUS_FUNC static Transformation hat(Tangent const& theta) {
+    return hat(theta[0]);
   }
 
   // Returns closed SO2 given arbirary 2x2 matrix.
@@ -490,7 +505,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   // the Lie bracket is simple ``0``.
   //
   SOPHUS_FUNC static Tangent lieBracket(Tangent const&, Tangent const&) {
-    return Scalar(0);
+    Tangent tangent;
+    tangent << Scalar(0);
+    return tangent;
   }
 
   // Draw uniform sample from SO(2) manifold.
@@ -518,7 +535,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   //
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     using std::abs;
-    return Omega(1, 0);
+    Tangent tangent;
+    tangent << Omega(1, 0);
+    return tangent;
   }
 
  protected:

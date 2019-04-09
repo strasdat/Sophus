@@ -59,6 +59,10 @@ class Tests {
     tangent_vec_.push_back(tmp);
     tmp << Scalar(1), Scalar(0), Scalar(0), Scalar(0);
     tangent_vec_.push_back(tmp);
+    tmp << Scalar(0), Scalar(0), Scalar(1), Scalar(0);
+    tangent_vec_.push_back(tmp);
+    tmp << Scalar(0), Scalar(0), Scalar(1), Scalar(0.1);
+    tangent_vec_.push_back(tmp);
     tmp << Scalar(0), Scalar(1), Scalar(0), Scalar(0.1);
     tangent_vec_.push_back(tmp);
     tmp << Scalar(-1), Scalar(1), Scalar(1), Scalar(-0.1);

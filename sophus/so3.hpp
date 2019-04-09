@@ -127,7 +127,7 @@ class SO3Base {
   SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, S> angleX() const {
     Sophus::Matrix3<Scalar> R = matrix();
     Sophus::Matrix2<Scalar> Rx = R.template block<2, 2>(1, 1);
-    return SO2<Scalar>(makeRotationMatrix(Rx)).log();
+    return SO2<Scalar>(makeRotationMatrix(Rx)).log()[0];
   }
 
   // Extract rotation angle about canonical Y-axis
@@ -141,7 +141,7 @@ class SO3Base {
       R(0, 0), R(2, 0),
       R(0, 2), R(2, 2);
     // clang-format on
-    return SO2<Scalar>(makeRotationMatrix(Ry)).log();
+    return SO2<Scalar>(makeRotationMatrix(Ry)).log()[0];
   }
 
   // Extract rotation angle about canonical Z-axis
@@ -150,7 +150,7 @@ class SO3Base {
   SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, S> angleZ() const {
     Sophus::Matrix3<Scalar> R = matrix();
     Sophus::Matrix2<Scalar> Rz = R.template block<2, 2>(0, 0);
-    return SO2<Scalar>(makeRotationMatrix(Rz)).log();
+    return SO2<Scalar>(makeRotationMatrix(Rz)).log()[0];
   }
 
   // Returns copy of instance casted to NewScalarType.
@@ -315,23 +315,27 @@ class SO3Base {
     return *this;
   }
 
+  template <typename OtherQuaternion>
+  static Eigen::Quaternion<ReturnScalar<OtherQuaternion>> QuaternionProduct(
+      const Eigen::Quaternion<Scalar>& a, const OtherQuaternion& b) {
+    return Eigen::Quaternion<ReturnScalar<OtherQuaternion>>(
+        a.w() * b.w() - a.x() * b.x() - a.y() * b.y() - a.z() * b.z(),
+        a.w() * b.x() + a.x() * b.w() + a.y() * b.z() - a.z() * b.y(),
+        a.w() * b.y() + a.y() * b.w() + a.z() * b.x() - a.x() * b.z(),
+        a.w() * b.z() + a.z() * b.w() + a.x() * b.y() - a.y() * b.x());
+  }
+
   // Group multiplication, which is rotation concatenation.
   //
   template <typename OtherDerived>
   SOPHUS_FUNC SO3Product<OtherDerived> operator*(
       SO3Base<OtherDerived> const& other) const {
-    using QuaternionProductType =
-        typename SO3Product<OtherDerived>::QuaternionType;
     const QuaternionType& a = unit_quaternion();
     const typename OtherDerived::QuaternionType& b = other.unit_quaternion();
     // NOTE: We cannot use Eigen's Quaternion multiplication because it always
     // returns a Quaternion of the same Scalar as this object, so it is not able
     // to multiple Jets and doubles correctly.
-    return SO3Product<OtherDerived>(QuaternionProductType(
-        a.w() * b.w() - a.x() * b.x() - a.y() * b.y() - a.z() * b.z(),
-        a.w() * b.x() + a.x() * b.w() + a.y() * b.z() - a.z() * b.y(),
-        a.w() * b.y() + a.y() * b.w() + a.z() * b.x() - a.x() * b.z(),
-        a.w() * b.z() + a.z() * b.w() + a.x() * b.y() - a.y() * b.x()));
+    return SO3Product<OtherDerived>(QuaternionProduct(a, b));
   }
 
   // Group action on 3-points.

@@ -118,13 +118,15 @@ class RxSO2Base {
 
   // Returns rotation angle.
   //
-  SOPHUS_FUNC Scalar angle() const { return SO2<Scalar>(complex()).log(); }
+  SOPHUS_FUNC Scalar angle() const { return SO2<Scalar>(complex()).log()[0]; }
 
   // Returns copy of instance casted to NewScalarType.
   //
   template <class NewScalarType>
   SOPHUS_FUNC RxSO2<NewScalarType> cast() const {
-    return RxSO2<NewScalarType>(complex().template cast<NewScalarType>());
+    typename RxSO2<NewScalarType>::ComplexType c =
+        complex().template cast<NewScalarType>();
+    return RxSO2<NewScalarType>(c);
   }
 
   // This provides unsafe read/write access to internal data. RxSO(2) is
@@ -163,7 +165,7 @@ class RxSO2Base {
     using std::log;
     Tangent theta_sigma;
     theta_sigma[1] = log(scale());
-    theta_sigma[0] = SO2<Scalar>(complex()).log();
+    theta_sigma[0] = SO2<Scalar>(complex()).log()[0];
     return theta_sigma;
   }
 
@@ -220,7 +222,7 @@ class RxSO2Base {
         Constants<ResultT>::epsilon() * Constants<ResultT>::epsilon()) {
       // Saturation to ensure class invariant.
       result_complex.normalize();
-      result_complex *= Constants<ResultT>::epsilon();
+      result_complex *= Scalar(2.0) * Constants<ResultT>::epsilon();
     }
     return RxSO2Product<OtherDerived>(result_complex);
   }
@@ -276,6 +278,15 @@ class RxSO2Base {
       RxSO2Base<OtherDerived> const& other) {
     *static_cast<Derived*>(this) = *this * other;
     return *this;
+  }
+
+  // Returns derivative of  this * RxSO2::exp(x) wrt. x at x=0
+  //
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
+      const {
+    Matrix<Scalar, num_parameters, DoF> J;
+    J << -complex().y(), complex().x(), complex().x(), complex().y();
+    return J;
   }
 
   // Returns internal parameters of RxSO(2).
@@ -371,6 +382,9 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   using Base = RxSO2Base<RxSO2<Scalar_, Options>>;
 
  public:
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -451,6 +465,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
   }
+
   // Group exponential
   //
   // This functions takes in an element of tangent space (= rotation angle
@@ -467,9 +482,41 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
     Scalar const theta = a[0];
     Scalar const sigma = a[1];
     Scalar s = exp(sigma);
+    if (s < Constants<Scalar>::epsilon()) {
+      s = Scalar(2.0) * Constants<Scalar>::epsilon();
+    }
+    if (s > Scalar(2.0) / Constants<Scalar>::epsilon()) {
+      s = Scalar(1.0) / Constants<Scalar>::epsilon();
+    }
     Vector2<Scalar> z = SO2<Scalar>::exp(theta).unit_complex();
     z *= s;
     return RxSO2<Scalar>(z);
+  }
+
+  // Returns derivative of exp(x) wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
+  Dx_exp_x_at_0() {
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    static Scalar const i(1.);
+    static Scalar const o(0.);
+    J << o, i, i, o;
+    return J;
+  }
+
+  // Returns derivative of exp(x) wrt. x.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
+      Tangent const& a) {
+    using std::cos;
+    using std::exp;
+    using std::sin;
+    Scalar const theta = a[0];
+    Scalar const sigma = a[1];
+
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    J << -sin(theta), cos(theta), cos(theta), sin(theta);
+    return J * exp(sigma);
   }
 
   // Returns the ith infinitesimal generators of ``R+ x SO(2)``.

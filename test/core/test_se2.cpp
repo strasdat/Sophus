@@ -159,7 +159,7 @@ class Tests {
     Point translation = se2.translation();
     SO2Type so2 = se2.so2();
 
-    SOPHUS_TEST_APPROX(passed, SE2Type(so2.log(), translation).matrix(),
+    SOPHUS_TEST_APPROX(passed, SE2Type(so2.log()[0], translation).matrix(),
                        se2.matrix(), Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, SE2Type(so2, translation).matrix(), se2.matrix(),
                        Constants<Scalar>::epsilon());

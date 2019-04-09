@@ -157,7 +157,7 @@ class SE2Base {
     using std::abs;
 
     Tangent upsilon_theta;
-    Scalar theta = so2().log();
+    Scalar theta = so2().log()[0];
     upsilon_theta[2] = theta;
     Scalar halftheta = Scalar(0.5) * theta;
     Scalar halftheta_by_tan_of_halftheta;
@@ -417,6 +417,9 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   // Constructor from rotation angle and translation vector.
   //
   SOPHUS_FUNC SE2(Scalar const& theta, Point const& translation)
+      : so2_(theta), translation_(translation) {}
+  SOPHUS_FUNC SE2(typename Base::SO2Type::Tangent const& theta,
+                  Point const& translation)
       : so2_(theta), translation_(translation) {}
 
   // Constructor from complex number and translation vector
@@ -712,7 +715,8 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
         "Omega: \n%", Omega);
     Tangent upsilon_omega;
     upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
-    upsilon_omega[2] = SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
+    upsilon_omega[2] =
+        SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>())[0];
     return upsilon_omega;
   }
 

@@ -232,16 +232,18 @@ class RxSO3Base {
   template <typename OtherDerived>
   SOPHUS_FUNC RxSO3Product<OtherDerived> operator*(
       RxSO3Base<OtherDerived> const& other) const {
+    using std::sqrt;
     using ResultT = ReturnScalar<OtherDerived>;
-    typename RxSO3Product<OtherDerived>::QuaternionType result_quaternion(
-        quaternion() * other.quaternion());
+    Eigen::Quaternion<ResultT> result_quaternion =
+        SO3<Scalar>::QuaternionProduct(quaternion(), other.quaternion());
 
     ResultT scale = result_quaternion.squaredNorm();
     if (scale < Constants<ResultT>::epsilon()) {
       SOPHUS_ENSURE(scale > ResultT(0), "Scale must be greater zero.");
       // Saturation to ensure class invariant.
       result_quaternion.normalize();
-      result_quaternion.coeffs() *= sqrt(Constants<Scalar>::epsilon());
+      result_quaternion.coeffs() *=
+          sqrt(ResultT(2.0)) * sqrt(Constants<ResultT>::epsilon());
     }
     return RxSO3Product<OtherDerived>(result_quaternion);
   }
@@ -303,6 +305,35 @@ class RxSO3Base {
       RxSO3Base<OtherDerived> const& other) {
     *static_cast<Derived*>(this) = *this * other;
     return *this;
+  }
+
+  // Return derivative of  this * RxSO3::exp(x) wrt. x at x=0
+  //
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
+      const {
+    Matrix<Scalar, num_parameters, DoF> J;
+    Eigen::Quaternion<Scalar> const q = quaternion();
+    J.col(3) = q.coeffs() * Scalar(0.5);
+    Scalar const c0 = Scalar(0.5) * q.w();
+    Scalar const c1 = Scalar(0.5) * q.z();
+    Scalar const c2 = -c1;
+    Scalar const c3 = Scalar(0.5) * q.y();
+    Scalar const c4 = Scalar(0.5) * q.x();
+    Scalar const c5 = -c4;
+    Scalar const c6 = -c3;
+    J(0, 0) = c0;
+    J(0, 1) = c2;
+    J(0, 2) = c3;
+    J(1, 0) = c1;
+    J(1, 1) = c0;
+    J(1, 2) = c5;
+    J(2, 0) = c6;
+    J(2, 1) = c4;
+    J(2, 2) = c0;
+    J(3, 0) = c5;
+    J(3, 1) = c6;
+    J(3, 2) = c2;
+    return J;
   }
 
   // Returns internal parameters of RxSO(3).
@@ -407,6 +438,9 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   using Base = RxSO3Base<RxSO3<Scalar_, Options>>;
 
  public:
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -518,11 +552,47 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
     Vector3<Scalar> const omega = a.template head<3>();
     Scalar sigma = a[3];
-    Scalar sqrt_scale = sqrt(exp(sigma));
+    Scalar scale = exp(sigma);
+
+    // Saturation to ensure class invariant
+    if (scale < Constants<Scalar>::epsilon()) {
+      scale = Scalar(2.0) * Constants<Scalar>::epsilon();
+    }
+    if (scale > Scalar(2.0) / Constants<Scalar>::epsilon()) {
+      scale = Scalar(1.0) / Constants<Scalar>::epsilon();
+    }
+    Scalar sqrt_scale = sqrt(scale);
+
     Eigen::Quaternion<Scalar> quat =
         SO3<Scalar>::expAndTheta(omega, theta).unit_quaternion();
     quat.coeffs() *= sqrt_scale;
     return RxSO3<Scalar>(quat);
+  }
+
+  // Returns derivative of exp(x) wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
+  Dx_exp_x_at_0() {
+    static Scalar const h(0.5);
+    return h * Sophus::Matrix<Scalar, num_parameters, DoF>::Identity();
+  }
+
+  // Returns derivative of exp(x) wrt. x.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
+      const Tangent& a) {
+    using std::exp;
+    using std::sqrt;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    Vector3<Scalar> const omega = a.template head<3>();
+    Scalar const sigma = a[3];
+    Eigen::Quaternion<Scalar> quat = SO3<Scalar>::exp(omega).unit_quaternion();
+    Scalar const scale = sqrt(exp(sigma));
+    Scalar const scale_half = scale * Scalar(0.5);
+
+    J.template block<4, 3>(0, 0) = SO3<Scalar>::Dx_exp_x(omega) * scale;
+    J.col(3) = quat.coeffs() * scale_half;
+    return J;
   }
 
   // Returns the ith infinitesimal generators of ``R+ x SO(3)``.

@@ -92,6 +92,7 @@ class Tests {
   }
 
   bool testSaturation() {
+    using std::sqrt;
     bool passed = true;
     RxSO3Type small1(Constants<Scalar>::epsilon(), SO3Type());
     RxSO3Type small2(Constants<Scalar>::epsilon(),
@@ -99,7 +100,7 @@ class Tests {
                                                   Scalar(0), Scalar(0))));
     RxSO3Type saturated_product = small1 * small2;
     SOPHUS_TEST_APPROX(passed, saturated_product.scale(),
-                       Constants<Scalar>::epsilon(),
+                       sqrt(Scalar(2.0)) * Constants<Scalar>::epsilon(),
                        Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, saturated_product.so3().matrix(),
                        (small1.so3() * small2.so3()).matrix(),

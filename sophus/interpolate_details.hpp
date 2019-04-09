@@ -22,7 +22,7 @@ struct Traits<SO2<Scalar>> {
 
   static bool hasShortestPathAmbiguity(SO2<Scalar> const& foo_T_bar) {
     using std::abs;
-    Scalar angle = foo_T_bar.log();
+    Scalar angle = foo_T_bar.log()[0];
     return abs(abs(angle) - Constants<Scalar>::pi()) <
            Constants<Scalar>::epsilon();
   }
@@ -98,7 +98,7 @@ struct Traits<Sim3<Scalar>> {
   }
 };
 
-}  // namespace details
+}  // namespace interp_details
 }  // namespace Sophus
 
 #endif  // SOPHUS_INTERPOLATE_DETAILS_HPP

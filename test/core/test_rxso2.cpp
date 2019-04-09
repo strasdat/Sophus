@@ -107,7 +107,7 @@ class Tests {
                      SO2Type::exp(Constants<Scalar>::pi()));
     RxSO2Type saturated_product = small1 * small2;
     SOPHUS_TEST_APPROX(passed, saturated_product.scale(),
-                       Constants<Scalar>::epsilon(),
+                       Scalar(2.0) * Constants<Scalar>::epsilon(),
                        Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, saturated_product.so2().matrix(),
                        (small1.so2() * small2.so2()).matrix(),

@@ -51,7 +51,7 @@ class VectorField {
 };
 
 template <class Scalar, int N>
-class VectorField<Scalar, N, 1> {
+class ScalarField {
  public:
   static Eigen::Matrix<Scalar, N, 1> num_diff(
       std::function<Sophus::Vector<Scalar, N>(Scalar)> vector_field,

@@ -256,7 +256,7 @@ class Sim2Base {
   // Returns internal parameters of Sim(2).
   //
   // It returns (c[0], c[1], t[0], t[1]),
-  // with c being the complex number, t the translation 3-vector.
+  // with c being the complex number, t the translation 2-vector.
   //
   SOPHUS_FUNC Sophus::Vector<Scalar, num_parameters> params() const {
     Sophus::Vector<Scalar, num_parameters> p;
@@ -274,6 +274,18 @@ class Sim2Base {
       Sim2Base<OtherDerived> const& other) {
     *static_cast<Derived*>(this) = *this * other;
     return *this;
+  }
+
+  // Return derivative of  this * Sim2::exp(x) wrt. x at x=0
+  //
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
+      const {
+    Matrix<Scalar, num_parameters, DoF> J;
+    J.template block<2, 2>(0, 0).setZero();
+    J.template block<2, 2>(0, 2) = rxso2().Dx_this_mul_exp_x_at_0();
+    J.template block<2, 2>(2, 2).setZero();
+    J.template block<2, 2>(2, 0) = rxso2().matrix();
+    return J;
   }
 
   // Setter of non-zero complex number.
@@ -355,6 +367,9 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   using Base = Sim2Base<Sim2<Scalar_, Options>>;
 
  public:
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -490,6 +505,55 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
     Matrix2<Scalar> const Omega = SO2<Scalar>::hat(theta);
     Matrix2<Scalar> const W = details::calcW<Scalar, 2>(Omega, theta, sigma);
     return Sim2<Scalar>(rxso2, W * upsilon);
+  }
+
+  // Returns derivative of exp(x) wrt. x_i at x=0.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
+  Dx_exp_x_at_0() {
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    J.template block<2, 2>(0, 0).setZero();
+    J.template block<2, 2>(0, 2) = RxSO2<Scalar>::Dx_exp_x_at_0();
+    J.template block<2, 2>(2, 0).setIdentity();
+    J.template block<2, 2>(2, 2).setZero();
+    return J;
+  }
+
+  // Returns derivative of exp(x) wrt. x.
+  //
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
+      const Tangent& a) {
+    static Matrix2<Scalar> const I = Matrix2<Scalar>::Identity();
+    static Scalar const one(1.0);
+
+    Scalar const theta = a[2];
+    Scalar const sigma = a[3];
+
+    Matrix2<Scalar> const Omega = SO2<Scalar>::hat(theta);
+    Matrix2<Scalar> const Omega_dtheta = SO2<Scalar>::hat(one);
+    Matrix2<Scalar> const Omega2 = Omega * Omega;
+    Matrix2<Scalar> const Omega2_dtheta =
+        Omega_dtheta * Omega + Omega * Omega_dtheta;
+    Matrix2<Scalar> const W = details::calcW<Scalar, 2>(Omega, theta, sigma);
+    Vector2<Scalar> const upsilon = a.segment(0, 2);
+
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    J.template block<2, 2>(0, 0).setZero();
+    J.template block<2, 2>(0, 2) =
+        RxSO2<Scalar>::Dx_exp_x(a.template tail<2>());
+    J.template block<2, 2>(2, 0) = W;
+
+    Scalar A, B, C, A_dtheta, B_dtheta, A_dsigma, B_dsigma, C_dsigma;
+    details::calcW_derivatives(theta, sigma, A, B, C, A_dsigma, B_dsigma,
+                               C_dsigma, A_dtheta, B_dtheta);
+
+    J.template block<2, 1>(2, 2) = (A_dtheta * Omega + A * Omega_dtheta +
+                                    B_dtheta * Omega2 + B * Omega2_dtheta) *
+                                   upsilon;
+    J.template block<2, 1>(2, 3) =
+        (A_dsigma * Omega + B_dsigma * Omega2 + C_dsigma * I) * upsilon;
+
+    return J;
   }
 
   // Returns the ith infinitesimal generators of Sim(2).

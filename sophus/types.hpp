@@ -10,6 +10,11 @@ template <class Scalar, int M, int Options = 0>
 using Vector = Eigen::Matrix<Scalar, M, 1, Options>;
 
 template <class Scalar, int Options = 0>
+using Vector1 = Vector<Scalar, 1, Options>;
+using Vector1f = Vector1<float>;
+using Vector1d = Vector1<double>;
+
+template <class Scalar, int Options = 0>
 using Vector2 = Vector<Scalar, 2, Options>;
 using Vector2f = Vector2<float>;
 using Vector2d = Vector2<double>;
