@@ -978,7 +978,6 @@ SE3<Scalar, Options>::SE3() : translation_(TranslationMember::Zero()) {
       "particular when using [this->data(), this-data() + "
       "num_parameters] to access the raw data in a contiguous fashion.");
 }
-
 }  // namespace Sophus
 
 namespace Eigen {

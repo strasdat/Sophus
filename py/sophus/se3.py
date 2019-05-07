@@ -49,6 +49,10 @@ class Se3:
     def __repr__(self):
         return "Se3: [" + repr(self.so3) + " " + repr(self.t)
 
+    def inverse(self):
+        invR = self.so3.inverse()
+        return Se3(invR, invR * (-1 * self.t))
+
     @staticmethod
     def hat(v):
         """ R^6 => R^4x4  """

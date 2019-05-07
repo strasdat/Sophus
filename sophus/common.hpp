@@ -110,7 +110,7 @@ void ensureFailed(char const* function, char const* file, int line,
   ((expr) ? ((void)0)                                \
           : ::Sophus::ensureFailed(                  \
                 SOPHUS_FUNCTION, __FILE__, __LINE__, \
-                Sophus::details::FormatString(##__VA_ARGS__).c_str()))
+                Sophus::details::FormatString(__VA_ARGS__).c_str()))
 #else
 // LCOV_EXCL_START
 
