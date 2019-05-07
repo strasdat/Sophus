@@ -30,6 +30,9 @@ class So3:
     def __repr__(self):
         return "So3:" + repr(self.q)
 
+    def inverse(self):
+        return So3(self.q.conj())
+
     @staticmethod
     def hat(o):
         return sympy.Matrix([[0, -o[2], o[1]],
