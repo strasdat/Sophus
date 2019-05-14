@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4)
 project(Sophus VERSION 1.0.0)
 
 include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
 
 # Release by default
 # Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"
@@ -102,7 +103,6 @@ if(BUILD_TESTS)
 endif()
 
 # Export package for use from the build tree
-include(GNUInstallDirs)
 set(SOPHUS_CMAKE_EXPORT_DIR ${CMAKE_INSTALL_DATADIR}/sophus/cmake)
 
 set_target_properties(sophus PROPERTIES EXPORT_NAME Sophus)
