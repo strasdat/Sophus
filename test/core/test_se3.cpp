@@ -53,6 +53,7 @@ class Tests {
   void runAll() {
     bool passed = testLieProperties();
     passed &= testRawDataAcces();
+    passed &= testMutatingAccessors();
     passed &= testConstructors();
     passed &= testFit();
     processTestResult(passed);
@@ -150,6 +151,17 @@ class Tests {
     t << Scalar(0), Scalar(0), Scalar(0), Scalar(0), Scalar(0), Scalar(1.1);
     SOPHUS_TEST_EQUAL(passed, SE3Type::rotZ(Scalar(1.1)).matrix(),
                       SE3Type::exp(t).matrix());
+
+    return passed;
+  }
+
+  bool testMutatingAccessors() {
+    bool passed = true;
+    SE3Type se3;
+    SO3Type R(SO3Type::exp(Point(Scalar(0.2), Scalar(0.5), Scalar(0.0))));
+    se3.setRotationMatrix(R.matrix());
+    SOPHUS_TEST_APPROX(passed, se3.rotationMatrix(), R.matrix(),
+                       Constants<Scalar>::epsilon());
 
     return passed;
   }

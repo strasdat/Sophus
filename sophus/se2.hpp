@@ -315,10 +315,11 @@ class SE2Base {
   //
   SOPHUS_FUNC void setRotationMatrix(Matrix<Scalar, 2, 2> const& R) {
     SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
-    SOPHUS_ENSURE(R.determinant() > 0, "det(R) is not positive: %",
+    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
                   R.determinant());
-    so2().setComplex(Scalar(0.5) * (R(0, 0) + R(1, 1)),
-                     Scalar(0.5) * (R(1, 0) - R(0, 1)));
+    typename SO2Type::ComplexT const complex(Scalar(0.5) * (R(0, 0) + R(1, 1)),
+                                             Scalar(0.5) * (R(1, 0) - R(0, 1)));
+    so2().setComplex(complex);
   }
 
   // Mutator of SO3 group.

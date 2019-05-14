@@ -70,6 +70,7 @@ class Tests {
   void runAll() {
     bool passed = testLieProperties();
     passed &= testRawDataAcces();
+    passed &= testMutatingAccessors();
     passed &= testConstructors();
     passed &= testFit();
     processTestResult(passed);
@@ -147,6 +148,18 @@ class Tests {
     trans = SE2Type::transY(Scalar(0.7));
     SOPHUS_TEST_APPROX(passed, trans.translation().y(), Scalar(0.7),
                        Constants<Scalar>::epsilon());
+
+    return passed;
+  }
+
+  bool testMutatingAccessors() {
+    bool passed = true;
+    SE2Type se2;
+    SO2Type R(Scalar(0.2));
+    se2.setRotationMatrix(R.matrix());
+    SOPHUS_TEST_APPROX(passed, se2.rotationMatrix(), R.matrix(),
+                       Constants<Scalar>::epsilon());
+
     return passed;
   }
 
