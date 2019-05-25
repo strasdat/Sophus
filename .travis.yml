@@ -11,7 +11,7 @@ addons:
       - g++-5
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if ! [[ "$BUILD_TYPE" == "Python" ]]; then scripts/install_linux_deps.sh ; fi ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if ! [[ "$BUILD_TYPE" == "Python" ]]; then if ! [[ "$BUILD_TYPE" == "Docs" ]]; then scripts/install_linux_deps.sh ; fi ; fi ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then scripts/install_osx_deps.sh ; fi
 
 install:
@@ -20,6 +20,7 @@ install:
 - if [[ "$BUILD_TYPE" == "Coverage" ]]; then sudo make -C lcov-1.11/ install ; fi
 - if [[ "$BUILD_TYPE" == "Coverage" ]]; then gem install coveralls-lcov ; fi
 - if [[ "$BUILD_TYPE" == "Python" ]]; then pip3 install sympy ; fi
+- if [[ "$BUILD_TYPE" == "Docs" ]]; then scripts/install_docs_deps.sh ; fi
 
 language: cpp
 
@@ -47,24 +48,41 @@ matrix:
     compiler: clang
     os: linux
     env: BUILD_TYPE=Release ROW_MAJOR_DEFAULT=OFF
-  - language: python
-    env: BUILD_TYPE=Python
-    python: "3.6"
   - language: cpp
     compiler: clang
     os: osx
     env: BUILD_TYPE=Debug
+  - language: python
+    env: BUILD_TYPE=Python
+    os: linux
+    python: "3.6"
+  - language: python
+    env: BUILD_TYPE=Docs
+    os: linux
+    python: "3.6"
 
 
 script:
-  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then scripts/run_cpp_tests.sh ; fi
+  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then if ! [[ "$BUILD_TYPE" == "Docs" ]]; then scripts/run_cpp_tests.sh ; fi ; fi
   - if [[ "$BUILD_TYPE" == "Python" ]]; then cd py; ./run_tests.sh ; fi
+  - if [[ "$BUILD_TYPE" == "Docs" ]]; then make html ; fi
 
 after_success:
  - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --directory . --capture --output-file coverage.info ; fi
  - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --remove coverage.info 'test/*' '/usr/*' --output-file coverage.info ; fi
  - if [[ "$BUILD_TYPE" == "Coverage" ]]; then lcov --list coverage.info ; fi
  - if [[ "$BUILD_TYPE" == "Coverage" ]]; then coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info ; fi
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep_history: false
+  local_dir: build/html/
+  verbose: true
+  on:
+    branch: master
+    condition: $BUILD_TYPE = Docs
 
 branches:
   only:
