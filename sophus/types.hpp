@@ -1,5 +1,8 @@
-#ifndef SOPHUS_TYEPES_HPP
-#define SOPHUS_TYEPES_HPP
+/// @file
+/// Common type aliases.
+
+#ifndef SOPHUS_TYPES_HPP
+#define SOPHUS_TYPES_HPP
 
 #include <type_traits>
 #include "common.hpp"
@@ -234,4 +237,4 @@ using Line2f = Line2<float>;
 
 }  // namespace Sophus
 
-#endif  // SOPHUS_TYEPES_HPP
+#endif  // SOPHUS_TYPES_HPP
