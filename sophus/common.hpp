@@ -1,3 +1,6 @@
+/// @file
+/// Common functionality.
+
 #ifndef SOPHUS_COMMON_HPP
 #define SOPHUS_COMMON_HPP
 
@@ -162,11 +165,11 @@ struct Constants<float> {
   SOPHUS_FUNC static float constexpr pi() { return static_cast<float>(M_PI); }
 };
 
-// Leightweight optional implementation which require ``T`` to have a
-// default constructor.
-//
-// TODO: Replace with std::optional once Sophus moves to c++17.
-//
+/// Lightweight optional implementation which require ``T`` to have a
+/// default constructor.
+///
+/// TODO: Replace with std::optional once Sophus moves to c++17.
+///
 struct nullopt_t {
   explicit constexpr nullopt_t() {}
 };

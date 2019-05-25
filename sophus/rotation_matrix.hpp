@@ -1,3 +1,6 @@
+/// @file
+/// Rotation matrix helper functions.
+
 #ifndef SOPHUS_ROTATION_MATRIX_HPP
 #define SOPHUS_ROTATION_MATRIX_HPP
 
@@ -8,8 +11,8 @@
 
 namespace Sophus {
 
-// Takes in arbiray square matrix and returns true if it is
-// orthogonal.
+/// Takes in arbitrary square matrix and returns true if it is
+/// orthogonal.
 template <class D>
 SOPHUS_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
   using Scalar = typename D::Scalar;
@@ -23,9 +26,9 @@ SOPHUS_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
          Constants<Scalar>::epsilon();
 }
 
-// Takes in arbiray square matrix and returns true if it is
-// "scaled-orthogonal" with positive determinant.
-//
+/// Takes in arbitrary square matrix and returns true if it is
+/// "scaled-orthogonal" with positive determinant.
+///
 template <class D>
 SOPHUS_FUNC bool isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
   using Scalar = typename D::Scalar;
@@ -50,8 +53,8 @@ SOPHUS_FUNC bool isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
          sqrt(Constants<Scalar>::epsilon());
 }
 
-// Takes in arbiray square matrix (2x2 or larger) and returns closest
-// orthogonal matrix with positive determinant.
+/// Takes in arbitrary square matrix (2x2 or larger) and returns closest
+/// orthogonal matrix with positive determinant.
 template <class D>
 SOPHUS_FUNC enable_if_t<
     std::is_floating_point<typename D::Scalar>::value,
