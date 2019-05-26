@@ -11,7 +11,7 @@ addons:
       - g++-5
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if ! [[ "$BUILD_TYPE" == "Python" ]]; then if ! [[ "$BUILD_TYPE" == "Docs" ]]; then scripts/install_linux_deps.sh ; fi ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if ! [[ "$BUILD_TYPE" == "Python" ]]; then if ! [[ "$BUILD_TYPE" == "Docs" ]]; then scripts/install_linux_deps.sh ; fi ; fi ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then scripts/install_osx_deps.sh ; fi
 
 install:
@@ -63,7 +63,7 @@ matrix:
 
 
 script:
-  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then if ! [[ "$BUILD_TYPE" == "Docs" ]]; then scripts/run_cpp_tests.sh ; fi
+  - if ! [[ "$BUILD_TYPE" == "Python" ]]; then if ! [[ "$BUILD_TYPE" == "Docs" ]]; then scripts/run_cpp_tests.sh ; fi ; fi
   - if [[ "$BUILD_TYPE" == "Python" ]]; then cd py; ./run_tests.sh ; fi
   - if [[ "$BUILD_TYPE" == "Docs" ]]; then make html ; fi
 
