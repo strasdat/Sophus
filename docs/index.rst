@@ -13,7 +13,7 @@ Welcome to Sophus's documentation!
    about
    api/library_root
    pysophus
-   https://github.com/strasdat/Sophus
+   Sophus GitHub Page <https://github.com/strasdat/Sophus>
 
 Indices and tables
 ==================
