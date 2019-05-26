@@ -12,6 +12,7 @@ Welcome to Sophus's documentation!
 
    about
    api/library_root
+   pysophus
 
 Indices and tables
 ==================
@@ -19,3 +20,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
