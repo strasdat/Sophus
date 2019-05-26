@@ -7,10 +7,10 @@
 // Eigen's ostream operator is not compatible with ceres::Jet types.
 // In particular, Eigen assumes that the scalar type (here Jet<T,N>) can be
 // casted to an arithmetic type, which is not true for ceres::Jet.
-// Unfortunatly, the ceres::Jet class does not define a conversion
+// Unfortunately, the ceres::Jet class does not define a conversion
 // operator (http://en.cppreference.com/w/cpp/language/cast_operator).
 //
-// This workaround creates a template specilization for Eigen's cast_impl,
+// This workaround creates a template specialization for Eigen's cast_impl,
 // when casting from a ceres::Jet type. It relies on Eigen's internal API and
 // might break with future versions of Eigen.
 namespace Eigen {
@@ -36,8 +36,8 @@ struct TestSE3CostFunctor {
     Eigen::Map<Sophus::SE3<T> const> const T_wa(sT_wa);
     Eigen::Map<Eigen::Matrix<T, 6, 1> > residuals(sResiduals);
 
-    // We are able to mix Sophus types with doubles and Jet types withou needing
-    // to cast to T.
+    // We are able to mix Sophus types with doubles and Jet types without
+    // needing to cast to T.
     residuals = (T_aw * T_wa).log();
     // Reverse order of multiplication. This forces the compiler to verify that
     // (Jet, double) and (double, Jet) SE3 multiplication work correctly.
@@ -129,9 +129,9 @@ bool test(Sophus::SE3d const& T_w_targ, Sophus::SE3d const& T_w_init,
 }
 
 template <typename Scalar>
-bool CreateSE3FromMatrix(Eigen::Matrix<Scalar, 4, 4> mat) {
-  auto se3 = Sophus::SE3<Scalar>(mat);
-  se3 = se3;
+bool CreateSE3FromMatrix(const Eigen::Matrix<Scalar, 4, 4>& mat) {
+  Sophus::SE3<Scalar> se3 = Sophus::SE3<Scalar>(mat);
+  std::cout << se3.translation().x() << std::endl;
   return true;
 }
 

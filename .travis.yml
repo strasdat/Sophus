@@ -1,14 +1,5 @@
 sudo: required
-dist: trusty
-
-
-addons:
-  apt:
-    sources:
-      - sourceline: 'ppa:ubuntu-toolchain-r/test'
-    packages:
-      - gcc-5
-      - g++-5
+dist: xenial
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if ! [[ "$BUILD_TYPE" == "Python" ]]; then if ! [[ "$BUILD_TYPE" == "Docs" ]]; then scripts/install_linux_deps.sh ; fi ; fi ; fi
@@ -55,11 +46,11 @@ matrix:
   - language: python
     env: BUILD_TYPE=Python
     os: linux
-    python: "3.6"
+    python: "3.7"
   - language: python
     env: BUILD_TYPE=Docs
     os: linux
-    python: "3.6"
+    python: "3.7"
 
 
 script:
