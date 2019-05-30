@@ -1,5 +1,5 @@
-Sophus for SymPy
-================
+Python API
+==========
 
 .. automodule:: sophus.matrix
    :members:

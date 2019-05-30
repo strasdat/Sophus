@@ -48,8 +48,8 @@ void processTestResult(bool passed) {
 
 #define SOPHUS_STRINGIFY(x) #x
 
-// GenericTests whether condition is true.
-// The in-out parameter passed will be set to false if test fails.
+/// GenericTests whether condition is true.
+/// The in-out parameter passed will be set to false if test fails.
 #define SOPHUS_TEST(passed, condition, ...)                                    \
   do {                                                                         \
     if (!(condition)) {                                                        \
@@ -61,8 +61,8 @@ void processTestResult(bool passed) {
     }                                                                          \
   } while (false)
 
-// GenericTests whether left is equal to right given a threshold.
-// The in-out parameter passed will be set to false if test fails.
+/// GenericTests whether left is equal to right given a threshold.
+/// The in-out parameter passed will be set to false if test fails.
 #define SOPHUS_TEST_EQUAL(passed, left, right, ...)                            \
   do {                                                                         \
     if (left != right) {                                                       \
@@ -76,8 +76,8 @@ void processTestResult(bool passed) {
     }                                                                          \
   } while (false)
 
-// GenericTests whether left is equal to right given a threshold.
-// The in-out parameter passed will be set to false if test fails.
+/// GenericTests whether left is equal to right given a threshold.
+/// The in-out parameter passed will be set to false if test fails.
 #define SOPHUS_TEST_NEQ(passed, left, right, ...)                              \
   do {                                                                         \
     if (left == right) {                                                       \
@@ -91,8 +91,8 @@ void processTestResult(bool passed) {
     }                                                                          \
   } while (false)
 
-// GenericTests whether left is approximatly equal to right given a threshold.
-// The in-out parameter passed will be set to false if test fails.
+/// GenericTests whether left is approximatly equal to right given a threshold.
+/// The in-out parameter passed will be set to false if test fails.
 #define SOPHUS_TEST_APPROX(passed, left, right, thr, ...)                      \
   do {                                                                         \
     auto nrm = Sophus::maxMetric((left), (right));                             \
@@ -108,9 +108,8 @@ void processTestResult(bool passed) {
     }                                                                          \
   } while (false)
 
-// GenericTests whether left is NOT approximatly equal to right given a
-// threshold.
-// The in-out parameter passed will be set to false if test fails.
+/// GenericTests whether left is NOT approximatly equal to right given a
+/// threshold. The in-out parameter passed will be set to false if test fails.
 #define SOPHUS_TEST_NOT_APPROX(passed, left, right, thr, ...)                  \
   do {                                                                         \
     auto nrm = Sophus::maxMetric((left), (right));                             \

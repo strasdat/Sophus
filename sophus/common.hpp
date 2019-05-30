@@ -165,18 +165,19 @@ struct Constants<float> {
   SOPHUS_FUNC static float constexpr pi() { return static_cast<float>(M_PI); }
 };
 
-/// Lightweight optional implementation which require ``T`` to have a
-/// default constructor.
-///
-/// TODO: Replace with std::optional once Sophus moves to c++17.
-///
+/// Nullopt type of lightweight optional class.
 struct nullopt_t {
   explicit constexpr nullopt_t() {}
 };
 
 constexpr nullopt_t nullopt{};
-template <class T>
 
+/// Lightweight optional implementation which requires ``T`` to have a
+/// default constructor.
+///
+/// TODO: Replace with std::optional once Sophus moves to c++17.
+///
+template <class T>
 class optional {
  public:
   optional() : is_valid_(false) {}
