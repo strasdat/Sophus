@@ -15,56 +15,15 @@ import sys
 sys.path.insert(0, os.path.abspath('../py'))
 
 
+sys.path.insert(1, os.path.abspath('../doxyrest_b/doxyrest/sphinx'))
+extensions = ['doxyrest', 'cpplexer', 'sphinx.ext.autodoc']
+
 # -- Project information -----------------------------------------------------
 
 project = 'Sophus'
 copyright = '2019, Hauke Strasdat'
 author = 'Hauke Strasdat'
 
-
-# -- General configuration ---------------------------------------------------
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
-extensions = [
-  'breathe',
-  'exhale',
-  'sphinx.ext.autodoc'
-]
-
-# Setup the breathe extension
-breathe_projects = {
-    "Sophus": "./doxyoutput/xml"
-}
-breathe_default_project = "Sophus"
-
-# Setup the exhale extension
-exhale_args = {
-    # These arguments are required
-    "containmentFolder":     "./api",
-    "rootFileName":          "library_root.rst",
-    "rootFileTitle":         "C++ Library API",
-    "doxygenStripFromPath":  "..",
-    # Suggested optional arguments
-    "createTreeView":        True,
-    # TIP: if using the sphinx-bootstrap-theme, you need
-    # "treeViewIsBootstrap": True,
-    "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin":    """
-        INPUT                  = ../sophus
-        EXTRACT_ALL            = YES
-        ENABLE_PREPROCESSING   = YES
-        MACRO_EXPANSION        = YES
-        WARN_AS_ERROR          = YES
-        EXPAND_ONLY_PREDEF     = NO
-        SKIP_FUNCTION_MACROS   = NO
-        BUILTIN_STL_SUPPORT    = YES
-        AUTOLINK_SUPPORT       = YES
-        MULTILINE_CPP_IS_BRIEF = YES
-        MARKDOWN_SUPPORT       = YES
-    """
-}
 
 # Tell sphinx what the primary language being documented is.
 primary_domain = 'cpp'
