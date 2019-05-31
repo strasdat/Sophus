@@ -10,7 +10,7 @@ pip3 install sympy
 
 git clone https://github.com/vovkos/doxyrest_b
 cd doxyrest_b
-git reset --hard 9af65a29669f59a2e0059a6cc2f43bc4d33278b6
+git reset --hard 35866af2d090ea526c0efa5d879c147a523e4bea
 git submodule update --init
 mkdir build
 cd build
