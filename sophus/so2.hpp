@@ -7,8 +7,8 @@
 #include <complex>
 #include <type_traits>
 
-/// Include only the selective set of Eigen headers that we need.
-/// This helps when using Sophus with unusual compilers, like nvcc.
+// Include only the selective set of Eigen headers that we need.
+// This helps when using Sophus with unusual compilers, like nvcc.
 #include <Eigen/LU>
 
 #include "rotation_matrix.hpp"
@@ -56,8 +56,8 @@ namespace Sophus {
 /// determinant is 1. Let ``theta`` be the rotation angle, the rotation matrix
 /// can be written in close form:
 ///
-///  | cos(theta) -sin(theta) |
-///  | sin(theta)  cos(theta) |
+///      | cos(theta) -sin(theta) |
+///      | sin(theta)  cos(theta) |
 ///
 /// As a matter of fact, the first column of those matrices is isomorph to the
 /// set of unit complex numbers U(1). Thus, internally, SO2 is represented as
@@ -72,7 +72,7 @@ namespace Sophus {
 /// Class invariant: The 2-norm of ``unit_complex`` must be close to 1.
 /// Technically speaking, it must hold that:
 ///
-///   ``|unit_complex().squaredNorm() - 1| <= epsilon``.
+///   ``|unit_complex().squaredNorm() - 1| <= Constants::epsilon()``.
 template <class Derived>
 class SO2Base {
  public:
@@ -329,7 +329,7 @@ class SO2Base {
   }
 };
 
-/// SO2 default type - Constructors and default storage for SO2 Type
+/// SO2 using  default storage; derived from SO2Base.
 template <class Scalar_, int Options>
 class SO2 : public SO2Base<SO2<Scalar_, Options>> {
  public:
@@ -350,7 +350,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  /// Default constructor initialize unit complex number to identity rotation.
+  /// Default constructor initializes unit complex number to identity rotation.
   ///
   SOPHUS_FUNC SO2() : unit_complex_(Scalar(1), Scalar(0)) {}
 
@@ -440,18 +440,18 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
     return Sophus::Matrix<Scalar, num_parameters, DoF>(Scalar(0), Scalar(1));
   }
 
-  /// Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int) {
     return generator();
   }
 
-  /// Returns the infinitesimal generators of SO3.
+  /// Returns the infinitesimal generators of SO(2).
   ///
   /// The infinitesimal generators of SO(2) is:
   ///
-  ///   |  0  1 |
-  ///   | -1  0 |
+  ///     |  0  1 |
+  ///     | -1  0 |
   ///
   SOPHUS_FUNC static Transformation generator() { return hat(Scalar(1)); }
 
@@ -460,13 +460,13 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   /// It takes in the scalar representation ``theta`` (= rotation angle) and
   /// returns the corresponding matrix representation of Lie algebra element.
   ///
-  /// Formally, the ``hat()`` operator of SO(2) is defined as
+  /// Formally, the hat()-operator of SO(2) is defined as
   ///
   ///   ``hat(.): R^2 -> R^{2x2},  hat(theta) = theta * G``
   ///
   /// with ``G`` being the infinitesimal generator of SO(2).
   ///
-  /// The corresponding inverse is the ``vee``-operator, see below.
+  /// The corresponding inverse is the vee()-operator, see below.
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& theta) {
     Transformation Omega;
@@ -511,7 +511,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   /// It takes the 2x2-matrix representation ``Omega`` and maps it to the
   /// corresponding scalar representation of Lie algebra.
   ///
-  /// This is the inverse of the hat-operator, see above.
+  /// This is the inverse of the hat()-operator, see above.
   ///
   /// Precondition: ``Omega`` must have the following structure:
   ///
@@ -535,7 +535,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
 namespace Eigen {
 
-/// Specialization of Eigen::Map for ``SO2``.
+/// Specialization of Eigen::Map for ``SO2``; derived from SO2Base.
 ///
 /// Allows us to wrap SO2 objects around POD array (e.g. external c style
 /// complex number / tuple).
@@ -583,7 +583,7 @@ class Map<Sophus::SO2<Scalar_>, Options>
   Map<Matrix<Scalar, 2, 1>, Options> unit_complex_;
 };
 
-/// Specialization of Eigen::Map for ``SO2 const``.
+/// Specialization of Eigen::Map for ``SO2 const``; derived from SO2Base.
 ///
 /// Allows us to wrap SO2 objects around POD array (e.g. external c style
 /// complex number / tuple).

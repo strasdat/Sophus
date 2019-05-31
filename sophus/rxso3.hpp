@@ -58,7 +58,7 @@ namespace Sophus {
 /// This class has the explicit class invariant that the scale ``s`` is not
 /// too close to zero. Strictly speaking, it must hold that:
 ///
-///   ``quaternion().squaredNorm() >= epsilon``.
+///   ``quaternion().squaredNorm() >= Constants::epsilon()``.
 ///
 /// In order to obey this condition, group multiplication is implemented with
 /// saturation such that a product always has a scale which is equal or greater
@@ -406,7 +406,7 @@ class RxSO3Base {
   }
 };
 
-/// RxSO3 default type - Constructors and default storage for RxSO3 Type.
+/// RxSO3 using storage; derived from RxSO3Base.
 template <class Scalar_, int Options>
 class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
  public:
@@ -424,7 +424,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  /// Default constructor initialize quaternion to identity rotation and scale.
+  /// Default constructor initializes quaternion to identity rotation and scale
+  /// to 1.
   ///
   SOPHUS_FUNC RxSO3()
       : quaternion_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
@@ -442,7 +443,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// Constructor from scaled rotation matrix
   ///
   /// Precondition: rotation matrix need to be scaled orthogonal with
-  /// determinant of s^3.
+  /// determinant of ``s^3``.
   ///
   SOPHUS_FUNC explicit RxSO3(Transformation const& sR) {
     this->setScaledRotationMatrix(sR);
@@ -451,7 +452,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// Constructor from scale factor and rotation matrix ``R``.
   ///
   /// Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
-  ///               of 1 and ``scale`` must to be close to zero.
+  ///               of 1 and ``scale`` must be close to zero.
   ///
   SOPHUS_FUNC RxSO3(Scalar const& scale, Transformation const& R)
       : quaternion_(R) {
@@ -490,7 +491,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC QuaternionMember const& quaternion() const { return quaternion_; }
 
-  /// Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
@@ -567,13 +568,13 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// logarithm of scale) and  returns the corresponding matrix representation
   /// of Lie algebra element.
   ///
-  /// Formally, the ``hat()`` operator of RxSO3 is defined as
+  /// Formally, the hat()-operator of RxSO3 is defined as
   ///
   ///   ``hat(.): R^4 -> R^{3x3},  hat(a) = sum_i a_i * G_i``  (for i=0,1,2,3)
   ///
-  /// with ``G_i`` being the ith infinitesial generator of RxSO3.
+  /// with ``G_i`` being the ith infinitesimal generator of RxSO3.
   ///
-  /// The corresponding inverse is the ``vee``-operator, see below.
+  /// The corresponding inverse is the vee()-operator, see below.
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation A;
@@ -591,8 +592,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   ///
   ///   ``[omega_1, omega_2]_rxso3 := vee([hat(omega_1), hat(omega_2)])``
   ///
-  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
-  /// hat-operator and ``vee(.)`` the vee-operator of RxSO3.
+  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.)`` the
+  /// hat()-operator and ``vee(.)`` the vee()-operator of RxSO3.
   ///
   SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
     Vector3<Scalar> const omega1 = a.template head<3>();
@@ -621,13 +622,13 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// It takes the 3x3-matrix representation ``Omega`` and maps it to the
   /// corresponding vector representation of Lie algebra.
   ///
-  /// This is the inverse of the hat-operator, see above.
+  /// This is the inverse of the hat()-operator, see above.
   ///
   /// Precondition: ``Omega`` must have the following structure:
   ///
   ///                |  d -c  b |
   ///                |  c  d -a |
-  ///                | -b  a  d | .
+  ///                | -b  a  d |
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     using std::abs;
@@ -644,7 +645,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
 namespace Eigen {
 
-/// Specialization of Eigen::Map for ``RxSO3``.
+/// Specialization of Eigen::Map for ``RxSO3``; derived from RxSO3Base
 ///
 /// Allows us to wrap RxSO3 objects around POD array (e.g. external c style
 /// quaternion).
@@ -687,7 +688,7 @@ class Map<Sophus::RxSO3<Scalar_>, Options>
   Map<Eigen::Quaternion<Scalar>, Options> quaternion_;
 };
 
-/// Specialization of Eigen::Map for ``RxSO3 const``.
+/// Specialization of Eigen::Map for ``RxSO3 const``; derived from RxSO3Base.
 ///
 /// Allows us to wrap RxSO3 objects around POD array (e.g. external c style
 /// quaternion).

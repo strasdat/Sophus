@@ -64,12 +64,12 @@ namespace Sophus {
 /// non-commutative since the equation ``R_1 * R_2 = R_2 * R_1`` does not hold
 /// in general. For example rotating an object by some degrees about its
 /// ``x``-axis and then by some degrees about its y axis, does not lead to the
-/// same orienation when rotation first about ``y`` and then about ``x``.
+/// same orientation when rotation first about ``y`` and then about ``x``.
 ///
 /// Class invariant: The 2-norm of ``unit_quaternion`` must be close to 1.
 /// Technically speaking, it must hold that:
 ///
-///   ``|unit_quaternion().squaredNorm() - 1| <= epsilon``.
+///   ``|unit_quaternion().squaredNorm() - 1| <= Constants::epsilon()``.
 template <class Derived>
 class SO3Base {
  public:
@@ -421,7 +421,7 @@ class SO3Base {
   }
 };
 
-/// SO3 default type - Constructors and default storage for SO3 Type.
+/// SO3 using default storage; derived from SO3Base.
 template <class Scalar_, int Options>
 class SO3 : public SO3Base<SO3<Scalar_, Options>> {
  public:
@@ -443,7 +443,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  /// Default constructor initialize unit quaternion to identity rotation.
+  /// Default constructor initializes unit quaternion to identity rotation.
   ///
   SOPHUS_FUNC SO3()
       : unit_quaternion_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
@@ -553,7 +553,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     return J;
   }
 
-  /// Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
@@ -613,7 +613,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     return q;
   }
 
-  /// Returns closest SO3 given arbirary 3x3 matrix.
+  /// Returns closest SO3 given arbitrary 3x3 matrix.
   ///
   template <class S = Scalar>
   static SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, SO3>
@@ -654,14 +654,14 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   /// It takes in the 3-vector representation ``omega`` (= rotation vector) and
   /// returns the corresponding matrix representation of Lie algebra element.
   ///
-  /// Formally, the ``hat()`` operator of SO(3) is defined as
+  /// Formally, the hat()-operator of SO(3) is defined as
   ///
   ///   ``hat(.): R^3 -> R^{3x3},  hat(omega) = sum_i omega_i * G_i``
   ///   (for i=0,1,2)
   ///
   /// with ``G_i`` being the ith infinitesimal generator of SO(3).
   ///
-  /// The corresponding inverse is the ``vee``-operator, see below.
+  /// The corresponding inverse is the vee()-operator, see below.
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& omega) {
     Transformation Omega;
@@ -681,7 +681,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   ///   ``[omega_1, omega_2]_so3 := vee([hat(omega_1), hat(omega_2)])``
   ///
   /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.)`` the
-  /// hat-operator and ``vee(.)`` the vee-operator of SO3.
+  /// hat()-operator and ``vee(.)`` the vee()-operator of SO3.
   ///
   /// For the Lie algebra so3, the Lie bracket is simply the cross product:
   ///
@@ -692,19 +692,19 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     return omega1.cross(omega2);
   }
 
-  /// Contruct x-axis rotation.
+  /// Construct x-axis rotation.
   ///
   static SOPHUS_FUNC SO3 rotX(Scalar const& x) {
     return SO3::exp(Sophus::Vector3<Scalar>(x, Scalar(0), Scalar(0)));
   }
 
-  /// Contruct y-axis rotation.
+  /// Construct y-axis rotation.
   ///
   static SOPHUS_FUNC SO3 rotY(Scalar const& y) {
     return SO3::exp(Sophus::Vector3<Scalar>(Scalar(0), y, Scalar(0)));
   }
 
-  /// Contruct z-axis rotation.
+  /// Construct z-axis rotation.
   ///
   static SOPHUS_FUNC SO3 rotZ(Scalar const& z) {
     return SO3::exp(Sophus::Vector3<Scalar>(Scalar(0), Scalar(0), z));
@@ -736,13 +736,13 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   /// It takes the 3x3-matrix representation ``Omega`` and maps it to the
   /// corresponding vector representation of Lie algebra.
   ///
-  /// This is the inverse of the hat-operator, see above.
+  /// This is the inverse of the hat()-operator, see above.
   ///
   /// Precondition: ``Omega`` must have the following structure:
   ///
   ///                |  0 -c  b |
   ///                |  c  0 -a |
-  ///                | -b  a  0 | .
+  ///                | -b  a  0 |
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     return Tangent(Omega(2, 1), Omega(0, 2), Omega(1, 0));
@@ -761,7 +761,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 }  // namespace Sophus
 
 namespace Eigen {
-/// Specialization of Eigen::Map for ``SO3``.
+/// Specialization of Eigen::Map for ``SO3``; derived from SO3Base.
 ///
 /// Allows us to wrap SO3 objects around POD array (e.g. external c style
 /// quaternion).
@@ -808,7 +808,7 @@ class Map<Sophus::SO3<Scalar_>, Options>
   Map<Eigen::Quaternion<Scalar>, Options> unit_quaternion_;
 };
 
-/// Specialization of Eigen::Map for ``SO3 const``.
+/// Specialization of Eigen::Map for ``SO3 const``; derived from SO3Base.
 ///
 /// Allows us to wrap SO3 objects around POD array (e.g. external c style
 /// quaternion).

@@ -167,8 +167,8 @@ class Sim3Base {
   ///
   /// It has the following form:
   ///
-  ///   | s*R t |
-  ///   |  o  1 |
+  ///     | s*R t |
+  ///     |  o  1 |
   ///
   /// where ``R`` is a 3x3 rotation matrix, ``s`` a scale factor, ``t`` a
   /// translation 3-vector and ``o`` a 3-column vector of zeros.
@@ -351,7 +351,7 @@ class Sim3Base {
   }
 };
 
-/// Sim3 default type - Constructors and default storage for Sim3 Type.
+/// Sim3 using default storage; derived from Sim3Base.
 template <class Scalar_, int Options>
 class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
  public:
@@ -367,7 +367,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  /// Default constructor initialize similarity transform to the identity.
+  /// Default constructor initializes similarity transform to the identity.
   ///
   SOPHUS_FUNC Sim3();
 
@@ -413,7 +413,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   /// Constructor from 4x4 matrix
   ///
   /// Precondition: Top-left 3x3 matrix needs to be "scaled-orthogonal" with
-  ///               positive determinant. The last row must be (0, 0, 0, 1).
+  ///               positive determinant. The last row must be ``(0, 0, 0, 1)``.
   ///
   SOPHUS_FUNC explicit Sim3(Matrix<Scalar, 4, 4> const& T)
       : rxso3_(T.template topLeftCorner<3, 3>()),
@@ -454,7 +454,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
     return translation_;
   }
 
-  /// Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
@@ -546,11 +546,13 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   /// It takes in the 7-vector representation and returns the corresponding
   /// matrix representation of Lie algebra element.
   ///
-  /// Formally, the ``hat()`` operator of Sim(3) is defined as
+  /// Formally, the hat()-operator of Sim(3) is defined as
   ///
   ///   ``hat(.): R^7 -> R^{4x4},  hat(a) = sum_i a_i * G_i``  (for i=0,...,6)
   ///
   /// with ``G_i`` being the ith infinitesimal generator of Sim(3).
+  ///
+  /// The corresponding inverse is the vee()-operator, see below.
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
@@ -567,8 +569,8 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   ///
   ///   ``[omega_1, omega_2]_sim3 := vee([hat(omega_1), hat(omega_2)])``
   ///
-  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
-  /// hat-operator and ``vee(.)`` the vee-operator of Sim(3).
+  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.)`` the
+  /// hat()-operator and ``vee(.)`` the vee()-operator of Sim(3).
   ///
   SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
     Vector3<Scalar> const upsilon1 = a.template head<3>();
@@ -607,14 +609,14 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   /// It takes the 4x4-matrix representation ``Omega`` and maps it to the
   /// corresponding 7-vector representation of Lie algebra.
   ///
-  /// This is the inverse of the hat-operator, see above.
+  /// This is the inverse of the hat()-operator, see above.
   ///
   /// Precondition: ``Omega`` must have the following structure:
   ///
   ///                |  g -f  e  a |
   ///                |  f  g -d  b |
   ///                | -e  d  g  c |
-  ///                |  0  0  0  0 | .
+  ///                |  0  0  0  0 |
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     Tangent upsilon_omega_sigma;
@@ -646,7 +648,7 @@ Sim3<Scalar, Options>::Sim3() : translation_(TranslationMember::Zero()) {
 
 namespace Eigen {
 
-/// Specialization of Eigen::Map for ``Sim3``.
+/// Specialization of Eigen::Map for ``Sim3``; derived from Sim3Base.
 ///
 /// Allows us to wrap Sim3 objects around POD array.
 template <class Scalar_, int Options>
@@ -698,7 +700,7 @@ class Map<Sophus::Sim3<Scalar_>, Options>
   Map<Sophus::Vector3<Scalar>, Options> translation_;
 };
 
-/// Specialization of Eigen::Map for ``Sim3 const``.
+/// Specialization of Eigen::Map for ``Sim3 const``; derived from Sim3Base.
 ///
 /// Allows us to wrap RxSO3 objects around POD array.
 template <class Scalar_, int Options>

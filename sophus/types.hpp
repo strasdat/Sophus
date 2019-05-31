@@ -216,7 +216,7 @@ struct GetScalar<Matrix<Scalar_, M, N>> {
   using Scalar = Scalar_;
 };
 
-/// If the Vector type is a fixed size, then IsFixedSizeVector::value will be
+/// If the Vector type is of fixed size, then IsFixedSizeVector::value will be
 /// true.
 template <typename Vector, int NumDimensions,
           typename = typename std::enable_if<

@@ -360,7 +360,7 @@ class SE2Base {
   }
 };
 
-/// SE2 default type - Constructors and default storage for SE3 Type.
+/// SE2 using default storage; derived from SE2Base.
 template <class Scalar_, int Options>
 class SE2 : public SE2Base<SE2<Scalar_, Options>> {
  public:
@@ -379,7 +379,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  /// Default constructor initialize rigid body motion to the identity.
+  /// Default constructor initializes rigid body motion to the identity.
   ///
   SOPHUS_FUNC SE2();
 
@@ -425,15 +425,14 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
 
   /// Constructor from complex number and translation vector
   ///
-  /// Precondition: ``complex` must not be close to zero.
+  /// Precondition: ``complex`` must not be close to zero.
   SOPHUS_FUNC SE2(Vector2<Scalar> const& complex, Point const& translation)
       : so2_(complex), translation_(translation) {}
 
   /// Constructor from 3x3 matrix
   ///
   /// Precondition: Rotation matrix needs to be orthogonal with determinant
-  /// of 1.
-  ///               The last row must be (0, 0, 1).
+  /// of 1. The last row must be ``(0, 0, 1)``.
   ///
   SOPHUS_FUNC explicit SE2(Transformation const& T)
       : so2_(T.template topLeftCorner<2, 2>().eval()),
@@ -540,7 +539,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
     return J;
   }
 
-  /// Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
@@ -623,11 +622,13 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   /// It takes in the 3-vector representation (= twist) and returns the
   /// corresponding matrix representation of Lie algebra element.
   ///
-  /// Formally, the ``hat()`` operator of SE(3) is defined as
+  /// Formally, the hat()-operator of SE(3) is defined as
   ///
   ///   ``hat(.): R^3 -> R^{3x33},  hat(a) = sum_i a_i * G_i``  (for i=0,1,2)
   ///
   /// with ``G_i`` being the ith infinitesimal generator of SE(2).
+  ///
+  /// The corresponding inverse is the vee()-operator, see below.
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
@@ -643,8 +644,8 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   ///
   ///   ``[omega_1, omega_2]_se2 := vee([hat(omega_1), hat(omega_2)])``
   ///
-  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
-  /// hat-operator and ``vee(.)`` the vee-operator of SE(2).
+  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.)`` the
+  /// hat()-operator and ``vee(.)`` the vee()-operator of SE(2).
   ///
   SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
     Vector2<Scalar> upsilon1 = a.template head<2>();
@@ -701,13 +702,13 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   /// It takes the 3x3-matrix representation ``Omega`` and maps it to the
   /// corresponding 3-vector representation of Lie algebra.
   ///
-  /// This is the inverse of the hat-operator, see above.
+  /// This is the inverse of the hat()-operator, see above.
   ///
   /// Precondition: ``Omega`` must have the following structure:
   ///
   ///                |  0 -d  a |
   ///                |  d  0  b |
-  ///                |  0  0  0 | .
+  ///                |  0  0  0 |
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     SOPHUS_ENSURE(
@@ -741,7 +742,7 @@ SE2<Scalar, Options>::SE2() : translation_(TranslationMember::Zero()) {
 
 namespace Eigen {
 
-/// Specialization of Eigen::Map for ``SE2``.
+/// Specialization of Eigen::Map for ``SE2``; derived from SE2Base.
 ///
 /// Allows us to wrap SE2 objects around POD array.
 template <class Scalar_, int Options>
@@ -795,7 +796,7 @@ class Map<Sophus::SE2<Scalar_>, Options>
   Map<Sophus::Vector2<Scalar>, Options> translation_;
 };
 
-/// Specialization of Eigen::Map for ``SE2 const``.
+/// Specialization of Eigen::Map for ``SE2 const``; derived from SE2Base.
 ///
 /// Allows us to wrap SE2 objects around POD array.
 template <class Scalar_, int Options>

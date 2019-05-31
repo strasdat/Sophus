@@ -50,8 +50,8 @@ namespace Sophus {
 /// where ``R`` is an orthogonal matrix with ``det(R) = 1`` and ``s > 0``
 /// being a positive real number. In particular, it has the following form:
 ///
-///  | s * cos(theta)  s * -sin(theta) |
-///  | s * sin(theta)  s *  cos(theta) |
+///     | s * cos(theta)  s * -sin(theta) |
+///     | s * sin(theta)  s *  cos(theta) |
 ///
 /// where ``theta`` being the rotation angle. Internally, it is represented by
 /// the first column of the rotation matrix, or in other words by a non-zero
@@ -67,7 +67,7 @@ namespace Sophus {
 /// This class has the explicit class invariant that the scale ``s`` is not
 /// too close to zero. Strictly speaking, it must hold that:
 ///
-///   ``complex().norm() >= epsilon``.
+///   ``complex().norm() >= Constants::epsilon()``.
 ///
 /// In order to obey this condition, group multiplication is implemented with
 /// saturation such that a product always has a scale which is equal or greater
@@ -369,7 +369,7 @@ class RxSO2Base {
   }
 };
 
-/// RxSO2 default type - Constructors and default storage for RxSO2 Type.
+/// RxSO2 using storage; derived from RxSO2Base.
 template <class Scalar_, int Options>
 class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
  public:
@@ -387,8 +387,8 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  /// Default constructor initialize complex number to identity rotation and
-  /// scale.
+  /// Default constructor initializes complex number to identity rotation and
+  /// scale to 1.
   ///
   SOPHUS_FUNC RxSO2() : complex_(Scalar(1), Scalar(0)) {}
 
@@ -405,7 +405,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// Constructor from scaled rotation matrix
   ///
   /// Precondition: rotation matrix need to be scaled orthogonal with
-  /// determinant of s^2.
+  /// determinant of ``s^2``.
   ///
   SOPHUS_FUNC explicit RxSO2(Transformation const& sR) {
     this->setScaledRotationMatrix(sR);
@@ -421,7 +421,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   /// Constructor from scale factor and SO2
   ///
-  /// Precondition: ``scale`` must to be close to zero.
+  /// Precondition: ``scale`` must be close to zero.
   ///
   SOPHUS_FUNC RxSO2(Scalar const& scale, SO2<Scalar> const& so2)
       : RxSO2((scale * so2.unit_complex()).eval()) {}
@@ -449,7 +449,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC ComplexMember const& complex() const { return complex_; }
 
-  /// Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
@@ -503,13 +503,13 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// logarithm of scale) and  returns the corresponding matrix representation
   /// of Lie algebra element.
   ///
-  /// Formally, the ``hat()`` operator of RxSO2 is defined as
+  /// Formally, the hat()-operator of RxSO2 is defined as
   ///
   ///   ``hat(.): R^2 -> R^{2x2},  hat(a) = sum_i a_i * G_i``  (for i=0,1,2)
   ///
-  /// with ``G_i`` being the ith infinitesial generator of RxSO2.
+  /// with ``G_i`` being the ith infinitesimal generator of RxSO2.
   ///
-  /// The corresponding inverse is the ``vee``-operator, see below.
+  /// The corresponding inverse is the vee()-operator, see below.
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation A;
@@ -526,8 +526,8 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   ///
   ///   ``[omega_1, omega_2]_rxso2 := vee([hat(omega_1), hat(omega_2)])``
   ///
-  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
-  /// hat-operator and ``vee(.)`` the vee-operator of RxSO2.
+  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.)`` the
+  /// hat()-operator and ``vee(.)`` the vee()-operator of RxSO2.
   ///
   SOPHUS_FUNC static Tangent lieBracket(Tangent const&, Tangent const&) {
     Vector2<Scalar> res;
@@ -553,12 +553,12 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// It takes the 2x2-matrix representation ``Omega`` and maps it to the
   /// corresponding vector representation of Lie algebra.
   ///
-  /// This is the inverse of the hat-operator, see above.
+  /// This is the inverse of the hat()-operator, see above.
   ///
   /// Precondition: ``Omega`` must have the following structure:
   ///
   ///                |  d -x |
-  ///                |  x  d | .
+  ///                |  x  d |
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     using std::abs;
@@ -575,7 +575,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
 namespace Eigen {
 
-/// Specialization of Eigen::Map for ``RxSO2``.
+/// Specialization of Eigen::Map for ``RxSO2``; derived from  RxSO2Base.
 ///
 /// Allows us to wrap RxSO2 objects around POD array (e.g. external z style
 /// complex).
@@ -618,7 +618,7 @@ class Map<Sophus::RxSO2<Scalar_>, Options>
   Map<Sophus::Vector2<Scalar>, Options> complex_;
 };
 
-/// Specialization of Eigen::Map for ``RxSO2 const``.
+/// Specialization of Eigen::Map for ``RxSO2 const``; derived from  RxSO2Base.
 ///
 /// Allows us to wrap RxSO2 objects around POD array (e.g. external z style
 /// complex).

@@ -351,7 +351,7 @@ class Sim2Base {
   }
 };
 
-/// Sim2 default type - Constructors and default storage for Sim2 Type.
+/// Sim2 using default storage; derived from Sim2Base.
 template <class Scalar_, int Options>
 class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
  public:
@@ -367,7 +367,7 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  /// Default constructor initialize similarity transform to the identity.
+  /// Default constructor initializes similarity transform to the identity.
   ///
   SOPHUS_FUNC Sim2();
 
@@ -411,7 +411,7 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   /// Constructor from 3x3 matrix
   ///
   /// Precondition: Top-left 2x2 matrix needs to be "scaled-orthogonal" with
-  ///               positive determinant. The last row must be (0, 0, 1).
+  ///               positive determinant. The last row must be ``(0, 0, 1)``.
   ///
   SOPHUS_FUNC explicit Sim2(Matrix<Scalar, 3, 3> const& T)
       : rxso2_((T.template topLeftCorner<2, 2>()).eval()),
@@ -452,7 +452,7 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
     return translation_;
   }
 
-  /// Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
@@ -530,11 +530,13 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   /// It takes in the 4-vector representation and returns the corresponding
   /// matrix representation of Lie algebra element.
   ///
-  /// Formally, the ``hat()`` operator of Sim(2) is defined as
+  /// Formally, the hat()-operator of Sim(2) is defined as
   ///
   ///   ``hat(.): R^4 -> R^{3x3},  hat(a) = sum_i a_i * G_i``  (for i=0,...,6)
   ///
   /// with ``G_i`` being the ith infinitesimal generator of Sim(2).
+  ///
+  /// The corresponding inverse is the vee()-operator, see below.
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
@@ -551,8 +553,8 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   ///
   ///   ``[omega_1, omega_2]_sim2 := vee([hat(omega_1), hat(omega_2)])``
   ///
-  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
-  /// hat-operator and ``vee(.)`` the vee-operator of Sim(2).
+  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.)`` the
+  /// hat()-operator and ``vee(.)`` the vee()-operator of Sim(2).
   ///
   SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
     Vector2<Scalar> const upsilon1 = a.template head<2>();
@@ -591,13 +593,13 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   /// It takes the 3x3-matrix representation ``Omega`` and maps it to the
   /// corresponding 4-vector representation of Lie algebra.
   ///
-  /// This is the inverse of the hat-operator, see above.
+  /// This is the inverse of the hat()-operator, see above.
   ///
   /// Precondition: ``Omega`` must have the following structure:
   ///
   ///                |  d -c  a |
   ///                |  c  d  b |
-  ///                |  0  0  0 | .
+  ///                |  0  0  0 |
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     Tangent upsilon_omega_sigma;
@@ -629,7 +631,7 @@ Sim2<Scalar, Options>::Sim2() : translation_(TranslationMember::Zero()) {
 
 namespace Eigen {
 
-/// Specialization of Eigen::Map for ``Sim2``.
+/// Specialization of Eigen::Map for ``Sim2``; derived from Sim2Base.
 ///
 /// Allows us to wrap Sim2 objects around POD array.
 template <class Scalar_, int Options>
@@ -681,7 +683,7 @@ class Map<Sophus::Sim2<Scalar_>, Options>
   Map<Sophus::Vector2<Scalar>, Options> translation_;
 };
 
-/// Specialization of Eigen::Map for ``Sim2 const``.
+/// Specialization of Eigen::Map for ``Sim2 const``; derived from Sim2Base.
 ///
 /// Allows us to wrap RxSO2 objects around POD array.
 template <class Scalar_, int Options>

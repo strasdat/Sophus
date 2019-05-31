@@ -425,7 +425,7 @@ class SE3Base {
   }
 };
 
-/// SE3 default type - Constructors and default storage for SE3 Type.
+/// SE3 using default storage; derived from SE3Base.
 template <class Scalar_, int Options>
 class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   using Base = SE3Base<SE3<Scalar_, Options>>;
@@ -445,7 +445,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  /// Default constructor initialize rigid body motion to the identity.
+  /// Default constructor initializes rigid body motion to the identity.
   ///
   SOPHUS_FUNC SE3();
 
@@ -485,7 +485,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
 
   /// Constructor from quaternion and translation vector.
   ///
-  /// Precondition: quaternion must not be close to zero.
+  /// Precondition: ``quaternion`` must not be close to zero.
   ///
   SOPHUS_FUNC SE3(Eigen::Quaternion<Scalar> const& quaternion,
                   Point const& translation)
@@ -494,7 +494,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   /// Constructor from 4x4 matrix
   ///
   /// Precondition: Rotation matrix needs to be orthogonal with determinant
-  ///               of 1. The last row must be (0, 0, 0, 1).
+  ///               of 1. The last row must be ``(0, 0, 0, 1)``.
   ///
   SOPHUS_FUNC explicit SE3(Matrix4<Scalar> const& T)
       : so3_(T.template topLeftCorner<3, 3>()),
@@ -742,7 +742,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return J;
   }
 
-  /// Returns derivative of exp(x).matrix() wrt. x_i at x=0.
+  /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
@@ -843,11 +843,13 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   /// It takes in the 6-vector representation (= twist) and returns the
   /// corresponding matrix representation of Lie algebra element.
   ///
-  /// Formally, the ``hat()`` operator of SE(3) is defined as
+  /// Formally, the hat()-operator of SE(3) is defined as
   ///
   ///   ``hat(.): R^6 -> R^{4x4},  hat(a) = sum_i a_i * G_i``  (for i=0,...,5)
   ///
   /// with ``G_i`` being the ith infinitesimal generator of SE(3).
+  ///
+  /// The corresponding inverse is the vee()-operator, see below.
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
@@ -864,8 +866,8 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   ///
   ///   ``[omega_1, omega_2]_se3 := vee([hat(omega_1), hat(omega_2)])``
   ///
-  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.) the
-  /// hat-operator and ``vee(.)`` the vee-operator of SE(3).
+  /// with ``[A,B] := AB-BA`` being the matrix commutator, ``hat(.)`` the
+  /// hat()-operator and ``vee(.)`` the vee()-operator of SE(3).
   ///
   SOPHUS_FUNC static Tangent lieBracket(Tangent const& a, Tangent const& b) {
     Vector3<Scalar> const upsilon1 = a.template head<3>();
@@ -944,13 +946,13 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   /// It takes 4x4-matrix representation ``Omega`` and maps it to the
   /// corresponding 6-vector representation of Lie algebra.
   ///
-  /// This is the inverse of the hat-operator, see above.
+  /// This is the inverse of the hat()-operator, see above.
   ///
   /// Precondition: ``Omega`` must have the following structure:
   ///
   ///                |  0 -f  e  a |
   ///                |  f  0 -d  b |
-  ///                | -e  d  0  c |
+  ///                | -e  d  0  c
   ///                |  0  0  0  0 | .
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
@@ -982,7 +984,7 @@ SE3<Scalar, Options>::SE3() : translation_(TranslationMember::Zero()) {
 
 namespace Eigen {
 
-/// Specialization of Eigen::Map for ``SE3``.
+/// Specialization of Eigen::Map for ``SE3``; derived from SE3Base.
 ///
 /// Allows us to wrap SE3 objects around POD array.
 template <class Scalar_, int Options>
@@ -1035,7 +1037,7 @@ class Map<Sophus::SE3<Scalar_>, Options>
   Map<Sophus::Vector3<Scalar>, Options> translation_;
 };
 
-/// Specialization of Eigen::Map for ``SE3 const``.
+/// Specialization of Eigen::Map for ``SE3 const``; derived from SE3Base.
 ///
 /// Allows us to wrap SE3 objects around POD array.
 template <class Scalar_, int Options>
