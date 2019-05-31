@@ -26,17 +26,17 @@ bool tests_linear_velocities() {
     foo_Ts_baz.push_back(foo_T_bar * bar_T_baz);
   }
 
-  auto gen_linear_vels = [](
-      std::vector<SE3<Scalar>, Eigen::aligned_allocator<SE3<Scalar>>> const&
-          a_Ts_b) {
-    std::vector<Vector3<Scalar>, Eigen::aligned_allocator<Vector3<Scalar>>>
-        linearVels_a;
-    for (size_t i = 0; i < a_Ts_b.size() - 1; ++i) {
-      linearVels_a.push_back(a_Ts_b[i + 1].translation() -
-                             a_Ts_b[i].translation());
-    }
-    return linearVels_a;
-  };
+  auto gen_linear_vels =
+      [](std::vector<SE3<Scalar>, Eigen::aligned_allocator<SE3<Scalar>>> const&
+             a_Ts_b) {
+        std::vector<Vector3<Scalar>, Eigen::aligned_allocator<Vector3<Scalar>>>
+            linearVels_a;
+        for (size_t i = 0; i < a_Ts_b.size() - 1; ++i) {
+          linearVels_a.push_back(a_Ts_b[i + 1].translation() -
+                                 a_Ts_b[i].translation());
+        }
+        return linearVels_a;
+      };
 
   // linear velocities in frame bar
   std::vector<Vector3<Scalar>, Eigen::aligned_allocator<Vector3<Scalar>>>

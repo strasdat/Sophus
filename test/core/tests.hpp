@@ -200,7 +200,8 @@ class LieGroupTests {
       LieGroup T2 = group_vec_[i + 1];
       LieGroup mult = T1 * T2;
       T1 *= T2;
-      SOPHUS_TEST_APPROX(passed, T1.matrix(), mult.matrix(), kSmallEps, "Product case: %", i);
+      SOPHUS_TEST_APPROX(passed, T1.matrix(), mult.matrix(), kSmallEps,
+                         "Product case: %", i);
     }
     return passed;
   }
@@ -513,7 +514,8 @@ std::vector<SE3<Scalar>, Eigen::aligned_allocator<SE3<Scalar>>> getTestSE3s() {
   se3_vec.push_back(SE3<Scalar>(
       SO3<Scalar>::exp(Vector3<Scalar>(Scalar(0.2), Scalar(0.5), Scalar(-1.0))),
       Vector3<Scalar>(Scalar(10), Scalar(0), Scalar(0))));
-  se3_vec.push_back(SE3<Scalar>::trans(Scalar(0), Scalar(100), Scalar(5)));
+  se3_vec.push_back(
+      SE3<Scalar>::trans(Vector3<Scalar>(Scalar(0), Scalar(100), Scalar(5))));
   se3_vec.push_back(SE3<Scalar>::rotZ(Scalar(0.00001)));
   se3_vec.push_back(
       SE3<Scalar>::trans(Scalar(0), Scalar(-0.00000001), Scalar(0.0000000001)) *
@@ -548,6 +550,7 @@ std::vector<SE2<T>, Eigen::aligned_allocator<SE2<T>>> getTestSE2s() {
   se2_vec.push_back(SE2<T>());
   se2_vec.push_back(SE2<T>(SO2<T>(0.2), Vector2<T>(10, 0)));
   se2_vec.push_back(SE2<T>::transY(100));
+  se2_vec.push_back(SE2<T>::trans(Vector2<T>(1, 2)));
   se2_vec.push_back(SE2<T>(SO2<T>(-1.), Vector2<T>(20, -1)));
   se2_vec.push_back(
       SE2<T>(SO2<T>(0.00001), Vector2<T>(-0.00000001, 0.0000000001)));
