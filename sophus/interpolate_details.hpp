@@ -98,7 +98,7 @@ struct Traits<Sim3<Scalar>> {
   }
 };
 
-}  // namespace details
+}  // namespace interp_details
 }  // namespace Sophus
 
 #endif  // SOPHUS_INTERPOLATE_DETAILS_HPP

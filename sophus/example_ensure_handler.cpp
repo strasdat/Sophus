@@ -11,4 +11,4 @@ void ensureFailed(char const* function, char const* file, int line,
   std::printf("Description: %s\n", description);
   std::abort();
 }
-}
+}  // namespace Sophus
