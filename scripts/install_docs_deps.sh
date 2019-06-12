@@ -5,6 +5,7 @@ set -e # exit on error
 
 sudo apt-get -qq update
 sudo apt-get install doxygen liblua5.3-dev
+pip3 install 'sphinx==2.0.1'
 pip3 install sphinx_rtd_theme
 pip3 install sympy
 

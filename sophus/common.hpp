@@ -151,7 +151,9 @@ struct Constants {
     return sqrt(epsilon());
   }
 
-  SOPHUS_FUNC static Scalar pi() { return Scalar(M_PI); }
+  SOPHUS_FUNC static Scalar pi() {
+    return Scalar(3.141592653589793238462643383279502884);
+  }
 };
 
 template <>
@@ -162,7 +164,9 @@ struct Constants<float> {
 
   SOPHUS_FUNC static float epsilonSqrt() { return std::sqrt(epsilon()); }
 
-  SOPHUS_FUNC static float constexpr pi() { return static_cast<float>(M_PI); }
+  SOPHUS_FUNC static float constexpr pi() {
+    return 3.141592653589793238462643383279502884f;
+  }
 };
 
 /// Nullopt type of lightweight optional class.
