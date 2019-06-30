@@ -452,7 +452,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// Constructor from scale factor and rotation matrix ``R``.
   ///
   /// Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
-  ///               of 1 and ``scale`` must be close to zero.
+  ///               of 1 and ``scale`` must not be close to zero.
   ///
   SOPHUS_FUNC RxSO3(Scalar const& scale, Transformation const& R)
       : quaternion_(R) {
@@ -464,7 +464,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
   /// Constructor from scale factor and SO3
   ///
-  /// Precondition: ``scale`` must to be close to zero.
+  /// Precondition: ``scale`` must not to be close to zero.
   ///
   SOPHUS_FUNC RxSO3(Scalar const& scale, SO3<Scalar> const& so3)
       : quaternion_(so3.unit_quaternion()) {
