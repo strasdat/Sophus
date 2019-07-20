@@ -12,7 +12,7 @@ if( Ceres_FOUND )
 
   FOREACH(test_src ${TEST_SOURCES})
     ADD_EXECUTABLE( ${test_src} ${test_src}.cpp local_parameterization_se3)
-    TARGET_LINK_LIBRARIES( ${test_src} sophus ${CERES_LIBRARIES} )
+    TARGET_LINK_LIBRARIES( ${test_src} sophus ${CERES_LIBRARIES} fmt )
     TARGET_INCLUDE_DIRECTORIES( ${test_src} SYSTEM PRIVATE ${CERES_INCLUDE_DIRS})
     ADD_TEST( ${test_src} ${test_src} )
   ENDFOREACH(test_src)

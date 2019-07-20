@@ -4,7 +4,7 @@ find_package( Ceres 1.6.0 QUIET )
 
 FOREACH(test_src ${TEST_SOURCES})
   ADD_EXECUTABLE( ${test_src} ${test_src}.cpp tests.hpp ../../sophus/test_macros.hpp)
-  TARGET_LINK_LIBRARIES( ${test_src} sophus )
+  TARGET_LINK_LIBRARIES( ${test_src} sophus fmt::fmt)
   if( Ceres_FOUND )
       TARGET_INCLUDE_DIRECTORIES( ${test_src} SYSTEM PRIVATE ${CERES_INCLUDE_DIRS})
       ADD_DEFINITIONS(-DSOPHUS_CERES)
