@@ -197,11 +197,11 @@ class Tests {
         Matrix3<Scalar> R = makeRotationMatrix(M);
         Matrix3<Scalar> sR = scale * R;
         SOPHUS_TEST(passed, isScaledOrthogonalAndPositive(sR),
-                    "isScaledOrthogonalAndPositive(sR): % *\n%", scale, R);
+                    "isScaledOrthogonalAndPositive(sR): {} *\n{}", scale, R);
         Matrix3<Scalar> sR_cols_swapped;
         sR_cols_swapped << sR.col(1), sR.col(0), sR.col(2);
         SOPHUS_TEST(passed, !isScaledOrthogonalAndPositive(sR_cols_swapped),
-                    "isScaledOrthogonalAndPositive(-sR): % *\n%", scale, R);
+                    "isScaledOrthogonalAndPositive(-sR): {} *\n{}", scale, R);
       }
     }
     return passed;
