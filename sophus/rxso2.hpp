@@ -346,7 +346,7 @@ class RxSO2Base {
   ///
   SOPHUS_FUNC void setScaledRotationMatrix(Transformation const& sR) {
     SOPHUS_ENSURE(isScaledOrthogonalAndPositive(sR),
-                  "sR must be scaled orthogonal:\n %", sR);
+                  "sR must be scaled orthogonal:\n {}", sR);
     complex_nonconst() = sR.col(0);
   }
 
@@ -433,7 +433,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   SOPHUS_FUNC explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
     SOPHUS_ENSURE(complex_.squaredNorm() >= Constants<Scalar>::epsilon() *
                                                 Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon: % vs %",
+                  "Scale factor must be greater-equal epsilon: {} vs {}",
                   complex_.squaredNorm(),
                   Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
   }
