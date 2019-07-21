@@ -7,6 +7,7 @@ brew install eigen
 brew install glog
 brew install suite-sparse
 brew install ccache
+brew install fmt
 export PATH="/usr/local/opt/ccache/libexec:$PATH"
 whereis ccache
 git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver

@@ -1,0 +1,36 @@
+branches:
+  only:
+    - master
+    - dev
+
+os: Visual Studio 2017
+
+clone_folder: c:\projects\sophus
+
+platform: x64
+configuration: Debug
+
+build:
+  project: c:\projects\sophus\build\Sophus.sln
+
+install:
+  - ps: wget http://bitbucket.org/eigen/eigen/get/3.3.4.zip -outfile eigen3.zip
+  - cmd: 7z x eigen3.zip -o"C:\projects" -y > nul
+  - git clone https://github.com/fmtlib/fmt.git
+  - cd fmt
+  - git checkout 5.3.0
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 15 2017 Win64" ..
+  - cmake --build .
+  - cmake --build . --target install
+  - cd ../..
+
+before_build:
+  - cd c:\projects\sophus
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 15 2017 Win64" -D EIGEN3_INCLUDE_DIR=C:\projects\eigen-eigen-5a0156e40feb ..
+
+after_build:
+  - ctest
