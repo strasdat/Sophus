@@ -405,9 +405,9 @@ class LieGroupTests {
 
         // test average({A, B}) == interp(A, B):
         LieGroup foo_T_quiz = interpolate(foo_T_bar, foo_T_baz, 0.5);
-        optional<LieGroup> foo_T_iaverage = iterativeMean(
+        Expected<LieGroup, AverageError> foo_T_iaverage = iterativeMean(
             std::array<LieGroup, 2>({{foo_T_bar, foo_T_baz}}), 20);
-        optional<LieGroup> foo_T_average =
+        Expected<LieGroup, AverageError> foo_T_average =
             average(std::array<LieGroup, 2>({{foo_T_bar, foo_T_baz}}));
         SOPHUS_TEST(passed, bool(foo_T_average),
                     "log(foo_T_bar): %\nlog(foo_T_baz): %",

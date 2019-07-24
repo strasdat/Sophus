@@ -1,5 +1,5 @@
 #include <iostream>
-#include "sophus/geometry.hpp"
+#include "sophus/so3.hpp"
 
 int main() {
   // The following demonstrates the group multiplication of rotation matrices

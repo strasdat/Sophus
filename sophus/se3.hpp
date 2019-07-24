@@ -414,12 +414,18 @@ class SE3Base {
   ///
   /// Returns false if ``R`` is not a rotation matrix.
   ///
-  SOPHUS_FUNC bool trySetRotationFromMatrix(Matrix3<Scalar> const& R) {
-    if (!isOrthogonal(R) || !(R.determinant() > Scalar(0))) {
+  SOPHUS_FUNC Expected<bool, SO3FromMatrixError> trySetRotationFromMatrix(
+      Matrix3<Scalar> const& R) {
+    if (!isOrthogonal(R)) {
       // If R contains NANs, we end up here as well.
-      return false;
+      return SO3FromMatrixError::kNotOrthogonal;
     }
-    return so3().trySetQuaternion(Eigen::Quaternion<Scalar>(R));
+    if (!(R.determinant() > Scalar(0))) {
+      return SO3FromMatrixError::kNegativeDeterminant;
+    }
+    auto is_set = so3().trySetQuaternion(Eigen::Quaternion<Scalar>(R));
+    SOPHUS_ENSURE(is_set, "Logic Error");
+    return true;
   }
 
   /// Returns internal parameters of SE(3).
@@ -522,8 +528,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
                                     Point const& translation)
       : so3_(quaternion), translation_(translation) {}
 
-  /// This ``SE3`` constructior is deprecated. Use tryFromMatrix() or
-  /// fitToSE3() instead.
+  /// This ``SE3`` constructior is deprecated. Use fitToSE3() instead.
   /// Constructor from 4x4 matrix
   ///
   /// Precondition: Rotation matrix needs to be orthogonal with determinant
@@ -974,49 +979,20 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return SE3::trans(Scalar(0), Scalar(0), z);
   }
 
-  /// Factory from 4x4 matrix.
-  ///
-  /// Returns nullopt if ``T`` is not a pose matrix of the form
-  ///
-  /// ```
-  ///    | R00 R01 R02 t0 |
-  ///    | R10 R11 R12 t1 |
-  ///    | R20 R21 R22 t2 |
-  ///    |  0   0   0   1 |
-  /// ```
-  ///
-  /// with ``R`` being a rotation matrix.
-  ///
-  static SOPHUS_FUNC optional<SE3<Scalar, Options>> tryFromMatrix(
-      Matrix4<Scalar> const& T) {
-    if ((T.row(3) -
-         Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0), Scalar(0), Scalar(1)))
-            .squaredNorm() >= Constants<Scalar>::epsilon()) {
-      return nullopt;
-    }
-    SE3<Scalar, Options> se3(Uninitialized{});
-    optional<SO3<Scalar, Options>> maybe_so3 =
-        SO3<Scalar, Options>::tryFromMatrix(T.template topLeftCorner<3, 3>());
-    if (!maybe_so3) {
-      return nullopt;
-    }
-    se3.so3() = *maybe_so3;
-    se3.translation() = T.template block<3, 1>(0, 3);
-    return optional<SE3<Scalar, Options>>(se3);
-  }
-
   /// Factory from matrix and translation.
   ///
-  /// Returns nullopt if ``R`` is not a rotation matrix.
+  /// Returns SO3FromMatrixError if ``R`` is not a rotation matrix.
   ///
-  static SOPHUS_FUNC optional<SE3<Scalar, Options>> tryFromMatrixAndTranslation(
-      Matrix3<Scalar> const& R, Point const& translation) {
+  static SOPHUS_FUNC Expected<SE3<Scalar, Options>, SO3FromMatrixError>
+  tryFromMatrixAndTranslation(Matrix3<Scalar> const& R,
+                              Point const& translation) {
     SE3 se3(Uninitialized{});
-    if (se3.trySetRotationFromMatrix(R)) {
+    auto expected_so3 = se3.trySetRotationFromMatrix(R);
+    if (expected_so3) {
       se3.translation() = translation;
-      return optional<SE3<Scalar, Options>>(se3);
+      return se3;
     }
-    return nullopt;
+    return expected_so3.error();
   }
 
   /// vee-operator

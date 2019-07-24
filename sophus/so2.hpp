@@ -47,6 +47,8 @@ struct traits<Map<Sophus::SO2<Scalar_> const, Options>>
 }  // namespace Eigen
 
 namespace Sophus {
+enum class SO2FromMatrixError { kNotOrthogonal, kNegativeDeterminant };
+enum class SO2FromComplexError { kCloseToZero };
 
 /// SO2 base type - implements SO2 class but is storage agnostic.
 ///
@@ -315,14 +317,15 @@ class SO2Base {
 
   /// Takes in complex number, and normalizes it.
   ///
-  /// Returns false, if ``complex`` is close to zero.
+  /// Returns SO2FromComplexError, if ``complex`` is close to zero.
   ///
-  SOPHUS_FUNC bool trySetComplex(Point const& complex) {
+  SOPHUS_FUNC Expected<bool, SO2FromComplexError> trySetComplex(
+      Point const& complex) {
     unit_complex_nonconst() = complex;
     Scalar length = unit_complex_nonconst().norm();
     if (!(length >= Constants<Scalar>::epsilon())) {
       // If complex number contains NANs, we end up here as well.
-      return false;
+      return SO2FromComplexError::kCloseToZero;
     }
     unit_complex_nonconst() /= length;
     return true;
@@ -531,39 +534,43 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns nullopt if R is not a rotation matrix.
+  /// Returns SO2FromMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC optional<SO2<Scalar, Options>> tryFromMatrix(
-      Transformation const& R) {
-    if (!isOrthogonal(R) || !(R.determinant() > Scalar(0))) {
+  static SOPHUS_FUNC Expected<SO2<Scalar, Options>, SO2FromMatrixError>
+  tryFromMatrix(Transformation const& R) {
+    if (!isOrthogonal(R)) {
       // If R contains NANs, we end up here as well.
-      return nullopt;
+      return SO2FromMatrixError::kNotOrthogonal;
+    }
+    if (!(R.determinant() > Scalar(0))) {
+      return SO2FromMatrixError::kNegativeDeterminant;
     }
     SO2 so2(Uninitialized{});
     so2.unit_complex_nonconst()[0] = Scalar(0.5) * (R(0, 0) + R(1, 1));
     so2.unit_complex_nonconst()[1] = Scalar(0.5) * (R(1, 0) - R(0, 1));
-    return optional<SO2<Scalar, Options>>(so2);
+    return so2;
   }
 
   /// Factory from complex number.
   ///
-  /// Returns nullopt if ``complex`` is close to zero.
+  /// Returns SO2FromComplexError::kCloseToZero if complex is close to zero.
   ///
-  static SOPHUS_FUNC optional<SO2<Scalar, Options>> tryFromComplex(
-      Point const& complex) {
+  static SOPHUS_FUNC Expected<SO2<Scalar, Options>, SO2FromComplexError>
+  tryFromComplex(Point const& complex) {
     SO2 so2(Uninitialized{});
     if (so2.trySetComplex(complex)) {
       return so2;
     }
-    return nullopt;
+    return SO2FromComplexError::kCloseToZero;
   }
 
   /// Factory from complex number.
   ///
-  /// Returns nullopt if ``real`` or ``imag`` is close to zero.
+  /// Returns SO2FromComplexError::kCloseToZero if real or imag are close to
+  /// zero.
   ///
-  static SOPHUS_FUNC optional<SO2<Scalar, Options>> tryFromQuaternion(
-      Scalar real, Scalar imag) {
+  static SOPHUS_FUNC Expected<SO2<Scalar, Options>, SO2FromComplexError>
+  tryFromQuaternion(Scalar real, Scalar imag) {
     return tryFromComplex(Point(real, imag));
   }
 

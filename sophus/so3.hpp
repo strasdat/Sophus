@@ -48,6 +48,9 @@ struct traits<Map<Sophus::SO3<Scalar_> const, Options>>
 
 namespace Sophus {
 
+enum class SO3FromMatrixError { kNotOrthogonal, kNegativeDeterminant };
+enum class SO3FromQuaternionError { kCloseToZero };
+
 /// SO3 base type - implements SO3 class but is storage agnostic.
 ///
 /// SO(3) is the group of rotations in 3d. As a matrix group, it is the set of
@@ -410,15 +413,15 @@ class SO3Base {
 
   /// Takes in quaternion, and normalizes it.
   ///
-  /// Returns false, if ``quaternion`` is close to zero.
+  /// Returns SO3FromQuaternionError, if ``quaternion`` is close to zero.
   ///
-  SOPHUS_FUNC bool trySetQuaternion(
+  SOPHUS_FUNC Expected<bool, SO3FromQuaternionError> trySetQuaternion(
       Eigen::Quaternion<Scalar> const& quaternion) {
     unit_quaternion_nonconst() = quaternion;
     Scalar length = unit_quaternion_nonconst().norm();
     if (!(length >= Constants<Scalar>::epsilon())) {
       // If quaternion contains NANs, we end up here as well.
-      return false;
+      return SO3FromQuaternionError::kCloseToZero;
     }
     unit_quaternion_nonconst().coeffs() /= length;
     return true;
@@ -757,30 +760,33 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns nullopt if R is not a rotation matrix.
+  /// Returns SO3FromMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC optional<SO3<Scalar, Options>> tryFromMatrix(
-      Transformation const& R) {
-    if (!isOrthogonal(R) || !(R.determinant() > Scalar(0))) {
+  static SOPHUS_FUNC Expected<SO3<Scalar, Options>, SO3FromMatrixError>
+  tryFromMatrix(Transformation const& R) {
+    if (!isOrthogonal(R)) {
       // If R contains NANs, we end up here as well.
-      return nullopt;
+      return SO3FromMatrixError::kNotOrthogonal;
+    }
+    if (!(R.determinant() > Scalar(0))) {
+      return SO3FromMatrixError::kNegativeDeterminant;
     }
     SO3 so3(Uninitialized{});
     so3.unit_quaternion_nonconst() = R;
-    return optional<SO3<Scalar, Options>>(so3);
+    return so3;
   }
 
   /// Factory from quaternion.
   ///
-  /// Returns nullopt if ``quaternion`` is close to zero.
+  /// Returns SO3FromQuaternionError if ``quaternion`` is close to zero.
   ///
-  static SOPHUS_FUNC optional<SO3<Scalar, Options>> tryFromQuaternion(
-      Eigen::Quaternion<Scalar> const& quaternion) {
+  static SOPHUS_FUNC Expected<SO3<Scalar, Options>, SO3FromQuaternionError>
+  tryFromQuaternion(Eigen::Quaternion<Scalar> const& quaternion) {
     SO3 so3(Uninitialized{});
     if (so3.trySetQuaternion(quaternion)) {
       return so3;
     }
-    return nullopt;
+    return SO3FromQuaternionError::kCloseToZero;
   }
 
   /// vee-operator

@@ -502,7 +502,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// plus logarithm of scale) and returns the corresponding element of the
   /// group RxSO3.
   ///
-  /// To be more specific, thixs function computes ``expmat(hat(omega))``
+  /// To be more specific, this function computes ``expmat(hat(omega))``
   /// with ``expmat(.)`` being the matrix exponential and ``hat(.)`` being the
   /// hat()-operator of RSO3.
   ///
