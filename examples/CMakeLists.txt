@@ -4,5 +4,5 @@ find_package( Ceres 1.6.0 QUIET )
 
 FOREACH(example_src ${EXAMPLE_SOURCES})
   ADD_EXECUTABLE( ${example_src} ${example_src}.cpp)
-  TARGET_LINK_LIBRARIES( ${example_src} sophus )
+  TARGET_LINK_LIBRARIES( ${example_src} sophus fmt)
 ENDFOREACH(example_src)

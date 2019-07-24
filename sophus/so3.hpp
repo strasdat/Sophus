@@ -261,7 +261,7 @@ class SO3Base {
       /// If quaternion is normalized and n=0, then w should be 1;
       /// w=0 should never happen here!
       SOPHUS_ENSURE(abs(w) >= Constants<Scalar>::epsilon(),
-                    "Quaternion ({}) should be normalized!",
+                    "Quaternion (%) should be normalized!",
                     unit_quaternion().coeffs().transpose());
       Scalar squared_w = w * w;
       two_atan_nbyw_by_n =
@@ -292,7 +292,7 @@ class SO3Base {
   SOPHUS_FUNC void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
     SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
-                  "Quaternion ({}) should not be close to zero!",
+                  "Quaternion (%) should not be close to zero!",
                   unit_quaternion_nonconst().coeffs().transpose());
     unit_quaternion_nonconst().coeffs() /= length;
   }
@@ -397,13 +397,31 @@ class SO3Base {
     return *this;
   }
 
+  /// ``SO3::setQuaternion`` is deprecated. Use trySetQuaternion() instead!
   /// Takes in quaternion, and normalizes it.
   ///
   /// Precondition: The quaternion must not be close to zero.
   ///
-  SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quaternion) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setQuaternion(
+      Eigen::Quaternion<Scalar> const& quaternion) {
     unit_quaternion_nonconst() = quaternion;
     normalize();
+  }
+
+  /// Takes in quaternion, and normalizes it.
+  ///
+  /// Returns false, if ``quaternion`` is close to zero.
+  ///
+  SOPHUS_FUNC bool trySetQuaternion(
+      Eigen::Quaternion<Scalar> const& quaternion) {
+    unit_quaternion_nonconst() = quaternion;
+    Scalar length = unit_quaternion_nonconst().norm();
+    if (!(length >= Constants<Scalar>::epsilon())) {
+      // If quaternion contains NANs, we end up here as well.
+      return false;
+    }
+    unit_quaternion_nonconst().coeffs() /= length;
+    return true;
   }
 
   /// Accessor of unit quaternion.
@@ -458,24 +476,30 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   SOPHUS_FUNC SO3(SO3Base<OtherDerived> const& other)
       : unit_quaternion_(other.unit_quaternion()) {}
 
+  /// This SO3 constructor is deprecated. Use tryFromMatrix() or
+  /// fitToSO3() instead!
   /// Constructor from rotation matrix
   ///
   /// Precondition: rotation matrix needs to be orthogonal with determinant
   /// of 1.
   ///
-  SOPHUS_FUNC SO3(Transformation const& R) : unit_quaternion_(R) {
-    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}",
+  SOPHUS_DEPRECATED SOPHUS_FUNC SO3(Transformation const& R)
+      : unit_quaternion_(R) {
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %",
                   R * R.transpose());
-    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: {}",
+    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
                   R.determinant());
   }
 
+  /// This SO3 constructor is deprecated. Use tryFromQuaternion()
+  /// instead!
   /// Constructor from quaternion
   ///
   /// Precondition: quaternion must not be close to zero.
   ///
   template <class D>
-  SOPHUS_FUNC explicit SO3(Eigen::QuaternionBase<D> const& quat)
+  SOPHUS_DEPRECATED SOPHUS_FUNC explicit SO3(
+      Eigen::QuaternionBase<D> const& quat)
       : unit_quaternion_(quat) {
     static_assert(
         std::is_same<typename Eigen::QuaternionBase<D>::Scalar, Scalar>::value,
@@ -608,7 +632,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
                          imag_factor * omega.y(), imag_factor * omega.z());
     SOPHUS_ENSURE(abs(q.unit_quaternion().squaredNorm() - Scalar(1)) <
                       Sophus::Constants<Scalar>::epsilon(),
-                  "SO3::exp failed! omega: {}, real: {}, img: {}",
+                  "SO3::exp failed! omega: %, real: %, img: %",
                   omega.transpose(), real_factor, imag_factor);
     return q;
   }
@@ -731,6 +755,34 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     return SO3::exp(uniform(generator) * axis);
   }
 
+  /// Factory from rotation matrix.
+  ///
+  /// Returns nullopt if R is not a rotation matrix.
+  ///
+  static SOPHUS_FUNC optional<SO3<Scalar, Options>> tryFromMatrix(
+      Transformation const& R) {
+    if (!isOrthogonal(R) || !(R.determinant() > Scalar(0))) {
+      // If R contains NANs, we end up here as well.
+      return nullopt;
+    }
+    SO3 so3(Uninitialized{});
+    so3.unit_quaternion_nonconst() = R;
+    return optional<SO3<Scalar, Options>>(so3);
+  }
+
+  /// Factory from quaternion.
+  ///
+  /// Returns nullopt if ``quaternion`` is close to zero.
+  ///
+  static SOPHUS_FUNC optional<SO3<Scalar, Options>> tryFromQuaternion(
+      Eigen::Quaternion<Scalar> const& quaternion) {
+    SO3 so3(Uninitialized{});
+    if (so3.trySetQuaternion(quaternion)) {
+      return so3;
+    }
+    return nullopt;
+  }
+
   /// vee-operator
   ///
   /// It takes the 3x3-matrix representation ``Omega`` and maps it to the
@@ -756,6 +808,9 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   }
 
   QuaternionMember unit_quaternion_;
+
+ private:
+  SOPHUS_FUNC explicit SO3(Uninitialized) {}
 };
 
 }  // namespace Sophus

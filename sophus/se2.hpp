@@ -304,33 +304,62 @@ class SE2Base {
     return so2().matrix();
   }
 
+  /// ``SE2::setComplex`` is deprecated. Use
+  /// trySetRotationFromComplex() instead!
   /// Takes in complex number, and normalizes it.
   ///
   /// Precondition: The complex number must not be close to zero.
   ///
-  SOPHUS_FUNC void setComplex(Sophus::Vector2<Scalar> const& complex) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setComplex(
+      Sophus::Vector2<Scalar> const& complex) {
     return so2().setComplex(complex);
   }
 
-  /// Sets ``so3`` using ``rotation_matrix``.
+  /// ``SE2::setRotationMatrix`` is deprecated. Use
+  /// trySetRotationFromMatrix() instead!
+  /// Sets ``so2`` using ``rotation_matrix``.
   ///
   /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   ///
-  SOPHUS_FUNC void setRotationMatrix(Matrix<Scalar, 2, 2> const& R) {
-    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}", R);
-    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: {}",
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setRotationMatrix(
+      Matrix2<Scalar> const& R) {
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
+    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
                   R.determinant());
     typename SO2Type::ComplexT const complex(Scalar(0.5) * (R(0, 0) + R(1, 1)),
                                              Scalar(0.5) * (R(1, 0) - R(0, 1)));
     so2().setComplex(complex);
   }
 
-  /// Mutator of SO3 group.
+  /// Takes in complex number, and normalizes it.
+  ///
+  /// Returns false, if ``complex`` is close to zero.
+  ///
+  SOPHUS_FUNC bool trySetRotationFromComplex(
+      Sophus::Vector2<Scalar> const& complex) {
+    return so2().trySetComplex(complex);
+  }
+
+  /// Sets ``so2`` using ``R``.
+  ///
+  /// Returns false if ``R`` is not a rotation matrix.
+  ///
+  SOPHUS_FUNC bool trySetRotationFromMatrix(Matrix2<Scalar> const& R) {
+    if (!isOrthogonal(R) || !(R.determinant() > Scalar(0))) {
+      // If R contains NANs, we end up here as well.
+      return false;
+    }
+    so2().setComplex(Vector2<Scalar>(Scalar(0.5) * (R(0, 0) + R(1, 1)),
+                                     Scalar(0.5) * (R(1, 0) - R(0, 1))));
+    return true;
+  }
+
+  /// Mutator of 2 group.
   ///
   SOPHUS_FUNC
   SO2Type& so2() { return static_cast<Derived*>(this)->so2(); }
 
-  /// Accessor of SO3 group.
+  /// Accessor of SO2 group.
   ///
   SOPHUS_FUNC
   SO2Type const& so2() const {
@@ -396,7 +425,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
                   "must be same Scalar type");
   }
 
-  /// Constructor from SO3 and translation vector
+  /// Constructor from SO2 and translation vector
   ///
   template <class OtherDerived, class D>
   SOPHUS_FUNC SE2(SO2Base<OtherDerived> const& so2,
@@ -408,12 +437,14 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
                   "must be same Scalar type");
   }
 
+  /// This SE2 constructor is deprecated. Use
+  /// tryFromMatrixAndTranslation() instead.
   /// Constructor from rotation matrix and translation vector
   ///
   /// Precondition: Rotation matrix needs to be orthogonal with determinant
   /// of 1.
   ///
-  SOPHUS_FUNC
+  SOPHUS_DEPRECATED SOPHUS_FUNC
   SE2(typename SO2<Scalar>::Transformation const& rotation_matrix,
       Point const& translation)
       : so2_(rotation_matrix), translation_(translation) {}
@@ -423,20 +454,83 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   SOPHUS_FUNC SE2(Scalar const& theta, Point const& translation)
       : so2_(theta), translation_(translation) {}
 
+  /// This SE2 constructor is deprecated. Use
+  /// tryFromComplexAndTranslation() instead.
   /// Constructor from complex number and translation vector
   ///
   /// Precondition: ``complex`` must not be close to zero.
-  SOPHUS_FUNC SE2(Vector2<Scalar> const& complex, Point const& translation)
+  SOPHUS_DEPRECATED SOPHUS_FUNC SE2(Vector2<Scalar> const& complex,
+                                    Point const& translation)
       : so2_(complex), translation_(translation) {}
 
+  /// This SE2 constructor is deprecated. Use tryFromMatrix() or
+  /// fitToSE2() instead.
   /// Constructor from 3x3 matrix
   ///
   /// Precondition: Rotation matrix needs to be orthogonal with determinant
   /// of 1. The last row must be ``(0, 0, 1)``.
   ///
-  SOPHUS_FUNC explicit SE2(Transformation const& T)
+  SOPHUS_DEPRECATED SOPHUS_FUNC explicit SE2(Transformation const& T)
       : so2_(T.template topLeftCorner<2, 2>().eval()),
         translation_(T.template block<2, 1>(0, 2)) {}
+
+  /// Factory from 3x3 matrix.
+  ///
+  /// Returns nullopt if ``T`` is not a pose matrix of the form
+  ///
+  /// ```
+  ///    | R00 R01 t0 |
+  ///    | R10 R11 t1 |
+  ///    |  0   0   1 |
+  /// ```
+  ///
+  /// with ``R`` being a rotation matrix.
+  ///
+  static SOPHUS_FUNC optional<SE2<Scalar, Options>> tryFromMatrix(
+      Matrix3<Scalar> const& T) {
+    if ((T.row(2) - Matrix<Scalar, 1, 3>(Scalar(0), Scalar(0), Scalar(1)))
+            .squaredNorm() >= Constants<Scalar>::epsilon()) {
+      return nullopt;
+    }
+    SE2<Scalar, Options> se2(Uninitialized{});
+    optional<SO2<Scalar, Options>> maybe_so2 =
+        SO2<Scalar, Options>::tryFromMatrix(T.template topLeftCorner<2, 2>());
+    if (!maybe_so2) {
+      return nullopt;
+    }
+    se2.so2() = *maybe_so2;
+    se2.translation() = T.template block<2, 1>(0, 2);
+    return optional<SE2<Scalar, Options>>(se2);
+  }
+
+  /// Factory from matrix and translation.
+  ///
+  /// Returns nullopt if ``R`` is not a rotation matrix.
+  ///
+  static SOPHUS_FUNC optional<SE2<Scalar, Options>> tryFromMatrixAndTranslation(
+      Matrix2<Scalar> const& R, Point const& translation) {
+    SE2 se2(Uninitialized{});
+    if (se2.trySetRotationFromMatrix(R)) {
+      se2.translation() = translation;
+      return optional<SE2<Scalar, Options>>(se2);
+    }
+    return nullopt;
+  }
+
+  /// Factory from complex and translation.
+  ///
+  /// Returns nullopt if ``complex`` is close to zero.
+  ///
+  static SOPHUS_FUNC optional<SE2<Scalar, Options>>
+  tryFromComplexAndTranslation(Vector2<Scalar> const& complex,
+                               Point const& translation) {
+    SE2 se2(Uninitialized{});
+    if (se2.trySetRotationFromComplex(complex)) {
+      se2.translation() = translation;
+      return optional<SE2<Scalar, Options>>(se2);
+    }
+    return nullopt;
+  }
 
   /// This provides unsafe read/write access to internal data. SO(2) is
   /// represented by a complex number (two parameters). When using direct write
@@ -455,11 +549,11 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
     return so2_.data();
   }
 
-  /// Accessor of SO3
+  /// Accessor of SO2
   ///
   SOPHUS_FUNC SO2Member& so2() { return so2_; }
 
-  /// Mutator of SO3
+  /// Mutator of SO2
   ///
   SOPHUS_FUNC SO2Member const& so2() const { return so2_; }
 
@@ -713,7 +807,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     SOPHUS_ENSURE(
         Omega.row(2).template lpNorm<1>() < Constants<Scalar>::epsilon(),
-        "Omega: \n{}", Omega);
+        "Omega: \n%", Omega);
     Tangent upsilon_omega;
     upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
     upsilon_omega[2] = SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
@@ -723,6 +817,9 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
  protected:
   SO2Member so2_;
   TranslationMember translation_;
+
+ private:
+  SOPHUS_FUNC explicit SE2(Uninitialized) {}
 };
 
 template <class Scalar, int Options>
@@ -769,11 +866,11 @@ class Map<Sophus::SE2<Scalar_>, Options>
       : so2_(coeffs),
         translation_(coeffs + Sophus::SO2<Scalar>::num_parameters) {}
 
-  /// Mutator of SO3
+  /// Mutator of SO2
   ///
   SOPHUS_FUNC Map<Sophus::SO2<Scalar>, Options>& so2() { return so2_; }
 
-  /// Accessor of SO3
+  /// Accessor of SO2
   ///
   SOPHUS_FUNC Map<Sophus::SO2<Scalar>, Options> const& so2() const {
     return so2_;
