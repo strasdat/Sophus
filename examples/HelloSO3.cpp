@@ -18,11 +18,9 @@ int main() {
             << (R1 * R2 * R3).matrix() << std::endl;
   std::cout << std::endl;
 
-  // Creating vectors is the same as in Eigen
+  // Rotation matrices can act on vectors
   Eigen::Vector3d x;
   x << 0.0, 0.0, 1.0;
-
-  // Rotation matrices can act on vectors
   std::cout << "Rotation matrices can act on vectors" << std::endl;
   std::cout << "x\n" << x << std::endl;
   std::cout << "R2*x\n" << R2 * x << std::endl;
@@ -34,7 +32,7 @@ int main() {
   std::cout << "R1 in matrix form:\n" << R1.matrix() << std::endl;
   std::cout << "R1 in unit quaternion form:\n"
             << R1.unit_quaternion().coeffs() << std::endl;
-  // Note that the order of coefficiences of Eigen's quaternion class is (imag0,
-  // imag1, imag2, real)
+  // Note that the order of coefficiences of Eigen's quaternion class is
+  // (imag0, imag1, imag2, real)
   std::cout << std::endl;
 }
