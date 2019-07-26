@@ -37,7 +37,7 @@ enum class RotationMatrixError {
 };
 
 /// Takes in arbitrary square matrix and returns true if it is
-/// "scaled-orthogonal".
+/// "scaled-orthogonal" with positive determinant.
 ///
 template <class D>
 SOPHUS_FUNC Expected<bool, ScaledRotationMatrixError>
