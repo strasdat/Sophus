@@ -236,6 +236,8 @@ using Line2 = Eigen::Hyperplane<T, 2>;
 using Line2d = Line2<double>;
 using Line2f = Line2<float>;
 
+/// Tag
+struct Uninitialized {};
 }  // namespace Sophus
 
 #endif  // SOPHUS_TYPES_HPP

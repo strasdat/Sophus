@@ -104,28 +104,54 @@ class Tests {
 
     Eigen::Matrix<Scalar, 4, 1> raw2;
     raw2 << Scalar(1), Scalar(0), Scalar(3), Scalar(1);
-    Eigen::Map<SE2Type> map_of_se3(raw.data());
-    map_of_se3.setComplex(raw2.template head<2>());
-    map_of_se3.translation() = raw2.template tail<2>();
-    SOPHUS_TEST_APPROX(passed, map_of_se3.unit_complex().eval(),
+    Eigen::Map<SE2Type> map_of_se2(raw.data());
+    map_of_se2.setComplex(raw2.template head<2>());
+    map_of_se2.translation() = raw2.template tail<2>();
+    SOPHUS_TEST_APPROX(passed, map_of_se2.unit_complex().eval(),
                        raw2.template head<2>().eval(),
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_APPROX(passed, map_of_se3.translation().eval(),
+    SOPHUS_TEST_APPROX(passed, map_of_se2.translation().eval(),
                        raw2.template tail<2>().eval(),
                        Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, map_of_se3.unit_complex().data(), raw.data());
-    SOPHUS_TEST_EQUAL(passed, map_of_se3.translation().data(), raw.data() + 2);
-    SOPHUS_TEST_NEQ(passed, map_of_se3.unit_complex().data(), raw2.data());
-    Eigen::Map<SE2Type> shallow_copy = map_of_se3;
+    SOPHUS_TEST_EQUAL(passed, map_of_se2.unit_complex().data(), raw.data());
+    SOPHUS_TEST_EQUAL(passed, map_of_se2.translation().data(), raw.data() + 2);
+    SOPHUS_TEST_NEQ(passed, map_of_se2.unit_complex().data(), raw2.data());
+
+    auto is_set = map_of_se2.trySetRotationFromComplex(raw2.template head<2>());
+    SOPHUS_TEST(passed, is_set);
+    SOPHUS_TEST_APPROX(passed, map_of_se2.unit_complex().eval(),
+                       raw2.template head<2>().eval(),
+                       Constants<Scalar>::epsilon());
+    Eigen::Map<SE2Type> shallow_copy = map_of_se2;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_complex().eval(),
-                      map_of_se3.unit_complex().eval());
+                      map_of_se2.unit_complex().eval());
     SOPHUS_TEST_EQUAL(passed, shallow_copy.translation().eval(),
-                      map_of_se3.translation().eval());
-    Eigen::Map<SE2Type> const const_map_of_se2 = map_of_se3;
+                      map_of_se2.translation().eval());
+    Eigen::Map<SE2Type> const const_map_of_se2 = map_of_se2;
     SOPHUS_TEST_EQUAL(passed, const_map_of_se2.unit_complex().eval(),
-                      map_of_se3.unit_complex().eval());
+                      map_of_se2.unit_complex().eval());
     SOPHUS_TEST_EQUAL(passed, const_map_of_se2.translation().eval(),
-                      map_of_se3.translation().eval());
+                      map_of_se2.translation().eval());
+
+    is_set = map_of_se2.trySetRotationFromComplex(
+        Sophus::Vector2<Scalar>(Scalar(0), Scalar(0)));
+    SOPHUS_TEST(passed, !is_set);
+
+    Matrix2<Scalar> R = se2_vec_.front().rotationMatrix();
+    auto is_set2 = map_of_se2.trySetRotationFromMatrix(R);
+    SOPHUS_TEST(passed, is_set2);
+    SOPHUS_TEST_APPROX(passed, map_of_se2.rotationMatrix(), R,
+                       Constants<Scalar>::epsilon());
+    R(0, 0) *= Scalar(-1);
+    is_set2 = map_of_se2.trySetRotationFromMatrix(R);
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed,
+                is_set2.error() == SO2FromMatrixError::kNegativeDeterminant);
+
+    R(0, 0) *= Scalar(2);
+    is_set2 = map_of_se2.trySetRotationFromMatrix(R);
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed, is_set2.error() == SO2FromMatrixError::kNotOrthogonal);
 
     SE2Type const const_se2(raw2.template head<2>().eval(),
                             raw2.template tail<2>().eval());
@@ -183,6 +209,29 @@ class Tests {
                        se2.matrix(), Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, SE2Type(se2.matrix()).matrix(), se2.matrix(),
                        Constants<Scalar>::epsilon());
+
+    Matrix2<Scalar> R = se2.so2().matrix();
+    auto se2_from_mat = SE2Type::tryFromMatrixAndTranslation(R, translation);
+    SOPHUS_TEST(passed, se2_from_mat);
+    SOPHUS_TEST_APPROX(passed, se2_from_mat->rotationMatrix(), R,
+                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, se2_from_mat->translation(), translation,
+                       Constants<Scalar>::epsilon());
+    R(0, 0) = Scalar(0);
+    se2_from_mat = SE2Type::tryFromMatrixAndTranslation(R, translation);
+    SOPHUS_TEST(passed, !se2_from_mat);
+
+    Vector2<Scalar> c = se2.so2().unit_complex();
+    auto se2_from_complex =
+        SE2Type::tryFromComplexAndTranslation(c, translation);
+    SOPHUS_TEST(passed, se2_from_complex);
+    SOPHUS_TEST_APPROX(passed, se2_from_complex->unit_complex(), c,
+                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, se2_from_complex->translation(), translation,
+                       Constants<Scalar>::epsilon());
+    se2_from_complex = SE2Type::tryFromComplexAndTranslation(
+        Vector2<Scalar>(Scalar(0), Scalar(0)), translation);
+    SOPHUS_TEST(passed, !se2_from_complex);
 
     return passed;
   }

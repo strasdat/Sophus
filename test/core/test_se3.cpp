@@ -107,6 +107,7 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, map_of_se3.translation().data(), raw.data() + 4);
     SOPHUS_TEST_NEQ(passed, map_of_se3.unit_quaternion().coeffs().data(),
                     quat.coeffs().data());
+
     Eigen::Map<SE3Type> shallow_copy = map_of_se3;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_quaternion().coeffs().eval(),
                       map_of_se3.unit_quaternion().coeffs().eval());
@@ -152,6 +153,33 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, SE3Type::rotZ(Scalar(1.1)).matrix(),
                       SE3Type::exp(t).matrix());
 
+    auto is_set = map_of_se3.trySetRotationFromQuaternion(quat);
+    SOPHUS_TEST(passed, is_set);
+    SOPHUS_TEST_APPROX(passed, map_of_se3.unit_quaternion().coeffs().eval(),
+                       quat.coeffs().eval(), Constants<Scalar>::epsilon());
+
+    is_set = map_of_se3.trySetRotationFromQuaternion(
+        Eigen::Quaternion<Scalar>(Scalar(0), Scalar(0), Scalar(0), Scalar(0)));
+    SOPHUS_TEST(passed, !is_set);
+
+    Matrix3<Scalar> R = se3_vec_.front().rotationMatrix();
+    auto is_set2 = map_of_se3.trySetRotationFromMatrix(R);
+    SOPHUS_TEST(passed, is_set2);
+    SOPHUS_TEST_APPROX(passed, map_of_se3.rotationMatrix(), R,
+                       Constants<Scalar>::epsilon());
+    Vector3<Scalar> tmp = R.col(0);
+    R.col(0) = R.col(1);
+    R.col(1) = tmp;
+    is_set2 = map_of_se3.trySetRotationFromMatrix(R);
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed,
+                is_set2.error() == SO3FromMatrixError::kNegativeDeterminant);
+
+    R(1, 1) = Scalar(2);
+    is_set2 = map_of_se3.trySetRotationFromMatrix(R);
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed, is_set2.error() == SO3FromMatrixError::kNotOrthogonal);
+
     return passed;
   }
 
@@ -184,6 +212,30 @@ class Tests {
                        se3.matrix(), Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, SE3Type(se3.matrix()).matrix(), se3.matrix(),
                        Constants<Scalar>::epsilon());
+
+    Matrix3<Scalar> R = se3.so3().matrix();
+    auto se3_from_mat = SE3Type::tryFromMatrixAndTranslation(R, translation);
+    SOPHUS_TEST(passed, se3_from_mat);
+    SOPHUS_TEST_APPROX(passed, se3_from_mat->rotationMatrix(), R,
+                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, se3_from_mat->translation(), translation,
+                       Constants<Scalar>::epsilon());
+    R(0, 0) = Scalar(0);
+    se3_from_mat = SE3Type::tryFromMatrixAndTranslation(R, translation);
+    SOPHUS_TEST(passed, !se3_from_mat);
+
+    Eigen::Quaternion<Scalar> quat = se3.so3().unit_quaternion();
+    auto se3_from_quat =
+        SE3Type::tryFromQuaternionAndTranslation(quat, translation);
+    SOPHUS_TEST(passed, se3_from_quat);
+    SOPHUS_TEST_APPROX(passed, se3_from_quat->unit_quaternion().coeffs(),
+                       quat.coeffs(), Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, se3_from_quat->translation(), translation,
+                       Constants<Scalar>::epsilon());
+    se3_from_quat = SE3Type::tryFromQuaternionAndTranslation(
+        Eigen::Quaternion<Scalar>(Scalar(0), Scalar(0), Scalar(0), Scalar(0)),
+        translation);
+    SOPHUS_TEST(passed, !se3_from_quat);
 
     return passed;
   }

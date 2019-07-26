@@ -41,8 +41,13 @@ bool testSmokeDetails() {
   Matrix<float, 1, 2> expected_row(1, 7);
   SOPHUS_TEST_EQUAL(passed, row, expected_row);
 
-  optional<int> opt(nullopt);
+  enum class Error { kError };
+  Expected<int, Error> opt(Error::kError);
   SOPHUS_TEST(passed, !opt);
+  SOPHUS_TEST(passed, opt.error() == Error::kError);
+  Expected<int, Error> opt2(2);
+  SOPHUS_TEST(passed, opt2);
+  SOPHUS_TEST(passed, *opt2 == 2);
 
   return passed;
 }

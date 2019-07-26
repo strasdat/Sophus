@@ -273,11 +273,11 @@ class SE3Base {
   /// ``o`` a 3-column vector of zeros.
   ///
   SOPHUS_FUNC Transformation matrix() const {
-    Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<3, 4>() = matrix3x4();
-    homogenious_matrix.row(3) =
+    Transformation homogeneous_matrix;
+    homogeneous_matrix.template topLeftCorner<3, 4>() = matrix3x4();
+    homogeneous_matrix.row(3) =
         Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0), Scalar(0), Scalar(1));
-    return homogenious_matrix;
+    return homogeneous_matrix;
   }
 
   /// Returns the significant first three rows of the matrix above.
@@ -376,23 +376,56 @@ class SE3Base {
     return static_cast<const Derived*>(this)->so3();
   }
 
+  /// ``SE3::setQuaternion`` is deprecated. Use
+  /// trySetRotationFromQuaternion() instead!
   /// Takes in quaternion, and normalizes it.
   ///
   /// Precondition: The quaternion must not be close to zero.
   ///
-  SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quat) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setQuaternion(
+      Eigen::Quaternion<Scalar> const& quat) {
     so3().setQuaternion(quat);
   }
 
-  /// Sets ``so3`` using ``rotation_matrix``.
+  /// Takes in quaternion, and normalizes it.
+  ///
+  /// Returns false, if ``quaternion`` is close to zero.
+  ///
+  SOPHUS_FUNC Expected<bool, SO3FromQuaternionError>
+  trySetRotationFromQuaternion(Eigen::Quaternion<Scalar> const& quaternion) {
+    return so3().trySetQuaternion(quaternion);
+  }
+
+  /// ``SE3::setRotationMatrix`` is deprecated. Use
+  /// trySetRotationFromMatrix() instead!
+  /// Sets ``so3`` using ``R``.
   ///
   /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   ///
-  SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar> const& R) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setRotationMatrix(
+      Matrix3<Scalar> const& R) {
     SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
     SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
                   R.determinant());
     so3().setQuaternion(Eigen::Quaternion<Scalar>(R));
+  }
+
+  /// Sets ``so3`` using ``R``.
+  ///
+  /// Returns SO3FromMatrixError if ``R`` is not a rotation matrix.
+  ///
+  SOPHUS_FUNC Expected<bool, SO3FromMatrixError> trySetRotationFromMatrix(
+      Matrix3<Scalar> const& R) {
+    if (!isOrthogonal(R)) {
+      // If R contains NANs, we end up here as well.
+      return SO3FromMatrixError::kNotOrthogonal;
+    }
+    if (!(R.determinant() > Scalar(0))) {
+      return SO3FromMatrixError::kNegativeDeterminant;
+    }
+    auto is_set = so3().trySetQuaternion(Eigen::Quaternion<Scalar>(R));
+    SOPHUS_ENSURE(is_set, "Logic Error");
+    return true;
   }
 
   /// Returns internal parameters of SE(3).
@@ -474,23 +507,28 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
                   "must be same Scalar type");
   }
 
+  /// This ``SE3`` constructior is deprecated.  Use
+  /// tryFromMatrixAndTranslation() instead.
   /// Constructor from rotation matrix and translation vector
   ///
   /// Precondition: Rotation matrix needs to be orthogonal with determinant
   ///               of 1.
   ///
-  SOPHUS_FUNC
-  SE3(Matrix3<Scalar> const& rotation_matrix, Point const& translation)
+  SOPHUS_DEPRECATED SOPHUS_FUNC SE3(Matrix3<Scalar> const& rotation_matrix,
+                                    Point const& translation)
       : so3_(rotation_matrix), translation_(translation) {}
 
+  /// This ``SE3`` constructior is deprecated. Use
+  /// tryFromQuaternionAndTranslation() instead.
   /// Constructor from quaternion and translation vector.
   ///
   /// Precondition: ``quaternion`` must not be close to zero.
   ///
-  SOPHUS_FUNC SE3(Eigen::Quaternion<Scalar> const& quaternion,
-                  Point const& translation)
+  SOPHUS_DEPRECATED SOPHUS_FUNC SE3(Eigen::Quaternion<Scalar> const& quaternion,
+                                    Point const& translation)
       : so3_(quaternion), translation_(translation) {}
 
+  /// This ``SE3`` constructior is deprecated. Use fitToSE3() instead.
   /// Constructor from 4x4 matrix
   ///
   /// Precondition: Rotation matrix needs to be orthogonal with determinant
@@ -766,7 +804,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     Vector3<Scalar> const omega = a.template tail<3>();
 
     Scalar theta;
-    SO3<Scalar> const so3 = SO3<Scalar>::expAndTheta(omega, &theta);
+    SO3<Scalar, Options> const so3 = SO3<Scalar>::expAndTheta(omega, &theta);
     Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
     Matrix3<Scalar> const Omega_sq = Omega * Omega;
     Matrix3<Scalar> V;
@@ -780,10 +818,10 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
            (Scalar(1) - cos(theta)) / (theta_sq)*Omega +
            (theta - sin(theta)) / (theta_sq * theta) * Omega_sq);
     }
-    return SE3<Scalar>(so3, V * a.template head<3>());
+    return SE3<Scalar, Options>(so3, V * a.template head<3>());
   }
 
-  /// Returns closest SE3 given arbirary 4x4 matrix.
+  /// Returns closest SE3 given arbitrary 4x4 matrix.
   ///
   template <class S = Scalar>
   SOPHUS_FUNC static enable_if_t<std::is_floating_point<S>::value, SE3>
@@ -916,11 +954,11 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   ///
   template <class T0, class T1, class T2>
   static SOPHUS_FUNC SE3 trans(T0 const& x, T1 const& y, T2 const& z) {
-    return SE3(SO3<Scalar>(), Vector3<Scalar>(x, y, z));
+    return SE3(SO3<Scalar, Options>(), Vector3<Scalar>(x, y, z));
   }
 
   static SOPHUS_FUNC SE3 trans(Vector3<Scalar> const& xyz) {
-    return SE3(SO3<Scalar>(), xyz);
+    return SE3(SO3<Scalar, Options>(), xyz);
   }
 
   /// Construct x-axis translation.
@@ -939,6 +977,38 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   ///
   static SOPHUS_FUNC SE3 transZ(Scalar const& z) {
     return SE3::trans(Scalar(0), Scalar(0), z);
+  }
+
+  /// Factory from matrix and translation.
+  ///
+  /// Returns SO3FromMatrixError if ``R`` is not a rotation matrix.
+  ///
+  static SOPHUS_FUNC Expected<SE3<Scalar, Options>, SO3FromMatrixError>
+  tryFromMatrixAndTranslation(Matrix3<Scalar> const& R,
+                              Point const& translation) {
+    SE3 se3(Uninitialized{});
+    auto is_set = se3.trySetRotationFromMatrix(R);
+    if (is_set) {
+      se3.translation() = translation;
+      return se3;
+    }
+    return is_set.error();
+  }
+
+  /// Factory from quaternion and translation.
+  ///
+  /// Returns SO3FromQuaternionError if ``R`` is not a rotation matrix.
+  ///
+  static SOPHUS_FUNC Expected<SE3<Scalar, Options>, SO3FromQuaternionError>
+  tryFromQuaternionAndTranslation(Eigen::Quaternion<Scalar> const& q,
+                                  Point const& translation) {
+    SE3 se3(Uninitialized{});
+    auto is_set = se3.trySetRotationFromQuaternion(q);
+    if (is_set) {
+      se3.translation() = translation;
+      return se3;
+    }
+    return is_set.error();
   }
 
   /// vee-operator
@@ -966,6 +1036,9 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
  protected:
   SO3Member so3_;
   TranslationMember translation_;
+
+ private:
+  SOPHUS_FUNC explicit SE3(Uninitialized) {}
 };
 
 template <class Scalar, int Options>

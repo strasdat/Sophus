@@ -30,7 +30,9 @@ SO2<T> SO2FromNormal(Vector2<T> normal_foo) {
   SOPHUS_ENSURE(normal_foo.squaredNorm() > Constants<T>::epsilon(), "%",
                 normal_foo.transpose());
   normal_foo.normalize();
-  return SO2<T>(normal_foo.y(), -normal_foo.x());
+  auto so2 = SO2<T>::tryFromComplex(normal_foo.y(), -normal_foo.x());
+  SOPHUS_ENSURE(so2, "logic error");
+  return *so2;
 }
 
 /// Takes in a rotation ``R_foo_plane`` and returns the corresponding plane

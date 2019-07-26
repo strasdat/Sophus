@@ -27,23 +27,17 @@ SOPHUS_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
 }
 
 /// Takes in arbitrary square matrix and returns true if it is
-/// "scaled-orthogonal" with positive determinant.
+/// "scaled-orthogonal".
 ///
 template <class D>
-SOPHUS_FUNC bool isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
+SOPHUS_FUNC bool isScaledOrthogonal(Eigen::MatrixBase<D> const& sR) {
   using Scalar = typename D::Scalar;
   static int const N = D::RowsAtCompileTime;
   static int const M = D::ColsAtCompileTime;
   using std::pow;
   using std::sqrt;
 
-  Scalar det = sR.determinant();
-
-  if (det <= Scalar(0)) {
-    return false;
-  }
-
-  Scalar scale_sqr = pow(det, Scalar(2. / N));
+  Scalar scale_sqr = pow(sR.determinant(), Scalar(2. / N));
 
   static_assert(N == M, "must be a square matrix");
   static_assert(N >= 2, "must have compile time dimension >= 2");

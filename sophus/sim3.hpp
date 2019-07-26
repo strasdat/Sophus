@@ -280,12 +280,24 @@ class Sim3Base {
     return p;
   }
 
+  /// ``Sim3::setQuaternion`` is deprecated. Use
+  /// trySetQuaternion() instead!
   /// Setter of non-zero quaternion.
   ///
   /// Precondition: ``quat`` must not be close to zero.
   ///
-  SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quat) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setQuaternion(
+      Eigen::Quaternion<Scalar> const& quat) {
     rxso3().setQuaternion(quat);
+  }
+
+  /// Takes in quaternion.
+  ///
+  /// Returns RxSO3FromQuaternionError, if ``quaternion`` is close to zero.
+  ///
+  SOPHUS_FUNC Expected<bool, RxSO3FromQuaternionError> trySetQuaternion(
+      Eigen::Quaternion<Scalar> const& quaternion) {
+    return rxso3().trySetQuaternion(quaternion);
   }
 
   /// Accessor of quaternion.
@@ -318,8 +330,19 @@ class Sim3Base {
 
   /// Setter of quaternion using rotation matrix ``R``, leaves scale as is.
   ///
-  SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar>& R) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar>& R) {
     rxso3().setRotationMatrix(R);
+  }
+
+  /// ``Sim3::setRotationMatrix`` is deprecated. Use trySetRotationFromMatrix()
+  /// instead!
+  /// Sets ``rxso3`` using ``sR``.
+  ///
+  /// Returns SO3FromMatrixError if ``R`` is not a rotation matrix.
+  ///
+  SOPHUS_FUNC Expected<bool, SO3FromMatrixError> trySetRotationFromMatrix(
+      Matrix3<Scalar> const& R) {
+    return rxso3().setRotationMatrix(R);
   }
 
   /// Sets scale and leaves rotation as is.
@@ -329,13 +352,34 @@ class Sim3Base {
   ///
   SOPHUS_FUNC void setScale(Scalar const& scale) { rxso3().setScale(scale); }
 
+  /// ``Sim3::setScaledRotationMatrix`` is deprecated. Use
+  /// trySetScaledRotationFromMatrix() instead!
   /// Setter of quaternion using scaled rotation matrix ``sR``.
   ///
   /// Precondition: The 3x3 matrix must be "scaled orthogonal"
   ///               and have a positive determinant.
   ///
-  SOPHUS_FUNC void setScaledRotationMatrix(Matrix3<Scalar> const& sR) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setScaledRotationMatrix(
+      Matrix3<Scalar> const& sR) {
     rxso3().setScaledRotationMatrix(sR);
+  }
+
+  /// Sets ``rxso3`` using ``sR``.
+  ///
+  /// Returns RxSO3FromMatrixError if ``sR`` is not a scaled rotation matrix.
+  ///
+  SOPHUS_FUNC Expected<bool, RxSO3FromMatrixError>
+  trySetScaledRotationFromMatrix(Matrix3<Scalar> const& sR) {
+    if (!isScaledOrthogonal(sR)) {
+      // If R contains NANs, we end up here as well.
+      return RxSO3FromMatrixError::kNotScaledOrthogonal;
+    }
+    if (!(sR.determinant() > Scalar(0))) {
+      return RxSO3FromMatrixError::kNegativeDeterminant;
+    }
+    auto is_set = rxso3().trySetQuaternion(Eigen::Quaternion<Scalar>(sR));
+    SOPHUS_ENSURE(is_set, "Logic Error");
+    return true;
   }
 
   /// Mutator of translation vector
@@ -396,13 +440,16 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
                   "must be same Scalar type");
   }
 
+  /// This Sim3 constructor is deprecated. Use tryFromQuaternionAndTranslation()
+  /// instead!
   /// Constructor from quaternion and translation vector.
   ///
   /// Precondition: quaternion must not be close to zero.
   ///
   template <class D1, class D2>
-  SOPHUS_FUNC Sim3(Eigen::QuaternionBase<D1> const& quaternion,
-                   Eigen::MatrixBase<D2> const& translation)
+  SOPHUS_DEPRECATED SOPHUS_FUNC
+  Sim3(Eigen::QuaternionBase<D1> const& quaternion,
+       Eigen::MatrixBase<D2> const& translation)
       : rxso3_(quaternion), translation_(translation) {
     static_assert(std::is_same<typename D1::Scalar, Scalar>::value,
                   "must be same Scalar type");
@@ -410,12 +457,29 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
                   "must be same Scalar type");
   }
 
+  /// Factory from quaternion and translation.
+  ///
+  /// Returns SO3FromQuaternionError if ``R`` is not a rotation matrix.
+  ///
+  static SOPHUS_FUNC Expected<Sim3<Scalar, Options>, RxSO3FromQuaternionError>
+  tryFromQuaternionAndTranslation(Eigen::Quaternion<Scalar> const& q,
+                                  Point const& translation) {
+    Sim3 sim3(Uninitialized{});
+    auto is_set = sim3.trySetQuaternion(q);
+    if (is_set) {
+      sim3.translation() = translation;
+      return sim3;
+    }
+    return is_set.error();
+  }
+
+  /// This Sim3 constructor is deprecated!
   /// Constructor from 4x4 matrix
   ///
   /// Precondition: Top-left 3x3 matrix needs to be "scaled-orthogonal" with
   ///               positive determinant. The last row must be ``(0, 0, 0, 1)``.
   ///
-  SOPHUS_FUNC explicit Sim3(Matrix<Scalar, 4, 4> const& T)
+  SOPHUS_DEPRECATED SOPHUS_FUNC explicit Sim3(Matrix<Scalar, 4, 4> const& T)
       : rxso3_(T.template topLeftCorner<3, 3>()),
         translation_(T.template block<3, 1>(0, 3)) {}
 
@@ -629,6 +693,9 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
  protected:
   RxSo3Member rxso3_;
   TranslationMember translation_;
+
+ private:
+  SOPHUS_FUNC explicit Sim3(Uninitialized) {}
 };
 
 template <class Scalar, int Options>

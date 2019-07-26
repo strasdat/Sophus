@@ -36,6 +36,14 @@
 
 #define SOPHUS_FUNC EIGEN_DEVICE_FUNC
 
+#if defined(__GNUC__) || defined(__clang__)
+#define SOPHUS_DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define SOPHUS_DEPRECATED __declspec(deprecated)
+#else
+#define SOPHUS_DEPRECATED
+#endif
+
 namespace Sophus {
 namespace details {
 
@@ -169,52 +177,67 @@ struct Constants<float> {
   }
 };
 
-/// Nullopt type of lightweight optional class.
-struct nullopt_t {
-  explicit constexpr nullopt_t() {}
-};
-
-constexpr nullopt_t nullopt{};
-
-/// Lightweight optional implementation which requires ``T`` to have a
-/// default constructor.
+/// Lightweight expected implementation which requires type T and error E to
+/// have default constructors.
 ///
-/// TODO: Replace with std::optional once Sophus moves to c++17.
+/// In a nutshell, this is an either/or type: It either contains a value of type
+/// T, or it contains an error of type E.
 ///
-template <class T>
-class optional {
+template <class T, class E>
+class Expected {
  public:
-  optional() : is_valid_(false) {}
+  Expected(E error) : type_(), error_(std::move(error)), has_value_(false) {}
 
-  optional(nullopt_t) : is_valid_(false) {}
+  Expected(T type) : type_(type), error_(), has_value_(true) {}
 
-  optional(T const& type) : type_(type), is_valid_(true) {}
+  bool has_value() const { return has_value_; }
+  explicit operator bool() const { return has_value(); }
 
-  explicit operator bool() const { return is_valid_; }
-
+  /// Returns pointer to value of type T.
+  ///
+  /// Precondition: has_value() must be true.
+  ///
   T const* operator->() const {
-    SOPHUS_ENSURE(is_valid_, "must be valid");
+    SOPHUS_ENSURE(has_value_, "must be valid");
     return &type_;
   }
 
   T* operator->() {
-    SOPHUS_ENSURE(is_valid_, "must be valid");
+    SOPHUS_ENSURE(has_value_, "must be valid");
     return &type_;
   }
 
+  /// Returns value of type T.
+  ///
+  /// Precondition: has_value() must be true.
+  ///
   T const& operator*() const {
-    SOPHUS_ENSURE(is_valid_, "must be valid");
+    SOPHUS_ENSURE(has_value_, "must be valid");
     return type_;
   }
 
   T& operator*() {
-    SOPHUS_ENSURE(is_valid_, "must be valid");
+    SOPHUS_ENSURE(has_value_, "must be valid");
     return type_;
+  }
+
+  /// Returns error of type E.
+  ///
+  /// Precondition: has_value() must be false.
+  ///
+  const E& error() const {
+    SOPHUS_ENSURE(!has_value_, "must not be valid");
+    return error_;
+  }
+  E& error() {
+    SOPHUS_ENSURE(!has_value_, "must not be valid");
+    return error_;
   }
 
  private:
   T type_;
-  bool is_valid_;
+  E error_;
+  bool has_value_;
 };
 
 template <bool B, class T = void>

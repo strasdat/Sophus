@@ -96,9 +96,20 @@ class Tests {
                        Constants<Scalar>::epsilon());
     SOPHUS_TEST_EQUAL(passed, map_of_so2.unit_complex().data(), raw.data());
     SOPHUS_TEST_NEQ(passed, map_of_so2.unit_complex().data(), raw2.data());
+
+    auto is_set = map_of_so2.trySetComplex(raw2);
+    SOPHUS_TEST(passed, is_set);
+    SOPHUS_TEST_APPROX(passed, map_of_so2.unit_complex().eval(), raw2,
+                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_EQUAL(passed, map_of_so2.unit_complex().data(), raw.data());
+    SOPHUS_TEST_NEQ(passed, map_of_so2.unit_complex().data(), raw2.data());
     Eigen::Map<SO2Type> shallow_copy = map_of_so2;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_complex().eval(),
                       map_of_so2.unit_complex().eval());
+
+    auto is_set2 = map_of_so2.trySetComplex(Vector2<Scalar>(0.0, 0.0));
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed, is_set2.error() == SO2FromComplexError::kCloseToZero);
 
     SO2Type const const_so2(raw2);
     for (int i = 0; i < 2; ++i) {
@@ -121,6 +132,30 @@ class Tests {
     Matrix2<Scalar> R = so2_vec_.front().matrix();
     SO2Type so2(R);
     SOPHUS_TEST_APPROX(passed, R, so2.matrix(), Constants<Scalar>::epsilon());
+
+    auto so2_from_mat = SO2Type::tryFromMatrix(R);
+    SOPHUS_TEST(passed, so2_from_mat);
+    SOPHUS_TEST_APPROX(passed, R, so2_from_mat->matrix(),
+                       Constants<Scalar>::epsilon());
+    R(0, 0) = -R(0, 0);
+    so2_from_mat = SO2Type::tryFromMatrix(R);
+    SOPHUS_TEST(passed, !so2_from_mat);
+    SOPHUS_TEST(passed, so2_from_mat.error() ==
+                            SO2FromMatrixError::kNegativeDeterminant);
+    R(0, 0) = Scalar(2);
+    so2_from_mat = SO2Type::tryFromMatrix(R);
+    SOPHUS_TEST(passed, !so2_from_mat);
+    SOPHUS_TEST(passed,
+                so2_from_mat.error() == SO2FromMatrixError::kNotOrthogonal);
+
+    auto so2_from_complex = SO2Type::tryFromComplex(Scalar(0.0), Scalar(0.0));
+    SOPHUS_TEST(passed, !so2_from_complex);
+    SOPHUS_TEST(passed,
+                so2_from_complex.error() == SO2FromComplexError::kCloseToZero);
+
+    so2_from_complex = SO2Type::tryFromComplex(so2.matrix().col(0));
+    SOPHUS_TEST(passed, so2_from_complex);
+    SOPHUS_TEST_EQUAL(passed, so2_from_complex->matrix(), so2.matrix());
 
     return passed;
   }

@@ -117,6 +117,15 @@ class Tests {
                       raw.data());
     SOPHUS_TEST_NEQ(passed, map_of_so3.unit_quaternion().coeffs().data(),
                     quat.coeffs().data());
+
+    auto is_set = map_of_so3.trySetQuaternion(quat);
+    SOPHUS_TEST(passed, is_set);
+    SOPHUS_TEST_APPROX(passed, map_of_so3.unit_quaternion().coeffs().eval(),
+                       raw2, Constants<Scalar>::epsilon());
+    SOPHUS_TEST_EQUAL(passed, map_of_so3.unit_quaternion().coeffs().data(),
+                      raw.data());
+    SOPHUS_TEST_NEQ(passed, map_of_so3.unit_quaternion().coeffs().data(),
+                    quat.coeffs().data());
     Eigen::Map<SO3Type> shallow_copy = map_of_so3;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_quaternion().coeffs().eval(),
                       map_of_so3.unit_quaternion().coeffs().eval());
@@ -125,6 +134,12 @@ class Tests {
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, const_so3.data()[i], raw2.data()[i]);
     }
+
+    auto is_set2 = map_of_so3.trySetQuaternion(
+        Eigen::Quaternion<Scalar>(Scalar(0), Scalar(0), Scalar(0), Scalar(0)));
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed,
+                is_set2.error() == SO3FromQuaternionError::kCloseToZero);
 
     SO3Type so3(quat);
     for (int i = 0; i < 4; ++i) {
@@ -153,6 +168,33 @@ class Tests {
     Matrix3<Scalar> R = so3_vec_.front().matrix();
     SO3Type so3(R);
     SOPHUS_TEST_APPROX(passed, R, so3.matrix(), Constants<Scalar>::epsilon());
+
+    auto so3_from_mat = SO3<Scalar>::tryFromMatrix(R);
+    SOPHUS_TEST(passed, so3_from_mat);
+    SOPHUS_TEST_APPROX(passed, R, so3_from_mat->matrix(),
+                       Constants<Scalar>::epsilon());
+    R(0, 0) *= Scalar(-1);
+    so3_from_mat = SO3<Scalar>::tryFromMatrix(R);
+    SOPHUS_TEST(passed, !so3_from_mat);
+    SOPHUS_TEST(passed, so3_from_mat.error() ==
+                            SO3FromMatrixError::kNegativeDeterminant);
+    R(0, 0) = Scalar(5);
+    so3_from_mat = SO3<Scalar>::tryFromMatrix(R);
+    SOPHUS_TEST(passed, !so3_from_mat);
+    SOPHUS_TEST(passed,
+                so3_from_mat.error() == SO3FromMatrixError::kNotOrthogonal);
+
+    Eigen::Quaternion<Scalar> q(Scalar(1), Scalar(0), Scalar(0), Scalar(0));
+    auto so3_from_quat = SO3<Scalar>::tryFromQuaternion(q);
+    SOPHUS_TEST(passed, so3_from_quat);
+    SOPHUS_TEST_APPROX(passed, q.coeffs(),
+                       so3_from_quat->unit_quaternion().coeffs(),
+                       Constants<Scalar>::epsilon());
+    q.coeffs().w() = Scalar(0);
+    so3_from_quat = SO3<Scalar>::tryFromQuaternion(q);
+    SOPHUS_TEST(passed, !so3_from_quat);
+    SOPHUS_TEST(passed,
+                so3_from_quat.error() == SO3FromQuaternionError::kCloseToZero);
 
     return passed;
   }

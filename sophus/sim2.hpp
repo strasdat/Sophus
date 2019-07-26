@@ -278,12 +278,22 @@ class Sim2Base {
     return *this;
   }
 
+  /// ``Sim2::setComplex`` is deprecated. Use trySetComplex() instead!
   /// Setter of non-zero complex number.
   ///
   /// Precondition: ``z`` must not be close to zero.
   ///
-  SOPHUS_FUNC void setComplex(Vector2<Scalar> const& z) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setComplex(Vector2<Scalar> const& z) {
     rxso2().setComplex(z);
+  }
+
+  /// Takes in complex number.
+  ///
+  /// Returns RxSO2FromComplexError, if ``complex`` is close to zero.
+  ///
+  SOPHUS_FUNC Expected<bool, RxSO2FromComplexError> trySetComplex(
+      Sophus::Vector2<Scalar> const& complex) {
+    return rxso2().trySetComplex(complex);
   }
 
   /// Accessor of complex number.
@@ -318,7 +328,7 @@ class Sim2Base {
 
   /// Setter of complex number using rotation matrix ``R``, leaves scale as is.
   ///
-  SOPHUS_FUNC void setRotationMatrix(Matrix2<Scalar>& R) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setRotationMatrix(Matrix2<Scalar>& R) {
     rxso2().setRotationMatrix(R);
   }
 
@@ -329,13 +339,21 @@ class Sim2Base {
   ///
   SOPHUS_FUNC void setScale(Scalar const& scale) { rxso2().setScale(scale); }
 
+  /// RxSO2::setScaledRotationMatrix is deprecated. Use
+  /// trySetScaledRotationMatrix() instead!
   /// Setter of complexnumber using scaled rotation matrix ``sR``.
   ///
   /// Precondition: The 2x2 matrix must be "scaled orthogonal"
   ///               and have a positive determinant.
   ///
-  SOPHUS_FUNC void setScaledRotationMatrix(Matrix2<Scalar> const& sR) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setScaledRotationMatrix(
+      Matrix2<Scalar> const& sR) {
     rxso2().setScaledRotationMatrix(sR);
+  }
+
+  SOPHUS_FUNC Expected<bool, RxSO2FromMatrixError> trySetScaledRotationMatrix(
+      Transformation const& sR) {
+    return rxso2().setScaledRotationMatrix(sR);
   }
 
   /// Mutator of translation vector
@@ -396,24 +414,42 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
                   "must be same Scalar type");
   }
 
+  /// This Sim2 constructor is deprecated. Use ``tryFromComplexAndTranslation``
+  /// instead!
   /// Constructor from complex number and translation vector.
   ///
   /// Precondition: complex number must not be close to zero.
   ///
   template <class D>
-  SOPHUS_FUNC Sim2(Vector2<Scalar> const& complex_number,
-                   Eigen::MatrixBase<D> const& translation)
+  SOPHUS_DEPRECATED SOPHUS_FUNC Sim2(Vector2<Scalar> const& complex_number,
+                                     Eigen::MatrixBase<D> const& translation)
       : rxso2_(complex_number), translation_(translation) {
     static_assert(std::is_same<typename D::Scalar, Scalar>::value,
                   "must be same Scalar type");
   }
 
+  /// Factory from complex number.
+  ///
+  /// Returns RxSO2FromComplexError::kCloseToZero if complex is close to zero.
+  ///
+  static SOPHUS_FUNC Expected<Sim2<Scalar, Options>, RxSO2FromComplexError>
+  tryFromComplexAndTranslation(Point const& complex, Point const& translation) {
+    Sim2 sim2(Uninitialized{});
+    auto is_set = sim2.trySetComplex(complex);
+    if (is_set) {
+      sim2.translation() = translation;
+      return sim2;
+    }
+    return is_set.error();
+  }
+
+  /// This Sim2 constructor is deprecated.
   /// Constructor from 3x3 matrix
   ///
   /// Precondition: Top-left 2x2 matrix needs to be "scaled-orthogonal" with
   ///               positive determinant. The last row must be ``(0, 0, 1)``.
   ///
-  SOPHUS_FUNC explicit Sim2(Matrix<Scalar, 3, 3> const& T)
+  SOPHUS_DEPRECATED SOPHUS_FUNC explicit Sim2(Matrix<Scalar, 3, 3> const& T)
       : rxso2_((T.template topLeftCorner<2, 2>()).eval()),
         translation_(T.template block<2, 1>(0, 2)) {}
 
@@ -612,6 +648,9 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
  protected:
   RxSo2Member rxso2_;
   TranslationMember translation_;
+
+ private:
+  SOPHUS_FUNC explicit Sim2(Uninitialized) {}
 };
 
 template <class Scalar, int Options>

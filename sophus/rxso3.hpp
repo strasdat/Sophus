@@ -40,6 +40,15 @@ struct traits<Map<Sophus::RxSO3<Scalar_> const, Options>>
 
 namespace Sophus {
 
+enum class RxSO3FromMatrixError { kNotScaledOrthogonal, kNegativeDeterminant };
+enum class RxSO3FromQuaternionError { kCloseToZero };
+enum class RxSO3ScaleError { kTooSmall };
+enum class RxSO3FromScaleAndRotationMatrixError {
+  kScaleTooSmall,
+  kNotOrthogonal,
+  kNegativeDeterminant
+};
+
 /// RxSO3 base type - implements RxSO3 class but is storage agnostic
 ///
 /// This class implements the group ``R+ x SO(3)``, the direct product of the
@@ -319,14 +328,31 @@ class RxSO3Base {
     return quaternion().coeffs();
   }
 
+  /// RxSO3::setQuaternion is deprecated. Use trySetQuaternion() instead!
   /// Sets non-zero quaternion
   ///
   /// Precondition: ``quat`` must not be close to zero.
-  SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quat) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setQuaternion(
+      Eigen::Quaternion<Scalar> const& quat) {
     SOPHUS_ENSURE(quat.squaredNorm() > Constants<Scalar>::epsilon() *
                                            Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
     static_cast<Derived*>(this)->quaternion_nonconst() = quat;
+  }
+
+  /// Takes in quaternion.
+  ///
+  /// Returns SO3FromQuaternionError, if ``quaternion`` is close to zero.
+  ///
+  SOPHUS_FUNC Expected<bool, RxSO3FromQuaternionError> trySetQuaternion(
+      Eigen::Quaternion<Scalar> const& quaternion) {
+    quaternion_nonconst() = quaternion;
+    Scalar n2 = quaternion_nonconst().squaredNorm();
+    if (!(n2 >= Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon())) {
+      // If quaternion contains NANs, we end up here as well.
+      return RxSO3FromQuaternionError::kCloseToZero;
+    }
+    return true;
   }
 
   /// Accessor of quaternion.
@@ -350,7 +376,8 @@ class RxSO3Base {
 
   /// Setter of quaternion using rotation matrix ``R``, leaves scale as is.
   ///
-  SOPHUS_FUNC void setRotationMatrix(Transformation const& R) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setRotationMatrix(
+      Transformation const& R) {
     using std::sqrt;
     Scalar saved_scale = scale();
     quaternion_nonconst() = R;
@@ -369,12 +396,15 @@ class RxSO3Base {
     quaternion_nonconst().coeffs() *= sqrt(scale);
   }
 
-  /// Setter of quaternion using scaled rotation matrix ``sR``.
+  /// This RxSO3 constructor is deprecated. Use trySetScaledRotationMatrix()
+  /// instead! Setter of quaternion using scaled rotation matrix ``sR``.
   ///
   /// Precondition: The 3x3 matrix must be "scaled orthogonal"
   ///               and have a positive determinant.
   ///
-  SOPHUS_FUNC void setScaledRotationMatrix(Transformation const& sR) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setScaledRotationMatrix(
+      Transformation const& sR) {
+    using std::sqrt;
     Transformation squared_sR = sR * sR.transpose();
     Scalar squared_scale =
         Scalar(1. / 3.) *
@@ -382,6 +412,28 @@ class RxSO3Base {
     SOPHUS_ENSURE(squared_scale >= Constants<Scalar>::epsilon() *
                                        Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
+    Scalar scale = sqrt(squared_scale);
+    quaternion_nonconst() = sR / scale;
+    quaternion_nonconst().coeffs() *= sqrt(scale);
+  }
+
+  /// Tries to set quaternion using scaled rotation matrix ``sR``.
+  ///
+  /// Returns RxSO3FromMatrixError if ``sR`` is not scaled-orthogonal.
+  ///
+  SOPHUS_FUNC Expected<SO3<Scalar>, RxSO3FromMatrixError>
+  trySetScaledRotationMatrix(Transformation const& sR) {
+    using std::sqrt;
+    if (!isScaledOrthogonal(sR)) {
+      return RxSO3FromMatrixError::kNotScaledOrthogonal;
+    }
+    if (!(sR.determinant() > Scalar(0))) {
+      return RxSO3FromMatrixError::kNotScaledOrthogonal;
+    }
+    Transformation squared_sR = sR * sR.transpose();
+    Scalar squared_scale =
+        Scalar(1. / 3.) *
+        (squared_sR(0, 0) + squared_sR(1, 1) + squared_sR(2, 2));
     Scalar scale = sqrt(squared_scale);
     quaternion_nonconst() = sR / scale;
     quaternion_nonconst().coeffs() *= sqrt(scale);
@@ -440,21 +492,42 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   SOPHUS_FUNC RxSO3(RxSO3Base<OtherDerived> const& other)
       : quaternion_(other.quaternion()) {}
 
+  /// This RxSO3 constructor is deprecated. Use tryFromMatrix() instead!
   /// Constructor from scaled rotation matrix
   ///
   /// Precondition: rotation matrix need to be scaled orthogonal with
   /// determinant of ``s^3``.
   ///
-  SOPHUS_FUNC explicit RxSO3(Transformation const& sR) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC explicit RxSO3(Transformation const& sR) {
     this->setScaledRotationMatrix(sR);
   }
 
-  /// Constructor from scale factor and rotation matrix ``R``.
+  /// Factory from rotation matrix.
+  ///
+  /// Returns SO3FromMatrixError if R is not a rotation matrix.
+  ///
+  static SOPHUS_FUNC Expected<RxSO3<Scalar, Options>, RxSO3FromMatrixError>
+  tryFromMatrix(Transformation const& sR) {
+    if (!isScaledOrthogonal(sR)) {
+      // If R contains NANs, we end up here as well.
+      return RxSO3FromMatrixError::kNotScaledOrthogonal;
+    }
+    if (!(sR.determinant() > Scalar(0))) {
+      return RxSO3FromMatrixError::kNegativeDeterminant;
+    }
+    RxSO3 rxso3(Uninitialized{});
+    rxso3.quaternion_nonconst() = sR;
+    return rxso3;
+  }
+
+  /// This RxSO3 constructor is deprecated. Use TryFromScaleAndRotationMatrix()
+  /// instead! Constructor from scale factor and rotation matrix ``R``.
   ///
   /// Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
   ///               of 1 and ``scale`` must not be close to zero.
   ///
-  SOPHUS_FUNC RxSO3(Scalar const& scale, Transformation const& R)
+  SOPHUS_DEPRECATED SOPHUS_FUNC RxSO3(Scalar const& scale,
+                                      Transformation const& R)
       : quaternion_(R) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
@@ -462,11 +535,37 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
     quaternion_.coeffs() *= sqrt(scale);
   }
 
+  /// Factory from scale and rotation matrix
+  ///
+  /// Returns RxSO3ScaleError, if scale is too small, or negative.
+  ///
+  static SOPHUS_FUNC
+      Expected<RxSO3<Scalar, Options>, RxSO3FromScaleAndRotationMatrixError>
+      TryFromScaleAndRotationMatrix(Scalar const& scale,
+                                    Transformation const& R) {
+    if (!(scale >= Constants<Scalar>::epsilon())) {
+      return RxSO3FromScaleAndRotationMatrixError::kScaleTooSmall;
+    }
+    if (!isOrthogonal(R)) {
+      // If R contains NANs, we end up here as well.
+      return RxSO3FromScaleAndRotationMatrixError::kNotOrthogonal;
+    }
+    if (!(R.determinant() > Scalar(0))) {
+      return RxSO3FromScaleAndRotationMatrixError::kNegativeDeterminant;
+    }
+    using std::sqrt;
+    RxSO3 rxso3{Uninitialized{}};
+    rxso3.quaternion_nonconst() = R;
+    rxso3.quaternion_nonconst().coeffs() *= sqrt(scale);
+    return rxso3;
+  }
+
   /// Constructor from scale factor and SO3
   ///
   /// Precondition: ``scale`` must not to be close to zero.
   ///
-  SOPHUS_FUNC RxSO3(Scalar const& scale, SO3<Scalar> const& so3)
+  SOPHUS_DEPRECATED SOPHUS_FUNC RxSO3(Scalar const& scale,
+                                      SO3<Scalar> const& so3)
       : quaternion_(so3.unit_quaternion()) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
@@ -474,6 +573,23 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
     quaternion_.coeffs() *= sqrt(scale);
   }
 
+  /// Factory from scale and SO3
+  ///
+  /// Returns RxSO3ScaleError, if scale is too small, or negative.
+  ///
+  static SOPHUS_FUNC Expected<RxSO3<Scalar, Options>, RxSO3ScaleError>
+  TryFromScaleAndSO3(Scalar const& scale, SO3<Scalar> const& so3) {
+    if (!(scale >= Constants<Scalar>::epsilon())) {
+      return RxSO3ScaleError::kTooSmall;
+    }
+    using std::sqrt;
+    RxSO3 rxso3{Uninitialized{}};
+    rxso3.quaternion_nonconst() = so3.unit_quaternion();
+    rxso3.quaternion_nonconst().coeffs() *= sqrt(scale);
+    return rxso3;
+  }
+
+  /// This RxSO3 constructor is deprecated. Use tryFromQuaternion() instead!
   /// Constructor from quaternion
   ///
   /// Precondition: quaternion must not be close to zero.
@@ -485,6 +601,19 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
                   "must be same Scalar type.");
     SOPHUS_ENSURE(quaternion_.squaredNorm() >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
+  }
+
+  /// Factory from quaternion.
+  ///
+  /// Returns RxSO3FromQuaternionError if ``quaternion`` is close to zero.
+  ///
+  static SOPHUS_FUNC Expected<RxSO3<Scalar, Options>, RxSO3FromQuaternionError>
+  tryFromQuaternion(Eigen::Quaternion<Scalar> const& quaternion) {
+    RxSO3 rxso3(Uninitialized{});
+    if (rxso3.trySetQuaternion(quaternion)) {
+      return rxso3;
+    }
+    return RxSO3FromQuaternionError::kCloseToZero;
   }
 
   /// Accessor of quaternion.
@@ -502,7 +631,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// plus logarithm of scale) and returns the corresponding element of the
   /// group RxSO3.
   ///
-  /// To be more specific, thixs function computes ``expmat(hat(omega))``
+  /// To be more specific, this function computes ``expmat(hat(omega))``
   /// with ``expmat(.)`` being the matrix exponential and ``hat(.)`` being the
   /// hat()-operator of RSO3.
   ///
@@ -639,6 +768,9 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   SOPHUS_FUNC QuaternionMember& quaternion_nonconst() { return quaternion_; }
 
   QuaternionMember quaternion_;
+
+ private:
+  SOPHUS_FUNC explicit RxSO3(Uninitialized) {}
 };
 
 }  // namespace Sophus

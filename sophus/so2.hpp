@@ -47,6 +47,8 @@ struct traits<Map<Sophus::SO2<Scalar_> const, Options>>
 }  // namespace Eigen
 
 namespace Sophus {
+enum class SO2FromMatrixError { kNotOrthogonal, kNegativeDeterminant };
+enum class SO2FromComplexError { kCloseToZero };
 
 /// SO2 base type - implements SO2 class but is storage agnostic.
 ///
@@ -303,13 +305,30 @@ class SO2Base {
     return unit_complex();
   }
 
+  /// ``SO2::setComplex`` is deprecated. Use trySetComplex() instead!
   /// Takes in complex number / tuple and normalizes it.
   ///
   /// Precondition: The complex number must not be close to zero.
   ///
-  SOPHUS_FUNC void setComplex(Point const& complex) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setComplex(Point const& complex) {
     unit_complex_nonconst() = complex;
     normalize();
+  }
+
+  /// Takes in complex number, and normalizes it.
+  ///
+  /// Returns SO2FromComplexError, if ``complex`` is close to zero.
+  ///
+  SOPHUS_FUNC Expected<bool, SO2FromComplexError> trySetComplex(
+      Point const& complex) {
+    unit_complex_nonconst() = complex;
+    Scalar length = unit_complex_nonconst().norm();
+    if (!(length >= Constants<Scalar>::epsilon())) {
+      // If complex number contains NANs, we end up here as well.
+      return SO2FromComplexError::kCloseToZero;
+    }
+    unit_complex_nonconst() /= length;
+    return true;
   }
 
   /// Accessor of unit quaternion.
@@ -364,11 +383,13 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   SOPHUS_FUNC SO2(SO2Base<OtherDerived> const& other)
       : unit_complex_(other.unit_complex()) {}
 
+  /// This SO2 constructor is deprecated. Use tryFromMatrix() or
+  /// fitToSO2() instead!
   /// Constructor from rotation matrix
   ///
   /// Precondition: rotation matrix need to be orthogonal with determinant of 1.
   ///
-  SOPHUS_FUNC explicit SO2(Transformation const& R)
+  SOPHUS_DEPRECATED SOPHUS_FUNC explicit SO2(Transformation const& R)
       : unit_complex_(Scalar(0.5) * (R(0, 0) + R(1, 1)),
                       Scalar(0.5) * (R(1, 0) - R(0, 1))) {
     SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
@@ -376,21 +397,26 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
                   R.determinant());
   }
 
+  /// This SO2 constructor is deprecated. Use tryFromComplex()
+  /// instead!
   /// Constructor from pair of real and imaginary number.
   ///
   /// Precondition: The pair must not be close to zero.
   ///
-  SOPHUS_FUNC SO2(Scalar const& real, Scalar const& imag)
+  SOPHUS_DEPRECATED SOPHUS_FUNC SO2(Scalar const& real, Scalar const& imag)
       : unit_complex_(real, imag) {
     Base::normalize();
   }
 
+  /// This SO2 constructor is deprecated. Use ``tryFromComplex``
+  /// instead!
   /// Constructor from 2-vector.
   ///
   /// Precondition: The vector must not be close to zero.
   ///
   template <class D>
-  SOPHUS_FUNC explicit SO2(Eigen::MatrixBase<D> const& complex)
+  SOPHUS_DEPRECATED SOPHUS_FUNC explicit SO2(
+      Eigen::MatrixBase<D> const& complex)
       : unit_complex_(complex) {
     static_assert(std::is_same<typename D::Scalar, Scalar>::value,
                   "must be same Scalar type");
@@ -506,6 +532,48 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
     return SO2(uniform(generator));
   }
 
+  /// Factory from rotation matrix.
+  ///
+  /// Returns SO2FromMatrixError if R is not a rotation matrix.
+  ///
+  static SOPHUS_FUNC Expected<SO2<Scalar, Options>, SO2FromMatrixError>
+  tryFromMatrix(Transformation const& R) {
+    if (!isOrthogonal(R)) {
+      // If R contains NANs, we end up here as well.
+      return SO2FromMatrixError::kNotOrthogonal;
+    }
+    if (!(R.determinant() > Scalar(0))) {
+      return SO2FromMatrixError::kNegativeDeterminant;
+    }
+    SO2 so2(Uninitialized{});
+    so2.unit_complex_nonconst()[0] = Scalar(0.5) * (R(0, 0) + R(1, 1));
+    so2.unit_complex_nonconst()[1] = Scalar(0.5) * (R(1, 0) - R(0, 1));
+    return so2;
+  }
+
+  /// Factory from complex number.
+  ///
+  /// Returns SO2FromComplexError::kCloseToZero if complex is close to zero.
+  ///
+  static SOPHUS_FUNC Expected<SO2<Scalar, Options>, SO2FromComplexError>
+  tryFromComplex(Point const& complex) {
+    SO2 so2(Uninitialized{});
+    if (so2.trySetComplex(complex)) {
+      return so2;
+    }
+    return SO2FromComplexError::kCloseToZero;
+  }
+
+  /// Factory from complex number.
+  ///
+  /// Returns SO2FromComplexError::kCloseToZero if real or imag are close to
+  /// zero.
+  ///
+  static SOPHUS_FUNC Expected<SO2<Scalar, Options>, SO2FromComplexError>
+  tryFromComplex(Scalar real, Scalar imag) {
+    return tryFromComplex(Point(real, imag));
+  }
+
   /// vee-operator
   ///
   /// It takes the 2x2-matrix representation ``Omega`` and maps it to the
@@ -529,6 +597,9 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   SOPHUS_FUNC ComplexMember& unit_complex_nonconst() { return unit_complex_; }
 
   ComplexMember unit_complex_;
+
+ private:
+  SOPHUS_FUNC explicit SO2(Uninitialized) {}
 };
 
 }  // namespace Sophus

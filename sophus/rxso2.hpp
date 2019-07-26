@@ -39,6 +39,8 @@ struct traits<Map<Sophus::RxSO2<Scalar_> const, Options>>
 }  // namespace Eigen
 
 namespace Sophus {
+enum class RxSO2FromMatrixError { kNotScaledOrthogonal, kNegativeDeterminant };
+enum class RxSO2FromComplexError { kCloseToZero };
 
 /// RxSO2 base type - implements RxSO2 class but is storage agnostic
 ///
@@ -290,14 +292,30 @@ class RxSO2Base {
     return complex();
   }
 
+  /// '`RxSO2::setComplex`` is deprecated. Use trySetComplex() instead!
   /// Sets non-zero complex
   ///
   /// Precondition: ``z`` must not be close to zero.
-  SOPHUS_FUNC void setComplex(Vector2<Scalar> const& z) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setComplex(Vector2<Scalar> const& z) {
     SOPHUS_ENSURE(z.squaredNorm() > Constants<Scalar>::epsilon() *
                                         Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
     static_cast<Derived*>(this)->complex_nonconst() = z;
+  }
+
+  /// Takes in complex number.
+  ///
+  /// Returns RxSO2FromComplexError, if ``complex`` is close to zero.
+  ///
+  SOPHUS_FUNC Expected<bool, RxSO2FromComplexError> trySetComplex(
+      Point const& complex) {
+    static_cast<Derived*>(this)->complex_nonconst() = complex;
+    Scalar n2 = static_cast<Derived*>(this)->complex_nonconst().squaredNorm();
+    if (!(n2 >= Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon())) {
+      // If complex number contains NANs, we end up here as well.
+      return RxSO2FromComplexError::kCloseToZero;
+    }
+    return true;
   }
 
   /// Accessor of complex.
@@ -327,7 +345,8 @@ class RxSO2Base {
   ///
   /// Precondition: ``R`` must be orthogonal with determinant of one.
   ///
-  SOPHUS_FUNC void setRotationMatrix(Transformation const& R) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setRotationMatrix(
+      Transformation const& R) {
     setSO2(SO2<Scalar>(R));
   }
 
@@ -339,21 +358,42 @@ class RxSO2Base {
     complex_nonconst() *= scale;
   }
 
+  /// RxSO2::setScaledRotationMatrix is deprecated. Use
+  /// trySetScaledRotationMatrix() instead!
   /// Setter of complex number using scaled rotation matrix ``sR``.
   ///
   /// Precondition: The 2x2 matrix must be "scaled orthogonal"
   ///               and have a positive determinant.
   ///
-  SOPHUS_FUNC void setScaledRotationMatrix(Transformation const& sR) {
-    SOPHUS_ENSURE(isScaledOrthogonalAndPositive(sR),
-                  "sR must be scaled orthogonal:\n %", sR);
+  SOPHUS_DEPRECATED SOPHUS_FUNC void setScaledRotationMatrix(
+      Transformation const& sR) {
+    SOPHUS_ENSURE(isScaledOrthogonal(sR), "sR must be scaled orthogonal:\n %",
+                  sR);
+    SOPHUS_ENSURE(sR.determinant() > Scalar(0.0),
+                  "Determinant must be positive\n {}", sR.determinant());
     complex_nonconst() = sR.col(0);
+  }
+
+  /// Sets scale and rotation given a scaled rotation matrix sR.
+  ///
+  /// Returns RxSO2FromMatrixError, if sR is not scaled-orthogonal with positive
+  /// determinant.
+  ///
+  SOPHUS_FUNC Expected<bool, RxSO2FromMatrixError> trySetScaledRotationMatrix(
+      Transformation const& sR) {
+    if (!isScaledOrthogonal(sR)) {
+      return RxSO2FromMatrixError::kNotScaledOrthogonal;
+    }
+    if (!(sR.determinant() > Scalar(0))) {
+      return RxSO2FromMatrixError::kNotScaledOrthogonal;
+    }
+    complex_nonconst() = sR.col(0);
+    return true;
   }
 
   /// Setter of SO(2) rotations, leaves scale as is.
   ///
   SOPHUS_FUNC void setSO2(SO2<Scalar> const& so2) {
-    using std::sqrt;
     Scalar saved_scale = scale();
     complex_nonconst() = so2.unit_complex();
     complex_nonconst() *= saved_scale;
@@ -402,13 +442,32 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   SOPHUS_FUNC RxSO2(RxSO2Base<OtherDerived> const& other)
       : complex_(other.complex()) {}
 
+  /// This RxSO2 constructor is deprecated. Use tryFromMatrix() instead!
   /// Constructor from scaled rotation matrix
   ///
   /// Precondition: rotation matrix need to be scaled orthogonal with
   /// determinant of ``s^2``.
   ///
-  SOPHUS_FUNC explicit RxSO2(Transformation const& sR) {
+  SOPHUS_DEPRECATED SOPHUS_FUNC explicit RxSO2(Transformation const& sR) {
     this->setScaledRotationMatrix(sR);
+  }
+
+  /// Factory from rotation matrix.
+  ///
+  /// Returns SO3FromMatrixError if R is not a rotation matrix.
+  ///
+  static SOPHUS_FUNC Expected<RxSO2<Scalar, Options>, RxSO2FromMatrixError>
+  tryFromMatrix(Transformation const& sR) {
+    if (!isScaledOrthogonal(sR)) {
+      // If R contains NANs, we end up here as well.
+      return RxSO2FromMatrixError::kNotScaledOrthogonal;
+    }
+    if (!(sR.determinant() > Scalar(0))) {
+      return RxSO2FromMatrixError::kNegativeDeterminant;
+    }
+    RxSO2 rxso2(Uninitialized{});
+    rxso2.complex_nonconst() = sR.col(0);
+    return rxso2;
   }
 
   /// Constructor from scale factor and rotation matrix ``R``.
@@ -426,16 +485,31 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   SOPHUS_FUNC RxSO2(Scalar const& scale, SO2<Scalar> const& so2)
       : RxSO2((scale * so2.unit_complex()).eval()) {}
 
+  /// This RxSO2 constructor is deprecated. Use ``tryFromComplex``
+  /// instead!
   /// Constructor from complex number.
   ///
   /// Precondition: complex number must not be close to zero.
   ///
-  SOPHUS_FUNC explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
+  SOPHUS_DEPRECATED explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
     SOPHUS_ENSURE(complex_.squaredNorm() >= Constants<Scalar>::epsilon() *
                                                 Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon: % vs %",
+                  "Scale factor must be greater-equal epsilon: {} vs {}",
                   complex_.squaredNorm(),
                   Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
+  }
+
+  /// Factory from complex number.
+  ///
+  /// Returns RxSO2FromComplexError::kCloseToZero if complex is close to zero.
+  ///
+  static SOPHUS_FUNC Expected<RxSO2<Scalar, Options>, RxSO2FromComplexError>
+  tryFromComplex(Point const& complex) {
+    RxSO2 rxso2(Uninitialized{});
+    if (rxso2.trySetComplex(complex)) {
+      return rxso2;
+    }
+    return RxSO2FromComplexError::kCloseToZero;
   }
 
   /// Constructor from complex number.
@@ -569,6 +643,9 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   SOPHUS_FUNC ComplexMember& complex_nonconst() { return complex_; }
 
   ComplexMember complex_;
+
+ private:
+  SOPHUS_FUNC explicit RxSO2(Uninitialized) {}
 };
 
 }  // namespace Sophus
