@@ -102,6 +102,12 @@ if(BUILD_TESTS)
     add_subdirectory(test)
 endif()
 
+# Create examples make targets using ctest
+option(BUILD_EXAMPLES "Build examples." ON)
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
 # Export package for use from the build tree
 set(SOPHUS_CMAKE_EXPORT_DIR ${CMAKE_INSTALL_DATADIR}/sophus/cmake)
 
