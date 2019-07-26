@@ -140,15 +140,14 @@ class Tests {
     R(0, 0) = -R(0, 0);
     so2_from_mat = SO2Type::tryFromMatrix(R);
     SOPHUS_TEST(passed, !so2_from_mat);
-    SOPHUS_TEST(
-        passed,
-        so2_from_mat.error() ==
-            SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant);
+    SOPHUS_TEST(passed,
+                so2_from_mat.error() ==
+                    RotationMatrixError::kOrthogonalButNegativeDeterminant);
     R(0, 0) = Scalar(2);
     so2_from_mat = SO2Type::tryFromMatrix(R);
     SOPHUS_TEST(passed, !so2_from_mat);
-    SOPHUS_TEST(passed, so2_from_mat.error() ==
-                            SpecialOrthogonalMatrixError::kNotOrthogonal);
+    SOPHUS_TEST(passed,
+                so2_from_mat.error() == RotationMatrixError::kNotOrthogonal);
 
     auto so2_from_complex = SO2Type::tryFromComplex(Scalar(0.0), Scalar(0.0));
     SOPHUS_TEST(passed, !so2_from_complex);

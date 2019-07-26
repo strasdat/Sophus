@@ -210,12 +210,12 @@ class Tests {
     rxso3_from_mat = RxSO3<Scalar>::tryFromMatrix(RR);
     SOPHUS_TEST(passed, !rxso3_from_mat);
     SOPHUS_TEST(passed, rxso3_from_mat.error() ==
-                            ScaledOrthogonalMatrixError::kNegativeDeterminant);
+                            ScaledRotationMatrixError::kNegativeDeterminant);
     R(0, 0) = Scalar(5);
     rxso3_from_mat = RxSO3<Scalar>::tryFromMatrix(R);
     SOPHUS_TEST(passed, !rxso3_from_mat);
     SOPHUS_TEST(passed, rxso3_from_mat.error() ==
-                            ScaledOrthogonalMatrixError::
+                            ScaledRotationMatrixError::
                                 kPositiveDeterminantButNotScaledOrthogonal);
 
     Eigen::Quaternion<Scalar> q(Scalar(1), Scalar(0), Scalar(0), Scalar(0));

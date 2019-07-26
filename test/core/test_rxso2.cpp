@@ -201,12 +201,12 @@ class Tests {
     rxso2_from_mat = RxSO2Type::tryFromMatrix(RR);
     SOPHUS_TEST(passed, !rxso2_from_mat);
     SOPHUS_TEST(passed, rxso2_from_mat.error() ==
-                            ScaledOrthogonalMatrixError::kNegativeDeterminant);
+                            ScaledRotationMatrixError::kNegativeDeterminant);
     R(0, 0) = Scalar(2);
     rxso2_from_mat = RxSO2Type::tryFromMatrix(R);
     SOPHUS_TEST(passed, !rxso2_from_mat);
     SOPHUS_TEST(passed, rxso2_from_mat.error() ==
-                            ScaledOrthogonalMatrixError::
+                            ScaledRotationMatrixError::
                                 kPositiveDeterminantButNotScaledOrthogonal);
 
     auto so2_from_complex =

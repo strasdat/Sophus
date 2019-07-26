@@ -187,6 +187,37 @@ class Tests {
     for (int i = 0; i < 7; ++i) {
       SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i]);
     }
+
+    auto is_set = map_of_sim3.trySetQuaternion(quat);
+    SOPHUS_TEST(passed, is_set);
+    SOPHUS_TEST_APPROX(passed, map_of_sim3.quaternion().coeffs().eval(),
+                       quat.coeffs().eval(), Constants<Scalar>::epsilon());
+
+    is_set = map_of_sim3.trySetQuaternion(
+        Eigen::Quaternion<Scalar>(Scalar(0), Scalar(0), Scalar(0), Scalar(0)));
+    SOPHUS_TEST(passed, !is_set);
+
+    Matrix3<Scalar> sR = sim3_vec_.front().rxso3().matrix();
+    // auto is_set2 =
+    map_of_sim3.setScaledRotationMatrix(sR);
+    // SOPHUS_TEST(passed, is_set2);
+    SOPHUS_TEST_APPROX(passed, map_of_sim3.rxso3().matrix(), sR,
+                       Constants<Scalar>::epsilon());
+    Matrix3<Scalar> ssRR = sR;
+    ssRR.col(0) = sR.col(1);
+    ssRR.col(1) = sR.col(0);
+    auto is_set2 = map_of_sim3.trySetScaledRotationMatrix(ssRR);
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed, is_set2.error() ==
+                            ScaledRotationMatrixError::kNegativeDeterminant);
+
+    sR(1, 1) = Scalar(2);
+    is_set2 = map_of_sim3.trySetScaledRotationMatrix(sR);
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed, is_set2.error() ==
+                            ScaledRotationMatrixError::
+                                kPositiveDeterminantButNotScaledOrthogonal);
+
     return passed;
   }
 
@@ -216,6 +247,20 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, sim3_vec_[0].rxso3().quaternion().coeffs(),
                        sim3_vec_[0].rxso3().quaternion().coeffs(),
                        Constants<Scalar>::epsilon(), "setQuaternion");
+
+    Eigen::Quaternion<Scalar> quat = sim3.rxso3().quaternion();
+    auto sim3_from_quat =
+        Sim3Type::tryFromQuaternionAndTranslation(quat, translation);
+    SOPHUS_TEST(passed, sim3_from_quat);
+    SOPHUS_TEST_APPROX(passed, sim3_from_quat->quaternion().coeffs(),
+                       quat.coeffs(), Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, sim3_from_quat->translation(), translation,
+                       Constants<Scalar>::epsilon());
+    sim3_from_quat = Sim3Type::tryFromQuaternionAndTranslation(
+        Eigen::Quaternion<Scalar>(Scalar(0), Scalar(0), Scalar(0), Scalar(0)),
+        translation);
+    SOPHUS_TEST(passed, !sim3_from_quat);
+
     return passed;
   }
 

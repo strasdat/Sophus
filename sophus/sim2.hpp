@@ -351,9 +351,9 @@ class Sim2Base {
     rxso2().setScaledRotationMatrix(sR);
   }
 
-  SOPHUS_FUNC Expected<bool, ScaledOrthogonalMatrixError>
-  trySetScaledRotationMatrix(Transformation const& sR) {
-    return rxso2().setScaledRotationMatrix(sR);
+  SOPHUS_FUNC Expected<bool, ScaledRotationMatrixError>
+  trySetScaledRotationMatrix(Matrix2<Scalar> const& sR) {
+    return rxso2().trySetScaledRotationMatrix(sR);
   }
 
   /// Mutator of translation vector

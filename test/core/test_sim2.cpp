@@ -145,6 +145,37 @@ class Tests {
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i]);
     }
+
+    auto is_set = map_of_sim2.trySetComplex(raw2.template head<2>());
+    SOPHUS_TEST(passed, is_set);
+    SOPHUS_TEST_APPROX(passed, map_of_sim2.complex().eval(),
+                       raw2.template head<2>().eval(),
+                       Constants<Scalar>::epsilon());
+
+    is_set = map_of_sim2.trySetComplex(
+        Sophus::Vector2<Scalar>(Scalar(0), Scalar(0)));
+    SOPHUS_TEST(passed, !is_set);
+
+    Matrix2<Scalar> R = sim2_vec_.front().rotationMatrix();
+    auto is_set2 = map_of_sim2.trySetScaledRotationMatrix(R);
+    SOPHUS_TEST(passed, is_set2);
+    SOPHUS_TEST_APPROX(passed, map_of_sim2.rotationMatrix(), R,
+                       Constants<Scalar>::epsilon());
+    Matrix2<Scalar> RR = R;
+    RR.col(0) = R.col(1);
+    RR.col(1) = R.col(0);
+    is_set2 = map_of_sim2.trySetScaledRotationMatrix(RR);
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed, is_set2.error() ==
+                            ScaledRotationMatrixError::kNegativeDeterminant);
+
+    R(0, 0) *= Scalar(2);
+    is_set2 = map_of_sim2.trySetScaledRotationMatrix(R);
+    SOPHUS_TEST(passed, !is_set2);
+    SOPHUS_TEST(passed, is_set2.error() ==
+                            ScaledRotationMatrixError::
+                                kPositiveDeterminantButNotScaledOrthogonal);
+
     return passed;
   }
 
@@ -173,6 +204,18 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, sim2_vec_[0].rxso2().complex(),
                        sim2_vec_[0].rxso2().complex(),
                        Constants<Scalar>::epsilon(), "setComplex");
+
+    Vector2<Scalar> c = sim2.rxso2().complex();
+    auto sim2_from_complex =
+        Sim2Type::tryFromComplexAndTranslation(c, translation);
+    SOPHUS_TEST(passed, sim2_from_complex);
+    SOPHUS_TEST_APPROX(passed, sim2_from_complex->complex(), c,
+                       Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, sim2_from_complex->translation(), translation,
+                       Constants<Scalar>::epsilon());
+    sim2_from_complex = Sim2Type::tryFromComplexAndTranslation(
+        Vector2<Scalar>(Scalar(0), Scalar(0)), translation);
+    SOPHUS_TEST(passed, !sim2_from_complex);
     return passed;
   }
 

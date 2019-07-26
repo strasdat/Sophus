@@ -758,17 +758,16 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns SpecialOrthogonalMatrixError if R is not a rotation matrix.
+  /// Returns RotationMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC
-      Expected<SO3<Scalar, Options>, SpecialOrthogonalMatrixError>
-      tryFromMatrix(Transformation const& R) {
+  static SOPHUS_FUNC Expected<SO3<Scalar, Options>, RotationMatrixError>
+  tryFromMatrix(Transformation const& R) {
     if (!isOrthogonal(R)) {
       // If R contains NANs, we end up here as well.
-      return SpecialOrthogonalMatrixError::kNotOrthogonal;
+      return RotationMatrixError::kNotOrthogonal;
     }
     if (!(R.determinant() > Scalar(0))) {
-      return SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant;
+      return RotationMatrixError::kOrthogonalButNegativeDeterminant;
     }
     SO3 so3(Uninitialized{});
     so3.unit_quaternion_nonconst() = R;

@@ -26,12 +26,12 @@ SOPHUS_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
          Constants<Scalar>::epsilon();
 }
 
-enum class ScaledOrthogonalMatrixError {
+enum class ScaledRotationMatrixError {
   kNegativeDeterminant,
   kPositiveDeterminantButNotScaledOrthogonal
 };
 
-enum class SpecialOrthogonalMatrixError {
+enum class RotationMatrixError {
   kNotOrthogonal,
   kOrthogonalButNegativeDeterminant
 };
@@ -40,7 +40,7 @@ enum class SpecialOrthogonalMatrixError {
 /// "scaled-orthogonal".
 ///
 template <class D>
-SOPHUS_FUNC Expected<bool, ScaledOrthogonalMatrixError>
+SOPHUS_FUNC Expected<bool, ScaledRotationMatrixError>
 isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
   using Scalar = typename D::Scalar;
   static int const N = D::RowsAtCompileTime;
@@ -50,7 +50,7 @@ isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
 
   Scalar det = sR.determinant();
   if (det < Scalar(0)) {
-    return ScaledOrthogonalMatrixError::kNegativeDeterminant;
+    return ScaledRotationMatrixError::kNegativeDeterminant;
   }
   Scalar scale_sqr = pow(det, Scalar(2. / N));
 
@@ -62,8 +62,7 @@ isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
       sqrt(Constants<Scalar>::epsilon())) {
     return true;
   }
-  return ScaledOrthogonalMatrixError::
-      kPositiveDeterminantButNotScaledOrthogonal;
+  return ScaledRotationMatrixError::kPositiveDeterminantButNotScaledOrthogonal;
 }
 
 /// Takes in arbitrary square matrix (2x2 or larger) and returns closest

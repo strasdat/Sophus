@@ -40,10 +40,7 @@ struct traits<Map<Sophus::RxSO3<Scalar_> const, Options>>
 
 namespace Sophus {
 
-enum class RxSpecialOrthogonalMatrixError {
-  kNotScaledOrthogonal,
-  kNegativeDeterminant
-};
+enum class RxRotationMatrixError { kNotScaledOrthogonal, kNegativeDeterminant };
 enum class RxSO3FromQuaternionError { kCloseToZero };
 enum class RxSO3ScaleError { kTooSmall };
 enum class RxSO3FromScaleAndRotationMatrixError {
@@ -422,9 +419,9 @@ class RxSO3Base {
 
   /// Tries to set quaternion using scaled rotation matrix ``sR``.
   ///
-  /// Returns ScaledOrthogonalMatrixError if ``sR`` is not scaled-orthogonal.
+  /// Returns ScaledRotationMatrixError if ``sR`` is not scaled-orthogonal.
   ///
-  SOPHUS_FUNC Expected<SO3<Scalar>, ScaledOrthogonalMatrixError>
+  SOPHUS_FUNC Expected<bool, ScaledRotationMatrixError>
   trySetScaledRotationMatrix(Transformation const& sR) {
     using std::sqrt;
     auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
@@ -435,9 +432,13 @@ class RxSO3Base {
     Scalar squared_scale =
         Scalar(1. / 3.) *
         (squared_sR(0, 0) + squared_sR(1, 1) + squared_sR(2, 2));
+    SOPHUS_ENSURE(squared_scale >= Constants<Scalar>::epsilon() *
+                                       Constants<Scalar>::epsilon(),
+                  "Scale factor must be greater-equal epsilon.");
     Scalar scale = sqrt(squared_scale);
     quaternion_nonconst() = sR / scale;
     quaternion_nonconst().coeffs() *= sqrt(scale);
+    return true;
   }
 
   /// Setter of SO(3) rotations, leaves scale as is.
@@ -505,11 +506,10 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns SpecialOrthogonalMatrixError if R is not a rotation matrix.
+  /// Returns RotationMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC
-      Expected<RxSO3<Scalar, Options>, ScaledOrthogonalMatrixError>
-      tryFromMatrix(Transformation const& sR) {
+  static SOPHUS_FUNC Expected<RxSO3<Scalar, Options>, ScaledRotationMatrixError>
+  tryFromMatrix(Transformation const& sR) {
     auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
     if (!scaled_ortho) {
       // If R contains NANs, we end up here as well.

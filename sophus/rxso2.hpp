@@ -373,10 +373,10 @@ class RxSO2Base {
 
   /// Sets scale and rotation given a scaled rotation matrix sR.
   ///
-  /// Returns ScaledOrthogonalMatrixError, if sR is not scaled-orthogonal with
+  /// Returns ScaledRotationMatrixError, if sR is not scaled-orthogonal with
   /// positive determinant.
   ///
-  SOPHUS_FUNC Expected<bool, ScaledOrthogonalMatrixError>
+  SOPHUS_FUNC Expected<bool, ScaledRotationMatrixError>
   trySetScaledRotationMatrix(Transformation const& sR) {
     auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
     if (!scaled_ortho) {
@@ -449,11 +449,10 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns SpecialOrthogonalMatrixError if R is not a rotation matrix.
+  /// Returns RotationMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC
-      Expected<RxSO2<Scalar, Options>, ScaledOrthogonalMatrixError>
-      tryFromMatrix(Transformation const& sR) {
+  static SOPHUS_FUNC Expected<RxSO2<Scalar, Options>, ScaledRotationMatrixError>
+  tryFromMatrix(Transformation const& sR) {
     auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
     if (!scaled_ortho) {
       // If R contains NANs, we end up here as well.

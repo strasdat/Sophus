@@ -338,10 +338,10 @@ class Sim3Base {
   /// instead!
   /// Sets ``rxso3`` using ``sR``.
   ///
-  /// Returns SpecialOrthogonalMatrixError if ``R`` is not a rotation matrix.
+  /// Returns RotationMatrixError if ``R`` is not a rotation matrix.
   ///
-  SOPHUS_FUNC Expected<bool, SpecialOrthogonalMatrixError>
-  trySetRotationFromMatrix(Matrix3<Scalar> const& R) {
+  SOPHUS_FUNC Expected<bool, RotationMatrixError> trySetRotationFromMatrix(
+      Matrix3<Scalar> const& R) {
     return rxso3().setRotationMatrix(R);
   }
 
@@ -366,19 +366,12 @@ class Sim3Base {
 
   /// Sets ``rxso3`` using ``sR``.
   ///
-  /// Returns ScaledOrthogonalMatrixError if ``sR`` is not a scaled rotation
+  /// Returns ScaledRotationMatrixError if ``sR`` is not a scaled rotation
   /// matrix.
   ///
-  SOPHUS_FUNC Expected<bool, ScaledOrthogonalMatrixError>
-  trySetScaledRotationFromMatrix(Matrix3<Scalar> const& sR) {
-    auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
-    if (!scaled_ortho) {
-      // If R contains NANs, we end up here as well.
-      return scaled_ortho.error();
-    }
-    auto is_set = rxso3().trySetQuaternion(Eigen::Quaternion<Scalar>(sR));
-    SOPHUS_ENSURE(is_set, "Logic Error");
-    return true;
+  SOPHUS_FUNC Expected<bool, ScaledRotationMatrixError>
+  trySetScaledRotationMatrix(Matrix3<Scalar> const& sR) {
+    return rxso3().trySetScaledRotationMatrix(sR);
   }
 
   /// Mutator of translation vector

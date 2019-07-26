@@ -412,16 +412,16 @@ class SE3Base {
 
   /// Sets ``so3`` using ``R``.
   ///
-  /// Returns SpecialOrthogonalMatrixError if ``R`` is not a rotation matrix.
+  /// Returns RotationMatrixError if ``R`` is not a rotation matrix.
   ///
-  SOPHUS_FUNC Expected<bool, SpecialOrthogonalMatrixError>
-  trySetRotationFromMatrix(Matrix3<Scalar> const& R) {
+  SOPHUS_FUNC Expected<bool, RotationMatrixError> trySetRotationFromMatrix(
+      Matrix3<Scalar> const& R) {
     if (!isOrthogonal(R)) {
       // If R contains NANs, we end up here as well.
-      return SpecialOrthogonalMatrixError::kNotOrthogonal;
+      return RotationMatrixError::kNotOrthogonal;
     }
     if (!(R.determinant() > Scalar(0))) {
-      return SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant;
+      return RotationMatrixError::kOrthogonalButNegativeDeterminant;
     }
     auto is_set = so3().trySetQuaternion(Eigen::Quaternion<Scalar>(R));
     SOPHUS_ENSURE(is_set, "Logic Error");
@@ -981,12 +981,11 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
 
   /// Factory from matrix and translation.
   ///
-  /// Returns SpecialOrthogonalMatrixError if ``R`` is not a rotation matrix.
+  /// Returns RotationMatrixError if ``R`` is not a rotation matrix.
   ///
-  static SOPHUS_FUNC
-      Expected<SE3<Scalar, Options>, SpecialOrthogonalMatrixError>
-      tryFromMatrixAndTranslation(Matrix3<Scalar> const& R,
-                                  Point const& translation) {
+  static SOPHUS_FUNC Expected<SE3<Scalar, Options>, RotationMatrixError>
+  tryFromMatrixAndTranslation(Matrix3<Scalar> const& R,
+                              Point const& translation) {
     SE3 se3(Uninitialized{});
     auto is_set = se3.trySetRotationFromMatrix(R);
     if (is_set) {

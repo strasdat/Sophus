@@ -172,16 +172,14 @@ class Tests {
     R.col(1) = tmp;
     is_set2 = map_of_se3.trySetRotationFromMatrix(R);
     SOPHUS_TEST(passed, !is_set2);
-    SOPHUS_TEST(
-        passed,
-        is_set2.error() ==
-            SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant);
+    SOPHUS_TEST(passed,
+                is_set2.error() ==
+                    RotationMatrixError::kOrthogonalButNegativeDeterminant);
 
     R(1, 1) = Scalar(2);
     is_set2 = map_of_se3.trySetRotationFromMatrix(R);
     SOPHUS_TEST(passed, !is_set2);
-    SOPHUS_TEST(passed, is_set2.error() ==
-                            SpecialOrthogonalMatrixError::kNotOrthogonal);
+    SOPHUS_TEST(passed, is_set2.error() == RotationMatrixError::kNotOrthogonal);
 
     return passed;
   }
