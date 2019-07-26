@@ -39,7 +39,6 @@ struct traits<Map<Sophus::RxSO2<Scalar_> const, Options>>
 }  // namespace Eigen
 
 namespace Sophus {
-enum class RxSO2FromMatrixError { kNotScaledOrthogonal, kNegativeDeterminant };
 enum class RxSO2FromComplexError { kCloseToZero };
 
 /// RxSO2 base type - implements RxSO2 class but is storage agnostic
@@ -367,25 +366,21 @@ class RxSO2Base {
   ///
   SOPHUS_DEPRECATED SOPHUS_FUNC void setScaledRotationMatrix(
       Transformation const& sR) {
-    SOPHUS_ENSURE(isScaledOrthogonal(sR), "sR must be scaled orthogonal:\n %",
-                  sR);
-    SOPHUS_ENSURE(sR.determinant() > Scalar(0.0),
-                  "Determinant must be positive\n {}", sR.determinant());
+    SOPHUS_ENSURE(isScaledOrthogonalAndPositive(sR),
+                  "sR must be scaled orthogonal:\n %", sR);
     complex_nonconst() = sR.col(0);
   }
 
   /// Sets scale and rotation given a scaled rotation matrix sR.
   ///
-  /// Returns RxSO2FromMatrixError, if sR is not scaled-orthogonal with positive
-  /// determinant.
+  /// Returns ScaledOrthogonalMatrixError, if sR is not scaled-orthogonal with
+  /// positive determinant.
   ///
-  SOPHUS_FUNC Expected<bool, RxSO2FromMatrixError> trySetScaledRotationMatrix(
-      Transformation const& sR) {
-    if (!isScaledOrthogonal(sR)) {
-      return RxSO2FromMatrixError::kNotScaledOrthogonal;
-    }
-    if (!(sR.determinant() > Scalar(0))) {
-      return RxSO2FromMatrixError::kNotScaledOrthogonal;
+  SOPHUS_FUNC Expected<bool, ScaledOrthogonalMatrixError>
+  trySetScaledRotationMatrix(Transformation const& sR) {
+    auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
+    if (!scaled_ortho) {
+      return scaled_ortho.error();
     }
     complex_nonconst() = sR.col(0);
     return true;
@@ -454,16 +449,15 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns SO3FromMatrixError if R is not a rotation matrix.
+  /// Returns SpecialOrthogonalMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC Expected<RxSO2<Scalar, Options>, RxSO2FromMatrixError>
-  tryFromMatrix(Transformation const& sR) {
-    if (!isScaledOrthogonal(sR)) {
+  static SOPHUS_FUNC
+      Expected<RxSO2<Scalar, Options>, ScaledOrthogonalMatrixError>
+      tryFromMatrix(Transformation const& sR) {
+    auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
+    if (!scaled_ortho) {
       // If R contains NANs, we end up here as well.
-      return RxSO2FromMatrixError::kNotScaledOrthogonal;
-    }
-    if (!(sR.determinant() > Scalar(0))) {
-      return RxSO2FromMatrixError::kNegativeDeterminant;
+      return scaled_ortho.error();
     }
     RxSO2 rxso2(Uninitialized{});
     rxso2.complex_nonconst() = sR.col(0);
@@ -494,7 +488,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   SOPHUS_DEPRECATED explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
     SOPHUS_ENSURE(complex_.squaredNorm() >= Constants<Scalar>::epsilon() *
                                                 Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon: {} vs {}",
+                  "Scale factor must be greater-equal epsilon: % vs %",
                   complex_.squaredNorm(),
                   Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
   }

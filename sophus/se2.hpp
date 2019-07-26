@@ -342,16 +342,16 @@ class SE2Base {
 
   /// Sets ``so2`` using ``R``.
   ///
-  /// Returns SO2FromMatrixError if ``R`` is not a rotation matrix.
+  /// Returns SpecialOrthogonalMatrixError if ``R`` is not a rotation matrix.
   ///
-  SOPHUS_FUNC Expected<bool, SO2FromMatrixError> trySetRotationFromMatrix(
-      Matrix2<Scalar> const& R) {
+  SOPHUS_FUNC Expected<bool, SpecialOrthogonalMatrixError>
+  trySetRotationFromMatrix(Matrix2<Scalar> const& R) {
     if (!isOrthogonal(R)) {
       // If R contains NANs, we end up here as well.
-      return SO2FromMatrixError::kNotOrthogonal;
+      return SpecialOrthogonalMatrixError::kNotOrthogonal;
     }
     if (!(R.determinant() > Scalar(0))) {
-      return SO2FromMatrixError::kNegativeDeterminant;
+      return SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant;
     }
     so2().setComplex(Vector2<Scalar>(Scalar(0.5) * (R(0, 0) + R(1, 1)),
                                      Scalar(0.5) * (R(1, 0) - R(0, 1))));
@@ -479,11 +479,12 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
 
   /// Factory from matrix and translation.
   ///
-  /// Returns SO2FromMatrixError if ``R`` is not a rotation matrix.
+  /// Returns SpecialOrthogonalMatrixError if ``R`` is not a rotation matrix.
   ///
-  static SOPHUS_FUNC Expected<SE2<Scalar, Options>, SO2FromMatrixError>
-  tryFromMatrixAndTranslation(Matrix2<Scalar> const& R,
-                              Point const& translation) {
+  static SOPHUS_FUNC
+      Expected<SE2<Scalar, Options>, SpecialOrthogonalMatrixError>
+      tryFromMatrixAndTranslation(Matrix2<Scalar> const& R,
+                                  Point const& translation) {
     SE2 se2(Uninitialized{});
     auto expected_so2 = se2.trySetRotationFromMatrix(R);
     if (expected_so2) {

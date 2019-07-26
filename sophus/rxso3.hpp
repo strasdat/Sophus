@@ -40,7 +40,10 @@ struct traits<Map<Sophus::RxSO3<Scalar_> const, Options>>
 
 namespace Sophus {
 
-enum class RxSO3FromMatrixError { kNotScaledOrthogonal, kNegativeDeterminant };
+enum class RxSpecialOrthogonalMatrixError {
+  kNotScaledOrthogonal,
+  kNegativeDeterminant
+};
 enum class RxSO3FromQuaternionError { kCloseToZero };
 enum class RxSO3ScaleError { kTooSmall };
 enum class RxSO3FromScaleAndRotationMatrixError {
@@ -419,16 +422,14 @@ class RxSO3Base {
 
   /// Tries to set quaternion using scaled rotation matrix ``sR``.
   ///
-  /// Returns RxSO3FromMatrixError if ``sR`` is not scaled-orthogonal.
+  /// Returns ScaledOrthogonalMatrixError if ``sR`` is not scaled-orthogonal.
   ///
-  SOPHUS_FUNC Expected<SO3<Scalar>, RxSO3FromMatrixError>
+  SOPHUS_FUNC Expected<SO3<Scalar>, ScaledOrthogonalMatrixError>
   trySetScaledRotationMatrix(Transformation const& sR) {
     using std::sqrt;
-    if (!isScaledOrthogonal(sR)) {
-      return RxSO3FromMatrixError::kNotScaledOrthogonal;
-    }
-    if (!(sR.determinant() > Scalar(0))) {
-      return RxSO3FromMatrixError::kNotScaledOrthogonal;
+    auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
+    if (!scaled_ortho) {
+      return scaled_ortho.error();
     }
     Transformation squared_sR = sR * sR.transpose();
     Scalar squared_scale =
@@ -504,16 +505,15 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns SO3FromMatrixError if R is not a rotation matrix.
+  /// Returns SpecialOrthogonalMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC Expected<RxSO3<Scalar, Options>, RxSO3FromMatrixError>
-  tryFromMatrix(Transformation const& sR) {
-    if (!isScaledOrthogonal(sR)) {
+  static SOPHUS_FUNC
+      Expected<RxSO3<Scalar, Options>, ScaledOrthogonalMatrixError>
+      tryFromMatrix(Transformation const& sR) {
+    auto scaled_ortho = isScaledOrthogonalAndPositive(sR);
+    if (!scaled_ortho) {
       // If R contains NANs, we end up here as well.
-      return RxSO3FromMatrixError::kNotScaledOrthogonal;
-    }
-    if (!(sR.determinant() > Scalar(0))) {
-      return RxSO3FromMatrixError::kNegativeDeterminant;
+      return scaled_ortho.error();
     }
     RxSO3 rxso3(Uninitialized{});
     rxso3.quaternion_nonconst() = sR;

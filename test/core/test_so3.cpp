@@ -176,13 +176,15 @@ class Tests {
     R(0, 0) *= Scalar(-1);
     so3_from_mat = SO3<Scalar>::tryFromMatrix(R);
     SOPHUS_TEST(passed, !so3_from_mat);
-    SOPHUS_TEST(passed, so3_from_mat.error() ==
-                            SO3FromMatrixError::kNegativeDeterminant);
+    SOPHUS_TEST(
+        passed,
+        so3_from_mat.error() ==
+            SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant);
     R(0, 0) = Scalar(5);
     so3_from_mat = SO3<Scalar>::tryFromMatrix(R);
     SOPHUS_TEST(passed, !so3_from_mat);
-    SOPHUS_TEST(passed,
-                so3_from_mat.error() == SO3FromMatrixError::kNotOrthogonal);
+    SOPHUS_TEST(passed, so3_from_mat.error() ==
+                            SpecialOrthogonalMatrixError::kNotOrthogonal);
 
     Eigen::Quaternion<Scalar> q(Scalar(1), Scalar(0), Scalar(0), Scalar(0));
     auto so3_from_quat = SO3<Scalar>::tryFromQuaternion(q);

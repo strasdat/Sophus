@@ -47,7 +47,6 @@ struct traits<Map<Sophus::SO2<Scalar_> const, Options>>
 }  // namespace Eigen
 
 namespace Sophus {
-enum class SO2FromMatrixError { kNotOrthogonal, kNegativeDeterminant };
 enum class SO2FromComplexError { kCloseToZero };
 
 /// SO2 base type - implements SO2 class but is storage agnostic.
@@ -534,16 +533,17 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns SO2FromMatrixError if R is not a rotation matrix.
+  /// Returns SpecialOrthogonalMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC Expected<SO2<Scalar, Options>, SO2FromMatrixError>
-  tryFromMatrix(Transformation const& R) {
+  static SOPHUS_FUNC
+      Expected<SO2<Scalar, Options>, SpecialOrthogonalMatrixError>
+      tryFromMatrix(Transformation const& R) {
     if (!isOrthogonal(R)) {
       // If R contains NANs, we end up here as well.
-      return SO2FromMatrixError::kNotOrthogonal;
+      return SpecialOrthogonalMatrixError::kNotOrthogonal;
     }
     if (!(R.determinant() > Scalar(0))) {
-      return SO2FromMatrixError::kNegativeDeterminant;
+      return SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant;
     }
     SO2 so2(Uninitialized{});
     so2.unit_complex_nonconst()[0] = Scalar(0.5) * (R(0, 0) + R(1, 1));

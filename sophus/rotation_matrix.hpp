@@ -26,25 +26,44 @@ SOPHUS_FUNC bool isOrthogonal(Eigen::MatrixBase<D> const& R) {
          Constants<Scalar>::epsilon();
 }
 
+enum class ScaledOrthogonalMatrixError {
+  kNegativeDeterminant,
+  kPositiveDeterminantButNotScaledOrthogonal
+};
+
+enum class SpecialOrthogonalMatrixError {
+  kNotOrthogonal,
+  kOrthogonalButNegativeDeterminant
+};
+
 /// Takes in arbitrary square matrix and returns true if it is
 /// "scaled-orthogonal".
 ///
 template <class D>
-SOPHUS_FUNC bool isScaledOrthogonal(Eigen::MatrixBase<D> const& sR) {
+SOPHUS_FUNC Expected<bool, ScaledOrthogonalMatrixError>
+isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
   using Scalar = typename D::Scalar;
   static int const N = D::RowsAtCompileTime;
   static int const M = D::ColsAtCompileTime;
   using std::pow;
   using std::sqrt;
 
-  Scalar scale_sqr = pow(sR.determinant(), Scalar(2. / N));
+  Scalar det = sR.determinant();
+  if (det < Scalar(0)) {
+    return ScaledOrthogonalMatrixError::kNegativeDeterminant;
+  }
+  Scalar scale_sqr = pow(det, Scalar(2. / N));
 
   static_assert(N == M, "must be a square matrix");
   static_assert(N >= 2, "must have compile time dimension >= 2");
 
-  return (sR * sR.transpose() - scale_sqr * Matrix<Scalar, N, N>::Identity())
-             .template lpNorm<Eigen::Infinity>() <
-         sqrt(Constants<Scalar>::epsilon());
+  if ((sR * sR.transpose() - scale_sqr * Matrix<Scalar, N, N>::Identity())
+          .template lpNorm<Eigen::Infinity>() <
+      sqrt(Constants<Scalar>::epsilon())) {
+    return true;
+  }
+  return ScaledOrthogonalMatrixError::
+      kPositiveDeterminantButNotScaledOrthogonal;
 }
 
 /// Takes in arbitrary square matrix (2x2 or larger) and returns closest

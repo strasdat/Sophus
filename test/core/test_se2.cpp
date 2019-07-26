@@ -145,13 +145,16 @@ class Tests {
     R(0, 0) *= Scalar(-1);
     is_set2 = map_of_se2.trySetRotationFromMatrix(R);
     SOPHUS_TEST(passed, !is_set2);
-    SOPHUS_TEST(passed,
-                is_set2.error() == SO2FromMatrixError::kNegativeDeterminant);
+    SOPHUS_TEST(
+        passed,
+        is_set2.error() ==
+            SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant);
 
     R(0, 0) *= Scalar(2);
     is_set2 = map_of_se2.trySetRotationFromMatrix(R);
     SOPHUS_TEST(passed, !is_set2);
-    SOPHUS_TEST(passed, is_set2.error() == SO2FromMatrixError::kNotOrthogonal);
+    SOPHUS_TEST(passed, is_set2.error() ==
+                            SpecialOrthogonalMatrixError::kNotOrthogonal);
 
     SE2Type const const_se2(raw2.template head<2>().eval(),
                             raw2.template tail<2>().eval());

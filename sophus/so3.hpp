@@ -48,7 +48,6 @@ struct traits<Map<Sophus::SO3<Scalar_> const, Options>>
 
 namespace Sophus {
 
-enum class SO3FromMatrixError { kNotOrthogonal, kNegativeDeterminant };
 enum class SO3FromQuaternionError { kCloseToZero };
 
 /// SO3 base type - implements SO3 class but is storage agnostic.
@@ -759,16 +758,17 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 
   /// Factory from rotation matrix.
   ///
-  /// Returns SO3FromMatrixError if R is not a rotation matrix.
+  /// Returns SpecialOrthogonalMatrixError if R is not a rotation matrix.
   ///
-  static SOPHUS_FUNC Expected<SO3<Scalar, Options>, SO3FromMatrixError>
-  tryFromMatrix(Transformation const& R) {
+  static SOPHUS_FUNC
+      Expected<SO3<Scalar, Options>, SpecialOrthogonalMatrixError>
+      tryFromMatrix(Transformation const& R) {
     if (!isOrthogonal(R)) {
       // If R contains NANs, we end up here as well.
-      return SO3FromMatrixError::kNotOrthogonal;
+      return SpecialOrthogonalMatrixError::kNotOrthogonal;
     }
     if (!(R.determinant() > Scalar(0))) {
-      return SO3FromMatrixError::kNegativeDeterminant;
+      return SpecialOrthogonalMatrixError::kOrthogonalButNegativeDeterminant;
     }
     SO3 so3(Uninitialized{});
     so3.unit_quaternion_nonconst() = R;
