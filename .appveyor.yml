@@ -1,6 +1,7 @@
 branches:
   only:
     - master
+    - dev
 
 os: Visual Studio 2015
 

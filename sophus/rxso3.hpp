@@ -434,7 +434,8 @@ class RxSO3Base {
         (squared_sR(0, 0) + squared_sR(1, 1) + squared_sR(2, 2));
     SOPHUS_ENSURE(squared_scale >= Constants<Scalar>::epsilon() *
                                        Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon.");
+                  "Scale factor must be greater-equal epsilon: %",
+                  squared_scale);
     Scalar scale = sqrt(squared_scale);
     quaternion_nonconst() = sR / scale;
     quaternion_nonconst().coeffs() *= sqrt(scale);
@@ -541,7 +542,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   ///
   static SOPHUS_FUNC
       Expected<RxSO3<Scalar, Options>, RxSO3FromScaleAndRotationMatrixError>
-      TryFromScaleAndRotationMatrix(Scalar const& scale,
+      tryFromScaleAndRotationMatrix(Scalar const& scale,
                                     Transformation const& R) {
     if (!(scale >= Constants<Scalar>::epsilon())) {
       return RxSO3FromScaleAndRotationMatrixError::kScaleTooSmall;
@@ -578,7 +579,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// Returns RxSO3ScaleError, if scale is too small, or negative.
   ///
   static SOPHUS_FUNC Expected<RxSO3<Scalar, Options>, RxSO3ScaleError>
-  TryFromScaleAndSO3(Scalar const& scale, SO3<Scalar> const& so3) {
+  tryFromScaleAndSO3(Scalar const& scale, SO3<Scalar> const& so3) {
     if (!(scale >= Constants<Scalar>::epsilon())) {
       return RxSO3ScaleError::kTooSmall;
     }
