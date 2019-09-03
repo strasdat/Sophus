@@ -245,7 +245,7 @@ class SO3Base {
     using std::atan;
     using std::sqrt;
     Scalar squared_n = unit_quaternion().vec().squaredNorm();
-    Scalar n = sqrt(squared_n);
+    Scalar n = (squared_n < Constants<Scalar>::epsilon())? squared_n : sqrt(squared_n);
     Scalar w = unit_quaternion().w();
 
     Scalar two_atan_nbyw_by_n;
@@ -585,7 +585,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     using std::sin;
     using std::sqrt;
     Scalar theta_sq = omega.squaredNorm();
-    *theta = sqrt(theta_sq);
+    *theta = (theta_sq < Constants<Scalar>::epsilon())? theta_sq : sqrt(theta_sq);
     Scalar half_theta = Scalar(0.5) * (*theta);
 
     Scalar imag_factor;
