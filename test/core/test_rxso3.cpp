@@ -24,6 +24,7 @@ class Tests {
   using Scalar = Scalar_;
   using SO3Type = SO3<Scalar>;
   using RxSO3Type = RxSO3<Scalar>;
+  using RotationMatrixType = typename SO3<Scalar>::Transformation;
   using Point = typename RxSO3<Scalar>::Point;
   using Tangent = typename RxSO3<Scalar>::Tangent;
   Scalar const kPi = Constants<Scalar>::pi();
@@ -149,6 +150,27 @@ class Tests {
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i]);
     }
+
+    // regression: test that rotationMatrix API doesn't change underlying value
+    // for non-const-map and compiles at all for const-map
+    Eigen::Matrix<Scalar, 4, 1> raw3 = {Scalar(2), Scalar(0), Scalar(0),
+                                        Scalar(0)};
+    Eigen::Map<RxSO3Type> map_of_rxso3_3(raw3.data());
+    Eigen::Map<const RxSO3Type> const_map_of_rxso3_3(raw3.data());
+    RxSO3Type rxso3_copy3 = map_of_rxso3_3;
+    const RotationMatrixType r_ref = map_of_rxso3_3.so3().matrix();
+
+    const RotationMatrixType r = map_of_rxso3_3.rotationMatrix();
+    SOPHUS_TEST_APPROX(passed, r_ref, r, Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, map_of_rxso3_3.quaternion().coeffs().eval(),
+                       rxso3_copy3.quaternion().coeffs().eval(),
+                       Constants<Scalar>::epsilon());
+
+    const RotationMatrixType r_const = const_map_of_rxso3_3.rotationMatrix();
+    SOPHUS_TEST_APPROX(passed, r_ref, r_const, Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(
+        passed, const_map_of_rxso3_3.quaternion().coeffs().eval(),
+        rxso3_copy3.quaternion().coeffs().eval(), Constants<Scalar>::epsilon());
 
     return passed;
   }
