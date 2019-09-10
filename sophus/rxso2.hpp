@@ -16,22 +16,25 @@ using RxSO2f = RxSO2<float>;
 namespace Eigen {
 namespace internal {
 
-template <class Scalar_, int Options>
-struct traits<Sophus::RxSO2<Scalar_, Options>> {
+template <class Scalar_, int Options_>
+struct traits<Sophus::RxSO2<Scalar_, Options_>> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Sophus::Vector2<Scalar, Options>;
 };
 
-template <class Scalar_, int Options>
-struct traits<Map<Sophus::RxSO2<Scalar_>, Options>>
-    : traits<Sophus::RxSO2<Scalar_, Options>> {
+template <class Scalar_, int Options_>
+struct traits<Map<Sophus::RxSO2<Scalar_>, Options_>>
+    : traits<Sophus::RxSO2<Scalar_, Options_>> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Map<Sophus::Vector2<Scalar>, Options>;
 };
 
-template <class Scalar_, int Options>
-struct traits<Map<Sophus::RxSO2<Scalar_> const, Options>>
-    : traits<Sophus::RxSO2<Scalar_, Options> const> {
+template <class Scalar_, int Options_>
+struct traits<Map<Sophus::RxSO2<Scalar_> const, Options_>>
+    : traits<Sophus::RxSO2<Scalar_, Options_> const> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Map<Sophus::Vector2<Scalar> const, Options>;
 };
@@ -75,8 +78,10 @@ namespace Sophus {
 template <class Derived>
 class RxSO2Base {
  public:
+  static constexpr int Options = Eigen::internal::traits<Derived>::Options;
   using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
   using ComplexType = typename Eigen::internal::traits<Derived>::ComplexType;
+  using ComplexTemporaryType = Sophus::Vector2<Scalar, Options>;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (one for rotation and one for scaling).
@@ -309,7 +314,7 @@ class RxSO2Base {
   /// Returns rotation matrix.
   ///
   SOPHUS_FUNC Transformation rotationMatrix() const {
-    ComplexType norm_quad = complex();
+    ComplexTemporaryType norm_quad = complex();
     norm_quad.normalize();
     return SO2<Scalar>(norm_quad).matrix();
   }

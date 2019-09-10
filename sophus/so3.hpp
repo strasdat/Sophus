@@ -24,22 +24,25 @@ using SO3f = SO3<float>;
 namespace Eigen {
 namespace internal {
 
-template <class Scalar_, int Options>
-struct traits<Sophus::SO3<Scalar_, Options>> {
+template <class Scalar_, int Options_>
+struct traits<Sophus::SO3<Scalar_, Options_>> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using QuaternionType = Eigen::Quaternion<Scalar, Options>;
 };
 
-template <class Scalar_, int Options>
-struct traits<Map<Sophus::SO3<Scalar_>, Options>>
-    : traits<Sophus::SO3<Scalar_, Options>> {
+template <class Scalar_, int Options_>
+struct traits<Map<Sophus::SO3<Scalar_>, Options_>>
+    : traits<Sophus::SO3<Scalar_, Options_>> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using QuaternionType = Map<Eigen::Quaternion<Scalar>, Options>;
 };
 
-template <class Scalar_, int Options>
-struct traits<Map<Sophus::SO3<Scalar_> const, Options>>
-    : traits<Sophus::SO3<Scalar_, Options> const> {
+template <class Scalar_, int Options_>
+struct traits<Map<Sophus::SO3<Scalar_> const, Options_>>
+    : traits<Sophus::SO3<Scalar_, Options_> const> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using QuaternionType = Map<Eigen::Quaternion<Scalar> const, Options>;
 };
@@ -73,9 +76,11 @@ namespace Sophus {
 template <class Derived>
 class SO3Base {
  public:
+  static constexpr int Options = Eigen::internal::traits<Derived>::Options;
   using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
   using QuaternionType =
       typename Eigen::internal::traits<Derived>::QuaternionType;
+  using QuaternionTemporaryType = Eigen::Quaternion<Scalar, Options>;
 
   /// Degrees of freedom of group, number of dimensions in tangent space.
   static int constexpr DoF = 3;
