@@ -256,7 +256,7 @@ class SO3Base {
     /// Representation through Encapsulation of Manifolds"
     /// Information Fusion, 2011
 
-    if (squared_n < Constants<Scalar>::epsilon()) {
+    if (squared_n < Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
       SOPHUS_ENSURE(abs(w) >= Constants<Scalar>::epsilon(),
@@ -588,7 +588,8 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
 
     Scalar imag_factor;
     Scalar real_factor;
-    if (theta_sq < Constants<Scalar>::epsilon()) {
+    if (theta_sq <
+        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
       *theta = Scalar(0);
       Scalar theta_po4 = theta_sq * theta_sq;
       imag_factor = Scalar(0.5) - Scalar(1.0 / 48.0) * theta_sq +
