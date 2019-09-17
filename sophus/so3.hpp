@@ -265,7 +265,7 @@ class SO3Base {
       Scalar squared_w = w * w;
       two_atan_nbyw_by_n =
           Scalar(2) / w - Scalar(2) * (squared_n) / (w * squared_w);
-      J.theta = Scalar(0);
+      J.theta = Scalar(2) * squared_n / w;
     } else {
       Scalar n = sqrt(squared_n);
       if (abs(w) < Constants<Scalar>::epsilon()) {
