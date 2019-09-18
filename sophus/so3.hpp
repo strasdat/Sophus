@@ -245,7 +245,6 @@ class SO3Base {
     using std::atan;
     using std::sqrt;
     Scalar squared_n = unit_quaternion().vec().squaredNorm();
-    Scalar n = sqrt(squared_n);
     Scalar w = unit_quaternion().w();
 
     Scalar two_atan_nbyw_by_n;
@@ -257,16 +256,18 @@ class SO3Base {
     /// Representation through Encapsulation of Manifolds"
     /// Information Fusion, 2011
 
-    if (n < Constants<Scalar>::epsilon()) {
-      /// If quaternion is normalized and n=0, then w should be 1;
-      /// w=0 should never happen here!
+    if (squared_n < Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
+      // If quaternion is normalized and n=0, then w should be 1;
+      // w=0 should never happen here!
       SOPHUS_ENSURE(abs(w) >= Constants<Scalar>::epsilon(),
                     "Quaternion (%) should be normalized!",
                     unit_quaternion().coeffs().transpose());
       Scalar squared_w = w * w;
       two_atan_nbyw_by_n =
           Scalar(2) / w - Scalar(2) * (squared_n) / (w * squared_w);
+      J.theta = Scalar(2) * squared_n / w;
     } else {
+      Scalar n = sqrt(squared_n);
       if (abs(w) < Constants<Scalar>::epsilon()) {
         if (w > Scalar(0)) {
           two_atan_nbyw_by_n = Constants<Scalar>::pi() / n;
@@ -276,9 +277,8 @@ class SO3Base {
       } else {
         two_atan_nbyw_by_n = Scalar(2) * atan(n / w) / n;
       }
+      J.theta = two_atan_nbyw_by_n * n;
     }
-
-    J.theta = two_atan_nbyw_by_n * n;
 
     J.tangent = two_atan_nbyw_by_n * unit_quaternion().vec();
     return J;
@@ -585,18 +585,20 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     using std::sin;
     using std::sqrt;
     Scalar theta_sq = omega.squaredNorm();
-    *theta = sqrt(theta_sq);
-    Scalar half_theta = Scalar(0.5) * (*theta);
 
     Scalar imag_factor;
     Scalar real_factor;
-    if ((*theta) < Constants<Scalar>::epsilon()) {
+    if (theta_sq <
+        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
+      *theta = Scalar(0);
       Scalar theta_po4 = theta_sq * theta_sq;
       imag_factor = Scalar(0.5) - Scalar(1.0 / 48.0) * theta_sq +
                     Scalar(1.0 / 3840.0) * theta_po4;
       real_factor = Scalar(1) - Scalar(1.0 / 8.0) * theta_sq +
                     Scalar(1.0 / 384.0) * theta_po4;
     } else {
+      *theta = sqrt(theta_sq);
+      Scalar half_theta = Scalar(0.5) * (*theta);
       Scalar sin_half_theta = sin(half_theta);
       imag_factor = sin_half_theta / (*theta);
       real_factor = cos(half_theta);
