@@ -158,7 +158,8 @@ class Tests {
     return passed;
   }
 
-  bool testSampleUniformSymmetry() {
+  template <class S = Scalar>
+  enable_if_t<std::is_floating_point<S>::value, bool> testSampleUniformSymmetry() {
     bool passed = true;
     std::default_random_engine generator(0);
 
@@ -204,6 +205,11 @@ class Tests {
     }
 
     return passed;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<!std::is_floating_point<S>::value, bool> testSampleUniformSymmetry() {
+    return true;
   }
 
   template <class S = Scalar>
