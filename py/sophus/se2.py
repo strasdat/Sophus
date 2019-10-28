@@ -20,8 +20,14 @@ class Se2:
         theta = v[2]
         so2 = sophus.So2.exp(theta)
 
-        a = so2.z.imag / theta
-        b = (1 - so2.z.real) / theta
+        # See Constants::epsilon().
+        if not isinstance(theta, sympy.Symbol) and abs(theta) < 1e-10:
+            theta_sq = theta * theta;
+            a = 1. - (1. / 6.) * theta_sq;
+            b = 0.5 * theta - (1. / 24.) * theta * theta_sq;
+        else:
+            a = so2.z.imag / theta
+            b = (1 - so2.z.real) / theta
 
         t = sophus.Vector2(a * v[0] - b * v[1],
                            b * v[0] + a * v[1])
@@ -30,7 +36,13 @@ class Se2:
     def log(self):
         theta = self.so2.log()
         halftheta = 0.5 * theta
-        a = -(halftheta * self.so2.z.imag) / (self.so2.z.real - 1)
+        real_minus_one = self.so2.z.real - 1
+
+        # See Constants::epsilon().
+        if not isinstance(theta, sympy.Symbol) and abs(real_minus_one) < 1e-10:
+            a = 1. - (1. / 12) * theta * theta;
+        else:
+            a = -(halftheta * self.so2.z.imag) / real_minus_one
 
         V_inv = sympy.Matrix([[a, halftheta],
                               [-halftheta, a]])
@@ -149,7 +161,8 @@ class TestSe2(unittest.TestCase):
         self.p = sophus.Vector2(p0, p1)
 
     def test_exp_log(self):
-        for v in [sophus.Vector3(0., 1, 0.5),
+        for v in [sophus.Vector3(0., 0., 0.),
+                  sophus.Vector3(0., 1, 0.5),
                   sophus.Vector3(0.1, 0.1, 0.1),
                   sophus.Vector3(0.01, 0.2, 0.03)]:
             w = Se2.exp(v).log()
