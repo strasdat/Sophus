@@ -24,22 +24,25 @@ using SO2f = SO2<float>;
 namespace Eigen {
 namespace internal {
 
-template <class Scalar_, int Options>
-struct traits<Sophus::SO2<Scalar_, Options>> {
+template <class Scalar_, int Options_>
+struct traits<Sophus::SO2<Scalar_, Options_>> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Sophus::Vector2<Scalar, Options>;
 };
 
-template <class Scalar_, int Options>
-struct traits<Map<Sophus::SO2<Scalar_>, Options>>
-    : traits<Sophus::SO2<Scalar_, Options>> {
+template <class Scalar_, int Options_>
+struct traits<Map<Sophus::SO2<Scalar_>, Options_>>
+    : traits<Sophus::SO2<Scalar_, Options_>> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Map<Sophus::Vector2<Scalar>, Options>;
 };
 
-template <class Scalar_, int Options>
-struct traits<Map<Sophus::SO2<Scalar_> const, Options>>
-    : traits<Sophus::SO2<Scalar_, Options> const> {
+template <class Scalar_, int Options_>
+struct traits<Map<Sophus::SO2<Scalar_> const, Options_>>
+    : traits<Sophus::SO2<Scalar_, Options_> const> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Map<Sophus::Vector2<Scalar> const, Options>;
 };
@@ -76,8 +79,10 @@ namespace Sophus {
 template <class Derived>
 class SO2Base {
  public:
+  static constexpr int Options = Eigen::internal::traits<Derived>::Options;
   using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
   using ComplexT = typename Eigen::internal::traits<Derived>::ComplexType;
+  using ComplexTemporaryType = Sophus::Vector2<Scalar, Options>;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space (one
   /// since we only have in-plane rotations).

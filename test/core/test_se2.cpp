@@ -160,6 +160,13 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, se2.rotationMatrix(), R.matrix(),
                        Constants<Scalar>::epsilon());
 
+    Eigen::Matrix<Scalar, 4, 1> raw;
+    raw << Scalar(1), Scalar(0), Scalar(3), Scalar(1);
+    Eigen::Map<SE2Type> map_of_se2(raw.data());
+    map_of_se2.setRotationMatrix(R.matrix());
+    SOPHUS_TEST_APPROX(passed, map_of_se2.rotationMatrix(), R.matrix(),
+                       Constants<Scalar>::epsilon());
+
     return passed;
   }
 
