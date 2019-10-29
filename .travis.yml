@@ -81,4 +81,3 @@ deploy:
 branches:
   only:
     - master
-    - dev
