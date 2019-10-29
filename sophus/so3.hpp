@@ -713,24 +713,26 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   }
 
   /// Draw uniform sample from SO(3) manifold.
+  /// Based on: http://planning.cs.uiuc.edu/node198.html
   ///
   template <class UniformRandomBitGenerator>
   static SO3 sampleUniform(UniformRandomBitGenerator& generator) {
     static_assert(IsUniformRandomBitGenerator<UniformRandomBitGenerator>::value,
                   "generator must meet the UniformRandomBitGenerator concept");
-    std::uniform_real_distribution<Scalar> uniform(-Constants<Scalar>::pi(),
-                                                   Constants<Scalar>::pi());
-    std::normal_distribution<Scalar> normal(0, 1);
-    Sophus::Vector3<Scalar> axis;
-    Scalar nrm;
-    do {
-      axis.x() = normal(generator);
-      axis.y() = normal(generator);
-      axis.z() = normal(generator);
-      nrm = axis.norm();
-    } while (nrm < Constants<Scalar>::epsilon());
-    axis /= nrm;
-    return SO3::exp(uniform(generator) * axis);
+
+    std::uniform_real_distribution<Scalar> uniform(Scalar(0), Scalar(1));
+    std::uniform_real_distribution<Scalar> uniform_twopi(
+        Scalar(0), 2 * Constants<Scalar>::pi());
+
+    const Scalar u1 = uniform(generator);
+    const Scalar u2 = uniform_twopi(generator);
+    const Scalar u3 = uniform_twopi(generator);
+
+    const Scalar a = sqrt(1 - u1);
+    const Scalar b = sqrt(u1);
+
+    return SO3(
+        QuaternionMember(a * sin(u2), a * cos(u2), b * sin(u3), b * cos(u3)));
   }
 
   /// vee-operator

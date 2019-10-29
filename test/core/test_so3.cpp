@@ -66,6 +66,7 @@ class Tests {
     passed &= testUnity();
     passed &= testRawDataAcces();
     passed &= testConstructors();
+    passed &= testSampleUniformSymmetry();
     passed &= testFit();
     processTestResult(passed);
   }
@@ -80,7 +81,7 @@ class Tests {
     bool passed = true;
     // Test that the complex number magnitude stays close to one.
     SO3Type current_q;
-    for (std::size_t i = 0; i < 1000; ++i) {
+    for (size_t i = 0; i < 1000; ++i) {
       for (SO3Type const& q : so3_vec_) {
         current_q *= q;
       }
@@ -155,6 +156,60 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, R, so3.matrix(), Constants<Scalar>::epsilon());
 
     return passed;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<std::is_floating_point<S>::value, bool> testSampleUniformSymmetry() {
+    bool passed = true;
+    std::default_random_engine generator(0);
+
+    // A non-rigorous test for checking that our sampleUniform() function is
+    // giving us symmetric results
+    //
+    // We (a) split the output space in half, (b) apply a series of random
+    // rotations to a point, (c) check which half of the output space each
+    // transformed point ends up, and then (d) apply a standard "coin toss"
+    // chi-square test
+
+    for (size_t trial = 0; trial < 5; trial++) {
+      std::normal_distribution<Scalar> normal(0, 10);
+
+      // Pick a random plane to split the output space by
+      Point plane_normal(normal(generator), normal(generator),
+                         normal(generator));
+      plane_normal /= plane_normal.norm();
+
+      // Pick a random point to be rotated
+      Point input_point(normal(generator), normal(generator),
+                        normal(generator));
+      input_point /= input_point.norm();
+
+      // Randomly rotate points and track # that land on each side of plane
+      size_t positive_count = 0;
+      size_t negative_count = 0;
+      size_t samples = 5000;
+      for (size_t i = 0; i < samples; ++i) {
+        SO3Type R = SO3Type::sampleUniform(generator);
+        if (plane_normal.dot(R * input_point) > 0)
+          positive_count++;
+        else
+          negative_count++;
+      }
+
+      // Chi-square computation, compare against critical value (p=0.01)
+      double expected_count = static_cast<double>(samples) / 2.0;
+      double chi_square =
+          pow(positive_count - expected_count, 2.0) / expected_count +
+          pow(negative_count - expected_count, 2.0) / expected_count;
+      SOPHUS_TEST(passed, chi_square < 6.635);
+    }
+
+    return passed;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<!std::is_floating_point<S>::value, bool> testSampleUniformSymmetry() {
+    return true;
   }
 
   template <class S = Scalar>
