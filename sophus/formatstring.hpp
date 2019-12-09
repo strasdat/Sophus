@@ -1,3 +1,9 @@
+/// @file
+/// FormatString functionality
+
+#ifndef SOPHUS_FORMATSTRING_HPP
+#define SOPHUS_FORMATSTRING_HPP
+
 #include <iostream>
 
 namespace Sophus {
@@ -62,3 +68,5 @@ inline std::string FormatString() { return std::string(); }
 
 }  // namespace details
 }  // namespace Sophus
+
+#endif //SOPHUS_FORMATSTRING_HPP
