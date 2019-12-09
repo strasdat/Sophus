@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <sophus/test_macros.hpp>
+#include <sophus/formatstring.hpp>
 
 namespace Sophus {
 
