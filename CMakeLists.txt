@@ -56,6 +56,7 @@ set(SOPHUS_HEADER_FILES
   sophus/so3.hpp
   sophus/types.hpp
   sophus/velocities.hpp
+  sophus/formatstring.hpp
 )
 
 set(SOPHUS_OTHER_FILES
