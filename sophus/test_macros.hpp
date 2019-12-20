@@ -2,6 +2,7 @@
 #define SOPUHS_TESTS_MACROS_HPP
 
 #include <sophus/types.hpp>
+#include <sophus/formatstring.hpp>
 
 namespace Sophus {
 namespace details {
