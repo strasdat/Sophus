@@ -269,7 +269,7 @@ class SO3Base {
                     unit_quaternion().coeffs().transpose());
       Scalar squared_w = w * w;
       two_atan_nbyw_by_n =
-          Scalar(2) / w - Scalar(2) * (squared_n) / (w * squared_w);
+          Scalar(2) / w - Scalar(2.0/3.0) * (squared_n) / (w * squared_w);
       J.theta = Scalar(2) * squared_n / w;
     } else {
       Scalar n = sqrt(squared_n);
