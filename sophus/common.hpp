@@ -37,10 +37,16 @@
 #define EIGEN_DEVICE_FUNC
 #endif
 
+// NVCC on windows has issues with defaulting the Map specialization constructors, so
+// special case that specific platform case.
+#if defined(_MSC_VER) && defined(__CUDACC__)
+#define SOPHUS_WINDOW_NVCC_FALLBACK
+#endif
+
 // Make sure this compiles with older versions of Eigen which do not have
 // EIGEN_DEFAULT_COPY_CONSTRUCTOR defined
 #ifndef EIGEN_DEFAULT_COPY_CONSTRUCTOR
-#if EIGEN_HAS_CXX11
+#if EIGEN_HAS_CXX11 && !defined(SOPHUS_WINDOW_NVCC_FALLBACK)
 #define EIGEN_DEFAULT_COPY_CONSTRUCTOR(CLASS) EIGEN_DEVICE_FUNC CLASS(const CLASS&) = default;
 #else
 #define EIGEN_DEFAULT_COPY_CONSTRUCTOR(CLASS)
