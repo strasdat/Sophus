@@ -522,11 +522,11 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return so3_.data();
   }
 
-  /// Accessor of SO3
+  /// Mutator of SO3
   ///
   SOPHUS_FUNC SO3Member& so3() { return so3_; }
 
-  /// Mutator of SO3
+  /// Accessor of SO3
   ///
   SOPHUS_FUNC SO3Member const& so3() const { return so3_; }
 
