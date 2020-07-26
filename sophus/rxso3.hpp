@@ -670,7 +670,7 @@ class Map<Sophus::RxSO3<Scalar_>, Options>
   friend class Sophus::RxSO3Base<Map<Sophus::RxSO3<Scalar_>, Options>>;
 
   // LCOV_EXCL_START
-  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map);
+  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map)
   // LCOV_EXCL_STOP
 
   using Base::operator*=;

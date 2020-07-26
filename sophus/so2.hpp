@@ -561,7 +561,7 @@ class Map<Sophus::SO2<Scalar_>, Options>
   friend class Sophus::SO2Base<Map<Sophus::SO2<Scalar_>, Options>>;
 
   // LCOV_EXCL_START
-  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map);
+  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map)
   // LCOV_EXCL_STOP
 
   using Base::operator*=;

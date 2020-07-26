@@ -647,7 +647,7 @@ class Map<Sophus::Sim2<Scalar_>, Options>
   using Adjoint = typename Base::Adjoint;
 
   // LCOV_EXCL_START
-  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map);
+  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map)
   // LCOV_EXCL_STOP
 
   using Base::operator*=;
