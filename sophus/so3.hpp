@@ -311,10 +311,6 @@ class SO3Base {
     return unit_quaternion().toRotationMatrix();
   }
 
-  /// Assignment operator.
-  ///
-  SOPHUS_FUNC SO3Base& operator=(SO3Base const& other) = default;
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class OtherDerived>
@@ -445,6 +441,8 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   /// ``Base`` is friend so unit_quaternion_nonconst can be accessed from
   /// ``Base``.
   friend class SO3Base<SO3<Scalar, Options>>;
+
+  using Base::operator=;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -790,10 +788,7 @@ class Map<Sophus::SO3<Scalar_>, Options>
   /// ``Base``.
   friend class Sophus::SO3Base<Map<Sophus::SO3<Scalar_>, Options>>;
 
-  // LCOV_EXCL_START
-  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map);
-  // LCOV_EXCL_STOP
-
+  using Base::operator=;
   using Base::operator*=;
   using Base::operator*;
 

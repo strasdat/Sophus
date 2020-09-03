@@ -219,10 +219,6 @@ class RxSO3Base {
     return sR;
   }
 
-  /// Assignment operator.
-  ///
-  SOPHUS_FUNC RxSO3Base& operator=(RxSO3Base const& other) = default;
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class OtherDerived>
@@ -403,7 +399,7 @@ class RxSO3Base {
 
   SOPHUS_FUNC SO3<Scalar> so3() const { return SO3<Scalar>(quaternion()); }
 
- protected:
+ private:
   /// Mutator of quaternion is private to ensure class invariant.
   ///
   SOPHUS_FUNC QuaternionType& quaternion_nonconst() {
@@ -426,6 +422,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
   /// ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
   friend class RxSO3Base<RxSO3<Scalar_, Options>>;
+
+  using Base::operator=;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -669,10 +667,7 @@ class Map<Sophus::RxSO3<Scalar_>, Options>
   /// ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
   friend class Sophus::RxSO3Base<Map<Sophus::RxSO3<Scalar_>, Options>>;
 
-  // LCOV_EXCL_START
-  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map);
-  // LCOV_EXCL_STOP
-
+  using Base::operator=;
   using Base::operator*=;
   using Base::operator*;
 

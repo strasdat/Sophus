@@ -190,10 +190,6 @@ class Sim3Base {
     return matrix;
   }
 
-  /// Assignment operator.
-  ///
-  SOPHUS_FUNC Sim3Base& operator=(Sim3Base const& other) = default;
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class OtherDerived>
@@ -364,6 +360,8 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   using Adjoint = typename Base::Adjoint;
   using RxSo3Member = RxSO3<Scalar, Options>;
   using TranslationMember = Vector3<Scalar, Options>;
+
+  using Base::operator=;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -663,10 +661,7 @@ class Map<Sophus::Sim3<Scalar_>, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  // LCOV_EXCL_START
-  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map);
-  // LCOV_EXCL_STOP
-
+  using Base::operator=;
   using Base::operator*=;
   using Base::operator*;
 
