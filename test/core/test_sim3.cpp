@@ -187,6 +187,31 @@ class Tests {
     for (int i = 0; i < 7; ++i) {
       SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i]);
     }
+
+    Eigen::Matrix<Scalar, 7, 1> data1, data2;
+    data1 << Scalar(0), Scalar(2), Scalar(0), Scalar(0),
+      Scalar(1), Scalar(2), Scalar(3);
+    data2 << Scalar(0), Scalar(0), Scalar(2), Scalar(0),
+      Scalar(3), Scalar(2), Scalar(1);
+
+    Eigen::Map<Sim3Type> map1(data1.data()), map2(data2.data());
+
+    // map -> map assignment
+    map2 = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+
+    // map -> type assignment
+    Sim3Type copy;
+    copy = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
+    // type -> map assignment
+    copy = Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.2), Scalar(0.5),
+                                   Scalar(-1.0), Scalar(1.1))),
+                    Point(Scalar(10), Scalar(0), Scalar(0)));
+    map1 = copy;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
     return passed;
   }
 

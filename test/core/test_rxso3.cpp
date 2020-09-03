@@ -172,6 +172,27 @@ class Tests {
         passed, const_map_of_rxso3_3.quaternion().coeffs().eval(),
         rxso3_copy3.quaternion().coeffs().eval(), Constants<Scalar>::epsilon());
 
+    Eigen::Matrix<Scalar, 4, 1> data1, data2;
+    data1 << Scalar(.1), Scalar(.2), Scalar(.3), Scalar(.4);
+    data2 << Scalar(.5), Scalar(.4), Scalar(.3), Scalar(.2);
+
+    Eigen::Map<RxSO3Type> map1(data1.data()), map2(data2.data());
+
+    // map -> map assignment
+    map2 = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+
+    // map -> type assignment
+    RxSO3Type copy;
+    copy = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
+    // type -> map assignment
+    copy = RxSO3Type::exp(Tangent(Scalar(0.2), Scalar(0.5),
+                                  Scalar(-1.0), Scalar(1.1)));
+    map1 = copy;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
     return passed;
   }
 

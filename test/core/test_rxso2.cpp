@@ -170,6 +170,26 @@ class Tests {
                        rxso2_copy3.complex().eval(),
                        Constants<Scalar>::epsilon());
 
+    Eigen::Matrix<Scalar, 2, 1> data1, data2;
+    data1 << Scalar(.1), Scalar(.2);
+    data2 << Scalar(.5), Scalar(.4);
+
+    Eigen::Map<RxSO2Type> map1(data1.data()), map2(data2.data());
+
+    // map -> map assignment
+    map2 = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+
+    // map -> type assignment
+    RxSO2Type copy;
+    copy = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
+    // type -> map assignment
+    copy = RxSO2Type::exp(Tangent(Scalar(0.2), Scalar(0.5)));
+    map1 = copy;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
     return passed;
   }
 
