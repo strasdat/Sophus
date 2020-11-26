@@ -190,10 +190,6 @@ class RxSO2Base {
     return sR;
   }
 
-  /// Assignment operator.
-  ///
-  SOPHUS_FUNC RxSO2Base& operator=(RxSO2Base const& other) = default;
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class OtherDerived>
@@ -366,7 +362,7 @@ class RxSO2Base {
 
   SOPHUS_FUNC SO2<Scalar> so2() const { return SO2<Scalar>(complex()); }
 
- protected:
+ private:
   /// Mutator of complex is private to ensure class invariant.
   ///
   SOPHUS_FUNC ComplexType& complex_nonconst() {
@@ -389,6 +385,8 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   /// ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
   friend class RxSO2Base<RxSO2<Scalar_, Options>>;
+
+  using Base::operator=;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -600,9 +598,7 @@ class Map<Sophus::RxSO2<Scalar_>, Options>
   /// ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
   friend class Sophus::RxSO2Base<Map<Sophus::RxSO2<Scalar_>, Options>>;
 
-  // LCOV_EXCL_START
-  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map);
-  // LCOV_EXCL_STOP
+  using Base::operator=;
   using Base::operator*=;
   using Base::operator*;
 

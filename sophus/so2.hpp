@@ -196,10 +196,6 @@ class SO2Base {
     return R;
   }
 
-  /// Assignment operator
-  ///
-  SOPHUS_FUNC SO2Base& operator=(SO2Base const& other) = default;
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class OtherDerived>
@@ -352,6 +348,8 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   /// ``Base`` is friend so unit_complex_nonconst can be accessed from ``Base``.
   friend class SO2Base<SO2<Scalar, Options>>;
+
+  using Base::operator=;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -560,10 +558,7 @@ class Map<Sophus::SO2<Scalar_>, Options>
   /// ``Base`` is friend so unit_complex_nonconst can be accessed from ``Base``.
   friend class Sophus::SO2Base<Map<Sophus::SO2<Scalar_>, Options>>;
 
-  // LCOV_EXCL_START
-  SOPHUS_INHERIT_ASSIGNMENT_OPERATORS(Map);
-  // LCOV_EXCL_STOP
-
+  using Base::operator=;
   using Base::operator*=;
   using Base::operator*;
 

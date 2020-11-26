@@ -146,6 +146,24 @@ class Tests {
         passed, SO3Type::rotZ(Scalar(1.1)).matrix(),
         SO3Type::exp(Point(Scalar(0), Scalar(0), Scalar(1.1))).matrix());
 
+    Vector4<Scalar> data1(Scalar{1}, Scalar{0}, Scalar{0}, Scalar{0});
+    Vector4<Scalar> data2(Scalar{0}, Scalar{1}, Scalar{0}, Scalar{0});
+    Eigen::Map<SO3Type> map1(data1.data()), map2(data2.data());
+
+    // map -> map assignment
+    map2 = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+
+    // map -> type assignment
+    SO3Type copy;
+    copy = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
+    // type -> map assignment
+    copy = SO3Type::rotZ(Scalar(0.5));
+    map1 = copy;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
     return passed;
   }
 

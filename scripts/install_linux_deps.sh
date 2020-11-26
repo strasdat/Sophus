@@ -7,11 +7,11 @@ cmake --version
 
 sudo apt-get -qq update
 sudo apt-get install gfortran libc++-dev libgoogle-glog-dev libatlas-base-dev libsuitesparse-dev
-wget http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2
-tar xvf 3.3.4.tar.bz2
+wget https://gitlab.com/libeigen/eigen/-/archive/3.3.4/eigen-3.3.4.tar.bz2
+tar xvf eigen-3.3.4.tar.bz2
 mkdir build-eigen
 cd build-eigen
-cmake ../eigen-eigen-5a0156e40feb -DEIGEN_DEFAULT_TO_ROW_MAJOR=$ROW_MAJOR_DEFAULT
+cmake ../eigen-3.3.4 -DEIGEN_DEFAULT_TO_ROW_MAJOR=$ROW_MAJOR_DEFAULT
 sudo make install
 git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
 cd ceres-solver
