@@ -250,9 +250,18 @@ class SO3Base {
     using std::atan;
     using std::sqrt;
     Scalar squared_n = unit_quaternion().vec().squaredNorm();
+    Scalar n = sqrt(squared_n);
     Scalar w = unit_quaternion().w();
 
-    Scalar two_atan_nbyw_by_n;
+    // As two quaternions correspond to the same rotation, it is possible to
+    // make w = cos(theta/2) >= 0, so that theta will be in [0, pi]
+    Scalar sign = Scalar(1);
+    if (w < Scalar(0)) {
+      sign = Scalar(-1);
+      w = w * sign;
+    }
+
+    Scalar theta_by_n;
 
     /// Atan-based log thanks to
     ///
@@ -268,24 +277,25 @@ class SO3Base {
                     "Quaternion (%) should be normalized!",
                     unit_quaternion().coeffs().transpose());
       Scalar squared_w = w * w;
-      two_atan_nbyw_by_n =
+      theta_by_n =
           Scalar(2) / w - Scalar(2.0/3.0) * (squared_n) / (w * squared_w);
-      J.theta = Scalar(2) * squared_n / w;
+      J.theta = Scalar(2) * n / w;
     } else {
-      Scalar n = sqrt(squared_n);
-      if (abs(w) < Constants<Scalar>::epsilon()) {
-        if (w > Scalar(0)) {
-          two_atan_nbyw_by_n = Constants<Scalar>::pi() / n;
-        } else {
-          two_atan_nbyw_by_n = -Constants<Scalar>::pi() / n;
-        }
+      // Use computationally stable (around theta=pi, w=x=0) version of atan2(y, x)
+      // with (w = x) >= 0, (n = y) > 0
+      // Scalar squared_w = w * w;
+      // J.theta = Scalar(4) * atan(n / (w + sqrt(squared_w + squared_n)));
+      // As the quaternion is of unit norm, we can use squared_w + squared_n = 1
+      if (w < Constants<Scalar>::epsilon()) {
+        // without this check the interpolation tests with float values fail
+        J.theta = Constants<Scalar>::pi();
       } else {
-        two_atan_nbyw_by_n = Scalar(2) * atan(n / w) / n;
+        J.theta = Scalar(4) * atan(n / (w + Scalar(1)));
       }
-      J.theta = two_atan_nbyw_by_n * n;
+      theta_by_n = J.theta / n;
     }
 
-    J.tangent = two_atan_nbyw_by_n * unit_quaternion().vec();
+    J.tangent = theta_by_n * sign * unit_quaternion().vec();
     return J;
   }
 
