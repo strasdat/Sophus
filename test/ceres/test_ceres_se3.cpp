@@ -43,7 +43,7 @@ struct TestSE3CostFunctor {
     // (Jet, double) and (double, Jet) SE3 multiplication work correctly.
     residuals = (T_wa * T_aw).log();
     // Finally, ensure that Jet-to-Jet multiplication works.
-    residuals = (T_wa * T_aw.cast<T>()).log();
+    residuals = (T_aw.cast<T>() * T_wa).log();
     return true;
   }
 
@@ -128,6 +128,29 @@ bool test(Sophus::SE3d const& T_w_targ, Sophus::SE3d const& T_w_init,
   return passed;
 }
 
+bool test_box_minus_only(Sophus::SE3d const& T_w_targ,
+                         Sophus::SE3d const& T_w_init) {
+  Sophus::SE3d T_wr = T_w_init;
+  ceres::Problem problem;
+  problem.AddParameterBlock(T_wr.data(), Sophus::SE3d::num_parameters,
+                            new Sophus::test::LocalParameterizationSE3);
+  ceres::CostFunction* cost_function1 =
+      new ceres::AutoDiffCostFunction<TestSE3CostFunctor, Sophus::SE3d::DoF,
+                                      Sophus::SE3d::num_parameters>(
+          new TestSE3CostFunctor(T_w_targ.inverse()));
+  problem.AddResidualBlock(cost_function1, NULL, T_wr.data());
+  ceres::Solver::Options options;
+  options.gradient_tolerance = 0.01 * Sophus::Constants<double>::epsilon();
+  options.function_tolerance = 0.01 * Sophus::Constants<double>::epsilon();
+  options.linear_solver_type = ceres::DENSE_QR;
+  ceres::Solver::Summary summary;
+  Solve(options, &problem, &summary);
+  std::cout << summary.BriefReport() << std::endl;
+  double const mse = (T_w_targ.inverse() * T_wr).log().squaredNorm();
+  bool const passed = mse < 10. * Sophus::Constants<double>::epsilon();
+  return passed;
+}
+
 template <typename Scalar>
 bool CreateSE3FromMatrix(const Eigen::Matrix<Scalar, 4, 4>& mat) {
   Sophus::SE3<Scalar> se3 = Sophus::SE3<Scalar>(mat);
@@ -142,6 +165,28 @@ int main(int, char**) {
   double const kPi = Sophus::Constants<double>::pi();
 
   std::vector<SE3Type> se3_vec;
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.1, 0.05, -0.7)), Point(1, 2, 3)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.1, 0.05, -0.7)), Point(1, 2, 3)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.1, 0.05, -0.7)), Point(1, 2, 3)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.1, 0.05, -0.7)), Point(1, 2, 3)));
+
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.1, 0.05, -0.7)), Point(1, 2, 3)) *
+      SE3Type(SO3Type::exp(Point((kPi - 1e-10), 0, 0)), Point(0, 0, 0)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.1, 0.05, -0.7)), Point(1, 2, 3)) *
+      SE3Type(SO3Type::exp(Point((kPi - 1e-11), 0, 0)), Point(0, 0, 0)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.1, 0.05, -0.7)), Point(1, 2, 3)) *
+      SE3Type(SO3Type::exp(Point((kPi - 1e-12), 0, 0)), Point(0, 0, 0)));
+  se3_vec.push_back(
+      SE3Type(SO3Type::exp(Point(0.1, 0.05, -0.7)), Point(1, 2, 3)) *
+      SE3Type(SO3Type::exp(Point((kPi), 0, 0)), Point(0, 0, 0)));
+
   se3_vec.push_back(
       SE3Type(SO3Type::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)));
   se3_vec.push_back(
@@ -175,9 +220,19 @@ int main(int, char**) {
   point_vec.emplace_back(5.8, 9.2, 0.0);
 
   for (size_t i = 0; i < se3_vec.size(); ++i) {
-    const int other_index = (i + 3) % se3_vec.size();
-    bool const passed = test(se3_vec[i], se3_vec[other_index], point_vec[i],
-                             point_vec[other_index]);
+    const int other_index = (i + 4) % se3_vec.size();
+    bool const passed = test_box_minus_only(se3_vec[other_index], se3_vec[i]);
+    if (!passed) {
+      std::cerr << "failed!" << std::endl << std::endl;
+      exit(-1);
+    }
+  }
+
+  for (size_t i = 0; i < se3_vec.size(); ++i) {
+    const int other_index = (i + 4) % se3_vec.size();
+    const int other_index_point = (i + 4) % point_vec.size();
+    bool const passed = test(se3_vec[other_index], se3_vec[i],
+                             point_vec[other_index_point], point_vec[i]);
     if (!passed) {
       std::cerr << "failed!" << std::endl << std::endl;
       exit(-1);
