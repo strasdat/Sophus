@@ -134,7 +134,9 @@ class RxSO2Base {
   ///
   template <class NewScalarType>
   SOPHUS_FUNC RxSO2<NewScalarType> cast() const {
-    return RxSO2<NewScalarType>(complex().template cast<NewScalarType>());
+    typename RxSO2<NewScalarType>::ComplexType c =
+        complex().template cast<NewScalarType>();
+    return RxSO2<NewScalarType>(c);
   }
 
   /// This provides unsafe read/write access to internal data. RxSO(2) is
