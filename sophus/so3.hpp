@@ -88,6 +88,8 @@ class SO3Base {
   static int constexpr num_parameters = 4;
   /// Group transformations are 3x3 matrices.
   static int constexpr N = 3;
+  /// Number of parameters in group transformation matrices.
+  static int constexpr num_parameters_matrix = 9;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector3<Scalar>;
   using HomogeneousPoint = Vector4<Scalar>;
@@ -298,6 +300,67 @@ class SO3Base {
     J.tangent = theta_by_n * sign * unit_quaternion().vec();
     return J;
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+    /// Returns derivative of log(R) wrt. R.
+    ///
+    SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, num_parameters_matrix> Dx_log_x(
+            Transformation const& R) {
+        using std::cos;
+        using std::exp;
+        using std::sin;
+        using std::sqrt;
+        using std::abs;
+        using std::atan2;
+
+        Scalar const trR = R(0, 0) + R(1, 1) + R(2, 2);
+        Scalar const rest_tr = Scalar(3) - trR;
+
+        if (abs(Scalar(3) - trR) < Constants<Scalar>::epsilon()) {
+            // TODO: return Jacobian of log map at Theta = 0
+            // pass;
+        } else if (abs(Scalar(-1) - trR) < Constants<Scalar>::epsilon()) {
+            // TODO: return Jacobian of log map at Theta = pi
+        }
+
+        template <typename T> T sgn(T val) {
+            return T((T(0) <= val) - (val < T(0)));
+        }
+
+        Scalar const cos_theta = Scalar(0.5) * (trR - Scalar(1));
+
+        Scalar const S_11 = R(0, 0) + R(0, 0) + Scalar(1) - trR;
+        Scalar const S_22 = R(1, 1) + R(1, 1) + Scalar(1) - trR;
+        Scalar const S_33 = R(2, 2) + R(2, 2) + Scalar(1) - trR;
+
+        Scalar const n_1 = sgn<Scalar>(R(2, 1) - R(1, 2)) * sqrt(S_11 / rest_tr);
+        Scalar const n_2 = sgn<Scalar>(R(0, 2) - R(2, 0)) * sqrt(S_22 / rest_tr);
+        Scalar const n_3 = sgn<Scalar>(R(1, 0) - R(0, 1)) * sqrt(S_33 / rest_tr);
+
+        Scalar const dn_1_d_R_11 = (S_11 + rest_tr) / (Scalar(2) * n_1 * rest_tr * rest_tr);
+        Scalar const dn_1_d_R_22 = (S_11 - rest_tr) / (Scalar(2) * n_1 * rest_tr * rest_tr);
+        Scalar const dn_1_d_R_33 = dn_1_d_R_22;
+        Scalar const dn_2_d_R_11 = (S_22 - rest_tr) / (Scalar(2) * n_2 * rest_tr * rest_tr);
+        Scalar const dn_2_d_R_22 = (S_22 + rest_tr) / (Scalar(2) * n_2 * rest_tr * rest_tr);
+        Scalar const dn_2_d_R_33 = dn_2_d_R_11;
+        Scalar const dn_3_d_R_11 = (S_33 - rest_tr) / (Scalar(2) * n_3 * rest_tr * rest_tr);
+        Scalar const dn_3_d_R_22 = dn_3_d_R_11;
+        Scalar const dn_3_d_R_33 = (S_33 + rest_tr) / (Scalar(2) * n_3 * rest_tr * rest_tr);
+
+        Scalar const sin_theta = Scalar(-0.5) * (n_1 * (R(1, 2) - R(2, 1)) + n_2 * (R(2, 0) - R(0, 2)) +
+                n_3 * (R(0, 1) - R(1, 0)));
+        Scalar const theta = atan2(sin_theta, cos_theta);
+
+
+
+        Sophus::Matrix<Scalar, DoF, num_parameters_matrix> J;
+        return J;
+    }
+*/
+//////////////////////////////////////////////////////////////////////////////
+
+
 
   /// It re-normalizes ``unit_quaternion`` to unit length.
   ///
