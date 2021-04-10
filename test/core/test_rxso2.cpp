@@ -102,7 +102,12 @@ class Tests {
   }
 
   bool testSaturation() {
+    using std::cos;
+    using std::sin;
+    using std::log;
+
     bool passed = true;
+    // Test if product of two small group elements has correct scale
     RxSO2Type small1(Scalar(1.1) * Constants<Scalar>::epsilon(), SO2Type());
     RxSO2Type small2(Scalar(1.1) * Constants<Scalar>::epsilon(),
                      SO2Type::exp(Constants<Scalar>::pi()));
@@ -112,6 +117,37 @@ class Tests {
                        Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, saturated_product.so2().matrix(),
                        (small1.so2() * small2.so2()).matrix(),
+                       Constants<Scalar>::epsilon());
+
+    /*
+     * Test if group exponential produces group elements
+     * that can be multiplied safely even for large scale factors
+     */
+    const Tangent large_log(Scalar(1.), std::numeric_limits<Scalar>::max());
+    const Tangent regular_log(Scalar(2.), Scalar(0.));
+    const RxSO2Type large = RxSO2Type::exp(large_log);
+    const RxSO2Type regular = RxSO2Type::exp(regular_log);
+    const RxSO2Type product = regular * large;
+    SOPHUS_TEST(passed, std::isfinite(large.scale()));
+    SOPHUS_TEST(passed, std::isfinite(product.scale()));
+
+    // Test if saturation is handled correctly with imprecision of IEEE754-2008
+    std::mt19937 rng;
+    std::uniform_real_distribution<Scalar> uniform(Scalar(0.), kPi);
+    Tangent small_log;
+    while (true) {
+      const Scalar phi = uniform(rng);
+      const Scalar c = cos(phi);
+      const Scalar s = sin(phi);
+      if (c * c + s * s < Scalar(1.)) {
+        small_log[0] = phi;
+        break;
+      }
+    }
+    small_log[1] = log(Constants<Scalar>::epsilon() / Scalar(2.));
+
+    const RxSO2Type small_exp = RxSO2Type::exp(small_log);
+    SOPHUS_TEST_APPROX(passed, small_exp.scale(), Constants<Scalar>::epsilon(),
                        Constants<Scalar>::epsilon());
     return passed;
   }

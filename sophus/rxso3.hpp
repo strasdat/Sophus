@@ -59,9 +59,10 @@ namespace Sophus {
 /// freedom (DoF) of RxSO3 (=4) equals the number of internal parameters (=4).
 ///
 /// This class has the explicit class invariant that the scale ``s`` is not
-/// too close to zero. Strictly speaking, it must hold that:
+/// too close to either zero or infinity. Strictly speaking, it must hold that:
 ///
-///   ``quaternion().squaredNorm() >= Constants::epsilon()``.
+///   ``quaternion().squaredNorm() >= Constants::epsilon()`` and
+///   ``1. / quaternion().squaredNorm() >= Constants::epsilon()``.
 ///
 /// In order to obey this condition, group multiplication is implemented with
 /// saturation such that a product always has a scale which is equal or greater
@@ -237,6 +238,7 @@ class RxSO3Base {
   template <typename OtherDerived>
   SOPHUS_FUNC RxSO3Product<OtherDerived> operator*(
       RxSO3Base<OtherDerived> const& other) const {
+    using std::sqrt;
     using ResultT = ReturnScalar<OtherDerived>;
     typename RxSO3Product<OtherDerived>::QuaternionType result_quaternion(
         quaternion() * other.quaternion());
@@ -246,7 +248,11 @@ class RxSO3Base {
       SOPHUS_ENSURE(scale > ResultT(0), "Scale must be greater zero.");
       /// Saturation to ensure class invariant.
       result_quaternion.normalize();
-      result_quaternion.coeffs() *= sqrt(Constants<Scalar>::epsilon());
+      result_quaternion.coeffs() *= sqrt(Constants<ResultT>::epsilonPlus());
+    }
+    if (scale > ResultT(1.) / Constants<ResultT>::epsilon()) {
+      result_quaternion.normalize();
+      result_quaternion.coeffs() /= sqrt(Constants<ResultT>::epsilonPlus());
     }
     return RxSO3Product<OtherDerived>(result_quaternion);
   }
@@ -322,11 +328,15 @@ class RxSO3Base {
 
   /// Sets non-zero quaternion
   ///
-  /// Precondition: ``quat`` must not be close to zero.
+  /// Precondition: ``quat`` must not be close to either zero or infinity
   SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quat) {
     SOPHUS_ENSURE(quat.squaredNorm() > Constants<Scalar>::epsilon() *
                                            Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
+    SOPHUS_ENSURE(
+        quat.squaredNorm() < Scalar(1.) / (Constants<Scalar>::epsilon() *
+                                           Constants<Scalar>::epsilon()),
+        "Inverse scale factor must be greater-equal epsilon.");
     static_cast<Derived*>(this)->quaternion_nonconst() = quat;
   }
 
@@ -383,6 +393,9 @@ class RxSO3Base {
     SOPHUS_ENSURE(squared_scale >= Constants<Scalar>::epsilon() *
                                        Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
+    SOPHUS_ENSURE(squared_scale < Scalar(1.) / (Constants<Scalar>::epsilon() *
+                                                Constants<Scalar>::epsilon()),
+                  "Inverse scale factor must be greater-equal epsilon.");
     Scalar scale = sqrt(squared_scale);
     quaternion_nonconst() = sR / scale;
     quaternion_nonconst().coeffs() *= sqrt(scale);
@@ -455,31 +468,35 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// Constructor from scale factor and rotation matrix ``R``.
   ///
   /// Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
-  ///               of 1 and ``scale`` must not be close to zero.
+  ///               of 1 and ``scale`` must not be close to either zero or infinity.
   ///
   SOPHUS_FUNC RxSO3(Scalar const& scale, Transformation const& R)
       : quaternion_(R) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
+    SOPHUS_ENSURE(scale < Scalar(1.) / Constants<Scalar>::epsilon(),
+                  "Inverse scale factor must be greater-equal epsilon.");
     using std::sqrt;
     quaternion_.coeffs() *= sqrt(scale);
   }
 
   /// Constructor from scale factor and SO3
   ///
-  /// Precondition: ``scale`` must not to be close to zero.
+  /// Precondition: ``scale`` must not to be close to either zero or infinity.
   ///
   SOPHUS_FUNC RxSO3(Scalar const& scale, SO3<Scalar> const& so3)
       : quaternion_(so3.unit_quaternion()) {
     SOPHUS_ENSURE(scale >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
+    SOPHUS_ENSURE(scale < Scalar(1.) / Constants<Scalar>::epsilon(),
+                  "Inverse scale factor must be greater-equal epsilon.");
     using std::sqrt;
     quaternion_.coeffs() *= sqrt(scale);
   }
 
   /// Constructor from quaternion
   ///
-  /// Precondition: quaternion must not be close to zero.
+  /// Precondition: quaternion must not be close to either zero or infinity.
   ///
   template <class D>
   SOPHUS_FUNC explicit RxSO3(Eigen::QuaternionBase<D> const& quat)
@@ -488,6 +505,9 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
                   "must be same Scalar type.");
     SOPHUS_ENSURE(quaternion_.squaredNorm() >= Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
+    SOPHUS_ENSURE(
+        quat.squaredNorm() < Scalar(1.) / Constants<Scalar>::epsilon(),
+        "Inverse scale factor must be greater-equal epsilon.");
   }
 
   /// Accessor of quaternion.
@@ -523,10 +543,16 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
     SOPHUS_ENSURE(theta != nullptr, "must not be nullptr.");
     using std::exp;
     using std::sqrt;
+    using std::max;
+    using std::min;
 
     Vector3<Scalar> const omega = a.template head<3>();
     Scalar sigma = a[3];
-    Scalar sqrt_scale = sqrt(exp(sigma));
+    Scalar scale = exp(sigma);
+    // Ensure that scale-factor contraint is always valid
+    scale = max(scale, Constants<Scalar>::epsilonPlus());
+    scale = min(scale, Scalar(1.) / Constants<Scalar>::epsilonPlus());
+    Scalar sqrt_scale = sqrt(scale);
     Eigen::Quaternion<Scalar> quat =
         SO3<Scalar>::expAndTheta(omega, theta).unit_quaternion();
     quat.coeffs() *= sqrt_scale;
