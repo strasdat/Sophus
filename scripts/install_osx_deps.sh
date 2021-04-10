@@ -11,7 +11,7 @@ export PATH="/usr/local/opt/ccache/libexec:$PATH"
 whereis ccache
 git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
 cd ceres-solver
-git reset --hard afe93546b67cee0ad205fe8044325646ed5deea9
+git reset --hard 399cda773035d99eaf1f4a129a666b3c4df9d1b1
 mkdir build
 cd build
 ccache -M 50G
