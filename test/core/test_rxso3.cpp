@@ -118,13 +118,14 @@ class Tests {
     const RxSO3Type large = RxSO3Type::exp(large_log);
     const RxSO3Type regular = RxSO3Type::exp(regular_log);
     const RxSO3Type product = regular * large;
-    SOPHUS_TEST(passed, std::isfinite(large.scale()));
-    SOPHUS_TEST(passed, std::isfinite(product.scale()));
+    SOPHUS_TEST(passed, isfinite(large.scale()));
+    SOPHUS_TEST(passed, isfinite(product.scale()));
 
     // Test if saturation is handled correctly with imprecision of IEEE754-2008
     Tangent small_log;
     while (true) {
-      const typename SO3Type::Tangent so3_tangent = SO3Type::Tangent::Random();
+      // Note: use cast() since Random() doesn't work with ceres::Jet Scalar types
+      const typename SO3Type::Tangent so3_tangent = Eigen::Vector3d::Random().cast<Scalar>();
       const SO3Type so3_exp = SO3Type::exp(so3_tangent);
       if (so3_exp.unit_quaternion().squaredNorm() >= Scalar(1.)) continue;
       small_log << so3_tangent, log(Constants<Scalar>::epsilon() / Scalar(2.));
