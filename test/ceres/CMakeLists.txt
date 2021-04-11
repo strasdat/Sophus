@@ -8,10 +8,10 @@ if( Ceres_FOUND )
   MESSAGE(STATUS "CERES found")
 
   # Tests to run
-  SET( TEST_SOURCES test_ceres_se3 )
+  SET( TEST_SOURCES test_ceres_se3 test_ceres_so3)
 
   FOREACH(test_src ${TEST_SOURCES})
-    ADD_EXECUTABLE( ${test_src} ${test_src}.cpp local_parameterization_se3)
+    ADD_EXECUTABLE( ${test_src} ${test_src}.cpp local_parameterization_se3 local_parameterization_so3)
     TARGET_LINK_LIBRARIES( ${test_src} sophus ${CERES_LIBRARIES} )
     TARGET_INCLUDE_DIRECTORIES( ${test_src} SYSTEM PRIVATE ${CERES_INCLUDE_DIRS})
     ADD_TEST( ${test_src} ${test_src} )
