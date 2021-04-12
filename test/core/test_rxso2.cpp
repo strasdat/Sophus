@@ -128,15 +128,16 @@ class Tests {
     const RxSO2Type large = RxSO2Type::exp(large_log);
     const RxSO2Type regular = RxSO2Type::exp(regular_log);
     const RxSO2Type product = regular * large;
-    SOPHUS_TEST(passed, std::isfinite(large.scale()));
-    SOPHUS_TEST(passed, std::isfinite(product.scale()));
+    SOPHUS_TEST(passed, isfinite(large.scale()));
+    SOPHUS_TEST(passed, isfinite(product.scale()));
 
     // Test if saturation is handled correctly with imprecision of IEEE754-2008
     std::mt19937 rng;
-    std::uniform_real_distribution<Scalar> uniform(Scalar(0.), kPi);
+    std::uniform_real_distribution<double> uniform(0., Constants<double>::pi());
     Tangent small_log;
     while (true) {
-      const Scalar phi = uniform(rng);
+      // Note: sample double and convert to Scalar for compatibility with ceres::Jet
+      const Scalar phi = Scalar(uniform(rng));
       const Scalar c = cos(phi);
       const Scalar s = sin(phi);
       if (c * c + s * s < Scalar(1.)) {
