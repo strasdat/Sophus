@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        language: [c++, sympy]
+      fail-fast: false
+
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1
+        if: matrix.language == 'c++'
+
+      - name: Install dependencies (Linux)
+        run: ./scripts/install_linux_deps.sh
+        if: matrix.language == 'c++'
+
+      - name: Run tests
+        run: ./scripts/run_cpp_tests.sh
+        if: matrix.language == 'c++'
+
+      - name: Run sympp tests
+        run: |
+          pip3 install sympy
+          cd py
+          ./run_tests.sh
+        if: matrix.language == 'sympy'
