@@ -18,8 +18,7 @@ cd ceres-solver
 git reset --hard 399cda773035d99eaf1f4a129a666b3c4df9d1b1
 mkdir build
 cd build
-ccache -M 50G
 ccache -s
-cmake -DCXX11=On -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DOPENMP=Off ..
-make -j3
+cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ..
+make -j8
 sudo make install
