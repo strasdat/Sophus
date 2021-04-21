@@ -1,8 +1,8 @@
 #ifndef SOPUHS_TESTS_MACROS_HPP
 #define SOPUHS_TESTS_MACROS_HPP
 
-#include <sophus/types.hpp>
 #include <sophus/formatstring.hpp>
+#include <sophus/types.hpp>
 
 namespace Sophus {
 namespace details {

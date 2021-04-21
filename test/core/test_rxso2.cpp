@@ -103,8 +103,8 @@ class Tests {
 
   bool testSaturation() {
     using std::cos;
-    using std::sin;
     using std::log;
+    using std::sin;
 
     bool passed = true;
     // Test if product of two small group elements has correct scale
@@ -136,7 +136,8 @@ class Tests {
     std::uniform_real_distribution<double> uniform(0., Constants<double>::pi());
     Tangent small_log;
     while (true) {
-      // Note: sample double and convert to Scalar for compatibility with ceres::Jet
+      // Note: sample double and convert to Scalar for compatibility with
+      // ceres::Jet
       const Scalar phi = Scalar(uniform(rng));
       const Scalar c = cos(phi);
       const Scalar s = sin(phi);

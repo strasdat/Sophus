@@ -147,8 +147,8 @@ class Tests {
     }
 
     Eigen::Matrix<Scalar, 4, 1> data1, data2;
-    data1 << Scalar(0), Scalar(2),  Scalar(1), Scalar(2);
-    data2 << Scalar(2), Scalar(0),  Scalar(2), Scalar(1);
+    data1 << Scalar(0), Scalar(2), Scalar(1), Scalar(2);
+    data2 << Scalar(2), Scalar(0), Scalar(2), Scalar(1);
 
     Eigen::Map<Sim2Type> map1(data1.data()), map2(data2.data());
 

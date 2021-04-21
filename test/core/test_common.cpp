@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <sophus/test_macros.hpp>
 #include <sophus/formatstring.hpp>
+#include <sophus/test_macros.hpp>
 
 namespace Sophus {
 

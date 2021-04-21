@@ -468,7 +468,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// Constructor from scale factor and rotation matrix ``R``.
   ///
   /// Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
-  ///               of 1 and ``scale`` must not be close to either zero or infinity.
+  ///               of 1 and ``scale`` must not be close to either zero or
+  ///               infinity.
   ///
   SOPHUS_FUNC RxSO3(Scalar const& scale, Transformation const& R)
       : quaternion_(R) {
@@ -542,9 +543,9 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
                                                Scalar* theta) {
     SOPHUS_ENSURE(theta != nullptr, "must not be nullptr.");
     using std::exp;
-    using std::sqrt;
     using std::max;
     using std::min;
+    using std::sqrt;
 
     Vector3<Scalar> const omega = a.template head<3>();
     Scalar sigma = a[3];

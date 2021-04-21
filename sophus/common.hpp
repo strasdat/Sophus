@@ -14,7 +14,7 @@
 
 #if !defined(SOPHUS_DISABLE_ENSURES)
 #include "formatstring.hpp"
-#endif //!defined(SOPHUS_DISABLE_ENSURES)
+#endif  //! defined(SOPHUS_DISABLE_ENSURES)
 
 // following boost's assert.hpp
 #undef SOPHUS_ENSURE
@@ -37,8 +37,8 @@
 #define EIGEN_DEVICE_FUNC
 #endif
 
-// NVCC on windows has issues with defaulting the Map specialization constructors, so
-// special case that specific platform case.
+// NVCC on windows has issues with defaulting the Map specialization
+// constructors, so special case that specific platform case.
 #if defined(_MSC_VER) && defined(__CUDACC__)
 #define SOPHUS_WINDOW_NVCC_FALLBACK
 #endif
@@ -93,7 +93,9 @@ template <class Scalar>
 struct Constants {
   SOPHUS_FUNC static Scalar epsilon() { return Scalar(1e-10); }
 
-  SOPHUS_FUNC static Scalar epsilonPlus() { return epsilon() * (Scalar(1.) + epsilon()); }
+  SOPHUS_FUNC static Scalar epsilonPlus() {
+    return epsilon() * (Scalar(1.) + epsilon());
+  }
 
   SOPHUS_FUNC static Scalar epsilonSqrt() {
     using std::sqrt;
@@ -110,7 +112,9 @@ struct Constants<float> {
   SOPHUS_FUNC static float constexpr epsilon() {
     return static_cast<float>(1e-5);
   }
-  SOPHUS_FUNC static float epsilonPlus() { return epsilon() * (1.f + epsilon()); }
+  SOPHUS_FUNC static float epsilonPlus() {
+    return epsilon() * (1.f + epsilon());
+  }
 
   SOPHUS_FUNC static float epsilonSqrt() { return std::sqrt(epsilon()); }
 

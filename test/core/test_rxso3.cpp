@@ -124,8 +124,10 @@ class Tests {
     // Test if saturation is handled correctly with imprecision of IEEE754-2008
     Tangent small_log;
     while (true) {
-      // Note: use cast() since Random() doesn't work with ceres::Jet Scalar types
-      const typename SO3Type::Tangent so3_tangent = Eigen::Vector3d::Random().cast<Scalar>();
+      // Note: use cast() since Random() doesn't work with ceres::Jet Scalar
+      // types
+      const typename SO3Type::Tangent so3_tangent =
+          Eigen::Vector3d::Random().cast<Scalar>();
       const SO3Type so3_exp = SO3Type::exp(so3_tangent);
       if (so3_exp.unit_quaternion().squaredNorm() >= Scalar(1.)) continue;
       small_log << so3_tangent, log(Constants<Scalar>::epsilon() / Scalar(2.));
@@ -219,8 +221,8 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
 
     // type -> map assignment
-    copy = RxSO3Type::exp(Tangent(Scalar(0.2), Scalar(0.5),
-                                  Scalar(-1.0), Scalar(1.1)));
+    copy = RxSO3Type::exp(
+        Tangent(Scalar(0.2), Scalar(0.5), Scalar(-1.0), Scalar(1.1)));
     map1 = copy;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
 
