@@ -47,7 +47,7 @@ jobs:
         run: ./scripts/run_cpp_tests.sh
         if: matrix.language == 'c++'
 
-      - name: Run sympp tests
+      - name: Run sympy tests
         run: |
           pip3 install sympy
           cd py
