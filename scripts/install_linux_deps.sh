@@ -6,7 +6,7 @@ set -e # exit on error
 cmake --version
 
 sudo apt-get -qq update
-sudo apt-get install gfortran libc++-dev libgoogle-glog-dev libatlas-base-dev libsuitesparse-dev
+sudo apt-get install gfortran libc++-dev libgoogle-glog-dev libatlas-base-dev libsuitesparse-dev libceres-dev
 wget https://gitlab.com/libeigen/eigen/-/archive/3.3.4/eigen-3.3.4.tar.bz2
 tar xvf eigen-3.3.4.tar.bz2
 mkdir build-eigen

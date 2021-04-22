@@ -153,10 +153,10 @@ class Tests {
                       SE3Type::exp(t).matrix());
 
     Eigen::Matrix<Scalar, 7, 1> data1, data2;
-    data1 << Scalar(0), Scalar(1),  Scalar(0), Scalar(0),
-      Scalar(1), Scalar(2), Scalar(3);
-    data1 << Scalar(0), Scalar(0),  Scalar(1), Scalar(0),
-      Scalar(3), Scalar(2), Scalar(1);
+    data1 << Scalar(0), Scalar(1), Scalar(0), Scalar(0), Scalar(1), Scalar(2),
+        Scalar(3);
+    data1 << Scalar(0), Scalar(0), Scalar(1), Scalar(0), Scalar(3), Scalar(2),
+        Scalar(1);
 
     Eigen::Map<SE3Type> map1(data1.data()), map2(data2.data());
 
@@ -170,8 +170,8 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
 
     // type -> map assignment
-    copy = SE3Type::trans(Scalar(4), Scalar(5), Scalar(6))
-      * SE3Type::rotZ(Scalar(0.5));
+    copy = SE3Type::trans(Scalar(4), Scalar(5), Scalar(6)) *
+           SE3Type::rotZ(Scalar(0.5));
     map1 = copy;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
 

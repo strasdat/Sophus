@@ -228,8 +228,8 @@ class RxSO2Base {
       result_complex.normalize();
       result_complex *= Constants<ResultT>::epsilonPlus();
     }
-    if (squared_scale >
-        Scalar(1.) / (Constants<ResultT>::epsilon() * Constants<ResultT>::epsilon())) {
+    if (squared_scale > Scalar(1.) / (Constants<ResultT>::epsilon() *
+                                      Constants<ResultT>::epsilon())) {
       /// Saturation to ensure class invariant.
       result_complex.normalize();
       result_complex /= Constants<ResultT>::epsilonPlus();
@@ -306,7 +306,7 @@ class RxSO2Base {
                                         Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
     SOPHUS_ENSURE(z.squaredNorm() < Scalar(1.) / (Constants<Scalar>::epsilon() *
-                                        Constants<Scalar>::epsilon()),
+                                                  Constants<Scalar>::epsilon()),
                   "Inverse scale factor must be greate-equal epsilon.");
     static_cast<Derived*>(this)->complex_nonconst() = z;
   }
@@ -427,7 +427,8 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// Constructor from scale factor and rotation matrix ``R``.
   ///
   /// Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
-  ///               of 1 and ``scale`` must not to be close to either zero or infinity.
+  ///               of 1 and ``scale`` must not to be close to either zero or
+  ///               infinity.
   ///
   SOPHUS_FUNC RxSO2(Scalar const& scale, Transformation const& R)
       : RxSO2((scale * SO2<Scalar>(R).unit_complex()).eval()) {}
@@ -449,11 +450,12 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
                   "Scale factor must be greater-equal epsilon: % vs %",
                   complex_.squaredNorm(),
                   Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
-    SOPHUS_ENSURE(complex_.squaredNorm() <= Scalar(1.) / (Constants<Scalar>::epsilon() *
+    SOPHUS_ENSURE(
+        complex_.squaredNorm() <= Scalar(1.) / (Constants<Scalar>::epsilon() *
                                                 Constants<Scalar>::epsilon()),
-                  "Inverse scale factor must be greater-equal epsilon: % vs %",
-                  Scalar(1.) / complex_.squaredNorm(),
-                  Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
+        "Inverse scale factor must be greater-equal epsilon: % vs %",
+        Scalar(1.) / complex_.squaredNorm(),
+        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
   }
 
   /// Constructor from complex number.
