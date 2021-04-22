@@ -1,4 +1,5 @@
 Github CI (linux, os x): |GithubCI|_ windows: |AppVeyor|_ code coverage: |ci_cov|_
+
 Soon deprecated: TravisCI (linux, os x): |TravisCI|_
 
 
