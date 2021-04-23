@@ -1,4 +1,8 @@
 build
+build-eigen
 CMakeLists.txt.user
 *.pyc
 .vscode/settings.json
+.idea/
+eigen*/
+*cmake-build*/
