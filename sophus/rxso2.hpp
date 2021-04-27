@@ -290,6 +290,15 @@ class RxSO2Base {
     return *this;
   }
 
+  /// Returns derivative of  this * RxSO2::exp(x) wrt. x at x=0
+  ///
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
+      const {
+    Matrix<Scalar, num_parameters, DoF> J;
+    J << -complex().y(), complex().x(), complex().x(), complex().y();
+    return J;
+  }
+
   /// Returns internal parameters of RxSO(2).
   ///
   /// It returns (c[0], c[1]), with c being the  complex number.
@@ -398,6 +407,9 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   using Base::operator=;
 
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   /// Default constructor initializes complex number to identity rotation and
@@ -468,6 +480,32 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// Accessor of complex.
   ///
   SOPHUS_FUNC ComplexMember const& complex() const { return complex_; }
+
+  /// Returns derivative of exp(x) wrt. ``x``
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
+      Tangent const& a) {
+    using std::cos;
+    using std::exp;
+    using std::sin;
+    Scalar const theta = a[0];
+    Scalar const sigma = a[1];
+
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    J << -sin(theta), cos(theta), cos(theta), sin(theta);
+    return J * exp(sigma);
+  }
+
+  /// Returns derivative of exp(x) wrt. x_i at x=0.
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
+  Dx_exp_x_at_0() {
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    static Scalar const i(1.);
+    static Scalar const o(0.);
+    J << o, i, i, o;
+    return J;
+  }
 
   /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
