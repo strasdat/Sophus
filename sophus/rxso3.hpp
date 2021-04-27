@@ -412,6 +412,35 @@ class RxSO3Base {
 
   SOPHUS_FUNC SO3<Scalar> so3() const { return SO3<Scalar>(quaternion()); }
 
+  /// Returns derivative of  this * RxSO3::exp(x) wrt. x at x=0
+  ///
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
+      const {
+    Matrix<Scalar, num_parameters, DoF> J;
+    Eigen::Quaternion<Scalar> const q = quaternion();
+    J.col(3) = q.coeffs() * Scalar(0.5);
+    Scalar const c0 = Scalar(0.5) * q.w();
+    Scalar const c1 = Scalar(0.5) * q.z();
+    Scalar const c2 = -c1;
+    Scalar const c3 = Scalar(0.5) * q.y();
+    Scalar const c4 = Scalar(0.5) * q.x();
+    Scalar const c5 = -c4;
+    Scalar const c6 = -c3;
+    J(0, 0) = c0;
+    J(0, 1) = c2;
+    J(0, 2) = c3;
+    J(1, 0) = c1;
+    J(1, 1) = c0;
+    J(1, 2) = c5;
+    J(2, 0) = c6;
+    J(2, 1) = c4;
+    J(2, 2) = c0;
+    J(3, 0) = c5;
+    J(3, 1) = c6;
+    J(3, 2) = c2;
+    return J;
+  }
+
  private:
   /// Mutator of quaternion is private to ensure class invariant.
   ///
@@ -425,6 +454,9 @@ template <class Scalar_, int Options>
 class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
  public:
   using Base = RxSO3Base<RxSO3<Scalar_, Options>>;
+  static int constexpr DoF = Base::DoF;
+  static int constexpr num_parameters = Base::num_parameters;
+
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -514,6 +546,32 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// Accessor of quaternion.
   ///
   SOPHUS_FUNC QuaternionMember const& quaternion() const { return quaternion_; }
+
+  /// Returns derivative of exp(x) wrt. x_i at x=0.
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
+  Dx_exp_x_at_0() {
+    static Scalar const h(0.5);
+    return h * Sophus::Matrix<Scalar, num_parameters, DoF>::Identity();
+  }
+
+  /// Returns derivative of exp(x) wrt. x.
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
+      const Tangent& a) {
+    using std::exp;
+    using std::sqrt;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    Vector3<Scalar> const omega = a.template head<3>();
+    Scalar const sigma = a[3];
+    Eigen::Quaternion<Scalar> quat = SO3<Scalar>::exp(omega).unit_quaternion();
+    Scalar const scale = sqrt(exp(sigma));
+    Scalar const scale_half = scale * Scalar(0.5);
+
+    J.template block<4, 3>(0, 0) = SO3<Scalar>::Dx_exp_x(omega) * scale;
+    J.col(3) = quat.coeffs() * scale_half;
+    return J;
+  }
 
   /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
