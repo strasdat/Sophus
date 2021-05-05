@@ -24,6 +24,7 @@ class Tests {
   using Scalar = Scalar_;
   using SO3Type = SO3<Scalar>;
   using RxSO3Type = RxSO3<Scalar>;
+  using RotationMatrixType = typename SO3<Scalar>::Transformation;
   using Point = typename RxSO3<Scalar>::Point;
   using Tangent = typename RxSO3<Scalar>::Tangent;
   Scalar const kPi = Constants<Scalar>::pi();
@@ -92,7 +93,10 @@ class Tests {
   }
 
   bool testSaturation() {
+    using std::log;
+
     bool passed = true;
+    // Test if product of two small group elements has correct scale
     RxSO3Type small1(Constants<Scalar>::epsilon(), SO3Type());
     RxSO3Type small2(Constants<Scalar>::epsilon(),
                      SO3Type::exp(Vector3<Scalar>(Constants<Scalar>::pi(),
@@ -103,6 +107,36 @@ class Tests {
                        Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, saturated_product.so3().matrix(),
                        (small1.so3() * small2.so3()).matrix(),
+                       Constants<Scalar>::epsilon());
+    /*
+     * Test if group exponential produces group elements
+     * that can be multiplied safely even for large scale factors
+     */
+    const Tangent large_log(Scalar(1.), Scalar(2.), Scalar(3.),
+                            std::numeric_limits<Scalar>::max());
+    const Tangent regular_log(Scalar(4.), Scalar(5.), Scalar(6.), Scalar(0.));
+    const RxSO3Type large = RxSO3Type::exp(large_log);
+    const RxSO3Type regular = RxSO3Type::exp(regular_log);
+    const RxSO3Type product = regular * large;
+    SOPHUS_TEST(passed, isfinite(large.scale()));
+    SOPHUS_TEST(passed, isfinite(product.scale()));
+
+    // Test if saturation is handled correctly with imprecision of IEEE754-2008
+    Tangent small_log;
+    while (true) {
+      // Note: use cast() since Random() doesn't work with ceres::Jet Scalar
+      // types
+      const typename SO3Type::Tangent so3_tangent =
+          Eigen::Vector3d::Random().cast<Scalar>();
+      const SO3Type so3_exp = SO3Type::exp(so3_tangent);
+      if (so3_exp.unit_quaternion().squaredNorm() >= Scalar(1.)) continue;
+      small_log << so3_tangent, log(Constants<Scalar>::epsilon() / Scalar(2.));
+      break;
+    }
+
+    const RxSO3Type small_exp = RxSO3Type::exp(small_log);
+    SOPHUS_TEST_APPROX(passed, small_exp.quaternion().squaredNorm(),
+                       Constants<Scalar>::epsilon(),
                        Constants<Scalar>::epsilon());
     return passed;
   }
@@ -149,6 +183,48 @@ class Tests {
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i]);
     }
+
+    // regression: test that rotationMatrix API doesn't change underlying value
+    // for non-const-map and compiles at all for const-map
+    Eigen::Matrix<Scalar, 4, 1> raw3 = {Scalar(2), Scalar(0), Scalar(0),
+                                        Scalar(0)};
+    Eigen::Map<RxSO3Type> map_of_rxso3_3(raw3.data());
+    Eigen::Map<const RxSO3Type> const_map_of_rxso3_3(raw3.data());
+    RxSO3Type rxso3_copy3 = map_of_rxso3_3;
+    const RotationMatrixType r_ref = map_of_rxso3_3.so3().matrix();
+
+    const RotationMatrixType r = map_of_rxso3_3.rotationMatrix();
+    SOPHUS_TEST_APPROX(passed, r_ref, r, Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, map_of_rxso3_3.quaternion().coeffs().eval(),
+                       rxso3_copy3.quaternion().coeffs().eval(),
+                       Constants<Scalar>::epsilon());
+
+    const RotationMatrixType r_const = const_map_of_rxso3_3.rotationMatrix();
+    SOPHUS_TEST_APPROX(passed, r_ref, r_const, Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(
+        passed, const_map_of_rxso3_3.quaternion().coeffs().eval(),
+        rxso3_copy3.quaternion().coeffs().eval(), Constants<Scalar>::epsilon());
+
+    Eigen::Matrix<Scalar, 4, 1> data1, data2;
+    data1 << Scalar(.1), Scalar(.2), Scalar(.3), Scalar(.4);
+    data2 << Scalar(.5), Scalar(.4), Scalar(.3), Scalar(.2);
+
+    Eigen::Map<RxSO3Type> map1(data1.data()), map2(data2.data());
+
+    // map -> map assignment
+    map2 = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+
+    // map -> type assignment
+    RxSO3Type copy;
+    copy = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
+    // type -> map assignment
+    copy = RxSO3Type::exp(
+        Tangent(Scalar(0.2), Scalar(0.5), Scalar(-1.0), Scalar(1.1)));
+    map1 = copy;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
 
     return passed;
   }

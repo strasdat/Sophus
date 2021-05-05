@@ -149,6 +149,26 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, trans.translation().y(), Scalar(0.7),
                        Constants<Scalar>::epsilon());
 
+    Eigen::Matrix<Scalar, 4, 1> data1, data2;
+    data1 << Scalar(0), Scalar(1), Scalar(1), Scalar(2);
+    data1 << Scalar(1), Scalar(0), Scalar(2), Scalar(1);
+
+    Eigen::Map<SE2Type> map1(data1.data()), map2(data2.data());
+
+    // map -> map assignment
+    map2 = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+
+    // map -> type assignment
+    SE2Type copy;
+    copy = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
+    // type -> map assignment
+    copy = SE2Type::trans(Scalar(4), Scalar(5)) * SE2Type::rot(Scalar(0.5));
+    map1 = copy;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
     return passed;
   }
 
@@ -158,6 +178,13 @@ class Tests {
     SO2Type R(Scalar(0.2));
     se2.setRotationMatrix(R.matrix());
     SOPHUS_TEST_APPROX(passed, se2.rotationMatrix(), R.matrix(),
+                       Constants<Scalar>::epsilon());
+
+    Eigen::Matrix<Scalar, 4, 1> raw;
+    raw << Scalar(1), Scalar(0), Scalar(3), Scalar(1);
+    Eigen::Map<SE2Type> map_of_se2(raw.data());
+    map_of_se2.setRotationMatrix(R.matrix());
+    SOPHUS_TEST_APPROX(passed, map_of_se2.rotationMatrix(), R.matrix(),
                        Constants<Scalar>::epsilon());
 
     return passed;

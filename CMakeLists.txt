@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
-project(Sophus VERSION 1.0.0)
+project(Sophus VERSION 1.1.0)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -58,6 +58,7 @@ set(SOPHUS_HEADER_FILES
   sophus/so3.hpp
   sophus/types.hpp
   sophus/velocities.hpp
+  sophus/formatstring.hpp
 )
 
 set(SOPHUS_OTHER_FILES

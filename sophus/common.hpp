@@ -39,6 +39,12 @@
 #define EIGEN_DEVICE_FUNC
 #endif
 
+// NVCC on windows has issues with defaulting the Map specialization
+// constructors, so special case that specific platform case.
+#if defined(_MSC_VER) && defined(__CUDACC__)
+#define SOPHUS_WINDOW_NVCC_FALLBACK
+#endif
+
 #define SOPHUS_FUNC EIGEN_DEVICE_FUNC
 
 #if defined(SOPHUS_DISABLE_ENSURES)
@@ -52,20 +58,37 @@ void ensureFailed(char const* function, char const* file, int line,
                   char const* description);
 }
 
-#define SOPHUS_ENSURE(expr, desc, ...)                               \
-  ((expr)                                                            \
-       ? ((void)0)                                                   \
-       : ::Sophus::ensureFailed(SOPHUS_FUNCTION, __FILE__, __LINE__, \
-                                fmt::format(fmt(desc), __VA_ARGS__).c_str()))
+#define SOPHUS_ENSURE(expr, desc, ...)               \
+  ((expr) ? ((void)0)                                \
+          : ::Sophus::ensureFailed(                  \
+                SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                fmt::format(description, __VA_ARGS__).c_str()))
 #else
-#define SOPHUS_ENSURE(expr, desc, ...)                                     \
-  if (!(expr)) {                                                           \
-    std::printf(                                                           \
-        "Sophus assertion failed in function '%s', file '%s', line %d.\n", \
-        SOPHUS_FUNCTION, __FILE__, __LINE__);                              \
-    std::cout << fmt::format(fmt(desc), ##__VA_ARGS__) << std::endl;       \
-    std::abort();                                                          \
-  }
+// LCOV_EXCL_START
+
+namespace Sophus {
+template <class... Args>
+SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
+                               char const* description, Args&&... args) {
+  std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
+              function, file, line);
+#ifdef __CUDACC__
+  std::printf("%s", description);
+#else
+  std::printf("Sophus assertion failed in function '%s', file '%s', line %d.\n",
+              SOPHUS_FUNCTION, __FILE__, __LINE__);
+  std::cout << fmt::format(description, std::forward<Args>(args)...)
+            << std::endl;
+  std::abort();
+#endif
+}
+}  // namespace Sophus
+
+// LCOV_EXCL_STOP
+#define SOPHUS_ENSURE(expr, ...)                                       \
+  ((expr) ? ((void)0)                                                  \
+          : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                  ##__VA_ARGS__))
 #endif
 
 namespace Sophus {
@@ -73,6 +96,10 @@ namespace Sophus {
 template <class Scalar>
 struct Constants {
   SOPHUS_FUNC static Scalar epsilon() { return Scalar(1e-10); }
+
+  SOPHUS_FUNC static Scalar epsilonPlus() {
+    return epsilon() * (Scalar(1.) + epsilon());
+  }
 
   SOPHUS_FUNC static Scalar epsilonSqrt() {
     using std::sqrt;
@@ -88,6 +115,9 @@ template <>
 struct Constants<float> {
   SOPHUS_FUNC static float constexpr epsilon() {
     return static_cast<float>(1e-5);
+  }
+  SOPHUS_FUNC static float epsilonPlus() {
+    return epsilon() * (1.f + epsilon());
   }
 
   SOPHUS_FUNC static float epsilonSqrt() { return std::sqrt(epsilon()); }

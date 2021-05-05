@@ -17,6 +17,13 @@
 
 namespace Sophus {
 
+// compatibility with ceres::Jet types
+#if SOPHUS_CERES
+using ceres::isfinite;
+#else
+using std::isfinite;
+#endif
+
 template <class LieGroup_>
 class LieGroupTests {
  public:

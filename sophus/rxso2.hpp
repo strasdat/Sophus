@@ -16,22 +16,25 @@ using RxSO2f = RxSO2<float>;
 namespace Eigen {
 namespace internal {
 
-template <class Scalar_, int Options>
-struct traits<Sophus::RxSO2<Scalar_, Options>> {
+template <class Scalar_, int Options_>
+struct traits<Sophus::RxSO2<Scalar_, Options_>> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Sophus::Vector2<Scalar, Options>;
 };
 
-template <class Scalar_, int Options>
-struct traits<Map<Sophus::RxSO2<Scalar_>, Options>>
-    : traits<Sophus::RxSO2<Scalar_, Options>> {
+template <class Scalar_, int Options_>
+struct traits<Map<Sophus::RxSO2<Scalar_>, Options_>>
+    : traits<Sophus::RxSO2<Scalar_, Options_>> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Map<Sophus::Vector2<Scalar>, Options>;
 };
 
-template <class Scalar_, int Options>
-struct traits<Map<Sophus::RxSO2<Scalar_> const, Options>>
-    : traits<Sophus::RxSO2<Scalar_, Options> const> {
+template <class Scalar_, int Options_>
+struct traits<Map<Sophus::RxSO2<Scalar_> const, Options_>>
+    : traits<Sophus::RxSO2<Scalar_, Options_> const> {
+  static constexpr int Options = Options_;
   using Scalar = Scalar_;
   using ComplexType = Map<Sophus::Vector2<Scalar> const, Options>;
 };
@@ -65,9 +68,10 @@ namespace Sophus {
 /// factors.
 ///
 /// This class has the explicit class invariant that the scale ``s`` is not
-/// too close to zero. Strictly speaking, it must hold that:
+/// too close to either zero or infinity. Strictly speaking, it must hold that:
 ///
-///   ``complex().norm() >= Constants::epsilon()``.
+///   ``complex().norm() >= Constants::epsilon()`` and
+///   ``1. / complex().norm() >= Constants::epsilon()``.
 ///
 /// In order to obey this condition, group multiplication is implemented with
 /// saturation such that a product always has a scale which is equal or greater
@@ -75,8 +79,10 @@ namespace Sophus {
 template <class Derived>
 class RxSO2Base {
  public:
+  static constexpr int Options = Eigen::internal::traits<Derived>::Options;
   using Scalar = typename Eigen::internal::traits<Derived>::Scalar;
   using ComplexType = typename Eigen::internal::traits<Derived>::ComplexType;
+  using ComplexTemporaryType = Sophus::Vector2<Scalar, Options>;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (one for rotation and one for scaling).
@@ -185,10 +191,6 @@ class RxSO2Base {
     return sR;
   }
 
-  /// Assignment operator.
-  ///
-  SOPHUS_FUNC RxSO2Base& operator=(RxSO2Base const& other) = default;
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class OtherDerived>
@@ -224,7 +226,13 @@ class RxSO2Base {
         Constants<ResultT>::epsilon() * Constants<ResultT>::epsilon()) {
       /// Saturation to ensure class invariant.
       result_complex.normalize();
-      result_complex *= Constants<ResultT>::epsilon();
+      result_complex *= Constants<ResultT>::epsilonPlus();
+    }
+    if (squared_scale > Scalar(1.) / (Constants<ResultT>::epsilon() *
+                                      Constants<ResultT>::epsilon())) {
+      /// Saturation to ensure class invariant.
+      result_complex.normalize();
+      result_complex /= Constants<ResultT>::epsilonPlus();
     }
     return RxSO2Product<OtherDerived>(result_complex);
   }
@@ -292,11 +300,14 @@ class RxSO2Base {
 
   /// Sets non-zero complex
   ///
-  /// Precondition: ``z`` must not be close to zero.
+  /// Precondition: ``z`` must not be close to either zero or infinity.
   SOPHUS_FUNC void setComplex(Vector2<Scalar> const& z) {
     SOPHUS_ENSURE(z.squaredNorm() > Constants<Scalar>::epsilon() *
                                         Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
+    SOPHUS_ENSURE(z.squaredNorm() < Scalar(1.) / (Constants<Scalar>::epsilon() *
+                                                  Constants<Scalar>::epsilon()),
+                  "Inverse scale factor must be greate-equal epsilon.");
     static_cast<Derived*>(this)->complex_nonconst() = z;
   }
 
@@ -309,7 +320,7 @@ class RxSO2Base {
   /// Returns rotation matrix.
   ///
   SOPHUS_FUNC Transformation rotationMatrix() const {
-    ComplexType norm_quad = complex();
+    ComplexTemporaryType norm_quad = complex();
     norm_quad.normalize();
     return SO2<Scalar>(norm_quad).matrix();
   }
@@ -361,7 +372,7 @@ class RxSO2Base {
 
   SOPHUS_FUNC SO2<Scalar> so2() const { return SO2<Scalar>(complex()); }
 
- protected:
+ private:
   /// Mutator of complex is private to ensure class invariant.
   ///
   SOPHUS_FUNC ComplexType& complex_nonconst() {
@@ -384,6 +395,8 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   /// ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
   friend class RxSO2Base<RxSO2<Scalar_, Options>>;
+
+  using Base::operator=;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -414,21 +427,22 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// Constructor from scale factor and rotation matrix ``R``.
   ///
   /// Precondition: Rotation matrix ``R`` must to be orthogonal with determinant
-  ///               of 1 and ``scale`` must to be close to zero.
+  ///               of 1 and ``scale`` must not to be close to either zero or
+  ///               infinity.
   ///
   SOPHUS_FUNC RxSO2(Scalar const& scale, Transformation const& R)
       : RxSO2((scale * SO2<Scalar>(R).unit_complex()).eval()) {}
 
   /// Constructor from scale factor and SO2
   ///
-  /// Precondition: ``scale`` must be close to zero.
+  /// Precondition: ``scale`` must not be close to either zero or infinity.
   ///
   SOPHUS_FUNC RxSO2(Scalar const& scale, SO2<Scalar> const& so2)
       : RxSO2((scale * so2.unit_complex()).eval()) {}
 
   /// Constructor from complex number.
   ///
-  /// Precondition: complex number must not be close to zero.
+  /// Precondition: complex number must not be close to either zero or infinity
   ///
   SOPHUS_FUNC explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
     SOPHUS_ENSURE(complex_.squaredNorm() >= Constants<Scalar>::epsilon() *
@@ -436,11 +450,17 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
                   "Scale factor must be greater-equal epsilon: {} vs {}",
                   complex_.squaredNorm(),
                   Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
+    SOPHUS_ENSURE(
+        complex_.squaredNorm() <= Scalar(1.) / (Constants<Scalar>::epsilon() *
+                                                Constants<Scalar>::epsilon()),
+        "Inverse scale factor must be greater-equal epsilon: % vs %",
+        Scalar(1.) / complex_.squaredNorm(),
+        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
   }
 
   /// Constructor from complex number.
   ///
-  /// Precondition: complex number must not be close to zero.
+  /// Precondition: complex number must not be close to either zero or inifnity.
   ///
   SOPHUS_FUNC explicit RxSO2(Scalar const& real, Scalar const& imag)
       : RxSO2(Vector2<Scalar>(real, imag)) {}
@@ -466,10 +486,15 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static RxSO2<Scalar> exp(Tangent const& a) {
     using std::exp;
+    using std::max;
+    using std::min;
 
     Scalar const theta = a[0];
     Scalar const sigma = a[1];
     Scalar s = exp(sigma);
+    // Ensuring proper scale
+    s = max(s, Constants<Scalar>::epsilonPlus());
+    s = min(s, Scalar(1.) / Constants<Scalar>::epsilonPlus());
     Vector2<Scalar> z = SO2<Scalar>::exp(theta).unit_complex();
     z *= s;
     return RxSO2<Scalar>(z);
@@ -595,9 +620,7 @@ class Map<Sophus::RxSO2<Scalar_>, Options>
   /// ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
   friend class Sophus::RxSO2Base<Map<Sophus::RxSO2<Scalar_>, Options>>;
 
-  // LCOV_EXCL_START
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map);
-  // LCOV_EXCL_STOP
+  using Base::operator=;
   using Base::operator*=;
   using Base::operator*;
 

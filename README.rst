@@ -1,4 +1,6 @@
-linux, os x: |TravisCI|_ windows: |AppVeyor|_ code coverage: |ci_cov|_
+Github CI (linux, os x): |GithubCI|_ windows: |AppVeyor|_ code coverage: |ci_cov|_
+
+Soon deprecated: TravisCI (linux, os x): |TravisCI|_
 
 
 Sophus
@@ -35,3 +37,6 @@ modern configurations as long they support c++14, CMake, Eigen 3.X and fmt.
 
 .. |ci_cov| image:: https://coveralls.io/repos/github/strasdat/Sophus/badge.svg?branch=master
 .. _ci_cov: https://coveralls.io/github/strasdat/Sophus?branch=master
+
+.. |GithubCI| image:: https://github.com/strasdat/Sophus/actions/workflows/main.yml/badge.svg
+.. _GithubCI: https://github.com/strasdat/Sophus/actions

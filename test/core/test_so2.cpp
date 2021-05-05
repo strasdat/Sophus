@@ -113,6 +113,24 @@ class Tests {
     for (int i = 0; i < 2; ++i) {
       SOPHUS_TEST_EQUAL(passed, so2.data()[i], raw.data()[i]);
     }
+
+    Vector2<Scalar> data1 = {1, 0}, data2 = {0, 1};
+    Eigen::Map<SO2Type> map1(data1.data()), map2(data2.data());
+
+    // map -> map assignment
+    map2 = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+
+    // map -> type assignment
+    SO2Type copy;
+    copy = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
+    // type -> map assignment
+    copy = SO2Type(Scalar(0.5));
+    map1 = copy;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
     return passed;
   }
 

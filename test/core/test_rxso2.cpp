@@ -23,6 +23,7 @@ class Tests {
  public:
   using SO2Type = SO2<Scalar>;
   using RxSO2Type = RxSO2<Scalar>;
+  using RotationMatrixType = typename SO2<Scalar>::Transformation;
   using Point = typename RxSO2<Scalar>::Point;
   using Tangent = typename RxSO2<Scalar>::Tangent;
   Scalar const kPi = Constants<Scalar>::pi();
@@ -101,7 +102,12 @@ class Tests {
   }
 
   bool testSaturation() {
+    using std::cos;
+    using std::log;
+    using std::sin;
+
     bool passed = true;
+    // Test if product of two small group elements has correct scale
     RxSO2Type small1(Scalar(1.1) * Constants<Scalar>::epsilon(), SO2Type());
     RxSO2Type small2(Scalar(1.1) * Constants<Scalar>::epsilon(),
                      SO2Type::exp(Constants<Scalar>::pi()));
@@ -111,6 +117,39 @@ class Tests {
                        Constants<Scalar>::epsilon());
     SOPHUS_TEST_APPROX(passed, saturated_product.so2().matrix(),
                        (small1.so2() * small2.so2()).matrix(),
+                       Constants<Scalar>::epsilon());
+
+    /*
+     * Test if group exponential produces group elements
+     * that can be multiplied safely even for large scale factors
+     */
+    const Tangent large_log(Scalar(1.), std::numeric_limits<Scalar>::max());
+    const Tangent regular_log(Scalar(2.), Scalar(0.));
+    const RxSO2Type large = RxSO2Type::exp(large_log);
+    const RxSO2Type regular = RxSO2Type::exp(regular_log);
+    const RxSO2Type product = regular * large;
+    SOPHUS_TEST(passed, isfinite(large.scale()));
+    SOPHUS_TEST(passed, isfinite(product.scale()));
+
+    // Test if saturation is handled correctly with imprecision of IEEE754-2008
+    std::mt19937 rng;
+    std::uniform_real_distribution<double> uniform(0., Constants<double>::pi());
+    Tangent small_log;
+    while (true) {
+      // Note: sample double and convert to Scalar for compatibility with
+      // ceres::Jet
+      const Scalar phi = Scalar(uniform(rng));
+      const Scalar c = cos(phi);
+      const Scalar s = sin(phi);
+      if (c * c + s * s < Scalar(1.)) {
+        small_log[0] = phi;
+        break;
+      }
+    }
+    small_log[1] = log(Constants<Scalar>::epsilon() / Scalar(2.));
+
+    const RxSO2Type small_exp = RxSO2Type::exp(small_log);
+    SOPHUS_TEST_APPROX(passed, small_exp.scale(), Constants<Scalar>::epsilon(),
                        Constants<Scalar>::epsilon());
     return passed;
   }
@@ -148,6 +187,47 @@ class Tests {
     for (int i = 0; i < 2; ++i) {
       SOPHUS_TEST_EQUAL(passed, so2.data()[i], raw.data()[i]);
     }
+
+    // regression: test that rotationMatrix API doesn't change underlying value
+    // for non-const-map and compiles at all for const-map
+    Eigen::Matrix<Scalar, 2, 1> raw3 = {Scalar(2), Scalar(0)};
+    Eigen::Map<RxSO2Type> map_of_rxso2_3(raw3.data());
+    Eigen::Map<const RxSO2Type> const_map_of_rxso2_3(raw3.data());
+    RxSO2Type rxso2_copy3 = map_of_rxso2_3;
+    const RotationMatrixType r_ref = map_of_rxso2_3.so2().matrix();
+
+    const RotationMatrixType r = map_of_rxso2_3.rotationMatrix();
+    SOPHUS_TEST_APPROX(passed, r_ref, r, Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, map_of_rxso2_3.complex().eval(),
+                       rxso2_copy3.complex().eval(),
+                       Constants<Scalar>::epsilon());
+
+    const RotationMatrixType r_const = const_map_of_rxso2_3.rotationMatrix();
+    SOPHUS_TEST_APPROX(passed, r_ref, r_const, Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, const_map_of_rxso2_3.complex().eval(),
+                       rxso2_copy3.complex().eval(),
+                       Constants<Scalar>::epsilon());
+
+    Eigen::Matrix<Scalar, 2, 1> data1, data2;
+    data1 << Scalar(.1), Scalar(.2);
+    data2 << Scalar(.5), Scalar(.4);
+
+    Eigen::Map<RxSO2Type> map1(data1.data()), map2(data2.data());
+
+    // map -> map assignment
+    map2 = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+
+    // map -> type assignment
+    RxSO2Type copy;
+    copy = map1;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
+    // type -> map assignment
+    copy = RxSO2Type::exp(Tangent(Scalar(0.2), Scalar(0.5)));
+    map1 = copy;
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+
     return passed;
   }
 

@@ -188,10 +188,6 @@ class Sim2Base {
     return matrix;
   }
 
-  /// Assignment operator.
-  ///
-  SOPHUS_FUNC Sim2Base& operator=(Sim2Base const& other) = default;
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class OtherDerived>
@@ -364,6 +360,8 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   using Adjoint = typename Base::Adjoint;
   using RxSo2Member = RxSO2<Scalar, Options>;
   using TranslationMember = Vector2<Scalar, Options>;
+
+  using Base::operator=;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -646,10 +644,7 @@ class Map<Sophus::Sim2<Scalar_>, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  // LCOV_EXCL_START
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map);
-  // LCOV_EXCL_STOP
-
+  using Base::operator=;
   using Base::operator*=;
   using Base::operator*;
 

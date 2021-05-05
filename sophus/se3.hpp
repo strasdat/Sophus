@@ -289,10 +289,6 @@ class SE3Base {
     return matrix;
   }
 
-  /// Assignment operator.
-  ///
-  SOPHUS_FUNC SE3Base& operator=(SE3Base const& other) = default;
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class OtherDerived>
@@ -443,6 +439,8 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   using SO3Member = SO3<Scalar, Options>;
   using TranslationMember = Vector3<Scalar, Options>;
 
+  using Base::operator=;
+
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   /// Default constructor initializes rigid body motion to the identity.
@@ -522,11 +520,11 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return so3_.data();
   }
 
-  /// Accessor of SO3
+  /// Mutator of SO3
   ///
   SOPHUS_FUNC SO3Member& so3() { return so3_; }
 
-  /// Mutator of SO3
+  /// Accessor of SO3
   ///
   SOPHUS_FUNC SO3Member const& so3() const { return so3_; }
 
@@ -999,10 +997,7 @@ class Map<Sophus::SE3<Scalar_>, Options>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  // LCOV_EXCL_START
-  EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Map);
-  // LCOV_EXCL_STOP
-
+  using Base::operator=;
   using Base::operator*=;
   using Base::operator*;
 
