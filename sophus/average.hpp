@@ -4,6 +4,8 @@
 #ifndef SOPHUS_AVERAGE_HPP
 #define SOPHUS_AVERAGE_HPP
 
+#include <complex>
+
 #include "common.hpp"
 #include "rxso2.hpp"
 #include "rxso3.hpp"

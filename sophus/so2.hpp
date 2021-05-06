@@ -4,7 +4,6 @@
 #ifndef SOPHUS_SO2_HPP
 #define SOPHUS_SO2_HPP
 
-#include <complex>
 #include <type_traits>
 
 // Include only the selective set of Eigen headers that we need.
