@@ -250,9 +250,19 @@ class SO3Base {
     using std::atan;
     using std::sqrt;
     Scalar squared_n = unit_quaternion().vec().squaredNorm();
+    Scalar n = sqrt(squared_n);
     Scalar w = unit_quaternion().w();
+    Scalar squared_w = w * w;
 
-    Scalar two_atan_nbyw_by_n;
+    // As two quaternions `q`, `-q` correspond to the same rotation, it is possible to
+    // make `w = cos(theta/2)` positive, so that `theta` will always be in `[0, pi]`
+    Scalar sign = Scalar(1);
+    if (w < Scalar(0)) {
+      sign = Scalar(-1);
+      w = w * sign;
+    }
+
+    Scalar theta_by_n;
 
     /// Atan-based log thanks to
     ///
@@ -261,32 +271,31 @@ class SO3Base {
     /// Representation through Encapsulation of Manifolds"
     /// Information Fusion, 2011
 
-    if (squared_n <
-        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
+    if (squared_n < Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
       SOPHUS_ENSURE(abs(w) >= Constants<Scalar>::epsilon(),
                     "Quaternion (%) should be normalized!",
                     unit_quaternion().coeffs().transpose());
-      Scalar squared_w = w * w;
-      two_atan_nbyw_by_n =
-          Scalar(2) / w - Scalar(2.0 / 3.0) * (squared_n) / (w * squared_w);
-      J.theta = Scalar(2) * squared_n / w;
+      theta_by_n =
+          Scalar(2) / w - Scalar(2.0/3.0) * (squared_n) / (w * squared_w);
+      J.theta = theta_by_n * n;
     } else {
-      Scalar n = sqrt(squared_n);
-      if (abs(w) < Constants<Scalar>::epsilon()) {
-        if (w > Scalar(0)) {
-          two_atan_nbyw_by_n = Constants<Scalar>::pi() / n;
-        } else {
-          two_atan_nbyw_by_n = -Constants<Scalar>::pi() / n;
-        }
+      // Use computationally stable (around theta=pi, w=0) version of atan2(y, x)
+      // with (w = x) >= 0, (n = y) > 0
+      /*
+      if (w < Constants<Scalar>::epsilon()) {
+        // it fails with zero gradients in ceres optimization
+        J.theta = Constants<Scalar>::pi();
       } else {
-        two_atan_nbyw_by_n = Scalar(2) * atan(n / w) / n;
+        J.theta = Scalar(4) * atan(n / (w + sqrt(squared_w + squared_n)));
       }
-      J.theta = two_atan_nbyw_by_n * n;
-    }
+      */
+      J.theta = Scalar(4) * atan(n / (w + sqrt(squared_w + squared_n)));
 
-    J.tangent = two_atan_nbyw_by_n * unit_quaternion().vec();
+      theta_by_n = J.theta / n;
+    }
+    J.tangent = theta_by_n * sign * unit_quaternion().vec();
     return J;
   }
 
