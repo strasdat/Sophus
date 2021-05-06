@@ -385,8 +385,8 @@ class SE3Base {
   /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   ///
   SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar> const& R) {
-    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %", R);
-    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}", R);
+    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: {}",
                   R.determinant());
     so3().setQuaternion(Eigen::Quaternion<Scalar>(R));
   }
@@ -500,7 +500,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0),
                                                    Scalar(0), Scalar(1)))
                           .squaredNorm() < Constants<Scalar>::epsilon(),
-                  "Last row is not (0,0,0,1), but (%).", T.row(3));
+                  "Last row is not (0,0,0,1), but ({}).", T.row(3));
   }
 
   /// This provides unsafe read/write access to internal data. SO(3) is

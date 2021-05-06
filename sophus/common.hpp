@@ -7,14 +7,16 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 #include <random>
 #include <type_traits>
 
 #include <Eigen/Core>
 
-#if !defined(SOPHUS_DISABLE_ENSURES)
-#include "formatstring.hpp"
-#endif  //! defined(SOPHUS_DISABLE_ENSURES)
+#define FMT_STRING_ALIAS 1
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 
 // following boost's assert.hpp
 #undef SOPHUS_ENSURE
@@ -56,11 +58,11 @@ void ensureFailed(char const* function, char const* file, int line,
                   char const* description);
 }
 
-#define SOPHUS_ENSURE(expr, ...)                     \
+#define SOPHUS_ENSURE(expr, desc, ...)               \
   ((expr) ? ((void)0)                                \
           : ::Sophus::ensureFailed(                  \
                 SOPHUS_FUNCTION, __FILE__, __LINE__, \
-                Sophus::details::FormatString(__VA_ARGS__).c_str()))
+                fmt::format(description, __VA_ARGS__).c_str()))
 #else
 // LCOV_EXCL_START
 
@@ -73,7 +75,9 @@ SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
 #ifdef __CUDACC__
   std::printf("%s", description);
 #else
-  std::cout << details::FormatString(description, std::forward<Args>(args)...)
+  std::printf("Sophus assertion failed in function '%s', file '%s', line %d.\n",
+              SOPHUS_FUNCTION, __FILE__, __LINE__);
+  std::cout << fmt::format(description, std::forward<Args>(args)...)
             << std::endl;
   std::abort();
 #endif

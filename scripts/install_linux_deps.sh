@@ -13,6 +13,8 @@ mkdir build-eigen
 cd build-eigen
 cmake ../eigen-3.3.4 -DEIGEN_DEFAULT_TO_ROW_MAJOR=$ROW_MAJOR_DEFAULT
 sudo make install
+cd ..
+
 git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
 cd ceres-solver
 git reset --hard 399cda773035d99eaf1f4a129a666b3c4df9d1b1
@@ -22,3 +24,14 @@ ccache -s
 cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ..
 make -j8
 sudo make install
+cd ../..
+
+git clone https://github.com/fmtlib/fmt.git
+cd fmt
+git checkout 5.3.0
+mkdir build
+cd build
+cmake ..
+make -j3
+sudo make install
+cd ../..

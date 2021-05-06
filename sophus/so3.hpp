@@ -266,7 +266,7 @@ class SO3Base {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
       SOPHUS_ENSURE(abs(w) >= Constants<Scalar>::epsilon(),
-                    "Quaternion (%) should be normalized!",
+                    "Quaternion ({}) should be normalized!",
                     unit_quaternion().coeffs().transpose());
       Scalar squared_w = w * w;
       two_atan_nbyw_by_n =
@@ -298,7 +298,7 @@ class SO3Base {
   SOPHUS_FUNC void normalize() {
     Scalar length = unit_quaternion_nonconst().norm();
     SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
-                  "Quaternion (%) should not be close to zero!",
+                  "Quaternion ({}) should not be close to zero!",
                   unit_quaternion_nonconst().coeffs().transpose());
     unit_quaternion_nonconst().coeffs() /= length;
   }
@@ -468,9 +468,9 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
   /// of 1.
   ///
   SOPHUS_FUNC SO3(Transformation const& R) : unit_quaternion_(R) {
-    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n %",
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}",
                   R * R.transpose());
-    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: %",
+    SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: {}",
                   R.determinant());
   }
 
@@ -614,7 +614,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
                          imag_factor * omega.y(), imag_factor * omega.z());
     SOPHUS_ENSURE(abs(q.unit_quaternion().squaredNorm() - Scalar(1)) <
                       Sophus::Constants<Scalar>::epsilon(),
-                  "SO3::exp failed! omega: %, real: %, img: %",
+                  "SO3::exp failed! omega: {}, real: {}, img: {}",
                   omega.transpose(), real_factor, imag_factor);
     return q;
   }

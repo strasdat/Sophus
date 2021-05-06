@@ -3,4 +3,4 @@
 set -x # echo on
 set -e # exit on error
 brew update
-brew install ceres-solver
+brew install ceres-solver fmt
