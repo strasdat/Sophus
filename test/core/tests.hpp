@@ -139,12 +139,7 @@ class LieGroupTests {
   }
 
   template <class G = LieGroup>
-  enable_if_t<std::is_same<G, Sophus::SO2<Scalar>>::value ||
-                  std::is_same<G, Sophus::SO3<Scalar>>::value ||
-                  std::is_same<G, Sophus::SE2<Scalar>>::value ||
-                  std::is_same<G, Sophus::SE3<Scalar>>::value,
-              bool>
-  additionalDerivativeTest() {
+  bool additionalDerivativeTest() {
     bool passed = true;
     for (size_t j = 0; j < tangent_vec_.size(); ++j) {
       Tangent a = tangent_vec_[j];
@@ -187,16 +182,6 @@ class LieGroupTests {
     }
 
     return passed;
-  }
-
-  template <class G = LieGroup>
-  enable_if_t<!std::is_same<G, Sophus::SO2<Scalar>>::value &&
-                  !std::is_same<G, Sophus::SO3<Scalar>>::value &&
-                  !std::is_same<G, Sophus::SE2<Scalar>>::value &&
-                  !std::is_same<G, Sophus::SE3<Scalar>>::value,
-              bool>
-  additionalDerivativeTest() {
-    return true;
   }
 
   bool productTest() {
