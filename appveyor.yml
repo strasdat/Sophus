@@ -7,7 +7,7 @@ os: Visual Studio 2015
 clone_folder: c:\projects\sophus
 
 platform: x64
-configuration: Release
+configuration: Debug
 
 build:
   project: c:\projects\sophus\build\Sophus.sln
@@ -20,7 +20,7 @@ install:
   - git checkout 5.3.0
   - mkdir build
   - cd build
-  - cmake -G "Visual Studio 14 2015 Win64" ..
+  - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug ..
   - cmake --build .
   - cmake --build . --target install
   - cd ../..
@@ -29,7 +29,7 @@ before_build:
   - cd c:\projects\sophus
   - mkdir build
   - cd build
-  - cmake -G "Visual Studio 14 2015 Win64" -D EIGEN3_INCLUDE_DIR=C:\projects\eigen-3.3.4 ..
+  - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug -D EIGEN3_INCLUDE_DIR=C:\projects\eigen-3.3.4 ..
 
 after_build:
   - ctest
