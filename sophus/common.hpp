@@ -58,7 +58,7 @@ void ensureFailed(char const* function, char const* file, int line,
                   char const* description);
 }
 
-#define SOPHUS_ENSURE(expr, desc, ...)               \
+#define SOPHUS_ENSURE(expr, description, ...)        \
   ((expr) ? ((void)0)                                \
           : ::Sophus::ensureFailed(                  \
                 SOPHUS_FUNCTION, __FILE__, __LINE__, \
