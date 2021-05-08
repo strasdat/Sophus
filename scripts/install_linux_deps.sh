@@ -31,7 +31,7 @@ cd fmt
 git checkout 5.3.0
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ..
 make -j3
 sudo make install
 cd ../..

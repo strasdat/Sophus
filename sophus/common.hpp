@@ -13,10 +13,27 @@
 
 #include <Eigen/Core>
 
+#ifndef _WIN32
+#define SOPHUS_COMPILE_TIME_FMT
+#endif
+
+#undef FMT_STRING_ALIAS
+#ifdef SOPHUS_COMPILE_TIME_FMT
+// enable compile time FMT feature
 #define FMT_STRING_ALIAS 1
+#endif
+
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
+
+#ifdef SOPHUS_COMPILE_TIME_FMT
+// compile-time format check on x
+#define SOPHUS_FMT(x) FMT_STRING(x)
+#else
+// identity, hence no compile-time check on x
+#define SOPHUS_FMT(x) x
+#endif
 
 // following boost's assert.hpp
 #undef SOPHUS_ENSURE
@@ -62,33 +79,42 @@ void ensureFailed(char const* function, char const* file, int line,
   ((expr) ? ((void)0)                                \
           : ::Sophus::ensureFailed(                  \
                 SOPHUS_FUNCTION, __FILE__, __LINE__, \
-                fmt::format(description, __VA_ARGS__).c_str()))
+                fmt::format(SOPHUS_FMT(description), ##__VA_ARGS__).c_str()))
 #else
-// LCOV_EXCL_START
 
-namespace Sophus {
-template <class... Args>
-SOPHUS_FUNC void defaultEnsure(char const* function, char const* file, int line,
-                               char const* description, Args&&... args) {
-  std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
-              function, file, line);
+#define SOPHUS_DEDAULT_ENSURE_FAILURE_IMPL(function, file, line, description, \
+                                           ...)                               \
+  do {                                                                        \
+    std::printf(                                                              \
+        "Sophus ensure failed in function '%s', "                             \
+        "file '%s', line %d.\n",                                              \
+        function, file, line);                                                \
+    std::cout << fmt::format(SOPHUS_FMT(description), ##__VA_ARGS__)          \
+              << std::endl;                                                   \
+    std::abort();                                                             \
+  } while (false)
+
 #ifdef __CUDACC__
-  std::printf("%s", description);
+#define SOPHUS_ENSURE(expr, description, ...)                                  \
+  do {                                                                         \
+    if (!(expr)) {                                                             \
+      std::printf(                                                             \
+          "Sophus ensure failed in function '%s', file '%s', line %d.\n",      \
+          SOPHUS_FUNCTION, __FILE__, __LINE__);                                \
+      std::printf("%s", description);                                          \
+      /* there is no std::abort in cuda kernels, hence we just print the error \
+       * message here*/                                                        \
+    }                                                                          \
+  } while (false)
 #else
-  std::printf("Sophus assertion failed in function '%s', file '%s', line %d.\n",
-              SOPHUS_FUNCTION, __FILE__, __LINE__);
-  std::cout << fmt::format(description, std::forward<Args>(args)...)
-            << std::endl;
-  std::abort();
+#define SOPHUS_ENSURE(expr, ...)                                              \
+  do {                                                                        \
+    if (!(expr)) {                                                            \
+      SOPHUS_DEDAULT_ENSURE_FAILURE_IMPL(SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                         ##__VA_ARGS__);                      \
+    }                                                                         \
+  } while (false)
 #endif
-}
-}  // namespace Sophus
-
-// LCOV_EXCL_STOP
-#define SOPHUS_ENSURE(expr, ...)                                       \
-  ((expr) ? ((void)0)                                                  \
-          : Sophus::defaultEnsure(SOPHUS_FUNCTION, __FILE__, __LINE__, \
-                                  ##__VA_ARGS__))
 #endif
 
 namespace Sophus {
