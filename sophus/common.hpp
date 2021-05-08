@@ -13,8 +13,16 @@
 
 #include <Eigen/Core>
 
-#ifndef _WIN32
+#undef SOPHUS_COMPILE_TIME_FMT
+#ifdef __linux__
 #define SOPHUS_COMPILE_TIME_FMT
+#endif
+
+#ifdef __APPLE__
+#include "TargetConditionals.h"
+#ifdef TARGET_OS_MAC
+#define SOPHUS_COMPILE_TIME_FMT
+#endif
 #endif
 
 #undef FMT_STRING_ALIAS
