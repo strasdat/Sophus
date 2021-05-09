@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../py'))
+sys.path.insert(0, os.path.abspath('../sympy'))
 
 
 sys.path.insert(1, os.path.abspath('../doxyrest_b/doxyrest/sphinx'))

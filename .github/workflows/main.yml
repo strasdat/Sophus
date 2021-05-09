@@ -1,4 +1,4 @@
-name: CI
+name: CI - c++
 
 on:
   push:
@@ -12,7 +12,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        language: [c++, sympy]
         os: [ubuntu-20.04, macos-10.15]
       fail-fast: false
 
@@ -25,29 +24,20 @@ jobs:
         with:
           source: '.'
           extensions: 'hpp,cpp'
-          exclude: './py ./doxyrest_b'
+          exclude: './sympy ./doxyrest_b'
           clangFormatVersion: 9
         if: matrix.os == 'ubuntu-20.04'
 
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1
-        if: matrix.language == 'c++'
 
       - name: Install dependencies (Linux)
         run: ./scripts/install_linux_deps.sh
-        if: matrix.language == 'c++' && matrix.os == 'ubuntu-20.04'
+        if: matrix.os == 'ubuntu-20.04'
 
       - name: Install dependencies (Mac OS)
         run: ./scripts/install_osx_deps.sh
-        if: matrix.language == 'c++' && matrix.os == 'macos-10.15'
+        if: matrix.os == 'macos-10.15'
 
       - name: Run tests
         run: ./scripts/run_cpp_tests.sh
-        if: matrix.language == 'c++'
-
-      - name: Run sympy tests
-        run: |
-          pip3 install sympy
-          cd py
-          ./run_tests.sh
-        if: matrix.language == 'sympy' && matrix.os == 'ubuntu-20.04'
