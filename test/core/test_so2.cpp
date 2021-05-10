@@ -82,27 +82,27 @@ class Tests {
     Vector2<Scalar> raw = {0, 1};
     Eigen::Map<SO2Type const> map_of_const_so2(raw.data());
     SOPHUS_TEST_APPROX(passed, map_of_const_so2.unit_complex().eval(), raw,
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_EQUAL(passed, map_of_const_so2.unit_complex().data(),
-                      raw.data());
+                      raw.data(), "");
     Eigen::Map<SO2Type const> const_shallow_copy = map_of_const_so2;
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.unit_complex().eval(),
-                      map_of_const_so2.unit_complex().eval());
+                      map_of_const_so2.unit_complex().eval(), "");
 
     Vector2<Scalar> raw2 = {1, 0};
     Eigen::Map<SO2Type> map_of_so2(raw.data());
     map_of_so2.setComplex(raw2);
     SOPHUS_TEST_APPROX(passed, map_of_so2.unit_complex().eval(), raw2,
-                       Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, map_of_so2.unit_complex().data(), raw.data());
-    SOPHUS_TEST_NEQ(passed, map_of_so2.unit_complex().data(), raw2.data());
+                       Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, map_of_so2.unit_complex().data(), raw.data(), "");
+    SOPHUS_TEST_NEQ(passed, map_of_so2.unit_complex().data(), raw2.data(), "");
     Eigen::Map<SO2Type> shallow_copy = map_of_so2;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_complex().eval(),
-                      map_of_so2.unit_complex().eval());
+                      map_of_so2.unit_complex().eval(), "");
 
     SO2Type const const_so2(raw2);
     for (int i = 0; i < 2; ++i) {
-      SOPHUS_TEST_EQUAL(passed, const_so2.data()[i], raw2.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, const_so2.data()[i], raw2.data()[i], "");
     }
 
     SO2Type so2(raw2);
@@ -111,7 +111,7 @@ class Tests {
     }
 
     for (int i = 0; i < 2; ++i) {
-      SOPHUS_TEST_EQUAL(passed, so2.data()[i], raw.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, so2.data()[i], raw.data()[i], "");
     }
 
     Vector2<Scalar> data1 = {1, 0}, data2 = {0, 1};
@@ -119,17 +119,17 @@ class Tests {
 
     // map -> map assignment
     map2 = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix(), "");
 
     // map -> type assignment
     SO2Type copy;
     copy = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
     copy = SO2Type(Scalar(0.5));
     map1 = copy;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     return passed;
   }
@@ -138,7 +138,8 @@ class Tests {
     bool passed = true;
     Matrix2<Scalar> R = so2_vec_.front().matrix();
     SO2Type so2(R);
-    SOPHUS_TEST_APPROX(passed, R, so2.matrix(), Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, R, so2.matrix(), Constants<Scalar>::epsilon(),
+                       "");
 
     return passed;
   }
@@ -153,7 +154,7 @@ class Tests {
       SO2Type so2_2 = SO2Type::fitToSO2(so2.matrix());
 
       SOPHUS_TEST_APPROX(passed, so2.matrix(), so2_2.matrix(),
-                         Constants<Scalar>::epsilon());
+                         Constants<Scalar>::epsilon(), "");
     }
     return passed;
   }

@@ -307,7 +307,7 @@ class LieGroupTests {
     bool passed = true;
     LieGroup* raw_ptr = nullptr;
     raw_ptr = new LieGroup();
-    SOPHUS_TEST_NEQ(passed, reinterpret_cast<std::uintptr_t>(raw_ptr), 0);
+    SOPHUS_TEST_NEQ(passed, reinterpret_cast<std::uintptr_t>(raw_ptr), 0, "");
     delete raw_ptr;
     return passed;
   }
@@ -326,10 +326,10 @@ class LieGroupTests {
         // Test boundary conditions ``alpha=0`` and ``alpha=1``.
         LieGroup foo_T_quiz = interpolate(foo_T_bar, foo_T_baz, Scalar(0));
         SOPHUS_TEST_APPROX(passed, foo_T_quiz.matrix(), foo_T_bar.matrix(),
-                           sqrt_eps);
+                           sqrt_eps, "");
         foo_T_quiz = interpolate(foo_T_bar, foo_T_baz, Scalar(1));
         SOPHUS_TEST_APPROX(passed, foo_T_quiz.matrix(), foo_T_baz.matrix(),
-                           sqrt_eps);
+                           sqrt_eps, "");
       }
     }
     for (Scalar alpha :
@@ -351,7 +351,8 @@ class LieGroupTests {
             LieGroup dash_T_quiz = interpolate(dash_T_foo * foo_T_bar,
                                                dash_T_foo * foo_T_baz, alpha);
             SOPHUS_TEST_APPROX(passed, dash_T_quiz.matrix(),
-                               (dash_T_foo * foo_T_quiz).matrix(), sqrt_eps);
+                               (dash_T_foo * foo_T_quiz).matrix(), sqrt_eps,
+                               "");
           }
           // test inverse-invariance:
           //
@@ -360,7 +361,7 @@ class LieGroupTests {
           LieGroup quiz_T_foo =
               interpolate(foo_T_bar.inverse(), foo_T_baz.inverse(), alpha);
           SOPHUS_TEST_APPROX(passed, quiz_T_foo.inverse().matrix(),
-                             foo_T_quiz.matrix(), sqrt_eps);
+                             foo_T_quiz.matrix(), sqrt_eps, "");
         }
       }
 
@@ -381,7 +382,8 @@ class LieGroupTests {
             LieGroup quiz_T_dash = interpolate(bar_T_foo * foo_T_dash,
                                                baz_T_foo * foo_T_dash, alpha);
             SOPHUS_TEST_APPROX(passed, quiz_T_dash.matrix(),
-                               (quiz_T_foo * foo_T_dash).matrix(), sqrt_eps);
+                               (quiz_T_foo * foo_T_dash).matrix(), sqrt_eps,
+                               "");
           }
         }
       }
@@ -403,26 +405,26 @@ class LieGroupTests {
             average(std::array<LieGroup, 2>({{foo_T_bar, foo_T_baz}}));
         SOPHUS_TEST(passed, bool(foo_T_average),
                     "log(foo_T_bar): %\nlog(foo_T_baz): %",
-                    transpose(foo_T_bar.log()), transpose(foo_T_baz.log()));
+                    transpose(foo_T_bar.log()), transpose(foo_T_baz.log()), "");
         if (foo_T_average) {
           SOPHUS_TEST_APPROX(
               passed, foo_T_quiz.matrix(), foo_T_average->matrix(), sqrt_eps,
               "log(foo_T_bar): %\nlog(foo_T_baz): %\n"
               "log(interp): %\nlog(average): %",
               transpose(foo_T_bar.log()), transpose(foo_T_baz.log()),
-              transpose(foo_T_quiz.log()), transpose(foo_T_average->log()));
+              transpose(foo_T_quiz.log()), transpose(foo_T_average->log()), "");
         }
         SOPHUS_TEST(passed, bool(foo_T_iaverage),
                     "log(foo_T_bar): %\nlog(foo_T_baz): %\n"
                     "log(interp): %\nlog(iaverage): %",
                     transpose(foo_T_bar.log()), transpose(foo_T_baz.log()),
                     transpose(foo_T_quiz.log()),
-                    transpose(foo_T_iaverage->log()));
+                    transpose(foo_T_iaverage->log()), "");
         if (foo_T_iaverage) {
           SOPHUS_TEST_APPROX(
               passed, foo_T_quiz.matrix(), foo_T_iaverage->matrix(), sqrt_eps,
               "log(foo_T_bar): %\nlog(foo_T_baz): %",
-              transpose(foo_T_bar.log()), transpose(foo_T_baz.log()));
+              transpose(foo_T_bar.log()), transpose(foo_T_baz.log()), "");
         }
       }
     }
@@ -435,7 +437,7 @@ class LieGroupTests {
     std::default_random_engine engine;
     for (int i = 0; i < 100; ++i) {
       LieGroup g = LieGroup::sampleUniform(engine);
-      SOPHUS_TEST_EQUAL(passed, g.params(), g.params());
+      SOPHUS_TEST_EQUAL(passed, g.params(), g.params(), "");
     }
     return passed;
   }

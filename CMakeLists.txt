@@ -34,7 +34,12 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 # Find Eigen 3 (dependency)
 find_package(Eigen3 3.3.0 REQUIRED)
 
-find_package(fmt REQUIRED)
+# Basic logging (in ensure and test macros)
+option(USE_BASIC_LOGGING "Use basic logging" OFF)
+if(NOT USE_BASIC_LOGGING)
+  find_package(fmt REQUIRED)
+  add_definitions("-D SOPHUS_FMT_LOGGING")
+endif()
 
 # Define interface library target
 add_library(sophus INTERFACE)
@@ -72,7 +77,10 @@ endif (MSVC)
 
 # Add Eigen interface dependency, depending on available cmake info
 if(TARGET Eigen3::Eigen)
-  target_link_libraries(sophus INTERFACE Eigen3::Eigen fmt::fmt)
+  target_link_libraries(sophus INTERFACE Eigen3::Eigen)
+  if (NOT USE_BASIC_LOGGING)
+    target_link_libraries(sophus INTERFACE fmt::fmt)
+  endif()
   set(Eigen3_DEPENDENCY "find_dependency (Eigen3 ${Eigen3_VERSION})")
 else(TARGET Eigen3::Eigen)
   target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})

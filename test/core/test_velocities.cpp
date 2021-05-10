@@ -48,7 +48,7 @@ bool tests_linear_velocities() {
   for (size_t i = 0; i < linearVels_bar.size(); ++i) {
     SOPHUS_TEST_APPROX(passed, linearVels_foo[i],
                        transformVelocity(foo_T_bar, linearVels_bar[i]),
-                       sqrt(Constants<Scalar>::epsilon()));
+                       sqrt(Constants<Scalar>::epsilon()), "");
   }
   return passed;
 }
@@ -88,12 +88,12 @@ bool tests_rotational_velocities() {
     SOPHUS_TEST_APPROX(
         passed, rotVel_in_frame_bar, rotVel_in_frame_bar2,
         // not too tight threshold, because of finit difference approximation
-        std::sqrt(Constants<Scalar>::epsilon()));
+        std::sqrt(Constants<Scalar>::epsilon()), "");
 
     // The rotational velocities rotVel_in_frame_foo and rotVel_in_frame_bar
     // should not be equal since they are in different frames (foo != bar).
     SOPHUS_TEST_NOT_APPROX(passed, rotVel_in_frame_foo, rotVel_in_frame_bar,
-                           Scalar(1e-3));
+                           Scalar(1e-3), "");
 
     // Expect same result when using adjoint instead since:
     //  vee(bar_R_foo * hat(vel_foo) * bar_R_foo^T = bar_R_foo 8 vel_foo.
@@ -102,7 +102,7 @@ bool tests_rotational_velocities() {
         SO3<Scalar>::vee(foo_T_bar.so3().inverse().matrix() *
                          SO3<Scalar>::hat(rotVel_in_frame_foo) *
                          foo_T_bar.so3().matrix()),
-        Constants<Scalar>::epsilon());
+        Constants<Scalar>::epsilon(), "");
   }
   return passed;
 }

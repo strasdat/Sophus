@@ -98,13 +98,14 @@ class Tests {
     Eigen::Map<SO3Type const> map_of_const_so3(raw.data());
     SOPHUS_TEST_APPROX(passed,
                        map_of_const_so3.unit_quaternion().coeffs().eval(), raw,
-                       Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(
-        passed, map_of_const_so3.unit_quaternion().coeffs().data(), raw.data());
+                       Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed,
+                      map_of_const_so3.unit_quaternion().coeffs().data(),
+                      raw.data(), "");
     Eigen::Map<SO3Type const> const_shallow_copy = map_of_const_so3;
     SOPHUS_TEST_EQUAL(passed,
                       const_shallow_copy.unit_quaternion().coeffs().eval(),
-                      map_of_const_so3.unit_quaternion().coeffs().eval());
+                      map_of_const_so3.unit_quaternion().coeffs().eval(), "");
 
     Eigen::Matrix<Scalar, 4, 1> raw2 = {Scalar(1), Scalar(0), Scalar(0),
                                         Scalar(0)};
@@ -113,18 +114,18 @@ class Tests {
     quat.coeffs() = raw2;
     map_of_so3.setQuaternion(quat);
     SOPHUS_TEST_APPROX(passed, map_of_so3.unit_quaternion().coeffs().eval(),
-                       raw2, Constants<Scalar>::epsilon());
+                       raw2, Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_EQUAL(passed, map_of_so3.unit_quaternion().coeffs().data(),
-                      raw.data());
+                      raw.data(), "");
     SOPHUS_TEST_NEQ(passed, map_of_so3.unit_quaternion().coeffs().data(),
-                    quat.coeffs().data());
+                    quat.coeffs().data(), "");
     Eigen::Map<SO3Type> shallow_copy = map_of_so3;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_quaternion().coeffs().eval(),
-                      map_of_so3.unit_quaternion().coeffs().eval());
+                      map_of_so3.unit_quaternion().coeffs().eval(), "");
 
     SO3Type const const_so3(quat);
     for (int i = 0; i < 4; ++i) {
-      SOPHUS_TEST_EQUAL(passed, const_so3.data()[i], raw2.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, const_so3.data()[i], raw2.data()[i], "");
     }
 
     SO3Type so3(quat);
@@ -133,18 +134,18 @@ class Tests {
     }
 
     for (int i = 0; i < 4; ++i) {
-      SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, so3.data()[i], raw.data()[i], "");
     }
 
     SOPHUS_TEST_EQUAL(
         passed, SO3Type::rotX(Scalar(0.2)).matrix(),
-        SO3Type::exp(Point(Scalar(0.2), Scalar(0), Scalar(0))).matrix());
+        SO3Type::exp(Point(Scalar(0.2), Scalar(0), Scalar(0))).matrix(), "");
     SOPHUS_TEST_EQUAL(
         passed, SO3Type::rotY(Scalar(-0.2)).matrix(),
-        SO3Type::exp(Point(Scalar(0), Scalar(-0.2), Scalar(0))).matrix());
+        SO3Type::exp(Point(Scalar(0), Scalar(-0.2), Scalar(0))).matrix(), "");
     SOPHUS_TEST_EQUAL(
         passed, SO3Type::rotZ(Scalar(1.1)).matrix(),
-        SO3Type::exp(Point(Scalar(0), Scalar(0), Scalar(1.1))).matrix());
+        SO3Type::exp(Point(Scalar(0), Scalar(0), Scalar(1.1))).matrix(), "");
 
     Vector4<Scalar> data1(Scalar{1}, Scalar{0}, Scalar{0}, Scalar{0});
     Vector4<Scalar> data2(Scalar{0}, Scalar{1}, Scalar{0}, Scalar{0});
@@ -152,17 +153,17 @@ class Tests {
 
     // map -> map assignment
     map2 = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix(), "");
 
     // map -> type assignment
     SO3Type copy;
     copy = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
     copy = SO3Type::rotZ(Scalar(0.5));
     map1 = copy;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     return passed;
   }
@@ -171,7 +172,8 @@ class Tests {
     bool passed = true;
     Matrix3<Scalar> R = so3_vec_.front().matrix();
     SO3Type so3(R);
-    SOPHUS_TEST_APPROX(passed, R, so3.matrix(), Constants<Scalar>::epsilon());
+    SOPHUS_TEST_APPROX(passed, R, so3.matrix(), Constants<Scalar>::epsilon(),
+                       "");
 
     return passed;
   }
@@ -220,7 +222,7 @@ class Tests {
       double chi_square =
           pow(positive_count - expected_count, 2.0) / expected_count +
           pow(negative_count - expected_count, 2.0) / expected_count;
-      SOPHUS_TEST(passed, chi_square < 6.635);
+      SOPHUS_TEST(passed, chi_square < 6.635, "");
     }
 
     return passed;
@@ -242,17 +244,17 @@ class Tests {
       SO3Type so3_2 = SO3Type::fitToSO3(so3.matrix());
 
       SOPHUS_TEST_APPROX(passed, so3.matrix(), so3_2.matrix(),
-                         Constants<Scalar>::epsilon());
+                         Constants<Scalar>::epsilon(), "");
     }
 
     for (Scalar const angle :
          {Scalar(0.0), Scalar(0.1), Scalar(0.3), Scalar(-0.7)}) {
       SOPHUS_TEST_APPROX(passed, SO3Type::rotX(angle).angleX(), angle,
-                         Constants<Scalar>::epsilon());
+                         Constants<Scalar>::epsilon(), "");
       SOPHUS_TEST_APPROX(passed, SO3Type::rotY(angle).angleY(), angle,
-                         Constants<Scalar>::epsilon());
+                         Constants<Scalar>::epsilon(), "");
       SOPHUS_TEST_APPROX(passed, SO3Type::rotZ(angle).angleZ(), angle,
-                         Constants<Scalar>::epsilon());
+                         Constants<Scalar>::epsilon(), "");
     }
     return passed;
   }

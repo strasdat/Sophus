@@ -15,16 +15,25 @@ jobs:
         os: [ubuntu-20.04, macos-10.15]
         build_type: [Debug, Release]
         row_major: [ON, OFF]
+        basic_logging: [ON, OFF]
         exclude:
           - os: macos-10.15
             row_major: ON
+          - os: macos-10.15
+            basic_logging: ON
           - build_type: Release
             row_major: ON
+          - build_type: Release
+            basic_logging: ON
+          - build_type: Debug
+            row_major: ON
+            basic_logging: ON
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
       ROW_MAJOR_DEFAULT: ${{ matrix.row_major }}
-      
+      USE_BASIC_LOGGING: ${{ matrix.basic_logging }}
+
 
     steps:
       - uses: actions/checkout@v2
@@ -44,6 +53,10 @@ jobs:
       - name: Install dependencies (Linux)
         run: ./scripts/install_linux_deps.sh
         if: matrix.os == 'ubuntu-20.04'
+
+      - name: Install fmt dependency (Linux)
+        run: ./scripts/install_linux_fmt_deps.sh
+        if: matrix.os == 'ubuntu-20.04' && matrix.basic_logging == 'OFF'
 
       - name: Install dependencies (Mac OS)
         run: ./scripts/install_osx_deps.sh
