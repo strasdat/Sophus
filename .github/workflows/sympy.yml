@@ -1,4 +1,4 @@
-name: CI - sympy
+name: Linux - sympy
 
 on:
   push:
