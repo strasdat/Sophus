@@ -14,13 +14,13 @@
 
 #undef SOPHUS_COMPILE_TIME_FMT
 
-#ifndef SOPHUS_FMT_LOGGING
+#ifdef SOPHUS_USE_BASIC_LOGGING
 
 #define SOPHUS_FMT_CSTR(description, ...) description
 #define SOPHUS_FMT_STR(description, ...) std::string(description)
 #define SOPHUS_FMT_PRINT(description, ...) std::printf("%s\n", description)
 
-#else  // SOPHUS_FMT_LOGGING
+#else  // !SOPHUS_USE_BASIC_LOGGING
 
 #ifdef __linux__
 #define SOPHUS_COMPILE_TIME_FMT
@@ -61,7 +61,7 @@
   fmt::print(SOPHUS_FMT_STRING(description), ##__VA_ARGS__); \
   fmt::print("\n")
 
-#endif  // SOPHUS_FMT_LOGGING
+#endif  // !SOPHUS_USE_BASIC_LOGGING
 
 // following boost's assert.hpp
 #undef SOPHUS_ENSURE

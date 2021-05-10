@@ -36,9 +36,10 @@ find_package(Eigen3 3.3.0 REQUIRED)
 
 # Basic logging (in ensure and test macros)
 option(USE_BASIC_LOGGING "Use basic logging" OFF)
-if(NOT USE_BASIC_LOGGING)
+if(USE_BASIC_LOGGING)
+  add_definitions("-D SOPHUS_USE_BASIC_LOGGING")
+else()
   find_package(fmt REQUIRED)
-  add_definitions("-D SOPHUS_FMT_LOGGING")
 endif()
 
 # Define interface library target
