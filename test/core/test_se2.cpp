@@ -89,18 +89,19 @@ class Tests {
     Eigen::Map<SE2Type const> const_se2_map(raw.data());
     SOPHUS_TEST_APPROX(passed, const_se2_map.unit_complex().eval(),
                        raw.template head<2>().eval(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, const_se2_map.translation().eval(),
                        raw.template tail<2>().eval(),
-                       Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, const_se2_map.unit_complex().data(), raw.data());
+                       Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, const_se2_map.unit_complex().data(), raw.data(),
+                      "");
     SOPHUS_TEST_EQUAL(passed, const_se2_map.translation().data(),
-                      raw.data() + 2);
+                      raw.data() + 2, "");
     Eigen::Map<SE2Type const> const_shallow_copy = const_se2_map;
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.unit_complex().eval(),
-                      const_se2_map.unit_complex().eval());
+                      const_se2_map.unit_complex().eval(), "");
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.translation().eval(),
-                      const_se2_map.translation().eval());
+                      const_se2_map.translation().eval(), "");
 
     Eigen::Matrix<Scalar, 4, 1> raw2;
     raw2 << Scalar(1), Scalar(0), Scalar(3), Scalar(1);
@@ -109,45 +110,46 @@ class Tests {
     map_of_se3.translation() = raw2.template tail<2>();
     SOPHUS_TEST_APPROX(passed, map_of_se3.unit_complex().eval(),
                        raw2.template head<2>().eval(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, map_of_se3.translation().eval(),
                        raw2.template tail<2>().eval(),
-                       Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, map_of_se3.unit_complex().data(), raw.data());
-    SOPHUS_TEST_EQUAL(passed, map_of_se3.translation().data(), raw.data() + 2);
-    SOPHUS_TEST_NEQ(passed, map_of_se3.unit_complex().data(), raw2.data());
+                       Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, map_of_se3.unit_complex().data(), raw.data(), "");
+    SOPHUS_TEST_EQUAL(passed, map_of_se3.translation().data(), raw.data() + 2,
+                      "");
+    SOPHUS_TEST_NEQ(passed, map_of_se3.unit_complex().data(), raw2.data(), "");
     Eigen::Map<SE2Type> shallow_copy = map_of_se3;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.unit_complex().eval(),
-                      map_of_se3.unit_complex().eval());
+                      map_of_se3.unit_complex().eval(), "");
     SOPHUS_TEST_EQUAL(passed, shallow_copy.translation().eval(),
-                      map_of_se3.translation().eval());
+                      map_of_se3.translation().eval(), "");
     Eigen::Map<SE2Type> const const_map_of_se2 = map_of_se3;
     SOPHUS_TEST_EQUAL(passed, const_map_of_se2.unit_complex().eval(),
-                      map_of_se3.unit_complex().eval());
+                      map_of_se3.unit_complex().eval(), "");
     SOPHUS_TEST_EQUAL(passed, const_map_of_se2.translation().eval(),
-                      map_of_se3.translation().eval());
+                      map_of_se3.translation().eval(), "");
 
     SE2Type const const_se2(raw2.template head<2>().eval(),
                             raw2.template tail<2>().eval());
     for (int i = 0; i < 4; ++i) {
-      SOPHUS_TEST_EQUAL(passed, const_se2.data()[i], raw2.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, const_se2.data()[i], raw2.data()[i], "");
     }
 
     SE2Type se2(raw2.template head<2>().eval(), raw2.template tail<2>().eval());
     for (int i = 0; i < 4; ++i) {
-      SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw2.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw2.data()[i], "");
     }
 
     for (int i = 0; i < 4; ++i) {
-      SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw.data()[i], "");
     }
 
     SE2Type trans = SE2Type::transX(Scalar(0.2));
     SOPHUS_TEST_APPROX(passed, trans.translation().x(), Scalar(0.2),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     trans = SE2Type::transY(Scalar(0.7));
     SOPHUS_TEST_APPROX(passed, trans.translation().y(), Scalar(0.7),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
 
     Eigen::Matrix<Scalar, 4, 1> data1, data2;
     data1 << Scalar(0), Scalar(1), Scalar(1), Scalar(2);
@@ -157,17 +159,17 @@ class Tests {
 
     // map -> map assignment
     map2 = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix(), "");
 
     // map -> type assignment
     SE2Type copy;
     copy = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
     copy = SE2Type::trans(Scalar(4), Scalar(5)) * SE2Type::rot(Scalar(0.5));
     map1 = copy;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     return passed;
   }
@@ -178,14 +180,14 @@ class Tests {
     SO2Type R(Scalar(0.2));
     se2.setRotationMatrix(R.matrix());
     SOPHUS_TEST_APPROX(passed, se2.rotationMatrix(), R.matrix(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
 
     Eigen::Matrix<Scalar, 4, 1> raw;
     raw << Scalar(1), Scalar(0), Scalar(3), Scalar(1);
     Eigen::Map<SE2Type> map_of_se2(raw.data());
     map_of_se2.setRotationMatrix(R.matrix());
     SOPHUS_TEST_APPROX(passed, map_of_se2.rotationMatrix(), R.matrix(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
 
     return passed;
   }
@@ -193,23 +195,23 @@ class Tests {
   bool testConstructors() {
     bool passed = true;
     Matrix3<Scalar> I = Matrix3<Scalar>::Identity();
-    SOPHUS_TEST_EQUAL(passed, SE2Type().matrix(), I);
+    SOPHUS_TEST_EQUAL(passed, SE2Type().matrix(), I, "");
 
     SE2Type se2 = se2_vec_.front();
     Point translation = se2.translation();
     SO2Type so2 = se2.so2();
 
     SOPHUS_TEST_APPROX(passed, SE2Type(so2.log(), translation).matrix(),
-                       se2.matrix(), Constants<Scalar>::epsilon());
+                       se2.matrix(), Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, SE2Type(so2, translation).matrix(), se2.matrix(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, SE2Type(so2.matrix(), translation).matrix(),
-                       se2.matrix(), Constants<Scalar>::epsilon());
+                       se2.matrix(), Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed,
                        SE2Type(so2.unit_complex(), translation).matrix(),
-                       se2.matrix(), Constants<Scalar>::epsilon());
+                       se2.matrix(), Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, SE2Type(se2.matrix()).matrix(), se2.matrix(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
 
     return passed;
   }
@@ -223,7 +225,7 @@ class Tests {
       SE2Type se2_2 = SE2Type::fitToSE2(se2.matrix());
 
       SOPHUS_TEST_APPROX(passed, se2.matrix(), se2_2.matrix(),
-                         Constants<Scalar>::epsilon());
+                         Constants<Scalar>::epsilon(), "");
     }
     return passed;
   }

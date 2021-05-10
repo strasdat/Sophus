@@ -12,7 +12,10 @@ if( Ceres_FOUND )
 
   FOREACH(test_src ${TEST_SOURCES})
     ADD_EXECUTABLE( ${test_src} ${test_src}.cpp local_parameterization_se3.hpp)
-    TARGET_LINK_LIBRARIES( ${test_src} sophus Ceres::ceres fmt::fmt)
+    TARGET_LINK_LIBRARIES( ${test_src} sophus Ceres::ceres)
+    if (NOT USE_BASIC_LOGGING)
+      TARGET_LINK_LIBRARIES( ${test_src} fmt::fmt)
+    endif()
     ADD_TEST( ${test_src} ${test_src} )
   ENDFOREACH(test_src)
 

@@ -130,19 +130,19 @@ class Tests {
     Eigen::Map<Sim3Type const> map_of_const_sim3(raw.data());
     SOPHUS_TEST_APPROX(passed, map_of_const_sim3.quaternion().coeffs().eval(),
                        raw.template head<4>().eval(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, map_of_const_sim3.translation().eval(),
                        raw.template tail<3>().eval(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_EQUAL(passed, map_of_const_sim3.quaternion().coeffs().data(),
-                      raw.data());
+                      raw.data(), "");
     SOPHUS_TEST_EQUAL(passed, map_of_const_sim3.translation().data(),
-                      raw.data() + 4);
+                      raw.data() + 4, "");
     Eigen::Map<Sim3Type const> const_shallow_copy = map_of_const_sim3;
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.quaternion().coeffs().eval(),
-                      map_of_const_sim3.quaternion().coeffs().eval());
+                      map_of_const_sim3.quaternion().coeffs().eval(), "");
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.translation().eval(),
-                      map_of_const_sim3.translation().eval());
+                      map_of_const_sim3.translation().eval(), "");
 
     Eigen::Matrix<Scalar, 7, 1> raw2;
     raw2 << Scalar(1), Scalar(0), Scalar(0), Scalar(0), Scalar(3), Scalar(2),
@@ -154,38 +154,39 @@ class Tests {
     map_of_sim3.translation() = raw2.template tail<3>();
     SOPHUS_TEST_APPROX(passed, map_of_sim3.quaternion().coeffs().eval(),
                        raw2.template head<4>().eval(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, map_of_sim3.translation().eval(),
                        raw2.template tail<3>().eval(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_EQUAL(passed, map_of_sim3.quaternion().coeffs().data(),
-                      raw.data());
-    SOPHUS_TEST_EQUAL(passed, map_of_sim3.translation().data(), raw.data() + 4);
+                      raw.data(), "");
+    SOPHUS_TEST_EQUAL(passed, map_of_sim3.translation().data(), raw.data() + 4,
+                      "");
     SOPHUS_TEST_NEQ(passed, map_of_sim3.quaternion().coeffs().data(),
-                    quat.coeffs().data());
+                    quat.coeffs().data(), "");
     Eigen::Map<Sim3Type> shallow_copy = map_of_sim3;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.quaternion().coeffs().eval(),
-                      map_of_sim3.quaternion().coeffs().eval());
+                      map_of_sim3.quaternion().coeffs().eval(), "");
     SOPHUS_TEST_EQUAL(passed, shallow_copy.translation().eval(),
-                      map_of_sim3.translation().eval());
+                      map_of_sim3.translation().eval(), "");
     Eigen::Map<Sim3Type> const const_map_of_sim3 = map_of_sim3;
     SOPHUS_TEST_EQUAL(passed, const_map_of_sim3.quaternion().coeffs().eval(),
-                      map_of_sim3.quaternion().coeffs().eval());
+                      map_of_sim3.quaternion().coeffs().eval(), "");
     SOPHUS_TEST_EQUAL(passed, const_map_of_sim3.translation().eval(),
-                      map_of_sim3.translation().eval());
+                      map_of_sim3.translation().eval(), "");
 
     Sim3Type const const_sim3(quat, raw2.template tail<3>().eval());
     for (int i = 0; i < 7; ++i) {
-      SOPHUS_TEST_EQUAL(passed, const_sim3.data()[i], raw2.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, const_sim3.data()[i], raw2.data()[i], "");
     }
 
     Sim3Type se3(quat, raw2.template tail<3>().eval());
     for (int i = 0; i < 7; ++i) {
-      SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw2.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw2.data()[i], "");
     }
 
     for (int i = 0; i < 7; ++i) {
-      SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i], "");
     }
 
     Eigen::Matrix<Scalar, 7, 1> data1, data2;
@@ -198,19 +199,19 @@ class Tests {
 
     // map -> map assignment
     map2 = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix(), "");
 
     // map -> type assignment
     Sim3Type copy;
     copy = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
     copy = Sim3Type(RxSO3Type::exp(Vector4Type(Scalar(0.2), Scalar(0.5),
                                                Scalar(-1.0), Scalar(1.1))),
                     Point(Scalar(10), Scalar(0), Scalar(0)));
     map1 = copy;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     return passed;
   }
@@ -218,19 +219,19 @@ class Tests {
   bool testConstructors() {
     bool passed = true;
     Eigen::Matrix<Scalar, 4, 4> I = Eigen::Matrix<Scalar, 4, 4>::Identity();
-    SOPHUS_TEST_EQUAL(passed, Sim3Type().matrix(), I);
+    SOPHUS_TEST_EQUAL(passed, Sim3Type().matrix(), I, "");
 
     Sim3Type sim3 = sim3_vec_.front();
     Point translation = sim3.translation();
     RxSO3Type rxso3 = sim3.rxso3();
 
     SOPHUS_TEST_APPROX(passed, Sim3Type(rxso3, translation).matrix(),
-                       sim3.matrix(), Constants<Scalar>::epsilon());
+                       sim3.matrix(), Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed,
                        Sim3Type(rxso3.quaternion(), translation).matrix(),
-                       sim3.matrix(), Constants<Scalar>::epsilon());
+                       sim3.matrix(), Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, Sim3Type(sim3.matrix()).matrix(), sim3.matrix(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
 
     Scalar scale(1.2);
     sim3.setScale(scale);

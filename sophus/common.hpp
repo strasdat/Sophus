@@ -7,13 +7,21 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <random>
 #include <type_traits>
 
 #include <Eigen/Core>
 
 #undef SOPHUS_COMPILE_TIME_FMT
+
+#ifndef SOPHUS_FMT_LOGGING
+
+#define SOPHUS_FMT_CSTR(description, ...) description
+#define SOPHUS_FMT_STR(description, ...) std::string(description)
+#define SOPHUS_FMT_PRINT(description, ...) std::printf("%s\n", description)
+
+#else  // SOPHUS_FMT_LOGGING
+
 #ifdef __linux__
 #define SOPHUS_COMPILE_TIME_FMT
 #endif
@@ -37,11 +45,23 @@
 
 #ifdef SOPHUS_COMPILE_TIME_FMT
 // compile-time format check on x
-#define SOPHUS_FMT(x) FMT_STRING(x)
-#else
+#define SOPHUS_FMT_STRING(x) FMT_STRING(x)
+#else  // ! SOPHUS_COMPILE_TIME_FMT
 // identity, hence no compile-time check on x
-#define SOPHUS_FMT(x) x
-#endif
+#define SOPHUS_FMT_STRING(x) x
+#endif  // ! SOPHUS_COMPILE_TIME_FMT
+
+#define SOPHUS_FMT_CSTR(description, ...) \
+  fmt::format(SOPHUS_FMT_STRING(description), ##__VA_ARGS__).c_str()
+
+#define SOPHUS_FMT_STR(description, ...) \
+  fmt::format(SOPHUS_FMT_STRING(description), ##__VA_ARGS__)
+
+#define SOPHUS_FMT_PRINT(description, ...)                   \
+  fmt::print(SOPHUS_FMT_STRING(description), ##__VA_ARGS__); \
+  fmt::print("\n")
+
+#endif  // SOPHUS_FMT_LOGGING
 
 // following boost's assert.hpp
 #undef SOPHUS_ENSURE
@@ -83,11 +103,10 @@ void ensureFailed(char const* function, char const* file, int line,
                   char const* description);
 }
 
-#define SOPHUS_ENSURE(expr, description, ...)        \
-  ((expr) ? ((void)0)                                \
-          : ::Sophus::ensureFailed(                  \
-                SOPHUS_FUNCTION, __FILE__, __LINE__, \
-                fmt::format(SOPHUS_FMT(description), ##__VA_ARGS__).c_str()))
+#define SOPHUS_ENSURE(expr, description, ...)                           \
+  ((expr) ? ((void)0)                                                   \
+          : ::Sophus::ensureFailed(SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                   SOPHUS_FMT(description)))
 #else
 
 #define SOPHUS_DEDAULT_ENSURE_FAILURE_IMPL(function, file, line, description, \
@@ -97,8 +116,7 @@ void ensureFailed(char const* function, char const* file, int line,
         "Sophus ensure failed in function '%s', "                             \
         "file '%s', line %d.\n",                                              \
         function, file, line);                                                \
-    std::cout << fmt::format(SOPHUS_FMT(description), ##__VA_ARGS__)          \
-              << std::endl;                                                   \
+    SOPHUS_FMT_PRINT(description, ##__VA_ARGS__);                             \
     std::abort();                                                             \
   } while (false)
 

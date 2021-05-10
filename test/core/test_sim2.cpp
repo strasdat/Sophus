@@ -92,18 +92,19 @@ class Tests {
     Eigen::Map<Sim2Type const> map_of_const_sim2(raw.data());
     SOPHUS_TEST_APPROX(passed, map_of_const_sim2.complex().eval(),
                        raw.template head<2>().eval(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, map_of_const_sim2.translation().eval(),
                        raw.template tail<2>().eval(),
-                       Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, map_of_const_sim2.complex().data(), raw.data());
+                       Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, map_of_const_sim2.complex().data(), raw.data(),
+                      "");
     SOPHUS_TEST_EQUAL(passed, map_of_const_sim2.translation().data(),
-                      raw.data() + 2);
+                      raw.data() + 2, "");
     Eigen::Map<Sim2Type const> const_shallow_copy = map_of_const_sim2;
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.complex().eval(),
-                      map_of_const_sim2.complex().eval());
+                      map_of_const_sim2.complex().eval(), "");
     SOPHUS_TEST_EQUAL(passed, const_shallow_copy.translation().eval(),
-                      map_of_const_sim2.translation().eval());
+                      map_of_const_sim2.translation().eval(), "");
 
     Eigen::Matrix<Scalar, 4, 1> raw2;
     raw2 << Scalar(1), Scalar(0), Scalar(2), Scalar(1);
@@ -114,36 +115,37 @@ class Tests {
     map_of_sim2.translation() = raw2.template tail<2>();
     SOPHUS_TEST_APPROX(passed, map_of_sim2.complex().eval(),
                        raw2.template head<2>().eval(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, map_of_sim2.translation().eval(),
                        raw2.template tail<2>().eval(),
-                       Constants<Scalar>::epsilon());
-    SOPHUS_TEST_EQUAL(passed, map_of_sim2.complex().data(), raw.data());
-    SOPHUS_TEST_EQUAL(passed, map_of_sim2.translation().data(), raw.data() + 2);
-    SOPHUS_TEST_NEQ(passed, map_of_sim2.complex().data(), z.data());
+                       Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, map_of_sim2.complex().data(), raw.data(), "");
+    SOPHUS_TEST_EQUAL(passed, map_of_sim2.translation().data(), raw.data() + 2,
+                      "");
+    SOPHUS_TEST_NEQ(passed, map_of_sim2.complex().data(), z.data(), "");
     Eigen::Map<Sim2Type> shallow_copy = map_of_sim2;
     SOPHUS_TEST_EQUAL(passed, shallow_copy.complex().eval(),
-                      map_of_sim2.complex().eval());
+                      map_of_sim2.complex().eval(), "");
     SOPHUS_TEST_EQUAL(passed, shallow_copy.translation().eval(),
-                      map_of_sim2.translation().eval());
+                      map_of_sim2.translation().eval(), "");
     Eigen::Map<Sim2Type> const const_map_of_sim3 = map_of_sim2;
     SOPHUS_TEST_EQUAL(passed, const_map_of_sim3.complex().eval(),
-                      map_of_sim2.complex().eval());
+                      map_of_sim2.complex().eval(), "");
     SOPHUS_TEST_EQUAL(passed, const_map_of_sim3.translation().eval(),
-                      map_of_sim2.translation().eval());
+                      map_of_sim2.translation().eval(), "");
 
     Sim2Type const const_sim2(z, raw2.template tail<2>().eval());
     for (int i = 0; i < 4; ++i) {
-      SOPHUS_TEST_EQUAL(passed, const_sim2.data()[i], raw2.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, const_sim2.data()[i], raw2.data()[i], "");
     }
 
     Sim2Type se3(z, raw2.template tail<2>().eval());
     for (int i = 0; i < 4; ++i) {
-      SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw2.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw2.data()[i], "");
     }
 
     for (int i = 0; i < 4; ++i) {
-      SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i]);
+      SOPHUS_TEST_EQUAL(passed, se3.data()[i], raw.data()[i], "");
     }
 
     Eigen::Matrix<Scalar, 4, 1> data1, data2;
@@ -154,18 +156,18 @@ class Tests {
 
     // map -> map assignment
     map2 = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix(), "");
 
     // map -> type assignment
     Sim2Type copy;
     copy = map1;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
     copy = Sim2Type(RxSO2Type::exp(Vector2Type(-1, 1)),
                     Point(Scalar(10), Scalar(0)));
     map1 = copy;
-    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix());
+    SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     return passed;
   }
@@ -173,28 +175,28 @@ class Tests {
   bool testConstructors() {
     bool passed = true;
     Eigen::Matrix<Scalar, 3, 3> I = Eigen::Matrix<Scalar, 3, 3>::Identity();
-    SOPHUS_TEST_EQUAL(passed, Sim2Type().matrix(), I);
+    SOPHUS_TEST_EQUAL(passed, Sim2Type().matrix(), I, "");
 
     Sim2Type sim2 = sim2_vec_.front();
     Point translation = sim2.translation();
     RxSO2Type rxso2 = sim2.rxso2();
 
     SOPHUS_TEST_APPROX(passed, Sim2Type(rxso2, translation).matrix(),
-                       sim2.matrix(), Constants<Scalar>::epsilon());
+                       sim2.matrix(), Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, Sim2Type(rxso2.complex(), translation).matrix(),
-                       sim2.matrix(), Constants<Scalar>::epsilon());
+                       sim2.matrix(), Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, Sim2Type(sim2.matrix()).matrix(), sim2.matrix(),
-                       Constants<Scalar>::epsilon());
+                       Constants<Scalar>::epsilon(), "");
 
     Scalar scale(1.2);
     sim2.setScale(scale);
     SOPHUS_TEST_APPROX(passed, scale, sim2.scale(),
-                       Constants<Scalar>::epsilon(), "setScale");
+                       Constants<Scalar>::epsilon(), "setScale", "");
 
     sim2.setComplex(sim2_vec_[0].rxso2().complex());
     SOPHUS_TEST_APPROX(passed, sim2_vec_[0].rxso2().complex(),
                        sim2_vec_[0].rxso2().complex(),
-                       Constants<Scalar>::epsilon(), "setComplex");
+                       Constants<Scalar>::epsilon(), "setComplex", "");
     return passed;
   }
 

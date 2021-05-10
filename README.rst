@@ -25,7 +25,9 @@ the ones which are used in the Continuous Integration (CI): See GitHubCI_ and
 AppVeyor_ for details.
 
 However, it should work (with no to minor modification) on many other
-modern configurations as long they support c++14, CMake, Eigen 3.X and fmt.
+modern configurations as long they support c++14, CMake, Eigen 3.3.X and
+(optionally) fmt. The fmt dependency can be eliminated of by passing
+"-DUSE_BASIC_LOGGING=ON" to cmake when configuring Sophus.
 
 .. _GitHubCI: https://github.com/strasdat/Sophus/actions
 

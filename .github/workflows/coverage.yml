@@ -26,7 +26,9 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1
 
       - name: Install dependencies (Linux)
-        run: ./scripts/install_linux_deps.sh
+        run: |
+          ./scripts/install_linux_deps.sh
+          ./scripts/install_linux_fmt_deps.sh
 
       - name: Install Coverage
         run: |
