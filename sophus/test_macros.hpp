@@ -1,6 +1,7 @@
 #ifndef SOPUHS_TESTS_MACROS_HPP
 #define SOPUHS_TESTS_MACROS_HPP
 
+#include <iostream>
 #include <sstream>
 
 #include <sophus/types.hpp>

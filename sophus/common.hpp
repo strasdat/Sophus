@@ -103,10 +103,11 @@ void ensureFailed(char const* function, char const* file, int line,
                   char const* description);
 }
 
-#define SOPHUS_ENSURE(expr, description, ...)                           \
-  ((expr) ? ((void)0)                                                   \
-          : ::Sophus::ensureFailed(SOPHUS_FUNCTION, __FILE__, __LINE__, \
-                                   SOPHUS_FMT(description)))
+#define SOPHUS_ENSURE(expr, description, ...)                        \
+  ((expr)                                                            \
+       ? ((void)0)                                                   \
+       : ::Sophus::ensureFailed(SOPHUS_FUNCTION, __FILE__, __LINE__, \
+                                SOPHUS_FMT_CSTR(description, ##__VA_ARGS__)))
 #else
 
 #define SOPHUS_DEDAULT_ENSURE_FAILURE_IMPL(function, file, line, description, \
