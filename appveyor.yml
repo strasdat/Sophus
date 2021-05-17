@@ -32,4 +32,4 @@ before_build:
   - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug -D EIGEN3_INCLUDE_DIR=C:\projects\eigen-3.3.4 ..
 
 after_build:
-  - ctest
+  - ctest --output-on-failure
