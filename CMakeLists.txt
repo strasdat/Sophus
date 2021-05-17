@@ -31,16 +31,16 @@ ENDIF()
 # Add local path for finding packages, set the local version first
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
-# Find Eigen 3 (dependency)
-find_package(Eigen3 3.3.0 REQUIRED)
-
 # Basic logging (in ensure and test macros)
 option(USE_BASIC_LOGGING "Use basic logging" OFF)
+
 if(USE_BASIC_LOGGING)
-  add_definitions("-D SOPHUS_USE_BASIC_LOGGING")
-else()
-  find_package(fmt REQUIRED)
+  set (CMAKE_DISABLE_FIND_PACKAGE_fmt ON)
 endif()
+
+# Public dependencies
+find_package(Eigen3 3.3.0 REQUIRED)
+find_package(fmt)
 
 # Define interface library target
 add_library(sophus INTERFACE)
@@ -79,13 +79,19 @@ endif (MSVC)
 # Add Eigen interface dependency, depending on available cmake info
 if(TARGET Eigen3::Eigen)
   target_link_libraries(sophus INTERFACE Eigen3::Eigen)
-  if (NOT USE_BASIC_LOGGING)
-    target_link_libraries(sophus INTERFACE fmt::fmt)
-  endif()
   set(Eigen3_DEPENDENCY "find_dependency (Eigen3 ${Eigen3_VERSION})")
 else(TARGET Eigen3::Eigen)
   target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
 endif(TARGET Eigen3::Eigen)
+
+if(USE_BASIC_LOGGING OR NOT TARGET fmt::fmt)
+  # NOTE fmt_FOUND does not seem to be defined even though the package config
+  # was found.
+  target_compile_definitions(sophus INTERFACE SOPHUS_USE_BASIC_LOGGING=1)
+else()
+  target_link_libraries(sophus INTERFACE fmt::fmt)
+  set(fmt_DEPENDENCY "find_dependency (fmt ${fmt_VERSION})")
+endif()
 
 # Associate target with include directory
 target_include_directories(sophus INTERFACE
