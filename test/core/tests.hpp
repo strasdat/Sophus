@@ -24,6 +24,16 @@ using ceres::isfinite;
 using std::isfinite;
 #endif
 
+template <typename Scalar>
+Hyperplane<Scalar, 2> through(const Vector<Scalar, 2>* points) {
+  return Hyperplane<Scalar, 2>::Through(points[0], points[1]);
+}
+
+template <typename Scalar>
+Hyperplane<Scalar, 3> through(const Vector<Scalar, 3>* points) {
+  return Hyperplane<Scalar, 3>::Through(points[0], points[1], points[2]);
+}
+
 template <class LieGroup_>
 class LieGroupTests {
  public:
@@ -35,6 +45,7 @@ class LieGroupTests {
   using HomogeneousPoint = typename LieGroup::HomogeneousPoint;
   using ConstPointMap = Eigen::Map<const Point>;
   using Line = typename LieGroup::Line;
+  using Hyperplane = typename LieGroup::Hyperplane;
   using Adjoint = typename LieGroup::Adjoint;
   static int constexpr N = LieGroup::N;
   static int constexpr DoF = LieGroup::DoF;
@@ -276,6 +287,34 @@ class LieGroupTests {
     return passed;
   }
 
+  bool planeActionTest() {
+    const int PointDim = Point::RowsAtCompileTime;
+    bool passed = point_vec_.size() >= PointDim;
+    for (size_t i = 0; i < group_vec_.size(); ++i) {
+      for (size_t j = 0; j + PointDim - 1 < point_vec_.size(); ++j) {
+        Point points[PointDim], points_t[PointDim];
+        for (int k = 0; k < PointDim; ++k) {
+          points[k] = point_vec_[j + k];
+          points_t[k] = group_vec_[i] * points[k];
+        }
+
+        Hyperplane const plane = through(points);
+
+        Hyperplane const plane_t = group_vec_[i] * plane;
+
+        for (int k = 0; k < PointDim; ++k) {
+          SOPHUS_TEST_APPROX(passed, plane_t.signedDistance(points_t[k]),
+                             static_cast<Scalar>(0.), kSmallEps,
+                             "Transform plane case (point #%): %", k, i);
+        }
+        SOPHUS_TEST_APPROX(passed, plane_t.normal().squaredNorm(),
+                           plane.normal().squaredNorm(), kSmallEps,
+                           "Transform plane case (normal): %", i);
+      }
+    }
+    return passed;
+  }
+
   bool lieBracketTest() {
     bool passed = true;
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
@@ -461,6 +500,7 @@ class LieGroupTests {
     passed &= expLogTest();
     passed &= groupActionTest();
     passed &= lineActionTest();
+    passed &= planeActionTest();
     passed &= lieBracketTest();
     passed &= veeHatTest();
     passed &= newDeleteSmokeTest();

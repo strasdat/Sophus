@@ -87,6 +87,7 @@ class RxSO3Base {
   using Point = Vector3<Scalar>;
   using HomogeneousPoint = Vector4<Scalar>;
   using Line = ParametrizedLine3<Scalar>;
+  using Hyperplane = Hyperplane3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -300,6 +301,20 @@ class RxSO3Base {
   SOPHUS_FUNC Line operator*(Line const& l) const {
     return Line((*this) * l.origin(),
                 (*this) * l.direction() / quaternion().squaredNorm());
+  }
+
+  /// Group action on planes.
+  ///
+  /// This function rotates parametrized plane
+  /// ``n.x + d = 0`` by the SO3 element and scales it by the scale factor:
+  ///
+  /// Normal vector ``n`` is rotated
+  /// Offset ``d`` is scaled
+  ///
+  SOPHUS_FUNC Hyperplane operator*(Hyperplane const& p) const {
+    const auto this_scale = scale();
+    return Hyperplane((*this) * p.normal() / this_scale,
+                      this_scale * p.offset());
   }
 
   /// In-place group multiplication. This method is only valid if the return

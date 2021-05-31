@@ -59,6 +59,7 @@ class Tests {
 
     point_vec_.push_back(Point(Scalar(1), Scalar(2), Scalar(4)));
     point_vec_.push_back(Point(Scalar(1), Scalar(-3), Scalar(0.5)));
+    point_vec_.push_back(Point(Scalar(-5), Scalar(-6), Scalar(7)));
   }
 
   void runAll() {

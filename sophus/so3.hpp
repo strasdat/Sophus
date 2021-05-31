@@ -92,6 +92,7 @@ class SO3Base {
   using Point = Vector3<Scalar>;
   using HomogeneousPoint = Vector4<Scalar>;
   using Line = ParametrizedLine3<Scalar>;
+  using Hyperplane = Hyperplane3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -386,6 +387,18 @@ class SO3Base {
   ///
   SOPHUS_FUNC Line operator*(Line const& l) const {
     return Line((*this) * l.origin(), (*this) * l.direction());
+  }
+
+  /// Group action on planes.
+  ///
+  /// This function rotates a plane
+  /// ``n.x + d = 0`` by the SO3 element:
+  ///
+  /// Normal vector ``n`` is rotated
+  /// Offset ``d`` is left unchanged
+  ///
+  SOPHUS_FUNC Hyperplane operator*(Hyperplane const& p) const {
+    return Hyperplane((*this) * p.normal(), p.offset());
   }
 
   /// In-place group multiplication. This method is only valid if the return

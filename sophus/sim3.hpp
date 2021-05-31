@@ -76,6 +76,7 @@ class Sim3Base {
   using Point = Vector3<Scalar>;
   using HomogeneousPoint = Vector4<Scalar>;
   using Line = ParametrizedLine3<Scalar>;
+  using Hyperplane = Hyperplane3<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -251,6 +252,20 @@ class Sim3Base {
   SOPHUS_FUNC Line operator*(Line const& l) const {
     Line rotatedLine = rxso3() * l;
     return Line(rotatedLine.origin() + translation(), rotatedLine.direction());
+  }
+
+  /// Group action on planes.
+  ///
+  /// This function rotates and translates a plane
+  /// ``n.x + d = 0`` by the Sim(3) element:
+  ///
+  /// Normal vector ``n`` is rotated
+  /// Offset ``d`` is adjusted for scale and translation
+  ///
+  SOPHUS_FUNC Hyperplane operator*(Hyperplane const& p) const {
+    Hyperplane const rotated = rxso3() * p;
+    return Hyperplane(rotated.normal(),
+                      rotated.offset() - translation().dot(rotated.normal()));
   }
 
   /// In-place group multiplication. This method is only valid if the return

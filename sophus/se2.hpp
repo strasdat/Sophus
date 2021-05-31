@@ -74,6 +74,7 @@ class SE2Base {
   using Point = Vector2<Scalar>;
   using HomogeneousPoint = Vector3<Scalar>;
   using Line = ParametrizedLine2<Scalar>;
+  using Hyperplane = Hyperplane2<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -270,6 +271,23 @@ class SE2Base {
   ///
   SOPHUS_FUNC Line operator*(Line const& l) const {
     return Line((*this) * l.origin(), so2() * l.direction());
+  }
+
+  /// Group action on hyper-planes.
+  ///
+  /// This function rotates a hyper-plane ``n.x + d = 0`` by the SE2
+  /// element:
+  ///
+  /// Normal vector ``n`` is rotated
+  /// Offset ``d`` is adjusted for translation
+  ///
+  /// Note that in 2d-case hyper-planes are just another parametrization of
+  /// lines
+  ///
+  SOPHUS_FUNC Hyperplane operator*(Hyperplane const& p) const {
+    Hyperplane const rotated = so2() * p;
+    return Hyperplane(rotated.normal(),
+                      rotated.offset() - translation().dot(rotated.normal()));
   }
 
   /// In-place group multiplication. This method is only valid if the return
