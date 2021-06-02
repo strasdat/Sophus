@@ -9,6 +9,7 @@
 #include <sophus/average.hpp>
 #include <sophus/interpolate.hpp>
 #include <sophus/num_diff.hpp>
+#include <sophus/spline.hpp>
 #include <sophus/test_macros.hpp>
 
 #ifdef SOPHUS_CERES
@@ -482,6 +483,82 @@ class LieGroupTests {
   }
 
   template <class S = Scalar>
+  enable_if_t<std::is_same<S, float>::value, bool> testSpline() {
+    // skip tests for Scalar == float
+    return true;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<!std::is_same<S, float>::value, bool> testSpline() {
+    // run tests for Scalar != float
+    bool passed = true;
+
+    for (LieGroup const& T_world_foo : group_vec_) {
+      for (LieGroup const& T_world_bar : group_vec_) {
+        std::vector<LieGroup> control_poses;
+        control_poses.push_back(interpolate(T_world_foo, T_world_bar, 0.0));
+
+        for (double p = 0.2; p < 1.0; p += 0.2) {
+          LieGroup T_world_inter = interpolate(T_world_foo, T_world_bar, p);
+          control_poses.push_back(T_world_inter);
+        }
+
+        SplineImpl<LieGroup> spline(control_poses, 1.0);
+
+        LieGroup T = spline.T_foo_spline(1, 1.0);
+        LieGroup T2 = spline.T_foo_spline(2, 0.0);
+
+        SOPHUS_TEST_APPROX(passed, T.matrix(), T2.matrix(), 10 * kSmallEpsSqrt,
+                           "T_foo_spline");
+
+        Transformation Dt_T_foo_spline = spline.Dt_T_foo_spline(1, 0.5);
+        Transformation Dt_T_foo_spline2 = curveNumDiff(
+            [&](double u_bar) -> Transformation {
+              return spline.T_foo_spline(1, u_bar).matrix();
+            },
+            0.5);
+        SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2,
+                           40 * kSmallEpsSqrt, "Dt_T_foo_spline");
+
+        Transformation Dt2_T_foo_spline = spline.Dt2_T_foo_spline(1, 0.5);
+        Transformation Dt2_T_foo_spline2 = curveNumDiff(
+            [&](double u_bar) -> Transformation {
+              return spline.Dt_T_foo_spline(1, u_bar).matrix();
+            },
+            0.5);
+        SOPHUS_TEST_APPROX(passed, Dt2_T_foo_spline, Dt2_T_foo_spline2,
+                           20 * kSmallEpsSqrt, "Dt2_T_foo_spline");
+
+        for (double frac : {0.01, 0.25, 0.5, 0.9, 0.99}) {
+          double t0 = 2.0;
+          double delta_t = 0.1;
+          Spline<LieGroup> spline(control_poses, t0, delta_t);
+          double t = t0 + frac * delta_t;
+
+          Transformation Dt_T_foo_spline = spline.Dt_T_foo_spline(t);
+          Transformation Dt_T_foo_spline2 = curveNumDiff(
+              [&](double t_bar) -> Transformation {
+                return spline.T_foo_spline(t_bar).matrix();
+              },
+              t);
+          SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2,
+                             80 * kSmallEpsSqrt, "Dt_T_foo_spline");
+
+          Transformation Dt2_T_foo_spline = spline.Dt2_T_foo_spline(t);
+          Transformation Dt2_T_foo_spline2 = curveNumDiff(
+              [&](double t_bar) -> Transformation {
+                return spline.Dt_T_foo_spline(t_bar).matrix();
+              },
+              t);
+          SOPHUS_TEST_APPROX(passed, Dt2_T_foo_spline, Dt2_T_foo_spline2,
+                             20 * kSmallEpsSqrt, "Dt2_T_foo_spline");
+        }
+      }
+    }
+    return passed;
+  }
+
+  template <class S = Scalar>
   enable_if_t<std::is_floating_point<S>::value, bool> doAllTestsPass() {
     return doesLargeTestSetPass();
   }
@@ -515,6 +592,7 @@ class LieGroupTests {
     passed &= expMapTest();
     passed &= interpolateAndMeanTest();
     passed &= testRandomSmoke();
+    passed &= testSpline();
     return passed;
   }
 
