@@ -95,6 +95,7 @@ class RxSO2Base {
   using Point = Vector2<Scalar>;
   using HomogeneousPoint = Vector3<Scalar>;
   using Line = ParametrizedLine2<Scalar>;
+  using Hyperplane = Hyperplane2<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -273,6 +274,23 @@ class RxSO2Base {
   ///
   SOPHUS_FUNC Line operator*(Line const& l) const {
     return Line((*this) * l.origin(), (*this) * l.direction() / scale());
+  }
+
+  /// Group action on hyper-planes.
+  ///
+  /// This function rotates a hyper-plane ``n.x + d = 0`` by the SO2
+  /// element and scales offset by the scale factor
+  ///
+  /// Normal vector ``n`` is rotated
+  /// Offset ``d`` is scaled
+  ///
+  /// Note that in 2d-case hyper-planes are just another parametrization of
+  /// lines
+  ///
+  SOPHUS_FUNC Hyperplane operator*(Hyperplane const& p) const {
+    const auto this_scale = scale();
+    return Hyperplane((*this) * p.normal() / this_scale,
+                      this_scale * p.offset());
   }
 
   /// In-place group multiplication. This method is only valid if the return

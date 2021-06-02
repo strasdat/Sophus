@@ -78,6 +78,19 @@ using ParametrizedLine2 = ParametrizedLine<Scalar, 2, Options>;
 using ParametrizedLine2f = ParametrizedLine2<float>;
 using ParametrizedLine2d = ParametrizedLine2<double>;
 
+template <class Scalar, int N, int Options = 0>
+using Hyperplane = Eigen::Hyperplane<Scalar, N, Options>;
+
+template <class Scalar, int Options = 0>
+using Hyperplane3 = Eigen::Hyperplane<Scalar, 3, Options>;
+using Hyperplane3f = Hyperplane3<float>;
+using Hyperplane3d = Hyperplane3<double>;
+
+template <class Scalar, int Options = 0>
+using Hyperplane2 = Eigen::Hyperplane<Scalar, 2, Options>;
+using Hyperplane2f = Hyperplane2<float>;
+using Hyperplane2d = Hyperplane2<double>;
+
 namespace details {
 template <class Scalar>
 class MaxMetric {

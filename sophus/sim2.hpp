@@ -75,6 +75,7 @@ class Sim2Base {
   using Point = Vector2<Scalar>;
   using HomogeneousPoint = Vector3<Scalar>;
   using Line = ParametrizedLine2<Scalar>;
+  using Hyperplane = Hyperplane2<Scalar>;
   using Tangent = Vector<Scalar, DoF>;
   using Adjoint = Matrix<Scalar, DoF, DoF>;
 
@@ -249,6 +250,23 @@ class Sim2Base {
   SOPHUS_FUNC Line operator*(Line const& l) const {
     Line rotatedLine = rxso2() * l;
     return Line(rotatedLine.origin() + translation(), rotatedLine.direction());
+  }
+
+  /// Group action on hyper-planes.
+  ///
+  /// This function rotates a hyper-plane ``n.x + d = 0`` by the Sim2
+  /// element:
+  ///
+  /// Normal vector ``n`` is rotated
+  /// Offset ``d`` is scaled and adjusted for translation
+  ///
+  /// Note that in 2d-case hyper-planes are just another parametrization of
+  /// lines
+  ///
+  SOPHUS_FUNC Hyperplane operator*(Hyperplane const& p) const {
+    Hyperplane const rotated = rxso2() * p;
+    return Hyperplane(rotated.normal(),
+                      rotated.offset() - translation().dot(rotated.normal()));
   }
 
   /// Returns internal parameters of Sim(2).
