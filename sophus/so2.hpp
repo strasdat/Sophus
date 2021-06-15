@@ -468,8 +468,8 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   ///
   /// The infinitesimal generators of SO(2) is:
   ///
-  ///     |  0  1 |
-  ///     | -1  0 |
+  ///     |  0 -1 |
+  ///     |  1  0 |
   ///
   SOPHUS_FUNC static Transformation generator() { return hat(Scalar(1)); }
 
