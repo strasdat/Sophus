@@ -95,7 +95,8 @@ bool testSpline() {
   //       return spline.T_foo_spline(1, u_bar).matrix();
   //     },
   //     0.5);
-  // SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2, kSmallEpsSqrt,
+  // SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2,
+  // kSmallEpsSqrt,
   //                    "Dt_T_foo_spline");
 
   // Eigen::Matrix4d Dt2_T_foo_spline = spline.Dt2_T_foo_spline(1, 0.5);
@@ -104,7 +105,8 @@ bool testSpline() {
   //       return spline.Dt_T_foo_spline(1, u_bar).matrix();
   //     },
   //     0.5);
-  // SOPHUS_TEST_APPROX(passed, Dt2_T_foo_spline, Dt2_T_foo_spline2, kSmallEpsSqrt,
+  // SOPHUS_TEST_APPROX(passed, Dt2_T_foo_spline, Dt2_T_foo_spline2,
+  // kSmallEpsSqrt,
   //                    "Dt2_T_foo_spline");
 
   // {
@@ -119,7 +121,8 @@ bool testSpline() {
   //         return spline.T_foo_spline(t_bar).matrix();
   //       },
   //       t);
-  //   SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2, kSmallEpsSqrt,
+  //   SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2,
+  //   kSmallEpsSqrt,
   //                      "Dt_T_foo_spline");
 
   //   Eigen::Matrix4d Dt2_T_foo_spline = spline.Dt2_T_foo_spline(t);
