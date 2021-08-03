@@ -508,7 +508,8 @@ class LieGroupTests {
         // LieGroup T = spline.T_foo_spline(1, 1.0);
         // LieGroup T2 = spline.T_foo_spline(2, 0.0);
 
-        // SOPHUS_TEST_APPROX(passed, T.matrix(), T2.matrix(), 10 * kSmallEpsSqrt,
+        // SOPHUS_TEST_APPROX(passed, T.matrix(), T2.matrix(), 10 *
+        // kSmallEpsSqrt,
         //                    "T_foo_spline");
 
         // Transformation Dt_T_foo_spline = spline.Dt_T_foo_spline(1, 0.5);
