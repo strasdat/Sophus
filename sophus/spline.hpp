@@ -159,11 +159,11 @@ class SplineImpl {
 
   SplineImpl(std::vector<LieGroup> parent_Ts_control_point, double delta_t)
       : parent_Ts_control_point_(parent_Ts_control_point), delta_t_(delta_t) {
-    SOPHUS_ENSURE(parent_Ts_control_point_.size() >= 4u, ", but {}",
+    SOPHUS_ENSURE(parent_Ts_control_point_.size() >= 2u, ", but {}",
                   parent_Ts_control_point_.size());
     recomputeControlTangentVectors();
     SOPHUS_ENSURE(
-        parent_Ts_control_point_.size() == control_tagent_vectors_.size() + 1,
+        parent_Ts_control_point_.size() + 1 == control_tagent_vectors_.size(),
         "{} vs {}", parent_Ts_control_point_.size(),
         control_tagent_vectors_.size());
   }
@@ -178,7 +178,7 @@ class SplineImpl {
         parent_Ts_control_point_.size());
 
     return SplineFn<LieGroup>::parent_T_spline(
-        parent_Ts_control_point_[i],
+        get_parent_T_control_point(i),
         std::make_tuple(control_tagent_vectors_[i],
                         control_tagent_vectors_[i + 1],
                         control_tagent_vectors_[i + 2]),
@@ -195,7 +195,7 @@ class SplineImpl {
         parent_Ts_control_point_.size());
 
     return SplineFn<LieGroup>::Dt_parent_T_spline(
-        parent_Ts_control_point_.at(i),
+        get_parent_T_control_point(i),
         std::make_tuple(control_tagent_vectors_[i],
                         control_tagent_vectors_[i + 1],
                         control_tagent_vectors_[i + 2]),
@@ -212,7 +212,7 @@ class SplineImpl {
         parent_Ts_control_point_.size());
 
     return SplineFn<LieGroup>::Dt2_parent_T_spline(
-        parent_Ts_control_point_[i],
+        get_parent_T_control_point(i),
         std::make_tuple(control_tagent_vectors_[i],
                         control_tagent_vectors_[i + 1],
                         control_tagent_vectors_[i + 2]),
@@ -228,22 +228,44 @@ class SplineImpl {
   }
 
   int getNumSegments() const {
-    return int(parent_Ts_control_point_.size()) - 3;
+    return int(parent_Ts_control_point_.size()) - 1;
   }
 
   double delta_t() const { return delta_t_; }
 
   void recomputeControlTangentVectors() {
     control_tagent_vectors_.clear();
+    Tangent o;
+    setToZero(o);
+    control_tagent_vectors_.push_back(o);
     for (size_t i = 1; i < parent_Ts_control_point_.size(); ++i) {
       control_tagent_vectors_.push_back(
           (parent_Ts_control_point_[i - 1].inverse() *
            parent_Ts_control_point_[i])
               .log());
     }
+    control_tagent_vectors_.push_back(o);
   }
 
  private:
+  // The first two, and the last two control poses are equal:
+  //  - get_parent_T_control_point(0) == get_parent_T_control_point(1)
+  //  - get_parent_T_control_point(s-1) == get_parent_T_control_point(s-2)
+  // Hence we do not store the first and last pose, but rather deal with the
+  // corner cases here.
+  //
+  // Hence, the first and last contol tangent vectors are 0. See
+  // `recomputeControlTangentVectors`.
+  LieGroup const& get_parent_T_control_point(int i) const {
+    if (i == 0) {
+      return parent_Ts_control_point_.front();
+    }
+    if (i == int(parent_Ts_control_point_.size())) {
+      return parent_Ts_control_point_.back();
+    }
+    return parent_Ts_control_point_[i - 1];
+  }
+
   std::vector<LieGroup> parent_Ts_control_point_;
   std::vector<Tangent> control_tagent_vectors_;
   double delta_t_;
@@ -277,7 +299,9 @@ class Spline {
     return impl_.Dt2_parent_T_spline(index_and_u.i, index_and_u.u);
   }
 
-  double t0() { return t0_; }
+  double t0() const { return t0_; }
+
+  double tmax() const { return t0_ + impl_.delta_t() * getNumSegments(); }
 
   const std::vector<LieGroup>& parent_Ts_control_point() const {
     return impl_.parent_Ts_control_point();
@@ -302,11 +326,28 @@ class Spline {
   double s(double t) const { return (t - t0_) / impl_.delta_t(); }
 
   IndexAndU index_and_u(double t) const {
+    SOPHUS_ENSURE(t >= t0_, "{} vs. {}", t, t0_);
+    SOPHUS_ENSURE(t <= this->tmax(), "{} vs. {}", t, this->tmax());
+
     double s = this->s(t);
     double i;
     IndexAndU index_and_u;
     index_and_u.u = std::modf(s, &i);
     index_and_u.i = int(i);
+    if (index_and_u.u > 0.0) {
+      return index_and_u;
+    }
+
+    // u == 0.0
+    if (s < 0.5 * this->tmax()) {
+      // First half of spline, keep as is (i, 0.0).
+      return index_and_u;
+    }
+    // Second half of spline, use (i-1, 1.0) instead. This way we can represent
+    // t == tmax (and not just t<tmax).
+    index_and_u.u = 1.0;
+    --index_and_u.i;
+
     return index_and_u;
   }
 
