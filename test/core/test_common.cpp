@@ -62,78 +62,80 @@ bool testSpline() {
     }
   }
 
-  // SE3d T_world_foo = SE3d::rotX(0.4) * SE3d::rotY(0.2);
-  // SE3d T_world_bar =
-  //     SE3d::rotZ(-0.4) * SE3d::rotY(0.4) * SE3d::trans(0.0, 1.0, -2.0);
+  SE3d T_world_foo = SE3d::rotX(0.4) * SE3d::rotY(0.2);
+  SE3d T_world_bar =
+      SE3d::rotZ(-0.4) * SE3d::rotY(0.4) * SE3d::trans(0.0, 1.0, -2.0);
 
-  // std::vector<SE3d> control_poses;
-  // control_poses.push_back(interpolate(T_world_foo, T_world_bar, 0.0));
+  std::vector<SE3d> control_poses;
+  control_poses.push_back(interpolate(T_world_foo, T_world_bar, 0.0));
 
-  // for (double p = 0.2; p < 1.0; p += 0.2) {
-  //   std::cerr << p << std::endl;
-  //   SE3d T_world_inter = interpolate(T_world_foo, T_world_bar, p);
-  //   control_poses.push_back(T_world_inter);
-  // }
+  for (double p = 0.2; p < 1.0; p += 0.2) {
+    std::cerr << p << std::endl;
+    SE3d T_world_inter = interpolate(T_world_foo, T_world_bar, p);
+    control_poses.push_back(T_world_inter);
+  }
 
-  // SE3d T = SplineImpl<Sophus::SE3d>::T_foo_spline(1, 1.0);
-  // SE3d T2 = SplineImpl<Sophus::SE3d>::T_foo_spline(2, 0.0);
+  SplineImpl<Sophus::SE3d> spline(control_poses, 1.0);
 
-  // Eigen::Matrix3d R = T.so3().matrix();
-  // Eigen::Matrix3d R2 = T2.so3().matrix();
-  // Eigen::Vector3d t = T.translation();
-  // Eigen::Vector3d t2 = T2.translation();
-  // std::cerr << R << std::endl;
-  // std::cerr << t << std::endl;
+  SE3d T = spline.T_foo_spline(1, 1.0);
+  SE3d T2 = spline.T_foo_spline(2, 0.0);
 
-  // SOPHUS_TEST_APPROX(passed, R, R2, kSmallEpsSqrt, "lambdsa");
+  Eigen::Matrix3d R = T.so3().matrix();
+  Eigen::Matrix3d R2 = T2.so3().matrix();
+  Eigen::Vector3d t = T.translation();
+  Eigen::Vector3d t2 = T2.translation();
+  std::cerr << R << std::endl;
+  std::cerr << t << std::endl;
 
-  // SOPHUS_TEST_APPROX(passed, t, t2, kSmallEpsSqrt, "lambdsa");
+  SOPHUS_TEST_APPROX(passed, R, R2, kSmallEpsSqrt, "lambdsa");
 
-  // Eigen::Matrix4d Dt_T_foo_spline = spline.Dt_T_foo_spline(1, 0.5);
-  // Eigen::Matrix4d Dt_T_foo_spline2 = curveNumDiff(
-  //     [&](double u_bar) -> Eigen::Matrix4d {
-  //       return spline.T_foo_spline(1, u_bar).matrix();
-  //     },
-  //     0.5);
-  // SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2,
-  // kSmallEpsSqrt,
-  //                    "Dt_T_foo_spline");
+  SOPHUS_TEST_APPROX(passed, t, t2, kSmallEpsSqrt, "lambdsa");
 
-  // Eigen::Matrix4d Dt2_T_foo_spline = spline.Dt2_T_foo_spline(1, 0.5);
-  // Eigen::Matrix4d Dt2_T_foo_spline2 = curveNumDiff(
-  //     [&](double u_bar) -> Eigen::Matrix4d {
-  //       return spline.Dt_T_foo_spline(1, u_bar).matrix();
-  //     },
-  //     0.5);
-  // SOPHUS_TEST_APPROX(passed, Dt2_T_foo_spline, Dt2_T_foo_spline2,
-  // kSmallEpsSqrt,
-  //                    "Dt2_T_foo_spline");
+  Eigen::Matrix4d Dt_T_foo_spline = spline.Dt_T_foo_spline(1, 0.5);
+  Eigen::Matrix4d Dt_T_foo_spline2 = curveNumDiff(
+      [&](double u_bar) -> Eigen::Matrix4d {
+        return spline.T_foo_spline(1, u_bar).matrix();
+      },
+      0.5);
+  SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2,
+  kSmallEpsSqrt,
+                     "Dt_T_foo_spline");
 
-  // {
-  //   double t0 = 2.0;
-  //   double delta_t = 0.1;
-  //   Spline<Sophus::SE3d> spline(control_poses, t0, delta_t);
-  //   double t = t0 + 0.5 * delta_t;
+  Eigen::Matrix4d Dt2_T_foo_spline = spline.Dt2_T_foo_spline(1, 0.5);
+  Eigen::Matrix4d Dt2_T_foo_spline2 = curveNumDiff(
+      [&](double u_bar) -> Eigen::Matrix4d {
+        return spline.Dt_T_foo_spline(1, u_bar).matrix();
+      },
+      0.5);
+  SOPHUS_TEST_APPROX(passed, Dt2_T_foo_spline, Dt2_T_foo_spline2,
+  kSmallEpsSqrt,
+                     "Dt2_T_foo_spline");
 
-  //   Eigen::Matrix4d Dt_T_foo_spline = spline.Dt_T_foo_spline(t);
-  //   Eigen::Matrix4d Dt_T_foo_spline2 = curveNumDiff(
-  //       [&](double t_bar) -> Eigen::Matrix4d {
-  //         return spline.T_foo_spline(t_bar).matrix();
-  //       },
-  //       t);
-  //   SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2,
-  //   kSmallEpsSqrt,
-  //                      "Dt_T_foo_spline");
+  {
+    double t0 = 2.0;
+    double delta_t = 0.1;
+    Spline<Sophus::SE3d> spline(control_poses, t0, delta_t);
+    double t = t0 + 0.5 * delta_t;
 
-  //   Eigen::Matrix4d Dt2_T_foo_spline = spline.Dt2_T_foo_spline(t);
-  //   Eigen::Matrix4d Dt2_T_foo_spline2 = curveNumDiff(
-  //       [&](double t_bar) -> Eigen::Matrix4d {
-  //         return spline.Dt_T_foo_spline(t_bar).matrix();
-  //       },
-  //       t);
-  //   SOPHUS_TEST_APPROX(passed, Dt2_T_foo_spline, Dt2_T_foo_spline2,
-  //                      kSmallEpsSqrt, "Dt2_T_foo_spline");
-  // }
+    Eigen::Matrix4d Dt_T_foo_spline = spline.Dt_T_foo_spline(t);
+    Eigen::Matrix4d Dt_T_foo_spline2 = curveNumDiff(
+        [&](double t_bar) -> Eigen::Matrix4d {
+          return spline.T_foo_spline(t_bar).matrix();
+        },
+        t);
+    SOPHUS_TEST_APPROX(passed, Dt_T_foo_spline, Dt_T_foo_spline2,
+    kSmallEpsSqrt,
+                       "Dt_T_foo_spline");
+
+    Eigen::Matrix4d Dt2_T_foo_spline = spline.Dt2_T_foo_spline(t);
+    Eigen::Matrix4d Dt2_T_foo_spline2 = curveNumDiff(
+        [&](double t_bar) -> Eigen::Matrix4d {
+          return spline.Dt_T_foo_spline(t_bar).matrix();
+        },
+        t);
+    SOPHUS_TEST_APPROX(passed, Dt2_T_foo_spline, Dt2_T_foo_spline2,
+                       kSmallEpsSqrt, "Dt2_T_foo_spline");
+  }
 
   return passed;
 }

@@ -52,20 +52,6 @@ class SplineFn {
   using Transformation = typename LieGroup::Transformation;
   using Tangent = typename LieGroup::Tangent;
 
-  // SplineImpl(std::vector<LieGroup> T_foo_controlPoint, double delta_t)
-  // // T_foo_controlPoint_(std::move(T_foo_controlPoint))
-  // {
-  //   // SOPHUS_ENSURE(T_foo_controlPoint_.size() >= 4u, ", but {}",
-  //   //               T_foo_controlPoint_.size());
-
-  //   // for (size_t i = 1; i < T_foo_controlPoint_.size(); ++i) {
-  //   //   control_tagent_vectors_.push_back(
-  //   //       (T_foo_controlPoint_[i - 1].inverse() * T_foo_controlPoint_[i])
-  //   //           .log());
-  //   // }
-  // }
-
-  // in i-1
   static LieGroup T_foo_spline(
       const LieGroup& T_foo_controlPoint,
       std::tuple<Tangent, Tangent, Tangent> const& control_tagent_vectors,
@@ -90,7 +76,6 @@ class SplineFn {
              std::get<2>(Dt_AA)));
   }
 
-  // in i-1
   static Transformation Dt2_T_foo_spline(
       const LieGroup& T_foo_controlPoint,
       std::tuple<Tangent, Tangent, Tangent> const& control_tagent_vectors,
@@ -134,9 +119,9 @@ class SplineFn {
         Dt_B[0] * std::get<0>(AA).matrix() *
             LieGroup::hat(std::get<0>(control_tagent_vectors)),
         Dt_B[1] * std::get<1>(AA).matrix() *
-            LieGroup::hat(std::get<0>(control_tagent_vectors)),
+            LieGroup::hat(std::get<1>(control_tagent_vectors)),
         Dt_B[2] * std::get<2>(AA).matrix() *
-            LieGroup::hat(std::get<0>(control_tagent_vectors)));
+            LieGroup::hat(std::get<2>(control_tagent_vectors)));
   }
 
   static std::tuple<Transformation, Transformation, Transformation> Dt2_A(
@@ -158,14 +143,73 @@ class SplineFn {
          Dt2_B[2] * std::get<2>(AA).matrix()) *
             LieGroup::hat(std::get<2>(control_tagent_vectors)));
   }
-
-  // std::vector<LieGroup> T_foo_controlPoint_;
-  // std::vector<Tangent> control_tagent_vectors_;
-  // double delta_t_;
 };
 
 template <class LieGroup_>
 class SplineImpl {
+ public:
+  using LieGroup = LieGroup_;
+  using Scalar = typename LieGroup::Scalar;
+  using Transformation = typename LieGroup::Transformation;
+  using Tangent = typename LieGroup::Tangent;
+
+  SplineImpl(std::vector<LieGroup> T_foo_controlPoint, double delta_t)
+      : T_foo_controlPoint_(T_foo_controlPoint), delta_t_(delta_t) {
+    SOPHUS_ENSURE(T_foo_controlPoint_.size() >= 4u, ", but {}",
+                  T_foo_controlPoint_.size());
+
+    for (size_t i = 1; i < T_foo_controlPoint_.size(); ++i) {
+      control_tagent_vectors_.push_back(
+          (T_foo_controlPoint_[i - 1].inverse() * T_foo_controlPoint_[i])
+              .log());
+    }
+  }
+
+  LieGroup T_foo_spline(int i, double u) {
+    std::cerr << i << " " << control_tagent_vectors_.size() << " "
+              << T_foo_controlPoint_.size() << std::endl;
+    return SplineFn<LieGroup>::T_foo_spline(
+        T_foo_controlPoint_.at(i - 1),
+        std::make_tuple(control_tagent_vectors_[i - 1],
+                        control_tagent_vectors_[i],
+                        control_tagent_vectors_[i + 1]),
+        u);
+  }
+
+  Transformation Dt_T_foo_spline(int i, double u) {
+    std::cerr << i << " " << control_tagent_vectors_.size() << " "
+              << T_foo_controlPoint_.size() << std::endl;
+    return SplineFn<LieGroup>::Dt_T_foo_spline(
+        T_foo_controlPoint_.at(i - 1),
+        std::make_tuple(control_tagent_vectors_[i - 1],
+                        control_tagent_vectors_[i],
+                        control_tagent_vectors_[i + 1]),
+        u, delta_t_);
+  }
+
+  Transformation Dt2_T_foo_spline(int i, double u) {
+    std::cerr << i << " " << control_tagent_vectors_.size() << " "
+              << T_foo_controlPoint_.size() << std::endl;
+    return SplineFn<LieGroup>::Dt2_T_foo_spline(
+        T_foo_controlPoint_.at(i - 1),
+        std::make_tuple(control_tagent_vectors_[i - 1],
+                        control_tagent_vectors_[i],
+                        control_tagent_vectors_[i + 1]),
+        u, delta_t_);
+  }
+
+  const std::vector<LieGroup>& T_foo_controlPoint() const {
+    return T_foo_controlPoint_;
+  }
+
+  std::vector<LieGroup>& T_foo_controlPoint() { return T_foo_controlPoint_; }
+
+  double delta_t() const { return delta_t_; }
+
+ private:
+  std::vector<LieGroup> T_foo_controlPoint_;
+  std::vector<Tangent> control_tagent_vectors_;
+  double delta_t_;
 };
 
 template <class LieGroup_>
@@ -177,78 +221,33 @@ class Spline {
   using Tangent = typename LieGroup::Tangent;
 
   Spline(std::vector<LieGroup> T_foo_controlPoint, double t0, double delta_t)
-      : T_foo_controlPoint_(std::move(T_foo_controlPoint)),
-        t0_(t0),
-        delta_t_(delta_t) {
-    SOPHUS_ENSURE(T_foo_controlPoint_.size() >= 4u, ", but {}",
-                  T_foo_controlPoint_.size());
-
-    for (size_t i = 1; i < T_foo_controlPoint_.size(); ++i) {
-      control_tagent_vectors_.push_back(
-          (T_foo_controlPoint_[i - 1].inverse() * T_foo_controlPoint_[i])
-              .log());
-    }
-  }
+      : impl_(std::move(T_foo_controlPoint), delta_t), t0_(t0) {}
 
   LieGroup T_foo_spline(double t) {
     IndexAndU index_and_u = this->index_and_u(t);
-    size_t i = index_and_u.i;
-    //FARM_NG_CHECK_GE(i, 0);
-    //FARM_NG_CHECK_LT(i, control_tagent_vectors_.size());
 
-    if (i == 0) {
-      return SplineFn<LieGroup>::T_foo_spline(
-          T_foo_controlPoint_.at(i),
-          std::make_tuple(control_tagent_vectors_[i],
-                          control_tagent_vectors_[i],
-                          control_tagent_vectors_[i + 1]),
-          index_and_u.u);
-    }
-
-    if (i == control_tagent_vectors_.size()-1) {
-      return SplineFn<LieGroup>::T_foo_spline(
-          T_foo_controlPoint_.at(i),
-          std::make_tuple(control_tagent_vectors_[i-1],
-                          control_tagent_vectors_[i],
-                          control_tagent_vectors_[i]),
-          index_and_u.u);
-    }
-
-    return SplineFn<LieGroup>::T_foo_spline(
-        T_foo_controlPoint_.at(i - 1),
-        std::make_tuple(control_tagent_vectors_[i - 1],
-                        control_tagent_vectors_[i],
-                        control_tagent_vectors_[i + 1]),
-        index_and_u.u);
+    return impl_.T_foo_spline(index_and_u.i, index_and_u.u);
   }
 
-  // Transformation Dt_T_foo_spline(double t) {
-  //   IndexAndU index_and_u = this->index_and_u(t);
-  //   return SplineImpl<LieGroup>::Dt_T_foo_spline(
-  //       T_foo_controlPoint_.at(index_and_u.i - 1),
-  //       std::make_tuple(control_tagent_vectors_[index_and_u.i - 1],
-  //                       control_tagent_vectors_[index_and_u.i],
-  //                       control_tagent_vectors_[index_and_u.i + 1]),
-  //       index_and_u.u, delta_t_);
-  // }
+  Transformation Dt_T_foo_spline(double t) {
+    IndexAndU index_and_u = this->index_and_u(t);
+    return impl_.Dt_T_foo_spline(index_and_u.i, index_and_u.u);
+  }
 
-  // Transformation Dt2_T_foo_spline(double t) {
-  //   IndexAndU index_and_u = this->index_and_u(t);
-  //   return SplineImpl<LieGroup>::Dt2_T_foo_spline(
-  //       T_foo_controlPoint_.at(index_and_u.i - 1),
-  //       std::make_tuple(control_tagent_vectors_[index_and_u.i - 1],
-  //                       control_tagent_vectors_[index_and_u.i],
-  //                       control_tagent_vectors_[index_and_u.i + 1]),
-  //       index_and_u.u, delta_t_);
-  // }
+  Transformation Dt2_T_foo_spline(double t) {
+    IndexAndU index_and_u = this->index_and_u(t);
+    return impl_.Dt2_T_foo_spline(index_and_u.i, index_and_u.u);
+  }
 
   double t0() { return t0_; }
 
   const std::vector<LieGroup>& T_foo_controlPoint() const {
-    return T_foo_controlPoint_;
+    return impl_.T_foo_controlPoint();
   }
 
-  std::vector<LieGroup>& T_foo_controlPoint() { return T_foo_controlPoint_; }
+  std::vector<LieGroup>& T_foo_controlPoint() {
+    return impl_.T_foo_controlPoint_();
+  }
 
  private:
   struct IndexAndU {
@@ -256,7 +255,7 @@ class Spline {
     double u;
   };
 
-  double s(double t) const { return (t - t0_) / delta_t_; }
+  double s(double t) const { return (t - t0_) / impl_.delta_t(); }
 
   IndexAndU index_and_u(double t) const {
     double s = this->s(t);
@@ -267,12 +266,9 @@ class Spline {
     return index_and_u;
   }
 
-  // SplineImpl<LieGroup> impl_;
+  SplineImpl<LieGroup> impl_;
 
-  std::vector<LieGroup> T_foo_controlPoint_;
-  std::vector<Tangent> control_tagent_vectors_;
   double t0_;
-  double delta_t_;
 };
 
 }  // namespace Sophus
