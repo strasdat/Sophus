@@ -39,8 +39,6 @@
 #define FMT_STRING_ALIAS 1
 #endif
 
-#define FMT_HEADER_ONLY
-
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>

@@ -32,7 +32,7 @@ ENDIF()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
 # Basic logging (in ensure and test macros)
-option(USE_BASIC_LOGGING "Use basic logging" ON)
+option(USE_BASIC_LOGGING "Use basic logging" OFF)
 
 if(USE_BASIC_LOGGING)
   set (CMAKE_DISABLE_FIND_PACKAGE_fmt ON)
@@ -84,12 +84,12 @@ else(TARGET Eigen3::Eigen)
   target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
 endif(TARGET Eigen3::Eigen)
 
-if(USE_BASIC_LOGGING OR NOT TARGET fmt::fmt)
+if(USE_BASIC_LOGGING OR NOT TARGET fmt::fmt-header-only)
   # NOTE fmt_FOUND does not seem to be defined even though the package config
   # was found.
   target_compile_definitions(sophus INTERFACE SOPHUS_USE_BASIC_LOGGING=1)
 else()
-  target_link_libraries(sophus INTERFACE fmt::fmt)
+  target_link_libraries(sophus INTERFACE fmt::fmt-header-only)
   set(fmt_DEPENDENCY "find_dependency (fmt ${fmt_VERSION})")
 endif()
 
@@ -113,15 +113,15 @@ target_compile_features (sophus INTERFACE
 add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES})
 
 # Create 'test' make target using ctest
-option(BUILD_TESTS "Build tests." OFF)
-if(BUILD_TESTS)
+option(BUILD_SOPHUS_TESTS "Build tests." ON)
+if(BUILD_SOPHUS_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif()
 
 # Create examples make targets using ctest
-option(BUILD_EXAMPLES "Build examples." OFF)
-if(BUILD_EXAMPLES)
+option(BUILD_SOPHUS_EXAMPLES "Build examples." ON)
+if(BUILD_SOPHUS_EXAMPLES)
     add_subdirectory(examples)
 endif()
 

@@ -518,7 +518,7 @@ class LieGroupTests {
             },
             0.5);
         SOPHUS_TEST_APPROX(passed, Dt_parent_T_spline, Dt_parent_T_spline2,
-                           40 * kSmallEpsSqrt, "Dt_parent_T_spline");
+                           100 * kSmallEpsSqrt, "Dt_parent_T_spline");
 
         Transformation Dt2_parent_T_spline = spline.Dt2_parent_T_spline(1, 0.5);
         Transformation Dt2_parent_T_spline2 = curveNumDiff(
