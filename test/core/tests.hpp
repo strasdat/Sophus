@@ -505,32 +505,33 @@ class LieGroupTests {
 
         SplineImpl<LieGroup> spline(control_poses, 1.0);
 
-        LieGroup T = spline.parent_T_spline(1, 1.0);
-        LieGroup T2 = spline.parent_T_spline(2, 0.0);
+        LieGroup T = spline.parent_T_spline(0.0, 1.0);
+        LieGroup T2 = spline.parent_T_spline(1.0, 0.0);
 
         SOPHUS_TEST_APPROX(passed, T.matrix(), T2.matrix(), 10 * kSmallEpsSqrt,
                            "parent_T_spline");
 
-        Transformation Dt_parent_T_spline = spline.Dt_parent_T_spline(1, 0.5);
+        Transformation Dt_parent_T_spline = spline.Dt_parent_T_spline(0.0, 0.5);
         Transformation Dt_parent_T_spline2 = curveNumDiff(
             [&](double u_bar) -> Transformation {
-              return spline.parent_T_spline(1, u_bar).matrix();
+              return spline.parent_T_spline(0.0, u_bar).matrix();
             },
             0.5);
         SOPHUS_TEST_APPROX(passed, Dt_parent_T_spline, Dt_parent_T_spline2,
                            100 * kSmallEpsSqrt, "Dt_parent_T_spline");
 
-        Transformation Dt2_parent_T_spline = spline.Dt2_parent_T_spline(1, 0.5);
+        Transformation Dt2_parent_T_spline =
+            spline.Dt2_parent_T_spline(0.0, 0.5);
         Transformation Dt2_parent_T_spline2 = curveNumDiff(
             [&](double u_bar) -> Transformation {
-              return spline.Dt_parent_T_spline(1, u_bar).matrix();
+              return spline.Dt_parent_T_spline(0.0, u_bar).matrix();
             },
             0.5);
         SOPHUS_TEST_APPROX(passed, Dt2_parent_T_spline, Dt2_parent_T_spline2,
                            20 * kSmallEpsSqrt, "Dt2_parent_T_spline");
 
         for (double frac : {0.01, 0.25, 0.5, 0.9, 0.99}) {
-          double t0 = 2.0;
+          double t0 = 1.0;
           double delta_t = 0.1;
           Spline<LieGroup> spline(control_poses, t0, delta_t);
           double t = t0 + frac * delta_t;

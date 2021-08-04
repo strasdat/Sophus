@@ -88,9 +88,11 @@ if(USE_BASIC_LOGGING OR NOT TARGET fmt::fmt-header-only)
   # NOTE fmt_FOUND does not seem to be defined even though the package config
   # was found.
   target_compile_definitions(sophus INTERFACE SOPHUS_USE_BASIC_LOGGING=1)
+  message("Turning basic logging ON")
 else()
   target_link_libraries(sophus INTERFACE fmt::fmt-header-only)
   set(fmt_DEPENDENCY "find_dependency (fmt ${fmt_VERSION})")
+  message("Turning basic logging OFF")
 endif()
 
 # Associate target with include directory
