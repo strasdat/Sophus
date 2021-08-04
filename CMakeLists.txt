@@ -32,7 +32,7 @@ ENDIF()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
 # Basic logging (in ensure and test macros)
-option(USE_BASIC_LOGGING "Use basic logging" OFF)
+option(USE_BASIC_LOGGING "Use basic logging" ON)
 
 if(USE_BASIC_LOGGING)
   set (CMAKE_DISABLE_FIND_PACKAGE_fmt ON)
@@ -113,14 +113,14 @@ target_compile_features (sophus INTERFACE
 add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES})
 
 # Create 'test' make target using ctest
-option(BUILD_TESTS "Build tests." ON)
+option(BUILD_TESTS "Build tests." OFF)
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif()
 
 # Create examples make targets using ctest
-option(BUILD_EXAMPLES "Build examples." ON)
+option(BUILD_EXAMPLES "Build examples." OFF)
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
