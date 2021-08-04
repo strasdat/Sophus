@@ -162,56 +162,60 @@ class SplineImpl {
     SOPHUS_ENSURE(parent_Ts_control_point_.size() >= 4u, ", but {}",
                   parent_Ts_control_point_.size());
     recomputeControlTangentVectors();
+    SOPHUS_ENSURE(
+        parent_Ts_control_point_.size() == control_tagent_vectors_.size() + 1,
+        "{} vs {}", parent_Ts_control_point_.size(),
+        control_tagent_vectors_.size());
   }
 
   LieGroup parent_T_spline(int i, double u) {
-    SOPHUS_ENSURE(i - 1 >= 0, "i - 1 = {}", i - 1);
-    SOPHUS_ENSURE(size_t(i - 1) < parent_Ts_control_point_.size(),
-                  "i - 1 = {};  parent_Ts_control_point_.size() = {}", i - 1,
-                  parent_Ts_control_point_.size());
-    SOPHUS_ENSURE(size_t(i + 1) < control_tagent_vectors_.size(),
-                  "i + 1 = {};  parent_Ts_control_point_.size() = {}", i - 1,
-                  control_tagent_vectors_.size());
+    SOPHUS_ENSURE(i >= 0, "i = {}", i);
+    SOPHUS_ENSURE(
+        i < this->getNumSegments(),
+        "i = {};  this->getNumSegments() = {}; control_tagent_vectors_.size() "
+        "= {}; parent_Ts_control_point_.size() = {}",
+        i, this->getNumSegments(), control_tagent_vectors_.size(),
+        parent_Ts_control_point_.size());
 
     return SplineFn<LieGroup>::parent_T_spline(
-        parent_Ts_control_point_.at(i - 1),
-        std::make_tuple(control_tagent_vectors_[i - 1],
-                        control_tagent_vectors_[i],
-                        control_tagent_vectors_[i + 1]),
+        parent_Ts_control_point_[i],
+        std::make_tuple(control_tagent_vectors_[i],
+                        control_tagent_vectors_[i + 1],
+                        control_tagent_vectors_[i + 2]),
         u);
   }
 
   Transformation Dt_parent_T_spline(int i, double u) {
-    SOPHUS_ENSURE(i - 1 >= 0, "i - 1 = {}", i - 1);
-    SOPHUS_ENSURE(size_t(i - 1) < parent_Ts_control_point_.size(),
-                  "i - 1 = {};  parent_Ts_control_point_.size() = {}", i - 1,
-                  parent_Ts_control_point_.size());
-    SOPHUS_ENSURE(size_t(i + 1) < control_tagent_vectors_.size(),
-                  "i + 1 = {};  parent_Ts_control_point_.size() = {}", i - 1,
-                  control_tagent_vectors_.size());
+    SOPHUS_ENSURE(i >= 0, "i = {}", i);
+    SOPHUS_ENSURE(
+        i < this->getNumSegments(),
+        "i = {};  this->getNumSegments() = {}; control_tagent_vectors_.size() "
+        "= {}; parent_Ts_control_point_.size() = {}",
+        i, this->getNumSegments(), control_tagent_vectors_.size(),
+        parent_Ts_control_point_.size());
 
     return SplineFn<LieGroup>::Dt_parent_T_spline(
-        parent_Ts_control_point_.at(i - 1),
-        std::make_tuple(control_tagent_vectors_[i - 1],
-                        control_tagent_vectors_[i],
-                        control_tagent_vectors_[i + 1]),
+        parent_Ts_control_point_.at(i),
+        std::make_tuple(control_tagent_vectors_[i],
+                        control_tagent_vectors_[i + 1],
+                        control_tagent_vectors_[i + 2]),
         u, delta_t_);
   }
 
   Transformation Dt2_parent_T_spline(int i, double u) {
-    SOPHUS_ENSURE(i - 1 >= 0, "i - 1 = {}", i - 1);
-    SOPHUS_ENSURE(size_t(i - 1) < parent_Ts_control_point_.size(),
-                  "i - 1 = {};  parent_Ts_control_point_.size() = {}", i - 1,
-                  parent_Ts_control_point_.size());
-    SOPHUS_ENSURE(size_t(i + 1) < control_tagent_vectors_.size(),
-                  "i + 1 = {};  parent_Ts_control_point_.size() = {}", i - 1,
-                  control_tagent_vectors_.size());
+    SOPHUS_ENSURE(i >= 0, "i = {}", i);
+    SOPHUS_ENSURE(
+        i < this->getNumSegments(),
+        "i = {};  this->getNumSegments() = {}; control_tagent_vectors_.size() "
+        "= {}; parent_Ts_control_point_.size() = {}",
+        i, this->getNumSegments(), control_tagent_vectors_.size(),
+        parent_Ts_control_point_.size());
 
     return SplineFn<LieGroup>::Dt2_parent_T_spline(
-        parent_Ts_control_point_.at(i - 1),
-        std::make_tuple(control_tagent_vectors_[i - 1],
-                        control_tagent_vectors_[i],
-                        control_tagent_vectors_[i + 1]),
+        parent_Ts_control_point_[i],
+        std::make_tuple(control_tagent_vectors_[i],
+                        control_tagent_vectors_[i + 1],
+                        control_tagent_vectors_[i + 2]),
         u, delta_t_);
   }
 
@@ -221,6 +225,10 @@ class SplineImpl {
 
   std::vector<LieGroup>& parent_Ts_control_point() {
     return parent_Ts_control_point_;
+  }
+
+  int getNumSegments() const {
+    return int(parent_Ts_control_point_.size()) - 3;
   }
 
   double delta_t() const { return delta_t_; }
@@ -283,6 +291,8 @@ class Spline {
     impl_.recomputeControlTangentVectors();
   }
 
+  int getNumSegments() const { return impl_.getNumSegments(); }
+
  private:
   struct IndexAndU {
     int i;
@@ -296,7 +306,7 @@ class Spline {
     double i;
     IndexAndU index_and_u;
     index_and_u.u = std::modf(s, &i);
-    index_and_u.i = int(i) + 1;
+    index_and_u.i = int(i);
     return index_and_u;
   }
 
