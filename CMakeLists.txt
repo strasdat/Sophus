@@ -62,6 +62,7 @@ set(SOPHUS_HEADER_FILES
   sophus/sim_details.hpp
   sophus/so2.hpp
   sophus/so3.hpp
+  sophus/spline.hpp
   sophus/types.hpp
   sophus/velocities.hpp
 )
