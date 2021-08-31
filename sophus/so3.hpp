@@ -248,7 +248,7 @@ class SO3Base {
   SOPHUS_FUNC TangentAndTheta logAndTheta() const {
     TangentAndTheta J;
     using std::abs;
-    using std::atan;
+    using std::atan2;
     using std::sqrt;
     Scalar squared_n = unit_quaternion().vec().squaredNorm();
     Scalar w = unit_quaternion().w();
@@ -275,15 +275,17 @@ class SO3Base {
       J.theta = Scalar(2) * squared_n / w;
     } else {
       Scalar n = sqrt(squared_n);
-      if (abs(w) < Constants<Scalar>::epsilon()) {
-        if (w > Scalar(0)) {
-          two_atan_nbyw_by_n = Constants<Scalar>::pi() / n;
-        } else {
-          two_atan_nbyw_by_n = -Constants<Scalar>::pi() / n;
-        }
-      } else {
-        two_atan_nbyw_by_n = Scalar(2) * atan(n / w) / n;
-      }
+
+      // w < 0 ==> cos(theta/2) < 0 ==> theta > pi
+      //
+      // By convention, the condition |theta| < pi is imposed by wrapping theta
+      // to pi; The wrap operation can be folded inside evaluation of atan2
+      //
+      // theta - pi = atan(sin(theta - pi), cos(theta - pi))
+      //            = atan(-sin(theta), -cos(theta))
+      //
+      Scalar atan_nbyw = (w < Scalar(0)) ? atan2(-n, -w) : atan2(n, w);
+      two_atan_nbyw_by_n = Scalar(2) * atan_nbyw / n;
       J.theta = two_atan_nbyw_by_n * n;
     }
 
