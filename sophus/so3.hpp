@@ -508,6 +508,63 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     return unit_quaternion_;
   }
 
+  /// Returns the left Jacobian on lie group. See 1st entry in rightmost column
+  /// in: http://asrl.utias.utoronto.ca/~tdb/bib/barfoot_ser17_identities.pdf
+  ///
+  /// A precomputed `theta` can be optionally passed in
+  ///
+  /// Warning: Not to be confused with Dx_exp_x(), which is derivative of the
+  ///          internal quaternion representation of SO3 wrt the tangent vector
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, DoF> leftJacobian(
+      Tangent const& omega, optional<Scalar> const& theta_o = nullopt) {
+    using std::cos;
+    using std::sin;
+    using std::sqrt;
+
+    Scalar const theta_sq = theta_o ? *theta_o * *theta_o : omega.squaredNorm();
+    Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
+    Matrix3<Scalar> const Omega_sq = Omega * Omega;
+    Matrix3<Scalar> V;
+
+    if (theta_sq <
+        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
+      V = Matrix3<Scalar>::Identity() + Scalar(0.5) * Omega;
+    } else {
+      Scalar theta = theta_o ? *theta_o : sqrt(theta_sq);
+      V = Matrix3<Scalar>::Identity() +
+          (Scalar(1) - cos(theta)) / theta_sq * Omega +
+          (theta - sin(theta)) / (theta_sq * theta) * Omega_sq;
+    }
+    return V;
+  }
+
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, DoF> leftJacobianInverse(
+      Tangent const& omega, optional<Scalar> const& theta_o = nullopt) {
+    using std::cos;
+    using std::sin;
+    using std::sqrt;
+    Scalar const theta_sq = theta_o ? *theta_o * *theta_o : omega.squaredNorm();
+    Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
+
+    Matrix3<Scalar> V_inv;
+    if (theta_sq <
+        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
+      V_inv = Matrix3<Scalar>::Identity() - Scalar(0.5) * Omega +
+              Scalar(1. / 12.) * (Omega * Omega);
+
+    } else {
+      Scalar const theta = theta_o ? *theta_o : sqrt(theta_sq);
+      Scalar const half_theta = Scalar(0.5) * theta;
+
+      V_inv = Matrix3<Scalar>::Identity() - Scalar(0.5) * Omega +
+              (Scalar(1) -
+               Scalar(0.5) * theta * cos(half_theta) / sin(half_theta)) /
+                  (theta * theta) * (Omega * Omega);
+    }
+    return V_inv;
+  }
+
   /// Returns derivative of exp(x) wrt. x.
   ///
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(

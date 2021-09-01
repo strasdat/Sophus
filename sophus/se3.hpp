@@ -233,26 +233,10 @@ class SE3Base {
     Tangent upsilon_omega;
     auto omega_and_theta = so3().logAndTheta();
     Scalar theta = omega_and_theta.theta;
-    upsilon_omega.template tail<3>() = omega_and_theta.tangent;
-    Matrix3<Scalar> const Omega =
-        SO3<Scalar>::hat(upsilon_omega.template tail<3>());
-
-    if (abs(theta) < Constants<Scalar>::epsilon()) {
-      Matrix3<Scalar> const V_inv = Matrix3<Scalar>::Identity() -
-                                    Scalar(0.5) * Omega +
-                                    Scalar(1. / 12.) * (Omega * Omega);
-
-      upsilon_omega.template head<3>() = V_inv * translation();
-    } else {
-      Scalar const half_theta = Scalar(0.5) * theta;
-
-      Matrix3<Scalar> const V_inv =
-          (Matrix3<Scalar>::Identity() - Scalar(0.5) * Omega +
-           (Scalar(1) -
-            theta * cos(half_theta) / (Scalar(2) * sin(half_theta))) /
-               (theta * theta) * (Omega * Omega));
-      upsilon_omega.template head<3>() = V_inv * translation();
-    }
+    Vector3<Scalar> const& omega = omega_and_theta.tangent;
+    upsilon_omega.template tail<3>() = omega;
+    Matrix3<Scalar> V_inv = SO3<Scalar>::leftJacobianInverse(omega, theta);
+    upsilon_omega.template head<3>() = V_inv * translation();
     return upsilon_omega;
   }
 
@@ -553,6 +537,67 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return translation_;
   }
 
+  SOPHUS_FUNC static Matrix3<Scalar> jacobianUpperRightBlock(
+      Vector3<Scalar> const& upsilon, Vector3<Scalar> const& omega) {
+    using std::cos;
+    using std::sin;
+    using std::sqrt;
+
+    Scalar const k1By2(0.5);
+
+    Scalar const theta_sq = omega.squaredNorm();
+    Matrix3<Scalar> const Upsilon = SO3<Scalar>::hat(upsilon);
+
+    Matrix3<Scalar> Q;
+    if (theta_sq <
+        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()) {
+      Q = k1By2 * Upsilon;
+
+    } else {
+      Scalar const theta = sqrt(theta_sq);
+      Scalar const i_theta = Scalar(1) / theta;
+      Scalar const i_theta_sq = i_theta * i_theta;
+      Scalar const i_theta_po4 = i_theta_sq * i_theta_sq;
+      Scalar const st = sin(theta);
+      Scalar const ct = cos(theta);
+      Scalar const c1 = i_theta_sq - st * i_theta_sq * i_theta;
+      Scalar const c2 = k1By2 * i_theta_sq + ct * i_theta_po4 - i_theta_po4;
+      Scalar const c3 = i_theta_po4 + k1By2 * ct * i_theta_po4 -
+                        Scalar(1.5) * st * i_theta * i_theta_po4;
+
+      Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
+      Matrix3<Scalar> const OmegaUpsilon = Omega * Upsilon;
+      Matrix3<Scalar> const OmegaUpsilonOmega = OmegaUpsilon * Omega;
+      Q = k1By2 * Upsilon +
+          c1 * (OmegaUpsilon + Upsilon * Omega + OmegaUpsilonOmega) -
+          c2 * (theta_sq * Upsilon + Scalar(2) * OmegaUpsilonOmega) +
+          c3 * (OmegaUpsilonOmega * Omega + Omega * OmegaUpsilonOmega);
+    }
+    return Q;
+  }
+
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, DoF> leftJacobian(
+      Tangent const& upsilon_omega) {
+    Vector3<Scalar> const upsilon = upsilon_omega.template head<3>();
+    Vector3<Scalar> const omega = upsilon_omega.template tail<3>();
+    Matrix3<Scalar> const J = SO3<Scalar>::leftJacobian(omega);
+    Matrix3<Scalar> Q = jacobianUpperRightBlock(upsilon, omega);
+    Matrix6<Scalar> U;
+    U << J, Q, Matrix3<Scalar>::Zero(), J;
+    return U;
+  }
+
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, DoF, DoF> leftJacobianInverse(
+      Tangent const& upsilon_omega) {
+    Vector3<Scalar> const upsilon = upsilon_omega.template head<3>();
+    Vector3<Scalar> const omega = upsilon_omega.template tail<3>();
+    Matrix3<Scalar> const J_inv = SO3<Scalar>::leftJacobianInverse(omega);
+    Matrix3<Scalar> Q = jacobianUpperRightBlock(upsilon, omega);
+    Matrix6<Scalar> U;
+    U << J_inv, -J_inv * Q * J_inv, Matrix3<Scalar>::Zero(), J_inv;
+    return U;
+  }
+
   /// Returns derivative of exp(x) wrt. x.
   ///
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
@@ -780,19 +825,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
 
     Scalar theta;
     SO3<Scalar> const so3 = SO3<Scalar>::expAndTheta(omega, &theta);
-    Matrix3<Scalar> const Omega = SO3<Scalar>::hat(omega);
-    Matrix3<Scalar> const Omega_sq = Omega * Omega;
-    Matrix3<Scalar> V;
-
-    if (theta < Constants<Scalar>::epsilon()) {
-      V = so3.matrix();
-      /// Note: That is an accurate expansion!
-    } else {
-      Scalar theta_sq = theta * theta;
-      V = (Matrix3<Scalar>::Identity() +
-           (Scalar(1) - cos(theta)) / (theta_sq)*Omega +
-           (theta - sin(theta)) / (theta_sq * theta) * Omega_sq);
-    }
+    Matrix3<Scalar> const V = SO3<Scalar>::leftJacobian(omega, theta);
     return SE3<Scalar>(so3, V * a.template head<3>());
   }
 
