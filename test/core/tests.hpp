@@ -82,6 +82,49 @@ class LieGroupTests {
     return passed;
   }
 
+  // For the time being, leftJacobian and leftJacobianInverse are only
+  // implemented for SO3 and SE3
+  template <class G = LieGroup>
+  enable_if_t<std::is_same<G, SO3<Scalar>>::value ||
+                  std::is_same<G, SE3<Scalar>>::value,
+              bool>
+  jacobianTest() {
+    bool passed = true;
+    for (const auto& x : tangent_vec_) {
+      LieGroup const inv_exp_x = LieGroup::exp(x).inverse();
+
+      // Explicit implement the derivative in the Lie Group in first principles
+      // as a vector field: D_x f(x) = D_h log(f(x + h) . f(x)^{-1})
+      Matrix<Scalar, DoF, DoF> const J_num =
+          vectorFieldNumDiff<Scalar, DoF, DoF>(
+              [&inv_exp_x](Tangent const& x_plus_delta) {
+                return (LieGroup::exp(x_plus_delta) * inv_exp_x).log();
+              },
+              x);
+
+      // Analytical left Jacobian
+      Matrix<Scalar, DoF, DoF> const J = LieGroup::leftJacobian(x);
+      SOPHUS_TEST_APPROX(passed, J, J_num, Scalar(100) * kSmallEpsSqrt,
+                         "Left Jacobian");
+
+      Matrix<Scalar, DoF, DoF> J_inv = LieGroup::leftJacobianInverse(x);
+
+      SOPHUS_TEST_APPROX(passed, J, J_inv.inverse().eval(),
+                         Scalar(100) * kSmallEpsSqrt,
+                         "Left Jacobian and its analytical Inverse");
+    }
+
+    return passed;
+  }
+
+  template <class G = LieGroup>
+  enable_if_t<!(std::is_same<G, SO3<Scalar>>::value ||
+                std::is_same<G, SE3<Scalar>>::value),
+              bool>
+  jacobianTest() {
+    return true;
+  }
+
   bool contructorAndAssignmentTest() {
     bool passed = true;
     for (LieGroup foo_T_bar : group_vec_) {
@@ -594,6 +637,7 @@ class LieGroupTests {
     passed &= interpolateAndMeanTest();
     passed &= testRandomSmoke();
     passed &= testSpline();
+    passed &= jacobianTest();
     return passed;
   }
 
