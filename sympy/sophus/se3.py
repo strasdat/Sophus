@@ -46,6 +46,9 @@ class Se3:
         upsilon = V_inv * self.t
         return upsilon.col_join(omega)
 
+    def calc_Dx_log_exp_x_times_this_at_0(self, x):
+        return sympy.Matrix(6, 6, lambda r, c: sympy.diff((Se3.exp(x)*self).log()[r], x[c]).limit(x,0))
+
     def __repr__(self):
         return "Se3: [" + repr(self.so3) + " " + repr(self.t)
 
@@ -241,6 +244,24 @@ class TestSe3(unittest.TestCase):
         stream = sophus.cse_codegen(self.a.calc_Dx_this_mul_exp_x_at_0(
             self.upsilon_omega))
         filename = "cpp_gencode/Se3_Dx_this_mul_exp_x_at_0.cpp"
+        # set to true to generate codegen files
+        if False:
+            file = open(filename, "w")
+            for line in stream:
+                file.write(line)
+            file.close()
+        else:
+            file = open(filename, "r")
+            file_lines = file.readlines()
+            for i, line in enumerate(stream):
+                self.assertEqual(line, file_lines[i])
+            file.close()
+        stream.close
+
+
+        stream = sophus.cse_codegen(self.a.calc_Dx_log_exp_x_times_this_at_0(self.upsilon_omega))
+        filename = "cpp_gencode/Se3_Dx_log_exp_x_times_this_at_0.cpp"
+
         # set to true to generate codegen files
         if False:
             file = open(filename, "w")
