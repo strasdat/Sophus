@@ -27,8 +27,11 @@ class So3:
         n = sympy.sqrt(sophus.squared_norm(self.q.vec))
         return 2 * sympy.atan(n / self.q.real) / n * self.q.vec
 
+    def calc_Dx_log_this(self):
+        return sympy.Matrix(3, 3, lambda r, c: sympy.diff(self.log()[r], self[c]))
+
     def calc_Dx_log_exp_x_times_this_at_0(self, x):
-        return sympy.Matrix(3, 3, lambda r, c: sympy.diff((So3.exp(x)*self).log()[r], x[c]).limit(x,0))
+        return sympy.Matrix(3, 3, lambda r, c: sympy.diff((So3.exp(x)*self).log()[r], x[c])).subs(x[0],0).subs(x[1],0).limit(x[2],0)
 
     def __repr__(self):
         return "So3:" + repr(self.q)
@@ -237,6 +240,23 @@ class TestSo3(unittest.TestCase):
         stream = sophus.cse_codegen(
             self.a.calc_Dx_this_mul_exp_x_at_0(self.omega))
         filename = "cpp_gencode/So3_Dx_this_mul_exp_x_at_0.cpp"
+        # set to true to generate codegen files
+        if False:
+            file = open(filename, "w")
+            for line in stream:
+                file.write(line)
+            file.close()
+        else:
+            file = open(filename, "r")
+            file_lines = file.readlines()
+            for i, line in enumerate(stream):
+                self.assertEqual(line, file_lines[i])
+            file.close()
+        stream.close
+
+        stream = sophus.cse_codegen(self.a.calc_Dx_log_this())
+        filename = "cpp_gencode/So3_Dx_log_this.cpp"
+
         # set to true to generate codegen files
         if False:
             file = open(filename, "w")

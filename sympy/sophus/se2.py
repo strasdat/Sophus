@@ -37,8 +37,8 @@ class Se2:
         upsilon = V_inv * self.t
         return sophus.Vector3(upsilon[0], upsilon[1], theta)
 
-    def calc_Dx_log_exp_x_times_this_at_0(self, x):
-        return sympy.Matrix(3, 3, lambda r, c: sympy.diff((Se2.exp(x)*self).log()[r], x[c]).limit(x,0))
+    def calc_Dx_log_this(self):
+        return sympy.Matrix(3, 4, lambda r, c: sympy.diff(self.log()[r], self[c]))
 
 
     def __repr__(self):
@@ -223,11 +223,11 @@ class TestSe2(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(self.a.calc_Dx_log_exp_x_times_this_at_0(self.upsilon_theta))
-        filename = "cpp_gencode/Se2_Dx_log_exp_x_times_this_at_0.cpp"
+        stream = sophus.cse_codegen(self.a.calc_Dx_log_this())
+        filename = "cpp_gencode/Se2_Dx_log_this.cpp"
 
         # set to true to generate codegen files
-        if True:
+        if False:
             file = open(filename, "w")
             for line in stream:
                 file.write(line)
