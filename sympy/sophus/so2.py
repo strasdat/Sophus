@@ -24,6 +24,9 @@ class So2:
         """ logarithmic map"""
         return sympy.atan2(self.z.imag, self.z.real)
 
+    def calc_Dx_log_this(self):
+        return sympy.diff(self.log(), self[0])
+
     def calc_Dx_log_exp_x_times_this_at_0(self, x):
         return sympy.diff((So2.exp(x)*self).log(), x).limit(x,0)
 
@@ -170,6 +173,23 @@ class TestSo2(unittest.TestCase):
         stream = sophus.cse_codegen(
             self.a.calc_Dx_this_mul_exp_x_at_0(self.theta))
         filename = "cpp_gencode/So2_Dx_this_mul_exp_x_at_0.cpp"
+        # set to true to generate codegen files
+        if False:
+            file = open(filename, "w")
+            for line in stream:
+                file.write(line)
+            file.close()
+        else:
+            file = open(filename, "r")
+            file_lines = file.readlines()
+            for i, line in enumerate(stream):
+                self.assertEqual(line, file_lines[i])
+            file.close()
+        stream.close
+
+        stream = sophus.cse_codegen(self.a.calc_Dx_log_this())
+        filename = "cpp_gencode/So2_Dx_log_this.cpp"
+
         # set to true to generate codegen files
         if False:
             file = open(filename, "w")
