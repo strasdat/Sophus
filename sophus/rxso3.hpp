@@ -771,7 +771,7 @@ class Map<Sophus::RxSO3<Scalar_>, Options>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC Map(Scalar* coeffs) : quaternion_(coeffs) {}
+  SOPHUS_FUNC explicit Map(Scalar* coeffs) : quaternion_(coeffs) {}
 
   /// Accessor of quaternion.
   ///
@@ -808,7 +808,7 @@ class Map<Sophus::RxSO3<Scalar_> const, Options>
   using Base::operator*;
 
   SOPHUS_FUNC
-  Map(Scalar const* coeffs) : quaternion_(coeffs) {}
+  explicit Map(Scalar const* coeffs) : quaternion_(coeffs) {}
 
   /// Accessor of quaternion.
   ///

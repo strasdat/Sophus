@@ -680,7 +680,7 @@ class Map<Sophus::RxSO2<Scalar_>, Options>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC Map(Scalar* coeffs) : complex_(coeffs) {}
+  SOPHUS_FUNC explicit Map(Scalar* coeffs) : complex_(coeffs) {}
 
   /// Accessor of complex.
   ///
@@ -717,7 +717,7 @@ class Map<Sophus::RxSO2<Scalar_> const, Options>
   using Base::operator*;
 
   SOPHUS_FUNC
-  Map(Scalar const* coeffs) : complex_(coeffs) {}
+  explicit Map(Scalar const* coeffs) : complex_(coeffs) {}
 
   /// Accessor of complex.
   ///

@@ -578,7 +578,7 @@ class Map<Sophus::SO2<Scalar_>, Options>
   using Base::operator*;
 
   SOPHUS_FUNC
-  Map(Scalar* coeffs) : unit_complex_(coeffs) {}
+  explicit Map(Scalar* coeffs) : unit_complex_(coeffs) {}
 
   /// Accessor of unit complex number.
   ///
@@ -617,7 +617,7 @@ class Map<Sophus::SO2<Scalar_> const, Options>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC Map(Scalar const* coeffs) : unit_complex_(coeffs) {}
+  SOPHUS_FUNC explicit Map(Scalar const* coeffs) : unit_complex_(coeffs) {}
 
   /// Accessor of unit complex number.
   ///
