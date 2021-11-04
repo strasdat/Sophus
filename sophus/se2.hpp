@@ -393,6 +393,11 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
 
   using Base::operator=;
 
+  /// Define copy-assignment operator explicitly. The definition of
+  /// implicit copy assignment operator is deprecated in presence of a
+  /// user-declared copy constructor (-Wdeprecated-copy in clang >= 13).
+  SOPHUS_FUNC SE2& operator=(SE2 const& other) = default;
+
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   /// Default constructor initializes rigid body motion to the identity.
