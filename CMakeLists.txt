@@ -15,7 +15,6 @@ if (NOT DEFINED SOPHUS_MASTER_PROJECT)
 endif ()
 
 option(SOPHUS_INSTALL "Generate the install target." ${SOPHUS_MASTER_PROJECT})
-option(SOPHUS_HEADER_ONLY_FMT "Use fmt::fmt-header-only instead of fmt::fmt" ON)
 option(USE_BASIC_LOGGING "Use basic logging (in ensure and test macros)" OFF)
 
 if(SOPHUS_MASTER_PROJECT)
@@ -99,19 +98,13 @@ else(TARGET Eigen3::Eigen)
   target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
 endif(TARGET Eigen3::Eigen)
 
-if(SOPHUS_HEADER_ONLY_FMT)
-  set(FMT_TARGET fmt::fmt-header-only)
-else()
-  set(FMT_TARGET fmt::fmt)
-endif()
-
-if(USE_BASIC_LOGGING OR NOT TARGET ${FMT_TARGET})
+if(USE_BASIC_LOGGING OR NOT TARGET fmt::fmt)
   # NOTE fmt_FOUND does not seem to be defined even though the package config
   # was found.
   target_compile_definitions(sophus INTERFACE SOPHUS_USE_BASIC_LOGGING=1)
   message("Turning basic logging ON")
 else()
-  target_link_libraries(sophus INTERFACE ${FMT_TARGET})
+  target_link_libraries(sophus INTERFACE fmt::fmt)
   set(fmt_DEPENDENCY "find_dependency (fmt ${fmt_VERSION})")
   message("Turning basic logging OFF")
 endif()
