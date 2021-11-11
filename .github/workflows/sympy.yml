@@ -21,6 +21,6 @@ jobs:
 
       - name: Run sympy tests
         run: |
-          pip3 install sympy
+          pip3 install sympy==1.8
           cd sympy
           ./run_tests.sh
