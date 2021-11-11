@@ -12,11 +12,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-16.04]
+        os: [ubuntu-20.04]
       fail-fast: false
     env:
       BUILD_TYPE: Coverage
-
 
 
     steps:
@@ -32,9 +31,8 @@ jobs:
 
       - name: Install Coverage
         run: |
-          wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.14.orig.tar.gz
-          tar xf lcov_1.14.orig.tar.gz
-          sudo make -C lcov-1.14/ install
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y \
+            lcov
 
       - name: Run tests for coverage
         run: |
