@@ -370,7 +370,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   /// Default constructor initializes unit complex number to identity rotation.
   ///
-  SOPHUS_FUNC SO2() : unit_complex_(Scalar(1), Scalar(0)) {}
+  SOPHUS_FUNC SO2() : unit_complex_(Matrix<Scalar, 2, 1>::UnitX()) {}
 
   /// Copy constructor
   ///
@@ -387,8 +387,8 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   /// Precondition: rotation matrix need to be orthogonal with determinant of 1.
   ///
   SOPHUS_FUNC explicit SO2(Transformation const& R)
-      : unit_complex_(Scalar(0.5) * (R(0, 0) + R(1, 1)),
-                      Scalar(0.5) * (R(1, 0) - R(0, 1))) {
+      : unit_complex_(Scalar(0.5) * Matrix<Scalar, 2, 1>{R.diagonal().sum(),
+                                                         R(1, 0) - R(0, 1)}) {
     SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}", R);
     SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: {}",
                   R.determinant());
@@ -455,7 +455,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
   Dx_exp_x_at_0() {
-    return Sophus::Matrix<Scalar, num_parameters, DoF>(Scalar(0), Scalar(1));
+    return Sophus::Matrix<Scalar, num_parameters, DoF>::UnitY();
   }
 
   /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.

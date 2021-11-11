@@ -171,10 +171,7 @@ class RxSO2Base {
   ///
   SOPHUS_FUNC Tangent log() const {
     using std::log;
-    Tangent theta_sigma;
-    theta_sigma[1] = log(scale());
-    theta_sigma[0] = SO2<Scalar>(complex()).log();
-    return theta_sigma;
+    return (Tangent{} << SO2<Scalar>(complex()).log(), log(scale())).finished();
   }
 
   /// Returns 2x2 matrix representation of the instance.
@@ -185,10 +182,7 @@ class RxSO2Base {
   ///
   SOPHUS_FUNC Transformation matrix() const {
     Transformation sR;
-    // clang-format off
-    sR << complex()[0], -complex()[1],
-          complex()[1],  complex()[0];
-    // clang-format on
+    sR << complex(), Vector2<Scalar>{-complex().y(), complex().x()};
     return sR;
   }
 
@@ -372,7 +366,6 @@ class RxSO2Base {
   /// Sets scale and leaves rotation as is.
   ///
   SOPHUS_FUNC void setScale(Scalar const& scale) {
-    using std::sqrt;
     complex_nonconst().normalize();
     complex_nonconst() *= scale;
   }
@@ -391,7 +384,6 @@ class RxSO2Base {
   /// Setter of SO(2) rotations, leaves scale as is.
   ///
   SOPHUS_FUNC void setSO2(SO2<Scalar> const& so2) {
-    using std::sqrt;
     Scalar saved_scale = scale();
     complex_nonconst() = so2.unit_complex();
     complex_nonconst() *= saved_scale;
@@ -503,26 +495,20 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
       Tangent const& a) {
-    using std::cos;
     using std::exp;
-    using std::sin;
     Scalar const theta = a[0];
     Scalar const sigma = a[1];
 
-    Sophus::Matrix<Scalar, num_parameters, DoF> J;
-    J << -sin(theta), cos(theta), cos(theta), sin(theta);
-    return J * exp(sigma);
+    return SO2<Scalar>::exp(theta).matrix().rowwise().reverse() * exp(sigma);
   }
 
   /// Returns derivative of exp(x) wrt. x_i at x=0.
   ///
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
   Dx_exp_x_at_0() {
-    Sophus::Matrix<Scalar, num_parameters, DoF> J;
-    static Scalar const i(1.);
-    static Scalar const o(0.);
-    J << o, i, i, o;
-    return J;
+    return Sophus::Matrix<Scalar, num_parameters, DoF>::Identity()
+        .rowwise()
+        .reverse();
   }
 
   /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
@@ -572,10 +558,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
     SOPHUS_ENSURE(i >= 0 && i <= 1, "i should be 0 or 1.");
-    Tangent e;
-    e.setZero();
-    e[i] = Scalar(1);
-    return hat(e);
+    return hat(Tangent::Unit(i));
   }
 
   /// hat-operator
@@ -594,10 +577,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation A;
-    // clang-format off
-    A << a(1), -a(0),
-         a(0),  a(1);
-    // clang-format on
+    A << a.reverse(), Vector2<Scalar>{-a.x(), a.y()};
     return A;
   }
 
@@ -611,9 +591,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// hat()-operator and ``vee(.)`` the vee()-operator of RxSO2.
   ///
   SOPHUS_FUNC static Tangent lieBracket(Tangent const&, Tangent const&) {
-    Vector2<Scalar> res;
-    res.setZero();
-    return res;
+    return Vector2<Scalar>::Zero();
   }
 
   /// Draw uniform sample from RxSO(2) manifold.
@@ -642,8 +620,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   ///                |  x  d |
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
-    using std::abs;
-    return Tangent(Omega(1, 0), Omega(0, 0));
+    return Omega.template leftCols<1>().reverse();
   }
 
  protected:

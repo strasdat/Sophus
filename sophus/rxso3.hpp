@@ -125,8 +125,8 @@ class RxSO3Base {
   ///
   SOPHUS_FUNC Adjoint Adj() const {
     Adjoint res;
-    res.setIdentity();
-    res.template topLeftCorner<3, 3>() = rotationMatrix();
+    res << rotationMatrix(), Matrix<Scalar, 3, 1>::Zero(),
+        Matrix<Scalar, 1, 4>::UnitW();
     return res;
   }
 
@@ -402,9 +402,7 @@ class RxSO3Base {
   ///
   SOPHUS_FUNC void setScaledRotationMatrix(Transformation const& sR) {
     Transformation squared_sR = sR * sR.transpose();
-    Scalar squared_scale =
-        Scalar(1. / 3.) *
-        (squared_sR(0, 0) + squared_sR(1, 1) + squared_sR(2, 2));
+    Scalar squared_scale = Scalar(1. / 3.) * squared_sR.diagonal().sum();
     SOPHUS_ENSURE(squared_scale >= Constants<Scalar>::epsilon() *
                                        Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon.");
@@ -583,8 +581,10 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
     Scalar const scale = sqrt(exp(sigma));
     Scalar const scale_half = scale * Scalar(0.5);
 
-    J.template block<4, 3>(0, 0) = SO3<Scalar>::Dx_exp_x(omega) * scale;
-    J.col(3) = quat.coeffs() * scale_half;
+    // clang-format off
+    J << SO3<Scalar>::Dx_exp_x(omega) * scale,
+         quat.coeffs() * scale_half;
+    // clang-format on
     return J;
   }
 

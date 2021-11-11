@@ -126,33 +126,16 @@ Eigen::Quaternion<Scalar> averageUnitQuaternion(
   SOPHUS_ENSURE(N >= 1, "N must be >= 1.");
   Eigen::Matrix<Scalar, 4, Eigen::Dynamic> Q(4, N);
   int i = 0;
-  Scalar w = Scalar(1. / N);
   for (auto const& foo_T_bar : foo_Ts_bar) {
-    Q.col(i) = w * details::getUnitQuaternion(foo_T_bar).coeffs();
+    Q.col(i) = details::getUnitQuaternion(foo_T_bar).coeffs();
     ++i;
   }
-
-  Eigen::Matrix<Scalar, 4, 4> QQt = Q * Q.transpose();
-  // TODO: Figure out why we can't use SelfAdjointEigenSolver here.
-  Eigen::EigenSolver<Eigen::Matrix<Scalar, 4, 4> > es(QQt);
-
-  std::complex<Scalar> max_eigenvalue = es.eigenvalues()[0];
-  Eigen::Matrix<std::complex<Scalar>, 4, 1> max_eigenvector =
-      es.eigenvectors().col(0);
-
-  for (int i = 1; i < 4; i++) {
-    if (std::norm(es.eigenvalues()[i]) > std::norm(max_eigenvalue)) {
-      max_eigenvalue = es.eigenvalues()[i];
-      max_eigenvector = es.eigenvectors().col(i);
-    }
-  }
-  Eigen::Quaternion<Scalar> quat;
-  quat.coeffs() <<                //
-      max_eigenvector[0].real(),  //
-      max_eigenvector[1].real(),  //
-      max_eigenvector[2].real(),  //
-      max_eigenvector[3].real();
-  return quat;
+  Scalar const w = Scalar(1. / N);
+  Q *= w;
+  Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Scalar, 4, 4> > es(Q *
+                                                                 Q.transpose());
+  // The eigenvalues are sorted in increasing order
+  return Eigen::Quaternion<Scalar>{es.eigenvectors().template rightCols<1>()};
 }
 }  // namespace details
 

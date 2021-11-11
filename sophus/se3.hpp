@@ -104,10 +104,10 @@ class SE3Base {
   SOPHUS_FUNC Adjoint Adj() const {
     Sophus::Matrix3<Scalar> const R = so3().matrix();
     Adjoint res;
-    res.block(0, 0, 3, 3) = R;
-    res.block(3, 3, 3, 3) = R;
-    res.block(0, 3, 3, 3) = SO3<Scalar>::hat(translation()) * R;
-    res.block(3, 0, 3, 3) = Matrix3<Scalar>::Zero(3, 3);
+    // clang-format off
+    res << R, SO3<Scalar>::hat(translation()) * R,
+           Matrix3<Scalar>::Zero(), R;
+    // clang-format on
     return res;
   }
 
@@ -275,9 +275,7 @@ class SE3Base {
   ///
   SOPHUS_FUNC Transformation matrix() const {
     Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<3, 4>() = matrix3x4();
-    homogenious_matrix.row(3) =
-        Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0), Scalar(0), Scalar(1));
+    homogenious_matrix << matrix3x4(), Matrix<Scalar, 1, 4>::UnitW();
     return homogenious_matrix;
   }
 
@@ -285,8 +283,7 @@ class SE3Base {
   ///
   SOPHUS_FUNC Matrix<Scalar, 3, 4> matrix3x4() const {
     Matrix<Scalar, 3, 4> matrix;
-    matrix.template topLeftCorner<3, 3>() = rotationMatrix();
-    matrix.col(3) = translation();
+    matrix << rotationMatrix(), translation();
     return matrix;
   }
 
@@ -511,10 +508,9 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC explicit SE3(Matrix4<Scalar> const& T)
       : so3_(T.template topLeftCorner<3, 3>()),
-        translation_(T.template block<3, 1>(0, 3)) {
-    SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0),
-                                                   Scalar(0), Scalar(1)))
-                          .squaredNorm() < Constants<Scalar>::epsilon(),
+        translation_(T.template rightCols<1>().template head<3>()) {
+    SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>::UnitW()).squaredNorm() <
+                      Constants<Scalar>::epsilon(),
                   "Last row is not (0,0,0,1), but ({}).", T.row(3));
   }
 
@@ -801,8 +797,8 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   template <class S = Scalar>
   SOPHUS_FUNC static enable_if_t<std::is_floating_point<S>::value, SE3>
   fitToSE3(Matrix4<Scalar> const& T) {
-    return SE3(SO3<Scalar>::fitToSO3(T.template block<3, 3>(0, 0)),
-               T.template block<3, 1>(0, 3));
+    return SE3(SO3<Scalar>::fitToSO3(T.template topLeftCorner<3, 3>()),
+               T.template rightCols<1>().template head<3>());
   }
 
   /// Returns the ith infinitesimal generators of SE(3).
@@ -866,10 +862,8 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
-    Omega.setZero();
-    Omega.template topLeftCorner<3, 3>() =
-        SO3<Scalar>::hat(a.template tail<3>());
-    Omega.col(3).template head<3>() = a.template head<3>();
+    Omega << SO3<Scalar>::hat(a.template tail<3>()), a.template head<3>(),
+        Matrix<Scalar, 1, 4>::Zero();
     return Omega;
   }
 
@@ -970,8 +964,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     Tangent upsilon_omega;
-    upsilon_omega.template head<3>() = Omega.col(3).template head<3>();
-    upsilon_omega.template tail<3>() =
+    upsilon_omega << Omega.template rightCols<1>().template head<3>(),
         SO3<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
     return upsilon_omega;
   }

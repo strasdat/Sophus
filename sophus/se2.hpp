@@ -200,9 +200,7 @@ class SE2Base {
   ///
   SOPHUS_FUNC Transformation matrix() const {
     Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<2, 3>() = matrix2x3();
-    homogenious_matrix.row(2) =
-        Matrix<Scalar, 1, 3>(Scalar(0), Scalar(0), Scalar(1));
+    homogenious_matrix << matrix2x3(), Matrix<Scalar, 1, 3>::UnitZ();
     return homogenious_matrix;
   }
 
@@ -210,8 +208,7 @@ class SE2Base {
   ///
   SOPHUS_FUNC Matrix<Scalar, 2, 3> matrix2x3() const {
     Matrix<Scalar, 2, 3> matrix;
-    matrix.template topLeftCorner<2, 2>() = rotationMatrix();
-    matrix.col(2) = translation();
+    matrix << rotationMatrix(), translation();
     return matrix;
   }
 
@@ -452,7 +449,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC explicit SE2(Transformation const& T)
       : so2_(T.template topLeftCorner<2, 2>().eval()),
-        translation_(T.template block<2, 1>(0, 2)) {}
+        translation_(T.template rightCols<1>().template head<2>()) {}
 
   /// This provides unsafe read/write access to internal data. SO(2) is
   /// represented by a complex number (two parameters). When using direct write
@@ -590,10 +587,13 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
       one_minus_cos_theta_by_theta =
           (Scalar(1.) - so2.unit_complex().x()) / theta;
     }
-    Vector2<Scalar> trans(
-        sin_theta_by_theta * a[0] - one_minus_cos_theta_by_theta * a[1],
-        one_minus_cos_theta_by_theta * a[0] + sin_theta_by_theta * a[1]);
-    return SE2<Scalar>(so2, trans);
+
+    Matrix<Scalar, 2, 2> A;
+    // clang-format off
+    A << sin_theta_by_theta,           -one_minus_cos_theta_by_theta,
+         one_minus_cos_theta_by_theta,  sin_theta_by_theta;
+    // clang-format on
+    return SE2<Scalar>(so2, A * a.template head<2>());
   }
 
   /// Returns closest SE3 given arbitrary 4x4 matrix.
@@ -601,8 +601,8 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   template <class S = Scalar>
   static SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, SE2>
   fitToSE2(Matrix3<Scalar> const& T) {
-    return SE2(SO2<Scalar>::fitToSO2(T.template block<2, 2>(0, 0)),
-               T.template block<2, 1>(0, 2));
+    return SE2(SO2<Scalar>::fitToSO2(T.template topLeftCorner<2, 2>()),
+               T.template rightCols<1>().template head<2>());
   }
 
   /// Returns the ith infinitesimal generators of SE(2).
@@ -638,9 +638,9 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   /// It takes in the 3-vector representation (= twist) and returns the
   /// corresponding matrix representation of Lie algebra element.
   ///
-  /// Formally, the hat()-operator of SE(3) is defined as
+  /// Formally, the hat()-operator of SE(2) is defined as
   ///
-  ///   ``hat(.): R^3 -> R^{3x33},  hat(a) = sum_i a_i * G_i``  (for i=0,1,2)
+  ///   ``hat(.): R^3 -> R^{3x3},  hat(a) = sum_i a_i * G_i``  (for i=0,1,2)
   ///
   /// with ``G_i`` being the ith infinitesimal generator of SE(2).
   ///
@@ -648,9 +648,8 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
-    Omega.setZero();
-    Omega.template topLeftCorner<2, 2>() = SO2<Scalar>::hat(a[2]);
-    Omega.col(2).template head<2>() = a.template head<2>();
+    Omega << SO2<Scalar>::hat(a.z()), a.template head<2>(),
+        Matrix<Scalar, 1, 3>::Zero();
     return Omega;
   }
 
@@ -731,8 +730,8 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
         Omega.row(2).template lpNorm<1>() < Constants<Scalar>::epsilon(),
         "Omega: \n{}", Omega);
     Tangent upsilon_omega;
-    upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
-    upsilon_omega[2] = SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
+    upsilon_omega << Omega.template rightCols<1>().template head<2>(),
+        SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
     return upsilon_omega;
   }
 

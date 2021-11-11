@@ -106,14 +106,11 @@ class Sim3Base {
   SOPHUS_FUNC Adjoint Adj() const {
     Matrix3<Scalar> const R = rxso3().rotationMatrix();
     Adjoint res;
-    res.setZero();
-    res.template block<3, 3>(0, 0) = rxso3().matrix();
-    res.template block<3, 3>(0, 3) = SO3<Scalar>::hat(translation()) * R;
-    res.template block<3, 1>(0, 6) = -translation();
-
-    res.template block<3, 3>(3, 3) = R;
-
-    res(6, 6) = Scalar(1);
+    // clang-format off
+    res << rxso3().matrix(), SO3<Scalar>::hat(translation()) * R, -translation(),
+           Matrix<Scalar, 3, 3>::Zero(), R, Vector3<Scalar>::Zero(),
+           Matrix<Scalar, 1, 6>::Zero(), Scalar{1};
+    // clang-format on
     return res;
   }
 
@@ -186,8 +183,7 @@ class Sim3Base {
   ///
   SOPHUS_FUNC Matrix<Scalar, 3, 4> matrix3x4() const {
     Matrix<Scalar, 3, 4> matrix;
-    matrix.template topLeftCorner<3, 3>() = rxso3().matrix();
-    matrix.col(3) = translation();
+    matrix << rxso3().matrix(), translation();
     return matrix;
   }
 
@@ -285,11 +281,10 @@ class Sim3Base {
   SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
       const {
     Matrix<Scalar, num_parameters, DoF> J;
-    J.template block<4, 3>(0, 0).setZero();
-    J.template block<4, 4>(0, 3) = rxso3().Dx_this_mul_exp_x_at_0();
-    J.template block<3, 3>(4, 0) = rxso3().matrix();
-    J.template block<3, 4>(4, 3).setZero();
-
+    // clang-format off
+    J << Matrix<Scalar, 4, 3>::Zero(), rxso3().Dx_this_mul_exp_x_at_0(),
+         rxso3().matrix(),             Matrix<Scalar, 3, 4>::Zero();
+    // clang-format on
     return J;
   }
 
@@ -446,7 +441,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC explicit Sim3(Matrix<Scalar, 4, 4> const& T)
       : rxso3_(T.template topLeftCorner<3, 3>()),
-        translation_(T.template block<3, 1>(0, 3)) {}
+        translation_(T.template rightCols<1>().template head<3>()) {}
 
   /// This provides unsafe read/write access to internal data. Sim(3) is
   /// represented by an Eigen::Quaternion (four parameters) and a 3-vector. When
@@ -488,10 +483,10 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
   Dx_exp_x_at_0() {
     Sophus::Matrix<Scalar, num_parameters, DoF> J;
-    J.template block<4, 3>(0, 0).setZero();
-    J.template block<4, 4>(0, 3) = RxSO3<Scalar>::Dx_exp_x_at_0();
-    J.template block<3, 3>(4, 0).setIdentity();
-    J.template block<3, 4>(4, 3).setZero();
+    // clang-format off
+    J << Matrix<Scalar, 4, 3>::Zero(), RxSO3<Scalar>::Dx_exp_x_at_0(),
+         Matrix3<Scalar>::Identity(),  Matrix<Scalar, 3, 4>::Zero();
+    // clang-format on
     return J;
   }
 
@@ -499,9 +494,6 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
       const Tangent& a) {
-    Sophus::Matrix<Scalar, num_parameters, DoF> J;
-
-    static Matrix3<Scalar> const I = Matrix3<Scalar>::Identity();
     Vector3<Scalar> const omega = a.template segment<3>(3);
     Vector3<Scalar> const upsilon = a.template head<3>();
     Scalar const sigma = a[6];
@@ -516,9 +508,9 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
       theta_domega = omega / theta;
     }
     static Matrix3<Scalar> const Omega_domega[3] = {
-        SO3<Scalar>::hat(Vector3<Scalar>::Unit(0)),
-        SO3<Scalar>::hat(Vector3<Scalar>::Unit(1)),
-        SO3<Scalar>::hat(Vector3<Scalar>::Unit(2))};
+        SO3<Scalar>::hat(Vector3<Scalar>::UnitX()),
+        SO3<Scalar>::hat(Vector3<Scalar>::UnitY()),
+        SO3<Scalar>::hat(Vector3<Scalar>::UnitZ())};
 
     Matrix3<Scalar> const Omega2_domega[3] = {
         Omega_domega[0] * Omega + Omega * Omega_domega[0],
@@ -527,15 +519,16 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
 
     Matrix3<Scalar> const W = details::calcW<Scalar, 3>(Omega, theta, sigma);
 
+    Scalar A, B, C, A_dtheta, B_dtheta, A_dsigma, B_dsigma, C_dsigma;
+    details::calcW_derivatives(theta, sigma, A, B, C, A_dsigma, B_dsigma,
+                               C_dsigma, A_dtheta, B_dtheta);
+
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
     J.template block<4, 3>(0, 0).setZero();
     J.template block<4, 4>(0, 3) =
         RxSO3<Scalar>::Dx_exp_x(a.template tail<4>());
     J.template block<3, 4>(4, 3).setZero();
     J.template block<3, 3>(4, 0) = W;
-
-    Scalar A, B, C, A_dtheta, B_dtheta, A_dsigma, B_dsigma, C_dsigma;
-    details::calcW_derivatives(theta, sigma, A, B, C, A_dsigma, B_dsigma,
-                               C_dsigma, A_dtheta, B_dtheta);
 
     for (int i = 0; i < 3; ++i) {
       J.template block<3, 1>(4, 3 + i) =
@@ -544,8 +537,9 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
           upsilon;
     }
 
-    J.template block<3, 1>(4, 6) =
-        (A_dsigma * Omega + B_dsigma * Omega2 + C_dsigma * I) * upsilon;
+    J.template block<3, 1>(4, 6) = (A_dsigma * Omega + B_dsigma * Omega2 +
+                                    C_dsigma * Matrix3<Scalar>::Identity()) *
+                                   upsilon;
 
     return J;
   }
@@ -652,10 +646,8 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
-    Omega.template topLeftCorner<3, 3>() =
-        RxSO3<Scalar>::hat(a.template tail<4>());
-    Omega.col(3).template head<3>() = a.template head<3>();
-    Omega.row(3).setZero();
+    Omega << RxSO3<Scalar>::hat(a.template tail<4>()), a.template head<3>(),
+        Matrix<Scalar, 1, 4>::Zero();
     return Omega;
   }
 
@@ -716,8 +708,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     Tangent upsilon_omega_sigma;
-    upsilon_omega_sigma.template head<3>() = Omega.col(3).template head<3>();
-    upsilon_omega_sigma.template tail<4>() =
+    upsilon_omega_sigma << Omega.template rightCols<1>().template head<3>(),
         RxSO3<Scalar>::vee(Omega.template topLeftCorner<3, 3>());
     return upsilon_omega_sigma;
   }

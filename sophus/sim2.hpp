@@ -104,15 +104,10 @@ class Sim2Base {
   ///
   SOPHUS_FUNC Adjoint Adj() const {
     Adjoint res;
-    res.setZero();
-    res.template block<2, 2>(0, 0) = rxso2().matrix();
-    res(0, 2) = translation()[1];
-    res(1, 2) = -translation()[0];
-    res.template block<2, 1>(0, 3) = -translation();
+    res << rxso2().matrix(),
+        Vector2<Scalar>{translation().y(), -translation().x()}, -translation(),
+        Matrix<Scalar, 2, 2>::Zero(), Matrix<Scalar, 2, 2>::Identity();
 
-    res(2, 2) = Scalar(1);
-
-    res(3, 3) = Scalar(1);
     return res;
   }
 
@@ -148,7 +143,6 @@ class Sim2Base {
     /// and logarithms of orthogonal matrices", IJRA 2002.
     /// https:///pdfs.semanticscholar.org/cfe3/e4b39de63c8cabd89bf3feff7f5449fc981d.pdf
     /// (Sec. 6., pp. 8)
-    Tangent res;
     Vector2<Scalar> const theta_sigma = rxso2().log();
     Scalar const theta = theta_sigma[0];
     Scalar const sigma = theta_sigma[1];
@@ -156,10 +150,7 @@ class Sim2Base {
     Matrix2<Scalar> const W_inv =
         details::calcWInv<Scalar, 2>(Omega, theta, sigma, scale());
 
-    res.segment(0, 2) = W_inv * translation();
-    res[2] = theta;
-    res[3] = sigma;
-    return res;
+    return (Tangent{} << W_inv * translation(), theta_sigma).finished();
   }
 
   /// Returns 3x3 matrix representation of the instance.
@@ -174,9 +165,7 @@ class Sim2Base {
   ///
   SOPHUS_FUNC Transformation matrix() const {
     Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<2, 3>() = matrix2x3();
-    homogenious_matrix.row(2) =
-        Matrix<Scalar, 3, 1>(Scalar(0), Scalar(0), Scalar(1));
+    homogenious_matrix << matrix2x3(), Matrix<Scalar, 1, 3>::UnitZ();
     return homogenious_matrix;
   }
 
@@ -184,8 +173,7 @@ class Sim2Base {
   ///
   SOPHUS_FUNC Matrix<Scalar, 2, 3> matrix2x3() const {
     Matrix<Scalar, 2, 3> matrix;
-    matrix.template topLeftCorner<2, 2>() = rxso2().matrix();
-    matrix.col(2) = translation();
+    matrix << rxso2().matrix(), translation();
     return matrix;
   }
 
@@ -297,10 +285,11 @@ class Sim2Base {
   SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_this_mul_exp_x_at_0()
       const {
     Matrix<Scalar, num_parameters, DoF> J;
-    J.template block<2, 2>(0, 0).setZero();
-    J.template block<2, 2>(0, 2) = rxso2().Dx_this_mul_exp_x_at_0();
-    J.template block<2, 2>(2, 2).setZero();
-    J.template block<2, 2>(2, 0) = rxso2().matrix();
+    // clang-format off
+    J <<
+        Matrix<Scalar, 2, 2>::Zero(), rxso2().Dx_this_mul_exp_x_at_0(),
+        rxso2().matrix(),             Matrix<Scalar, 2, 2>::Zero();
+    // clang-format on
     return J;
   }
 
@@ -446,7 +435,7 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC explicit Sim2(Matrix<Scalar, 3, 3> const& T)
       : rxso2_((T.template topLeftCorner<2, 2>()).eval()),
-        translation_(T.template block<2, 1>(0, 2)) {}
+        translation_(T.template rightCols<1>().template head<2>()) {}
 
   /// This provides unsafe read/write access to internal data. Sim(2) is
   /// represented by a complex number (two parameters) and a 2-vector. When
@@ -488,10 +477,10 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF>
   Dx_exp_x_at_0() {
     Sophus::Matrix<Scalar, num_parameters, DoF> J;
-    J.template block<2, 2>(0, 0).setZero();
-    J.template block<2, 2>(0, 2) = RxSO2<Scalar>::Dx_exp_x_at_0();
-    J.template block<2, 2>(2, 0).setIdentity();
-    J.template block<2, 2>(2, 2).setZero();
+    // clang-format off
+    J << Matrix<Scalar, 2, 2>::Zero(),     RxSO2<Scalar>::Dx_exp_x_at_0(),
+         Matrix<Scalar, 2, 2>::Identity(), Matrix<Scalar, 2, 2>::Zero();
+    // clang-format on
     return J;
   }
 
@@ -499,35 +488,27 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
       const Tangent& a) {
-    static Matrix2<Scalar> const I = Matrix2<Scalar>::Identity();
-    static Scalar const one(1.0);
-
     Scalar const theta = a[2];
     Scalar const sigma = a[3];
 
     Matrix2<Scalar> const Omega = SO2<Scalar>::hat(theta);
-    Matrix2<Scalar> const Omega_dtheta = SO2<Scalar>::hat(one);
+    Matrix2<Scalar> const Omega_dtheta = SO2<Scalar>::hat(Scalar{1});
     Matrix2<Scalar> const Omega2 = Omega * Omega;
-    Matrix2<Scalar> const Omega2_dtheta =
-        Omega_dtheta * Omega + Omega * Omega_dtheta;
+    Matrix2<Scalar> const Omega2_dtheta = Scalar{2} * Omega_dtheta * Omega;
     Matrix2<Scalar> const W = details::calcW<Scalar, 2>(Omega, theta, sigma);
-    Vector2<Scalar> const upsilon = a.segment(0, 2);
-
-    Sophus::Matrix<Scalar, num_parameters, DoF> J;
-    J.template block<2, 2>(0, 0).setZero();
-    J.template block<2, 2>(0, 2) =
-        RxSO2<Scalar>::Dx_exp_x(a.template tail<2>());
-    J.template block<2, 2>(2, 0) = W;
+    Vector2<Scalar> const upsilon = a.template head<2>();
 
     Scalar A, B, C, A_dtheta, B_dtheta, A_dsigma, B_dsigma, C_dsigma;
     details::calcW_derivatives(theta, sigma, A, B, C, A_dsigma, B_dsigma,
                                C_dsigma, A_dtheta, B_dtheta);
 
-    J.template block<2, 1>(2, 2) = (A_dtheta * Omega + A * Omega_dtheta +
-                                    B_dtheta * Omega2 + B * Omega2_dtheta) *
-                                   upsilon;
-    J.template block<2, 1>(2, 3) =
-        (A_dsigma * Omega + B_dsigma * Omega2 + C_dsigma * I) * upsilon;
+    Sophus::Matrix<Scalar, num_parameters, DoF> J;
+    // clang-format off
+    J << Matrix2<Scalar>::Zero(), RxSO2<Scalar>::Dx_exp_x(a.template tail<2>()),
+         W,
+         (A_dtheta * Omega + A * Omega_dtheta + B_dtheta * Omega2 + B * Omega2_dtheta) * upsilon,
+         (A_dsigma * Omega + B_dsigma * Omega2 + C_dsigma * Matrix2<Scalar>::Identity()) * upsilon;
+    // clang-format on
 
     return J;
   }
@@ -564,7 +545,7 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
     // H. Strasdat, "Local Accuracy and Global Consistency for Efficient Visual
     // SLAM", PhD thesis, 2012.
     // http:///hauke.strasdat.net/files/strasdat_thesis_2012.pdf (A.5, pp. 186)
-    Vector2<Scalar> const upsilon = a.segment(0, 2);
+    Vector2<Scalar> const upsilon = a.template head<2>();
     Scalar const theta = a[2];
     Scalar const sigma = a[3];
     RxSO2<Scalar> rxso2 = RxSO2<Scalar>::exp(a.template tail<2>());
@@ -620,10 +601,8 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Transformation hat(Tangent const& a) {
     Transformation Omega;
-    Omega.template topLeftCorner<2, 2>() =
-        RxSO2<Scalar>::hat(a.template tail<2>());
-    Omega.col(2).template head<2>() = a.template head<2>();
-    Omega.row(2).setZero();
+    Omega << RxSO2<Scalar>::hat(a.template tail<2>()), a.template head<2>(),
+        Matrix<Scalar, 1, 3>::Zero();
     return Omega;
   }
 
@@ -683,8 +662,7 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     Tangent upsilon_omega_sigma;
-    upsilon_omega_sigma.template head<2>() = Omega.col(2).template head<2>();
-    upsilon_omega_sigma.template tail<2>() =
+    upsilon_omega_sigma << Omega.template rightCols<1>().template head<2>(),
         RxSO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());
     return upsilon_omega_sigma;
   }

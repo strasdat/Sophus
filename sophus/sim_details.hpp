@@ -13,7 +13,6 @@ Matrix<Scalar, N, N> calcW(Matrix<Scalar, N, N> const &Omega,
   using std::cos;
   using std::exp;
   using std::sin;
-  static Matrix<Scalar, N, N> const I = Matrix<Scalar, N, N>::Identity();
   static Scalar const one(1);
   static Scalar const half(0.5);
   Matrix<Scalar, N, N> const Omega2 = Omega * Omega;
@@ -45,7 +44,7 @@ Matrix<Scalar, N, N> calcW(Matrix<Scalar, N, N> const &Omega,
       B = (C - ((b - one) * sigma + a * theta) / (c)) * one / (theta_sq);
     }
   }
-  return A * Omega + B * Omega2 + C * I;
+  return A * Omega + B * Omega2 + C * Matrix<Scalar, N, N>::Identity();
 }
 
 template <class Scalar>
@@ -146,7 +145,6 @@ Matrix<Scalar, N, N> calcWInv(Matrix<Scalar, N, N> const &Omega,
   using std::abs;
   using std::cos;
   using std::sin;
-  static Matrix<Scalar, N, N> const I = Matrix<Scalar, N, N>::Identity();
   static Scalar const half(0.5);
   static Scalar const one(1);
   static Scalar const two(2);
@@ -185,7 +183,7 @@ Matrix<Scalar, N, N> calcWInv(Matrix<Scalar, N, N> const &Omega,
                        two * s_cos_theta + scale - one));
     }
   }
-  return a * Omega + b * Omega2 + c * I;
+  return a * Omega + b * Omega2 + c * Matrix<Scalar, N, N>::Identity();
 }
 
 }  // namespace details

@@ -135,7 +135,7 @@ class SO3Base {
   template <class S = Scalar>
   SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, S> angleX() const {
     Sophus::Matrix3<Scalar> R = matrix();
-    Sophus::Matrix2<Scalar> Rx = R.template block<2, 2>(1, 1);
+    Sophus::Matrix2<Scalar> Rx = R.template bottomRightCorner<2, 2>();
     return SO2<Scalar>(makeRotationMatrix(Rx)).log();
   }
 
@@ -158,7 +158,7 @@ class SO3Base {
   template <class S = Scalar>
   SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, S> angleZ() const {
     Sophus::Matrix3<Scalar> R = matrix();
-    Sophus::Matrix2<Scalar> Rz = R.template block<2, 2>(0, 0);
+    Sophus::Matrix2<Scalar> Rz = R.template topLeftCorner<2, 2>();
     return SO2<Scalar>(makeRotationMatrix(Rz)).log();
   }
 
@@ -747,6 +747,7 @@ class SO3 : public SO3Base<SO3<Scalar_, Options>> {
     const Scalar u2 = uniform_twopi(generator);
     const Scalar u3 = uniform_twopi(generator);
 
+    using std::sqrt;
     const Scalar a = sqrt(1 - u1);
     const Scalar b = sqrt(u1);
 
