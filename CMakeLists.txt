@@ -15,7 +15,7 @@ if (NOT DEFINED SOPHUS_MASTER_PROJECT)
 endif ()
 
 option(SOPHUS_INSTALL "Generate the install target." ${SOPHUS_MASTER_PROJECT})
-option(USE_BASIC_LOGGING "Use basic logging (in ensure and test macros)" OFF)
+option(SOPHUS_USE_BASIC_LOGGING "Use basic logging (in ensure and test macros)" OFF)
 
 if(SOPHUS_MASTER_PROJECT)
   # Release by default
@@ -46,7 +46,7 @@ if(SOPHUS_MASTER_PROJECT)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 endif()
 
-if(USE_BASIC_LOGGING)
+if(SOPHUS_USE_BASIC_LOGGING)
   set (CMAKE_DISABLE_FIND_PACKAGE_fmt ON)
 endif()
 
@@ -106,7 +106,7 @@ else()
   target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
 endif()
 
-if(USE_BASIC_LOGGING OR NOT TARGET fmt::fmt)
+if(SOPHUS_USE_BASIC_LOGGING OR NOT TARGET fmt::fmt)
   # NOTE fmt_FOUND does not seem to be defined even though the package config
   # was found.
   target_compile_definitions(sophus INTERFACE SOPHUS_USE_BASIC_LOGGING=1)
