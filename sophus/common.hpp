@@ -33,12 +33,6 @@
 #endif
 #endif
 
-#undef FMT_STRING_ALIAS
-#ifdef SOPHUS_COMPILE_TIME_FMT
-// enable compile time FMT feature
-#define FMT_STRING_ALIAS 1
-#endif
-
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
