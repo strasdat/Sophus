@@ -155,8 +155,8 @@ class RxSO2Base {
   ///
   SOPHUS_FUNC RxSO2<Scalar> inverse() const {
     Scalar squared_scale = complex().squaredNorm();
-    return RxSO2<Scalar>(complex().x() / squared_scale,
-                         -complex().y() / squared_scale);
+    Vector2<Scalar> xy = complex() / squared_scale;
+    return RxSO2<Scalar>(xy.x(), -xy.y());
   }
 
   /// Logarithmic map
@@ -354,8 +354,10 @@ class RxSO2Base {
 
   /// Returns scale.
   ///
-  SOPHUS_FUNC
-  Scalar scale() const { return complex().norm(); }
+  SOPHUS_FUNC Scalar scale() const {
+    using std::hypot;
+    return hypot(complex().x(), complex().y());
+  }
 
   /// Setter of rotation angle, leaves scale as is.
   ///

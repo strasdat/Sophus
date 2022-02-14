@@ -170,13 +170,12 @@ class SO2Base {
   /// this function directly.
   ///
   SOPHUS_FUNC void normalize() {
-    using std::sqrt;
-    Scalar length = sqrt(unit_complex().x() * unit_complex().x() +
-                         unit_complex().y() * unit_complex().y());
+    using std::hypot;
+    // Avoid under/overflows for higher precision
+    Scalar length = hypot(unit_complex().x(), unit_complex().y());
     SOPHUS_ENSURE(length >= Constants<Scalar>::epsilon(),
                   "Complex number should not be close to zero!");
-    unit_complex_nonconst().x() /= length;
-    unit_complex_nonconst().y() /= length;
+    unit_complex_nonconst() /= length;
   }
 
   /// Returns 2x2 matrix representation of the instance.
