@@ -456,20 +456,11 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
 
   using Base::operator=;
 
-  /// Define copy-assignment operator explicitly. The definition of
-  /// implicit copy assignment operator is deprecated in presence of a
-  /// user-declared copy constructor (-Wdeprecated-copy in clang >= 13).
-  SOPHUS_FUNC SE3& operator=(SE3 const& other) = default;
-
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   /// Default constructor initializes rigid body motion to the identity.
   ///
   SOPHUS_FUNC SE3();
-
-  /// Copy constructor
-  ///
-  SOPHUS_FUNC SE3(SE3 const& other) = default;
 
   /// Copy-like constructor from OtherDerived.
   ///

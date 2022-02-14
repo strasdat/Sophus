@@ -427,11 +427,6 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   using Base::operator=;
 
-  /// Define copy-assignment operator explicitly. The definition of
-  /// implicit copy assignment operator is deprecated in presence of a
-  /// user-declared copy constructor (-Wdeprecated-copy in clang >= 13).
-  SOPHUS_FUNC RxSO2& operator=(RxSO2 const& other) = default;
-
   static int constexpr DoF = Base::DoF;
   static int constexpr num_parameters = Base::num_parameters;
 
@@ -441,10 +436,6 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// scale to 1.
   ///
   SOPHUS_FUNC RxSO2() : complex_(Scalar(1), Scalar(0)) {}
-
-  /// Copy constructor
-  ///
-  SOPHUS_FUNC RxSO2(RxSO2 const& other) = default;
 
   /// Copy-like constructor from OtherDerived.
   ///

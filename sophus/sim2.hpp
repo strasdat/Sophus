@@ -393,11 +393,6 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
 
   using Base::operator=;
 
-  /// Define copy-assignment operator explicitly. The definition of
-  /// implicit copy assignment operator is deprecated in presence of a
-  /// user-declared copy constructor (-Wdeprecated-copy in clang >= 13).
-  SOPHUS_FUNC Sim2& operator=(Sim2 const& other) = default;
-
   static int constexpr DoF = Base::DoF;
   static int constexpr num_parameters = Base::num_parameters;
 
@@ -406,10 +401,6 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
   /// Default constructor initializes similarity transform to the identity.
   ///
   SOPHUS_FUNC Sim2();
-
-  /// Copy constructor
-  ///
-  SOPHUS_FUNC Sim2(Sim2 const& other) = default;
 
   /// Copy-like constructor from OtherDerived.
   ///

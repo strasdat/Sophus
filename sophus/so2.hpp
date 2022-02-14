@@ -365,20 +365,11 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   using Base::operator=;
 
-  /// Define copy-assignment operator explicitly. The definition of
-  /// implicit copy assignment operator is deprecated in presence of a
-  /// user-declared copy constructor (-Wdeprecated-copy in clang >= 13).
-  SOPHUS_FUNC SO2& operator=(SO2 const& other) = default;
-
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   /// Default constructor initializes unit complex number to identity rotation.
   ///
   SOPHUS_FUNC SO2() : unit_complex_(Scalar(1), Scalar(0)) {}
-
-  /// Copy constructor
-  ///
-  SOPHUS_FUNC SO2(SO2 const& other) = default;
 
   /// Copy-like constructor from OtherDerived.
   ///

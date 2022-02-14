@@ -485,11 +485,6 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
 
   using Base::operator=;
 
-  /// Define copy-assignment operator explicitly. The definition of
-  /// implicit copy assignment operator is deprecated in presence of a
-  /// user-declared copy constructor (-Wdeprecated-copy in clang >= 13).
-  SOPHUS_FUNC RxSO3& operator=(RxSO3 const& other) = default;
-
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   /// Default constructor initializes quaternion to identity rotation and scale
@@ -497,10 +492,6 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC RxSO3()
       : quaternion_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
-
-  /// Copy constructor
-  ///
-  SOPHUS_FUNC RxSO3(RxSO3 const& other) = default;
 
   /// Copy-like constructor from OtherDerived
   ///
