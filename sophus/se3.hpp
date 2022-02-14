@@ -1021,7 +1021,7 @@ class Map<Sophus::SE3<Scalar_>, Options>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC Map(Scalar* coeffs)
+  SOPHUS_FUNC explicit Map(Scalar* coeffs)
       : so3_(coeffs),
         translation_(coeffs + Sophus::SO3<Scalar>::num_parameters) {}
 
@@ -1070,7 +1070,7 @@ class Map<Sophus::SE3<Scalar_> const, Options>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC Map(Scalar const* coeffs)
+  SOPHUS_FUNC explicit Map(Scalar const* coeffs)
       : so3_(coeffs),
         translation_(coeffs + Sophus::SO3<Scalar>::num_parameters) {}
 
