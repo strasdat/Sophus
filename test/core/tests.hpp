@@ -236,6 +236,17 @@ class LieGroupTests {
                          "Dx_this_mul_exp_x_at_0 case: %", i);
     }
 
+    for (size_t i = 0; i < group_vec_.size(); ++i) {
+      LieGroup T = group_vec_[i];
+
+      Eigen::Matrix<Scalar, DoF, DoF> J =
+          T.Dx_log_this_inv_by_x_at_this() * T.Dx_this_mul_exp_x_at_0();
+      Eigen::Matrix<Scalar, DoF, DoF> J_exp =
+          Eigen::Matrix<Scalar, DoF, DoF>::Identity();
+
+      SOPHUS_TEST_APPROX(passed, J, J_exp, kSmallEpsSqrt,
+                         "Dy_log_this_inv_by_at_x case: %", i);
+    }
     return passed;
   }
 

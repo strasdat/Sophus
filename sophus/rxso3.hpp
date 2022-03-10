@@ -460,6 +460,22 @@ class RxSO3Base {
     return J;
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_log_this_inv_by_x_at_this()
+      const {
+    auto& q = quaternion();
+    Matrix<Scalar, DoF, num_parameters> J;
+    // clang-format off
+    J << q.w(),  q.z(), -q.y(), -q.x(),
+        -q.z(),  q.w(),  q.x(), -q.y(),
+         q.y(), -q.x(),  q.w(), -q.z(),
+         q.x(),  q.y(),  q.z(),  q.w();
+    // clang-format on
+    const Scalar scaler = Scalar(2.) / q.squaredNorm();
+    return J * scaler;
+  }
+
  private:
   /// Mutator of quaternion is private to ensure class invariant.
   ///

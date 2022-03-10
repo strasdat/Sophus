@@ -293,6 +293,18 @@ class Sim3Base {
     return J;
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_log_this_inv_by_x_at_this()
+      const {
+    Matrix<Scalar, DoF, num_parameters> J;
+    J.template block<3, 4>(0, 0).setZero();
+    J.template block<3, 3>(0, 4) = rxso3().inverse().matrix();
+    J.template block<4, 4>(3, 0) = rxso3().Dx_log_this_inv_by_x_at_this();
+    J.template block<4, 3>(3, 4).setZero();
+    return J;
+  }
+
   /// Returns internal parameters of Sim(3).
   ///
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real, t[0], t[1], t[2]),

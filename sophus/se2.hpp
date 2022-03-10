@@ -141,6 +141,18 @@ class SE2Base {
     return J;
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_log_this_inv_by_x_at_this()
+      const {
+    Matrix<Scalar, DoF, num_parameters> J;
+    J.template block<2, 2>(0, 0).setZero();
+    J.template block<2, 2>(0, 2) = so2().inverse().matrix();
+    J.template block<1, 2>(2, 0) = so2().Dx_log_this_inv_by_x_at_this();
+    J.template block<1, 2>(2, 2).setZero();
+    return J;
+  }
+
   /// Returns group inverse.
   ///
   SOPHUS_FUNC SE2<Scalar> inverse() const {
@@ -511,8 +523,10 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
       Scalar const i(1);
 
       // clang-format off
-      J << o, o, o, o, o, i, i, o, -Scalar(0.5) * upsilon[1], o, i,
-          Scalar(0.5) * upsilon[0];
+      J << o, o, o,
+           o, o, i,
+           i, o, -Scalar(0.5) * upsilon[1],
+           o, i,  Scalar(0.5) * upsilon[0];
       // clang-format on
       return J;
     }
@@ -555,7 +569,10 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
     Scalar const i(1);
 
     // clang-format off
-    J << o, o, o, o, o, i, i, o, o, o, i, o;
+    J << o, o, o,
+         o, o, i,
+         i, o, o,
+         o, i, o;
     // clang-format on
     return J;
   }
