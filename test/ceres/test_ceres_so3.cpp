@@ -7,7 +7,14 @@
 template <typename T>
 using StdVector = std::vector<T, Eigen::aligned_allocator<T>>;
 
-int main(int, char**) {
+template <>
+struct RotationalPart<Sophus::SO3d> {
+  static double Norm(const typename Sophus::SO3d::Tangent &t) {
+    return t.norm();
+  }
+};
+
+int main(int, char **) {
   using SO3Type = Sophus::SO3<double>;
   using Point = SO3Type::Point;
   using Tangent = SO3Type::Tangent;

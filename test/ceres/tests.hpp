@@ -3,8 +3,15 @@
 
 #include <ceres/ceres.h>
 
+#ifndef USE_CERES_MANIFOLD
 #include <sophus/ceres_local_parameterization.hpp>
+#else
+#include <sophus/ceres_manifold.hpp>
+#endif
 #include <sophus/test_macros.hpp>
+
+template <typename LieGroup>
+struct RotationalPart;
 
 namespace Sophus {
 
@@ -21,6 +28,30 @@ double squaredNorm(const Vector<double, N>& vec) {
 }
 
 double squaredNorm(const double& scalar) { return scalar * scalar; }
+
+template <typename T>
+T Zero() {
+  return T::Zero();
+}
+
+template <typename T>
+typename T::Scalar* Data(T& t) {
+  return t.data();
+}
+
+double* Data(double& d) { return &d; }
+
+template <typename T>
+const typename T::Scalar* Data(const T& t) {
+  return t.data();
+}
+
+const double* Data(const double& d) { return &d; }
+
+template <>
+double Zero<double>() {
+  return 0.;
+}
 
 template <typename T>
 struct Random {
@@ -163,6 +194,14 @@ struct LieGroupCeresTests {
         }
       }
     }
+#ifdef USE_CERES_MANIFOLD
+    for (size_t i = 0; i < group_vec.size(); ++i) {
+      for (size_t j = 0; j < group_vec.size(); ++j) {
+        passed &= testManifold(group_vec[i], group_vec[j]);
+        processTestResult(passed);
+      }
+    }
+#endif
     int Ns[] = {20, 40, 80, 160};
     for (auto N : Ns) {
       std::cerr << "Averaging test: N = " << N;
@@ -187,9 +226,13 @@ struct LieGroupCeresTests {
     StdVector<LieGroupd> V(num_vertices), V_estimate;
     V_estimate.reserve(num_vertices);
     double initial_error = 0.;
+#ifndef USE_CERES_MANIFOLD
     // All parameter blocks have the same parameterization, thus it can be
     // reused. Memory will be freed by ceres-solver
     auto parametrization = new Sophus::LocalParameterization<LieGroup_>;
+#else
+    auto parametrization = new Sophus::Manifold<LieGroup_>;
+#endif
     // All vertices are initialized with an i.i.d noise with normal
     // distribution; Scaling is adjusted in order to maintain the same
     // expectation of squared norm for all groups
@@ -259,8 +302,12 @@ struct LieGroupCeresTests {
     ceres::Problem problem;
 
     // Specify local update rule for our parameter
-    problem.AddParameterBlock(T_wr.data(), num_parameters,
-                              new Sophus::LocalParameterization<LieGroup_>);
+#ifndef USE_CERES_MANIFOLD
+    auto parameterization = new Sophus::LocalParameterization<LieGroup_>;
+#else
+    auto parameterization = new Sophus::Manifold<LieGroup_>;
+#endif
+    problem.AddParameterBlock(T_wr.data(), num_parameters, parameterization);
 
     // Create and add cost functions. Derivatives will be evaluated via
     // automatic differentiation
@@ -293,6 +340,140 @@ struct LieGroupCeresTests {
     bool const passed = mse < 10. * Sophus::Constants<double>::epsilon();
     return passed;
   }
+
+#ifdef USE_CERES_MANIFOLD
+  bool testManifold(const LieGroupd& x, const LieGroupd& y) {
+    // ceres/manifold_test_utils.h is google-test based; here we check all the
+    // same invariants
+    const Tangentd delta = (x.inverse() * y).log();
+    const Tangentd zero = Zero<Tangentd>();
+    Sophus::Manifold<LieGroup_> manifold;
+
+    LieGroupd test_group;
+
+    bool passed = true;
+    auto coeffs =
+        Eigen::Map<const Eigen::Matrix<double, num_parameters, 1>>(x.data());
+    auto coeffs_y =
+        Eigen::Map<const Eigen::Matrix<double, num_parameters, 1>>(y.data());
+    std::cerr << "XPlusZeroIsXAt " << coeffs.transpose() << std::endl;
+    passed &= XPlusZeroIsXAt(x);
+    std::cerr << "XMinusXIsZeroAt " << coeffs.transpose() << std::endl;
+    passed &= XMinusXIsZeroAt(x);
+    std::cerr << "MinusPlusIsIdentityAt " << coeffs.transpose() << std::endl;
+    passed &= MinusPlusIsIdentityAt(x, delta);
+    std::cerr << "MinusPlusIsIdentityAt " << coeffs.transpose() << std::endl;
+    passed &= MinusPlusIsIdentityAt(x, zero);
+    std::cerr << "PlusMinusIsIdentityAt " << coeffs.transpose() << std::endl;
+    passed &= PlusMinusIsIdentityAt(x, x);
+    std::cerr << "PlusMinusIsIdentityAt " << coeffs.transpose() << " "
+              << coeffs_y.transpose() << std::endl;
+    passed &= PlusMinusIsIdentityAt(x, y);
+    std::cerr << "MinusPlusJacobianIsIdentityAt " << coeffs.transpose()
+              << std::endl;
+    passed &= MinusPlusJacobianIsIdentityAt(x);
+    return passed;
+  }
+
+  bool XPlusZeroIsXAt(const LieGroupd& x) {
+    const Tangentd zero = Zero<Tangentd>();
+    Sophus::Manifold<LieGroup_> manifold;
+    LieGroupd test_group;
+
+    bool passed = true;
+
+    passed &= manifold.Plus(x.data(), Data(zero), test_group.data());
+    processTestResult(passed);
+    const double error = squaredNorm((x.inverse() * test_group).log());
+    passed &= error < Sophus::Constants<double>::epsilon();
+    processTestResult(passed);
+    return passed;
+  }
+  bool XMinusXIsZeroAt(const LieGroupd& x) {
+    Sophus::Manifold<LieGroup_> manifold;
+    LieGroupd test_group;
+    Tangentd test_tangent;
+
+    bool passed = true;
+
+    passed &= manifold.Minus(x.data(), x.data(), Data(test_tangent));
+    processTestResult(passed);
+    const double error = squaredNorm(test_tangent);
+    passed &= error < Sophus::Constants<double>::epsilon();
+    processTestResult(passed);
+    return passed;
+  }
+
+  bool MinusPlusIsIdentityAt(const LieGroupd& x, const Tangentd& delta) {
+    if (RotationalPart<LieGroupd>::Norm(delta) >
+        Sophus::Constants<double>::pi() *
+            (1. - Sophus::Constants<double>::epsilon()))
+      return true;
+    Sophus::Manifold<LieGroup_> manifold;
+    LieGroupd test_group;
+    Tangentd test_tangent;
+
+    bool passed = true;
+
+    passed &= manifold.Plus(x.data(), Data(delta), test_group.data());
+    processTestResult(passed);
+
+    passed &= manifold.Minus(test_group.data(), x.data(), Data(test_tangent));
+    processTestResult(passed);
+
+    const Tangentd diff = test_tangent - delta;
+    const double error = squaredNorm(diff);
+    passed &= error < Sophus::Constants<double>::epsilon();
+    processTestResult(passed);
+    return passed;
+  }
+
+  bool PlusMinusIsIdentityAt(const LieGroupd& x, const LieGroupd& y) {
+    Sophus::Manifold<LieGroup_> manifold;
+    LieGroupd test_group;
+    Tangentd test_tangent;
+
+    bool passed = true;
+
+    passed &= manifold.Minus(y.data(), x.data(), Data(test_tangent));
+    processTestResult(passed);
+
+    passed &= manifold.Plus(x.data(), Data(test_tangent), test_group.data());
+    processTestResult(passed);
+
+    const double error = squaredNorm((y.inverse() * test_group).log());
+    passed &= error < Sophus::Constants<double>::epsilon();
+    processTestResult(passed);
+    return passed;
+  }
+
+  bool MinusPlusJacobianIsIdentityAt(const LieGroupd& x) {
+    Sophus::Manifold<LieGroup_> manifold;
+    LieGroupd test_group;
+
+    bool passed = true;
+
+    Eigen::Matrix<double, num_parameters, DoF,
+                  DoF == 1 ? Eigen::ColMajor : Eigen::RowMajor>
+        Jplus;
+    Eigen::Matrix<double, DoF, num_parameters, Eigen::RowMajor> Jminus;
+
+    passed &= manifold.PlusJacobian(x.data(), Jplus.data());
+    processTestResult(passed);
+
+    passed &= manifold.MinusJacobian(x.data(), Jminus.data());
+    processTestResult(passed);
+
+    const Eigen::Matrix<double, DoF, DoF> diff =
+        Jminus * Jplus - Eigen::Matrix<double, DoF, DoF>::Identity();
+
+    std::cerr << diff << std::endl;
+    const double error = diff.squaredNorm();
+    passed &= error < Sophus::Constants<double>::epsilon();
+    processTestResult(passed);
+    return passed;
+  }
+#endif
 
   LieGroupCeresTests(const StdVector<LieGroupd>& group_vec,
                      const StdVector<Pointd>& point_vec)
