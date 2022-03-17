@@ -11,7 +11,7 @@ if( Ceres_FOUND )
   SET( TEST_SOURCES test_ceres_se3 test_ceres_so3 test_ceres_sim3 test_ceres_rxso3 test_ceres_se2 test_ceres_so2 test_ceres_rxso2 test_ceres_sim2 )
 
   FOREACH(test_src ${TEST_SOURCES})
-    ADD_EXECUTABLE( ${test_src} ${test_src}.cpp local_parameterization_se3.hpp)
+    ADD_EXECUTABLE( ${test_src} ${test_src}.cpp)
     TARGET_LINK_LIBRARIES( ${test_src} sophus Ceres::ceres)
     ADD_TEST( ${test_src} ${test_src} )
   ENDFOREACH(test_src)
