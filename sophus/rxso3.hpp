@@ -241,8 +241,12 @@ class RxSO3Base {
       RxSO3Base<OtherDerived> const& other) const {
     using std::sqrt;
     using ResultT = ReturnScalar<OtherDerived>;
-    typename RxSO3Product<OtherDerived>::QuaternionType result_quaternion(
-        quaternion() * other.quaternion());
+    using QuaternionProductType =
+        typename RxSO3Product<OtherDerived>::QuaternionType;
+
+    QuaternionProductType result_quaternion(
+        Sophus::SO3<double>::QuaternionProduct<QuaternionProductType>(
+            quaternion(), other.quaternion()));
 
     ResultT scale = result_quaternion.squaredNorm();
     if (scale < Constants<ResultT>::epsilon()) {

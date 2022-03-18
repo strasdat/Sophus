@@ -323,6 +323,17 @@ class SO3Base {
     return *this;
   }
 
+  template <typename QuaternionProductType, typename QuaternionTypeA,
+            typename QuaternionTypeB>
+  static QuaternionProductType QuaternionProduct(const QuaternionTypeA& a,
+                                                 const QuaternionTypeB& b) {
+    return QuaternionProductType(
+        a.w() * b.w() - a.x() * b.x() - a.y() * b.y() - a.z() * b.z(),
+        a.w() * b.x() + a.x() * b.w() + a.y() * b.z() - a.z() * b.y(),
+        a.w() * b.y() + a.y() * b.w() + a.z() * b.x() - a.x() * b.z(),
+        a.w() * b.z() + a.z() * b.w() + a.x() * b.y() - a.y() * b.x());
+  }
+
   /// Group multiplication, which is rotation concatenation.
   ///
   template <typename OtherDerived>
@@ -335,11 +346,8 @@ class SO3Base {
     /// NOTE: We cannot use Eigen's Quaternion multiplication because it always
     /// returns a Quaternion of the same Scalar as this object, so it is not
     /// able to multiple Jets and doubles correctly.
-    return SO3Product<OtherDerived>(QuaternionProductType(
-        a.w() * b.w() - a.x() * b.x() - a.y() * b.y() - a.z() * b.z(),
-        a.w() * b.x() + a.x() * b.w() + a.y() * b.z() - a.z() * b.y(),
-        a.w() * b.y() + a.y() * b.w() + a.z() * b.x() - a.x() * b.z(),
-        a.w() * b.z() + a.z() * b.w() + a.x() * b.y() - a.y() * b.x()));
+    return SO3Product<OtherDerived>(
+        QuaternionProduct<QuaternionProductType>(a, b));
   }
 
   /// Group action on 3-points.
