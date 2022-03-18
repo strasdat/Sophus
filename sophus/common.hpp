@@ -33,13 +33,19 @@
 #endif
 #endif
 
-#include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
 #ifdef SOPHUS_COMPILE_TIME_FMT
+// To keep compatibility with older libfmt versions,
+// disable the compile time check if FMT_STRING is not avaiable.
+#ifdef FMT_STRING
 // compile-time format check on x
 #define SOPHUS_FMT_STRING(x) FMT_STRING(x)
+#else
+// identity, hence no compile-time check on x
+#define SOPHUS_FMT_STRING(x) x
+#endif
 #else  // ! SOPHUS_COMPILE_TIME_FMT
 // identity, hence no compile-time check on x
 #define SOPHUS_FMT_STRING(x) x
