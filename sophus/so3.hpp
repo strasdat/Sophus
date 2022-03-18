@@ -284,7 +284,8 @@ class SO3Base {
       // theta - pi = atan(sin(theta - pi), cos(theta - pi))
       //            = atan(-sin(theta), -cos(theta))
       //
-      Scalar atan_nbyw = (w < Scalar(0)) ? Scalar(atan2(-n, -w)) : Scalar(atan2(n, w));
+      Scalar atan_nbyw =
+          (w < Scalar(0)) ? Scalar(atan2(-n, -w)) : Scalar(atan2(n, w));
       two_atan_nbyw_by_n = Scalar(2) * atan_nbyw / n;
       J.theta = two_atan_nbyw_by_n * n;
     }
