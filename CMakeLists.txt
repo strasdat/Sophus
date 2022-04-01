@@ -68,6 +68,7 @@ add_library (Sophus::Sophus ALIAS sophus)
 
 set(SOPHUS_HEADER_FILES
   sophus/average.hpp
+  sophus/ceres_local_parameterization.hpp
   sophus/common.hpp
   sophus/geometry.hpp
   sophus/interpolate.hpp
@@ -134,7 +135,7 @@ target_compile_features (sophus INTERFACE
 )
 
 # Add sources as custom target so that they are shown in IDE's
-add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES})
+add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES} ${SOPHUS_HEADER_FILES})
 
 # Create 'test' make target using ctest
 option(BUILD_SOPHUS_TESTS "Build tests." ON)
