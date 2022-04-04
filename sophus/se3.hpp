@@ -1014,6 +1014,53 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return upsilon_omega;
   }
 
+  template <typename Derived, typename OtherDerived>
+  SOPHUS_FUNC void setFromPointClouds(
+      Eigen::MatrixBase<Derived> const& src,
+      Eigen::MatrixBase<OtherDerived> const& dst) {
+    using Eigen::Index;
+    using MatrixType =
+        typename Eigen::internal::plain_matrix_type<Derived>::type;
+    const Index N = src.cols();
+
+    SOPHUS_ENSURE(
+        src.rows() == 3 && dst.rows() == 3 && N == dst.cols(),
+        "Point clouds are stored in 3xN matrices, one point per column. Source "
+        "and destination matrices are {}x{} and {}x{} respectively",
+        src.rows(), N, dst.rows(), dst.cols());
+
+    Scalar w(1. / N);
+    Vector3<Scalar> const src_mean = src.rowwise().sum() * w;
+    Vector3<Scalar> const dst_mean = dst.rowwise().sum() * w;
+
+    MatrixType m1 = src.colwise() - src_mean;
+    MatrixType m2 = dst.colwise() - dst_mean;
+
+    m1 += m2;
+    m2 = m1 - Scalar(2) * m2;
+    Matrix4<Scalar> W = Matrix4<Scalar>::Zero();
+    for (Index i(0); i < N; ++i) {
+      Matrix3<Scalar> const S = SO3<Scalar>::hat(m1.col(i));
+      Vector3<Scalar> const v = m2.col(i);
+      Matrix4<Scalar> V;
+      V << S, -v, v.transpose(), Scalar(0);
+      W += w * V.transpose() * V;
+    }
+    const Eigen::SelfAdjointEigenSolver<Matrix4<Scalar>> eig(W);
+    const Eigen::Quaternion<Scalar> rotation(eig.eigenvectors().real().col(0));
+    so3_.setQuaternion(rotation);
+    translation_ = dst_mean - rotation * src_mean;
+  }
+
+  template <typename Derived, typename OtherDerived>
+  SOPHUS_FUNC static SE3<Scalar> FromPointClouds(
+      Eigen::MatrixBase<Derived> const& src,
+      Eigen::MatrixBase<OtherDerived> const& dst) {
+    SE3<Scalar> ret;
+    ret.setFromPointClouds(src, dst);
+    return ret;
+  }
+
  protected:
   SO3Member so3_;
   TranslationMember translation_;

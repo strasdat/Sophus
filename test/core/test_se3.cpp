@@ -57,6 +57,7 @@ class Tests {
     passed &= testMutatingAccessors();
     passed &= testConstructors();
     passed &= testFit();
+    passed &= testPointCloudAlignment();
     processTestResult(passed);
   }
 
@@ -240,6 +241,49 @@ class Tests {
 
   template <class S = Scalar>
   enable_if_t<!std::is_floating_point<S>::value, bool> testFit() {
+    return true;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<std::is_floating_point<S>::value, bool>
+  testPointCloudAlignment() {
+    bool passed = true;
+
+    using MatrixType = Eigen::Matrix<S, 3, Eigen::Dynamic>;
+
+    const int sz = point_vec_.size();
+    Eigen::Map<const MatrixType> src(point_vec_.front().data(), 3, sz);
+    MatrixType dst(3, sz);
+
+    for (const auto& it : se3_vec_) {
+      for (int i = 0; i < sz; ++i) {
+        dst.col(i) = it * src.col(i);
+      }
+      SE3Type result;
+      result.setFromPointClouds(src, dst);
+      SOPHUS_TEST_APPROX(passed, it.translation(), result.translation(),
+                         Constants<Scalar>::epsilon(),
+                         "Expected translation: {}; Got: {}", it.translation(),
+                         result.translation());
+      SOPHUS_TEST_APPROX(
+          passed, it.matrix(), result.matrix(), Constants<Scalar>::epsilon(),
+          "Expected rotation: {}; Got: {}", it.matrix(), result.matrix());
+
+      result = SE3Type::FromPointClouds(src, dst);
+      SOPHUS_TEST_APPROX(passed, it.translation(), result.translation(),
+                         Constants<Scalar>::epsilon(),
+                         "Expected translation: {}; Got: {}", it.translation(),
+                         result.translation());
+      SOPHUS_TEST_APPROX(
+          passed, it.matrix(), result.matrix(), Constants<Scalar>::epsilon(),
+          "Expected rotation: {}; Got: {}", it.matrix(), result.matrix());
+    }
+    return passed;
+  }
+
+  template <class S = Scalar>
+  enable_if_t<!std::is_floating_point<S>::value, bool>
+  testPointCloudAlignment() {
     return true;
   }
 
