@@ -32,7 +32,7 @@ int main() {
   std::cout << "R1 in matrix form:\n" << R1.matrix() << std::endl;
   std::cout << "R1 in unit quaternion form:\n"
             << R1.unit_quaternion().coeffs() << std::endl;
-  // Note that the order of coefficiences of Eigen's quaternion class is
+  // Note that the order of coefficients of Eigen's quaternion class is
   // (imag0, imag1, imag2, real)
   std::cout << std::endl;
 }

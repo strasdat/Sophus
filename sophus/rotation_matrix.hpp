@@ -1,8 +1,7 @@
 /// @file
 /// Rotation matrix helper functions.
 
-#ifndef SOPHUS_ROTATION_MATRIX_HPP
-#define SOPHUS_ROTATION_MATRIX_HPP
+#pragma once
 
 #include <Eigen/Dense>
 #include <Eigen/SVD>
@@ -80,5 +79,3 @@ makeRotationMatrix(Eigen::MatrixBase<D> const& R) {
 }
 
 }  // namespace Sophus
-
-#endif  // SOPHUS_ROTATION_MATRIX_HPP

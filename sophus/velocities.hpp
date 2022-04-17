@@ -1,5 +1,4 @@
-#ifndef SOPHUS_VELOCITIES_HPP
-#define SOPHUS_VELOCITIES_HPP
+#pragma once
 
 #include <functional>
 
@@ -70,5 +69,3 @@ Vector3<Scalar> finiteDifferenceRotationalVelocity(
 
 }  // namespace experimental
 }  // namespace Sophus
-
-#endif  // SOPHUS_VELOCITIES_HPP

@@ -1,8 +1,7 @@
 /// @file
 /// Special Euclidean group SE(2) - rotation and translation in 2d.
 
-#ifndef SOPHUS_SE2_HPP
-#define SOPHUS_SE2_HPP
+#pragma once
 
 #include "so2.hpp"
 
@@ -854,5 +853,3 @@ class Map<Sophus::SE2<Scalar_> const, Options>
   Map<Sophus::Vector2<Scalar> const, Options> const translation_;
 };
 }  // namespace Eigen
-
-#endif

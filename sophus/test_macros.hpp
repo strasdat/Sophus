@@ -1,5 +1,4 @@
-#ifndef SOPUHS_TESTS_MACROS_HPP
-#define SOPUHS_TESTS_MACROS_HPP
+#pragma once
 
 #include <iostream>
 #include <sstream>
@@ -147,5 +146,3 @@ void processTestResult(bool passed) {
                                   msg);                                        \
     }                                                                          \
   } while (false)
-
-#endif  // SOPUHS_TESTS_MACROS_HPP

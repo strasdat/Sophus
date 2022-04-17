@@ -1,5 +1,7 @@
 #Tests to run
 SET( TEST_SOURCES test_common
+                  test_cartesian2
+                  test_cartesian3
                   test_so2
                   test_se2
                   test_rxso2

@@ -68,6 +68,7 @@ add_library (Sophus::Sophus ALIAS sophus)
 
 set(SOPHUS_HEADER_FILES
   sophus/average.hpp
+  sophus/cartesian.hpp
   sophus/ceres_local_parameterization.hpp
   sophus/common.hpp
   sophus/geometry.hpp

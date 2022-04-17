@@ -1,8 +1,7 @@
 /// @file
 /// Similarity group Sim(3) - scaling, rotation and translation in 3d.
 
-#ifndef SOPHUS_SIM3_HPP
-#define SOPHUS_SIM3_HPP
+#pragma once
 
 #include "rxso3.hpp"
 #include "sim_details.hpp"
@@ -839,5 +838,3 @@ class Map<Sophus::Sim3<Scalar_> const, Options>
   Map<Sophus::Vector3<Scalar> const, Options> const translation_;
 };
 }  // namespace Eigen
-
-#endif

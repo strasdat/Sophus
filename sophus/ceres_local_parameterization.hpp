@@ -1,5 +1,4 @@
-#ifndef SOPHUS_CERES_LOCAL_PARAMETERIZATION_HPP
-#define SOPHUS_CERES_LOCAL_PARAMETERIZATION_HPP
+#pragma once
 
 #include <ceres/local_parameterization.h>
 
@@ -97,5 +96,3 @@ class LocalParameterization : public ceres::LocalParameterization {
 };
 
 }  // namespace Sophus
-
-#endif

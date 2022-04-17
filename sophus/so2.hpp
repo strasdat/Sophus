@@ -1,8 +1,7 @@
 /// @file
 /// Special orthogonal group SO(2) - rotation in 2d.
 
-#ifndef SOPHUS_SO2_HPP
-#define SOPHUS_SO2_HPP
+#pragma once
 
 #include <type_traits>
 
@@ -636,5 +635,3 @@ class Map<Sophus::SO2<Scalar_> const, Options>
   Map<Matrix<Scalar, 2, 1> const, Options> const unit_complex_;
 };
 }  // namespace Eigen
-
-#endif  // SOPHUS_SO2_HPP

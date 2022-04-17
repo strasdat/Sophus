@@ -37,24 +37,25 @@ bool testSpline() {
   bool passed = true;
   for (double delta_t : {0.1, 0.5, 1.0}) {
     for (double u : {0.0000, 0.1, 0.5, 0.51, 0.9, 0.999}) {
-      std::cout << details::pretty(BasisFunction<double>::B(u)) << std::endl;
+      std::cout << details::pretty(SplineBasisSpline<double>::B(u))
+                << std::endl;
 
-      Eigen::Vector3d Dt_B = BasisFunction<double>::Dt_B(u, delta_t);
+      Eigen::Vector3d Dt_B = SplineBasisSpline<double>::Dt_B(u, delta_t);
       std::cout << details::pretty(Dt_B) << std::endl;
 
       Eigen::Vector3d Dt_B2 = curveNumDiff(
           [delta_t](double u_bar) -> Eigen::Vector3d {
-            return BasisFunction<double>::B(u_bar) / delta_t;
+            return SplineBasisSpline<double>::B(u_bar) / delta_t;
           },
           u);
       SOPHUS_TEST_APPROX(passed, Dt_B, Dt_B2, kSmallEpsSqrt,
                          "Dt_, u={}, delta_t={}", u, delta_t);
 
-      Eigen::Vector3d Dt2_B = BasisFunction<double>::Dt2_B(u, delta_t);
+      Eigen::Vector3d Dt2_B = SplineBasisSpline<double>::Dt2_B(u, delta_t);
 
       Eigen::Vector3d Dt2_B2 = curveNumDiff(
           [delta_t](double u_bar) -> Eigen::Vector3d {
-            return BasisFunction<double>::Dt_B(u_bar, delta_t) / delta_t;
+            return SplineBasisSpline<double>::Dt_B(u_bar, delta_t) / delta_t;
           },
           u);
       SOPHUS_TEST_APPROX(passed, Dt2_B, Dt2_B2, kSmallEpsSqrt,
@@ -70,12 +71,11 @@ bool testSpline() {
   control_poses.push_back(interpolate(T_world_foo, T_world_bar, 0.0));
 
   for (double p = 0.2; p < 1.0; p += 0.2) {
-    std::cerr << p << std::endl;
     SE3d T_world_inter = interpolate(T_world_foo, T_world_bar, p);
     control_poses.push_back(T_world_inter);
   }
 
-  SplineImpl<Sophus::SE3d> spline(control_poses, 1.0);
+  BasisSplineImpl<SE3d> spline(control_poses, 1.0);
 
   SE3d T = spline.parent_T_spline(0.0, 1.0);
   SE3d T2 = spline.parent_T_spline(1.0, 0.0);
@@ -84,8 +84,6 @@ bool testSpline() {
   Eigen::Matrix3d R2 = T2.so3().matrix();
   Eigen::Vector3d t = T.translation();
   Eigen::Vector3d t2 = T2.translation();
-  std::cerr << R << std::endl;
-  std::cerr << t << std::endl;
 
   SOPHUS_TEST_APPROX(passed, R, R2, kSmallEpsSqrt, "lambdsa");
 
@@ -108,31 +106,6 @@ bool testSpline() {
       0.5);
   SOPHUS_TEST_APPROX(passed, Dt2_parent_T_spline, Dt2_parent_T_spline2,
                      kSmallEpsSqrt, "Dt2_parent_T_spline");
-
-  {
-    double t0 = 1.0;
-    double delta_t = 0.1;
-    Spline<Sophus::SE3d> spline(control_poses, t0, delta_t);
-    double t = t0 + 0.5 * delta_t;
-
-    Eigen::Matrix4d Dt_parent_T_spline = spline.Dt_parent_T_spline(t);
-    Eigen::Matrix4d Dt_parent_T_spline2 = curveNumDiff(
-        [&](double t_bar) -> Eigen::Matrix4d {
-          return spline.parent_T_spline(t_bar).matrix();
-        },
-        t);
-    SOPHUS_TEST_APPROX(passed, Dt_parent_T_spline, Dt_parent_T_spline2,
-                       kSmallEpsSqrt, "Dt_parent_T_spline");
-
-    Eigen::Matrix4d Dt2_parent_T_spline = spline.Dt2_parent_T_spline(t);
-    Eigen::Matrix4d Dt2_parent_T_spline2 = curveNumDiff(
-        [&](double t_bar) -> Eigen::Matrix4d {
-          return spline.Dt_parent_T_spline(t_bar).matrix();
-        },
-        t);
-    SOPHUS_TEST_APPROX(passed, Dt2_parent_T_spline, Dt2_parent_T_spline2,
-                       kSmallEpsSqrt, "Dt2_parent_T_spline");
-  }
 
   return passed;
 }

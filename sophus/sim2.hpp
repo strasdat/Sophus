@@ -1,8 +1,7 @@
 /// @file
 /// Similarity group Sim(2) - scaling, rotation and translation in 2d.
 
-#ifndef SOPHUS_SIM2_HPP
-#define SOPHUS_SIM2_HPP
+#pragma once
 
 #include "rxso2.hpp"
 #include "sim_details.hpp"
@@ -805,5 +804,3 @@ class Map<Sophus::Sim2<Scalar_> const, Options>
   Map<Sophus::Vector2<Scalar> const, Options> const translation_;
 };
 }  // namespace Eigen
-
-#endif

@@ -1,8 +1,7 @@
 /// @file
 /// Common type aliases.
 
-#ifndef SOPHUS_TYPES_HPP
-#define SOPHUS_TYPES_HPP
+#pragma once
 
 #include <type_traits>
 #include "common.hpp"
@@ -250,5 +249,3 @@ using Line2d = Line2<double>;
 using Line2f = Line2<float>;
 
 }  // namespace Sophus
-
-#endif  // SOPHUS_TYPES_HPP
