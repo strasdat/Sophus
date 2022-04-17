@@ -1,8 +1,7 @@
 /// @file
 /// Special Euclidean group SE(3) - rotation and translation in 3d.
 
-#ifndef SOPHUS_SE3_HPP
-#define SOPHUS_SE3_HPP
+#pragma once
 
 #include "so3.hpp"
 
@@ -834,7 +833,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     return SE3<Scalar>(so3, V * a.template head<3>());
   }
 
-  /// Returns closest SE3 given arbirary 4x4 matrix.
+  /// Returns closest SE3 given arbitrary 4x4 matrix.
   ///
   template <class S = Scalar>
   SOPHUS_FUNC static enable_if_t<std::is_floating_point<S>::value, SE3>
@@ -1125,5 +1124,3 @@ class Map<Sophus::SE3<Scalar_> const, Options>
   Map<Sophus::Vector3<Scalar> const, Options> const translation_;
 };
 }  // namespace Eigen
-
-#endif

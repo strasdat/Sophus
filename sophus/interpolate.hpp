@@ -1,8 +1,7 @@
 /// @file
 /// Interpolation for Lie groups.
 
-#ifndef SOPHUS_INTERPOLATE_HPP
-#define SOPHUS_INTERPOLATE_HPP
+#pragma once
 
 #include <Eigen/Eigenvalues>
 
@@ -34,5 +33,3 @@ enable_if_t<interp_details::Traits<G>::supported, G> interpolate(
 }
 
 }  // namespace Sophus
-
-#endif  // SOPHUS_INTERPOLATE_HPP

@@ -1,8 +1,7 @@
 /// @file
 /// Direct product R X SO(2) - rotation and scaling in 2d.
 
-#ifndef SOPHUS_RXSO2_HPP
-#define SOPHUS_RXSO2_HPP
+#pragma once
 
 #include "so2.hpp"
 
@@ -739,5 +738,3 @@ class Map<Sophus::RxSO2<Scalar_> const, Options>
   Map<Sophus::Vector2<Scalar> const, Options> const complex_;
 };
 }  // namespace Eigen
-
-#endif  /// SOPHUS_RXSO2_HPP

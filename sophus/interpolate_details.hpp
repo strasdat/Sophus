@@ -1,6 +1,6 @@
-#ifndef SOPHUS_INTERPOLATE_DETAILS_HPP
-#define SOPHUS_INTERPOLATE_DETAILS_HPP
+#pragma once
 
+#include "cartesian.hpp"
 #include "rxso2.hpp"
 #include "rxso3.hpp"
 #include "se2.hpp"
@@ -15,6 +15,15 @@ namespace interp_details {
 
 template <class Group>
 struct Traits;
+
+template <class Scalar, int Dim>
+struct Traits<Cartesian<Scalar, Dim>> {
+  static bool constexpr supported = true;
+
+  static bool hasShortestPathAmbiguity(Cartesian<Scalar, Dim> const&) {
+    return false;
+  }
+};
 
 template <class Scalar>
 struct Traits<SO2<Scalar>> {
@@ -100,5 +109,3 @@ struct Traits<Sim3<Scalar>> {
 
 }  // namespace interp_details
 }  // namespace Sophus
-
-#endif  // SOPHUS_INTERPOLATE_DETAILS_HPP

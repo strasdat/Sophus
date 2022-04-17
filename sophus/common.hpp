@@ -1,8 +1,7 @@
 /// @file
 /// Common functionality.
 
-#ifndef SOPHUS_COMMON_HPP
-#define SOPHUS_COMMON_HPP
+#pragma once
 
 #include <cmath>
 #include <cstdio>
@@ -38,7 +37,7 @@
 
 #ifdef SOPHUS_COMPILE_TIME_FMT
 // To keep compatibility with older libfmt versions,
-// disable the compile time check if FMT_STRING is not avaiable.
+// disable the compile time check if FMT_STRING is not available.
 #ifdef FMT_STRING
 // compile-time format check on x
 #define SOPHUS_FMT_STRING(x) FMT_STRING(x)
@@ -238,5 +237,3 @@ struct IsUniformRandomBitGenerator {
                             std::is_unsigned<decltype(G::max())>::value;
 };
 }  // namespace Sophus
-
-#endif  // SOPHUS_COMMON_HPP

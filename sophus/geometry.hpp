@@ -1,8 +1,7 @@
 /// @file
 /// Transformations between poses and hyperplanes.
 
-#ifndef GEOMETRY_HPP
-#define GEOMETRY_HPP
+#pragma once
 
 #include "se2.hpp"
 #include "se3.hpp"
@@ -175,5 +174,3 @@ Eigen::Hyperplane<T, N> makeHyperplaneUnique(
 }
 
 }  // namespace Sophus
-
-#endif  // GEOMETRY_HPP

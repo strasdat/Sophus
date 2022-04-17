@@ -1,8 +1,7 @@
 /// @file
 /// Direct product R X SO(3) - rotation and scaling in 3d.
 
-#ifndef SOPHUS_RXSO3_HPP
-#define SOPHUS_RXSO3_HPP
+#pragma once
 
 #include "so3.hpp"
 
@@ -830,5 +829,3 @@ class Map<Sophus::RxSO3<Scalar_> const, Options>
   Map<Eigen::Quaternion<Scalar> const, Options> const quaternion_;
 };
 }  // namespace Eigen
-
-#endif  /// SOPHUS_RXSO3_HPP

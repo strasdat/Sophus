@@ -546,7 +546,7 @@ class LieGroupTests {
           control_poses.push_back(T_world_inter);
         }
 
-        SplineImpl<LieGroup> spline(control_poses, 1.0);
+        BasisSplineImpl<LieGroup> spline(control_poses, 1.0);
 
         LieGroup T = spline.parent_T_spline(0.0, 1.0);
         LieGroup T2 = spline.parent_T_spline(1.0, 0.0);
@@ -576,7 +576,7 @@ class LieGroupTests {
         for (double frac : {0.01, 0.25, 0.5, 0.9, 0.99}) {
           double t0 = 1.0;
           double delta_t = 0.1;
-          Spline<LieGroup> spline(control_poses, t0, delta_t);
+          BasisSpline<LieGroup> spline(control_poses, t0, delta_t);
           double t = t0 + frac * delta_t;
 
           Transformation Dt_parent_T_spline = spline.Dt_parent_T_spline(t);

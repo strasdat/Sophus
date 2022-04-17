@@ -1,8 +1,7 @@
 /// @file
 /// Special orthogonal group SO(3) - rotation in 3d.
 
-#ifndef SOPHUS_SO3_HPP
-#define SOPHUS_SO3_HPP
+#pragma once
 
 #include "rotation_matrix.hpp"
 #include "so2.hpp"
@@ -933,5 +932,3 @@ class Map<Sophus::SO3<Scalar_> const, Options>
   Map<Eigen::Quaternion<Scalar> const, Options> const unit_quaternion_;
 };
 }  // namespace Eigen
-
-#endif
