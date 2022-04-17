@@ -10,7 +10,7 @@
 namespace Sophus {
 
 template <class Scalar>
-class SplineBasisSpline {
+class SplineBasisFunction {
  public:
   static SOPHUS_FUNC Eigen::Matrix<Scalar, 3, 4> C() {
     Eigen::Matrix<Scalar, 3, 4> C;
@@ -109,7 +109,7 @@ class BasisSplineFn {
   static std::tuple<LieGroup, LieGroup, LieGroup> A(
       std::tuple<Tangent, Tangent, Tangent> const& control_tagent_vectors,
       double u) {
-    Eigen::Vector3d B = SplineBasisSpline<double>::B(u);
+    Eigen::Vector3d B = SplineBasisFunction<double>::B(u);
     return std::make_tuple(
         LieGroup::exp(B[0] * std::get<0>(control_tagent_vectors)),
         LieGroup::exp(B[1] * std::get<1>(control_tagent_vectors)),
@@ -120,7 +120,7 @@ class BasisSplineFn {
       std::tuple<LieGroup, LieGroup, LieGroup> const& AA,
       const std::tuple<Tangent, Tangent, Tangent>& control_tagent_vectors,
       double u, double delta_t) {
-    Eigen::Vector3d Dt_B = SplineBasisSpline<double>::Dt_B(u, delta_t);
+    Eigen::Vector3d Dt_B = SplineBasisFunction<double>::Dt_B(u, delta_t);
     return std::make_tuple(
         Dt_B[0] * std::get<0>(AA).matrix() *
             LieGroup::hat(std::get<0>(control_tagent_vectors)),
@@ -135,8 +135,8 @@ class BasisSplineFn {
       std::tuple<Transformation, Transformation, Transformation> const& Dt_AA,
       std::tuple<Tangent, Tangent, Tangent> const& control_tagent_vectors,
       double u, double delta_t) {
-    Eigen::Vector3d Dt_B = SplineBasisSpline<double>::Dt_B(u, delta_t);
-    Eigen::Vector3d Dt2_B = SplineBasisSpline<double>::Dt2_B(u, delta_t);
+    Eigen::Vector3d Dt_B = SplineBasisFunction<double>::Dt_B(u, delta_t);
+    Eigen::Vector3d Dt2_B = SplineBasisFunction<double>::Dt2_B(u, delta_t);
 
     return std::make_tuple(
         (Dt_B[0] * std::get<0>(Dt_AA).matrix() +
