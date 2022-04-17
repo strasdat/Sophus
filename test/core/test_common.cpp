@@ -37,25 +37,25 @@ bool testSpline() {
   bool passed = true;
   for (double delta_t : {0.1, 0.5, 1.0}) {
     for (double u : {0.0000, 0.1, 0.5, 0.51, 0.9, 0.999}) {
-      std::cout << details::pretty(SplineBasisSpline<double>::B(u))
+      std::cout << details::pretty(SplineBasisFunction<double>::B(u))
                 << std::endl;
 
-      Eigen::Vector3d Dt_B = SplineBasisSpline<double>::Dt_B(u, delta_t);
+      Eigen::Vector3d Dt_B = SplineBasisFunction<double>::Dt_B(u, delta_t);
       std::cout << details::pretty(Dt_B) << std::endl;
 
       Eigen::Vector3d Dt_B2 = curveNumDiff(
           [delta_t](double u_bar) -> Eigen::Vector3d {
-            return SplineBasisSpline<double>::B(u_bar) / delta_t;
+            return SplineBasisFunction<double>::B(u_bar) / delta_t;
           },
           u);
       SOPHUS_TEST_APPROX(passed, Dt_B, Dt_B2, kSmallEpsSqrt,
                          "Dt_, u={}, delta_t={}", u, delta_t);
 
-      Eigen::Vector3d Dt2_B = SplineBasisSpline<double>::Dt2_B(u, delta_t);
+      Eigen::Vector3d Dt2_B = SplineBasisFunction<double>::Dt2_B(u, delta_t);
 
       Eigen::Vector3d Dt2_B2 = curveNumDiff(
           [delta_t](double u_bar) -> Eigen::Vector3d {
-            return SplineBasisSpline<double>::Dt_B(u_bar, delta_t) / delta_t;
+            return SplineBasisFunction<double>::Dt_B(u_bar, delta_t) / delta_t;
           },
           u);
       SOPHUS_TEST_APPROX(passed, Dt2_B, Dt2_B2, kSmallEpsSqrt,
