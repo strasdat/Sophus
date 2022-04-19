@@ -2,6 +2,9 @@
 
 #include <ceres/local_parameterization.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 namespace Sophus {
 
 template <class T, std::size_t = sizeof(T)>
@@ -94,5 +97,7 @@ class LocalParameterization : public ceres::LocalParameterization {
 
   int LocalSize() const override { return LieGroupd::DoF; }
 };
+
+#pragma GCC diagnostic pop
 
 }  // namespace Sophus

@@ -201,8 +201,11 @@ struct LieGroupCeresTests {
       const LieGroupd delta = LieGroupd::exp(delta_log);
       V_estimate.emplace_back(v * delta);
       initial_error += squaredNorm(delta_log);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
       problem.AddParameterBlock(V_estimate.back().data(),
                                 LieGroupd::num_parameters, parametrization);
+#pragma GCC diagnostic pop
     }
 
     // For simplicity of graph generation, we use a complete (undirected) graph.
@@ -258,9 +261,12 @@ struct LieGroupCeresTests {
     // Build the problem.
     ceres::Problem problem;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     // Specify local update rule for our parameter
     problem.AddParameterBlock(T_wr.data(), num_parameters,
                               new Sophus::LocalParameterization<LieGroup_>);
+#pragma GCC diagnostic pop
 
     // Create and add cost functions. Derivatives will be evaluated via
     // automatic differentiation
