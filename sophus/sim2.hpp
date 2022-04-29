@@ -303,6 +303,18 @@ class Sim2Base {
     return J;
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_log_this_inv_by_x_at_this()
+      const {
+    Matrix<Scalar, num_parameters, DoF> J;
+    J.template block<2, 2>(0, 0).setZero();
+    J.template block<2, 2>(0, 2) = rxso2().inverse().matrix();
+    J.template block<2, 2>(2, 0) = rxso2().Dx_log_this_inv_by_x_at_this();
+    J.template block<2, 2>(2, 2).setZero();
+    return J;
+  }
+
   /// Setter of non-zero complex number.
   ///
   /// Precondition: ``z`` must not be close to zero.

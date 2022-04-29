@@ -317,6 +317,14 @@ class SO2Base {
     return unit_complex();
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_log_this_inv_by_x_at_this()
+      const {
+    return Matrix<Scalar, DoF, num_parameters>(-unit_complex()[1],
+                                               unit_complex()[0]);
+  }
+
   /// Takes in complex number / tuple and normalizes it.
   ///
   /// Precondition: The complex number must not be close to zero.
