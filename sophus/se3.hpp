@@ -203,6 +203,18 @@ class SE3Base {
     return J;
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_log_this_inv_by_x_at_this()
+      const {
+    Matrix<Scalar, DoF, num_parameters> J;
+    J.template block<3, 4>(0, 0).setZero();
+    J.template block<3, 3>(0, 4) = so3().inverse().matrix();
+    J.template block<3, 4>(3, 0) = so3().Dx_log_this_inv_by_x_at_this();
+    J.template block<3, 3>(3, 4).setZero();
+    return J;
+  }
+
   /// Returns group inverse.
   ///
   SOPHUS_FUNC SE3<Scalar> inverse() const {
@@ -794,12 +806,13 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     Scalar const i(1);
 
     // clang-format off
-    J << o, o, o, h, o, o, o,
-         o, o, o, h, o, o, o,
-         o, o, o, h, o, o, o,
-         o, o, o, i, o, o, o,
-         o, o, o, i, o, o, o,
-         o, o, o, i, o, o, o;
+    J << o, o, o, h, o, o,
+         o, o, o, o, h, o,
+	 o, o, o, o, o, h,
+	 o, o, o, o, o, o,
+	 i, o, o, o, o, o,
+	 o, i, o, o, o, o,
+	 o, o, i, o, o, o;
     // clang-format on
     return J;
   }

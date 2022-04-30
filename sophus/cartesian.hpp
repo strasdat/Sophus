@@ -131,6 +131,15 @@ class CartesianBase {
     return m;
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, num_parameters, DoF> Dx_log_this_inv_by_x_at_this()
+      const {
+    Matrix<Scalar, DoF, num_parameters> m;
+    m.setIdentity();
+    return m;
+  }
+
   /// Returns group inverse.
   ///
   /// The additive inverse.
