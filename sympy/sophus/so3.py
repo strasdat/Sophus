@@ -1,8 +1,13 @@
-import sympy
-import sys
-import unittest
-import sophus
 import functools
+import unittest
+
+import sympy
+
+from sophus.cse_codegen import cse_codegen
+from sophus.matrix import Vector3
+from sophus.matrix import ZeroVector3
+from sophus.matrix import squared_norm
+from sophus.quaternion import Quaternion
 
 
 class So3:
@@ -15,23 +20,26 @@ class So3:
     @staticmethod
     def exp(v):
         """ exponential map """
-        theta_sq = sophus.squared_norm(v)
+        theta_sq = squared_norm(v)
         theta = sympy.sqrt(theta_sq)
         return So3(
-            sophus.Quaternion(
+            Quaternion(
                 sympy.cos(0.5 * theta),
                 sympy.sin(0.5 * theta) / theta * v))
 
     def log(self):
         """ logarithmic map"""
-        n = sympy.sqrt(sophus.squared_norm(self.q.vec))
+        n = sympy.sqrt(squared_norm(self.q.vec))
         return 2 * sympy.atan(n / self.q.real) / n * self.q.vec
 
     def calc_Dx_log_this(self):
-        return sympy.Matrix(3, 3, lambda r, c: sympy.diff(self.log()[r], self[c]))
+        return sympy.Matrix(3, 3, lambda r, c: sympy.diff(self.log()[r],
+                                                          self[c]))
 
     def calc_Dx_log_exp_x_times_this_at_0(self, x):
-        return sympy.Matrix(3, 3, lambda r, c: sympy.diff((So3.exp(x)*self).log()[r], x[c])).subs(x[0],0).subs(x[1],0).limit(x[2],0)
+        return sympy.Matrix(3, 3, lambda r, c:
+                            sympy.diff((So3.exp(x)*self).log()[r], x[c])).subs(
+                            x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
     def __repr__(self):
         return "So3:" + repr(self.q)
@@ -44,23 +52,25 @@ class So3:
         return sympy.Matrix([[0, -o[2], o[1]],
                              [o[2], 0, -o[0]],
                              [-o[1], o[0], 0]])
-    
+
     """vee-operator
-   
+
     It takes the 3x3-matrix representation ``Omega`` and maps it to the
     corresponding vector representation of Lie algebra.
-   
+
     This is the inverse of the hat-operator, see above.
-   
+
     Precondition: ``Omega`` must have the following structure:
-   
+
                    |  0 -c  b |
                    |  c  0 -a |
-                   | -b  a  0 | 
+                   | -b  a  0 |
     """
     @staticmethod
     def vee(Omega):
-        v = sophus.Vector3(Omega.row(2).col(1), Omega.row(0).col(2), Omega.row(1).col(0))
+        v = Vector3(Omega.row(2).col(1),
+                    Omega.row(0).col(2),
+                    Omega.row(1).col(0))
         return v
 
     def matrix(self):
@@ -90,7 +100,7 @@ class So3:
             either rotation concatenation or point-transform """
         if isinstance(right, sympy.Matrix):
             assert right.shape == (3, 1), right.shape
-            return (self.q * sophus.Quaternion(0, right) * self.q.conj()).vec
+            return (self.q * Quaternion(0, right) * self.q.conj()).vec
         elif isinstance(right, So3):
             return So3(self.q * right.q)
         assert False, "unsupported type: {0}".format(type(right))
@@ -152,8 +162,8 @@ class So3:
     def Dxi_exp_x_matrix(x, i):
         R = So3.exp(x)
         Dx_exp_x = So3.calc_Dx_exp_x(x)
-        l = [Dx_exp_x[j, i] * So3.Dxi_x_matrix(R, j) for j in [0, 1, 2, 3]]
-        return functools.reduce((lambda a, b: a + b), l)
+        list = [Dx_exp_x[j, i] * So3.Dxi_x_matrix(R, j) for j in [0, 1, 2, 3]]
+        return functools.reduce((lambda a, b: a + b), list)
 
     @staticmethod
     def calc_Dxi_exp_x_matrix(x, i):
@@ -162,7 +172,7 @@ class So3:
 
     @staticmethod
     def Dxi_exp_x_matrix_at_0(i):
-        v = sophus.ZeroVector3()
+        v = ZeroVector3()
         v[i] = 1
         return So3.hat(v)
 
@@ -179,15 +189,15 @@ class TestSo3(unittest.TestCase):
             'omega[0], omega[1], omega[2]', real=True)
         x, v0, v1, v2 = sympy.symbols('q.w() q.x() q.y() q.z()', real=True)
         p0, p1, p2 = sympy.symbols('p0 p1 p2', real=True)
-        v = sophus.Vector3(v0, v1, v2)
-        self.omega = sophus.Vector3(omega0, omega1, omega2)
-        self.a = So3(sophus.Quaternion(x, v))
-        self.p = sophus.Vector3(p0, p1, p2)
+        v = Vector3(v0, v1, v2)
+        self.omega = Vector3(omega0, omega1, omega2)
+        self.a = So3(Quaternion(x, v))
+        self.p = Vector3(p0, p1, p2)
 
     def test_exp_log(self):
-        for o in [sophus.Vector3(0., 1, 0.5),
-                  sophus.Vector3(0.1, 0.1, 0.1),
-                  sophus.Vector3(0.01, 0.2, 0.03)]:
+        for o in [Vector3(0., 1, 0.5),
+                  Vector3(0.1, 0.1, 0.1),
+                  Vector3(0.01, 0.2, 0.03)]:
             w = So3.exp(o).log()
             for i in range(0, 3):
                 self.assertAlmostEqual(o[i], w[i])
@@ -199,7 +209,7 @@ class TestSo3(unittest.TestCase):
         p1_foo = R_foo_bar * point_bar
         p2_foo = Rmat_foo_bar * point_bar
         self.assertEqual(sympy.simplify(p1_foo - p2_foo),
-                         sophus.ZeroVector3())
+                         ZeroVector3())
 
     def test_derivatives(self):
         self.assertEqual(sympy.simplify(So3.calc_Dx_exp_x_at_0(self.omega) -
@@ -221,7 +231,7 @@ class TestSo3(unittest.TestCase):
                 sympy.Matrix.zeros(3, 3))
 
     def test_codegen(self):
-        stream = sophus.cse_codegen(So3.calc_Dx_exp_x(self.omega))
+        stream = cse_codegen(So3.calc_Dx_exp_x(self.omega))
         filename = "cpp_gencode/So3_Dx_exp_x.cpp"
         # set to true to generate codegen files
         if False:
@@ -237,7 +247,7 @@ class TestSo3(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(
+        stream = cse_codegen(
             self.a.calc_Dx_this_mul_exp_x_at_0(self.omega))
         filename = "cpp_gencode/So3_Dx_this_mul_exp_x_at_0.cpp"
         # set to true to generate codegen files
@@ -254,7 +264,7 @@ class TestSo3(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(self.a.calc_Dx_log_this())
+        stream = cse_codegen(self.a.calc_Dx_log_this())
         filename = "cpp_gencode/So3_Dx_log_this.cpp"
 
         # set to true to generate codegen files
@@ -271,7 +281,8 @@ class TestSo3(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(self.a.calc_Dx_log_exp_x_times_this_at_0(self.omega))
+        stream = cse_codegen(self.a.calc_Dx_log_exp_x_times_this_at_0(
+                               self.omega))
         filename = "cpp_gencode/So3_Dx_log_exp_x_times_this_at_0.cpp"
 
         # set to true to generate codegen files
@@ -287,6 +298,7 @@ class TestSo3(unittest.TestCase):
                 self.assertEqual(line, file_lines[i])
             file.close()
         stream.close
+
 
 if __name__ == '__main__':
     unittest.main()

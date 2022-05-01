@@ -1,5 +1,6 @@
-import sympy
 import io
+
+import sympy
 
 
 def cse_codegen(symbols):

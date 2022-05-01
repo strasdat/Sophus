@@ -1,9 +1,11 @@
 """ run with: python3 -m sophus.quaternion """
 
-import sophus
-import sympy
-import sys
 import unittest
+
+import sympy
+
+from sophus.matrix import Vector3
+from sophus.matrix import squared_norm
 
 
 class Quaternion:
@@ -46,7 +48,7 @@ class Quaternion:
 
     def squared_norm(self):
         """ squared norm when considering the quaternion as 4-tuple """
-        return sophus.squared_norm(self.vec) + self.real**2
+        return squared_norm(self.vec) + self.real**2
 
     def conj(self):
         """ quaternion conjugate """
@@ -58,11 +60,11 @@ class Quaternion:
 
     @staticmethod
     def identity():
-        return Quaternion(1, sophus.Vector3(0, 0, 0))
+        return Quaternion(1, Vector3(0, 0, 0))
 
     @staticmethod
     def zero():
-        return Quaternion(0, sophus.Vector3(0, 0, 0))
+        return Quaternion(0, Vector3(0, 0, 0))
 
     def subs(self, x, y):
         return Quaternion(self.real.subs(x, y), self.vec.subs(x, y))
@@ -70,7 +72,7 @@ class Quaternion:
     def simplify(self):
         v = sympy.simplify(self.vec)
         return Quaternion(sympy.simplify(self.real),
-                          sophus.Vector3(v[0], v[1], v[2]))
+                          Vector3(v[0], v[1], v[2]))
 
     def __eq__(self, other):
         if isinstance(self, other.__class__):
@@ -106,8 +108,8 @@ class TestQuaternion(unittest.TestCase):
     def setUp(self):
         x, u0, u1, u2 = sympy.symbols('x u0 u1 u2', real=True)
         y, v0, v1, v2 = sympy.symbols('y v0 v1 v2', real=True)
-        u = sophus.Vector3(u0, u1, u2)
-        v = sophus.Vector3(v0, v1, v2)
+        u = Vector3(u0, u1, u2)
+        v = Vector3(v0, v1, v2)
         self.a = Quaternion(x, u)
         self.b = Quaternion(y, v)
 

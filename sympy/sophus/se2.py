@@ -1,8 +1,17 @@
-import sympy
-import sys
-import unittest
-import sophus
 import functools
+import unittest
+
+import sympy
+
+from sophus.complex import Complex
+from sophus.cse_codegen import cse_codegen
+from sophus.matrix import Vector2
+from sophus.matrix import Vector3
+from sophus.matrix import ZeroVector2
+from sophus.matrix import ZeroVector3
+from sophus.matrix import proj
+from sophus.matrix import unproj
+from sophus.so2 import So2
 
 
 class Se2:
@@ -18,13 +27,13 @@ class Se2:
     def exp(v):
         """ exponential map """
         theta = v[2]
-        so2 = sophus.So2.exp(theta)
+        so2 = So2.exp(theta)
 
         a = so2.z.imag / theta
         b = (1 - so2.z.real) / theta
 
-        t = sophus.Vector2(a * v[0] - b * v[1],
-                           b * v[0] + a * v[1])
+        t = Vector2(a * v[0] - b * v[1],
+                    b * v[0] + a * v[1])
         return Se2(so2, t)
 
     def log(self):
@@ -35,20 +44,20 @@ class Se2:
         V_inv = sympy.Matrix([[a, halftheta],
                               [-halftheta, a]])
         upsilon = V_inv * self.t
-        return sophus.Vector3(upsilon[0], upsilon[1], theta)
+        return Vector3(upsilon[0], upsilon[1], theta)
 
     def calc_Dx_log_this(self):
-        return sympy.Matrix(3, 4, lambda r, c: sympy.diff(self.log()[r], self[c]))
-
+        return sympy.Matrix(3, 4, lambda r, c: sympy.diff(self.log()[r],
+                            self[c]))
 
     def __repr__(self):
         return "Se2: [" + repr(self.so2) + " " + repr(self.t)
 
     @staticmethod
     def hat(v):
-        upsilon = sophus.Vector2(v[0], v[1])
+        upsilon = Vector2(v[0], v[1])
         theta = v[2]
-        return sophus.So2.hat(theta).\
+        return So2.hat(theta).\
             row_join(upsilon).\
             col_join(sympy.Matrix.zeros(1, 3))
 
@@ -89,7 +98,6 @@ class Se2:
                              [0, 1, 0]])
 
     def calc_Dx_this_mul_exp_x_at_0(self, x):
-        v = Se2.exp(x)
         return sympy.Matrix(4, 3, lambda r, c:
                             sympy.diff((self * Se2.exp(x))[r], x[c])). \
             subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
@@ -101,7 +109,7 @@ class Se2:
     @staticmethod
     def Dxi_x_matrix(x, i):
         if i < 2:
-            return sophus.So2.Dxi_x_matrix(x, i).\
+            return So2.Dxi_x_matrix(x, i).\
                 row_join(sympy.Matrix.zeros(2, 1)).\
                 col_join(sympy.Matrix.zeros(1, 3))
         M = sympy.Matrix.zeros(3, 3)
@@ -117,8 +125,8 @@ class Se2:
     def Dxi_exp_x_matrix(x, i):
         T = Se2.exp(x)
         Dx_exp_x = Se2.calc_Dx_exp_x(x)
-        l = [Dx_exp_x[j, i] * Se2.Dxi_x_matrix(T, j) for j in range(0, 4)]
-        return functools.reduce((lambda a, b: a + b), l)
+        list = [Dx_exp_x[j, i] * Se2.Dxi_x_matrix(T, j) for j in range(0, 4)]
+        return functools.reduce((lambda a, b: a + b), list)
 
     @staticmethod
     def calc_Dxi_exp_x_matrix(x, i):
@@ -127,7 +135,7 @@ class Se2:
 
     @staticmethod
     def Dxi_exp_x_matrix_at_0(i):
-        v = sophus.ZeroVector3()
+        v = ZeroVector3()
         v[i] = 1
         return Se2.hat(v)
 
@@ -146,16 +154,16 @@ class TestSe2(unittest.TestCase):
         x, y = sympy.symbols('c[0] c[1]', real=True)
         p0, p1 = sympy.symbols('p0 p1', real=True)
         t0, t1 = sympy.symbols('t[0] t[1]', real=True)
-        self.upsilon_theta = sophus.Vector3(
+        self.upsilon_theta = Vector3(
             upsilon0, upsilon1, theta)
-        self.t = sophus.Vector2(t0, t1)
-        self.a = Se2(sophus.So2(sophus.Complex(x, y)), self.t)
-        self.p = sophus.Vector2(p0, p1)
+        self.t = Vector2(t0, t1)
+        self.a = Se2(So2(Complex(x, y)), self.t)
+        self.p = Vector2(p0, p1)
 
     def test_exp_log(self):
-        for v in [sophus.Vector3(0., 1, 0.5),
-                  sophus.Vector3(0.1, 0.1, 0.1),
-                  sophus.Vector3(0.01, 0.2, 0.03)]:
+        for v in [Vector3(0., 1, 0.5),
+                  Vector3(0.1, 0.1, 0.1),
+                  Vector3(0.01, 0.2, 0.03)]:
             w = Se2.exp(v).log()
             for i in range(0, 3):
                 self.assertAlmostEqual(v[i], w[i])
@@ -165,9 +173,9 @@ class TestSe2(unittest.TestCase):
         Tmat_foo_bar = T_foo_bar.matrix()
         point_bar = self.p
         p1_foo = T_foo_bar * point_bar
-        p2_foo = sophus.proj(Tmat_foo_bar * sophus.unproj(point_bar))
+        p2_foo = proj(Tmat_foo_bar * unproj(point_bar))
         self.assertEqual(sympy.simplify(p1_foo - p2_foo),
-                         sophus.ZeroVector2())
+                         ZeroVector2())
 
     def test_derivatives(self):
         self.assertEqual(sympy.simplify(
@@ -189,7 +197,7 @@ class TestSe2(unittest.TestCase):
                 sympy.Matrix.zeros(3, 3))
 
     def test_codegen(self):
-        stream = sophus.cse_codegen(Se2.calc_Dx_exp_x(self.upsilon_theta))
+        stream = cse_codegen(Se2.calc_Dx_exp_x(self.upsilon_theta))
         filename = "cpp_gencode/Se2_Dx_exp_x.cpp"
 
         # set to true to generate codegen files
@@ -206,7 +214,7 @@ class TestSe2(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(self.a.calc_Dx_this_mul_exp_x_at_0(
+        stream = cse_codegen(self.a.calc_Dx_this_mul_exp_x_at_0(
             self.upsilon_theta))
         filename = "cpp_gencode/Se2_Dx_this_mul_exp_x_at_0.cpp"
         # set to true to generate codegen files
@@ -223,7 +231,7 @@ class TestSe2(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(self.a.calc_Dx_log_this())
+        stream = cse_codegen(self.a.calc_Dx_log_this())
         filename = "cpp_gencode/Se2_Dx_log_this.cpp"
 
         # set to true to generate codegen files
@@ -239,7 +247,6 @@ class TestSe2(unittest.TestCase):
                 self.assertEqual(line, file_lines[i])
             file.close()
         stream.close
-
 
 
 if __name__ == '__main__':

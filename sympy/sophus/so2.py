@@ -1,8 +1,12 @@
-import sympy
-import sys
-import unittest
-import sophus
 import functools
+import unittest
+
+import sympy
+
+from sophus.complex import Complex
+from sophus.cse_codegen import cse_codegen
+from sophus.matrix import Vector2
+from sophus.matrix import ZeroVector2
 
 
 class So2:
@@ -16,7 +20,7 @@ class So2:
     def exp(theta):
         """ exponential map """
         return So2(
-            sophus.Complex(
+            Complex(
                 sympy.cos(theta),
                 sympy.sin(theta)))
 
@@ -28,7 +32,7 @@ class So2:
         return sympy.diff(self.log(), self[0])
 
     def calc_Dx_log_exp_x_times_this_at_0(self, x):
-        return sympy.diff((So2.exp(x)*self).log(), x).limit(x,0)
+        return sympy.diff((So2.exp(x)*self).log(), x).limit(x, 0)
 
     def __repr__(self):
         return "So2:" + repr(self.z)
@@ -93,8 +97,8 @@ class So2:
     def Dx_exp_x_matrix(x):
         R = So2.exp(x)
         Dx_exp_x = So2.calc_Dx_exp_x(x)
-        l = [Dx_exp_x[j] * So2.Dxi_x_matrix(R, j) for j in [0, 1]]
-        return functools.reduce((lambda a, b: a + b), l)
+        list = [Dx_exp_x[j] * So2.Dxi_x_matrix(R, j) for j in [0, 1]]
+        return functools.reduce((lambda a, b: a + b), list)
 
     @staticmethod
     def calc_Dx_exp_x_matrix(x):
@@ -118,8 +122,8 @@ class TestSo2(unittest.TestCase):
             'theta', real=True)
         x, y = sympy.symbols('c[0] c[1]', real=True)
         p0, p1 = sympy.symbols('p0 p1', real=True)
-        self.a = So2(sophus.Complex(x, y))
-        self.p = sophus.Vector2(p0, p1)
+        self.a = So2(Complex(x, y))
+        self.p = Vector2(p0, p1)
 
     def test_exp_log(self):
         for theta in [0.,  0.5, 0.1]:
@@ -133,7 +137,7 @@ class TestSo2(unittest.TestCase):
         p1_foo = R_foo_bar * point_bar
         p2_foo = Rmat_foo_bar * point_bar
         self.assertEqual(sympy.simplify(p1_foo - p2_foo),
-                         sophus.ZeroVector2())
+                         ZeroVector2())
 
     def test_derivatives(self):
         self.assertEqual(sympy.simplify(So2.calc_Dx_exp_x_at_0(self.theta) -
@@ -154,7 +158,7 @@ class TestSo2(unittest.TestCase):
             sympy.Matrix.zeros(2, 2))
 
     def test_codegen(self):
-        stream = sophus.cse_codegen(So2.calc_Dx_exp_x(self.theta))
+        stream = cse_codegen(So2.calc_Dx_exp_x(self.theta))
         filename = "cpp_gencode/So2_Dx_exp_x.cpp"
         # set to true to generate codegen files
         if False:
@@ -170,7 +174,7 @@ class TestSo2(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(
+        stream = cse_codegen(
             self.a.calc_Dx_this_mul_exp_x_at_0(self.theta))
         filename = "cpp_gencode/So2_Dx_this_mul_exp_x_at_0.cpp"
         # set to true to generate codegen files
@@ -187,7 +191,7 @@ class TestSo2(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(self.a.calc_Dx_log_this())
+        stream = cse_codegen(self.a.calc_Dx_log_this())
         filename = "cpp_gencode/So2_Dx_log_this.cpp"
 
         # set to true to generate codegen files
@@ -204,7 +208,8 @@ class TestSo2(unittest.TestCase):
             file.close()
         stream.close
 
-        stream = sophus.cse_codegen(self.a.calc_Dx_log_exp_x_times_this_at_0(self.theta))
+        stream = cse_codegen(self.a.calc_Dx_log_exp_x_times_this_at_0(
+            self.theta))
         filename = "cpp_gencode/So2_Dx_log_exp_x_times_this_at_0.cpp"
 
         # set to true to generate codegen files
