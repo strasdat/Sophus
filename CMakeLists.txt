@@ -70,6 +70,8 @@ set(SOPHUS_HEADER_FILES
   sophus/average.hpp
   sophus/cartesian.hpp
   sophus/ceres_local_parameterization.hpp
+  sophus/ceres_manifold.hpp
+  sophus/ceres_typetraits.hpp
   sophus/common.hpp
   sophus/geometry.hpp
   sophus/interpolate.hpp
