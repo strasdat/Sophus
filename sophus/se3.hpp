@@ -1032,7 +1032,8 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
 };
 
 template <class Scalar, int Options>
-SOPHUS_FUNC SE3<Scalar, Options>::SE3() : translation_(TranslationMember::Zero()) {
+SOPHUS_FUNC SE3<Scalar, Options>::SE3()
+    : translation_(TranslationMember::Zero()) {
   static_assert(std::is_standard_layout<SE3>::value,
                 "Assume standard layout for the use of offsetof check below.");
   static_assert(

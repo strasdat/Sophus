@@ -587,7 +587,8 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// Precondition: quaternion must not be close to zero.
   ///
   template <class D>
-  SOPHUS_FUNC explicit RxSO3(Scalar const& scale, Eigen::QuaternionBase<D> const& unit_quat)
+  SOPHUS_FUNC explicit RxSO3(Scalar const& scale,
+                             Eigen::QuaternionBase<D> const& unit_quat)
       : RxSO3(scale, SO3<Scalar>(unit_quat)) {}
 
   /// Accessor of quaternion.
