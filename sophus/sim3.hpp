@@ -754,7 +754,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
 };
 
 template <class Scalar, int Options>
-Sim3<Scalar, Options>::Sim3() : translation_(TranslationMember::Zero()) {
+SOPHUS_FUNC Sim3<Scalar, Options>::Sim3() : translation_(TranslationMember::Zero()) {
   static_assert(std::is_standard_layout<Sim3>::value,
                 "Assume standard layout for the use of offsetof check below.");
   static_assert(
