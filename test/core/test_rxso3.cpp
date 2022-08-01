@@ -248,7 +248,7 @@ class Tests {
     SOPHUS_TEST_APPROX(passed, RxSO3Type(scale, so3.matrix()).matrix(),
                        rxso3.matrix(), Constants<Scalar>::epsilon(),
                        "RxSO3(scale, matrix3x3)");
-    const Eigen::Quaternion<Scalar> q = Eigen::Quaternion<Scalar>::UnitRandom();
+    const Eigen::Quaternion<Scalar> q = rxso3.quaternion();
     SOPHUS_TEST_APPROX(passed, RxSO3Type(scale, q).matrix(),
                        RxSO3Type(scale, SO3<Scalar>(q)).matrix(),
                        Constants<Scalar>::epsilon(),
