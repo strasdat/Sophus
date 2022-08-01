@@ -432,8 +432,8 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   /// Constructor from RxSO3 and translation vector
   ///
   template <class OtherDerived, class D>
-  SOPHUS_FUNC Sim3(RxSO3Base<OtherDerived> const& rxso3,
-                   Eigen::MatrixBase<D> const& translation)
+  SOPHUS_FUNC explicit Sim3(RxSO3Base<OtherDerived> const& rxso3,
+                            Eigen::MatrixBase<D> const& translation)
       : rxso3_(rxso3), translation_(translation) {
     static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
                   "must be same Scalar type");
@@ -446,14 +446,24 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   /// Precondition: quaternion must not be close to zero.
   ///
   template <class D1, class D2>
-  SOPHUS_FUNC Sim3(Eigen::QuaternionBase<D1> const& quaternion,
-                   Eigen::MatrixBase<D2> const& translation)
+  SOPHUS_FUNC explicit Sim3(Eigen::QuaternionBase<D1> const& quaternion,
+                            Eigen::MatrixBase<D2> const& translation)
       : rxso3_(quaternion), translation_(translation) {
     static_assert(std::is_same<typename D1::Scalar, Scalar>::value,
                   "must be same Scalar type");
     static_assert(std::is_same<typename D2::Scalar, Scalar>::value,
                   "must be same Scalar type");
   }
+
+  /// Constructor from scale factor, unit quaternion, and translation vector.
+  ///
+  /// Precondition: quaternion must not be close to zero.
+  ///
+  template <class D1, class D2>
+  SOPHUS_FUNC explicit Sim3(Scalar const& scale,
+                            Eigen::QuaternionBase<D1> const& unit_quaternion,
+                            Eigen::MatrixBase<D2> const& translation)
+      : Sim3(RxSO3<Scalar>(scale, unit_quaternion), translation) {}
 
   /// Constructor from 4x4 matrix
   ///
@@ -744,7 +754,8 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
 };
 
 template <class Scalar, int Options>
-Sim3<Scalar, Options>::Sim3() : translation_(TranslationMember::Zero()) {
+SOPHUS_FUNC Sim3<Scalar, Options>::Sim3()
+    : translation_(TranslationMember::Zero()) {
   static_assert(std::is_standard_layout<Sim3>::value,
                 "Assume standard layout for the use of offsetof check below.");
   static_assert(

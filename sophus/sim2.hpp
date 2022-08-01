@@ -711,7 +711,8 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
 };
 
 template <class Scalar, int Options>
-Sim2<Scalar, Options>::Sim2() : translation_(TranslationMember::Zero()) {
+SOPHUS_FUNC Sim2<Scalar, Options>::Sim2()
+    : translation_(TranslationMember::Zero()) {
   static_assert(std::is_standard_layout<Sim2>::value,
                 "Assume standard layout for the use of offsetof check below.");
   static_assert(
