@@ -292,6 +292,18 @@ class Sim3Base {
     return J;
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_log_this_inv_by_x_at_this()
+      const {
+    Matrix<Scalar, DoF, num_parameters> J;
+    J.template block<3, 4>(0, 0).setZero();
+    J.template block<3, 3>(0, 4) = rxso3().inverse().matrix();
+    J.template block<4, 4>(3, 0) = rxso3().Dx_log_this_inv_by_x_at_this();
+    J.template block<4, 3>(3, 4).setZero();
+    return J;
+  }
+
   /// Returns internal parameters of Sim(3).
   ///
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real, t[0], t[1], t[2]),
@@ -420,7 +432,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   /// Constructor from RxSO3 and translation vector
   ///
   template <class OtherDerived, class D>
-  SOPHUS_FUNC Sim3(RxSO3Base<OtherDerived> const& rxso3,
+  SOPHUS_FUNC explicit Sim3(RxSO3Base<OtherDerived> const& rxso3,
                    Eigen::MatrixBase<D> const& translation)
       : rxso3_(rxso3), translation_(translation) {
     static_assert(std::is_same<typename OtherDerived::Scalar, Scalar>::value,
@@ -434,7 +446,7 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
   /// Precondition: quaternion must not be close to zero.
   ///
   template <class D1, class D2>
-  SOPHUS_FUNC Sim3(Eigen::QuaternionBase<D1> const& quaternion,
+  SOPHUS_FUNC explicit Sim3(Eigen::QuaternionBase<D1> const& quaternion,
                    Eigen::MatrixBase<D2> const& translation)
       : rxso3_(quaternion), translation_(translation) {
     static_assert(std::is_same<typename D1::Scalar, Scalar>::value,
@@ -442,6 +454,16 @@ class Sim3 : public Sim3Base<Sim3<Scalar_, Options>> {
     static_assert(std::is_same<typename D2::Scalar, Scalar>::value,
                   "must be same Scalar type");
   }
+
+  /// Constructor from scale factor, unit quaternion, and translation vector.
+  ///
+  /// Precondition: quaternion must not be close to zero.
+  ///
+  template <class D1, class D2>
+  SOPHUS_FUNC explicit Sim3(Scalar const& scale,
+                   Eigen::QuaternionBase<D1> const& unit_quaternion,
+                   Eigen::MatrixBase<D2> const& translation)
+      : Sim3(RxSO3<Scalar>(scale, unit_quaternion), translation) {}
 
   /// Constructor from 4x4 matrix
   ///

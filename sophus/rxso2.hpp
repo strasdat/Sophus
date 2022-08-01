@@ -318,6 +318,16 @@ class RxSO2Base {
     return J;
   }
 
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC Matrix<Scalar, DoF, num_parameters> Dx_log_this_inv_by_x_at_this()
+      const {
+    Matrix<Scalar, DoF, num_parameters> J;
+    const Scalar norm_sq_inv = Scalar(1.) / complex().squaredNorm();
+    J << -complex().y(), complex().x(), complex().x(), complex().y();
+    return J * norm_sq_inv;
+  }
+
   /// Returns internal parameters of RxSO(2).
   ///
   /// It returns (c[0], c[1]), with c being the  complex number.

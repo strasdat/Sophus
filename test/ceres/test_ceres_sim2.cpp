@@ -7,7 +7,14 @@
 template <typename T>
 using StdVector = std::vector<T, Eigen::aligned_allocator<T>>;
 
-int main(int, char**) {
+template <>
+struct RotationalPart<Sophus::Sim2d> {
+  static double Norm(const typename Sophus::Sim2d::Tangent &t) {
+    return std::abs(t[2]);
+  }
+};
+
+int main(int, char **) {
   using Sim2d = Sophus::Sim2d;
   using RxSO2d = Sophus::RxSO2d;
   using Point = Sim2d::Point;

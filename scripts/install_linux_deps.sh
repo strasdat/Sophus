@@ -17,7 +17,7 @@ cd ..
 
 git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
 cd ceres-solver
-git reset --hard 399cda773035d99eaf1f4a129a666b3c4df9d1b1
+git reset --hard b0aef211db734379319c19c030e734d6e23436b0
 mkdir build
 cd build
 ccache -s
