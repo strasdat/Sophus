@@ -227,12 +227,20 @@ class Tests {
     RxSO3Type rxso3 = sim3.rxso3();
 
     SOPHUS_TEST_APPROX(passed, Sim3Type(rxso3, translation).matrix(),
-                       sim3.matrix(), Constants<Scalar>::epsilon(), "");
+                       sim3.matrix(), Constants<Scalar>::epsilon(),
+                       "Sim3(RxSO3, translation)");
     SOPHUS_TEST_APPROX(passed,
                        Sim3Type(rxso3.quaternion(), translation).matrix(),
-                       sim3.matrix(), Constants<Scalar>::epsilon(), "");
+                       sim3.matrix(), Constants<Scalar>::epsilon(),
+                       "Sim3(quaternion, translation)");
+    SOPHUS_TEST_APPROX(
+        passed,
+        Sim3Type(rxso3.scale(), rxso3.quaternion().normalized(), translation)
+            .matrix(),
+        sim3.matrix(), Constants<Scalar>::epsilon(),
+        "Sim3(scale, unit_quaternion, translation)");
     SOPHUS_TEST_APPROX(passed, Sim3Type(sim3.matrix()).matrix(), sim3.matrix(),
-                       Constants<Scalar>::epsilon(), "");
+                       Constants<Scalar>::epsilon(), "Sim3(matrix4x4)");
 
     Scalar scale(1.2);
     sim3.setScale(scale);
