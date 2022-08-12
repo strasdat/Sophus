@@ -36,6 +36,22 @@ def ZeroVector3():
     return Vector3(0, 0, 0)
 
 
+def Vector4(a, b, c, d):
+    return sympy.Matrix([a, b, c, d])
+
+
+def ZeroVector4():
+    return Vector4(0, 0, 0, 0)
+
+
+def Vector5(a, b, c, d, e):
+    return sympy.Matrix([a, b, c, d, e])
+
+
+def ZeroVector5():
+    return Vector5(0, 0, 0, 0, 0)
+
+
 def Vector6(a, b, c, d, e, f):
     return sympy.Matrix([a, b, c, d, e, f])
 
