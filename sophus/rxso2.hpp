@@ -90,6 +90,8 @@ class RxSO2Base {
   static int constexpr num_parameters = 2;
   /// Group transformations are 2x2 matrices.
   static int constexpr N = 2;
+  /// Points are 2-dimensional
+  static int constexpr Dim = 2;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector2<Scalar>;
   using HomogeneousPoint = Vector3<Scalar>;
@@ -543,11 +545,21 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
     return J;
   }
 
+  /// Returns derivative of exp(x) * p wrt. x_i at x=0.
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, 2, DoF> Dx_exp_x_times_point_at_0(
+      Point const& point) {
+    Sophus::Matrix<Scalar, 2, DoF> j;
+    j << Sophus::SO2<Scalar>::Dx_exp_x_times_point_at_0(point), point;
+    return j;
+  }
+
   /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
   }
+
   /// Group exponential
   ///
   /// This functions takes in an element of tangent space (= rotation angle

@@ -82,6 +82,8 @@ class RxSO3Base {
   static int constexpr num_parameters = 4;
   /// Group transformations are 3x3 matrices.
   static int constexpr N = 3;
+  /// Points are 3-dimensional
+  static int constexpr Dim = 3;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector3<Scalar>;
   using HomogeneousPoint = Vector4<Scalar>;
@@ -619,6 +621,15 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
     J.template block<4, 3>(0, 0) = SO3<Scalar>::Dx_exp_x(omega) * scale;
     J.col(3) = quat.coeffs() * scale_half;
     return J;
+  }
+
+  /// Returns derivative of exp(x) * p wrt. x_i at x=0.
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, 3, DoF> Dx_exp_x_times_point_at_0(
+      Point const& point) {
+    Sophus::Matrix<Scalar, 3, DoF> j;
+    j << Sophus::SO3<Scalar>::hat(-point), point;
+    return j;
   }
 
   /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.

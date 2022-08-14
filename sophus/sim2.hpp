@@ -70,6 +70,8 @@ class Sim2Base {
   static int constexpr num_parameters = 4;
   /// Group transformations are 3x3 matrices.
   static int constexpr N = 3;
+  /// Points are 2-dimensional
+  static int constexpr Dim = 2;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector2<Scalar>;
   using HomogeneousPoint = Vector3<Scalar>;
@@ -545,6 +547,16 @@ class Sim2 : public Sim2Base<Sim2<Scalar_, Options>> {
     J.template block<2, 1>(2, 3) =
         (A_dsigma * Omega + B_dsigma * Omega2 + C_dsigma * I) * upsilon;
 
+    return J;
+  }
+
+  /// Returns derivative of exp(x) * p wrt. x_i at x=0.
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, 2, DoF> Dx_exp_x_times_point_at_0(
+      Point const& point) {
+    Sophus::Matrix<Scalar, 2, DoF> J;
+    J << Sophus::Matrix2<Scalar>::Identity(),
+        Sophus::RxSO2<Scalar>::Dx_exp_x_times_point_at_0(point);
     return J;
   }
 

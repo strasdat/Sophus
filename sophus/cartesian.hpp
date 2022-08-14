@@ -61,7 +61,7 @@ namespace Sophus {
 /// with identity rotation, and hence represents pure translation.
 ///
 /// The purpose of this class is two-fold:
-///  - for educational purpose, to highlight how Lie groups genereliza over
+///  - for educational purpose, to highlight how Lie groups generalize over
 ///    Euclidean vector spaces.
 ///  - to be used in templated/generic algorithms (such as Sophus::Spline)
 ///    which are implemented against the Lie group interface.
@@ -84,6 +84,8 @@ class CartesianBase {
   static int constexpr num_parameters = M;
   /// Group transformations are (M+1)x(M+1) matrices.
   static int constexpr N = M + 1;
+  static int constexpr Dim = M;
+
   using Transformation = Sophus::Matrix<Scalar, N, N>;
   using Point = Sophus::Vector<Scalar, M>;
   using HomogeneousPoint = Sophus::Vector<Scalar, N>;
@@ -256,6 +258,7 @@ class Cartesian : public CartesianBase<Cartesian<Scalar_, M, Options>, M> {
   static int constexpr DoF = Base::DoF;
   static int constexpr num_parameters = Base::num_parameters;
   static int constexpr N = Base::N;
+  static int constexpr Dim = Base::Dim;
 
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
@@ -328,6 +331,15 @@ class Cartesian : public CartesianBase<Cartesian<Scalar_, M, Options>, M> {
   SOPHUS_FUNC static Sophus::Matrix<Scalar, num_parameters, DoF> Dx_exp_x(
       Tangent const&) {
     return Dx_exp_x_at_0();
+  }
+
+  /// Returns derivative of exp(x) * p wrt. x_i at x=0.
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, Dim, DoF> Dx_exp_x_times_point_at_0(
+      Point const&) {
+    Sophus::Matrix<Scalar, Dim, DoF> J;
+    J.setIdentity();
+    return J;
   }
 
   /// Returns derivative of exp(x).matrix() wrt. ``x_i at x=0``.
