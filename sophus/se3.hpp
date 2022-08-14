@@ -69,6 +69,8 @@ class SE3Base {
   static int constexpr num_parameters = 7;
   /// Group transformations are 4x4 matrices.
   static int constexpr N = 4;
+  /// Points are 3-dimensional
+  static int constexpr Dim = 3;
   using Transformation = Matrix<Scalar, N, N>;
   using Point = Vector3<Scalar>;
   using HomogeneousPoint = Vector4<Scalar>;
@@ -821,6 +823,16 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   ///
   SOPHUS_FUNC static Transformation Dxi_exp_x_matrix_at_0(int i) {
     return generator(i);
+  }
+
+  /// Returns derivative of exp(x) * p wrt. x_i at x=0.
+  ///
+  SOPHUS_FUNC static Sophus::Matrix<Scalar, 3, DoF> Dx_exp_x_times_point_at_0(
+      Point const& point) {
+    Sophus::Matrix<Scalar, 3, DoF> J;
+    J << Sophus::Matrix3<Scalar>::Identity(),
+        Sophus::SO3<Scalar>::Dx_exp_x_times_point_at_0(point);
+    return J;
   }
 
   /// Group exponential

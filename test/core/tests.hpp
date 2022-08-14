@@ -48,6 +48,7 @@ class LieGroupTests {
   using Line = typename LieGroup::Line;
   using Hyperplane = typename LieGroup::Hyperplane;
   using Adjoint = typename LieGroup::Adjoint;
+  static int constexpr Dim = LieGroup::Dim;
   static int constexpr N = LieGroup::N;
   static int constexpr DoF = LieGroup::DoF;
   static int constexpr num_parameters = LieGroup::num_parameters;
@@ -88,7 +89,7 @@ class LieGroupTests {
   enable_if_t<std::is_same<G, SO3<Scalar>>::value ||
                   std::is_same<G, SE3<Scalar>>::value,
               bool>
-  jacobianTest() {
+  leftJacobianTest() {
     bool passed = true;
     for (const auto& x : tangent_vec_) {
       LieGroup const inv_exp_x = LieGroup::exp(x).inverse();
@@ -121,8 +122,25 @@ class LieGroupTests {
   enable_if_t<!(std::is_same<G, SO3<Scalar>>::value ||
                 std::is_same<G, SE3<Scalar>>::value),
               bool>
-  jacobianTest() {
+  leftJacobianTest() {
     return true;
+  }
+
+  bool moreJacobiansTest() {
+    bool passed = true;
+    for (auto const& point : point_vec_) {
+      Matrix<Scalar, Dim, DoF> J = LieGroup::Dx_exp_x_times_point_at_0(point);
+      Tangent t;
+      setToZero(t);
+      Matrix<Scalar, Dim, DoF> const J_num =
+          vectorFieldNumDiff<Scalar, Dim, DoF>(
+              [point](Tangent const& x) { return LieGroup::exp(x) * point; },
+              t);
+
+      SOPHUS_TEST_APPROX(passed, J, J_num, kSmallEpsSqrt,
+                         "Dx_exp_x_times_point_at_0");
+    }
+    return passed;
   }
 
   bool contructorAndAssignmentTest() {
@@ -648,7 +666,8 @@ class LieGroupTests {
     passed &= interpolateAndMeanTest();
     passed &= testRandomSmoke();
     passed &= testSpline();
-    passed &= jacobianTest();
+    passed &= leftJacobianTest();
+    passed &= moreJacobiansTest();
     return passed;
   }
 
