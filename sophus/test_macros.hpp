@@ -122,7 +122,8 @@ void processTestResult(bool passed) {
           "{} (={}) is not approx {} (={}); {} is {}; nrm is {}\n",            \
           SOPHUS_STRINGIFY(left), Sophus::details::pretty(left),               \
           SOPHUS_STRINGIFY(right), Sophus::details::pretty(right),             \
-          SOPHUS_STRINGIFY(thr), Sophus::details::pretty(thr), nrm);           \
+          SOPHUS_STRINGIFY(thr), Sophus::details::pretty(thr),                 \
+          Sophus::details::pretty(nrm));                                       \
       msg += SOPHUS_FMT_STR(descr, ##__VA_ARGS__);                             \
       Sophus::details::testFailed(passed, SOPHUS_FUNCTION, __FILE__, __LINE__, \
                                   msg);                                        \
@@ -140,7 +141,8 @@ void processTestResult(bool passed) {
           "is {}\n",                                                           \
           SOPHUS_STRINGIFY(left), Sophus::details::pretty(left),               \
           SOPHUS_STRINGIFY(right), Sophus::details::pretty(right),             \
-          SOPHUS_STRINGIFY(thr), Sophus::details::pretty(thr), nrm);           \
+          SOPHUS_STRINGIFY(thr), Sophus::details::pretty(thr),                 \
+          Sophus::details::pretty(nrm));                                       \
       msg += SOPHUS_FMT_STR(descr, ##__VA_ARGS__);                             \
       Sophus::details::testFailed(passed, SOPHUS_FUNCTION, __FILE__, __LINE__, \
                                   msg);                                        \

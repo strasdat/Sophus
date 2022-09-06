@@ -128,7 +128,7 @@ template <class Scalar>
 class SetElementAt<Scalar, Scalar> {
  public:
   static void impl(Scalar& s, Scalar value, int at) {
-    SOPHUS_ENSURE(at == 0, "is {}", at);
+    SOPHUS_ENSURE(at == 0, "is {}", SOPHUS_FMT_ARG(at));
     s = value;
   }
 };
@@ -137,7 +137,7 @@ template <class Scalar, int N>
 class SetElementAt<Vector<Scalar, N>, Scalar> {
  public:
   static void impl(Vector<Scalar, N>& v, Scalar value, int at) {
-    SOPHUS_ENSURE(at >= 0 && at < N, "is {}", at);
+    SOPHUS_ENSURE(at >= 0 && at < N, "is {}", SOPHUS_FMT_ARG(at));
     v[at] = value;
   }
 };
