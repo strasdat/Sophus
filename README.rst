@@ -43,15 +43,15 @@ modern configurations as long they support c++14, CMake, Eigen 3.3.X and
 .. |GithubCISympy| image:: https://github.com/strasdat/Sophus/actions/workflows/sympy.yml/badge.svg?branch=master
 .. _GithubCISympy: https://github.com/strasdat/Sophus/actions/workflows/sympy.yml?query=branch%3Amaster
 
-Installing LuaBridge (vcpkg)
+Installing Sophus (vcpkg)
 ----------------------------
 
 You can build and install Sophus using [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager:
 
-    git clone https://github.com/Microsoft/vcpkg.git
-    cd vcpkg
-    ./bootstrap-vcpkg.sh
-    ./vcpkg integrate install
-    ./vcpkg install sophus
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+./vcpkg install sophus
 
 The Sophus port in vcpkg is kept up to date by Microsoft team members and community contributors. If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
