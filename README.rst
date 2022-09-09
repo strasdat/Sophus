@@ -46,7 +46,7 @@ modern configurations as long they support c++14, CMake, Eigen 3.3.X and
 Installing Sophus (vcpkg)
 ----------------------------
 
-You can build and install Sophus using [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager:
+You can build and install Sophus using [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager::
 
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
