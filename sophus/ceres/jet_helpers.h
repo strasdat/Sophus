@@ -1,0 +1,33 @@
+// Copyright (c) 2011, Hauke Strasdat
+// Copyright (c) 2012, Steven Lovegrove
+// Copyright (c) 2021, farm-ng, inc.
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file or at
+// https://opensource.org/licenses/MIT.
+
+#pragma once
+
+// Forward declare ceres::Jet, so we don't have to include <ceres/jet.h> here,
+// and core does not have to depend on ceres.
+namespace ceres {
+template <class ScalarT, int kN>
+struct Jet;
+}  // namespace ceres
+
+namespace sophus {
+
+namespace jet_helpers {
+
+template <class ScalarT>
+struct GetValue {
+  static ScalarT impl(const ScalarT& t) { return t; }
+};
+
+template <class ScalarT, int kN>
+struct GetValue<ceres::Jet<ScalarT, kN>> {
+  static ScalarT impl(const ScalarT& t) { return t.a; }
+};
+
+}  // namespace jet_helpers
+}  // namespace sophus

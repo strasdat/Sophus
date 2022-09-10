@@ -2,7 +2,7 @@ name: Build Docs
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, 23.04-beta ]
 
   workflow_dispatch:
 
@@ -16,7 +16,9 @@ jobs:
 
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
 
       - name: build docs
         run: |
@@ -31,4 +33,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: html-dir
-          publish_branch: gh_pages
+          publish_branch: gh_pages_beta

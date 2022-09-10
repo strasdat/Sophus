@@ -6,4 +6,5 @@ Sophus -  Lie groups for 2d/3d Geometry
    :caption: Contents:
 
    GitHub Page <https://github.com/strasdat/Sophus>
+   style
    pysophus

@@ -2,3 +2,13 @@ build
 CMakeLists.txt.user
 *.pyc
 .vscode/settings.json
+xml-dir/
+clang-tidy-build/
+doxyrest_b/
+html-dir/
+rst-dir/class_*
+rst-dir/struct_*
+rst-dir/enum_sophus_*
+rst-dir/global.rst
+rst-dir/index.rst
+rst-dir/namespace_*

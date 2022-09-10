@@ -1,0 +1,14 @@
+Scalar const c0 = 2.0*d[2];
+Scalar const c1 = pow(a, 2);
+Scalar const c2 = pow(b, 2);
+Scalar const c3 = c1 + c2;
+Scalar const c4 = pow(c3, 2);
+Scalar const c5 = 4.0*c3*d[1] + 6.0*c4*d[4] + 2.0*d[0];
+Scalar const c6 = a*d[3];
+Scalar const c7 = 1.0*pow(c3, 3)*d[4] + 1.0*c3*d[0] + 1.0*c4*d[1] + 1.0;
+Scalar const c8 = b*d[3];
+Scalar const c9 = a*b*c5;
+result[0] = f[0]*(b*c0 + c1*c5 + 6.0*c6 + c7);
+result[1] = f[0]*(a*c0 + 2*c8 + c9);
+result[2] = f[1]*(2*a*d[2] + 2.0*c8 + c9);
+result[3] = f[1]*(6.0*b*d[2] + c2*c5 + 2.0*c6 + c7);

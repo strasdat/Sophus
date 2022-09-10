@@ -1,5 +1,8 @@
-Copyright 2011-2017 Hauke Strasdat           
-          2012-2017 Steven Lovegrove
+MIT License
+
+Copyright (c) 2011, Hauke Strasdat.
+Copyright (c) 2012, Steven Lovegrove.
+Copyright (c) 2021, farm-ng, inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to

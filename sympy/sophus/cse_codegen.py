@@ -1,9 +1,11 @@
+"""TODO(docstring)"""
 import io
 
 import sympy
 
 
 def cse_codegen(symbols):
+    """TODO(docstring)"""
     cse_results = sympy.cse(symbols, sympy.numbered_symbols("c"))
     output = io.StringIO()
     for helper in cse_results[0]:

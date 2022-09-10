@@ -1,8 +1,8 @@
-name: Linux / MacOS - c++
+name: Ubuntu / Mac - c++
 
 on:
   push:
-    branches: [ master ]
+    branches: [master, 23.04-beta]
   pull_request:
 
   workflow_dispatch:
@@ -12,55 +12,92 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-10.15]
-        build_type: [Debug, Release]
-        row_major: [ON, OFF]
-        basic_logging: [ON, OFF]
-        exclude:
-          - os: macos-10.15
-            row_major: ON
-          - os: macos-10.15
-            basic_logging: ON
-          - build_type: Release
-            row_major: ON
-          - build_type: Release
-            basic_logging: ON
-          - build_type: Debug
-            row_major: ON
-            basic_logging: ON
+        include:
+          - os: ubuntu-20.04
+            tests: unit_test
+            access: col_major
+            build_type: Release
+          - os: ubuntu-20.04
+            tests: unit_test
+            access: row_major
+            build_type: Release
+          - os: ubuntu-20.04
+            tests: install_target
+            access: col_major
+            build_type: Release
+          - os: ubuntu-20.04
+            tests: clang_tidy
+            access: col_major
+            build_type: Release
+          - os: macos-11
+            tests: unit_test
+            access: col_major
+            build_type: Release
+          - os: macos-11
+            tests: install_target
+            access: col_major
+            build_type: Release
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
-      ROW_MAJOR_DEFAULT: ${{ matrix.row_major }}
-      USE_BASIC_LOGGING: ${{ matrix.basic_logging }}
-
+      ROW_MAJOR_DEFAULT: OFF
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Format
-        uses: DoozyX/clang-format-lint-action@v0.12
+      - uses: actions/checkout@v3
         with:
-          source: '.'
-          extensions: 'hpp,cpp'
-          exclude: './sympy ./doxyrest_b'
-          clangFormatVersion: 9
-        if: matrix.os == 'ubuntu-20.04'
+          submodules: "recursive"
 
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1
 
-      - name: Install dependencies (Linux)
-        run: ./scripts/install_linux_deps.sh
-        if: matrix.os == 'ubuntu-20.04'
+      - name: Install libfmt / expected
+        run: ./scripts/install_fmt_expected.sh
 
-      - name: Install fmt dependency (Linux)
-        run: ./scripts/install_linux_fmt_deps.sh
-        if: matrix.os == 'ubuntu-20.04' && matrix.basic_logging == 'OFF'
+      - name: Install dependencies (Ubuntu)
+        run: ./scripts/install_deps_ubuntu.sh
+        if: matrix.os == 'ubuntu-20.04' && matrix.access == 'col_major'
 
-      - name: Install dependencies (Mac OS)
-        run: ./scripts/install_osx_deps.sh
-        if: matrix.os == 'macos-10.15'
+      - name: Install dependencies (Ubuntu, Eigen row-major)
+        run: ./scripts/install_deps_ubuntu.sh
+        env:
+          ROW_MAJOR_DEFAULT: ON
+        if: matrix.os == 'ubuntu-20.04' && matrix.access == 'row_major'
+
+      - name: Install dependencies (Mac)
+        run: ./scripts/install_deps_mac.sh
+        if: matrix.os == 'macos-11'
+
+      - name: Install system targets tests
+        run: |
+          mkdir -p build
+          cd build
+          pwd
+          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DFARM_NG_CORE_TESTS=OFF ..
+          sudo make install
+          cd ..
+          cd examples/test_install_targets/
+          mkdir -p build
+          cd build
+          cmake ..
+          make
+        if: matrix.tests == 'install_target'
+
+      - name: install ceres (Mac)
+        run: |
+          ./scripts/install_ceres_mac.sh
+        if: (matrix.tests == 'clang_tidy' || matrix.tests == 'unit_test') && matrix.os == 'macos-11'
+
+      - name: install ceres (Ubuntu)
+        run:
+          ./scripts/install_ceres_ubuntu.sh
+        if: (matrix.tests == 'clang_tidy' || matrix.tests == 'unit_test') && matrix.os == 'ubuntu-20.04'
+
+      - name: clang-tidy
+        run: |
+          ./run_clang_tidy.sh
+        if: matrix.tests == 'clang_tidy'
 
       - name: Run tests
-        run: ./scripts/run_cpp_tests.sh
+        run:
+          ./scripts/run_cpp_tests.sh
+        if: matrix.tests == 'unit_test'

@@ -1,5 +1,5 @@
-Python API
-==========
+Sympy API - Symbolic Sophus In Python
+=====================================
 
 .. automodule:: sophus.matrix
    :members:
@@ -20,4 +20,16 @@ Python API
    :members:
 
 .. automodule:: sophus.se3
+   :members:
+
+.. automodule:: sophus.inverse_depth
+   :members:
+
+.. automodule:: sophus.affine_camera
+   :members:
+
+.. automodule:: sophus.brown_conrady_camera
+   :members:
+
+.. automodule:: sophus.kannala_brandt_camera
    :members:
