@@ -6,6 +6,11 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+/// Image MutImage, owning images types.
+///
+/// Note that it is a conscious API decision to follow "shallow-compare" type
+/// semantic for ImageView, MutImageView, Image and MutImage. See image_view.h
+/// for details.
 #pragma once
 
 #include "sophus/image/image_view.h"
@@ -150,7 +155,7 @@ class MutImage : public MutImageView<PixelT> {
   // End (Rule of 5)
 
   [[nodiscard]] MutImageView<PixelT> mutView() const {
-    return MutImageView<PixelT>(this->shape(), this->mutData());
+    return MutImageView<PixelT>(this->shape(), this->mutPtr());
   }
 
   /// Swaps img and this.
