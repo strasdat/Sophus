@@ -2,7 +2,7 @@
 list(APPEND SEARCH_HEADERS ${EIGEN3_INCLUDE_DIR})
 
 # git clone https://ceres-solver.googlesource.com/ceres-solver
-find_package(Ceres 2.0.0 QUIET)
+find_package(Ceres 2.1.0 QUIET)
 
 function(add_test_ceres source postfix)
   add_executable(${source}_${postfix} ${source}.cpp)

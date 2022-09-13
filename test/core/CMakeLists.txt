@@ -12,7 +12,7 @@ SET( TEST_SOURCES test_common
                   test_sim3
                   test_velocities
                   test_geometry)
-find_package( Ceres 2.0.0 QUIET )
+find_package( Ceres 2.1.0 QUIET )
 
 FOREACH(test_src ${TEST_SOURCES})
   ADD_EXECUTABLE( ${test_src} ${test_src}.cpp tests.hpp ../../sophus/test_macros.hpp)
