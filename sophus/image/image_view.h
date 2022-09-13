@@ -208,7 +208,7 @@ struct ImageView {
   bool operator!=(const ImageView& rhs) const = delete;
 
   /// Returns true both views have the same size and contain the same data.
-  bool hasSameData(const ImageView& rhs) const {
+  [[nodiscard]] bool hasSameData(const ImageView& rhs) const {
     if (!(this->imageSize() == rhs.imageSize())) {
       return false;
     }
