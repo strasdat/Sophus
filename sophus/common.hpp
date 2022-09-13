@@ -18,6 +18,7 @@
 #define SOPHUS_FMT_CSTR(description, ...) description
 #define SOPHUS_FMT_STR(description, ...) std::string(description)
 #define SOPHUS_FMT_PRINT(description, ...) std::printf("%s\n", description)
+#define SOPHUS_FMT_ARG(arg)
 
 #else  // !SOPHUS_USE_BASIC_LOGGING
 
@@ -34,6 +35,12 @@
 
 #include <fmt/format.h>
 #include <fmt/ostream.h>
+
+#if FMT_VERSION >= 90000
+#define SOPHUS_FMT_ARG(arg) fmt::streamed(arg)
+#else
+#define SOPHUS_FMT_ARG(arg) arg
+#endif
 
 #ifdef SOPHUS_COMPILE_TIME_FMT
 // To keep compatibility with older libfmt versions,

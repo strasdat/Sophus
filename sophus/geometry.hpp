@@ -27,7 +27,7 @@ Vector2<T> normalFromSO2(SO2<T> const& R_foo_line) {
 template <class T>
 SO2<T> SO2FromNormal(Vector2<T> normal_foo) {
   SOPHUS_ENSURE(normal_foo.squaredNorm() > Constants<T>::epsilon(), "{}",
-                normal_foo.transpose());
+                SOPHUS_FMT_ARG(normal_foo.transpose()));
   normal_foo.normalize();
   return SO2<T>(normal_foo.y(), -normal_foo.x());
 }
@@ -61,18 +61,19 @@ Matrix3<T> rotationFromNormal(Vector3<T> const& normal_foo,
                                                                    T(0))) {
   SOPHUS_ENSURE(xDirHint_foo.dot(yDirHint_foo) < Constants<T>::epsilon(),
                 "xDirHint ({}) and yDirHint ({}) must be perpendicular.",
-                xDirHint_foo.transpose(), yDirHint_foo.transpose());
+                SOPHUS_FMT_ARG(xDirHint_foo.transpose()),
+                SOPHUS_FMT_ARG(yDirHint_foo.transpose()));
   using std::abs;
   using std::sqrt;
   T const xDirHint_foo_sqr_length = xDirHint_foo.squaredNorm();
   T const yDirHint_foo_sqr_length = yDirHint_foo.squaredNorm();
   T const normal_foo_sqr_length = normal_foo.squaredNorm();
   SOPHUS_ENSURE(xDirHint_foo_sqr_length > Constants<T>::epsilon(), "{}",
-                xDirHint_foo.transpose());
+                SOPHUS_FMT_ARG(xDirHint_foo.transpose()));
   SOPHUS_ENSURE(yDirHint_foo_sqr_length > Constants<T>::epsilon(), "{}",
-                yDirHint_foo.transpose());
+                SOPHUS_FMT_ARG(yDirHint_foo.transpose()));
   SOPHUS_ENSURE(normal_foo_sqr_length > Constants<T>::epsilon(), "{}",
-                normal_foo.transpose());
+                SOPHUS_FMT_ARG(normal_foo.transpose()));
 
   Matrix3<T> basis_foo;
   basis_foo.col(2) = normal_foo;
@@ -101,8 +102,8 @@ Matrix3<T> rotationFromNormal(Vector3<T> const& normal_foo,
   T det = basis_foo.determinant();
   // sanity check
   SOPHUS_ENSURE(abs(det - T(1)) < Constants<T>::epsilon(),
-                "Determinant of basis is not 1, but {}. Basis is \n{}\n", det,
-                basis_foo);
+                "Determinant of basis is not 1, but {}. Basis is \n{}\n",
+                SOPHUS_FMT_ARG(det), SOPHUS_FMT_ARG(basis_foo));
   return basis_foo;
 }
 

@@ -77,7 +77,7 @@ class LieGroupTests {
         Tangent ad2 = LieGroup::vee(T * LieGroup::hat(x) *
                                     group_vec_[i].inverse().matrix());
         SOPHUS_TEST_APPROX(passed, ad1, ad2, Scalar(10) * kSmallEps,
-                           "Adjoint case %, %", i, j);
+                           "Adjoint case {}, {}", i, j);
       }
     }
     return passed;
@@ -148,44 +148,48 @@ class LieGroupTests {
     for (LieGroup foo_T_bar : group_vec_) {
       LieGroup foo_T2_bar = foo_T_bar;
       SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T2_bar.matrix(),
-                         kSmallEps, "Copy constructor: %\nvs\n %",
-                         transpose(foo_T_bar.matrix()),
-                         transpose(foo_T2_bar.matrix()));
+                         kSmallEps, "Copy constructor: {}\nvs\n {}",
+                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
+                         SOPHUS_FMT_ARG(transpose(foo_T2_bar.matrix())));
       LieGroup foo_T3_bar;
       foo_T3_bar = foo_T_bar;
       SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T3_bar.matrix(),
-                         kSmallEps, "Copy assignment: %\nvs\n %",
-                         transpose(foo_T_bar.matrix()),
-                         transpose(foo_T3_bar.matrix()));
+                         kSmallEps, "Copy assignment: {}\nvs\n {}",
+                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
+                         SOPHUS_FMT_ARG(transpose(foo_T3_bar.matrix())));
 
       LieGroup foo_T4_bar(foo_T_bar.matrix());
-      SOPHUS_TEST_APPROX(
-          passed, foo_T_bar.matrix(), foo_T4_bar.matrix(), kSmallEps,
-          "Constructor from homogeneous matrix: %\nvs\n %",
-          transpose(foo_T_bar.matrix()), transpose(foo_T4_bar.matrix()));
+      SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T4_bar.matrix(),
+                         kSmallEps,
+                         "Constructor from homogeneous matrix: {}\nvs\n {}",
+                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
+                         SOPHUS_FMT_ARG(transpose(foo_T4_bar.matrix())));
 
       Eigen::Map<LieGroup> foo_Tmap_bar(foo_T_bar.data());
       LieGroup foo_T5_bar = foo_Tmap_bar;
-      SOPHUS_TEST_APPROX(
-          passed, foo_T_bar.matrix(), foo_T5_bar.matrix(), kSmallEps,
-          "Assignment from Eigen::Map type: %\nvs\n %",
-          transpose(foo_T_bar.matrix()), transpose(foo_T5_bar.matrix()));
+      SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T5_bar.matrix(),
+                         kSmallEps,
+                         "Assignment from Eigen::Map type: {}\nvs\n {}",
+                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
+                         SOPHUS_FMT_ARG(transpose(foo_T5_bar.matrix())));
 
       Eigen::Map<LieGroup const> foo_Tcmap_bar(foo_T_bar.data());
       LieGroup foo_T6_bar;
       foo_T6_bar = foo_Tcmap_bar;
-      SOPHUS_TEST_APPROX(
-          passed, foo_T_bar.matrix(), foo_T5_bar.matrix(), kSmallEps,
-          "Assignment from Eigen::Map type: %\nvs\n %",
-          transpose(foo_T_bar.matrix()), transpose(foo_T5_bar.matrix()));
+      SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T5_bar.matrix(),
+                         kSmallEps,
+                         "Assignment from Eigen::Map type: {}\nvs\n {}",
+                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
+                         SOPHUS_FMT_ARG(transpose(foo_T5_bar.matrix())));
 
       LieGroup I;
       Eigen::Map<LieGroup> foo_Tmap2_bar(I.data());
       foo_Tmap2_bar = foo_T_bar;
       SOPHUS_TEST_APPROX(passed, foo_Tmap2_bar.matrix(), foo_T_bar.matrix(),
-                         kSmallEps, "Assignment to Eigen::Map type: %\nvs\n %",
-                         transpose(foo_Tmap2_bar.matrix()),
-                         transpose(foo_T_bar.matrix()));
+                         kSmallEps,
+                         "Assignment to Eigen::Map type: {}\nvs\n {}",
+                         SOPHUS_FMT_ARG(transpose(foo_Tmap2_bar.matrix())),
+                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())));
     }
     return passed;
   }
@@ -205,7 +209,7 @@ class LieGroupTests {
           },
           Scalar(0));
       SOPHUS_TEST_APPROX(passed, Gi, Gi2, kSmallEpsSqrt,
-                         "Dxi_exp_x_matrix_at_ case %", i);
+                         "Dxi_exp_x_matrix_at_ case {}", i);
     }
 
     return passed;
@@ -225,7 +229,7 @@ class LieGroupTests {
               a);
 
       SOPHUS_TEST_APPROX(passed, J, J_num, 3 * kSmallEpsSqrt,
-                         "Dx_exp_x case: %", j);
+                         "Dx_exp_x case: {}", j);
     }
 
     Tangent o;
@@ -251,7 +255,7 @@ class LieGroupTests {
               o);
 
       SOPHUS_TEST_APPROX(passed, J, J_num, kSmallEpsSqrt,
-                         "Dx_this_mul_exp_x_at_0 case: %", i);
+                         "Dx_this_mul_exp_x_at_0 case: {}", i);
     }
 
     for (size_t i = 0; i < group_vec_.size(); ++i) {
@@ -263,7 +267,7 @@ class LieGroupTests {
           Eigen::Matrix<Scalar, DoF, DoF>::Identity();
 
       SOPHUS_TEST_APPROX(passed, J, J_exp, kSmallEpsSqrt,
-                         "Dy_log_this_inv_by_at_x case: %", i);
+                         "Dy_log_this_inv_by_at_x case: {}", i);
     }
     return passed;
   }
@@ -277,7 +281,7 @@ class LieGroupTests {
       LieGroup mult = T1 * T2;
       T1 *= T2;
       SOPHUS_TEST_APPROX(passed, T1.matrix(), mult.matrix(), kSmallEps,
-                         "Product case: %", i);
+                         "Product case: {}", i);
     }
     return passed;
   }
@@ -288,7 +292,7 @@ class LieGroupTests {
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       Transformation T1 = group_vec_[i].matrix();
       Transformation T2 = LieGroup::exp(group_vec_[i].log()).matrix();
-      SOPHUS_TEST_APPROX(passed, T1, T2, kSmallEps, "G - exp(log(G)) case: %",
+      SOPHUS_TEST_APPROX(passed, T1, T2, kSmallEps, "G - exp(log(G)) case: {}",
                          i);
     }
     return passed;
@@ -301,7 +305,7 @@ class LieGroupTests {
       Transformation exp_x = LieGroup::exp(omega).matrix();
       Transformation expmap_hat_x = (LieGroup::hat(omega)).exp();
       SOPHUS_TEST_APPROX(passed, exp_x, expmap_hat_x, Scalar(10) * kSmallEps,
-                         "expmap(hat(x)) - exp(x) case: %", i);
+                         "expmap(hat(x)) - exp(x) case: {}", i);
     }
     return passed;
   }
@@ -324,11 +328,12 @@ class LieGroupTests {
         Point gt_point1 = map(T, p);
 
         SOPHUS_TEST_APPROX(passed, point1, gt_point1, kSmallEps,
-                           "Transform point case: %", i);
+                           "Transform point case: {}", i);
         SOPHUS_TEST_APPROX(passed, hpoint1.hnormalized().eval(), gt_point1,
-                           kSmallEps, "Transform homogeneous point case: %", i);
+                           kSmallEps, "Transform homogeneous point case: {}",
+                           i);
         SOPHUS_TEST_APPROX(passed, pointmap1, gt_point1, kSmallEps,
-                           "Transform map point case: %", i);
+                           "Transform map point case: {}", i);
       }
     }
     return passed;
@@ -348,13 +353,13 @@ class LieGroupTests {
 
         SOPHUS_TEST_APPROX(passed, l_t.squaredDistance(p1_t),
                            static_cast<Scalar>(0), kSmallEps,
-                           "Transform line case (1st point) : %", i);
+                           "Transform line case (1st point) : {}", i);
         SOPHUS_TEST_APPROX(passed, l_t.squaredDistance(p2_t),
                            static_cast<Scalar>(0), kSmallEps,
-                           "Transform line case (2nd point) : %", i);
+                           "Transform line case (2nd point) : {}", i);
         SOPHUS_TEST_APPROX(passed, l_t.direction().squaredNorm(),
                            l.direction().squaredNorm(), kSmallEps,
-                           "Transform line case (direction) : %", i);
+                           "Transform line case (direction) : {}", i);
       }
     }
     return passed;
@@ -378,11 +383,11 @@ class LieGroupTests {
         for (int k = 0; k < PointDim; ++k) {
           SOPHUS_TEST_APPROX(passed, plane_t.signedDistance(points_t[k]),
                              static_cast<Scalar>(0.), kSmallEps,
-                             "Transform plane case (point #%): %", k, i);
+                             "Transform plane case (point #{}): {}", k, i);
         }
         SOPHUS_TEST_APPROX(passed, plane_t.normal().squaredNorm(),
                            plane.normal().squaredNorm(), kSmallEps,
-                           "Transform plane case (normal): %", i);
+                           "Transform plane case (normal): {}", i);
       }
     }
     return passed;
@@ -399,7 +404,7 @@ class LieGroupTests {
 
         Tangent tangent2 = LieGroup::vee(hati * hatj - hatj * hati);
         SOPHUS_TEST_APPROX(passed, tangent1, tangent2, kSmallEps,
-                           "Lie Bracket case: %", i);
+                           "Lie Bracket case: {}", i);
       }
     }
     return passed;
@@ -410,7 +415,7 @@ class LieGroupTests {
     for (size_t i = 0; i < tangent_vec_.size(); ++i) {
       SOPHUS_TEST_APPROX(passed, Tangent(tangent_vec_[i]),
                          LieGroup::vee(LieGroup::hat(tangent_vec_[i])),
-                         kSmallEps, "Hat-vee case: %", i);
+                         kSmallEps, "Hat-vee case: {}", i);
     }
     return passed;
   }
@@ -516,27 +521,32 @@ class LieGroupTests {
         optional<LieGroup> foo_T_average =
             average(std::array<LieGroup, 2>({{foo_T_bar, foo_T_baz}}));
         SOPHUS_TEST(passed, bool(foo_T_average),
-                    "log(foo_T_bar): %\nlog(foo_T_baz): %",
-                    transpose(foo_T_bar.log()), transpose(foo_T_baz.log()), "");
+                    "log(foo_T_bar): {}\nlog(foo_T_baz): {}",
+                    SOPHUS_FMT_ARG(transpose(foo_T_bar.log())),
+                    SOPHUS_FMT_ARG(transpose(foo_T_baz.log())), "");
         if (foo_T_average) {
           SOPHUS_TEST_APPROX(
               passed, foo_T_quiz.matrix(), foo_T_average->matrix(), sqrt_eps,
-              "log(foo_T_bar): %\nlog(foo_T_baz): %\n"
-              "log(interp): %\nlog(average): %",
-              transpose(foo_T_bar.log()), transpose(foo_T_baz.log()),
-              transpose(foo_T_quiz.log()), transpose(foo_T_average->log()), "");
+              "log(foo_T_bar): {}\nlog(foo_T_baz): {}\n"
+              "log(interp): {}\nlog(average): {}",
+              SOPHUS_FMT_ARG(transpose(foo_T_bar.log())),
+              SOPHUS_FMT_ARG(transpose(foo_T_baz.log())),
+              SOPHUS_FMT_ARG(transpose(foo_T_quiz.log())),
+              SOPHUS_FMT_ARG(transpose(foo_T_average->log())), "");
         }
         SOPHUS_TEST(passed, bool(foo_T_iaverage),
-                    "log(foo_T_bar): %\nlog(foo_T_baz): %\n"
-                    "log(interp): %\nlog(iaverage): %",
-                    transpose(foo_T_bar.log()), transpose(foo_T_baz.log()),
-                    transpose(foo_T_quiz.log()),
-                    transpose(foo_T_iaverage->log()), "");
+                    "log(foo_T_bar): {}\nlog(foo_T_baz): {}\n"
+                    "log(interp): {}\nlog(iaverage): {}",
+                    SOPHUS_FMT_ARG(transpose(foo_T_bar.log())),
+                    SOPHUS_FMT_ARG(transpose(foo_T_baz.log())),
+                    SOPHUS_FMT_ARG(transpose(foo_T_quiz.log())),
+                    SOPHUS_FMT_ARG(transpose(foo_T_iaverage->log())), "");
         if (foo_T_iaverage) {
-          SOPHUS_TEST_APPROX(
-              passed, foo_T_quiz.matrix(), foo_T_iaverage->matrix(), sqrt_eps,
-              "log(foo_T_bar): %\nlog(foo_T_baz): %",
-              transpose(foo_T_bar.log()), transpose(foo_T_baz.log()), "");
+          SOPHUS_TEST_APPROX(passed, foo_T_quiz.matrix(),
+                             foo_T_iaverage->matrix(), sqrt_eps,
+                             "log(foo_T_bar): {}\nlog(foo_T_baz): {}",
+                             SOPHUS_FMT_ARG(transpose(foo_T_bar.log())),
+                             SOPHUS_FMT_ARG(transpose(foo_T_baz.log())), "");
         }
       }
     }

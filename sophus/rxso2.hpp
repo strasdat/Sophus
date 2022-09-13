@@ -399,7 +399,7 @@ class RxSO2Base {
   ///
   SOPHUS_FUNC void setScaledRotationMatrix(Transformation const& sR) {
     SOPHUS_ENSURE(isScaledOrthogonalAndPositive(sR),
-                  "sR must be scaled orthogonal:\n {}", sR);
+                  "sR must be scaled orthogonal:\n {}", SOPHUS_FMT_ARG(sR));
     complex_nonconst() = sR.col(0);
   }
 
@@ -498,14 +498,16 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
     SOPHUS_ENSURE(complex_.squaredNorm() >= Constants<Scalar>::epsilon() *
                                                 Constants<Scalar>::epsilon(),
                   "Scale factor must be greater-equal epsilon: {} vs {}",
-                  complex_.squaredNorm(),
-                  Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
+                  SOPHUS_FMT_ARG(complex_.squaredNorm()),
+                  SOPHUS_FMT_ARG(Constants<Scalar>::epsilon() *
+                                 Constants<Scalar>::epsilon()));
     SOPHUS_ENSURE(
         complex_.squaredNorm() <= Scalar(1.) / (Constants<Scalar>::epsilon() *
                                                 Constants<Scalar>::epsilon()),
-        "Inverse scale factor must be greater-equal epsilon: % vs %",
-        Scalar(1.) / complex_.squaredNorm(),
-        Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon());
+        "Inverse scale factor must be greater-equal epsilon: {} vs {}",
+        SOPHUS_FMT_ARG(Scalar(1.) / complex_.squaredNorm()),
+        SOPHUS_FMT_ARG(Constants<Scalar>::epsilon() *
+                       Constants<Scalar>::epsilon()));
   }
 
   /// Constructor from complex number.
