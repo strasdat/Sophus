@@ -20,7 +20,7 @@ TEST(ImageView, empty) {
   FARM_CHECK(view.isEmpty());
   FARM_CHECK_EQ(view.imageSize(), ImageSize(0, 0));
   FARM_CHECK_EQ(view.shape().pitchBytes(), 0u);
-  FARM_CHECK(view.data() == nullptr);
+  FARM_CHECK(view.ptr() == nullptr);
 }
 
 TEST(ImageView, create_and_access) {
@@ -48,7 +48,7 @@ TEST(ImageView, create_and_access) {
     FARM_CHECK_EQ(view.checked(0, 1), 10);
     FARM_CHECK_EQ(view.checked(2, 0), 2);
 
-    FARM_CHECK_EQ(size_t(view.data()), size_t(data_u16.data()));
+    FARM_CHECK_EQ(size_t(view.ptr()), size_t(data_u16.data()));
 
     ImageSize col_view_size(1, 2);
     ImageView<uint16_t> col1 = view.subview({1, 0}, col_view_size);
@@ -78,7 +78,7 @@ TEST(MutImageView, empty) {
   FARM_CHECK(mut_view.isEmpty());
   FARM_CHECK_EQ(mut_view.imageSize(), ImageSize(0, 0));
   FARM_CHECK_EQ(mut_view.shape().pitchBytes(), 0u);
-  FARM_CHECK(mut_view.mutData() == nullptr);
+  FARM_CHECK(mut_view.mutPtr() == nullptr);
 
   MutImageView<float> mut_view2;
   mut_view.copyDataFrom(mut_view2);

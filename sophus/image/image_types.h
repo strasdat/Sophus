@@ -198,7 +198,7 @@ std::optional<Eigen::Vector2i> firstFalsePixel(ImageViewBool mask);
       (right_image).imageSize(),                                              \
       "Inside: FARM_CHECK_IMAGE_EQ.");                                        \
   do {                                                                        \
-    if (!((left_image) == (right_image))) {                                   \
+    if (!(left_image).hasSameData(right_image)) {                             \
       ::sophus::MutImageBool mask = isEqualMask((left_image), (right_image)); \
       FARM_IMPL_LOG_HEADER("FARM_CHECK_IMAGE_EQ failed");                     \
       FARM_IMPL_LOG_PRINTLN(                                                  \
