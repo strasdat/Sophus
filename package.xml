@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>sophus</name>
-  <version>22.04.1</version>
+  <version>1.22.10</version>
   <description>
    C++ implementation of Lie Groups using Eigen.
   </description>
