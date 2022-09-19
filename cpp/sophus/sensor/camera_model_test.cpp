@@ -8,6 +8,7 @@
 
 #include "sophus/sensor/camera_model.h"
 
+#include "sophus/image/interpolation.h"
 #include "sophus/lie/se3.h"
 #include "sophus/math/num_diff.h"
 
@@ -74,6 +75,8 @@ TEST(camera_model, projection_round_trip) {
     std::vector<Eigen::Vector2d> pixels_image = {
         {0, 0}, {1, 400}, {320, 240}, {319.5, 239.5}, {100, 40}, {639, 479}};
 
+    Image<Eigen::Vector2f> unwarp_table = camera_model.unwarpTable();
+
     for (const auto& pixel_image : pixels_image) {
       for (double d : {0.1, 0.5, 1.0, 1.1, 3.0, 15.0}) {
         Eigen::Vector3d point_in_camera =
@@ -100,6 +103,10 @@ TEST(camera_model, projection_round_trip) {
       }
 
       Eigen::Vector2d ab_in_z1plane = camera_model.unwarp(pixel_image);
+      Eigen::Vector2d ab_in_z1plane2 =
+          interpolate(unwarp_table, pixel_image.cast<float>()).cast<double>();
+      FARM_CHECK_NEAR(ab_in_z1plane, ab_in_z1plane2, kEps);
+
       Eigen::Vector2d pixel_in_image = camera_model.warp(ab_in_z1plane);
 
       FARM_CHECK_NEAR(pixel_image, pixel_in_image, kEps);
