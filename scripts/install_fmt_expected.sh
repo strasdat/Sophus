@@ -3,6 +3,7 @@
 set -x # echo on
 set -e # exit on error
 
+cd cpp
 git clone https://github.com/fmtlib/fmt.git
 cd fmt
 git checkout 8.1.1
@@ -19,4 +20,4 @@ mkdir -p build
 cd build
 cmake .. -DEXPECTED_BUILD_TESTS=off
 sudo make install
-cd ../..
+cd ../../..

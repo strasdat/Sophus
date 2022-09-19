@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.23)
 project(Sophus VERSION 22.99.0)
 
 include(CMakePackageConfigHelpers)
@@ -55,7 +55,7 @@ endif()
 
 find_package(GTest REQUIRED)
 
-add_subdirectory(thirdparty/farm-ng-core)
+add_subdirectory(thirdparty/farm-ng-core/cpp)
 
 add_subdirectory(sophus)
 
