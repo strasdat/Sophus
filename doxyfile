@@ -1,6 +1,6 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "Sophus"
-INPUT                  = sophus thirdparty/farm-ng-core/farm_ng
+INPUT                  = cpp/sophus cpp/thirdparty/farm-ng-core/farm_ng
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 ENABLE_PREPROCESSING   = YES

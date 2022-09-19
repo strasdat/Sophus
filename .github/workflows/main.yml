@@ -69,6 +69,7 @@ jobs:
 
       - name: Install system targets tests
         run: |
+          cd cpp
           mkdir -p build
           cd build
           pwd
@@ -94,6 +95,7 @@ jobs:
 
       - name: clang-tidy
         run: |
+          cd cpp
           ./run_clang_tidy.sh
         if: matrix.tests == 'clang_tidy'
 
