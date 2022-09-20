@@ -1,3 +1,3 @@
 [submodule "thirdparty/farm-ng-core"]
-	path = cpp/thirdparty/farm-ng-core
+	path = thirdparty/farm-ng-core
 	url = git@github.com:farm-ng/farm-ng-core.git

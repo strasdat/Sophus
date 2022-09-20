@@ -3,8 +3,6 @@
 set -x # echo on
 set -e # exit on error
 
-cd cpp
-
 brew update
 brew install eigen
 
