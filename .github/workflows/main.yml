@@ -69,14 +69,13 @@ jobs:
 
       - name: Install system targets tests
         run: |
-          cd cpp
           mkdir -p build
           cd build
           pwd
           cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DFARM_NG_CORE_TESTS=OFF ..
           sudo make install
           cd ..
-          cd examples/test_install_targets/
+          cd cpp/examples/test_install_targets/
           mkdir -p build
           cd build
           cmake ..
@@ -95,7 +94,6 @@ jobs:
 
       - name: clang-tidy
         run: |
-          cd cpp
           ./run_clang_tidy.sh
         if: matrix.tests == 'clang_tidy'
 
