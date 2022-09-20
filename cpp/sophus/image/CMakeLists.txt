@@ -6,6 +6,7 @@ sophus_image
 ]]
 
 set(sophus_image_src_prefixes
+  interpolation
   image
   image_size
   image_types

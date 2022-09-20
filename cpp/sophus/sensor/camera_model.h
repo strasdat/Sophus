@@ -11,6 +11,7 @@
 #include "sophus/core/common.h"
 #include "sophus/geometry/point_transform.h"
 #include "sophus/geometry/projection.h"
+#include "sophus/image/image.h"
 #include "sophus/image/image_size.h"
 #include "sophus/lie/se3.h"
 #include "sophus/sensor/camera_transforms/affine.h"
@@ -105,17 +106,24 @@ class CameraModelT {
     return out;
   }
 
-  /// Focal length in x.
-  [[nodiscard]] ScalarT fx() const { return params_[0]; }
+  /// Focal length.
+  [[nodiscard]] PixelImage focalLength() const {
+    return params_.template head<2>();
+  }
 
-  /// Focal length in y.
-  [[nodiscard]] ScalarT fy() const { return params_[1]; }
+  /// Focal length.
+  void setFocalLength(PixelImage const& focal_length) {
+    params_.template head<2>() = focal_length;
+  }
 
-  /// Camera/projection center x.
-  [[nodiscard]] ScalarT cx() const { return params_[2]; }
+  [[nodiscard]] PixelImage principalPoint() const {
+    return params_.template segment<2>(2);
+  }
 
-  /// Camera/projection center y.
-  [[nodiscard]] ScalarT cy() const { return params_[3]; }
+  /// Focal length.
+  void setPrincipalPoint(PixelImage const& principal_point) {
+    params_.template segment<2>(2) = principal_point;
+  }
 
   /// Returns distortion parameters by value.
   [[nodiscard]] DistorationParams distortionParams() const {
@@ -218,6 +226,28 @@ class CameraModelT {
     return Proj::template warp(params_, point2_in_camera_z1_plane);
   }
 
+  [[nodiscard]] Eigen::Matrix<ScalarT, 2, 2> dxWarp(
+      const PixelImage& pixel_in_image) const {
+    return Proj::template dxWarp(params_, pixel_in_image);
+  }
+
+  /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
+  [[nodiscard]] ProjInCameraZ1Plane unwarp(
+      const PixelImage& pixel_in_image) const {
+    return Proj::template unwarp(params_, pixel_in_image);
+  }
+
+  [[nodiscard]] MutImage<Eigen::Vector2f> unwarpTable() const {
+    MutImage<Eigen::Vector2f> table(image_size_);
+    for (int v = 0; v < table.height(); ++v) {
+      Eigen::Vector2f* row_ptr = table.mutRowPtr(v);
+      for (int u = 0; u < table.width(); ++u) {
+        row_ptr[u] = this->unwarp(PixelImage(u, v)).template cast<float>();
+      }
+    }
+    return table;
+  }
+
   /// Projects 3-point in camera frame to a pixel in the image.
   [[nodiscard]] PixelImage camProj(const PointCamera& point_in_camera) const {
     return Proj::template warp(params_, ::sophus::proj(point_in_camera));
@@ -227,17 +257,6 @@ class CameraModelT {
       const PointCamera& point_in_camera) const {
     ProjInCameraZ1Plane point_in_z1plane = ::sophus::proj(point_in_camera);
     return dxWarp(point_in_z1plane) * dxProjX(point_in_camera);
-  }
-
-  /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
-  [[nodiscard]] ProjInCameraZ1Plane unwarp(
-      const PixelImage& pixel_in_image) const {
-    return Proj::template unwarp(params_, pixel_in_image);
-  }
-
-  [[nodiscard]] Eigen::Matrix<ScalarT, 2, 2> dxWarp(
-      const PixelImage& pixel_in_image) const {
-    return Proj::template dxWarp(params_, pixel_in_image);
   }
 
   /// Unprojects pixel in the image to point in camera frame.
@@ -512,6 +531,16 @@ class CameraModel {
   /// Camera transform flag
   [[nodiscard]] CameraTransformType transformType() const;
 
+  [[nodiscard]] Eigen::Vector2d focalLength() const;
+
+  /// Focal length.
+  void setFocalLength(Eigen::Vector2d const& focal_length);
+
+  [[nodiscard]] Eigen::Vector2d principalPoint() const;
+
+  /// Focal length.
+  void setPrincipalPoint(Eigen::Vector2d const& principal_point);
+
   /// Returns `params` vector by value.
   [[nodiscard]] Eigen::VectorXd params() const;
 
@@ -536,6 +565,12 @@ class CameraModel {
   [[nodiscard]] Eigen::Matrix2d dxWarp(
       const Eigen::Vector2d& point2_in_camera_z1_plane) const;
 
+  /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
+  [[nodiscard]] Eigen::Vector2d unwarp(
+      const Eigen::Vector2d& pixel_image) const;
+
+  [[nodiscard]] MutImage<Eigen::Vector2f> unwarpTable() const;
+
   /// Derivative of camProj(x) with respect to x=0.
   [[nodiscard]] Eigen::Matrix<double, 2, 3> dxCamProjX(
       const Eigen::Vector3d& point_in_camera) const;
@@ -548,10 +583,6 @@ class CameraModel {
   /// depth, reproject to a 3d point in the camera's reference frame.
   [[nodiscard]] Eigen::Vector3d camUnproj(
       const Eigen::Vector2d& pixel_image, double depth_z) const;
-
-  /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
-  [[nodiscard]] Eigen::Vector2d unwarp(
-      const Eigen::Vector2d& pixel_image) const;
 
   /// Subsamples pixel down, factor of 0.5.
   ///

@@ -57,6 +57,31 @@ Eigen::VectorXd CameraModel::params() const {
       [](auto&& arg) -> Eigen::VectorXd { return arg.params(); }, model_);
 }
 
+Eigen::Vector2d CameraModel::focalLength() const {
+  return std::visit(
+      [](auto&& arg) -> Eigen::Vector2d { return arg.focalLength(); }, model_);
+}
+
+void CameraModel::setFocalLength(Eigen::Vector2d const& focal_length) {
+  std::visit(
+      [&focal_length](auto&& arg) { return arg.setFocalLength(focal_length); },
+      model_);
+}
+
+Eigen::Vector2d CameraModel::principalPoint() const {
+  return std::visit(
+      [](auto&& arg) -> Eigen::Vector2d { return arg.principalPoint(); },
+      model_);
+}
+
+void CameraModel::setPrincipalPoint(Eigen::Vector2d const& principal_point) {
+  std::visit(
+      [&principal_point](auto&& arg) {
+        return arg.setPrincipalPoint(principal_point);
+      },
+      model_);
+}
+
 Eigen::VectorXd CameraModel::distortionParams() const {
   return std::visit(
       [](auto&& arg) -> Eigen::VectorXd { return arg.distortionParams(); },
@@ -101,6 +126,18 @@ Eigen::Matrix2d CameraModel::dxWarp(
       model_);
 }
 
+Eigen::Vector2d CameraModel::unwarp(const Eigen::Vector2d& pixel_image) const {
+  return std::visit(
+      [&](auto&& arg) -> Eigen::Vector2d { return arg.unwarp(pixel_image); },
+      model_);
+}
+
+[[nodiscard]] MutImage<Eigen::Vector2f> CameraModel::unwarpTable() const {
+  return std::visit(
+      [](auto&& arg) -> MutImage<Eigen::Vector2f> { return arg.unwarpTable(); },
+      model_);
+}
+
 Eigen::Matrix<double, 2, 3> CameraModel::dxCamProjX(
     const Eigen::Vector3d& point_in_camera) const {
   return std::visit(
@@ -118,12 +155,6 @@ Eigen::Matrix<double, 2, 6> CameraModel::dxCamProjExpXPointAt0(
 
         return arg.dxCamProjX(point_in_camera) * dx2;
       },
-      model_);
-}
-
-Eigen::Vector2d CameraModel::unwarp(const Eigen::Vector2d& pixel_image) const {
-  return std::visit(
-      [&](auto&& arg) -> Eigen::Vector2d { return arg.unwarp(pixel_image); },
       model_);
 }
 
