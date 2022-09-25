@@ -14,7 +14,7 @@ int main() {
   // The following demonstrates the group multiplication of rotation matrices
 
   // Create rotation matrices from rotations around the x and y and z axes:
-  const double kPi = sophus::kPi<double>;
+  double const kPi = sophus::kPi<double>;
   sophus::SO3d R1 = sophus::SO3d::rotX(kPi / 4);
   sophus::SO3d R2 = sophus::SO3d::rotY(kPi / 6);
   sophus::SO3d R3 = sophus::SO3d::rotZ(-kPi / 3);

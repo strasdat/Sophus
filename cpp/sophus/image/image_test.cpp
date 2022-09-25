@@ -130,7 +130,7 @@ TEST(Image, shared_ownership) {
   FARM_CHECK_EQ(image.useCount(), 2);
   FARM_CHECK_EQ(image2.useCount(), 2);
 
-  const float* image2_ptr = image2.ptr();
+  float const* image2_ptr = image2.ptr();
   FARM_CHECK(image2_ptr != nullptr);
 
   MutImage<float> copy2 = MutImage<float>::makeCopyFrom(std::move(image2));

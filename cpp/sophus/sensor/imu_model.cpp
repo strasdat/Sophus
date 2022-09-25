@@ -14,7 +14,7 @@
 namespace sophus {
 
 GyroModelVariant getModelFromType(
-    GyroModelType model_type, const Eigen::VectorXd& params) {
+    GyroModelType model_type, Eigen::VectorXd const& params) {
   switch (model_type) {
     case GyroModelType::scaling_non_orthogonality: {
       return ScalingNonOrthogonalityGyroModel<double>::fromParams(params);
@@ -25,7 +25,7 @@ GyroModelVariant getModelFromType(
 }
 
 AcceleroModelVariant getModelFromType(
-    AcceleroModelType model_type, const Eigen::VectorXd& params) {
+    AcceleroModelType model_type, Eigen::VectorXd const& params) {
   switch (model_type) {
     case AcceleroModelType::scaling_non_orthogonality: {
       return ScalingNonOrthogonalityAcceleroModel<double>::fromParams(params);
@@ -36,7 +36,7 @@ AcceleroModelVariant getModelFromType(
 }
 
 Eigen::Vector3d ImuModel::gyroMeasurement(
-    const Eigen::Vector3d& world_velocity_imu) {
+    Eigen::Vector3d const& world_velocity_imu) {
   return std::visit(
       [&world_velocity_imu](auto&& arg) -> Eigen::Vector3d {
         return arg.gyroMeasurement(world_velocity_imu);
@@ -45,7 +45,7 @@ Eigen::Vector3d ImuModel::gyroMeasurement(
 }
 
 Eigen::Vector3d ImuModel::acceleroMeasurement(
-    const Eigen::Vector3d& world_acceleration_imu) {
+    Eigen::Vector3d const& world_acceleration_imu) {
   return std::visit(
       [&world_acceleration_imu](auto&& arg) -> Eigen::Vector3d {
         return arg.acceleroMeasurement(world_acceleration_imu);

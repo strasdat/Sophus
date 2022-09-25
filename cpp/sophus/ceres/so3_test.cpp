@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-template <typename TT>
+template <class TT>
 using StdVector = std::vector<TT, Eigen::aligned_allocator<TT>>;
 
 template <>
@@ -24,29 +24,29 @@ struct RotationalPart<sophus::SO3d> {
 };
 
 int main(int /*unused*/, char ** /*unused*/) {
-  using SO3Type = sophus::So3<double>;
-  using Point = SO3Type::Point;
-  using Tangent = SO3Type::Tangent;
+  using So3Type = sophus::So3<double>;
+  using Point = So3Type::Point;
+  using Tangent = So3Type::Tangent;
   double const k_pi = sophus::kPi<double>;
   double const epsilon = sophus::kEpsilonF64;
 
-  SO3Type c_0 = SO3Type::exp(Tangent(0.1, 0.05, -0.7));
+  So3Type c_0 = So3Type::exp(Tangent(0.1, 0.05, -0.7));
 
   Tangent axis_0(0.18005924, -0.54563405, 0.81845107);
 
-  StdVector<SO3Type> so3_vec;
+  StdVector<So3Type> so3_vec;
   // Generic tests
-  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, 0.0)));
-  so3_vec.push_back(SO3Type::exp(Point(0.2, 0.5, -1.0)));
-  so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.)));
-  so3_vec.push_back(SO3Type::exp(Point(0., 0., 0.00001)));
-  so3_vec.push_back(SO3Type::exp(Point(k_pi, 0, 0)));
+  so3_vec.push_back(So3Type::exp(Point(0.2, 0.5, 0.0)));
+  so3_vec.push_back(So3Type::exp(Point(0.2, 0.5, -1.0)));
+  so3_vec.push_back(So3Type::exp(Point(0., 0., 0.)));
+  so3_vec.push_back(So3Type::exp(Point(0., 0., 0.00001)));
+  so3_vec.push_back(So3Type::exp(Point(k_pi, 0, 0)));
   so3_vec.push_back(
-      SO3Type::exp(Point(0.2, 0.5, 0.0)) * SO3Type::exp(Point(k_pi, 0, 0)) *
-      SO3Type::exp(Point(-0.2, -0.5, -0.0)));
+      So3Type::exp(Point(0.2, 0.5, 0.0)) * So3Type::exp(Point(k_pi, 0, 0)) *
+      So3Type::exp(Point(-0.2, -0.5, -0.0)));
   so3_vec.push_back(
-      SO3Type::exp(Point(0.3, 0.5, 0.1)) * SO3Type::exp(Point(k_pi, 0, 0)) *
-      SO3Type::exp(Point(-0.3, -0.5, -0.1)));
+      So3Type::exp(Point(0.3, 0.5, 0.1)) * So3Type::exp(Point(k_pi, 0, 0)) *
+      So3Type::exp(Point(-0.3, -0.5, -0.1)));
 
   // Checks if ceres optimization will proceed correctly given problematic
   // or close-to-singular initial conditions, i.e. approx. 180-deg rotation,
@@ -56,18 +56,18 @@ int main(int /*unused*/, char ** /*unused*/) {
   // giving zero gradients wrt scalar part of quaternion.
   so3_vec.push_back(c_0);
   // Generic rotation angle < pi
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * 1.0));
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * -1.0));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * 1.0));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * -1.0));
   // Generic rotation angle > pi
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * 4.0));
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * -4.0));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * 4.0));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * -4.0));
   // Singular rotation angle = pi
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * k_pi));
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * -k_pi));
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * k_pi * (1.0 + epsilon)));
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * k_pi * (1.0 - epsilon)));
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * -k_pi * (1.0 + epsilon)));
-  so3_vec.push_back(c_0 * SO3Type::exp(axis_0 * -k_pi * (1.0 - epsilon)));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * k_pi));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * -k_pi));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * k_pi * (1.0 + epsilon)));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * k_pi * (1.0 - epsilon)));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * -k_pi * (1.0 + epsilon)));
+  so3_vec.push_back(c_0 * So3Type::exp(axis_0 * -k_pi * (1.0 - epsilon)));
 
   StdVector<Point> point_vec;
   point_vec.push_back(Point(1.012, 2.73, -1.4));

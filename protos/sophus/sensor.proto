@@ -1,0 +1,60 @@
+
+// Copyright (c) 2011, Hauke Strasdat
+// Copyright (c) 2012, Steven Lovegrove
+// Copyright (c) 2021, farm-ng, inc.
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file or at
+// https://opensource.org/licenses/MIT.
+
+syntax = "proto3";
+
+import "protos/sophus/image.proto";
+import "protos/sophus/lie.proto";
+
+package farm_ng.proto;
+
+
+message CameraModel {
+  ImageSize image_size = 1;
+
+  // Specifies the projection type.
+  string transform_type = 2;
+
+  // Parameters. Typically the first four are: fx, fy, px, py
+  repeated double params = 3;
+};
+
+message CameraModels {
+  repeated CameraModel camera_models = 1;
+}
+
+message ClippingPlanes {
+  float near = 1;
+  float far = 2;
+}
+
+message CameraInRig {
+  CameraModel camera_model = 1;
+
+  Se3F64 rig_pose_camera = 2;
+}
+
+message MultiCameraRig {
+  repeated CameraInRig cameras = 1;
+}
+
+message GyroModel {
+  string model_type = 1;
+  repeated double params = 2;
+}
+
+message AcceleroModel {
+  string model_type = 1;
+  repeated double params = 2;
+}
+
+message ImuModel {
+  GyroModel gyro_model = 1;
+  AcceleroModel accelero_model = 2;
+}

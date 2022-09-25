@@ -2,11 +2,12 @@ add_subdirectory(sophus)
 
 add_library(sophus INTERFACE)
 target_link_libraries(sophus INTERFACE
-  sophus_core
-  sophus_math
+  sophus_common
+  sophus_calculus
+  sophus_linalg
   sophus_lie
+  sophus_lie_interp
   sophus_geometry
-  sophus_interp
 )
 add_library (sophus::sophus ALIAS sophus)
 
@@ -19,17 +20,32 @@ target_include_directories(sophus INTERFACE
 # Create examples make targets using ctest
 option(BUILD_SOPHUS_EXAMPLES "Build examples." ON)
 
+set(sophus_install_targets
+  sophus_common
+  sophus_linalg
+  sophus_calculus
+  sophus_lie
+  sophus_geometry
+  sophus_lie_interp
+  sophus_image
+  sophus_sensor
+  sophus_ceres
+  sophus_experimental)
+
+if(BUILD_FARM_NG_PROTOS)
+  message(STATUS "Protobuf found")
+  list(APPEND sophus_install_targets
+    sophus_linalg_proto_conv sophus_linalg_proto_defs
+    sophus_lie_proto_conv sophus_lie_proto_defs
+    sophus_geometry_proto_conv sophus_geometry_proto_defs
+    sophus_image_proto_conv sophus_image_proto_defs
+    sophus_sensor_proto_conv sophus_sensor_proto_defs)
+endif()
+
+
 install(
   TARGETS
-     sophus_core
-     sophus_math
-     sophus_lie
-     sophus_geometry
-     sophus_interp
-     sophus_image
-     sophus_sensor
-     sophus_ceres
-     sophus_experimental
+    ${sophus_install_targets}
   EXPORT SophusTargets
   FILE_SET HEADERS
   LIBRARY DESTINATION lib

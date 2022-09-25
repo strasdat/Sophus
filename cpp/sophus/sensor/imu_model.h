@@ -19,7 +19,7 @@ namespace sophus {
 
 template <class TT>
 Eigen::Matrix<TT, 3, 3> nonOrthogonalityMatrix(
-    const Eigen::Matrix<TT, 3, 1>& non_orthogonality) {
+    Eigen::Matrix<TT, 3, 1> const& non_orthogonality) {
   Eigen::Matrix<TT, 3, 3> lower_triagonal = Eigen::Matrix<TT, 3, 3>::Identity();
   lower_triagonal(1, 0) = non_orthogonality[0];
   lower_triagonal(2, 0) = non_orthogonality[1];
@@ -31,17 +31,17 @@ Eigen::Matrix<TT, 3, 3> nonOrthogonalityMatrix(
 template <class TT>
 struct ScalingNonOrthogonalityGyroModel {
   ScalingNonOrthogonalityGyroModel(
-      const Eigen::Matrix<TT, 3, 1>& scale = Eigen::Matrix<TT, 3, 1>::Ones(),
-      const Eigen::Matrix<TT, 3, 1>& non_orthogonality =
+      Eigen::Matrix<TT, 3, 1> const& scale = Eigen::Matrix<TT, 3, 1>::Ones(),
+      Eigen::Matrix<TT, 3, 1> const& non_orthogonality =
           Eigen::Matrix<TT, 3, 1>::Zero(),
-      const Eigen::Matrix<TT, 3, 1>& gyro_bias =
+      Eigen::Matrix<TT, 3, 1> const& gyro_bias =
           Eigen::Matrix<TT, 3, 1>::Zero())
       : scale(scale),
         non_orthogonality(non_orthogonality),
         gyro_bias(gyro_bias) {}
 
   static ScalingNonOrthogonalityGyroModel<TT> fromParams(
-      const Eigen::Matrix<TT, 9, 1>& params) {
+      Eigen::Matrix<TT, 9, 1> const& params) {
     return ScalingNonOrthogonalityGyroModel<TT>(
         {params[0], params[1], params[2]},
         {params[3], params[4], params[5]},
@@ -49,7 +49,7 @@ struct ScalingNonOrthogonalityGyroModel {
   }
 
   [[nodiscard]] Eigen::Matrix<TT, 3, 1> gyroMeasurement(
-      const Eigen::Matrix<TT, 3, 1>& imu_angular_rate_imu) const {
+      Eigen::Matrix<TT, 3, 1> const& imu_angular_rate_imu) const {
     return Eigen::DiagonalMatrix<TT, 3>(scale) *
                nonOrthogonalityMatrix(non_orthogonality) *
                imu_angular_rate_imu +
@@ -73,17 +73,17 @@ struct ScalingNonOrthogonalityGyroModel {
 template <class TT>
 struct ScalingNonOrthogonalityAcceleroModel {
   ScalingNonOrthogonalityAcceleroModel(
-      const Eigen::Matrix<TT, 3, 1>& scale = Eigen::Matrix<TT, 3, 1>::Ones(),
-      const Eigen::Matrix<TT, 3, 1>& non_orthogonality =
+      Eigen::Matrix<TT, 3, 1> const& scale = Eigen::Matrix<TT, 3, 1>::Ones(),
+      Eigen::Matrix<TT, 3, 1> const& non_orthogonality =
           Eigen::Matrix<TT, 3, 1>::Zero(),
-      const Eigen::Matrix<TT, 3, 1>& accel_bias =
+      Eigen::Matrix<TT, 3, 1> const& accel_bias =
           Eigen::Matrix<TT, 3, 1>::Zero())
       : scale(scale),
         non_orthogonality(non_orthogonality),
         accel_bias(accel_bias) {}
 
   static ScalingNonOrthogonalityAcceleroModel<TT> fromParams(
-      const Eigen::Matrix<TT, 9, 1>& params) {
+      Eigen::Matrix<TT, 9, 1> const& params) {
     return ScalingNonOrthogonalityAcceleroModel<TT>(
         {params[0], params[1], params[2]},
         {params[3], params[4], params[5]},
@@ -91,7 +91,7 @@ struct ScalingNonOrthogonalityAcceleroModel {
   }
 
   [[nodiscard]] Eigen::Matrix<TT, 3, 1> acceleroMeasurement(
-      const Eigen::Matrix<TT, 3, 1>& imu_acceleration_imu) const {
+      Eigen::Matrix<TT, 3, 1> const& imu_acceleration_imu) const {
     return Eigen::DiagonalMatrix<TT, 3>(scale) *
                nonOrthogonalityMatrix(non_orthogonality) *
                imu_acceleration_imu +
@@ -120,10 +120,10 @@ using AcceleroModelVariant =
     std::variant<ScalingNonOrthogonalityAcceleroModel<double>>;
 
 GyroModelVariant getModelFromType(
-    GyroModelType model_type, const Eigen::VectorXd& params);
+    GyroModelType model_type, Eigen::VectorXd const& params);
 
 AcceleroModelVariant getModelFromType(
-    AcceleroModelType model_type, const Eigen::VectorXd& params);
+    AcceleroModelType model_type, Eigen::VectorXd const& params);
 
 static_assert(
     std::variant_size_v<GyroModelVariant> == getCount(GyroModelType()),
@@ -138,24 +138,24 @@ static_assert(
 class ImuModel {
  public:
   ImuModel(
-      const GyroModelVariant& gyro_model,
-      const AcceleroModelVariant& accelero_model)
+      GyroModelVariant const& gyro_model,
+      AcceleroModelVariant const& accelero_model)
       : gyro_model_(gyro_model), accelero_model_(accelero_model) {}
 
-  Eigen::Vector3d gyroMeasurement(const Eigen::Vector3d& world_velocity_imu);
+  Eigen::Vector3d gyroMeasurement(Eigen::Vector3d const& world_velocity_imu);
 
   Eigen::Vector3d acceleroMeasurement(
-      const Eigen::Vector3d& world_acceleration_imu);
+      Eigen::Vector3d const& world_acceleration_imu);
 
-  GyroModelVariant& mutGyroModel() { return gyro_model_; }
+  GyroModelVariant& gyroModel() { return gyro_model_; }
 
-  [[nodiscard]] const GyroModelVariant& gyroModel() const {
+  [[nodiscard]] GyroModelVariant const& gyroModel() const {
     return gyro_model_;
   }
 
-  AcceleroModelVariant& mutAcceleroModel() { return accelero_model_; }
+  AcceleroModelVariant& acceleroModel() { return accelero_model_; }
 
-  [[nodiscard]] const AcceleroModelVariant& acceleroModel() const {
+  [[nodiscard]] AcceleroModelVariant const& acceleroModel() const {
     return accelero_model_;
   }
 
@@ -168,8 +168,6 @@ class ImuModel {
   [[nodiscard]] AcceleroModelType acceleroModelType() const;
 
  private:
-  std::string frame_name_;
-
   GyroModelVariant gyro_model_;
   AcceleroModelVariant accelero_model_;
 };

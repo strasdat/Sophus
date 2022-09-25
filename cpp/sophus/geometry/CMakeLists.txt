@@ -39,3 +39,7 @@ target_sources(sophus_geometry INTERFACE
                           LABELS small)
   endforeach()
 endif()
+
+if(BUILD_FARM_NG_PROTOS)
+    add_subdirectory(proto)
+endif()

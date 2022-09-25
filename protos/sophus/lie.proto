@@ -1,0 +1,28 @@
+// Copyright (c) 2011, Hauke Strasdat
+// Copyright (c) 2012, Steven Lovegrove
+// Copyright (c) 2021, farm-ng, inc.
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file or at
+// https://opensource.org/licenses/MIT.
+
+syntax = "proto3";
+
+import "protos/sophus/linalg.proto";
+
+package farm_ng.proto;
+
+message QuaternionF64 {
+  Vec3F64 imag = 1;
+  double real = 2;
+}
+
+message So3F64 {
+  // Quaternion which is required to be unit lenght.
+  QuaternionF64 unit_quaternion = 1;
+}
+
+message Se3F64 {
+  So3F64 so3 = 1;
+  Vec3F64 translation = 2;
+}

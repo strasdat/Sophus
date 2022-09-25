@@ -14,39 +14,39 @@ namespace sophus {
 
 class OrthographicProjection {
  public:
-  static constexpr int kNumDistortionParams = 0;
-  static constexpr int kNumParams = 4;
-  static const constexpr std::string_view kProjectionModel =
+  static int constexpr kNumDistortionParams = 0;
+  static int constexpr kNumParams = 4;
+  static constexpr const std::string_view kProjectionModel =
       "Orthographic:scale_x,scale_y,offset_x,offset_y";
 
-  template <class ScalarT>
-  using PointCamera = Eigen::Matrix<ScalarT, 3, 1>;
-  template <class ScalarT>
-  using PixelImage = Eigen::Matrix<ScalarT, 2, 1>;
-  template <class ScalarT>
-  using Params = Eigen::Matrix<ScalarT, kNumParams, 1>;
-  template <class ScalarT>
-  using DistorationParams = Eigen::Matrix<ScalarT, kNumDistortionParams, 1>;
+  template <class TScalar>
+  using PointCamera = Eigen::Matrix<TScalar, 3, 1>;
+  template <class TScalar>
+  using PixelImage = Eigen::Matrix<TScalar, 2, 1>;
+  template <class TScalar>
+  using Params = Eigen::Matrix<TScalar, kNumParams, 1>;
+  template <class TScalar>
+  using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
-  template <class ParamsTypeT, class PointTypeT>
-  static PixelImage<typename PointTypeT::Scalar> camProj(
-      const Eigen::MatrixBase<ParamsTypeT>& params,
-      const Eigen::MatrixBase<PointTypeT>& point_camera) {
-    using ParamScalar = typename ParamsTypeT::Scalar;
-    using PointScalar = typename PointTypeT::Scalar;
+  template <class TParamsTypeT, class TPointTypeT>
+  static PixelImage<typename TPointTypeT::Scalar> camProj(
+      Eigen::MatrixBase<TParamsTypeT> const& params,
+      Eigen::MatrixBase<TPointTypeT> const& point_camera) {
+    using ParamScalar = typename TParamsTypeT::Scalar;
+    using PointScalar = typename TPointTypeT::Scalar;
     using ReturnScalar = typename Eigen::
         ScalarBinaryOpTraits<ParamScalar, PointScalar>::ReturnType;
 
     static_assert(
-        ParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
+        TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
-        ParamsTypeT::RowsAtCompileTime == kNumParams,
+        TParamsTypeT::RowsAtCompileTime == kNumParams,
         "params must have exactly kNumParams rows");
     static_assert(
-        PointTypeT::ColsAtCompileTime == 1,
+        TPointTypeT::ColsAtCompileTime == 1,
         "point_camera must be a column-vector");
     static_assert(
-        PointTypeT::RowsAtCompileTime == 3,
+        TPointTypeT::RowsAtCompileTime == 3,
         "point_camera must have exactly 3 columns");
     FARM_CHECK_NE(
         point_camera.z(),
@@ -62,16 +62,16 @@ class OrthographicProjection {
         (point_camera.y() - offset_y) / scale_y);
   }
 
-  template <class ScalarT>
-  static PointCamera<ScalarT> camUnproj(
-      const Params<ScalarT>& params,
-      const PixelImage<ScalarT>& pixel_image,
+  template <class TScalar>
+  static PointCamera<TScalar> camUnproj(
+      Params<TScalar> const& params,
+      PixelImage<TScalar> const& pixel_image,
       double depth_z) {
-    ScalarT scale_x = params[0];
-    ScalarT scale_y = params[1];
-    ScalarT offset_x = params[2];
-    ScalarT offset_y = params[3];
-    return PointCamera<ScalarT>(
+    TScalar scale_x = params[0];
+    TScalar scale_y = params[1];
+    TScalar offset_x = params[2];
+    TScalar offset_y = params[3];
+    return PointCamera<TScalar>(
         scale_x * pixel_image.x() + offset_x,
         scale_y * pixel_image.y() + offset_y,
         depth_z);

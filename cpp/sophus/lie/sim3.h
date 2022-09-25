@@ -15,7 +15,7 @@
 #include "sophus/lie/rxso3.h"
 
 namespace sophus {
-template <class ScalarT, int kOptions = 0>
+template <class TScalar, int kOptions = 0>
 class Sim3;
 using Sim3F64 = Sim3<double>;
 using Sim3F32 = Sim3<float>;
@@ -27,27 +27,27 @@ using Sim3F32 = Sim3<float>;
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class ScalarT, int kOptions>
-struct traits<sophus::Sim3<ScalarT, kOptions>> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<sophus::Sim3<TScalar, kOptions>> {
+  using Scalar = TScalar;
   using TranslationType = Eigen::Matrix<Scalar, 3, 1, kOptions>;
-  using RxSO3Type = sophus::RxSo3<Scalar, kOptions>;
+  using RxSo3Type = sophus::RxSo3<Scalar, kOptions>;
 };
 
-template <class ScalarT, int kOptions>
-struct traits<Map<sophus::Sim3<ScalarT>, kOptions>>
-    : traits<sophus::Sim3<ScalarT, kOptions>> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<Map<sophus::Sim3<TScalar>, kOptions>>
+    : traits<sophus::Sim3<TScalar, kOptions>> {
+  using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector3<Scalar>, kOptions>;
-  using RxSO3Type = Map<sophus::RxSo3<Scalar>, kOptions>;
+  using RxSo3Type = Map<sophus::RxSo3<Scalar>, kOptions>;
 };
 
-template <class ScalarT, int kOptions>
-struct traits<Map<sophus::Sim3<ScalarT> const, kOptions>>
-    : traits<sophus::Sim3<ScalarT, kOptions> const> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<Map<sophus::Sim3<TScalar> const, kOptions>>
+    : traits<sophus::Sim3<TScalar, kOptions> const> {
+  using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector3<Scalar> const, kOptions>;
-  using RxSO3Type = Map<sophus::RxSo3<Scalar> const, kOptions>;
+  using RxSo3Type = Map<sophus::RxSo3<Scalar> const, kOptions>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -87,14 +87,14 @@ namespace sophus {
 ///
 /// See RxSo3 for more details of the scaling + rotation representation in 3d.
 ///
-template <class DerivedT>
+template <class TDerived>
 class Sim3Base {
  public:
-  using Scalar = typename Eigen::internal::traits<DerivedT>::Scalar;
+  using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using TranslationType =
-      typename Eigen::internal::traits<DerivedT>::TranslationType;
-  using RxSO3Type = typename Eigen::internal::traits<DerivedT>::RxSO3Type;
-  using QuaternionType = typename RxSO3Type::QuaternionType;
+      typename Eigen::internal::traits<TDerived>::TranslationType;
+  using RxSo3Type = typename Eigen::internal::traits<TDerived>::RxSo3Type;
+  using QuaternionType = typename RxSo3Type::QuaternionType;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (three for translation, three for rotation and one for scaling).
@@ -118,18 +118,18 @@ class Sim3Base {
   /// ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
   /// types, as well as other compatible scalar types such as Ceres::Jet and
   /// double scalars with Sim3 operations.
-  template <typename OtherDerivedT>
+  template <class TOtherDerived>
   using ReturnScalar = typename Eigen::
-      ScalarBinaryOpTraits<Scalar, typename OtherDerivedT::Scalar>::ReturnType;
+      ScalarBinaryOpTraits<Scalar, typename TOtherDerived::Scalar>::ReturnType;
 
-  template <typename OtherDerivedT>
-  using Sim3Product = Sim3<ReturnScalar<OtherDerivedT>>;
+  template <class TOtherDerived>
+  using Sim3Product = Sim3<ReturnScalar<TOtherDerived>>;
 
-  template <typename PointDerivedT>
-  using PointProduct = Eigen::Vector3<ReturnScalar<PointDerivedT>>;
+  template <class TPointDerived>
+  using PointProduct = Eigen::Vector3<ReturnScalar<TPointDerived>>;
 
-  template <typename HPointDerivedT>
-  using HomogeneousPointProduct = Eigen::Vector4<ReturnScalar<HPointDerivedT>>;
+  template <class THPointDerived>
+  using HomogeneousPointProduct = Eigen::Vector4<ReturnScalar<THPointDerived>>;
 
   /// Adjoint transformation
   ///
@@ -153,11 +153,11 @@ class Sim3Base {
 
   /// Returns copy of instance casted to NewScalarType.
   ///
-  template <class NewScalarTypeT>
-  SOPHUS_FUNC [[nodiscard]] Sim3<NewScalarTypeT> cast() const {
-    return Sim3<NewScalarTypeT>(
-        rxso3().template cast<NewScalarTypeT>(),
-        translation().template cast<NewScalarTypeT>());
+  template <class TNewScalarType>
+  SOPHUS_FUNC [[nodiscard]] Sim3<TNewScalarType> cast() const {
+    return Sim3<TNewScalarType>(
+        rxso3().template cast<TNewScalarType>(),
+        translation().template cast<TNewScalarType>());
   }
 
   /// Returns group inverse.
@@ -228,9 +228,9 @@ class Sim3Base {
 
   /// Assignment-like operator from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC Sim3Base<DerivedT>& operator=(
-      Sim3Base<OtherDerivedT> const& other) {
+  template <class TOtherDerived>
+  SOPHUS_FUNC Sim3Base<TDerived>& operator=(
+      Sim3Base<TOtherDerived> const& other) {
     rxso3() = other.rxso3();
     translation() = other.translation();
     return *this;
@@ -241,10 +241,10 @@ class Sim3Base {
   /// Note: That scaling is calculated with saturation. See RxSo3 for
   /// details.
   ///
-  template <typename OtherDerivedT>
-  SOPHUS_FUNC Sim3Product<OtherDerivedT> operator*(
-      Sim3Base<OtherDerivedT> const& other) const {
-    return Sim3Product<OtherDerivedT>(
+  template <class TOtherDerived>
+  SOPHUS_FUNC Sim3Product<TOtherDerived> operator*(
+      Sim3Base<TOtherDerived> const& other) const {
+    return Sim3Product<TOtherDerived>(
         rxso3() * other.rxso3(), translation() + rxso3() * other.translation());
   }
 
@@ -257,25 +257,25 @@ class Sim3Base {
   ///   ``p_bar = bar_sR_foo * p_foo + t_bar``.
   ///
   template <
-      typename PointDerivedT,
+      typename TPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<PointDerivedT, 3>::value>::type>
-  SOPHUS_FUNC PointProduct<PointDerivedT> operator*(
-      Eigen::MatrixBase<PointDerivedT> const& p) const {
+          IsFixedSizeVector<TPointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<TPointDerived> operator*(
+      Eigen::MatrixBase<TPointDerived> const& p) const {
     return rxso3() * p + translation();
   }
 
   /// Group action on homogeneous 3-points. See above for more details.
   ///
   template <
-      typename HPointDerivedT,
+      typename THPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<HPointDerivedT, 4>::value>::type>
-  SOPHUS_FUNC HomogeneousPointProduct<HPointDerivedT> operator*(
-      Eigen::MatrixBase<HPointDerivedT> const& p) const {
-    const PointProduct<HPointDerivedT> tp =
+          IsFixedSizeVector<THPointDerived, 4>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<THPointDerived> operator*(
+      Eigen::MatrixBase<THPointDerived> const& p) const {
+    PointProduct<THPointDerived> const tp =
         rxso3() * p.template head<3>() + p(3) * translation();
-    return HomogeneousPointProduct<HPointDerivedT>(tp(0), tp(1), tp(2), p(3));
+    return HomogeneousPointProduct<THPointDerived>(tp(0), tp(1), tp(2), p(3));
   }
 
   /// Group action on lines.
@@ -311,12 +311,12 @@ class Sim3Base {
   /// type of the multiplication is compatible with this So3's Scalar type.
   ///
   template <
-      typename OtherDerivedT,
+      typename TOtherDerived,
       typename = typename std::enable_if<
-          std::is_same<Scalar, ReturnScalar<OtherDerivedT>>::value>::type>
-  SOPHUS_FUNC Sim3Base<DerivedT>& operator*=(
-      Sim3Base<OtherDerivedT> const& other) {
-    *static_cast<DerivedT*>(this) = *this * other;
+          std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type>
+  SOPHUS_FUNC Sim3Base<TDerived>& operator*=(
+      Sim3Base<TOtherDerived> const& other) {
+    *static_cast<TDerived*>(this) = *this * other;
     return *this;
   }
 
@@ -379,14 +379,14 @@ class Sim3Base {
 
   /// Mutator of So3 group.
   ///
-  SOPHUS_FUNC RxSO3Type& rxso3() {
-    return static_cast<DerivedT*>(this)->rxso3();
+  SOPHUS_FUNC RxSo3Type& rxso3() {
+    return static_cast<TDerived*>(this)->rxso3();
   }
 
   /// Accessor of So3 group.
   ///
-  SOPHUS_FUNC [[nodiscard]] RxSO3Type const& rxso3() const {
-    return static_cast<DerivedT const*>(this)->rxso3();
+  SOPHUS_FUNC [[nodiscard]] RxSo3Type const& rxso3() const {
+    return static_cast<TDerived const*>(this)->rxso3();
   }
 
   /// Returns scale.
@@ -418,25 +418,25 @@ class Sim3Base {
   /// Mutator of translation vector
   ///
   SOPHUS_FUNC TranslationType& translation() {
-    return static_cast<DerivedT*>(this)->translation();
+    return static_cast<TDerived*>(this)->translation();
   }
 
   /// Accessor of translation vector
   ///
   SOPHUS_FUNC [[nodiscard]] TranslationType const& translation() const {
-    return static_cast<DerivedT const*>(this)->translation();
+    return static_cast<TDerived const*>(this)->translation();
   }
 };
 
 /// Sim3 using default storage; derived from Sim3Base.
-template <class ScalarT, int kOptions>
-class Sim3 : public Sim3Base<Sim3<ScalarT, kOptions>> {
+template <class TScalar, int kOptions>
+class Sim3 : public Sim3Base<Sim3<TScalar, kOptions>> {
  public:
-  using Base = Sim3Base<Sim3<ScalarT, kOptions>>;
+  using Base = Sim3Base<Sim3<TScalar, kOptions>>;
   static int constexpr kDoF = Base::kDoF;
   static int constexpr kNumParameters = Base::kNumParameters;
 
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -464,26 +464,26 @@ class Sim3 : public Sim3Base<Sim3<ScalarT, kOptions>> {
 
   /// Copy-like constructor from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC Sim3(Sim3Base<OtherDerivedT> const& other)
+  template <class TOtherDerived>
+  SOPHUS_FUNC Sim3(Sim3Base<TOtherDerived> const& other)
       : rxso3_(other.rxso3()), translation_(other.translation()) {
     static_assert(
-        std::is_same<typename OtherDerivedT::Scalar, Scalar>::value,
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
   /// Constructor from RxSo3 and translation vector
   ///
-  template <class OtherDerivedT, class DT>
+  template <class TOtherDerived, class TD>
   SOPHUS_FUNC explicit Sim3(
-      RxSo3Base<OtherDerivedT> const& rxso3,
-      Eigen::MatrixBase<DT> const& translation)
+      RxSo3Base<TOtherDerived> const& rxso3,
+      Eigen::MatrixBase<TD> const& translation)
       : rxso3_(rxso3), translation_(translation) {
     static_assert(
-        std::is_same<typename OtherDerivedT::Scalar, Scalar>::value,
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
         "must be same Scalar type");
     static_assert(
-        std::is_same<typename DT::Scalar, Scalar>::value,
+        std::is_same<typename TD::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
@@ -491,16 +491,16 @@ class Sim3 : public Sim3Base<Sim3<ScalarT, kOptions>> {
   ///
   /// Precondition: quaternion must not be close to zero.
   ///
-  template <class D1T, class D2T>
+  template <class TD1T, class TD2T>
   SOPHUS_FUNC explicit Sim3(
-      Eigen::QuaternionBase<D1T> const& quaternion,
-      Eigen::MatrixBase<D2T> const& translation)
+      Eigen::QuaternionBase<TD1T> const& quaternion,
+      Eigen::MatrixBase<TD2T> const& translation)
       : rxso3_(quaternion), translation_(translation) {
     static_assert(
-        std::is_same<typename D1T::Scalar, Scalar>::value,
+        std::is_same<typename TD1T::Scalar, Scalar>::value,
         "must be same Scalar type");
     static_assert(
-        std::is_same<typename D2T::Scalar, Scalar>::value,
+        std::is_same<typename TD2T::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
@@ -508,11 +508,11 @@ class Sim3 : public Sim3Base<Sim3<ScalarT, kOptions>> {
   ///
   /// Precondition: quaternion must not be close to zero.
   ///
-  template <class D1T, class D2T>
+  template <class TD1T, class TD2T>
   SOPHUS_FUNC explicit Sim3(
       Scalar const& scale,
-      Eigen::QuaternionBase<D1T> const& unit_quaternion,
-      Eigen::MatrixBase<D2T> const& translation)
+      Eigen::QuaternionBase<TD1T> const& unit_quaternion,
+      Eigen::MatrixBase<TD2T> const& translation)
       : Sim3(RxSo3<Scalar>(scale, unit_quaternion), translation) {}
 
   /// Constructor from 4x4 matrix
@@ -573,7 +573,7 @@ class Sim3 : public Sim3Base<Sim3<ScalarT, kOptions>> {
   /// Returns derivative of exp(x) wrt. x.
   ///
   SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
-      const Tangent& vec_a) {
+      Tangent const& vec_a) {
     Eigen::Matrix<Scalar, kNumParameters, kDoF> dx;
 
     static Eigen::Matrix3<Scalar> const kI = Eigen::Matrix3<Scalar>::Identity();
@@ -796,8 +796,8 @@ class Sim3 : public Sim3Base<Sim3<ScalarT, kOptions>> {
   /// The scale factor is drawn uniformly in log2-space from [-1, 1],
   /// hence the scale is in [0.5, 2].
   ///
-  template <class UniformRandomBitGeneratorT>
-  static Sim3 sampleUniform(UniformRandomBitGeneratorT& generator) {
+  template <class TUniformRandomBitGenerator>
+  static Sim3 sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     return Sim3(
         RxSo3<Scalar>::sampleUniform(generator),
@@ -833,8 +833,8 @@ class Sim3 : public Sim3Base<Sim3<ScalarT, kOptions>> {
   TranslationMember translation_;  // NOLINT
 };
 
-template <class ScalarT, int kOptions>
-SOPHUS_FUNC Sim3<ScalarT, kOptions>::Sim3()
+template <class TScalar, int kOptions>
+SOPHUS_FUNC Sim3<TScalar, kOptions>::Sim3()
     : translation_(TranslationMember::Zero()) {
   static_assert(
       std::is_standard_layout<Sim3>::value,
@@ -855,12 +855,12 @@ namespace Eigen {  // NOLINT
 /// Specialization of Eigen::Map for ``Sim3``; derived from Sim3Base.
 ///
 /// Allows us to wrap Sim3 objects around POD array.
-template <class ScalarT, int kOptions>
-class Map<sophus::Sim3<ScalarT>, kOptions>
-    : public sophus::Sim3Base<Map<sophus::Sim3<ScalarT>, kOptions>> {
+template <class TScalar, int kOptions>
+class Map<sophus::Sim3<TScalar>, kOptions>
+    : public sophus::Sim3Base<Map<sophus::Sim3<TScalar>, kOptions>> {
  public:
-  using Base = sophus::Sim3Base<Map<sophus::Sim3<ScalarT>, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = sophus::Sim3Base<Map<sophus::Sim3<TScalar>, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -906,13 +906,13 @@ class Map<sophus::Sim3<ScalarT>, kOptions>
 /// Specialization of Eigen::Map for ``Sim3 const``; derived from Sim3Base.
 ///
 /// Allows us to wrap RxSo3 objects around POD array.
-template <class ScalarT, int kOptions>
-class Map<sophus::Sim3<ScalarT> const, kOptions>
-    : public sophus::Sim3Base<Map<sophus::Sim3<ScalarT> const, kOptions>> {
-  using Base = sophus::Sim3Base<Map<sophus::Sim3<ScalarT> const, kOptions>>;
+template <class TScalar, int kOptions>
+class Map<sophus::Sim3<TScalar> const, kOptions>
+    : public sophus::Sim3Base<Map<sophus::Sim3<TScalar> const, kOptions>> {
+  using Base = sophus::Sim3Base<Map<sophus::Sim3<TScalar> const, kOptions>>;
 
  public:
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;

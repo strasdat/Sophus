@@ -14,69 +14,69 @@ namespace sophus {
 
 class AffineTransform {
  public:
-  static constexpr int kNumDistortionParams = 0;
-  static constexpr int kNumParams = 4;
-  static const constexpr std::string_view kProjectionModel =
+  static int constexpr kNumDistortionParams = 0;
+  static int constexpr kNumParams = 4;
+  static constexpr const std::string_view kProjectionModel =
       "Pinhole:fx,fy,cx,cy";
 
-  template <class ScalarT>
-  using ProjInCameraZ1Plane = Eigen::Matrix<ScalarT, 2, 1>;
-  template <class ScalarT>
-  using PixelImage = Eigen::Matrix<ScalarT, 2, 1>;
-  template <class ScalarT>
-  using Params = Eigen::Matrix<ScalarT, kNumParams, 1>;
-  template <class ScalarT>
-  using DistorationParams = Eigen::Matrix<ScalarT, kNumDistortionParams, 1>;
+  template <class TScalar>
+  using ProjInCameraZ1Plane = Eigen::Matrix<TScalar, 2, 1>;
+  template <class TScalar>
+  using PixelImage = Eigen::Matrix<TScalar, 2, 1>;
+  template <class TScalar>
+  using Params = Eigen::Matrix<TScalar, kNumParams, 1>;
+  template <class TScalar>
+  using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
-  template <class ParamsTypeT, class PointTypeT>
-  static PixelImage<typename PointTypeT::Scalar> warp(
-      const Eigen::MatrixBase<ParamsTypeT>& params,
-      const Eigen::MatrixBase<PointTypeT>& proj_point_in_camera_z1_plane) {
+  template <class TParamsTypeT, class TPointTypeT>
+  static PixelImage<typename TPointTypeT::Scalar> warp(
+      Eigen::MatrixBase<TParamsTypeT> const& params,
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     static_assert(
-        ParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
+        TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
-        ParamsTypeT::RowsAtCompileTime == kNumParams,
+        TParamsTypeT::RowsAtCompileTime == kNumParams,
         "params must have exactly kNumParams rows");
     static_assert(
-        PointTypeT::ColsAtCompileTime == 1,
+        TPointTypeT::ColsAtCompileTime == 1,
         "point_camera must be a column-vector");
     static_assert(
-        PointTypeT::RowsAtCompileTime == 2,
+        TPointTypeT::RowsAtCompileTime == 2,
         "point_camera must have exactly 2 columns");
 
-    return PixelImage<typename PointTypeT::Scalar>(
+    return PixelImage<typename TPointTypeT::Scalar>(
         proj_point_in_camera_z1_plane[0] * params[0] + params[2],
         proj_point_in_camera_z1_plane[1] * params[1] + params[3]);
   }
 
-  template <class ScalarT>
-  static ProjInCameraZ1Plane<ScalarT> unwarp(
-      const Params<ScalarT>& params, const PixelImage<ScalarT>& pixel_image) {
-    ScalarT proj_x_in_camera_z1_plane =
-        (pixel_image.x() - ScalarT(params[2])) / ScalarT(params[0]);
-    ScalarT proj_y_in_camera_z1_plane =
-        (pixel_image.y() - ScalarT(params[3])) / ScalarT(params[1]);
-    return ProjInCameraZ1Plane<ScalarT>(
+  template <class TScalar>
+  static ProjInCameraZ1Plane<TScalar> unwarp(
+      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
+    TScalar proj_x_in_camera_z1_plane =
+        (pixel_image.x() - TScalar(params[2])) / TScalar(params[0]);
+    TScalar proj_y_in_camera_z1_plane =
+        (pixel_image.y() - TScalar(params[3])) / TScalar(params[1]);
+    return ProjInCameraZ1Plane<TScalar>(
         proj_x_in_camera_z1_plane, proj_y_in_camera_z1_plane);
   }
 
-  template <class ParamsTypeT, class PointTypeT>
-  static Eigen::Matrix<typename PointTypeT::Scalar, 2, 2> dxWarp(
-      const Eigen::MatrixBase<ParamsTypeT>& params,
-      const Eigen::MatrixBase<PointTypeT>& /*proj_point_in_camera_z1_plane*/) {
+  template <class TParamsTypeT, class TPointTypeT>
+  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxWarp(
+      Eigen::MatrixBase<TParamsTypeT> const& params,
+      Eigen::MatrixBase<TPointTypeT> const& /*proj_point_in_camera_z1_plane*/) {
     static_assert(
-        ParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
+        TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
-        ParamsTypeT::RowsAtCompileTime == kNumParams,
+        TParamsTypeT::RowsAtCompileTime == kNumParams,
         "params must have exactly kNumParams rows");
     static_assert(
-        PointTypeT::ColsAtCompileTime == 1,
+        TPointTypeT::ColsAtCompileTime == 1,
         "point_camera must be a column-vector");
     static_assert(
-        PointTypeT::RowsAtCompileTime == 2,
+        TPointTypeT::RowsAtCompileTime == 2,
         "point_camera must have exactly 2 columns");
 
-    Eigen::Matrix<typename PointTypeT::Scalar, 2, 2> dx;
+    Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dx;
 
     // clang-format off
     dx <<  //

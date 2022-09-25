@@ -16,7 +16,7 @@
 using namespace sophus;
 
 TEST(inverse_depth, integrations) {
-  for (const Eigen::Vector3d &point : {Eigen::Vector3d(0.1, 0.3, 2.0)}) {
+  for (Eigen::Vector3d const &point : {Eigen::Vector3d(0.1, 0.3, 2.0)}) {
     auto inv_depth_point = InverseDepthPoint3F64::fromEuclideanPoint3(point);
     Eigen::Vector3d point2 = inv_depth_point.toEuclideanPoint3();
 

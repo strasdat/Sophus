@@ -18,9 +18,9 @@
 
 namespace sophus {
 
-template <class PixelT>
+template <class TPixel>
 struct AnyImagePredicate {
-  static constexpr bool kIsTypeValid = true;
+  static bool constexpr kIsTypeValid = true;
 };
 
 struct RuntimePixelType {
@@ -28,32 +28,32 @@ struct RuntimePixelType {
   int num_channels;
   int num_bytes_per_pixel_channel;
 
-  template <class PixelT>
+  template <class TPixel>
   static RuntimePixelType fromTemplate() {
     return RuntimePixelType{
         .number_type =
-            std::is_floating_point_v<typename ImageTraits<PixelT>::ChannelT>
+            std::is_floating_point_v<typename ImageTraits<TPixel>::ChannelT>
                 ? NumberType::floating_point
                 : NumberType::fixed_point,
-        .num_channels = ImageTraits<PixelT>::kNumChannels,
+        .num_channels = ImageTraits<TPixel>::kNumChannels,
         .num_bytes_per_pixel_channel =
-            sizeof(typename ImageTraits<PixelT>::ChannelT)};
+            sizeof(typename ImageTraits<TPixel>::ChannelT)};
   }
 };
 
-bool operator==(const RuntimePixelType& lhs, const RuntimePixelType& rhs);
+bool operator==(RuntimePixelType const& lhs, RuntimePixelType const& rhs);
 
 /// Example:
 /// RuntimePixelType::fromTemplate<float>() outputs: "1F32";
 /// RuntimePixelType::fromTemplate<Eigen::Matrix<uint8_t,4,1>>() outputs:
 /// "4U8";
-std::ostream& operator<<(std::ostream& os, const RuntimePixelType& type);
+std::ostream& operator<<(std::ostream& os, RuntimePixelType const& type);
 
 /// Type-erased image with shared ownership, and read-only access to pixels.
 /// Type is nullable.
 template <
-    template <typename> class PredicateT = AnyImagePredicate,
-    template <typename> class AllocatorT = Eigen::aligned_allocator>
+    template <typename> class TPredicate = AnyImagePredicate,
+    template <typename> class TAllocator = Eigen::aligned_allocator>
 class RuntimeImage {
  public:
   /// Empty image.
@@ -64,37 +64,37 @@ class RuntimeImage {
   /// Ownership is shared between RuntimeImage and Image, and hence the
   /// reference count will be increased by one (unless input is empty).
   /// By design not "explicit".
-  template <class PixelT>
-  RuntimeImage(Image<PixelT, AllocatorT> const& image)
+  template <class TPixel>
+  RuntimeImage(Image<TPixel, TAllocator> const& image)
       : shape_(image.shape()),
         shared_(image.shared_),
-        pixel_type_(RuntimePixelType::fromTemplate<PixelT>()) {
-    static_assert(PredicateT<PixelT>::kIsTypeValid);
+        pixel_type_(RuntimePixelType::fromTemplate<TPixel>()) {
+    static_assert(TPredicate<TPixel>::kIsTypeValid);
   }
 
   /// Create type-erased image from MutImage.
   /// By design not "explicit".
-  template <class PixelT>
-  RuntimeImage(MutImage<PixelT>&& image)
-      : RuntimeImage(Image<PixelT>(std::move(image))) {
-    static_assert(PredicateT<PixelT>::kIsTypeValid);
+  template <class TPixel>
+  RuntimeImage(MutImage<TPixel>&& image)
+      : RuntimeImage(Image<TPixel>(std::move(image))) {
+    static_assert(TPredicate<TPixel>::kIsTypeValid);
   }
 
-  /// Return true is this contains data of type PixelT.
-  template <class PixelT>
+  /// Return true is this contains data of type TPixel.
+  template <class TPixel>
   [[nodiscard]] bool has() const noexcept {
-    RuntimePixelType expected_type = RuntimePixelType::fromTemplate<PixelT>();
-    static_assert(PredicateT<PixelT>::kIsTypeValid);
+    RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
+    static_assert(TPredicate<TPixel>::kIsTypeValid);
     return expected_type == pixel_type_;
   }
 
   /// Returns typed image.
   ///
-  /// Precondition: this->has<PixelT>()
-  template <class PixelT>
-  [[nodiscard]] Image<PixelT, AllocatorT> image() const noexcept {
-    if (!this->has<PixelT>()) {
-      RuntimePixelType expected_type = RuntimePixelType::fromTemplate<PixelT>();
+  /// Precondition: this->has<TPixel>()
+  template <class TPixel>
+  [[nodiscard]] Image<TPixel, TAllocator> image() const noexcept {
+    if (!this->has<TPixel>()) {
+      RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
 
       FARM_FATAL(
           "expected type: {}\n"
@@ -103,16 +103,16 @@ class RuntimeImage {
           pixel_type_);
     }
 
-    return Image<PixelT, AllocatorT>(
-        ImageView<PixelT>(shape_, reinterpret_cast<PixelT*>(shared_.get())),
+    return Image<TPixel, TAllocator>(
+        ImageView<TPixel>(shape_, reinterpret_cast<TPixel*>(shared_.get())),
         shared_);
   }
 
-  template <class PixelT>
-  Image<PixelT, AllocatorT> reinterpretAs(
+  template <class TPixel>
+  Image<TPixel, TAllocator> reinterpretAs(
       ImageSize reinterpreted_size) const noexcept {
     FARM_CHECK_LE(
-        reinterpreted_size.width * sizeof(PixelT), shape().pitch_bytes_);
+        reinterpreted_size.width * sizeof(TPixel), shape().pitch_bytes_);
     FARM_CHECK_LE(reinterpreted_size.height, height());
 
     FARM_UNIMPLEMENTED();
@@ -144,7 +144,7 @@ class RuntimeImage {
 
   [[nodiscard]] size_t useCount() const { return shared_.use_count(); }
 
-  [[nodiscard]] const uint8_t* rawPtr() const { return shared_.get(); }
+  [[nodiscard]] uint8_t const* rawPtr() const { return shared_.get(); }
 
   [[nodiscard]] bool isEmpty() const { return this->rawPtr() == nullptr; }
 
@@ -157,14 +157,14 @@ class RuntimeImage {
 
 /// Image representing any number of channels (>=1) and any floating and
 /// unsigned integral channel type.
-template <template <typename> class AllocatorT = Eigen::aligned_allocator>
-using AnyImage = RuntimeImage<AnyImagePredicate, AllocatorT>;
+template <template <typename> class TAllocator = Eigen::aligned_allocator>
+using AnyImage = RuntimeImage<AnyImagePredicate, TAllocator>;
 
-template <class PixelT>
+template <class TPixel>
 struct IntensityImagePredicate {
-  static const int kNumChannels = ImageTraits<PixelT>::kNumChannels;
-  using ChannelT = typename ImageTraits<PixelT>::ChannelT;
-  static constexpr bool kIsTypeValid =
+  static int const kNumChannels = ImageTraits<TPixel>::kNumChannels;
+  using ChannelT = typename ImageTraits<TPixel>::ChannelT;
+  static bool constexpr kIsTypeValid =
       (kNumChannels == 1 || kNumChannels == 3 || kNumChannels == 4) &&
       (std::is_same_v<ChannelT, uint8_t> ||
        std::is_same_v<ChannelT, uint16_t> || std::is_same_v<ChannelT, float>);
@@ -178,13 +178,13 @@ struct IntensityImagePredicate {
       Pixel4U8,
       Pixel4U16,
       Pixel4F32>;
-  static_assert(kIsTypeValid == farm_ng::has_type_v<PixelT, Variant>);
+  static_assert(kIsTypeValid == farm_ng::has_type_v<TPixel, Variant>);
 };
 
 /// Image to represent intensity image / texture as grayscale (=1 channel),
 /// RGB (=3 channel ) and RGBA (=4 channel), either uint8_t [0-255],
 /// uint16 [0-65535] or float [0.0-1.0] channel type.
-template <template <typename> class AllocatorT = Eigen::aligned_allocator>
-using IntensityImage = RuntimeImage<IntensityImagePredicate, AllocatorT>;
+template <template <typename> class TAllocator = Eigen::aligned_allocator>
+using IntensityImage = RuntimeImage<IntensityImagePredicate, TAllocator>;
 
 }  // namespace sophus

@@ -29,13 +29,13 @@ template class Sim2<float, Eigen::DontAlign>;
 template class Sim2<ceres::Jet<double, 3>>;
 #endif
 
-template <class ScalarT>
+template <class TScalar>
 class Tests {
  public:
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
 
   using Sim2Type = Sim2<Scalar>;
-  using RxSO2Type = RxSo2<Scalar>;
+  using RxSo2Type = RxSo2<Scalar>;
   using Point = typename Sim2<Scalar>::Point;
   using Vector2Type = Eigen::Vector2<Scalar>;
   using Tangent = typename Sim2<Scalar>::Tangent;
@@ -43,28 +43,28 @@ class Tests {
 
   Tests() {
     sim2_vec_.push_back(
-        Sim2Type(RxSO2Type::exp(Vector2Type(0.2, 1.)), Point(0, 0)));
+        Sim2Type(RxSo2Type::exp(Vector2Type(0.2, 1.)), Point(0, 0)));
     sim2_vec_.push_back(
-        Sim2Type(RxSO2Type::exp(Vector2Type(0.2, 1.1)), Point(10, 0)));
+        Sim2Type(RxSo2Type::exp(Vector2Type(0.2, 1.1)), Point(10, 0)));
     sim2_vec_.push_back(
-        Sim2Type(RxSO2Type::exp(Vector2Type(0., 0.)), Point(0, 10)));
+        Sim2Type(RxSo2Type::exp(Vector2Type(0., 0.)), Point(0, 10)));
     sim2_vec_.push_back(
-        Sim2Type(RxSO2Type::exp(Vector2Type(0.00001, 0.)), Point(0, 0)));
+        Sim2Type(RxSo2Type::exp(Vector2Type(0.00001, 0.)), Point(0, 0)));
     sim2_vec_.push_back(Sim2Type(
-        RxSO2Type::exp(Vector2Type(0.00001, 0.0000001)),
+        RxSo2Type::exp(Vector2Type(0.00001, 0.0000001)),
         Point(1, -1.00000001)));
     sim2_vec_.push_back(
-        Sim2Type(RxSO2Type::exp(Vector2Type(0., 0.)), Point(0.01, 0)));
+        Sim2Type(RxSo2Type::exp(Vector2Type(0., 0.)), Point(0.01, 0)));
     sim2_vec_.push_back(
-        Sim2Type(RxSO2Type::exp(Vector2Type(k_pi, 0.9)), Point(4, 0)));
+        Sim2Type(RxSo2Type::exp(Vector2Type(k_pi, 0.9)), Point(4, 0)));
     sim2_vec_.push_back(
-        Sim2Type(RxSO2Type::exp(Vector2Type(0.2, 0)), Point(0, 0)) *
-        Sim2Type(RxSO2Type::exp(Vector2Type(k_pi, 0)), Point(0, 0)) *
-        Sim2Type(RxSO2Type::exp(Vector2Type(-0.2, 0)), Point(0, 0)));
+        Sim2Type(RxSo2Type::exp(Vector2Type(0.2, 0)), Point(0, 0)) *
+        Sim2Type(RxSo2Type::exp(Vector2Type(k_pi, 0)), Point(0, 0)) *
+        Sim2Type(RxSo2Type::exp(Vector2Type(-0.2, 0)), Point(0, 0)));
     sim2_vec_.push_back(
-        Sim2Type(RxSO2Type::exp(Vector2Type(0.3, 0)), Point(2, -7)) *
-        Sim2Type(RxSO2Type::exp(Vector2Type(k_pi, 0)), Point(0, 0)) *
-        Sim2Type(RxSO2Type::exp(Vector2Type(-0.3, 0)), Point(0, 6)));
+        Sim2Type(RxSo2Type::exp(Vector2Type(0.3, 0)), Point(2, -7)) *
+        Sim2Type(RxSo2Type::exp(Vector2Type(k_pi, 0)), Point(0, 0)) *
+        Sim2Type(RxSo2Type::exp(Vector2Type(-0.3, 0)), Point(0, 6)));
     Tangent tmp;
     tmp << Scalar(0), Scalar(0), Scalar(0), Scalar(0);
     tangent_vec_.push_back(tmp);
@@ -210,7 +210,7 @@ class Tests {
 
     // type -> map assignment
     copy = Sim2Type(
-        RxSO2Type::exp(Vector2Type(-1, 1)), Point(Scalar(10), Scalar(0)));
+        RxSo2Type::exp(Vector2Type(-1, 1)), Point(Scalar(10), Scalar(0)));
     map1 = copy;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
@@ -224,7 +224,7 @@ class Tests {
 
     Sim2Type sim2 = sim2_vec_.front();
     Point translation = sim2.translation();
-    RxSO2Type rxso2 = sim2.rxso2();
+    RxSo2Type rxso2 = sim2.rxso2();
 
     SOPHUS_TEST_APPROX(
         passed,

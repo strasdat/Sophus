@@ -55,4 +55,51 @@ if(${BUILD_SOPHUS_TESTS})
 endif()
 
 add_subdirectory(thirdparty/farm-ng-core)
+
+if (BUILD_FARM_NG_PROTOS)
+  find_package(Protobuf REQUIRED)
+  include_directories(${Protobuf_INCLUDE_DIRS})
+endif()
+
+if(BUILD_FARM_NG_PROTOS)
+  farm_ng_add_protobufs(sophus_linalg_proto_defs
+      PROTO_FILES
+      ./protos/sophus/linalg.proto)
+  add_library (sophus::sophus_linalg_proto_defs ALIAS sophus_linalg_proto_defs)
+
+  farm_ng_add_protobufs(sophus_lie_proto_defs
+      PROTO_FILES
+      ./protos/sophus/lie.proto
+      DEPENDENCIES
+      sophus::sophus_linalg_proto_defs)
+
+  add_library (sophus::sophus_lie_proto_defs ALIAS sophus_lie_proto_defs)
+
+
+  farm_ng_add_protobufs(sophus_geometry_proto_defs
+      PROTO_FILES
+      ./protos/sophus/geometry.proto
+      DEPENDENCIES
+      sophus::sophus_linalg_proto_defs)
+  add_library (sophus::sophus_geometry_proto_defs ALIAS sophus_geometry_proto_defs)
+
+
+  farm_ng_add_protobufs(sophus_image_proto_defs
+      PROTO_FILES
+      ./protos/sophus/image.proto
+      DEPENDENCIES
+      sophus::sophus_lie_proto_defs
+      sophus::sophus_geometry_proto_defs)
+  add_library (sophus::sophus_image_proto_defs ALIAS sophus_image_proto_defs)
+
+
+  farm_ng_add_protobufs(sophus_sensor_proto_defs
+      PROTO_FILES
+      ./protos/sophus/sensor.proto
+      DEPENDENCIES
+      sophus::sophus_image_proto_defs)
+  add_library (sophus::sophus_sensor_proto_defs ALIAS sophus_sensor_proto_defs)
+endif()
+
+
 add_subdirectory(cpp)

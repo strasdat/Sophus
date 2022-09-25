@@ -15,7 +15,7 @@
 #include "sophus/lie/rxso2.h"
 
 namespace sophus {
-template <class ScalarT, int kOptions = 0>
+template <class TScalar, int kOptions = 0>
 class Sim2;
 using Sim2F64 = Sim2<double>;
 using Sim2F32 = Sim2<float>;
@@ -27,27 +27,27 @@ using Sim2F32 = Sim2<float>;
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class ScalarT, int kOptions>
-struct traits<sophus::Sim2<ScalarT, kOptions>> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<sophus::Sim2<TScalar, kOptions>> {
+  using Scalar = TScalar;
   using TranslationType = Eigen::Matrix<Scalar, 2, 1, kOptions>;
-  using RxSO2Type = sophus::RxSo2<Scalar, kOptions>;
+  using RxSo2Type = sophus::RxSo2<Scalar, kOptions>;
 };
 
-template <class ScalarT, int kOptions>
-struct traits<Map<sophus::Sim2<ScalarT>, kOptions>>
-    : traits<sophus::Sim2<ScalarT, kOptions>> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<Map<sophus::Sim2<TScalar>, kOptions>>
+    : traits<sophus::Sim2<TScalar, kOptions>> {
+  using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector2<Scalar>, kOptions>;
-  using RxSO2Type = Map<sophus::RxSo2<Scalar>, kOptions>;
+  using RxSo2Type = Map<sophus::RxSo2<Scalar>, kOptions>;
 };
 
-template <class ScalarT, int kOptions>
-struct traits<Map<sophus::Sim2<ScalarT> const, kOptions>>
-    : traits<sophus::Sim2<ScalarT, kOptions> const> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<Map<sophus::Sim2<TScalar> const, kOptions>>
+    : traits<sophus::Sim2<TScalar, kOptions> const> {
+  using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector2<Scalar> const, kOptions>;
-  using RxSO2Type = Map<sophus::RxSo2<Scalar> const, kOptions>;
+  using RxSo2Type = Map<sophus::RxSo2<Scalar> const, kOptions>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -90,13 +90,13 @@ namespace sophus {
 ///
 /// See RxSo2 for more details of the scaling + rotation representation in 2d.
 ///
-template <class DerivedT>
+template <class TDerived>
 class Sim2Base {
  public:
-  using Scalar = typename Eigen::internal::traits<DerivedT>::Scalar;
+  using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using TranslationType =
-      typename Eigen::internal::traits<DerivedT>::TranslationType;
-  using RxSO2Type = typename Eigen::internal::traits<DerivedT>::RxSO2Type;
+      typename Eigen::internal::traits<TDerived>::TranslationType;
+  using RxSo2Type = typename Eigen::internal::traits<TDerived>::RxSo2Type;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (two for translation, one for rotation and one for scaling).
@@ -120,18 +120,18 @@ class Sim2Base {
   /// ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
   /// types, as well as other compatible scalar types such as Ceres::Jet and
   /// double scalars with SIM2 operations.
-  template <typename OtherDerivedT>
+  template <class TOtherDerived>
   using ReturnScalar = typename Eigen::
-      ScalarBinaryOpTraits<Scalar, typename OtherDerivedT::Scalar>::ReturnType;
+      ScalarBinaryOpTraits<Scalar, typename TOtherDerived::Scalar>::ReturnType;
 
-  template <typename OtherDerivedT>
-  using Sim2Product = Sim2<ReturnScalar<OtherDerivedT>>;
+  template <class TOtherDerived>
+  using Sim2Product = Sim2<ReturnScalar<TOtherDerived>>;
 
-  template <typename PointDerivedT>
-  using PointProduct = Eigen::Vector2<ReturnScalar<PointDerivedT>>;
+  template <class TPointDerived>
+  using PointProduct = Eigen::Vector2<ReturnScalar<TPointDerived>>;
 
-  template <typename HPointDerivedT>
-  using HomogeneousPointProduct = Eigen::Vector3<ReturnScalar<HPointDerivedT>>;
+  template <class THPointDerived>
+  using HomogeneousPointProduct = Eigen::Vector3<ReturnScalar<THPointDerived>>;
 
   /// Adjoint transformation
   ///
@@ -155,11 +155,11 @@ class Sim2Base {
 
   /// Returns copy of instance casted to NewScalarType.
   ///
-  template <class NewScalarTypeT>
-  SOPHUS_FUNC [[nodiscard]] Sim2<NewScalarTypeT> cast() const {
-    return Sim2<NewScalarTypeT>(
-        rxso2().template cast<NewScalarTypeT>(),
-        translation().template cast<NewScalarTypeT>());
+  template <class TNewScalarType>
+  SOPHUS_FUNC [[nodiscard]] Sim2<TNewScalarType> cast() const {
+    return Sim2<TNewScalarType>(
+        rxso2().template cast<TNewScalarType>(),
+        translation().template cast<TNewScalarType>());
   }
 
   /// Returns group inverse.
@@ -229,9 +229,9 @@ class Sim2Base {
 
   /// Assignment-like operator from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC Sim2Base<DerivedT>& operator=(
-      Sim2Base<OtherDerivedT> const& other) {
+  template <class TOtherDerived>
+  SOPHUS_FUNC Sim2Base<TDerived>& operator=(
+      Sim2Base<TOtherDerived> const& other) {
     rxso2() = other.rxso2();
     translation() = other.translation();
     return *this;
@@ -242,10 +242,10 @@ class Sim2Base {
   /// Note: That scaling is calculated with saturation. See RxSo2 for
   /// details.
   ///
-  template <typename OtherDerivedT>
-  SOPHUS_FUNC Sim2Product<OtherDerivedT> operator*(
-      Sim2Base<OtherDerivedT> const& other) const {
-    return Sim2Product<OtherDerivedT>(
+  template <class TOtherDerived>
+  SOPHUS_FUNC Sim2Product<TOtherDerived> operator*(
+      Sim2Base<TOtherDerived> const& other) const {
+    return Sim2Product<TOtherDerived>(
         rxso2() * other.rxso2(), translation() + rxso2() * other.translation());
   }
 
@@ -258,25 +258,25 @@ class Sim2Base {
   ///   ``p_bar = bar_sR_foo * p_foo + t_bar``.
   ///
   template <
-      typename PointDerivedT,
+      typename TPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<PointDerivedT, 2>::value>::type>
-  SOPHUS_FUNC PointProduct<PointDerivedT> operator*(
-      Eigen::MatrixBase<PointDerivedT> const& p) const {
+          IsFixedSizeVector<TPointDerived, 2>::value>::type>
+  SOPHUS_FUNC PointProduct<TPointDerived> operator*(
+      Eigen::MatrixBase<TPointDerived> const& p) const {
     return rxso2() * p + translation();
   }
 
   /// Group action on homogeneous 2-points. See above for more details.
   ///
   template <
-      typename HPointDerivedT,
+      typename THPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<HPointDerivedT, 3>::value>::type>
-  SOPHUS_FUNC HomogeneousPointProduct<HPointDerivedT> operator*(
-      Eigen::MatrixBase<HPointDerivedT> const& p) const {
-    const PointProduct<HPointDerivedT> tp =
+          IsFixedSizeVector<THPointDerived, 3>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<THPointDerived> operator*(
+      Eigen::MatrixBase<THPointDerived> const& p) const {
+    PointProduct<THPointDerived> const tp =
         rxso2() * p.template head<2>() + p(2) * translation();
-    return HomogeneousPointProduct<HPointDerivedT>(tp(0), tp(1), p(2));
+    return HomogeneousPointProduct<THPointDerived>(tp(0), tp(1), p(2));
   }
 
   /// Group action on lines.
@@ -327,12 +327,12 @@ class Sim2Base {
   /// type of the multiplication is compatible with this So2's Scalar type.
   ///
   template <
-      typename OtherDerivedT,
+      typename TOtherDerived,
       typename = typename std::enable_if<
-          std::is_same<Scalar, ReturnScalar<OtherDerivedT>>::value>::type>
-  SOPHUS_FUNC Sim2Base<DerivedT>& operator*=(
-      Sim2Base<OtherDerivedT> const& other) {
-    *static_cast<DerivedT*>(this) = *this * other;
+          std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type>
+  SOPHUS_FUNC Sim2Base<TDerived>& operator*=(
+      Sim2Base<TOtherDerived> const& other) {
+    *static_cast<TDerived*>(this) = *this * other;
     return *this;
   }
 
@@ -371,7 +371,7 @@ class Sim2Base {
   /// Accessor of complex number.
   ///
   SOPHUS_FUNC [[nodiscard]]
-  typename Eigen::internal::traits<DerivedT>::RxSO2Type::ComplexType const&
+  typename Eigen::internal::traits<TDerived>::RxSo2Type::ComplexType const&
   complex() const {
     return rxso2().complex();
   }
@@ -384,14 +384,14 @@ class Sim2Base {
 
   /// Mutator of So2 group.
   ///
-  SOPHUS_FUNC RxSO2Type& rxso2() {
-    return static_cast<DerivedT*>(this)->rxso2();
+  SOPHUS_FUNC RxSo2Type& rxso2() {
+    return static_cast<TDerived*>(this)->rxso2();
   }
 
   /// Accessor of So2 group.
   ///
-  SOPHUS_FUNC [[nodiscard]] RxSO2Type const& rxso2() const {
-    return static_cast<DerivedT const*>(this)->rxso2();
+  SOPHUS_FUNC [[nodiscard]] RxSo2Type const& rxso2() const {
+    return static_cast<TDerived const*>(this)->rxso2();
   }
 
   /// Returns scale.
@@ -424,22 +424,22 @@ class Sim2Base {
   /// Mutator of translation vector
   ///
   SOPHUS_FUNC TranslationType& translation() {
-    return static_cast<DerivedT*>(this)->translation();
+    return static_cast<TDerived*>(this)->translation();
   }
 
   /// Accessor of translation vector
   ///
   SOPHUS_FUNC [[nodiscard]] TranslationType const& translation() const {
-    return static_cast<DerivedT const*>(this)->translation();
+    return static_cast<TDerived const*>(this)->translation();
   }
 };
 
 /// Sim2 using default storage; derived from Sim2Base.
-template <class ScalarT, int kOptions>
-class Sim2 : public Sim2Base<Sim2<ScalarT, kOptions>> {
+template <class TScalar, int kOptions>
+class Sim2 : public Sim2Base<Sim2<TScalar, kOptions>> {
  public:
-  using Base = Sim2Base<Sim2<ScalarT, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = Sim2Base<Sim2<TScalar, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -470,26 +470,26 @@ class Sim2 : public Sim2Base<Sim2<ScalarT, kOptions>> {
 
   /// Copy-like constructor from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC Sim2(Sim2Base<OtherDerivedT> const& other)
+  template <class TOtherDerived>
+  SOPHUS_FUNC Sim2(Sim2Base<TOtherDerived> const& other)
       : rxso2_(other.rxso2()), translation_(other.translation()) {
     static_assert(
-        std::is_same<typename OtherDerivedT::Scalar, Scalar>::value,
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
   /// Constructor from RxSo2 and translation vector
   ///
-  template <class OtherDerivedT, class DT>
+  template <class TOtherDerived, class TD>
   SOPHUS_FUNC Sim2(
-      RxSo2Base<OtherDerivedT> const& rxso2,
-      Eigen::MatrixBase<DT> const& translation)
+      RxSo2Base<TOtherDerived> const& rxso2,
+      Eigen::MatrixBase<TD> const& translation)
       : rxso2_(rxso2), translation_(translation) {
     static_assert(
-        std::is_same<typename OtherDerivedT::Scalar, Scalar>::value,
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
         "must be same Scalar type");
     static_assert(
-        std::is_same<typename DT::Scalar, Scalar>::value,
+        std::is_same<typename TD::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
@@ -497,13 +497,13 @@ class Sim2 : public Sim2Base<Sim2<ScalarT, kOptions>> {
   ///
   /// Precondition: complex number must not be close to zero.
   ///
-  template <class DT>
+  template <class TD>
   SOPHUS_FUNC Sim2(
       Eigen::Vector2<Scalar> const& complex_number,
-      Eigen::MatrixBase<DT> const& translation)
+      Eigen::MatrixBase<TD> const& translation)
       : rxso2_(complex_number), translation_(translation) {
     static_assert(
-        std::is_same<typename DT::Scalar, Scalar>::value,
+        std::is_same<typename TD::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
@@ -565,7 +565,7 @@ class Sim2 : public Sim2Base<Sim2<ScalarT, kOptions>> {
   /// Returns derivative of exp(x) wrt. x.
   ///
   SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
-      const Tangent& vec_a) {
+      Tangent const& vec_a) {
     static Eigen::Matrix2<Scalar> const kI = Eigen::Matrix2<Scalar>::Identity();
     static Scalar const kOne(1.0);
 
@@ -758,8 +758,8 @@ class Sim2 : public Sim2Base<Sim2<ScalarT, kOptions>> {
   /// The scale factor is drawn uniformly in log2-space from [-1, 1],
   /// hence the scale is in [0.5, 2].
   ///
-  template <class UniformRandomBitGeneratorT>
-  static Sim2 sampleUniform(UniformRandomBitGeneratorT& generator) {
+  template <class TUniformRandomBitGenerator>
+  static Sim2 sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     return Sim2(
         RxSo2<Scalar>::sampleUniform(generator),
@@ -793,8 +793,8 @@ class Sim2 : public Sim2Base<Sim2<ScalarT, kOptions>> {
   TranslationMember translation_;  // NOLINT
 };
 
-template <class ScalarT, int kOptions>
-SOPHUS_FUNC Sim2<ScalarT, kOptions>::Sim2()
+template <class TScalar, int kOptions>
+SOPHUS_FUNC Sim2<TScalar, kOptions>::Sim2()
     : translation_(TranslationMember::Zero()) {
   static_assert(
       std::is_standard_layout<Sim2>::value,
@@ -815,12 +815,12 @@ namespace Eigen {  // NOLINT
 /// Specialization of Eigen::Map for ``Sim2``; derived from Sim2Base.
 ///
 /// Allows us to wrap Sim2 objects around POD array.
-template <class ScalarT, int kOptions>
-class Map<sophus::Sim2<ScalarT>, kOptions>
-    : public sophus::Sim2Base<Map<sophus::Sim2<ScalarT>, kOptions>> {
+template <class TScalar, int kOptions>
+class Map<sophus::Sim2<TScalar>, kOptions>
+    : public sophus::Sim2Base<Map<sophus::Sim2<TScalar>, kOptions>> {
  public:
-  using Base = sophus::Sim2Base<Map<sophus::Sim2<ScalarT>, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = sophus::Sim2Base<Map<sophus::Sim2<TScalar>, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -866,12 +866,12 @@ class Map<sophus::Sim2<ScalarT>, kOptions>
 /// Specialization of Eigen::Map for ``Sim2 const``; derived from Sim2Base.
 ///
 /// Allows us to wrap RxSo2 objects around POD array.
-template <class ScalarT, int kOptions>
-class Map<sophus::Sim2<ScalarT> const, kOptions>
-    : public sophus::Sim2Base<Map<sophus::Sim2<ScalarT> const, kOptions>> {
+template <class TScalar, int kOptions>
+class Map<sophus::Sim2<TScalar> const, kOptions>
+    : public sophus::Sim2Base<Map<sophus::Sim2<TScalar> const, kOptions>> {
  public:
-  using Base = sophus::Sim2Base<Map<sophus::Sim2<ScalarT> const, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = sophus::Sim2Base<Map<sophus::Sim2<TScalar> const, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;

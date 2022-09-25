@@ -78,7 +78,7 @@ TEST(MutImageView, empty) {
   FARM_CHECK(mut_view.isEmpty());
   FARM_CHECK_EQ(mut_view.imageSize(), ImageSize(0, 0));
   FARM_CHECK_EQ(mut_view.shape().pitchBytes(), 0u);
-  FARM_CHECK(mut_view.mutPtr() == nullptr);
+  FARM_CHECK(mut_view.ptrMut() == nullptr);
 
   MutImageView<float> mut_view2;
   mut_view.copyDataFrom(mut_view2);

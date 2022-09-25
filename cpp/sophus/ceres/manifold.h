@@ -14,10 +14,10 @@ namespace sophus {
 
 /// Templated local parameterization for LieGroup [with implemented
 /// LieGroup::Dx_this_mul_exp_x_at_0() ]
-template <template <typename, int = 0> class LieGroupT>
+template <template <typename, int = 0> class TLieGroup>
 class Manifold : public ceres::Manifold {
  public:
-  using LieGroupF64 = LieGroupT<double>;
+  using LieGroupF64 = TLieGroup<double>;
   using Tangent = typename LieGroupF64::Tangent;
   using TangentMap = typename sophus::Mapper<Tangent>::Map;
   using TangentConstMap = typename sophus::Mapper<Tangent>::ConstMap;

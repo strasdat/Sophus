@@ -9,32 +9,32 @@
 #pragma once
 
 #include "sophus/ceres/manifold.h"
-#include "sophus/core/test_macros.h"
+#include "sophus/common/test_macros.h"
 
-template <typename LieGroupT>
+template <class TLieGroup>
 struct RotationalPart;
 
 namespace sophus {
 
 template <int kMatrixDim>
 double dot(
-    const Eigen::Vector<double, kMatrixDim>& v1,
-    const Eigen::Vector<double, kMatrixDim>& v2) {
+    Eigen::Vector<double, kMatrixDim> const& v1,
+    Eigen::Vector<double, kMatrixDim> const& v2) {
   return v1.dot(v2);
 }
 
-double dot(const double& a, const double& b) { return a * b; }
+double dot(double const& a, double const& b) { return a * b; }
 
 template <int kMatrixDim>
-double squaredNorm(const Eigen::Vector<double, kMatrixDim>& vec) {
+double squaredNorm(Eigen::Vector<double, kMatrixDim> const& vec) {
   return vec.squaredNorm();
 }
 
-double squaredNorm(const double& scalar) { return scalar * scalar; }
+double squaredNorm(double const& scalar) { return scalar * scalar; }
 
-template <typename TT>
-TT zero() {
-  return TT::Zero();
+template <class TScalar>
+TScalar zero() {
+  return TScalar::Zero();
 }
 
 template <>
@@ -42,32 +42,32 @@ double zero<double>() {
   return 0.;
 }
 
-template <typename TT>
-typename TT::Scalar* data(TT& t) {
+template <class TScalar>
+typename TScalar::Scalar* data(TScalar& t) {
   return t.data();
 }
 
 double* data(double& d) { return &d; }
 
-template <typename TT>
-const typename TT::Scalar* data(const TT& t) {
+template <class TScalar>
+const typename TScalar::Scalar* data(TScalar const& t) {
   return t.data();
 }
 
-const double* data(const double& d) { return &d; }
+double const* data(double const& d) { return &d; }
 
-template <typename TT>
+template <class TScalar>
 struct Random {
-  template <typename RT>
-  TT static sample(RT& rng) {
+  template <class TRt>
+  static TScalar sample(TRt& rng) {
     std::normal_distribution<double> rnorm;
     static_assert(
-        TT::RowsAtCompileTime >= 0,
+        TScalar::RowsAtCompileTime >= 0,
         "Matrix should have known size at compile-time");
     static_assert(
-        TT::ColsAtCompileTime >= 0,
+        TScalar::ColsAtCompileTime >= 0,
         "Matrix should have known size at compile-time");
-    TT res;
+    TScalar res;
     for (Eigen::Index i = 0; i < res.size(); ++i) {
       res.data()[i] = rnorm(rng);
     }
@@ -77,24 +77,24 @@ struct Random {
 
 template <>
 struct Random<double> {
-  using T = double;
+  using TScalar = double;
 
-  template <typename RT>
-  T static sample(RT& rng) {
+  template <class TRt>
+  static TScalar sample(TRt& rng) {
     std::normal_distribution<double> rnorm;
     return rnorm(rng);
   }
 };
 
-template <template <typename, int = 0> class LieGroupT>
+template <template <typename, int = 0> class TLieGroup>
 struct LieGroupCeresTests {
-  template <typename TT>
-  using LieGroup = LieGroupT<TT>;
+  template <class TScalar>
+  using LieGroup = TLieGroup<TScalar>;
   using LieGroupF64 = LieGroup<double>;
   using PointF64 = typename LieGroupF64::Point;
   using Tangentd = typename LieGroupF64::Tangent;
-  template <typename TT>
-  using StdVector = std::vector<TT, Eigen::aligned_allocator<TT>>;
+  template <class TScalar>
+  using StdVector = std::vector<TScalar, Eigen::aligned_allocator<TScalar>>;
   static int constexpr kMatrixDim = LieGroupF64::kMatrixDim;
   static int constexpr kNumParameters = LieGroupF64::kNumParameters;
   static int constexpr kDoF = LieGroupF64::kDoF;
@@ -102,11 +102,11 @@ struct LieGroupCeresTests {
   struct TestLieGroupCostFunctor {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    TestLieGroupCostFunctor(const LieGroupF64& t_aw) : t_aw(t_aw) {}
+    TestLieGroupCostFunctor(LieGroupF64 const& t_aw) : t_aw(t_aw) {}
 
-    template <class TT>
-    bool operator()(TT const* const s_t_wa, TT* s_residuals) const {
-      Eigen::Map<LieGroup<TT> const> const t_wa(s_t_wa);
+    template <class TScalar>
+    bool operator()(TScalar const* const s_t_wa, TScalar* s_residuals) const {
+      Eigen::Map<LieGroup<TScalar> const> const t_wa(s_t_wa);
       // Mapper class is only used to facciliate difference between
       // So2 (which uses Scalar as tangent vector type) and other groups
       // (which use Eigen::Vector<...> as tangent vector type).
@@ -116,18 +116,18 @@ struct LieGroupCeresTests {
       //
       // We only use Mapper class in order to make tests universally
       // compatible with LieGroup::Tangent being Scalar or Eigen::Vector
-      using Mapper = Mapper<typename LieGroup<TT>::Tangent>;
+      using Mapper = Mapper<typename LieGroup<TScalar>::Tangent>;
       typename Mapper::Map residuals = Mapper::map(s_residuals);
 
       // We are able to mix Sophus types with doubles and Jet types withou
-      // needing to cast to T.
+      // needing to cast to TScalar.
       residuals = (t_aw * t_wa).log();
       // Reverse order of multiplication. This forces the compiler to verify
       // that (Jet, double) and (double, Jet) LieGroup multiplication work
       // correctly.
       residuals = (t_wa * t_aw).log();
       // Finally, ensure that Jet-to-Jet multiplication works.
-      residuals = (t_wa * t_aw.template cast<TT>()).log();
+      residuals = (t_wa * t_aw.template cast<TScalar>()).log();
       return true;
     }
 
@@ -136,15 +136,15 @@ struct LieGroupCeresTests {
   struct TestPointCostFunctor {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    TestPointCostFunctor(const LieGroupF64& t_aw, const PointF64& point_a)
+    TestPointCostFunctor(LieGroupF64 const& t_aw, PointF64 const& point_a)
         : t_aw(t_aw), point_a(point_a) {}
 
-    template <class TT>
+    template <class TScalar>
     bool operator()(
-        TT const* const s_t_wa,
-        TT const* const spoint_b,
-        TT* s_residuals) const {
-      using LieGroup = LieGroupT<TT>;
+        TScalar const* const s_t_wa,
+        TScalar const* const spoint_b,
+        TScalar* s_residuals) const {
+      using LieGroup = TLieGroup<TScalar>;
       using Point = typename LieGroup::Point;
       Eigen::Map<LieGroup const> const t_wa(s_t_wa);
       Eigen::Map<Point const> point_b(spoint_b);
@@ -153,12 +153,12 @@ struct LieGroupCeresTests {
       // Multiply LieGroupF64 by Jet vector3.
       Point point_b_prime = t_aw * point_b;
       // Ensure Jet LieGroup multiplication with Jet vector3.
-      point_b_prime = t_aw.template cast<TT>() * point_b;
+      point_b_prime = t_aw.template cast<TScalar>() * point_b;
 
       // Multiply Jet LieGroup with Vector3d.
       Point point_a_prime = t_wa * point_a;
       // Ensure Jet LieGroup multiplication with Jet vector3.
-      point_a_prime = t_wa * point_a.template cast<TT>();
+      point_a_prime = t_wa * point_a.template cast<TScalar>();
 
       residuals = point_b_prime - point_a_prime;
       return true;
@@ -169,9 +169,10 @@ struct LieGroupCeresTests {
   };
 
   struct TestGraphFunctor {
-    template <typename TT>
-    bool operator()(const TT* raw_a, const TT* raw_b, TT* residuals) const {
-      using LieGroup = LieGroupT<TT>;
+    template <class TScalar>
+    bool operator()(
+        TScalar const* raw_a, TScalar const* raw_b, TScalar* residuals) const {
+      using LieGroup = TLieGroup<TScalar>;
       Eigen::Map<const LieGroup> a(raw_a);
       Eigen::Map<const LieGroup> b(raw_b);
       using Mapper = Mapper<typename LieGroup::Tangent>;
@@ -182,7 +183,7 @@ struct LieGroupCeresTests {
       return true;
     }
 
-    TestGraphFunctor(const LieGroupF64& diff) : diff(diff) {}
+    TestGraphFunctor(LieGroupF64 const& diff) : diff(diff) {}
     const LieGroupF64 diff;
   };
 
@@ -224,13 +225,13 @@ struct LieGroupCeresTests {
 
   bool testAveraging(
       const size_t num_vertices,
-      const double sigma_init,
-      const double sigma_observation) {
+      double const sigma_init,
+      double const sigma_observation) {
     if (num_vertices == 0u) {
       return true;
     }
-    const double sigma_init_elementwise = sigma_init / std::sqrt(kDoF);
-    const double sigma_observation_elementwise =
+    double const sigma_init_elementwise = sigma_init / std::sqrt(kDoF);
+    double const sigma_observation_elementwise =
         sigma_observation / std::sqrt(kDoF);
     // Running Lie group averaging on a K_n graph with a random initialization
     // noise and random noise in observations
@@ -243,7 +244,7 @@ struct LieGroupCeresTests {
     StdVector<LieGroupF64> v_estimate;
     v_estimate.reserve(num_vertices);
     double initial_error = 0.;
-    auto parametrization = new sophus::Manifold<LieGroupT>;
+    auto parametrization = new sophus::Manifold<TLieGroup>;
 
     // All vertices are initialized with an i.i.d noise with normal
     // distribution; Scaling is adjusted in order to maintain the same
@@ -269,10 +270,10 @@ struct LieGroupCeresTests {
     for (size_t i = 0; i < num_vertices; ++i) {
       for (size_t j = i + 1; j < num_vertices; ++j) {
         LieGroupF64 diff = vec[i].inverse() * vec[j];
-        const auto delta_log =
+        auto const delta_log =
             Random<typename LieGroupF64::Tangent>::sample(rng) *
             sigma_observation_elementwise;
-        const auto delta = LieGroupF64::exp(delta_log);
+        auto const delta = LieGroupF64::exp(delta_log);
         ceres::CostFunction* cost = new ceres::AutoDiffCostFunction<
             TestGraphFunctor,
             LieGroupF64::kDoF,
@@ -310,7 +311,7 @@ struct LieGroupCeresTests {
       LieGroupF64 const& t_w_init,
       PointF64 const& point_a_init,
       PointF64 const& point_b) {
-    static constexpr int kNumPointParameters = PointF64::RowsAtCompileTime;
+    static int constexpr kNumPointParameters = PointF64::RowsAtCompileTime;
 
     // Optimization parameters.
     LieGroupF64 t_wr = t_w_init;
@@ -321,7 +322,7 @@ struct LieGroupCeresTests {
 
     // Specify local update rule for our parameter
 
-    auto parameterization = new sophus::Manifold<LieGroupT>;
+    auto parameterization = new sophus::Manifold<TLieGroup>;
     problem.AddParameterBlock(t_wr.data(), kNumParameters, parameterization);
 
     // Create and add cost functions. Derivatives will be evaluated via
@@ -358,12 +359,12 @@ struct LieGroupCeresTests {
     return passed;
   }
 
-  bool testManifold(const LieGroupF64& x, const LieGroupF64& y) {
+  bool testManifold(LieGroupF64 const& x, LieGroupF64 const& y) {
     // ceres/manifold_test_utils.h is google-test based; here we check all the
     // same invariants
     const Tangentd delta = (x.inverse() * y).log();
     const Tangentd o = zero<Tangentd>();
-    sophus::Manifold<LieGroupT> manifold;
+    sophus::Manifold<TLieGroup> manifold;
 
     LieGroupF64 test_group;
 
@@ -391,23 +392,23 @@ struct LieGroupCeresTests {
     return passed;
   }
 
-  bool xPlusZeroIsXAt(const LieGroupF64& x) {
+  bool xPlusZeroIsXAt(LieGroupF64 const& x) {
     const Tangentd o = zero<Tangentd>();
-    sophus::Manifold<LieGroupT> manifold;
+    sophus::Manifold<TLieGroup> manifold;
     LieGroupF64 test_group;
 
     bool passed = true;
 
     passed &= manifold.Plus(x.data(), data(o), test_group.data());
     processTestResult(passed);
-    const double error = squaredNorm((x.inverse() * test_group).log());
+    double const error = squaredNorm((x.inverse() * test_group).log());
     passed &= error < sophus::kEpsilonF64;
     processTestResult(passed);
     return passed;
   }
 
-  bool xMinusXIsZeroAt(const LieGroupF64& x) {
-    sophus::Manifold<LieGroupT> manifold;
+  bool xMinusXIsZeroAt(LieGroupF64 const& x) {
+    sophus::Manifold<TLieGroup> manifold;
     LieGroupF64 test_group;
     Tangentd test_tangent;
 
@@ -415,18 +416,18 @@ struct LieGroupCeresTests {
 
     passed &= manifold.Minus(x.data(), x.data(), data(test_tangent));
     processTestResult(passed);
-    const double error = squaredNorm(test_tangent);
+    double const error = squaredNorm(test_tangent);
     passed &= error < sophus::kEpsilonF64;
     processTestResult(passed);
     return passed;
   }
 
-  bool minusPlusIsIdentityAt(const LieGroupF64& x, const Tangentd& delta) {
+  bool minusPlusIsIdentityAt(LieGroupF64 const& x, Tangentd const& delta) {
     if (RotationalPart<LieGroupF64>::norm(delta) >
         sophus::kPi<double> * (1. - sophus::kEpsilonF64)) {
       return true;
     }
-    sophus::Manifold<LieGroupT> manifold;
+    sophus::Manifold<TLieGroup> manifold;
     LieGroupF64 test_group;
     Tangentd test_tangent;
 
@@ -439,14 +440,14 @@ struct LieGroupCeresTests {
     processTestResult(passed);
 
     const Tangentd diff = test_tangent - delta;
-    const double error = squaredNorm(diff);
+    double const error = squaredNorm(diff);
     passed &= error < sophus::kEpsilonF64;
     processTestResult(passed);
     return passed;
   }
 
-  bool plusMinusIsIdentityAt(const LieGroupF64& x, const LieGroupF64& y) {
-    sophus::Manifold<LieGroupT> manifold;
+  bool plusMinusIsIdentityAt(LieGroupF64 const& x, LieGroupF64 const& y) {
+    sophus::Manifold<TLieGroup> manifold;
     LieGroupF64 test_group;
     Tangentd test_tangent;
 
@@ -458,14 +459,14 @@ struct LieGroupCeresTests {
     passed &= manifold.Plus(x.data(), data(test_tangent), test_group.data());
     processTestResult(passed);
 
-    const double error = squaredNorm((y.inverse() * test_group).log());
+    double const error = squaredNorm((y.inverse() * test_group).log());
     passed &= error < sophus::kEpsilonF64;
     processTestResult(passed);
     return passed;
   }
 
-  bool minusPlusJacobianIsIdentityAt(const LieGroupF64& x) {
-    sophus::Manifold<LieGroupT> manifold;
+  bool minusPlusJacobianIsIdentityAt(LieGroupF64 const& x) {
+    sophus::Manifold<TLieGroup> manifold;
     LieGroupF64 test_group;
 
     bool passed = true;
@@ -488,15 +489,15 @@ struct LieGroupCeresTests {
         jminus * jplus - Eigen::Matrix<double, kDoF, kDoF>::Identity();
 
     std::cerr << diff << std::endl;
-    const double error = diff.squaredNorm();
+    double const error = diff.squaredNorm();
     passed &= error < sophus::kEpsilonF64;
     processTestResult(passed);
     return passed;
   }
 
   LieGroupCeresTests(
-      const StdVector<LieGroupF64>& group_vec,
-      const StdVector<PointF64>& point_vec)
+      StdVector<LieGroupF64> const& group_vec,
+      StdVector<PointF64> const& point_vec)
       : group_vec(group_vec), point_vec(point_vec) {}
 
   StdVector<LieGroupF64> group_vec;

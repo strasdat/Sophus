@@ -138,7 +138,7 @@ float sum(ImageView<float> view) {
 
 void plusOne(MutImageView<float> mut_view) {
   for (int v = 0; v < mut_view.height(); ++v) {
-    float* row = mut_view.mutRowPtr(v);
+    float* row = mut_view.rowPtrMut(v);
     for (int u = 0; u < mut_view.width(); ++u) {
       float& p = row[u];
       p += 1.f;

@@ -27,27 +27,27 @@ template class So2<float, Eigen::DontAlign>;
 template class So2<ceres::Jet<double, 3>>;
 #endif
 
-template <class ScalarT>
+template <class TScalar>
 class Tests {
  public:
-  using Scalar = ScalarT;
-  using SO2Type = So2<Scalar>;
+  using Scalar = TScalar;
+  using So2Type = So2<Scalar>;
   using Point = typename So2<Scalar>::Point;
   using Tangent = typename So2<Scalar>::Tangent;
   Scalar const k_pi = kPi<Scalar>;  // NOLINT
 
   Tests() {
-    so2_vec_.push_back(SO2Type::exp(Scalar(0.0)));
-    so2_vec_.push_back(SO2Type::exp(Scalar(0.2)));
-    so2_vec_.push_back(SO2Type::exp(Scalar(10.)));
-    so2_vec_.push_back(SO2Type::exp(Scalar(0.00001)));
-    so2_vec_.push_back(SO2Type::exp(k_pi));
+    so2_vec_.push_back(So2Type::exp(Scalar(0.0)));
+    so2_vec_.push_back(So2Type::exp(Scalar(0.2)));
+    so2_vec_.push_back(So2Type::exp(Scalar(10.)));
+    so2_vec_.push_back(So2Type::exp(Scalar(0.00001)));
+    so2_vec_.push_back(So2Type::exp(k_pi));
     so2_vec_.push_back(
-        SO2Type::exp(Scalar(0.2)) * SO2Type::exp(k_pi) *
-        SO2Type::exp(Scalar(-0.2)));
+        So2Type::exp(Scalar(0.2)) * So2Type::exp(k_pi) *
+        So2Type::exp(Scalar(-0.2)));
     so2_vec_.push_back(
-        SO2Type::exp(Scalar(-0.3)) * SO2Type::exp(k_pi) *
-        SO2Type::exp(Scalar(0.3)));
+        So2Type::exp(Scalar(-0.3)) * So2Type::exp(k_pi) *
+        So2Type::exp(Scalar(0.3)));
 
     tangent_vec_.push_back(Tangent(Scalar(0)));
     tangent_vec_.push_back(Tangent(Scalar(1)));
@@ -71,16 +71,16 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    LieGroupTests<SO2Type> tests(so2_vec_, tangent_vec_, point_vec_);
+    LieGroupTests<So2Type> tests(so2_vec_, tangent_vec_, point_vec_);
     return tests.doAllTestsPass();
   }
 
   bool testUnity() {
     bool passed = true;
     // Test that the complex number magnitude stays close to one.
-    SO2Type current_q;
+    So2Type current_q;
     for (std::size_t i = 0; i < 1000; ++i) {
-      for (SO2Type const& q : so2_vec_) {
+      for (So2Type const& q : so2_vec_) {
         current_q *= q;
       }
     }
@@ -96,7 +96,7 @@ class Tests {
   bool testRawDataAcces() {
     bool passed = true;
     Eigen::Vector2<Scalar> raw = {0, 1};
-    Eigen::Map<SO2Type const> map_of_const_so2(raw.data());
+    Eigen::Map<So2Type const> map_of_const_so2(raw.data());
     SOPHUS_TEST_APPROX(
         passed,
         map_of_const_so2.unitComplex().eval(),
@@ -105,7 +105,7 @@ class Tests {
         "");
     SOPHUS_TEST_EQUAL(
         passed, map_of_const_so2.unitComplex().data(), raw.data(), "");
-    Eigen::Map<SO2Type const> const_shallow_copy = map_of_const_so2;
+    Eigen::Map<So2Type const> const_shallow_copy = map_of_const_so2;
     SOPHUS_TEST_EQUAL(
         passed,
         const_shallow_copy.unitComplex().eval(),
@@ -113,25 +113,25 @@ class Tests {
         "");
 
     Eigen::Vector2<Scalar> raw2 = {1, 0};
-    Eigen::Map<SO2Type> map_of_so2(raw.data());
+    Eigen::Map<So2Type> map_of_so2(raw.data());
     map_of_so2.setComplex(raw2);
     SOPHUS_TEST_APPROX(
         passed, map_of_so2.unitComplex().eval(), raw2, kEpsilon<Scalar>, "");
     SOPHUS_TEST_EQUAL(passed, map_of_so2.unitComplex().data(), raw.data(), "");
     SOPHUS_TEST_NEQ(passed, map_of_so2.unitComplex().data(), raw2.data(), "");
-    Eigen::Map<SO2Type> shallow_copy = map_of_so2;
+    Eigen::Map<So2Type> shallow_copy = map_of_so2;
     SOPHUS_TEST_EQUAL(
         passed,
         shallow_copy.unitComplex().eval(),
         map_of_so2.unitComplex().eval(),
         "");
 
-    SO2Type const const_so2(raw2);
+    So2Type const const_so2(raw2);
     for (int i = 0; i < 2; ++i) {
       SOPHUS_TEST_EQUAL(passed, const_so2.data()[i], raw2.data()[i], "");
     }
 
-    SO2Type so2(raw2);
+    So2Type so2(raw2);
     for (int i = 0; i < 2; ++i) {
       so2.data()[i] = raw[i];
     }
@@ -143,21 +143,21 @@ class Tests {
     Eigen::Vector2<Scalar> data1 = {1, 0};
 
     Eigen::Vector2<Scalar> data2 = {0, 1};
-    Eigen::Map<SO2Type> map1(data1.data());
+    Eigen::Map<So2Type> map1(data1.data());
 
-    Eigen::Map<SO2Type> map2(data2.data());
+    Eigen::Map<So2Type> map2(data2.data());
 
     // map -> map assignment
     map2 = map1;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix(), "");
 
     // map -> type assignment
-    SO2Type copy;
+    So2Type copy;
     copy = map1;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
-    copy = SO2Type(Scalar(0.5));
+    copy = So2Type(Scalar(0.5));
     map1 = copy;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
@@ -167,20 +167,20 @@ class Tests {
   bool testConstructors() {
     bool passed = true;
     Eigen::Matrix2<Scalar> r = so2_vec_.front().matrix();
-    SO2Type so2(r);
+    So2Type so2(r);
     SOPHUS_TEST_APPROX(passed, r, so2.matrix(), kEpsilon<Scalar>, "");
 
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<std::is_floating_point<ST>::value, bool> testFit() {
+  template <class TS = Scalar>
+  std::enable_if_t<std::is_floating_point<TS>::value, bool> testFit() {
     bool passed = true;
 
     for (int i = 0; i < 100; ++i) {
       Eigen::Matrix2<Scalar> r = Eigen::Matrix2<Scalar>::Random();
-      SO2Type so2 = SO2Type::fitToSo2(r);
-      SO2Type so2_2 = SO2Type::fitToSo2(so2.matrix());
+      So2Type so2 = So2Type::fitToSo2(r);
+      So2Type so2_2 = So2Type::fitToSo2(so2.matrix());
 
       SOPHUS_TEST_APPROX(
           passed, so2.matrix(), so2_2.matrix(), kEpsilon<Scalar>, "");
@@ -188,12 +188,12 @@ class Tests {
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<!std::is_floating_point<ST>::value, bool> testFit() {
+  template <class TS = Scalar>
+  std::enable_if_t<!std::is_floating_point<TS>::value, bool> testFit() {
     return true;
   }
 
-  std::vector<SO2Type, Eigen::aligned_allocator<SO2Type>> so2_vec_;
+  std::vector<So2Type, Eigen::aligned_allocator<So2Type>> so2_vec_;
   std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec_;
   std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
 };

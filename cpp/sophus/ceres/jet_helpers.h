@@ -11,7 +11,7 @@
 // Forward declare ceres::Jet, so we don't have to include <ceres/jet.h> here,
 // and core does not have to depend on ceres.
 namespace ceres {
-template <class ScalarT, int kN>
+template <class TScalar, int kN>
 struct Jet;
 }  // namespace ceres
 
@@ -19,14 +19,14 @@ namespace sophus {
 
 namespace jet_helpers {
 
-template <class ScalarT>
+template <class TScalar>
 struct GetValue {
-  static ScalarT impl(const ScalarT& t) { return t; }
+  static TScalar impl(TScalar const& t) { return t; }
 };
 
-template <class ScalarT, int kN>
-struct GetValue<ceres::Jet<ScalarT, kN>> {
-  static ScalarT impl(const ScalarT& t) { return t.a; }
+template <class TScalar, int kN>
+struct GetValue<ceres::Jet<TScalar, kN>> {
+  static TScalar impl(TScalar const& t) { return t.a; }
 };
 
 }  // namespace jet_helpers

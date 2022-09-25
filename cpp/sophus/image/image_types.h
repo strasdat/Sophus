@@ -15,14 +15,14 @@
 namespace sophus {
 
 // Pixel type defs:
-template <class ChannelT>
-using Pixel3 = Eigen::Matrix<ChannelT, 3, 1>;
+template <class TChannel>
+using Pixel3 = Eigen::Matrix<TChannel, 3, 1>;
 using Pixel3U8 = Pixel3<uint8_t>;
 using Pixel3U16 = Pixel3<uint16_t>;
 using Pixel3F32 = Pixel3<float>;
 
-template <class ChannelT>
-using Pixel4 = Eigen::Matrix<ChannelT, 4, 1>;
+template <class TChannel>
+using Pixel4 = Eigen::Matrix<TChannel, 4, 1>;
 using Pixel4U8 = Pixel4<uint8_t>;
 using Pixel4U16 = Pixel4<uint16_t>;
 using Pixel4F32 = Pixel4<float>;
@@ -39,26 +39,26 @@ using MutImageViewU8 = MutImageView<uint8_t>;
 using MutImageViewU16 = MutImageView<uint16_t>;
 using MutImageViewF32 = MutImageView<float>;
 
-template <class ChannelT>
-using ImageView3 = ImageView<Pixel3<ChannelT>>;
+template <class TChannel>
+using ImageView3 = ImageView<Pixel3<TChannel>>;
 using ImageView3U8 = ImageView3<uint8_t>;
 using ImageView3U16 = ImageView3<uint16_t>;
 using ImageView3F32 = ImageView3<float>;
 
-template <class ChannelT>
-using MutImageView3 = MutImageView<Pixel3<ChannelT>>;
+template <class TChannel>
+using MutImageView3 = MutImageView<Pixel3<TChannel>>;
 using MutImageView3U8 = MutImageView3<uint8_t>;
 using MutImageView3U16 = MutImageView3<uint16_t>;
 using MutImageView3F32 = MutImageView3<float>;
 
-template <class ChannelT>
-using ImageView4 = ImageView<Pixel4<ChannelT>>;
+template <class TChannel>
+using ImageView4 = ImageView<Pixel4<TChannel>>;
 using ImageView4U8 = ImageView4<uint8_t>;
 using ImageView4U16 = ImageView4<uint16_t>;
 using ImageView4F32 = ImageView4<float>;
 
-template <class ChannelT>
-using MutImageView4 = MutImageView<Pixel4<ChannelT>>;
+template <class TChannel>
+using MutImageView4 = MutImageView<Pixel4<TChannel>>;
 using MutImageView4U8 = MutImageView4<uint8_t>;
 using MutImageView4U16 = MutImageView4<uint16_t>;
 using MutImageView4F32 = MutImageView4<float>;
@@ -75,26 +75,26 @@ using MutImageU8 = MutImage<uint8_t>;
 using MutImageU16 = MutImage<uint16_t>;
 using MutImageF32 = MutImage<float>;
 
-template <class ChannelT>
-using Image3 = Image<Pixel3<ChannelT>>;
+template <class TChannel>
+using Image3 = Image<Pixel3<TChannel>>;
 using Image3U8 = Image3<uint8_t>;
 using Image3U16 = Image3<uint16_t>;
 using Image3F32 = Image3<float>;
 
-template <class ChannelT>
-using MutImage3 = MutImage<Pixel3<ChannelT>>;
+template <class TChannel>
+using MutImage3 = MutImage<Pixel3<TChannel>>;
 using MutImage3U8 = MutImage3<uint8_t>;
 using MutImage3U16 = MutImage3<uint16_t>;
 using MutImage3F32 = MutImage3<float>;
 
-template <class ChannelT>
-using Image4 = Image<Pixel4<ChannelT>>;
+template <class TChannel>
+using Image4 = Image<Pixel4<TChannel>>;
 using Image4U8 = Image4<uint8_t>;
 using Image4U16 = Image4<uint16_t>;
 using Image4F32 = Image4<float>;
 
-template <class ChannelT>
-using MutImage4 = MutImage<Pixel4<ChannelT>>;
+template <class TChannel>
+using MutImage4 = MutImage<Pixel4<TChannel>>;
 using MutImage4U8 = MutImage4<uint8_t>;
 using MutImage4U16 = MutImage4<uint16_t>;
 using MutImage4F32 = MutImage4<float>;
@@ -104,17 +104,17 @@ FARM_ENUM(NumberType, (fixed_point, floating_point));
 
 template <class TT>
 struct ImageTraits {
-  static const int kNumChannels = 1;
-  using PixelT = TT;
-  using ChannelT = PixelT;
+  static int const kNumChannels = 1;
+  using TPixel = TT;
+  using ChannelT = TPixel;
   static_assert(
       std::is_floating_point_v<ChannelT> || std::is_unsigned_v<ChannelT>);
 };
 
 template <class TT, int kNumChannelsT>
 struct ImageTraits<Eigen::Matrix<TT, kNumChannelsT, 1>> {
-  static const int kNumChannels = kNumChannelsT;
-  using PixelT = Eigen::Matrix<TT, kNumChannels, 1>;
+  static int const kNumChannels = kNumChannelsT;
+  using TPixel = Eigen::Matrix<TT, kNumChannels, 1>;
   using ChannelT = TT;
   static_assert(
       std::is_floating_point_v<ChannelT> || std::is_unsigned_v<ChannelT>);
@@ -123,40 +123,40 @@ struct ImageTraits<Eigen::Matrix<TT, kNumChannelsT, 1>> {
 /// Returns boolean image with the result per pixel:
 ///
 /// mask(..) = lhs(..) == rhs (..)
-template <class PixelT>
-MutImageBool isEqualMask(ImageView<PixelT> lhs, ImageView<PixelT> rhs) {
+template <class TPixel>
+MutImageBool isEqualMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
   return MutImageBool::makeFromTransform(
-      lhs, rhs, [](PixelT lhs, PixelT rhs) { return lhs == rhs; });
+      lhs, rhs, [](TPixel lhs, TPixel rhs) { return lhs == rhs; });
 }
 
 /// Returns boolean image with the result per pixel:
 ///
 /// mask(..) = lhs(..) < rhs (..)
-template <class PixelT>
-MutImageBool isLessMask(ImageView<PixelT> lhs, ImageView<PixelT> rhs) {
+template <class TPixel>
+MutImageBool isLessMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
   return MutImageBool::makeFromTransform(
-      lhs, rhs, [](PixelT lhs, PixelT rhs) { return lhs < rhs; });
+      lhs, rhs, [](TPixel lhs, TPixel rhs) { return lhs < rhs; });
 }
 
 /// Returns boolean image with the result per pixel:
 ///
 /// mask(..) = lhs(..) > rhs (..)
-template <class PixelT>
-MutImageBool isGreaterMask(ImageView<PixelT> lhs, ImageView<PixelT> rhs) {
+template <class TPixel>
+MutImageBool isGreaterMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
   return MutImageBool::makeFromTransform(
-      lhs, rhs, [](PixelT lhs, PixelT rhs) { return lhs > rhs; });
+      lhs, rhs, [](TPixel lhs, TPixel rhs) { return lhs > rhs; });
 }
 
 /// Returns boolean image with the result per pixel:
 ///
 /// mask(..) = ||lhs(..), rhs (..)|| <= thr
-template <class PixelT>
+template <class TPixel>
 MutImageBool isNearMask(
-    ImageView<PixelT> lhs,
-    ImageView<PixelT> rhs,
-    typename ImageTraits<PixelT>::ChannelT thr) {
+    ImageView<TPixel> lhs,
+    ImageView<TPixel> rhs,
+    typename ImageTraits<TPixel>::ChannelT thr) {
   return MutImageBool::makeFromTransform(
-      lhs, rhs, [thr](PixelT lhs, PixelT rhs) {
+      lhs, rhs, [thr](TPixel lhs, TPixel rhs) {
         return MaxMetric(lhs, rhs) <= thr;
       });
 }

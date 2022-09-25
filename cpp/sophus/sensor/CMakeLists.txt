@@ -45,3 +45,7 @@ if(${BUILD_SOPHUS_TESTS})
                           LABELS small)
   endforeach()
 endif()
+
+if(BUILD_FARM_NG_PROTOS)
+    add_subdirectory(proto)
+endif()

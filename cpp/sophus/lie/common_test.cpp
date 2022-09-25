@@ -6,12 +6,13 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/core/test_macros.h"
-#include "sophus/interp/interpolate.h"
-#include "sophus/interp/spline.h"
+#include "sophus/calculus/num_diff.h"
+#include "sophus/common/test_macros.h"
+#include "sophus/lie/interp/interpolate.h"
+#include "sophus/lie/interp/spline.h"
 #include "sophus/lie/se3.h"
-#include "sophus/math/num_diff.h"
 
+#include <cmath>
 #include <iostream>
 
 namespace sophus {
