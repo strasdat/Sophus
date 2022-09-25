@@ -90,11 +90,11 @@ class InverseDepthPoint3 {
 
   /// Returns inverse depth psi, hence "1 / z".
   [[nodiscard]] T const& psi() const { return ab_and_psi_[2]; }
-  T& mutPsi() { return ab_and_psi_[2]; }
+  T& psi() { return ab_and_psi_[2]; }
 
   [[nodiscard]] T const* data() const { return ab_and_psi_.data(); }
 
-  T* mutData() { return ab_and_psi_.data(); }
+  T* data() { return ab_and_psi_.data(); }
 
   [[nodiscard]] [[nodiscard]] Eigen::Matrix<T, 3, 1> const& params() const {
     return ab_and_psi_;

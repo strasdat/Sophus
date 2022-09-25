@@ -17,30 +17,53 @@ jobs:
             tests: unit_test
             access: col_major
             build_type: Release
+            protos: OFF
+          - os: ubuntu-20.04
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            protos: ON
           - os: ubuntu-20.04
             tests: unit_test
             access: row_major
             build_type: Release
+            protos: OFF
           - os: ubuntu-20.04
             tests: install_target
             access: col_major
             build_type: Release
+            protos: OFF
+          - os: ubuntu-20.04
+            tests: install_target
+            access: col_major
+            build_type: Release
+            protos: ON
           - os: ubuntu-20.04
             tests: clang_tidy
             access: col_major
             build_type: Release
+            protos: OFF
           - os: macos-11
             tests: unit_test
             access: col_major
             build_type: Release
+            protos: OFF
           - os: macos-11
             tests: install_target
             access: col_major
             build_type: Release
+            protos: OFF
+          - os: macos-11
+            tests: install_target
+            access: col_major
+            build_type: Release
+            protos: ON
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
       ROW_MAJOR_DEFAULT: OFF
+      BUILD_PROTOS: ${{ matrix.protos }}
+
 
     steps:
       - uses: actions/checkout@v3
@@ -72,7 +95,8 @@ jobs:
           mkdir -p build
           cd build
           pwd
-          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DFARM_NG_CORE_TESTS=OFF ..
+          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_FARM_NG_PROTOS=$BUILD_PROTOS ..
+          make
           sudo make install
           cd ..
           cd cpp/examples/test_install_targets/

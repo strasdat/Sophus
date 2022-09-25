@@ -29,10 +29,10 @@ namespace sophus {
 
 // Types are largely inspired / derived from Pangolin.
 
-template <class PixelT, template <typename> class AllocatorT>
+template <class TPixel, template <typename> class TAllocator>
 class MutImage;
 
-template <class PixelT, template <typename> class AllocatorT>
+template <class TPixel, template <typename> class TAllocator>
 class Image;
 
 /// A view of an (immutable) image, which does not own the data.
@@ -52,26 +52,26 @@ class Image;
 /// ImageShape) and the pointer address to the first pixel ``ptr_``. No
 /// public member method can change the pointer nor the shape, hence they are
 /// all marked const.
-template <class PixelT>
+template <class TPixel>
 struct ImageView {
   /// Default constructor creates an empty image.
   ImageView() = default;
 
   /// Creates view from shape and pointer to first pixel.
-  ImageView(ImageShape shape, PixelT const* ptr) noexcept
+  ImageView(ImageShape shape, TPixel const* ptr) noexcept
       : shape_(shape), ptr_(ptr) {}
 
   /// Creates view from image size and pointer to first pixel. The image is
   /// assumed to be contiguous and the pitch is set accordingly.
-  ImageView(sophus::ImageSize image_size, PixelT const* ptr) noexcept
-      : ImageView(ImageShape::makeFromSize<PixelT>(image_size), ptr) {}
+  ImageView(sophus::ImageSize image_size, TPixel const* ptr) noexcept
+      : ImageView(ImageShape::makeFromSize<TPixel>(image_size), ptr) {}
 
   /// Returns true if view is empty.
   [[nodiscard]] bool isEmpty() const { return this->ptr_ == nullptr; }
 
   /// Returns true if view is contiguous.
   [[nodiscard]] bool isContiguous() {
-    return imageSize().width * sizeof(PixelT) == shape().pitchBytes();
+    return imageSize().width * sizeof(TPixel) == shape().pitchBytes();
   }
 
   /// Returns ImageSize.
@@ -101,8 +101,8 @@ struct ImageView {
   /// Returns v-th row pointer.
   ///
   /// Precondition: v must be in [0, height).
-  [[nodiscard]] PixelT const* rowPtr(int v) const {
-    return (PixelT*)((uint8_t*)(ptr_) + v * shape_.pitchBytes());
+  [[nodiscard]] TPixel const* rowPtr(int v) const {
+    return (TPixel*)((uint8_t*)(ptr_) + v * shape_.pitchBytes());
   }
 
   /// Returns pixel u, v.
@@ -116,18 +116,18 @@ struct ImageView {
   /// image. Use the following instead:
   ///
   /// for (int v=0; v<view.shape().height(); ++v) {
-  ///   PixelT const* row = img.rowPtr(v);
+  ///   TPixel const* row = img.rowPtr(v);
   ///   for (int u=0; u<view.shape().width(); ++u) {
   ///     PixetT p = row[u];
   ///   }
   /// }
-  [[nodiscard]] PixelT const& checked(int u, int v) const {
+  [[nodiscard]] TPixel const& checked(int u, int v) const {
     FARM_CHECK(colInBounds(u));
     FARM_CHECK(rowInBounds(v));
     return rowPtr(v)[u];
   }
 
-  [[nodiscard]] PixelT const& checked(Eigen::Vector2i uv) const {
+  [[nodiscard]] TPixel const& checked(Eigen::Vector2i uv) const {
     return checked(uv[0], uv[1]);
   }
 
@@ -135,16 +135,16 @@ struct ImageView {
   ///
   /// Precondition: u must be in [0, width) and v must be in [0, height).
   /// Silent UB on failure.
-  [[nodiscard]] PixelT const& unchecked(int u, int v) const {
+  [[nodiscard]] TPixel const& unchecked(int u, int v) const {
     return rowPtr(v)[u];
   }
 
-  [[nodiscard]] PixelT const& unchecked(Eigen::Vector2i uv) const {
+  [[nodiscard]] TPixel const& unchecked(Eigen::Vector2i uv) const {
     return unchecked(uv[0], uv[1]);
   }
 
   /// Returns pointer to first pixel.
-  [[nodiscard]] PixelT const* ptr() const { return ptr_; }
+  [[nodiscard]] TPixel const* ptr() const { return ptr_; }
 
   /// Returns subview.
   [[nodiscard]] ImageView subview(
@@ -154,19 +154,19 @@ struct ImageView {
     FARM_CHECK_LE(uv.x() + size.width, shape_.width());
     FARM_CHECK_LE(uv.y() + size.height, shape_.height());
     return ImageView(
-        ImageShape::makeFromSizeAndPitch<PixelT>(size, shape_.pitchBytes()),
+        ImageShape::makeFromSizeAndPitch<TPixel>(size, shape_.pitchBytes()),
         rowPtr(uv.y()) + uv.x());
   }
 
   /// Performs reduction / fold on image view.
-  template <class ReduceOpT, class ValT>
-  [[nodiscard]] ValT reduce(
-      const ReduceOpT& reduce_op, ValT val = ValT{}) const {
+  template <class TReduceOp, class TVal>
+  [[nodiscard]] TVal reduce(
+      TReduceOp const& reduce_op, TVal val = TVal{}) const {
     FARM_CHECK(!this->isEmpty());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
-      const PixelT* p = this->rowPtr(v);
-      const PixelT* end_of_row = p + this->shape_.width();
+      TPixel const* p = this->rowPtr(v);
+      TPixel const* end_of_row = p + this->shape_.width();
       for (; p != end_of_row; ++p) {
         reduce_op(*p, val);
       }
@@ -175,15 +175,15 @@ struct ImageView {
   }
 
   /// Performs reduction / fold on image view with short circuit condition.
-  template <class ShortCircuitReduceOpT, class ValT>
-  [[nodiscard]] ValT shortCircuitReduce(
-      const ShortCircuitReduceOpT& short_circuit_reduce_op,
-      ValT val = ValT{}) const {
+  template <class TShortCircuitReduceOp, class TVal>
+  [[nodiscard]] TVal shortCircuitReduce(
+      TShortCircuitReduceOp const& short_circuit_reduce_op,
+      TVal val = TVal{}) const {
     FARM_CHECK(!this->isEmpty());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
-      const PixelT* p = this->rowPtr(v);
-      const PixelT* end_of_row = p + this->shape_.width();
+      TPixel const* p = this->rowPtr(v);
+      TPixel const* end_of_row = p + this->shape_.width();
       for (; p != end_of_row; ++p) {
         if (short_circuit_reduce_op(*p, val)) {
           return val;
@@ -203,21 +203,21 @@ struct ImageView {
   /// values equality and return true for identical copies of data blocks.
   ///
   /// Here we follow std::span which also does not offer equality comparions.
-  bool operator==(const ImageView& rhs) const = delete;
+  bool operator==(ImageView const& rhs) const = delete;
 
   /// The in-equality operator is deleted to avoid confusion.
-  bool operator!=(const ImageView& rhs) const = delete;
+  bool operator!=(ImageView const& rhs) const = delete;
 
   /// Returns true both views have the same size and contain the same data.
-  [[nodiscard]] bool hasSameData(const ImageView& rhs) const {
+  [[nodiscard]] bool hasSameData(ImageView const& rhs) const {
     if (!(this->imageSize() == rhs.imageSize())) {
       return false;
     }
     for (int v = 0; v < this->shape_.height(); ++v) {
-      const PixelT* p = this->rowPtr(v);
-      const PixelT* rhs_p = rhs.rowPtr(v);
+      TPixel const* p = this->rowPtr(v);
+      TPixel const* rhs_p = rhs.rowPtr(v);
 
-      const PixelT* end_of_row = p + this->shape_.width();
+      TPixel const* end_of_row = p + this->shape_.width();
       for (; p != end_of_row; ++p, ++rhs_p) {
         if (*p != *rhs_p) {
           return false;
@@ -232,13 +232,13 @@ struct ImageView {
   void setViewToEmpty() { *this = {}; }
 
   ImageShape shape_ = {};        // NOLINT
-  PixelT const* ptr_ = nullptr;  // NOLINT
+  TPixel const* ptr_ = nullptr;  // NOLINT
 
  private:
-  template <class T2T, template <typename> class AllocatorT>
+  template <class TT, template <typename> class TAllocator>
   friend class MutImage;
 
-  template <class T2T, template <typename> class AllocatorT>
+  template <class TT, template <typename> class TAllocator>
   friend class Image;
 };
 
@@ -246,7 +246,7 @@ namespace details {
 void pitchedCopy(
     uint8_t* dst,
     size_t dst_pitch_bytes,
-    const uint8_t* src,
+    uint8_t const* src,
     size_t src_pitch_bytes,
     sophus::ImageSize size,
     uint8_t size_of_pixel);
@@ -268,38 +268,38 @@ void pitchedCopy(
 /// equality comparisons. Furthermore, giving mutable access to pixels is
 /// considered a const operation, as in
 ///
-///  ```PixelT& checkedMut(int u, int v) const```
+///  ```TPixel& checkedMut(int u, int v) const```
 ///
 /// since this merely allows for changing a pixel value, but not its state
 /// (data location and layout).
-template <class PixelT>
-class MutImageView : public ImageView<PixelT> {
+template <class TPixel>
+class MutImageView : public ImageView<TPixel> {
  public:
   /// Default constructor creates an empty image.
   MutImageView() = default;
 
   /// Creates view from shape and pointer to first pixel.
-  MutImageView(ImageShape shape, PixelT* ptr) noexcept
-      : ImageView<PixelT>(shape, ptr) {}
+  MutImageView(ImageShape shape, TPixel* ptr) noexcept
+      : ImageView<TPixel>(shape, ptr) {}
 
   /// Creates view from image size and pointer to first pixel. The image is
   /// assumed to be contiguous and the pitch is set accordingly.
-  MutImageView(sophus::ImageSize image_size, PixelT* ptr) noexcept
-      : ImageView<PixelT>(image_size, ptr) {}
+  MutImageView(sophus::ImageSize image_size, TPixel* ptr) noexcept
+      : ImageView<TPixel>(image_size, ptr) {}
 
   /// Creates mutable view from view.
   ///
   /// It is the user's responsibility to make sure that the data owned by
   /// the view can be modified safely.
-  [[nodiscard]] static MutImageView unsafeConstCast(ImageView<PixelT> view) {
-    return MutImageView(view.shape(), const_cast<PixelT*>(view.ptr()));
+  [[nodiscard]] static MutImageView unsafeConstCast(ImageView<TPixel> view) {
+    return MutImageView(view.shape(), const_cast<TPixel*>(view.ptr()));
   }
 
   /// Returns ImageView(*this).
   ///
   /// Returns non-mut version of view.
-  [[nodiscard]] ImageView<PixelT> view() const {
-    return ImageView<PixelT>(this->shape(), this->ptr());
+  [[nodiscard]] ImageView<TPixel> view() const {
+    return ImageView<TPixel>(this->shape(), this->ptr());
   }
 
   /// Copies data from view into this.
@@ -309,7 +309,7 @@ class MutImageView : public ImageView<PixelT> {
   ///  * this->size() == view.size()
   ///
   /// No-op if view is empty.
-  void copyDataFrom(ImageView<PixelT> view) const {
+  void copyDataFrom(ImageView<TPixel> view) const {
     FARM_CHECK_EQ(this->isEmpty(), view.isEmpty());
 
     if (this->isEmpty()) {
@@ -319,15 +319,15 @@ class MutImageView : public ImageView<PixelT> {
     details::pitchedCopy(
         (uint8_t*)this->ptr(),
         this->shape().pitchBytes(),
-        (const uint8_t*)view.ptr(),
+        (uint8_t const*)view.ptr(),
         view.shape().pitchBytes(),
         this->imageSize(),
-        sizeof(PixelT));
+        sizeof(TPixel));
   }
 
   /// Returns v-th row pointer of mutable pixel.
-  [[nodiscard]] PixelT* mutRowPtr(int v) const {
-    return (PixelT*)((uint8_t*)(this->ptr()) + v * this->shape_.pitchBytes());
+  [[nodiscard]] TPixel* rowPtrMut(int v) const {
+    return (TPixel*)((uint8_t*)(this->ptr()) + v * this->shape_.pitchBytes());
   }
 
   /// Mutable accessor to pixel u, v.
@@ -336,13 +336,13 @@ class MutImageView : public ImageView<PixelT> {
   ///
   /// Note:
   ///  * panics if u,v is invalid.
-  [[nodiscard]] PixelT& checkedMut(int u, int v) const {
+  [[nodiscard]] TPixel& checkedMut(int u, int v) const {
     FARM_CHECK(this->colInBounds(u));
     FARM_CHECK(this->rowInBounds(v));
-    return mutRowPtr(v)[u];
+    return rowPtrMut(v)[u];
   }
 
-  [[nodiscard]] PixelT& checkedMut(Eigen::Vector2i uv) const {
+  [[nodiscard]] TPixel& checkedMut(Eigen::Vector2i uv) const {
     return checkedMut(uv[0], uv[1]);
   }
 
@@ -350,24 +350,24 @@ class MutImageView : public ImageView<PixelT> {
   ///
   /// Precondition: u must be in [0, width) and v must be in [0, height).
   /// Silent UB on failure.
-  [[nodiscard]] PixelT& uncheckedMut(int u, int v) const {
-    return mutRowPtr(v)[u];
+  [[nodiscard]] TPixel& uncheckedMut(int u, int v) const {
+    return rowPtrMut(v)[u];
   }
 
-  [[nodiscard]] PixelT& uncheckedMut(Eigen::Vector2i uv) const {
+  [[nodiscard]] TPixel& uncheckedMut(Eigen::Vector2i uv) const {
     return uncheckedMut(uv[0], uv[1]);
   }
 
   /// Mutates each pixel of this with given unary operation
   ///
   /// Preconditions: this must not be empty.
-  template <class UnaryOperationT>
-  void mutate(const UnaryOperationT& unary_op) const {
+  template <class TUnaryOperation>
+  void mutate(TUnaryOperation const& unary_op) const {
     FARM_CHECK(!this->isEmpty());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
-      PixelT* p = this->mutRowPtr(v);
-      const PixelT* end_of_row = p + this->shape_.width();
+      TPixel* p = this->rowPtrMut(v);
+      TPixel const* end_of_row = p + this->shape_.width();
       for (; p != end_of_row; ++p) {
         *p = unary_op(*p);
       }
@@ -379,16 +379,16 @@ class MutImageView : public ImageView<PixelT> {
   /// Preconditions:
   ///   - this must not be empty.
   ///   - this->imageSize() == view.imageSize()
-  template <class OtherPixelT, class UnaryOperationT>
+  template <class TOtherPixel, class TUnaryOperation>
   void transformFrom(
-      ImageView<OtherPixelT> view, const UnaryOperationT& unary_op) const {
+      ImageView<TOtherPixel> view, TUnaryOperation const& unary_op) const {
     FARM_CHECK(!this->isEmpty());
     FARM_CHECK_EQ(view.imageSize(), this->imageSize());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
-      PixelT* mut_p = this->mutRowPtr(v);
-      OtherPixelT const* p = view.rowPtr(v);
-      const OtherPixelT* end_of_row = p + view.shape().width();
+      TPixel* mut_p = this->rowPtrMut(v);
+      TOtherPixel const* p = view.rowPtr(v);
+      TOtherPixel const* end_of_row = p + view.shape().width();
 
       for (; p != end_of_row; ++p, ++mut_p) {
         *mut_p = unary_op(*p);
@@ -401,19 +401,19 @@ class MutImageView : public ImageView<PixelT> {
   /// Preconditions:
   ///   - this must not be empty.
   ///   - this->imageSize() == lhs.imageSize() == rhs.imageSize()
-  template <class LhsPixelT, class RhsPixelT, class BinaryOperationT>
+  template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
   void transformFrom(
-      ImageView<LhsPixelT> lhs,
-      ImageView<RhsPixelT> rhs,
-      const BinaryOperationT& binary_op) const {
+      ImageView<TLhsPixel> lhs,
+      ImageView<TRhsPixel> rhs,
+      TBinaryOperation const& binary_op) const {
     FARM_CHECK(!this->isEmpty());
     FARM_CHECK_EQ(lhs.imageSize(), this->imageSize());
     FARM_CHECK_EQ(rhs.imageSize(), this->imageSize());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
-      PixelT* mut_p = this->mutRowPtr(v);
-      LhsPixelT const* lhs_p = lhs.rowPtr(v);
-      RhsPixelT const* rhs_p = rhs.rowPtr(v);
+      TPixel* mut_p = this->rowPtrMut(v);
+      TLhsPixel const* lhs_p = lhs.rowPtr(v);
+      TRhsPixel const* rhs_p = rhs.rowPtr(v);
 
       for (int u = 0; u < this->shape_.width(); ++u) {
         mut_p[u] = binary_op(lhs_p[u], rhs_p[u]);
@@ -424,13 +424,13 @@ class MutImageView : public ImageView<PixelT> {
   /// Populates every pixel of this with val.
   ///
   /// Preconditions: this must not be empty.
-  void fill(const PixelT& val) const {
-    mutate([&](const PixelT& /*unused*/) { return val; });
+  void fill(TPixel const& val) const {
+    mutate([&](TPixel const& /*unused*/) { return val; });
   }
 
   /// Returns pointer of mutable data to first pixel.
-  [[nodiscard]] PixelT* mutPtr() const {
-    return const_cast<PixelT*>(ImageView<PixelT>::ptr());
+  [[nodiscard]] TPixel* ptrMut() const {
+    return const_cast<TPixel*>(ImageView<TPixel>::ptr());
   }
 
   /// Returns mutable subview.
@@ -442,9 +442,9 @@ class MutImageView : public ImageView<PixelT> {
     FARM_CHECK_LE(uv.y() + size.height, this->shape().height());
 
     return MutImageView(
-        ImageShape::makeFromSizeAndPitch<PixelT>(
+        ImageShape::makeFromSizeAndPitch<TPixel>(
             size, this->shape().pitchBytes()),
-        this->mutRowPtr(uv.y()) + uv.x());
+        this->rowPtrMut(uv.y()) + uv.x());
   }
 };
 

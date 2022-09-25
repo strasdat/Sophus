@@ -14,13 +14,13 @@
 #include "so2.h"
 
 namespace sophus {
-template <class ScalarT, int kOptions = 0>
+template <class TScalar, int kOptions = 0>
 class RxSo2;
 using RxSo2F64 = RxSo2<double>;
 using RxSo2F32 = RxSo2<float>;
 
-template <class ScalarT, int kOptions = 0>
-/* [[deprecated]] */ using RxSO2 = RxSo2<ScalarT, kOptions>;
+template <class TScalar, int kOptions = 0>
+/* [[deprecated]] */ using RxSO2 = RxSo2<TScalar, kOptions>;
 /* [[deprecated]] */ using RxSO2d = RxSo2F64;
 /* [[deprecated]] */ using RxSO2f = RxSo2F32;
 }  // namespace sophus
@@ -28,26 +28,26 @@ template <class ScalarT, int kOptions = 0>
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class ScalarT, int kOptionsT>
-struct traits<sophus::RxSo2<ScalarT, kOptionsT>> {
-  static constexpr int kOptions = kOptionsT;
-  using Scalar = ScalarT;
+template <class TScalar, int kOptionsT>
+struct traits<sophus::RxSo2<TScalar, kOptionsT>> {
+  static int constexpr kOptions = kOptionsT;
+  using Scalar = TScalar;
   using ComplexType = Eigen::Matrix<Scalar, 2, 1, kOptions>;
 };
 
-template <class ScalarT, int kOptionsT>
-struct traits<Map<sophus::RxSo2<ScalarT>, kOptionsT>>
-    : traits<sophus::RxSo2<ScalarT, kOptionsT>> {
-  static constexpr int kOptions = kOptionsT;
-  using Scalar = ScalarT;
+template <class TScalar, int kOptionsT>
+struct traits<Map<sophus::RxSo2<TScalar>, kOptionsT>>
+    : traits<sophus::RxSo2<TScalar, kOptionsT>> {
+  static int constexpr kOptions = kOptionsT;
+  using Scalar = TScalar;
   using ComplexType = Map<Eigen::Vector2<Scalar>, kOptions>;
 };
 
-template <class ScalarT, int kOptionsT>
-struct traits<Map<sophus::RxSo2<ScalarT> const, kOptionsT>>
-    : traits<sophus::RxSo2<ScalarT, kOptionsT> const> {
-  static constexpr int kOptions = kOptionsT;
-  using Scalar = ScalarT;
+template <class TScalar, int kOptionsT>
+struct traits<Map<sophus::RxSo2<TScalar> const, kOptionsT>>
+    : traits<sophus::RxSo2<TScalar, kOptionsT> const> {
+  static int constexpr kOptions = kOptionsT;
+  using Scalar = TScalar;
   using ComplexType = Map<Eigen::Vector2<Scalar> const, kOptions>;
 };
 }  // namespace internal
@@ -88,12 +88,12 @@ namespace sophus {
 /// In order to obey this condition, group multiplication is implemented with
 /// saturation such that a product always has a scale which is equal or greater
 /// this threshold.
-template <class DerivedT>
+template <class TDerived>
 class RxSo2Base {
  public:
-  static constexpr int kOptions = Eigen::internal::traits<DerivedT>::kOptions;
-  using Scalar = typename Eigen::internal::traits<DerivedT>::Scalar;
-  using ComplexType = typename Eigen::internal::traits<DerivedT>::ComplexType;
+  static int constexpr kOptions = Eigen::internal::traits<TDerived>::kOptions;
+  using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
+  using ComplexType = typename Eigen::internal::traits<TDerived>::ComplexType;
   using ComplexTemporaryType = Eigen::Matrix<Scalar, 2, 1, kOptions>;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
@@ -117,18 +117,18 @@ class RxSo2Base {
   /// ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
   /// types, as well as other compatible scalar types such as Ceres::Jet and
   /// double scalars with RxSo2 operations.
-  template <typename OtherDerivedT>
+  template <class TOtherDerived>
   using ReturnScalar = typename Eigen::
-      ScalarBinaryOpTraits<Scalar, typename OtherDerivedT::Scalar>::ReturnType;
+      ScalarBinaryOpTraits<Scalar, typename TOtherDerived::Scalar>::ReturnType;
 
-  template <typename OtherDerivedT>
-  using RxSo2Product = RxSo2<ReturnScalar<OtherDerivedT>>;
+  template <class TOtherDerived>
+  using RxSo2Product = RxSo2<ReturnScalar<TOtherDerived>>;
 
-  template <typename PointDerivedT>
-  using PointProduct = Eigen::Vector2<ReturnScalar<PointDerivedT>>;
+  template <class TPointDerived>
+  using PointProduct = Eigen::Vector2<ReturnScalar<TPointDerived>>;
 
-  template <typename HPointDerivedT>
-  using HomogeneousPointProduct = Eigen::Vector3<ReturnScalar<HPointDerivedT>>;
+  template <class THPointDerived>
+  using HomogeneousPointProduct = Eigen::Vector3<ReturnScalar<THPointDerived>>;
 
   /// Adjoint transformation
   ///
@@ -148,11 +148,11 @@ class RxSo2Base {
 
   /// Returns copy of instance casted to NewScalarType.
   ///
-  template <class NewScalarTypeT>
-  SOPHUS_FUNC [[nodiscard]] RxSo2<NewScalarTypeT> cast() const {
-    typename RxSo2<NewScalarTypeT>::ComplexType c =
-        complex().template cast<NewScalarTypeT>();
-    return RxSo2<NewScalarTypeT>(c);
+  template <class TNewScalarType>
+  SOPHUS_FUNC [[nodiscard]] RxSo2<TNewScalarType> cast() const {
+    typename RxSo2<TNewScalarType>::ComplexType c =
+        complex().template cast<TNewScalarType>();
+    return RxSo2<TNewScalarType>(c);
   }
 
   /// This provides unsafe read/write access to internal data. RxSO(2) is
@@ -214,9 +214,9 @@ class RxSo2Base {
 
   /// Assignment-like operator from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC RxSo2Base<DerivedT>& operator=(
-      RxSo2Base<OtherDerivedT> const& other) {
+  template <class TOtherDerived>
+  SOPHUS_FUNC RxSo2Base<TDerived>& operator=(
+      RxSo2Base<TOtherDerived> const& other) {
     mutComplex() = other.complex();
     return *this;
   }
@@ -227,17 +227,17 @@ class RxSo2Base {
   /// Note: This function performs saturation for products close to zero in
   /// order to ensure the class invariant.
   ///
-  template <typename OtherDerivedT>
-  SOPHUS_FUNC RxSo2Product<OtherDerivedT> operator*(
-      RxSo2Base<OtherDerivedT> const& other) const {
-    using ResultT = ReturnScalar<OtherDerivedT>;
+  template <class TOtherDerived>
+  SOPHUS_FUNC RxSo2Product<TOtherDerived> operator*(
+      RxSo2Base<TOtherDerived> const& other) const {
+    using ResultT = ReturnScalar<TOtherDerived>;
 
     Scalar lhs_real = complex().x();
     Scalar lhs_imag = complex().y();
-    typename OtherDerivedT::Scalar const& rhs_real = other.complex().x();
-    typename OtherDerivedT::Scalar const& rhs_imag = other.complex().y();
+    typename TOtherDerived::Scalar const& rhs_real = other.complex().x();
+    typename TOtherDerived::Scalar const& rhs_imag = other.complex().y();
     /// complex multiplication
-    typename RxSo2Product<OtherDerivedT>::ComplexType result_complex(
+    typename RxSo2Product<TOtherDerived>::ComplexType result_complex(
         lhs_real * rhs_real - lhs_imag * rhs_imag,
         lhs_real * rhs_imag + lhs_imag * rhs_real);
 
@@ -253,7 +253,7 @@ class RxSo2Base {
       result_complex.normalize();
       result_complex /= kEpsilonPlus<ResultT>;
     }
-    return RxSo2Product<OtherDerivedT>(result_complex);
+    return RxSo2Product<TOtherDerived>(result_complex);
   }
 
   /// Group action on 2-points.
@@ -264,24 +264,24 @@ class RxSo2Base {
   ///   ``p_bar = s * (bar_R_foo * p_foo)``.
   ///
   template <
-      typename PointDerivedT,
+      typename TPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<PointDerivedT, 2>::value>::type>
-  SOPHUS_FUNC PointProduct<PointDerivedT> operator*(
-      Eigen::MatrixBase<PointDerivedT> const& p) const {
+          IsFixedSizeVector<TPointDerived, 2>::value>::type>
+  SOPHUS_FUNC PointProduct<TPointDerived> operator*(
+      Eigen::MatrixBase<TPointDerived> const& p) const {
     return matrix() * p;
   }
 
   /// Group action on homogeneous 2-points. See above for more details.
   ///
   template <
-      typename HPointDerivedT,
+      typename THPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<HPointDerivedT, 3>::value>::type>
-  SOPHUS_FUNC HomogeneousPointProduct<HPointDerivedT> operator*(
-      Eigen::MatrixBase<HPointDerivedT> const& p) const {
-    const auto rsp = *this * p.template head<2>();
-    return HomogeneousPointProduct<HPointDerivedT>(rsp(0), rsp(1), p(2));
+          IsFixedSizeVector<THPointDerived, 3>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<THPointDerived> operator*(
+      Eigen::MatrixBase<THPointDerived> const& p) const {
+    auto const rsp = *this * p.template head<2>();
+    return HomogeneousPointProduct<THPointDerived>(rsp(0), rsp(1), p(2));
   }
 
   /// Group action on lines.
@@ -308,7 +308,7 @@ class RxSo2Base {
   /// lines
   ///
   SOPHUS_FUNC Hyperplane operator*(Hyperplane const& p) const {
-    const auto this_scale = scale();
+    auto const this_scale = scale();
     return Hyperplane(
         (*this) * p.normal() / this_scale, this_scale * p.offset());
   }
@@ -320,12 +320,12 @@ class RxSo2Base {
   /// order to ensure the class invariant.
   ///
   template <
-      typename OtherDerivedT,
+      typename TOtherDerived,
       typename = typename std::enable_if<
-          std::is_same<Scalar, ReturnScalar<OtherDerivedT>>::value>::type>
-  SOPHUS_FUNC RxSo2Base<DerivedT>& operator*=(
-      RxSo2Base<OtherDerivedT> const& other) {
-    *static_cast<DerivedT*>(this) = *this * other;
+          std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type>
+  SOPHUS_FUNC RxSo2Base<TDerived>& operator*=(
+      RxSo2Base<TOtherDerived> const& other) {
+    *static_cast<TDerived*>(this) = *this * other;
     return *this;
   }
 
@@ -373,13 +373,13 @@ class RxSo2Base {
     FARM_CHECK(
         z.squaredNorm() < Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>),
         "Inverse scale factor must be greate-equal epsilon.");
-    static_cast<DerivedT*>(this)->mutComplex() = z;
+    static_cast<TDerived*>(this)->mutComplex() = z;
   }
 
   /// Accessor of complex.
   ///
   SOPHUS_FUNC [[nodiscard]] ComplexType const& complex() const {
-    return static_cast<DerivedT const*>(this)->complex();
+    return static_cast<TDerived const*>(this)->complex();
   }
 
   /// Returns rotation matrix.
@@ -448,16 +448,16 @@ class RxSo2Base {
   /// Mutator of complex is private to ensure class invariant.
   ///
   SOPHUS_FUNC ComplexType& mutComplex() {
-    return static_cast<DerivedT*>(this)->mutComplex();
+    return static_cast<TDerived*>(this)->mutComplex();
   }
 };
 
 /// RxSo2 using storage; derived from RxSo2Base.
-template <class ScalarT, int kOptions>
-class RxSo2 : public RxSo2Base<RxSo2<ScalarT, kOptions>> {
+template <class TScalar, int kOptions>
+class RxSo2 : public RxSo2Base<RxSo2<TScalar, kOptions>> {
  public:
-  using Base = RxSo2Base<RxSo2<ScalarT, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = RxSo2Base<RxSo2<TScalar, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -466,7 +466,7 @@ class RxSo2 : public RxSo2Base<RxSo2<ScalarT, kOptions>> {
   using ComplexMember = Eigen::Matrix<Scalar, 2, 1, kOptions>;
 
   /// ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
-  friend class RxSo2Base<RxSo2<ScalarT, kOptions>>;
+  friend class RxSo2Base<RxSo2<TScalar, kOptions>>;
 
   using Base::operator=;
 
@@ -491,8 +491,8 @@ class RxSo2 : public RxSo2Base<RxSo2<ScalarT, kOptions>> {
 
   /// Copy-like constructor from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC RxSo2(RxSo2Base<OtherDerivedT> const& other)
+  template <class TOtherDerived>
+  SOPHUS_FUNC RxSo2(RxSo2Base<TOtherDerived> const& other)
       : complex_(other.complex()) {}
 
   /// Constructor from scaled rotation matrix s*R
@@ -690,8 +690,8 @@ class RxSo2 : public RxSo2Base<RxSo2<ScalarT, kOptions>> {
   /// The scale factor is drawn uniformly in log2-space from [-1, 1],
   /// hence the scale is in [0.5, 2)].
   ///
-  template <class UniformRandomBitGeneratorT>
-  static RxSo2 sampleUniform(UniformRandomBitGeneratorT& generator) {
+  template <class TUniformRandomBitGenerator>
+  static RxSo2 sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     using std::exp2;
     return RxSo2(
@@ -729,13 +729,13 @@ namespace Eigen {  // NOLINT
 ///
 /// Allows us to wrap RxSo2 objects around POD array (e.g. external z style
 /// complex).
-template <class ScalarT, int kOptions>
-class Map<sophus::RxSo2<ScalarT>, kOptions>
-    : public sophus::RxSo2Base<Map<sophus::RxSo2<ScalarT>, kOptions>> {
-  using Base = sophus::RxSo2Base<Map<sophus::RxSo2<ScalarT>, kOptions>>;
+template <class TScalar, int kOptions>
+class Map<sophus::RxSo2<TScalar>, kOptions>
+    : public sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>, kOptions>> {
+  using Base = sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>, kOptions>>;
 
  public:
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -743,7 +743,7 @@ class Map<sophus::RxSo2<ScalarT>, kOptions>
   using Adjoint = typename Base::Adjoint;
 
   /// ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
-  friend class sophus::RxSo2Base<Map<sophus::RxSo2<ScalarT>, kOptions>>;
+  friend class sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>, kOptions>>;
 
   using Base::operator=;
   using Base::operator*=;
@@ -770,12 +770,12 @@ class Map<sophus::RxSo2<ScalarT>, kOptions>
 ///
 /// Allows us to wrap RxSo2 objects around POD array (e.g. external z style
 /// complex).
-template <class ScalarT, int kOptions>
-class Map<sophus::RxSo2<ScalarT> const, kOptions>
-    : public sophus::RxSo2Base<Map<sophus::RxSo2<ScalarT> const, kOptions>> {
+template <class TScalar, int kOptions>
+class Map<sophus::RxSo2<TScalar> const, kOptions>
+    : public sophus::RxSo2Base<Map<sophus::RxSo2<TScalar> const, kOptions>> {
  public:
-  using Base = sophus::RxSo2Base<Map<sophus::RxSo2<ScalarT> const, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = sophus::RxSo2Base<Map<sophus::RxSo2<TScalar> const, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;

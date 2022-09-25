@@ -8,53 +8,53 @@
 
 #pragma once
 
-#include "sophus/core/types.h"
+#include "sophus/common/types.h"
 
 namespace sophus {
 namespace details {
 
-template <class ScalarT, int kMatrixDim>
-Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> calcW(
-    Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> const &omega,
-    ScalarT const theta,
-    ScalarT const sigma) {
+template <class TScalar, int kMatrixDim>
+Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim> calcW(
+    Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim> const &omega,
+    TScalar const theta,
+    TScalar const sigma) {
   using std::abs;
   using std::cos;
   using std::exp;
   using std::sin;
-  static Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> const kI =
-      Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim>::Identity();
-  static ScalarT const kOne(1);
-  static ScalarT const kHalf(0.5);
-  Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> const omega2 = omega * omega;
-  ScalarT const scale = exp(sigma);
-  ScalarT a;
+  static Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim> const kI =
+      Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim>::Identity();
+  static TScalar const kOne(1);
+  static TScalar const kHalf(0.5);
+  Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim> const omega2 = omega * omega;
+  TScalar const scale = exp(sigma);
+  TScalar a;
 
-  ScalarT b;
+  TScalar b;
 
-  ScalarT c;
-  if (abs(sigma) < kEpsilon<ScalarT>) {
+  TScalar c;
+  if (abs(sigma) < kEpsilon<TScalar>) {
     c = kOne;
-    if (abs(theta) < kEpsilon<ScalarT>) {
+    if (abs(theta) < kEpsilon<TScalar>) {
       a = kHalf;
-      b = ScalarT(1. / 6.);
+      b = TScalar(1. / 6.);
     } else {
-      ScalarT theta_sq = theta * theta;
+      TScalar theta_sq = theta * theta;
       a = (kOne - cos(theta)) / theta_sq;
       b = (theta - sin(theta)) / (theta_sq * theta);
     }
   } else {
     c = (scale - kOne) / sigma;
-    if (abs(theta) < kEpsilon<ScalarT>) {
-      ScalarT sigma_sq = sigma * sigma;
+    if (abs(theta) < kEpsilon<TScalar>) {
+      TScalar sigma_sq = sigma * sigma;
       a = ((sigma - kOne) * scale + kOne) / sigma_sq;
       b = (scale * kHalf * sigma_sq + scale - kOne - sigma * scale) /
           (sigma_sq * sigma);
     } else {
-      ScalarT theta_sq = theta * theta;
-      ScalarT tmp_a = scale * sin(theta);
-      ScalarT tmp_b = scale * cos(theta);
-      ScalarT tmp_c = theta_sq + sigma * sigma;
+      TScalar theta_sq = theta * theta;
+      TScalar tmp_a = scale * sin(theta);
+      TScalar tmp_b = scale * cos(theta);
+      TScalar tmp_c = theta_sq + sigma * sigma;
       a = (tmp_a * sigma + (kOne - tmp_b) * theta) / (theta * tmp_c);
       b = (c - ((tmp_b - kOne) * sigma + tmp_a * theta) / (tmp_c)) * kOne /
           (theta_sq);
@@ -63,23 +63,23 @@ Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> calcW(
   return a * omega + b * omega2 + c * kI;
 }
 
-template <class ScalarT>
+template <class TScalar>
 void calcWDerivatives(
-    ScalarT const theta,
-    ScalarT const sigma,
-    ScalarT &a_out,
-    ScalarT &b_out,
-    ScalarT &c_out,
-    ScalarT &a_dsigma_out,
-    ScalarT &b_dsigma_out,
-    ScalarT &c_dsigma_out,
-    ScalarT &a_dtheta_out,
-    ScalarT &b_dtheta_out) {
+    TScalar const theta,
+    TScalar const sigma,
+    TScalar &a_out,
+    TScalar &b_out,
+    TScalar &c_out,
+    TScalar &a_dsigma_out,
+    TScalar &b_dsigma_out,
+    TScalar &c_dsigma_out,
+    TScalar &a_dtheta_out,
+    TScalar &b_dtheta_out) {
   using std::abs;
   using std::cos;
   using std::exp;
   using std::sin;
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   static Scalar const kZero(0.0);
   static Scalar const kOne(1.0);
   static Scalar const kHalf(0.5);
@@ -94,12 +94,12 @@ void calcWDerivatives(
   Scalar const sigma_sq = sigma * sigma;
   Scalar const sigma_c = sigma * sigma_sq;
 
-  if (abs(sigma) < kEpsilon<ScalarT>) {
+  if (abs(sigma) < kEpsilon<TScalar>) {
     c_out = kOne;
     c_dsigma_out = kHalf;
-    if (abs(theta) < kEpsilon<ScalarT>) {
+    if (abs(theta) < kEpsilon<TScalar>) {
       a_out = kHalf;
-      b_out = ScalarT(1. / 6.);
+      b_out = TScalar(1. / 6.);
       a_dtheta_out = a_dsigma_out = kZero;
       b_dtheta_out = b_dsigma_out = kZero;
     } else {
@@ -116,7 +116,7 @@ void calcWDerivatives(
   } else {
     c_out = (scale - kOne) / sigma;
     c_dsigma_out = (scale * (sigma - kOne) + kOne) / sigma_sq;
-    if (abs(theta) < kEpsilon<ScalarT>) {
+    if (abs(theta) < kEpsilon<TScalar>) {
       a_out = ((sigma - kOne) * scale + kOne) / sigma_sq;
       b_out =
           (scale * kHalf * sigma_sq + scale - kOne - sigma * scale) / sigma_c;
@@ -166,50 +166,50 @@ void calcWDerivatives(
   }
 }
 
-template <class ScalarT, int kMatrixDim>
-Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> calcWInv(
-    Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> const &omega,
-    ScalarT const theta,
-    ScalarT const sigma,
-    ScalarT const scale) {
+template <class TScalar, int kMatrixDim>
+Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim> calcWInv(
+    Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim> const &omega,
+    TScalar const theta,
+    TScalar const sigma,
+    TScalar const scale) {
   using std::abs;
   using std::cos;
   using std::sin;
-  static Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> const kI =
-      Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim>::Identity();
-  static ScalarT const kHalf(0.5);
-  static ScalarT const kOne(1);
-  static ScalarT const kTwo(2);
-  Eigen::Matrix<ScalarT, kMatrixDim, kMatrixDim> const omega2 = omega * omega;
-  ScalarT const scale_sq = scale * scale;
-  ScalarT const theta_sq = theta * theta;
-  ScalarT const sin_theta = sin(theta);
-  ScalarT const cos_theta = cos(theta);
+  static Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim> const kI =
+      Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim>::Identity();
+  static TScalar const kHalf(0.5);
+  static TScalar const kOne(1);
+  static TScalar const kTwo(2);
+  Eigen::Matrix<TScalar, kMatrixDim, kMatrixDim> const omega2 = omega * omega;
+  TScalar const scale_sq = scale * scale;
+  TScalar const theta_sq = theta * theta;
+  TScalar const sin_theta = sin(theta);
+  TScalar const cos_theta = cos(theta);
 
-  ScalarT a;
+  TScalar a;
 
-  ScalarT b;
+  TScalar b;
 
-  ScalarT c;
-  if (abs(sigma * sigma) < kEpsilon<ScalarT>) {
+  TScalar c;
+  if (abs(sigma * sigma) < kEpsilon<TScalar>) {
     c = kOne - kHalf * sigma;
     a = -kHalf;
-    if (abs(theta_sq) < kEpsilon<ScalarT>) {
-      b = ScalarT(1. / 12.);
+    if (abs(theta_sq) < kEpsilon<TScalar>) {
+      b = TScalar(1. / 12.);
     } else {
       b = (theta * sin_theta + kTwo * cos_theta - kTwo) /
           (kTwo * theta_sq * (cos_theta - kOne));
     }
   } else {
-    ScalarT const scale_cu = scale_sq * scale;
+    TScalar const scale_cu = scale_sq * scale;
     c = sigma / (scale - kOne);
-    if (abs(theta_sq) < kEpsilon<ScalarT>) {
+    if (abs(theta_sq) < kEpsilon<TScalar>) {
       a = (-sigma * scale + scale - kOne) / ((scale - kOne) * (scale - kOne));
       b = (scale_sq * sigma - kTwo * scale_sq + scale * sigma + kTwo * scale) /
-          (kTwo * scale_cu - ScalarT(6) * scale_sq + ScalarT(6) * scale - kTwo);
+          (kTwo * scale_cu - TScalar(6) * scale_sq + TScalar(6) * scale - kTwo);
     } else {
-      ScalarT const s_sin_theta = scale * sin_theta;
-      ScalarT const s_cos_theta = scale * cos_theta;
+      TScalar const s_sin_theta = scale * sin_theta;
+      TScalar const s_cos_theta = scale * cos_theta;
       a = (theta * s_cos_theta - theta - sigma * s_sin_theta) /
           (theta * (scale_sq - kTwo * s_cos_theta + kOne));
       b = -scale *

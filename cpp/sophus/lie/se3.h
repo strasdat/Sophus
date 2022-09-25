@@ -14,13 +14,13 @@
 #include "so3.h"
 
 namespace sophus {
-template <class ScalarT, int kOptions = 0>
+template <class TScalar, int kOptions = 0>
 class Se3;
 using Se3F64 = Se3<double>;
 using Se3F32 = Se3<float>;
 
-template <class ScalarT, int kOptions = 0>
-/* [[deprecated]] */ using SE3 = Se3<ScalarT, kOptions>;
+template <class TScalar, int kOptions = 0>
+/* [[deprecated]] */ using SE3 = Se3<TScalar, kOptions>;
 /* [[deprecated]] */ using SE3d = Se3F64;
 /* [[deprecated]] */ using SE3f = Se3F32;
 }  // namespace sophus
@@ -28,27 +28,27 @@ template <class ScalarT, int kOptions = 0>
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class ScalarT, int kOptions>
-struct traits<sophus::Se3<ScalarT, kOptions>> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<sophus::Se3<TScalar, kOptions>> {
+  using Scalar = TScalar;
   using TranslationType = Eigen::Matrix<Scalar, 3, 1, kOptions>;
-  using SO3Type = sophus::So3<Scalar, kOptions>;
+  using So3Type = sophus::So3<Scalar, kOptions>;
 };
 
-template <class ScalarT, int kOptions>
-struct traits<Map<sophus::Se3<ScalarT>, kOptions>>
-    : traits<sophus::Se3<ScalarT, kOptions>> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<Map<sophus::Se3<TScalar>, kOptions>>
+    : traits<sophus::Se3<TScalar, kOptions>> {
+  using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector3<Scalar>, kOptions>;
-  using SO3Type = Map<sophus::So3<Scalar>, kOptions>;
+  using So3Type = Map<sophus::So3<Scalar>, kOptions>;
 };
 
-template <class ScalarT, int kOptions>
-struct traits<Map<sophus::Se3<ScalarT> const, kOptions>>
-    : traits<sophus::Se3<ScalarT, kOptions> const> {
-  using Scalar = ScalarT;
+template <class TScalar, int kOptions>
+struct traits<Map<sophus::Se3<TScalar> const, kOptions>>
+    : traits<sophus::Se3<TScalar, kOptions> const> {
+  using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector3<Scalar> const, kOptions>;
-  using SO3Type = Map<sophus::So3<Scalar> const, kOptions>;
+  using So3Type = Map<sophus::So3<Scalar> const, kOptions>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -89,14 +89,14 @@ namespace sophus {
 ///
 /// See So3 for more details of the rotation representation in 3d.
 ///
-template <class DerivedT>
+template <class TDerived>
 class Se3Base {
  public:
-  using Scalar = typename Eigen::internal::traits<DerivedT>::Scalar;
+  using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using TranslationType =
-      typename Eigen::internal::traits<DerivedT>::TranslationType;
-  using SO3Type = typename Eigen::internal::traits<DerivedT>::SO3Type;
-  using QuaternionType = typename SO3Type::QuaternionType;
+      typename Eigen::internal::traits<TDerived>::TranslationType;
+  using So3Type = typename Eigen::internal::traits<TDerived>::So3Type;
+  using QuaternionType = typename So3Type::QuaternionType;
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (three for translation, three for rotation).
   static int constexpr kDoF = 6;
@@ -119,18 +119,18 @@ class Se3Base {
   /// ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
   /// types, as well as other compatible scalar types such as Ceres::Jet and
   /// double scalars with Se3 operations.
-  template <typename OtherDerivedT>
+  template <class TOtherDerived>
   using ReturnScalar = typename Eigen::
-      ScalarBinaryOpTraits<Scalar, typename OtherDerivedT::Scalar>::ReturnType;
+      ScalarBinaryOpTraits<Scalar, typename TOtherDerived::Scalar>::ReturnType;
 
-  template <typename OtherDerivedT>
-  using Se3Product = Se3<ReturnScalar<OtherDerivedT>>;
+  template <class TOtherDerived>
+  using Se3Product = Se3<ReturnScalar<TOtherDerived>>;
 
-  template <typename PointDerivedT>
-  using PointProduct = Eigen::Vector3<ReturnScalar<PointDerivedT>>;
+  template <class TPointDerived>
+  using PointProduct = Eigen::Vector3<ReturnScalar<TPointDerived>>;
 
-  template <typename HPointDerivedT>
-  using HomogeneousPointProduct = Eigen::Vector4<ReturnScalar<HPointDerivedT>>;
+  template <class THPointDerived>
+  using HomogeneousPointProduct = Eigen::Vector4<ReturnScalar<THPointDerived>>;
 
   /// Adjoint transformation
   ///
@@ -162,11 +162,11 @@ class Se3Base {
 
   /// Returns copy of instance casted to NewScalarType.
   ///
-  template <class NewScalarTypeT>
-  SOPHUS_FUNC [[nodiscard]] Se3<NewScalarTypeT> cast() const {
-    return Se3<NewScalarTypeT>(
-        so3().template cast<NewScalarTypeT>(),
-        translation().template cast<NewScalarTypeT>());
+  template <class TNewScalarType>
+  SOPHUS_FUNC [[nodiscard]] Se3<TNewScalarType> cast() const {
+    return Se3<TNewScalarType>(
+        so3().template cast<TNewScalarType>(),
+        translation().template cast<TNewScalarType>());
   }
 
   /// Returns derivative of  this * exp(x)  wrt x at x=0.
@@ -329,9 +329,9 @@ class Se3Base {
 
   /// Assignment-like operator from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC Se3Base<DerivedT>& operator=(
-      Se3Base<OtherDerivedT> const& other) {
+  template <class TOtherDerived>
+  SOPHUS_FUNC Se3Base<TDerived>& operator=(
+      Se3Base<TOtherDerived> const& other) {
     so3() = other.so3();
     translation() = other.translation();
     return *this;
@@ -339,10 +339,10 @@ class Se3Base {
 
   /// Group multiplication, which is rotation concatenation.
   ///
-  template <typename OtherDerivedT>
-  SOPHUS_FUNC Se3Product<OtherDerivedT> operator*(
-      Se3Base<OtherDerivedT> const& other) const {
-    return Se3Product<OtherDerivedT>(
+  template <class TOtherDerived>
+  SOPHUS_FUNC Se3Product<TOtherDerived> operator*(
+      Se3Base<TOtherDerived> const& other) const {
+    return Se3Product<TOtherDerived>(
         so3() * other.so3(), translation() + so3() * other.translation());
   }
 
@@ -355,25 +355,25 @@ class Se3Base {
   ///   ``p_bar = bar_R_foo * p_foo + t_bar``.
   ///
   template <
-      typename PointDerivedT,
+      typename TPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<PointDerivedT, 3>::value>::type>
-  SOPHUS_FUNC PointProduct<PointDerivedT> operator*(
-      Eigen::MatrixBase<PointDerivedT> const& p) const {
+          IsFixedSizeVector<TPointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<TPointDerived> operator*(
+      Eigen::MatrixBase<TPointDerived> const& p) const {
     return so3() * p + translation();
   }
 
   /// Group action on homogeneous 3-points. See above for more details.
   ///
   template <
-      typename HPointDerivedT,
+      typename THPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<HPointDerivedT, 4>::value>::type>
-  SOPHUS_FUNC HomogeneousPointProduct<HPointDerivedT> operator*(
-      Eigen::MatrixBase<HPointDerivedT> const& p) const {
-    const PointProduct<HPointDerivedT> tp =
+          IsFixedSizeVector<THPointDerived, 4>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<THPointDerived> operator*(
+      Eigen::MatrixBase<THPointDerived> const& p) const {
+    PointProduct<THPointDerived> const tp =
         so3() * p.template head<3>() + p(3) * translation();
-    return HomogeneousPointProduct<HPointDerivedT>(tp(0), tp(1), tp(2), p(3));
+    return HomogeneousPointProduct<THPointDerived>(tp(0), tp(1), tp(2), p(3));
   }
 
   /// Group action on lines.
@@ -407,12 +407,12 @@ class Se3Base {
   /// type of the multiplication is compatible with this Se3's Scalar type.
   ///
   template <
-      typename OtherDerivedT,
+      typename TOtherDerived,
       typename = typename std::enable_if<
-          std::is_same<Scalar, ReturnScalar<OtherDerivedT>>::value>::type>
-  SOPHUS_FUNC Se3Base<DerivedT>& operator*=(
-      Se3Base<OtherDerivedT> const& other) {
-    *static_cast<DerivedT*>(this) = *this * other;
+          std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type>
+  SOPHUS_FUNC Se3Base<TDerived>& operator*=(
+      Se3Base<TOtherDerived> const& other) {
+    *static_cast<TDerived*>(this) = *this * other;
     return *this;
   }
 
@@ -424,12 +424,12 @@ class Se3Base {
 
   /// Mutator of So3 group.
   ///
-  SOPHUS_FUNC SO3Type& so3() { return static_cast<DerivedT*>(this)->so3(); }
+  SOPHUS_FUNC So3Type& so3() { return static_cast<TDerived*>(this)->so3(); }
 
   /// Accessor of So3 group.
   ///
-  SOPHUS_FUNC [[nodiscard]] SO3Type const& so3() const {
-    return static_cast<DerivedT const*>(this)->so3();
+  SOPHUS_FUNC [[nodiscard]] So3Type const& so3() const {
+    return static_cast<TDerived const*>(this)->so3();
   }
 
   /// Takes in quaternion, and normalizes it.
@@ -468,13 +468,13 @@ class Se3Base {
   /// Mutator of translation vector.
   ///
   SOPHUS_FUNC TranslationType& translation() {
-    return static_cast<DerivedT*>(this)->translation();
+    return static_cast<TDerived*>(this)->translation();
   }
 
   /// Accessor of translation vector
   ///
   SOPHUS_FUNC [[nodiscard]] TranslationType const& translation() const {
-    return static_cast<DerivedT const*>(this)->translation();
+    return static_cast<TDerived const*>(this)->translation();
   }
 
   /// Accessor of unit quaternion.
@@ -485,15 +485,15 @@ class Se3Base {
 };
 
 /// Se3 using default storage; derived from Se3Base.
-template <class ScalarT, int kOptions>
-class Se3 : public Se3Base<Se3<ScalarT, kOptions>> {
-  using Base = Se3Base<Se3<ScalarT, kOptions>>;
+template <class TScalar, int kOptions>
+class Se3 : public Se3Base<Se3<TScalar, kOptions>> {
+  using Base = Se3Base<Se3<TScalar, kOptions>>;
 
  public:
   static int constexpr kDoF = Base::kDoF;
   static int constexpr kNumParameters = Base::kNumParameters;
 
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -521,26 +521,26 @@ class Se3 : public Se3Base<Se3<ScalarT, kOptions>> {
 
   /// Copy-like constructor from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC Se3(Se3Base<OtherDerivedT> const& other)
+  template <class TOtherDerived>
+  SOPHUS_FUNC Se3(Se3Base<TOtherDerived> const& other)
       : so3_(other.so3()), translation_(other.translation()) {
     static_assert(
-        std::is_same<typename OtherDerivedT::Scalar, Scalar>::value,
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
   /// Constructor from So3 and translation vector
   ///
-  template <class OtherDerivedT, class DT>
+  template <class TOtherDerived, class TD>
   SOPHUS_FUNC Se3(
-      So3Base<OtherDerivedT> const& so3,
-      Eigen::MatrixBase<DT> const& translation)
+      So3Base<TOtherDerived> const& so3,
+      Eigen::MatrixBase<TD> const& translation)
       : so3_(so3), translation_(translation) {
     static_assert(
-        std::is_same<typename OtherDerivedT::Scalar, Scalar>::value,
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
         "must be same Scalar type");
     static_assert(
-        std::is_same<typename DT::Scalar, Scalar>::value,
+        std::is_same<typename TD::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
@@ -929,8 +929,8 @@ class Se3 : public Se3Base<Se3<ScalarT, kOptions>> {
 
   /// Returns closest Se3 given arbitrary 4x4 matrix.
   ///
-  template <class ST = Scalar>
-  SOPHUS_FUNC static std::enable_if_t<std::is_floating_point<ST>::value, Se3>
+  template <class TS = Scalar>
+  SOPHUS_FUNC static std::enable_if_t<std::is_floating_point<TS>::value, Se3>
   fitToSe3(Eigen::Matrix4<Scalar> const& t) {
     return Se3(
         So3<Scalar>::fitToSo3(t.template block<3, 3>(0, 0)),
@@ -1049,8 +1049,8 @@ class Se3 : public Se3Base<Se3<ScalarT, kOptions>> {
   ///
   /// Translations are drawn component-wise from the range [-1, 1].
   ///
-  template <class UniformRandomBitGeneratorT>
-  static Se3 sampleUniform(UniformRandomBitGeneratorT& generator) {
+  template <class TUniformRandomBitGenerator>
+  static Se3 sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     return Se3(
         So3<Scalar>::sampleUniform(generator),
@@ -1060,8 +1060,8 @@ class Se3 : public Se3Base<Se3<ScalarT, kOptions>> {
 
   /// Construct a translation only Se3 instance.
   ///
-  template <class XT, class YT, class ZT>
-  static SOPHUS_FUNC Se3 trans(XT const& x, YT const& y, ZT const& z) {
+  template <class TX, class TY, class TZ>
+  static SOPHUS_FUNC Se3 trans(TX const& x, TY const& y, TZ const& z) {
     return Se3(So3<Scalar>(), Eigen::Vector3<Scalar>(x, y, z));
   }
 
@@ -1114,8 +1114,8 @@ class Se3 : public Se3Base<Se3<ScalarT, kOptions>> {
   TranslationMember translation_;  // NOLINT
 };
 
-template <class ScalarT, int kOptions>
-SOPHUS_FUNC Se3<ScalarT, kOptions>::Se3()
+template <class TScalar, int kOptions>
+SOPHUS_FUNC Se3<TScalar, kOptions>::Se3()
     : translation_(TranslationMember::Zero()) {
   static_assert(
       std::is_standard_layout<Se3>::value,
@@ -1135,12 +1135,12 @@ namespace Eigen {  // NOLINT
 /// Specialization of Eigen::Map for ``Se3``; derived from Se3Base.
 ///
 /// Allows us to wrap Se3 objects around POD array.
-template <class ScalarT, int kOptions>
-class Map<sophus::Se3<ScalarT>, kOptions>
-    : public sophus::Se3Base<Map<sophus::Se3<ScalarT>, kOptions>> {
+template <class TScalar, int kOptions>
+class Map<sophus::Se3<TScalar>, kOptions>
+    : public sophus::Se3Base<Map<sophus::Se3<TScalar>, kOptions>> {
  public:
-  using Base = sophus::Se3Base<Map<sophus::Se3<ScalarT>, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = sophus::Se3Base<Map<sophus::Se3<TScalar>, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -1187,12 +1187,12 @@ class Map<sophus::Se3<ScalarT>, kOptions>
 /// Specialization of Eigen::Map for ``Se3 const``; derived from Se3Base.
 ///
 /// Allows us to wrap Se3 objects around POD array.
-template <class ScalarT, int kOptions>
-class Map<sophus::Se3<ScalarT> const, kOptions>
-    : public sophus::Se3Base<Map<sophus::Se3<ScalarT> const, kOptions>> {
+template <class TScalar, int kOptions>
+class Map<sophus::Se3<TScalar> const, kOptions>
+    : public sophus::Se3Base<Map<sophus::Se3<TScalar> const, kOptions>> {
  public:
-  using Base = sophus::Se3Base<Map<sophus::Se3<ScalarT> const, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = sophus::Se3Base<Map<sophus::Se3<TScalar> const, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;

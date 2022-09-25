@@ -8,8 +8,8 @@
 
 #include "sophus/lie/so3.h"
 
-#include "sophus/interp/interpolate.h"
 #include "sophus/lie/details/test_impl.h"
+#include "sophus/lie/interp/interpolate.h"
 
 #include <iostream>
 
@@ -28,36 +28,36 @@ template class So3<float, Eigen::DontAlign>;
 template class So3<ceres::Jet<double, 3>>;
 #endif
 
-template <class ScalarT>
+template <class TScalar>
 class Tests {
  public:
-  using Scalar = ScalarT;
-  using SO3Type = So3<Scalar>;
+  using Scalar = TScalar;
+  using So3Type = So3<Scalar>;
   using Point = typename So3<Scalar>::Point;
   using Tangent = typename So3<Scalar>::Tangent;
   Scalar const k_pi = kPi<Scalar>;  // NOLINT
 
   Tests() {
-    so3_vec_.push_back(SO3Type(Eigen::Quaternion<Scalar>(
+    so3_vec_.push_back(So3Type(Eigen::Quaternion<Scalar>(
         Scalar(0.1e-11), Scalar(0.), Scalar(1.), Scalar(0.))));
-    so3_vec_.push_back(SO3Type(Eigen::Quaternion<Scalar>(
+    so3_vec_.push_back(So3Type(Eigen::Quaternion<Scalar>(
         Scalar(-1), Scalar(0.00001), Scalar(0.0), Scalar(0.0))));
     so3_vec_.push_back(
-        SO3Type::exp(Point(Scalar(0.2), Scalar(0.5), Scalar(0.0))));
+        So3Type::exp(Point(Scalar(0.2), Scalar(0.5), Scalar(0.0))));
     so3_vec_.push_back(
-        SO3Type::exp(Point(Scalar(0.2), Scalar(0.5), Scalar(-1.0))));
-    so3_vec_.push_back(SO3Type::exp(Point(Scalar(0.), Scalar(0.), Scalar(0.))));
+        So3Type::exp(Point(Scalar(0.2), Scalar(0.5), Scalar(-1.0))));
+    so3_vec_.push_back(So3Type::exp(Point(Scalar(0.), Scalar(0.), Scalar(0.))));
     so3_vec_.push_back(
-        SO3Type::exp(Point(Scalar(0.), Scalar(0.), Scalar(0.00001))));
-    so3_vec_.push_back(SO3Type::exp(Point(k_pi, Scalar(0), Scalar(0))));
+        So3Type::exp(Point(Scalar(0.), Scalar(0.), Scalar(0.00001))));
+    so3_vec_.push_back(So3Type::exp(Point(k_pi, Scalar(0), Scalar(0))));
     so3_vec_.push_back(
-        SO3Type::exp(Point(Scalar(0.2), Scalar(0.5), Scalar(0.0))) *
-        SO3Type::exp(Point(k_pi, Scalar(0), Scalar(0))) *
-        SO3Type::exp(Point(Scalar(-0.2), Scalar(-0.5), Scalar(-0.0))));
+        So3Type::exp(Point(Scalar(0.2), Scalar(0.5), Scalar(0.0))) *
+        So3Type::exp(Point(k_pi, Scalar(0), Scalar(0))) *
+        So3Type::exp(Point(Scalar(-0.2), Scalar(-0.5), Scalar(-0.0))));
     so3_vec_.push_back(
-        SO3Type::exp(Point(Scalar(0.3), Scalar(0.5), Scalar(0.1))) *
-        SO3Type::exp(Point(k_pi, Scalar(0), Scalar(0))) *
-        SO3Type::exp(Point(Scalar(-0.3), Scalar(-0.5), Scalar(-0.1))));
+        So3Type::exp(Point(Scalar(0.3), Scalar(0.5), Scalar(0.1))) *
+        So3Type::exp(Point(k_pi, Scalar(0), Scalar(0))) *
+        So3Type::exp(Point(Scalar(-0.3), Scalar(-0.5), Scalar(-0.1))));
     tangent_vec_.push_back(Tangent(Scalar(0), Scalar(0), Scalar(0)));
     tangent_vec_.push_back(Tangent(Scalar(1), Scalar(0), Scalar(0)));
     tangent_vec_.push_back(Tangent(Scalar(0), Scalar(1), Scalar(0)));
@@ -84,16 +84,16 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    LieGroupTests<SO3Type> tests(so3_vec_, tangent_vec_, point_vec_);
+    LieGroupTests<So3Type> tests(so3_vec_, tangent_vec_, point_vec_);
     return tests.doAllTestsPass();
   }
 
   bool testUnity() {
     bool passed = true;
     // Test that the complex number magnitude stays close to one.
-    SO3Type current_q;
+    So3Type current_q;
     for (size_t i = 0; i < 1000; ++i) {
-      for (SO3Type const& q : so3_vec_) {
+      for (So3Type const& q : so3_vec_) {
         current_q *= q;
       }
     }
@@ -110,7 +110,7 @@ class Tests {
     bool passed = true;
     Eigen::Matrix<Scalar, 4, 1> raw = {
         Scalar(0), Scalar(1), Scalar(0), Scalar(0)};
-    Eigen::Map<SO3Type const> map_of_const_so3(raw.data());
+    Eigen::Map<So3Type const> map_of_const_so3(raw.data());
     SOPHUS_TEST_APPROX(
         passed,
         map_of_const_so3.unitQuaternion().coeffs().eval(),
@@ -122,7 +122,7 @@ class Tests {
         map_of_const_so3.unitQuaternion().coeffs().data(),
         raw.data(),
         "");
-    Eigen::Map<SO3Type const> const_shallow_copy = map_of_const_so3;
+    Eigen::Map<So3Type const> const_shallow_copy = map_of_const_so3;
     SOPHUS_TEST_EQUAL(
         passed,
         const_shallow_copy.unitQuaternion().coeffs().eval(),
@@ -131,7 +131,7 @@ class Tests {
 
     Eigen::Matrix<Scalar, 4, 1> raw2 = {
         Scalar(1), Scalar(0), Scalar(0), Scalar(0)};
-    Eigen::Map<SO3Type> map_of_so3(raw.data());
+    Eigen::Map<So3Type> map_of_so3(raw.data());
     Eigen::Quaternion<Scalar> quat;
     quat.coeffs() = raw2;
     map_of_so3.setQuaternion(quat);
@@ -148,19 +148,19 @@ class Tests {
         map_of_so3.unitQuaternion().coeffs().data(),
         quat.coeffs().data(),
         "");
-    Eigen::Map<SO3Type> shallow_copy = map_of_so3;
+    Eigen::Map<So3Type> shallow_copy = map_of_so3;
     SOPHUS_TEST_EQUAL(
         passed,
         shallow_copy.unitQuaternion().coeffs().eval(),
         map_of_so3.unitQuaternion().coeffs().eval(),
         "");
 
-    SO3Type const const_so3(quat);
+    So3Type const const_so3(quat);
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, const_so3.data()[i], raw2.data()[i], "");
     }
 
-    SO3Type so3(quat);
+    So3Type so3(quat);
     for (int i = 0; i < 4; ++i) {
       so3.data()[i] = raw[i];
     }
@@ -171,37 +171,37 @@ class Tests {
 
     SOPHUS_TEST_EQUAL(
         passed,
-        SO3Type::rotX(Scalar(0.2)).matrix(),
-        SO3Type::exp(Point(Scalar(0.2), Scalar(0), Scalar(0))).matrix(),
+        So3Type::rotX(Scalar(0.2)).matrix(),
+        So3Type::exp(Point(Scalar(0.2), Scalar(0), Scalar(0))).matrix(),
         "");
     SOPHUS_TEST_EQUAL(
         passed,
-        SO3Type::rotY(Scalar(-0.2)).matrix(),
-        SO3Type::exp(Point(Scalar(0), Scalar(-0.2), Scalar(0))).matrix(),
+        So3Type::rotY(Scalar(-0.2)).matrix(),
+        So3Type::exp(Point(Scalar(0), Scalar(-0.2), Scalar(0))).matrix(),
         "");
     SOPHUS_TEST_EQUAL(
         passed,
-        SO3Type::rotZ(Scalar(1.1)).matrix(),
-        SO3Type::exp(Point(Scalar(0), Scalar(0), Scalar(1.1))).matrix(),
+        So3Type::rotZ(Scalar(1.1)).matrix(),
+        So3Type::exp(Point(Scalar(0), Scalar(0), Scalar(1.1))).matrix(),
         "");
 
     Eigen::Vector4<Scalar> data1(Scalar{1}, Scalar{0}, Scalar{0}, Scalar{0});
     Eigen::Vector4<Scalar> data2(Scalar{0}, Scalar{1}, Scalar{0}, Scalar{0});
-    Eigen::Map<SO3Type> map1(data1.data());
+    Eigen::Map<So3Type> map1(data1.data());
 
-    Eigen::Map<SO3Type> map2(data2.data());
+    Eigen::Map<So3Type> map2(data2.data());
 
     // map -> map assignment
     map2 = map1;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix(), "");
 
     // map -> type assignment
-    SO3Type copy;
+    So3Type copy;
     copy = map1;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
-    copy = SO3Type::rotZ(Scalar(0.5));
+    copy = So3Type::rotZ(Scalar(0.5));
     map1 = copy;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
@@ -211,14 +211,14 @@ class Tests {
   bool testConstructors() {
     bool passed = true;
     Eigen::Matrix3<Scalar> r = so3_vec_.front().matrix();
-    SO3Type so3(r);
+    So3Type so3(r);
     SOPHUS_TEST_APPROX(passed, r, so3.matrix(), kEpsilon<Scalar>, "");
 
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<std::is_floating_point<ST>::value, bool>
+  template <class TS = Scalar>
+  std::enable_if_t<std::is_floating_point<TS>::value, bool>
   testSampleUniformSymmetry() {
     bool passed = true;
     std::default_random_engine generator(0);
@@ -249,7 +249,7 @@ class Tests {
       size_t negative_count = 0;
       size_t samples = 5000;
       for (size_t i = 0; i < samples; ++i) {
-        SO3Type r = SO3Type::sampleUniform(generator);
+        So3Type r = So3Type::sampleUniform(generator);
         if (plane_normal.dot(r * input_point) > 0) {
           positive_count++;
         } else {
@@ -268,20 +268,20 @@ class Tests {
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<!std::is_floating_point<ST>::value, bool>
+  template <class TS = Scalar>
+  std::enable_if_t<!std::is_floating_point<TS>::value, bool>
   testSampleUniformSymmetry() {
     return true;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<std::is_floating_point<ST>::value, bool> testFit() {
+  template <class TS = Scalar>
+  std::enable_if_t<std::is_floating_point<TS>::value, bool> testFit() {
     bool passed = true;
 
     for (int i = 0; i < 100; ++i) {
       Eigen::Matrix3<Scalar> r = Eigen::Matrix3<Scalar>::Random();
-      SO3Type so3 = SO3Type::fitToSo3(r);
-      SO3Type so3_2 = SO3Type::fitToSo3(so3.matrix());
+      So3Type so3 = So3Type::fitToSo3(r);
+      So3Type so3_2 = So3Type::fitToSo3(so3.matrix());
 
       SOPHUS_TEST_APPROX(
           passed, so3.matrix(), so3_2.matrix(), kEpsilon<Scalar>, "");
@@ -290,21 +290,21 @@ class Tests {
     for (Scalar const angle :
          {Scalar(0.0), Scalar(0.1), Scalar(0.3), Scalar(-0.7)}) {
       SOPHUS_TEST_APPROX(
-          passed, SO3Type::rotX(angle).angleX(), angle, kEpsilon<Scalar>, "");
+          passed, So3Type::rotX(angle).angleX(), angle, kEpsilon<Scalar>, "");
       SOPHUS_TEST_APPROX(
-          passed, SO3Type::rotY(angle).angleY(), angle, kEpsilon<Scalar>, "");
+          passed, So3Type::rotY(angle).angleY(), angle, kEpsilon<Scalar>, "");
       SOPHUS_TEST_APPROX(
-          passed, SO3Type::rotZ(angle).angleZ(), angle, kEpsilon<Scalar>, "");
+          passed, So3Type::rotZ(angle).angleZ(), angle, kEpsilon<Scalar>, "");
     }
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<!std::is_floating_point<ST>::value, bool> testFit() {
+  template <class TS = Scalar>
+  std::enable_if_t<!std::is_floating_point<TS>::value, bool> testFit() {
     return true;
   }
 
-  std::vector<SO3Type, Eigen::aligned_allocator<SO3Type>> so3_vec_;
+  std::vector<So3Type, Eigen::aligned_allocator<So3Type>> so3_vec_;
   std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec_;
   std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
 };

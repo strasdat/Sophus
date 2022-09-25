@@ -28,19 +28,19 @@ using namespace sophus::experimental;
 /// Residual: pixel reprojection 2-vector
 class PosePointReprojFunctor {
  public:
-  PosePointReprojFunctor(PinholeModel camera) : camera("pinhole", camera) {}
+  PosePointReprojFunctor(PinholeModel camera) : camera(camera) {}
 
   static constexpr std::array<int, 2> kArgsDimArray = {{6, 3}};
 
   using ConstantType = Eigen::Vector2d;
 
-  template <class ArgTypesT>
-  [[nodiscard]] std::optional<LeastSquaresCostTermState<ArgTypesT::kBlockDim>>
+  template <class TArgTypes>
+  [[nodiscard]] std::optional<LeastSquaresCostTermState<TArgTypes::kBlockDim>>
   evalCostTerm(
       sophus::Se3F64 const& camera_pose_world,
       Eigen::Vector<double, kArgsDimArray[1]> point_in_world,
       ConstantType const& obs) const {
-    static int constexpr kBlockDim = ArgTypesT::kBlockDim;
+    static int constexpr kBlockDim = TArgTypes::kBlockDim;
 
     Eigen::Vector3d point_in_camera = camera_pose_world * point_in_world;
     Eigen::Vector2d pixel = camera.camProj(point_in_camera);
@@ -63,17 +63,17 @@ class PosePointReprojFunctor {
 
       // TODO(begin): imp generic constexpr or function template for this
       if constexpr (
-          ArgTypesT::kArgTypeArray[0] == ArgType::variable &&
-          ArgTypesT::kArgTypeArray[1] == ArgType::variable) {
+          TArgTypes::kArgTypeArray[0] == ArgType::variable &&
+          TArgTypes::kArgTypeArray[1] == ArgType::variable) {
         static_assert(kBlockDim == 9);
         dx_residual.template leftCols<6>() = eval_pose_jac();
         dx_residual.template rightCols<3>() = eval_point_jac();
       } else {
-        if constexpr (ArgTypesT::kArgTypeArray[1] == ArgType::variable) {
+        if constexpr (TArgTypes::kArgTypeArray[1] == ArgType::variable) {
           static_assert(kBlockDim == 3);
           dx_residual = eval_point_jac();
         } else {
-          if constexpr (ArgTypesT::kArgTypeArray[0] == ArgType::variable) {
+          if constexpr (TArgTypes::kArgTypeArray[0] == ArgType::variable) {
             static_assert(kBlockDim == 6);
             dx_residual = eval_pose_jac();
           } else {
@@ -161,14 +161,14 @@ class CompileOnlyTernaryCostFunctorExample {
 
   static constexpr std::array<int, 3> kArgsDimArray = {{4, 6, 3}};
 
-  template <class ArgTypesT>
-  [[nodiscard]] std::optional<LeastSquaresCostTermState<ArgTypesT::kBlockDim>>
+  template <class TArgTypes>
+  [[nodiscard]] std::optional<LeastSquaresCostTermState<TArgTypes::kBlockDim>>
   evalCostTerm(
       Eigen::Vector<double, kArgsDimArray[0]> const& /*unused*/,
       sophus::Se3F64 const& /*unused*/,
       Eigen::Vector<double, kArgsDimArray[2]> const& /*unused*/,
       ConstantType /*unused*/) const {
-    LeastSquaresCostTermState<ArgTypesT::kBlockDim> state;
+    LeastSquaresCostTermState<TArgTypes::kBlockDim> state;
     return state;
   }
 };

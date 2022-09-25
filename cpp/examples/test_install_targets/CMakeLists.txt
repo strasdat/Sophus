@@ -11,8 +11,6 @@ find_package(Sophus 22.99.0 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(Eigen3 3.4.0 REQUIRED)
 
-message(WARNING "${Sophus}")
-
 set(example_source hello_so3)
 
 foreach(example_src ${example_source})
@@ -28,3 +26,15 @@ foreach(example_src ${example_source2})
   target_link_libraries(${example_src} Eigen3::Eigen fmt::fmt pthread sophus::sophus_image sophus::sophus_sensor
 )
 endforeach()
+
+if (BUILD_FARM_NG_PROTOS)
+  find_package(Protobuf REQUIRED)
+  include_directories(${Protobuf_INCLUDE_DIRS})
+  add_executable(compile_all_proto compile_all_proto.cpp)
+  target_link_libraries(compile_all_proto PUBLIC fmt::fmt
+    Eigen3::Eigen
+    protobuf::libprotobuf
+    sophus::farm_ng_core_prototools
+    farm_ng_core::farm_ng_core_misc_proto_conv
+    sophus::sophus_sensor_proto_conv)
+endif()

@@ -26,10 +26,10 @@ template class Cartesian<float, 2, Eigen::DontAlign>;
 template class Cartesian<ceres::Jet<double, 2>, 2>;
 #endif
 
-template <class ScalarT>
+template <class TScalar>
 class Tests {
  public:
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   using Point = typename Cartesian<Scalar, 2>::Point;
   using Tangent = typename Cartesian<Scalar, 2>::Tangent;
 
@@ -50,7 +50,7 @@ class Tests {
     tmp << Scalar(20), Scalar(-1);
     tangent_vec_.push_back(tmp);
 
-    for (const auto& t : tangent_vec_) {
+    for (auto const& t : tangent_vec_) {
       cartesian2_vec_.push_back(Cartesian<Scalar, 2>(t));
     }
 

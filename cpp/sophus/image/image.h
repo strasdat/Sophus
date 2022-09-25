@@ -24,7 +24,7 @@ namespace sophus {
 
 // Types are largely inspired / derived from Pangolin.
 
-template <class PixelT, template <typename> class AllocatorT>
+template <class TPixel, template <typename> class TAllocator>
 class Image;
 
 /// A image with write access to pixels and exclusive ownership. There is no
@@ -36,16 +36,16 @@ class Image;
 ///
 /// Similar to Pangolin::ManagedImage.
 template <
-    class PixelT,
-    template <typename> class AllocatorT = Eigen::aligned_allocator>
-class MutImage : public MutImageView<PixelT> {
+    class TPixel,
+    template <typename> class TAllocator = Eigen::aligned_allocator>
+class MutImage : public MutImageView<TPixel> {
  public:
   struct TypedDeleterImpl {
     TypedDeleterImpl(size_t num_bytes) : num_bytes(num_bytes) {}
 
-    void operator()(PixelT* p) const {
+    void operator()(TPixel* p) const {
       if (p != nullptr) {
-        AllocatorT<PixelT>().deallocate(p, num_bytes / sizeof(PixelT));
+        TAllocator<TPixel>().deallocate(p, num_bytes / sizeof(TPixel));
       }
     }
 
@@ -58,14 +58,14 @@ class MutImage : public MutImageView<PixelT> {
 
     void operator()(uint8_t* p) const {
       if (image_deleter) {
-        (*image_deleter)(reinterpret_cast<PixelT*>(p));
+        (*image_deleter)(reinterpret_cast<TPixel*>(p));
       }
     }
 
     std::optional<TypedDeleterImpl> image_deleter;
   };
 
-  template <class T2T, template <typename> class Allocator2T>
+  template <class TT, template <typename> class TAllocator2T>
   friend class Image;
 
   /// Constructs empty image.
@@ -74,27 +74,27 @@ class MutImage : public MutImageView<PixelT> {
   /// Creates new image with given shape.
   ///
   /// If shape is not empty, memory allocation will happen.
-  explicit MutImage(ImageShape shape) : MutImageView<PixelT>(shape, nullptr) {
+  explicit MutImage(ImageShape shape) : MutImageView<TPixel>(shape, nullptr) {
     if (shape.sizeBytes() != 0u) {
-      FARM_CHECK_EQ(shape.sizeBytes() % sizeof(PixelT), 0);
+      FARM_CHECK_EQ(shape.sizeBytes() % sizeof(TPixel), 0);
       this->shared_.reset(
-          (uint8_t*)(AllocatorT<PixelT>().allocate(
-              shape.sizeBytes() / sizeof(PixelT))),
+          (uint8_t*)(TAllocator<TPixel>().allocate(
+              shape.sizeBytes() / sizeof(TPixel))),
           Deleter(TypedDeleterImpl(shape.sizeBytes())));
     }
-    this->ptr_ = reinterpret_cast<PixelT*>(this->shared_.get());
+    this->ptr_ = reinterpret_cast<TPixel*>(this->shared_.get());
   }
 
   /// Creates new contiguous image with given size.
   ///
   /// If shape is not empty, memory allocation will happen.
   explicit MutImage(sophus::ImageSize size)
-      : MutImage(ImageShape::makeFromSize<PixelT>(size)) {}
+      : MutImage(ImageShape::makeFromSize<TPixel>(size)) {}
 
   /// Creates contiguous copy from view.
   ///
   /// If view is not empty, memory allocation will happen.
-  [[nodiscard]] static MutImage makeCopyFrom(const ImageView<PixelT>& view) {
+  [[nodiscard]] static MutImage makeCopyFrom(ImageView<TPixel> const& view) {
     MutImage image(view.imageSize());
     image.copyDataFrom(view);
     return image;
@@ -103,9 +103,9 @@ class MutImage : public MutImageView<PixelT> {
   /// Creates new MutImage given view and unary transform function.
   ///
   /// mut_image(u, v) = unary_op(view(u, v));
-  template <class OtherPixelT, class UnaryOperationT>
+  template <class TOtherPixel, class TUnaryOperation>
   static MutImage makeFromTransform(
-      ImageView<OtherPixelT> view, const UnaryOperationT& unary_op) {
+      ImageView<TOtherPixel> view, TUnaryOperation const& unary_op) {
     MutImage mut_image(view.imageSize());
     mut_image.transformFrom(view, unary_op);
     return mut_image;
@@ -114,11 +114,11 @@ class MutImage : public MutImageView<PixelT> {
   /// Creates new MutImage given two views and binary transform function.
   ///
   /// mut_image(u, v) = binary_op(lhs(u, v), rhs(u, v));
-  template <class LhsPixelT, class RhsPixelT, class BinaryOperationT>
+  template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
   static MutImage makeFromTransform(
-      ImageView<LhsPixelT> lhs,
-      ImageView<RhsPixelT> rhs,
-      const BinaryOperationT& binary_op) {
+      ImageView<TLhsPixel> lhs,
+      ImageView<TRhsPixel> rhs,
+      TBinaryOperation const& binary_op) {
     MutImage mut_image(lhs.imageSize());
     mut_image.transformFrom(lhs, rhs, binary_op);
     return mut_image;
@@ -131,15 +131,15 @@ class MutImage : public MutImageView<PixelT> {
   ~MutImage() { reset(); }
 
   /// Not copy constructable
-  MutImage(const MutImage<PixelT>& other) = delete;
+  MutImage(MutImage<TPixel> const& other) = delete;
 
   /// Not copy assignable
-  MutImage& operator=(const MutImage&) = delete;
+  MutImage& operator=(MutImage const&) = delete;
 
   /// Move constructor - is cheap - no memory allocations.
   MutImage(MutImage&& img) noexcept
-      : MutImageView<PixelT>(img.mutView()), shared_(std::move(img.shared_)) {
-    this->ptr_ = reinterpret_cast<PixelT*>(shared_.get());
+      : MutImageView<TPixel>(img.viewMut()), shared_(std::move(img.shared_)) {
+    this->ptr_ = reinterpret_cast<TPixel*>(shared_.get());
     img.setViewToEmpty();
   }
 
@@ -148,14 +148,14 @@ class MutImage : public MutImageView<PixelT> {
     reset();
     this->shape_ = img.shape_;
     this->shared_ = std::move(img.shared_);
-    this->ptr_ = reinterpret_cast<PixelT*>(shared_.get());
+    this->ptr_ = reinterpret_cast<TPixel*>(shared_.get());
     img.setViewToEmpty();
     return *this;
   }
   // End (Rule of 5)
 
-  [[nodiscard]] MutImageView<PixelT> mutView() const {
-    return MutImageView<PixelT>(this->shape(), this->mutPtr());
+  [[nodiscard]] MutImageView<TPixel> viewMut() const {
+    return MutImageView<TPixel>(this->shape(), this->ptrMut());
   }
 
   /// Swaps img and this.
@@ -193,9 +193,9 @@ class MutImage : public MutImageView<PixelT> {
 
 template <
     template <typename>
-    class PredicateT,
+    class TPredicate,
     template <typename>
-    class AllocatorT>
+    class TAllocator>
 class RuntimeImage;
 
 /// Image read-only access to pixels and shared ownership, hence cheap to copy.
@@ -203,20 +203,20 @@ class RuntimeImage;
 ///
 /// Image has close interop with RuntimeImage (see below).
 template <
-    class PixelT,
-    template <typename> class AllocatorT = Eigen::aligned_allocator>
-class Image : public ImageView<PixelT> {
+    class TPixel,
+    template <typename> class TAllocator = Eigen::aligned_allocator>
+class Image : public ImageView<TPixel> {
  public:
   /// Constructs empty image.
   Image() = default;
 
   /// Moves MutImage into this.
   /// By design not "explicit".
-  Image(MutImage<PixelT, AllocatorT>&& image) noexcept
-      : ImageView<PixelT>(image.view()) {
+  Image(MutImage<TPixel, TAllocator>&& image) noexcept
+      : ImageView<TPixel>(image.view()) {
     if (!image.isEmpty()) {
       this->shared_ = std::move(image.shared_);
-      this->ptr_ = reinterpret_cast<PixelT*>(shared_.get());
+      this->ptr_ = reinterpret_cast<TPixel*>(shared_.get());
       image.setViewToEmpty();
     }
   }
@@ -224,28 +224,28 @@ class Image : public ImageView<PixelT> {
   /// Creates contiguous copy from view.
   ///
   /// If view is not empty, memory allocation will happen.
-  [[nodiscard]] static Image makeCopyFrom(const ImageView<PixelT>& view) {
-    return Image(MutImage<PixelT>::makeCopyFrom(view));
+  [[nodiscard]] static Image makeCopyFrom(ImageView<TPixel> const& view) {
+    return Image(MutImage<TPixel>::makeCopyFrom(view));
   }
 
   /// Creates new Image given view and unary transform function.
   ///
   /// image(u, v) = unary_op(view(u, v));
-  template <class OtherPixelT, class UnaryOperationT>
+  template <class TOtherPixel, class TUnaryOperation>
   static Image makeFromTransform(
-      ImageView<OtherPixelT> view, const UnaryOperationT& unary_op) {
-    return MutImage<PixelT>::makeFromTransform(view, unary_op);
+      ImageView<TOtherPixel> view, TUnaryOperation const& unary_op) {
+    return MutImage<TPixel>::makeFromTransform(view, unary_op);
   }
 
   /// Creates new Image given two views and binary transform function.
   ///
   /// image(u, v) = binary_op(lhs(u, v), rhs(u, v));
-  template <class LhsPixelT, class RhsPixelT, class BinaryOperationT>
+  template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
   static Image makeFromTransform(
-      ImageView<LhsPixelT> lhs,
-      ImageView<RhsPixelT> rhs,
-      const BinaryOperationT& binary_op) {
-    return MutImage<PixelT>::makeFromTransform(lhs, rhs, binary_op);
+      ImageView<TLhsPixel> lhs,
+      ImageView<TRhsPixel> rhs,
+      TBinaryOperation const& binary_op) {
+    return MutImage<TPixel>::makeFromTransform(lhs, rhs, binary_op);
   }
 
   [[nodiscard]] size_t useCount() const { return shared_.use_count(); }
@@ -261,20 +261,20 @@ class Image : public ImageView<PixelT> {
   }
 
  private:
-  template <class T2T, template <typename> class Allocator2T>
+  template <class TT, template <typename> class TAllocator2T>
   friend class MutImage;
 
   template <
       template <typename>
-      class PredicateT,
+      class TPredicate,
       template <typename>
-      class Allocator2T>
+      class TAllocator2T>
   friend class RuntimeImage;
 
-  explicit Image(ImageView<PixelT> view) : ImageView<PixelT>(view) {}
+  explicit Image(ImageView<TPixel> view) : ImageView<TPixel>(view) {}
 
-  Image(ImageView<PixelT> view, const std::shared_ptr<uint8_t>& shared)
-      : ImageView<PixelT>(view), shared_(shared) {}
+  Image(ImageView<TPixel> view, std::shared_ptr<uint8_t> const& shared)
+      : ImageView<TPixel>(view), shared_(shared) {}
 
   std::shared_ptr<uint8_t> shared_;
 };

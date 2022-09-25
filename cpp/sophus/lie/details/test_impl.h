@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include "sophus/core/test_macros.h"
-#include "sophus/interp/average.h"
-#include "sophus/interp/interpolate.h"
-#include "sophus/interp/spline.h"
-#include "sophus/math/num_diff.h"
+#include "sophus/calculus/num_diff.h"
+#include "sophus/common/test_macros.h"
+#include "sophus/lie/interp/average.h"
+#include "sophus/lie/interp/interpolate.h"
+#include "sophus/lie/interp/spline.h"
 
 #include <Eigen/StdVector>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -32,21 +32,21 @@ using ceres::isfinite;
 using std::isfinite;
 #endif
 
-template <typename ScalarT>
-Eigen::Hyperplane<ScalarT, 2> through(const Eigen::Vector<ScalarT, 2>* points) {
-  return Eigen::Hyperplane<ScalarT, 2>::Through(points[0], points[1]);
+template <class TScalar>
+Eigen::Hyperplane<TScalar, 2> through(Eigen::Vector<TScalar, 2> const* points) {
+  return Eigen::Hyperplane<TScalar, 2>::Through(points[0], points[1]);
 }
 
-template <typename ScalarT>
-Eigen::Hyperplane<ScalarT, 3> through(const Eigen::Vector<ScalarT, 3>* points) {
-  return Eigen::Hyperplane<ScalarT, 3>::Through(
+template <class TScalar>
+Eigen::Hyperplane<TScalar, 3> through(Eigen::Vector<TScalar, 3> const* points) {
+  return Eigen::Hyperplane<TScalar, 3>::Through(
       points[0], points[1], points[2]);
 }
 
-template <class LieGroupT>
+template <class TLieGroup>
 class LieGroupTests {
  public:
-  using LieGroup = LieGroupT;
+  using LieGroup = TLieGroup;
   using Scalar = typename LieGroup::Scalar;
   using Transformation = typename LieGroup::Transformation;
   using Tangent = typename LieGroup::Tangent;
@@ -99,14 +99,14 @@ class LieGroupTests {
 
   // For the time being, leftJacobian and leftJacobianInverse are only
   // implemented for So3 and Se3
-  template <class GT = LieGroup>
+  template <class TG = LieGroup>
   std::enable_if_t<
-      std::is_same<GT, So3<Scalar>>::value ||
-          std::is_same<GT, Se3<Scalar>>::value,
+      std::is_same<TG, So3<Scalar>>::value ||
+          std::is_same<TG, Se3<Scalar>>::value,
       bool>
   leftJacobianTest() {
     bool passed = true;
-    for (const auto& x : tangent_vec_) {
+    for (auto const& x : tangent_vec_) {
       LieGroup const inv_exp_x = LieGroup::exp(x).inverse();
 
       // Explicit implement the derivative in the Lie Group in first principles
@@ -137,10 +137,10 @@ class LieGroupTests {
     return passed;
   }
 
-  template <class GT = LieGroup>
+  template <class TG = LieGroup>
   std::enable_if_t<
-      !(std::is_same<GT, So3<Scalar>>::value ||
-        std::is_same<GT, Se3<Scalar>>::value),
+      !(std::is_same<TG, So3<Scalar>>::value ||
+        std::is_same<TG, Se3<Scalar>>::value),
       bool>
   leftJacobianTest() {
     return true;
@@ -256,7 +256,7 @@ class LieGroupTests {
     return passed;
   }
 
-  template <class GT = LieGroup>
+  template <class TG = LieGroup>
   bool additionalDerivativeTest() {
     bool passed = true;
     for (size_t j = 0; j < tangent_vec_.size(); ++j) {
@@ -443,7 +443,7 @@ class LieGroupTests {
   }
 
   bool planeActionTest() {
-    const int point_dim = Point::RowsAtCompileTime;
+    int const point_dim = Point::RowsAtCompileTime;
     bool passed = point_vec_.size() >= point_dim;
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       for (size_t j = 0; j + point_dim - 1 < point_vec_.size(); ++j) {
@@ -700,14 +700,14 @@ class LieGroupTests {
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<std::is_same<ST, float>::value, bool> testSpline() {
+  template <class TS = Scalar>
+  std::enable_if_t<std::is_same<TS, float>::value, bool> testSpline() {
     // skip tests for Scalar == float
     return true;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<!std::is_same<ST, float>::value, bool> testSpline() {
+  template <class TS = Scalar>
+  std::enable_if_t<!std::is_same<TS, float>::value, bool> testSpline() {
     // run tests for Scalar != float
     bool passed = true;
 
@@ -797,13 +797,13 @@ class LieGroupTests {
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<std::is_floating_point<ST>::value, bool> doAllTestsPass() {
+  template <class TS = Scalar>
+  std::enable_if_t<std::is_floating_point<TS>::value, bool> doAllTestsPass() {
     return doesLargeTestSetPass();
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<!std::is_floating_point<ST>::value, bool> doAllTestsPass() {
+  template <class TS = Scalar>
+  std::enable_if_t<!std::is_floating_point<TS>::value, bool> doAllTestsPass() {
     return doesSmallTestSetPass();
   }
 
@@ -858,52 +858,52 @@ class LieGroupTests {
   std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
 };
 
-template <class ScalarT>
-std::vector<Se3<ScalarT>, Eigen::aligned_allocator<Se3<ScalarT>>>
+template <class TScalar>
+std::vector<Se3<TScalar>, Eigen::aligned_allocator<Se3<TScalar>>>
 getTestSE3s() {
-  ScalarT const k_pi = kPi<ScalarT>;
-  std::vector<Se3<ScalarT>, Eigen::aligned_allocator<Se3<ScalarT>>> se3_vec;
-  se3_vec.push_back(Se3<ScalarT>(
-      So3<ScalarT>::exp(
-          Eigen::Vector3<ScalarT>(ScalarT(0.2), ScalarT(0.5), ScalarT(0.0))),
-      Eigen::Vector3<ScalarT>(ScalarT(0), ScalarT(0), ScalarT(0))));
-  se3_vec.push_back(Se3<ScalarT>(
-      So3<ScalarT>::exp(
-          Eigen::Vector3<ScalarT>(ScalarT(0.2), ScalarT(0.5), ScalarT(-1.0))),
-      Eigen::Vector3<ScalarT>(ScalarT(10), ScalarT(0), ScalarT(0))));
-  se3_vec.push_back(Se3<ScalarT>::trans(
-      Eigen::Vector3<ScalarT>(ScalarT(0), ScalarT(100), ScalarT(5))));
-  se3_vec.push_back(Se3<ScalarT>::rotZ(ScalarT(0.00001)));
+  TScalar const k_pi = kPi<TScalar>;
+  std::vector<Se3<TScalar>, Eigen::aligned_allocator<Se3<TScalar>>> se3_vec;
+  se3_vec.push_back(Se3<TScalar>(
+      So3<TScalar>::exp(
+          Eigen::Vector3<TScalar>(TScalar(0.2), TScalar(0.5), TScalar(0.0))),
+      Eigen::Vector3<TScalar>(TScalar(0), TScalar(0), TScalar(0))));
+  se3_vec.push_back(Se3<TScalar>(
+      So3<TScalar>::exp(
+          Eigen::Vector3<TScalar>(TScalar(0.2), TScalar(0.5), TScalar(-1.0))),
+      Eigen::Vector3<TScalar>(TScalar(10), TScalar(0), TScalar(0))));
+  se3_vec.push_back(Se3<TScalar>::trans(
+      Eigen::Vector3<TScalar>(TScalar(0), TScalar(100), TScalar(5))));
+  se3_vec.push_back(Se3<TScalar>::rotZ(TScalar(0.00001)));
   se3_vec.push_back(
-      Se3<ScalarT>::trans(
-          ScalarT(0), ScalarT(-0.00000001), ScalarT(0.0000000001)) *
-      Se3<ScalarT>::rotZ(ScalarT(0.00001)));
+      Se3<TScalar>::trans(
+          TScalar(0), TScalar(-0.00000001), TScalar(0.0000000001)) *
+      Se3<TScalar>::rotZ(TScalar(0.00001)));
   se3_vec.push_back(
-      Se3<ScalarT>::transX(ScalarT(0.01)) *
-      Se3<ScalarT>::rotZ(ScalarT(0.00001)));
+      Se3<TScalar>::transX(TScalar(0.01)) *
+      Se3<TScalar>::rotZ(TScalar(0.00001)));
   se3_vec.push_back(
-      Se3<ScalarT>::trans(ScalarT(4), ScalarT(-5), ScalarT(0)) *
-      Se3<ScalarT>::rotX(k_pi));
+      Se3<TScalar>::trans(TScalar(4), TScalar(-5), TScalar(0)) *
+      Se3<TScalar>::rotX(k_pi));
   se3_vec.push_back(
-      Se3<ScalarT>(
-          So3<ScalarT>::exp(Eigen::Vector3<ScalarT>(
-              ScalarT(0.2), ScalarT(0.5), ScalarT(0.0))),
-          Eigen::Vector3<ScalarT>(ScalarT(0), ScalarT(0), ScalarT(0))) *
-      Se3<ScalarT>::rotX(k_pi) *
-      Se3<ScalarT>(
-          So3<ScalarT>::exp(Eigen::Vector3<ScalarT>(
-              ScalarT(-0.2), ScalarT(-0.5), ScalarT(-0.0))),
-          Eigen::Vector3<ScalarT>(ScalarT(0), ScalarT(0), ScalarT(0))));
+      Se3<TScalar>(
+          So3<TScalar>::exp(Eigen::Vector3<TScalar>(
+              TScalar(0.2), TScalar(0.5), TScalar(0.0))),
+          Eigen::Vector3<TScalar>(TScalar(0), TScalar(0), TScalar(0))) *
+      Se3<TScalar>::rotX(k_pi) *
+      Se3<TScalar>(
+          So3<TScalar>::exp(Eigen::Vector3<TScalar>(
+              TScalar(-0.2), TScalar(-0.5), TScalar(-0.0))),
+          Eigen::Vector3<TScalar>(TScalar(0), TScalar(0), TScalar(0))));
   se3_vec.push_back(
-      Se3<ScalarT>(
-          So3<ScalarT>::exp(Eigen::Vector3<ScalarT>(
-              ScalarT(0.3), ScalarT(0.5), ScalarT(0.1))),
-          Eigen::Vector3<ScalarT>(ScalarT(2), ScalarT(0), ScalarT(-7))) *
-      Se3<ScalarT>::rotX(k_pi) *
-      Se3<ScalarT>(
-          So3<ScalarT>::exp(Eigen::Vector3<ScalarT>(
-              ScalarT(-0.3), ScalarT(-0.5), ScalarT(-0.1))),
-          Eigen::Vector3<ScalarT>(ScalarT(0), ScalarT(6), ScalarT(0))));
+      Se3<TScalar>(
+          So3<TScalar>::exp(Eigen::Vector3<TScalar>(
+              TScalar(0.3), TScalar(0.5), TScalar(0.1))),
+          Eigen::Vector3<TScalar>(TScalar(2), TScalar(0), TScalar(-7))) *
+      Se3<TScalar>::rotX(k_pi) *
+      Se3<TScalar>(
+          So3<TScalar>::exp(Eigen::Vector3<TScalar>(
+              TScalar(-0.3), TScalar(-0.5), TScalar(-0.1))),
+          Eigen::Vector3<TScalar>(TScalar(0), TScalar(6), TScalar(0))));
   return se3_vec;
 }
 

@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-template <typename TT>
+template <class TT>
 using StdVector = std::vector<TT, Eigen::aligned_allocator<TT>>;
 
 template <>

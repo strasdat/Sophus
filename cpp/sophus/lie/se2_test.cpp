@@ -29,36 +29,36 @@ template class Se2<double, Eigen::DontAlign>;
 template class Se2<ceres::Jet<double, 3>>;
 #endif
 
-template <class ScalarT>
+template <class TScalar>
 class Tests {
  public:
-  using Scalar = ScalarT;
-  using SE2Type = Se2<Scalar>;
-  using SO2Type = So2<Scalar>;
+  using Scalar = TScalar;
+  using Se2Type = Se2<Scalar>;
+  using So2Type = So2<Scalar>;
   using Point = typename Se2<Scalar>::Point;
   using Tangent = typename Se2<Scalar>::Tangent;
   Scalar const k_pi = kPi<Scalar>;  // NOLINT
 
   Tests() {
     se2_vec_.push_back(
-        SE2Type(SO2Type(Scalar(0.0)), Point(Scalar(0), Scalar(0))));
+        Se2Type(So2Type(Scalar(0.0)), Point(Scalar(0), Scalar(0))));
     se2_vec_.push_back(
-        SE2Type(SO2Type(Scalar(0.2)), Point(Scalar(10), Scalar(0))));
+        Se2Type(So2Type(Scalar(0.2)), Point(Scalar(10), Scalar(0))));
     se2_vec_.push_back(
-        SE2Type(SO2Type(Scalar(0.)), Point(Scalar(0), Scalar(100))));
+        Se2Type(So2Type(Scalar(0.)), Point(Scalar(0), Scalar(100))));
     se2_vec_.push_back(
-        SE2Type(SO2Type(Scalar(-1.)), Point(Scalar(20), -Scalar(1))));
-    se2_vec_.push_back(SE2Type(
-        SO2Type(Scalar(0.00001)),
+        Se2Type(So2Type(Scalar(-1.)), Point(Scalar(20), -Scalar(1))));
+    se2_vec_.push_back(Se2Type(
+        So2Type(Scalar(0.00001)),
         Point(Scalar(-0.00000001), Scalar(0.0000000001))));
     se2_vec_.push_back(
-        SE2Type(SO2Type(Scalar(0.2)), Point(Scalar(0), Scalar(0))) *
-        SE2Type(SO2Type(k_pi), Point(Scalar(0), Scalar(0))) *
-        SE2Type(SO2Type(Scalar(-0.2)), Point(Scalar(0), Scalar(0))));
+        Se2Type(So2Type(Scalar(0.2)), Point(Scalar(0), Scalar(0))) *
+        Se2Type(So2Type(k_pi), Point(Scalar(0), Scalar(0))) *
+        Se2Type(So2Type(Scalar(-0.2)), Point(Scalar(0), Scalar(0))));
     se2_vec_.push_back(
-        SE2Type(SO2Type(Scalar(0.3)), Point(Scalar(2), Scalar(0))) *
-        SE2Type(SO2Type(k_pi), Point(Scalar(0), Scalar(0))) *
-        SE2Type(SO2Type(Scalar(-0.3)), Point(Scalar(0), Scalar(6))));
+        Se2Type(So2Type(Scalar(0.3)), Point(Scalar(2), Scalar(0))) *
+        Se2Type(So2Type(k_pi), Point(Scalar(0), Scalar(0))) *
+        Se2Type(So2Type(Scalar(-0.3)), Point(Scalar(0), Scalar(6))));
 
     Tangent tmp;
     tmp << Scalar(0), Scalar(0), Scalar(0);
@@ -89,7 +89,7 @@ class Tests {
 
  private:
   bool testLieProperties() {
-    LieGroupTests<SE2Type> tests(se2_vec_, tangent_vec_, point_vec_);
+    LieGroupTests<Se2Type> tests(se2_vec_, tangent_vec_, point_vec_);
     return tests.doAllTestsPass();
   }
 
@@ -97,7 +97,7 @@ class Tests {
     bool passed = true;
     Eigen::Matrix<Scalar, 4, 1> raw;
     raw << Scalar(0), Scalar(1), Scalar(0), Scalar(3);
-    Eigen::Map<SE2Type const> const_se2_map(raw.data());
+    Eigen::Map<Se2Type const> const_se2_map(raw.data());
     SOPHUS_TEST_APPROX(
         passed,
         const_se2_map.unitComplex().eval(),
@@ -114,7 +114,7 @@ class Tests {
         passed, const_se2_map.unitComplex().data(), raw.data(), "");
     SOPHUS_TEST_EQUAL(
         passed, const_se2_map.translation().data(), raw.data() + 2, "");
-    Eigen::Map<SE2Type const> const_shallow_copy = const_se2_map;
+    Eigen::Map<Se2Type const> const_shallow_copy = const_se2_map;
     SOPHUS_TEST_EQUAL(
         passed,
         const_shallow_copy.unitComplex().eval(),
@@ -128,7 +128,7 @@ class Tests {
 
     Eigen::Matrix<Scalar, 4, 1> raw2;
     raw2 << Scalar(1), Scalar(0), Scalar(3), Scalar(1);
-    Eigen::Map<SE2Type> map_of_se3(raw.data());
+    Eigen::Map<Se2Type> map_of_se3(raw.data());
     map_of_se3.setComplex(raw2.template head<2>());
     map_of_se3.translation() = raw2.template tail<2>();
     SOPHUS_TEST_APPROX(
@@ -147,7 +147,7 @@ class Tests {
     SOPHUS_TEST_EQUAL(
         passed, map_of_se3.translation().data(), raw.data() + 2, "");
     SOPHUS_TEST_NEQ(passed, map_of_se3.unitComplex().data(), raw2.data(), "");
-    Eigen::Map<SE2Type> shallow_copy = map_of_se3;
+    Eigen::Map<Se2Type> shallow_copy = map_of_se3;
     SOPHUS_TEST_EQUAL(
         passed,
         shallow_copy.unitComplex().eval(),
@@ -158,7 +158,7 @@ class Tests {
         shallow_copy.translation().eval(),
         map_of_se3.translation().eval(),
         "");
-    Eigen::Map<SE2Type> const const_map_of_se2 = map_of_se3;
+    Eigen::Map<Se2Type> const const_map_of_se2 = map_of_se3;
     SOPHUS_TEST_EQUAL(
         passed,
         const_map_of_se2.unitComplex().eval(),
@@ -170,13 +170,13 @@ class Tests {
         map_of_se3.translation().eval(),
         "");
 
-    SE2Type const const_se2(
+    Se2Type const const_se2(
         raw2.template head<2>().eval(), raw2.template tail<2>().eval());
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, const_se2.data()[i], raw2.data()[i], "");
     }
 
-    SE2Type se2(raw2.template head<2>().eval(), raw2.template tail<2>().eval());
+    Se2Type se2(raw2.template head<2>().eval(), raw2.template tail<2>().eval());
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw2.data()[i], "");
     }
@@ -185,10 +185,10 @@ class Tests {
       SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw.data()[i], "");
     }
 
-    SE2Type trans = SE2Type::transX(Scalar(0.2));
+    Se2Type trans = Se2Type::transX(Scalar(0.2));
     SOPHUS_TEST_APPROX(
         passed, trans.translation().x(), Scalar(0.2), kEpsilon<Scalar>, "");
-    trans = SE2Type::transY(Scalar(0.7));
+    trans = Se2Type::transY(Scalar(0.7));
     SOPHUS_TEST_APPROX(
         passed, trans.translation().y(), Scalar(0.7), kEpsilon<Scalar>, "");
 
@@ -198,21 +198,21 @@ class Tests {
     data1 << Scalar(0), Scalar(1), Scalar(1), Scalar(2);
     data1 << Scalar(1), Scalar(0), Scalar(2), Scalar(1);
 
-    Eigen::Map<SE2Type> map1(data1.data());
+    Eigen::Map<Se2Type> map1(data1.data());
 
-    Eigen::Map<SE2Type> map2(data2.data());
+    Eigen::Map<Se2Type> map2(data2.data());
 
     // map -> map assignment
     map2 = map1;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), map2.matrix(), "");
 
     // map -> type assignment
-    SE2Type copy;
+    Se2Type copy;
     copy = map1;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
-    copy = SE2Type::trans(Scalar(4), Scalar(5)) * SE2Type::rot(Scalar(0.5));
+    copy = Se2Type::trans(Scalar(4), Scalar(5)) * Se2Type::rot(Scalar(0.5));
     map1 = copy;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
@@ -221,15 +221,15 @@ class Tests {
 
   bool testMutatingAccessors() {
     bool passed = true;
-    SE2Type se2;
-    SO2Type r(Scalar(0.2));
+    Se2Type se2;
+    So2Type r(Scalar(0.2));
     se2.setRotationMatrix(r.matrix());
     SOPHUS_TEST_APPROX(
         passed, se2.rotationMatrix(), r.matrix(), kEpsilon<Scalar>, "");
 
     Eigen::Matrix<Scalar, 4, 1> raw;
     raw << Scalar(1), Scalar(0), Scalar(3), Scalar(1);
-    Eigen::Map<SE2Type> map_of_se2(raw.data());
+    Eigen::Map<Se2Type> map_of_se2(raw.data());
     map_of_se2.setRotationMatrix(r.matrix());
     SOPHUS_TEST_APPROX(
         passed, map_of_se2.rotationMatrix(), r.matrix(), kEpsilon<Scalar>, "");
@@ -240,39 +240,39 @@ class Tests {
   bool testConstructors() {
     bool passed = true;
     Eigen::Matrix3<Scalar> i = Eigen::Matrix3<Scalar>::Identity();
-    SOPHUS_TEST_EQUAL(passed, SE2Type().matrix(), i, "");
+    SOPHUS_TEST_EQUAL(passed, Se2Type().matrix(), i, "");
 
-    SE2Type se2 = se2_vec_.front();
+    Se2Type se2 = se2_vec_.front();
     Point translation = se2.translation();
-    SO2Type so2 = se2.so2();
+    So2Type so2 = se2.so2();
 
     SOPHUS_TEST_APPROX(
         passed,
-        SE2Type(so2.log(), translation).matrix(),
+        Se2Type(so2.log(), translation).matrix(),
         se2.matrix(),
         kEpsilon<Scalar>,
         "");
     SOPHUS_TEST_APPROX(
         passed,
-        SE2Type(so2, translation).matrix(),
+        Se2Type(so2, translation).matrix(),
         se2.matrix(),
         kEpsilon<Scalar>,
         "");
     SOPHUS_TEST_APPROX(
         passed,
-        SE2Type(so2.matrix(), translation).matrix(),
+        Se2Type(so2.matrix(), translation).matrix(),
         se2.matrix(),
         kEpsilon<Scalar>,
         "");
     SOPHUS_TEST_APPROX(
         passed,
-        SE2Type(so2.unitComplex(), translation).matrix(),
+        Se2Type(so2.unitComplex(), translation).matrix(),
         se2.matrix(),
         kEpsilon<Scalar>,
         "");
     SOPHUS_TEST_APPROX(
         passed,
-        SE2Type(se2.matrix()).matrix(),
+        Se2Type(se2.matrix()).matrix(),
         se2.matrix(),
         kEpsilon<Scalar>,
         "");
@@ -280,13 +280,13 @@ class Tests {
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<std::is_floating_point<ST>::value, bool> testFit() {
+  template <class TS = Scalar>
+  std::enable_if_t<std::is_floating_point<TS>::value, bool> testFit() {
     bool passed = true;
     for (int i = 0; i < 100; ++i) {
       Eigen::Matrix3<Scalar> t = Eigen::Matrix3<Scalar>::Random();
-      SE2Type se2 = SE2Type::fitToSe2(t);
-      SE2Type se2_2 = SE2Type::fitToSe2(se2.matrix());
+      Se2Type se2 = Se2Type::fitToSe2(t);
+      Se2Type se2_2 = Se2Type::fitToSe2(se2.matrix());
 
       SOPHUS_TEST_APPROX(
           passed, se2.matrix(), se2_2.matrix(), kEpsilon<Scalar>, "");
@@ -294,12 +294,12 @@ class Tests {
     return passed;
   }
 
-  template <class ST = Scalar>
-  std::enable_if_t<!std::is_floating_point<ST>::value, bool> testFit() {
+  template <class TS = Scalar>
+  std::enable_if_t<!std::is_floating_point<TS>::value, bool> testFit() {
     return true;
   }
 
-  std::vector<SE2Type, Eigen::aligned_allocator<SE2Type>> se2_vec_;
+  std::vector<Se2Type, Eigen::aligned_allocator<Se2Type>> se2_vec_;
   std::vector<Tangent, Eigen::aligned_allocator<Tangent>> tangent_vec_;
   std::vector<Point, Eigen::aligned_allocator<Point>> point_vec_;
 };

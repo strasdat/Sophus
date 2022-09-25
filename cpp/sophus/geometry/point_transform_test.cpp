@@ -9,14 +9,14 @@
 #include "sophus/geometry/point_transform.h"
 
 #include "farm_ng/core/logging/eigen.h"
-#include "sophus/math/num_diff.h"
+#include "sophus/calculus/num_diff.h"
 
 #include <gtest/gtest.h>
 
 using namespace sophus;
 
 TEST(inverse_depth, integrations) {
-  for (const InverseDepthPoint3F64& inv_dept_point :
+  for (InverseDepthPoint3F64 const& inv_dept_point :
        {InverseDepthPoint3F64::fromAbAndPsi(Eigen::Vector3d(0.1, 0.3, 2.0)),
         InverseDepthPoint3F64::fromAbAndPsi(Eigen::Vector3d(0.7, 0.2, 1.0)),
         InverseDepthPoint3F64::fromAbAndPsi(Eigen::Vector3d(-0.2, 1.0, 0.1))}) {
@@ -43,7 +43,7 @@ TEST(inverse_depth, integrations) {
     }
   }
 
-  for (const InverseDepthPoint3F64& point :
+  for (InverseDepthPoint3F64 const& point :
        {InverseDepthPoint3F64::fromAbAndPsi(Eigen::Vector3d(0.1, 0.3, 2.0))}) {
     Eigen::Matrix<double, 2, 6> dx = dxProjExpXPointAt0(point);
 
@@ -90,14 +90,14 @@ TEST(point_transform, integrations) {
   point_vec.push_back(Eigen::Vector3d(1, -3, 0.5));
   point_vec.push_back(Eigen::Vector3d(-5, -6, 7));
 
-  const double eps = sophus::kEpsilon<double>;
+  double const eps = sophus::kEpsilon<double>;
 
-  for (const Eigen::Vector<double, 6>& t : tangent_vec) {
+  for (Eigen::Vector<double, 6> const& t : tangent_vec) {
     sophus::SE3d foo_pose_bar = sophus::SE3d::exp(t);
     PointTransformer<double> foo_transform_bar(foo_pose_bar);
 
     // For points not at infinity
-    for (const auto& point_in_bar : point_vec) {
+    for (auto const& point_in_bar : point_vec) {
       InverseDepthPoint3F64 inverse_depth_in_bar =
           InverseDepthPoint3F64::fromEuclideanPoint3(point_in_bar);
 
@@ -160,10 +160,10 @@ TEST(point_transform, integrations) {
     }
 
     // For points at infinity
-    for (const auto& point_in_bar : point_vec) {
+    for (auto const& point_in_bar : point_vec) {
       InverseDepthPoint3F64 inverse_depth_in_bar =
           InverseDepthPoint3F64::fromEuclideanPoint3(point_in_bar);
-      inverse_depth_in_bar.mutPsi() = 0.0;  // set z to infinity
+      inverse_depth_in_bar.psi() = 0.0;  // set z to infinity
 
       Eigen::Vector2d xy1_by_inf_in_foo =
           projTransform(foo_pose_bar, inverse_depth_in_bar);

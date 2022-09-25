@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "sophus/core/types.h"
+#include "sophus/common/types.h"
 
 namespace sophus {
 
@@ -16,27 +16,27 @@ namespace sophus {
 /// Hence it returns (x/z, y/z).
 ///
 /// Precondition: z must not be close to 0.
-template <class PointT>
-Eigen::Vector2<typename PointT::Scalar> proj(
-    const Eigen::MatrixBase<PointT>& p) {
-  using Scalar = typename PointT::Scalar;
+template <class TPoint>
+Eigen::Vector2<typename TPoint::Scalar> proj(
+    Eigen::MatrixBase<TPoint> const& p) {
+  using Scalar = typename TPoint::Scalar;
 
-  static_assert(PointT::ColsAtCompileTime == 1, "p must be a column-vector");
+  static_assert(TPoint::ColsAtCompileTime == 1, "p must be a column-vector");
   static_assert(
-      PointT::RowsAtCompileTime == 3, "p must have exactly 3 columns");
+      TPoint::RowsAtCompileTime == 3, "p must have exactly 3 columns");
   return Eigen::Vector2<Scalar>(p.x() / p.z(), p.y() / p.z());
 }
 
 /// Maps point on the z=1 plane (a,b) to homogeneous representation of the same
 /// point: (z*a, z*b, z). Z defaults to 1.
-template <class PointT>
-Eigen::Vector3<typename PointT::Scalar> unproj(
-    const Eigen::MatrixBase<PointT>& p,
-    const typename PointT::Scalar& z = 1.0) {
-  using Scalar = typename PointT::Scalar;
-  static_assert(PointT::ColsAtCompileTime == 1, "p must be a column-vector");
+template <class TPoint>
+Eigen::Vector3<typename TPoint::Scalar> unproj(
+    Eigen::MatrixBase<TPoint> const& p,
+    const typename TPoint::Scalar& z = 1.0) {
+  using Scalar = typename TPoint::Scalar;
+  static_assert(TPoint::ColsAtCompileTime == 1, "p must be a column-vector");
   static_assert(
-      PointT::RowsAtCompileTime == 2, "p must have exactly 3 columns");
+      TPoint::RowsAtCompileTime == 2, "p must have exactly 3 columns");
   return Eigen::Vector3<Scalar>(z * p.x(), z * p.y(), z);
 }
 

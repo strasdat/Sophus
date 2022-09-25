@@ -19,25 +19,26 @@ repos:
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
-        exclude: \.tftpl$
+        exclude: thirdparty/.*$
       - id: check-yaml
       - id: check-json
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.1.13
     hooks:
       - id: insert-license
-        files: \.(h|hpp|cpp)$
-        exclude: (sympy|thirdparty)/.*$
+        files: \.(h|hpp|cpp|proto)$
+        exclude: (py|thirdparty|py/sympy/cpp_gencode)/.*$
         args:
           - --comment-style
           - //
           - --license-filepath
           - license_header.txt
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v13.0.0
+    rev: v14.0.0
     hooks:
       - id: clang-format
-        exclude: (sympy|thirdparty)/.*$
+        files: \.(h|hpp|cpp)$
+        exclude: (py|thirdparty)/.*$
   - repo: local
     hooks:
       - id: pragma-once
@@ -46,7 +47,7 @@ repos:
         language: pygrep
         files: \.(h|hpp)$
         args: [--negate]
-        exclude: (sympy|thirdparty)/.*$
+        exclude: (py|thirdparty)/.*$
       - id: no-c-std-lib
         name: c standard library check
         entry: |
@@ -57,4 +58,4 @@ repos:
           ).h>
         language: pygrep
         files: \.(h|hpp|cpp)$
-        exclude: (sympy|thirdparty/.*$)
+        exclude: (py|thirdparty/.*$)

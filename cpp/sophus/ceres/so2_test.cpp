@@ -14,8 +14,8 @@
 
 #include <iostream>
 
-template <typename TT>
-using StdVector = std::vector<TT, Eigen::aligned_allocator<TT>>;
+template <class TScalar>
+using StdVector = std::vector<TScalar, Eigen::aligned_allocator<TScalar>>;
 
 template <>
 struct RotationalPart<sophus::SO2d> {

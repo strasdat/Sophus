@@ -29,12 +29,12 @@ template class Sim3<float, Eigen::DontAlign>;
 template class Sim3<ceres::Jet<double, 3>>;
 #endif
 
-template <class ScalarT>
+template <class TScalar>
 class Tests {
  public:
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   using Sim3Type = Sim3<Scalar>;
-  using RxSO3Type = RxSo3<Scalar>;
+  using RxSo3Type = RxSo3<Scalar>;
   using Point = typename Sim3<Scalar>::Point;
   using Vector4Type = Eigen::Vector4<Scalar>;
   using Tangent = typename Sim3<Scalar>::Tangent;
@@ -42,58 +42,58 @@ class Tests {
 
   Tests() {
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(
+        RxSo3Type::exp(
             Vector4Type(Scalar(0.2), Scalar(0.5), Scalar(0.0), Scalar(1.))),
         Point(Scalar(0), Scalar(0), Scalar(0))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(
+        RxSo3Type::exp(
             Vector4Type(Scalar(0.2), Scalar(0.5), Scalar(-1.0), Scalar(1.1))),
         Point(Scalar(10), Scalar(0), Scalar(0))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(
+        RxSo3Type::exp(
             Vector4Type(Scalar(0.), Scalar(0.), Scalar(0.), Scalar(0.))),
         Point(Scalar(0), Scalar(10), Scalar(5))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(
+        RxSo3Type::exp(
             Vector4Type(Scalar(0.), Scalar(0.), Scalar(0.), Scalar(1.1))),
         Point(Scalar(0), Scalar(10), Scalar(5))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(
+        RxSo3Type::exp(
             Vector4Type(Scalar(0.), Scalar(0.), Scalar(0.00001), Scalar(0.))),
         Point(Scalar(0), Scalar(0), Scalar(0))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(Vector4Type(
+        RxSo3Type::exp(Vector4Type(
             Scalar(0.), Scalar(0.), Scalar(0.00001), Scalar(0.0000001))),
         Point(Scalar(1), Scalar(-1.00000001), Scalar(2.0000000001))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(
+        RxSo3Type::exp(
             Vector4Type(Scalar(0.), Scalar(0.), Scalar(0.00001), Scalar(0))),
         Point(Scalar(0.01), Scalar(0), Scalar(0))));
     sim3_vec_.push_back(Sim3Type(
-        RxSO3Type::exp(Vector4Type(k_pi, Scalar(0), Scalar(0), Scalar(0.9))),
+        RxSo3Type::exp(Vector4Type(k_pi, Scalar(0), Scalar(0), Scalar(0.9))),
         Point(Scalar(4), Scalar(-5), Scalar(0))));
     sim3_vec_.push_back(
         Sim3Type(
-            RxSO3Type::exp(
+            RxSo3Type::exp(
                 Vector4Type(Scalar(0.2), Scalar(0.5), Scalar(0.0), Scalar(0))),
             Point(Scalar(0), Scalar(0), Scalar(0))) *
         Sim3Type(
-            RxSO3Type::exp(Vector4Type(k_pi, Scalar(0), Scalar(0), Scalar(0))),
+            RxSo3Type::exp(Vector4Type(k_pi, Scalar(0), Scalar(0), Scalar(0))),
             Point(Scalar(0), Scalar(0), Scalar(0))) *
         Sim3Type(
-            RxSO3Type::exp(Vector4Type(
+            RxSo3Type::exp(Vector4Type(
                 Scalar(-0.2), Scalar(-0.5), Scalar(-0.0), Scalar(0))),
             Point(Scalar(0), Scalar(0), Scalar(0))));
     sim3_vec_.push_back(
         Sim3Type(
-            RxSO3Type::exp(
+            RxSo3Type::exp(
                 Vector4Type(Scalar(0.3), Scalar(0.5), Scalar(0.1), Scalar(0))),
             Point(Scalar(2), Scalar(0), Scalar(-7))) *
         Sim3Type(
-            RxSO3Type::exp(Vector4Type(k_pi, Scalar(0), Scalar(0), Scalar(0))),
+            RxSo3Type::exp(Vector4Type(k_pi, Scalar(0), Scalar(0), Scalar(0))),
             Point(Scalar(0), Scalar(0), Scalar(0))) *
         Sim3Type(
-            RxSO3Type::exp(Vector4Type(
+            RxSo3Type::exp(Vector4Type(
                 Scalar(-0.3), Scalar(-0.5), Scalar(-0.1), Scalar(0))),
             Point(Scalar(0), Scalar(6), Scalar(0))));
     Tangent tmp;
@@ -260,7 +260,7 @@ class Tests {
 
     // type -> map assignment
     copy = Sim3Type(
-        RxSO3Type::exp(
+        RxSo3Type::exp(
             Vector4Type(Scalar(0.2), Scalar(0.5), Scalar(-1.0), Scalar(1.1))),
         Point(Scalar(10), Scalar(0), Scalar(0)));
     map1 = copy;
@@ -276,7 +276,7 @@ class Tests {
 
     Sim3Type sim3 = sim3_vec_.front();
     Point translation = sim3.translation();
-    RxSO3Type rxso3 = sim3.rxso3();
+    RxSo3Type rxso3 = sim3.rxso3();
 
     SOPHUS_TEST_APPROX(
         passed,

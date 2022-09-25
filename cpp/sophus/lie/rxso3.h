@@ -14,13 +14,13 @@
 #include "so3.h"
 
 namespace sophus {
-template <class ScalarT, int kOptions = 0>
+template <class TScalar, int kOptions = 0>
 class RxSo3;
 using RxSo3F64 = RxSo3<double>;
 using RxSo3F32 = RxSo3<float>;
 
-template <class ScalarT, int kOptions = 0>
-/* [[deprecated]] */ using RxSO3 = RxSo3<ScalarT, kOptions>;
+template <class TScalar, int kOptions = 0>
+/* [[deprecated]] */ using RxSO3 = RxSo3<TScalar, kOptions>;
 /* [[deprecated]] */ using RxSO3d = RxSo3F64;
 /* [[deprecated]] */ using RxSO3f = RxSo3F32;
 }  // namespace sophus
@@ -28,26 +28,26 @@ template <class ScalarT, int kOptions = 0>
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class ScalarT, int kOptionsT>
-struct traits<sophus::RxSo3<ScalarT, kOptionsT>> {
-  static constexpr int kOptions = kOptionsT;
-  using Scalar = ScalarT;
+template <class TScalar, int kOptionsT>
+struct traits<sophus::RxSo3<TScalar, kOptionsT>> {
+  static int constexpr kOptions = kOptionsT;
+  using Scalar = TScalar;
   using QuaternionType = Eigen::Quaternion<Scalar, kOptions>;
 };
 
-template <class ScalarT, int kOptionsT>
-struct traits<Map<sophus::RxSo3<ScalarT>, kOptionsT>>
-    : traits<sophus::RxSo3<ScalarT, kOptionsT>> {
-  static constexpr int kOptions = kOptionsT;
-  using Scalar = ScalarT;
+template <class TScalar, int kOptionsT>
+struct traits<Map<sophus::RxSo3<TScalar>, kOptionsT>>
+    : traits<sophus::RxSo3<TScalar, kOptionsT>> {
+  static int constexpr kOptions = kOptionsT;
+  using Scalar = TScalar;
   using QuaternionType = Map<Eigen::Quaternion<Scalar>, kOptions>;
 };
 
-template <class ScalarT, int kOptionsT>
-struct traits<Map<sophus::RxSo3<ScalarT> const, kOptionsT>>
-    : traits<sophus::RxSo3<ScalarT, kOptionsT> const> {
-  static constexpr int kOptions = kOptionsT;
-  using Scalar = ScalarT;
+template <class TScalar, int kOptionsT>
+struct traits<Map<sophus::RxSo3<TScalar> const, kOptionsT>>
+    : traits<sophus::RxSo3<TScalar, kOptionsT> const> {
+  static int constexpr kOptions = kOptionsT;
+  using Scalar = TScalar;
   using QuaternionType = Map<Eigen::Quaternion<Scalar> const, kOptions>;
 };
 }  // namespace internal
@@ -79,13 +79,13 @@ namespace sophus {
 /// In order to obey this condition, group multiplication is implemented with
 /// saturation such that a product always has a scale which is equal or greater
 /// this threshold.
-template <class DerivedT>
+template <class TDerived>
 class RxSo3Base {
  public:
-  static constexpr int kOptions = Eigen::internal::traits<DerivedT>::kOptions;
-  using Scalar = typename Eigen::internal::traits<DerivedT>::Scalar;
+  static int constexpr kOptions = Eigen::internal::traits<TDerived>::kOptions;
+  using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using QuaternionType =
-      typename Eigen::internal::traits<DerivedT>::QuaternionType;
+      typename Eigen::internal::traits<TDerived>::QuaternionType;
   using QuaternionTemporaryType = Eigen::Quaternion<Scalar, kOptions>;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
@@ -116,18 +116,18 @@ class RxSo3Base {
   /// ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
   /// types, as well as other compatible scalar types such as Ceres::Jet and
   /// double scalars with RxSo3 operations.
-  template <typename OtherDerivedT>
+  template <class TOtherDerived>
   using ReturnScalar = typename Eigen::
-      ScalarBinaryOpTraits<Scalar, typename OtherDerivedT::Scalar>::ReturnType;
+      ScalarBinaryOpTraits<Scalar, typename TOtherDerived::Scalar>::ReturnType;
 
-  template <typename OtherDerivedT>
-  using RxSo3Product = RxSo3<ReturnScalar<OtherDerivedT>>;
+  template <class TOtherDerived>
+  using RxSo3Product = RxSo3<ReturnScalar<TOtherDerived>>;
 
-  template <typename PointDerivedT>
-  using PointProduct = Eigen::Vector3<ReturnScalar<PointDerivedT>>;
+  template <class TPointDerived>
+  using PointProduct = Eigen::Vector3<ReturnScalar<TPointDerived>>;
 
-  template <typename HPointDerivedT>
-  using HomogeneousPointProduct = Eigen::Vector4<ReturnScalar<HPointDerivedT>>;
+  template <class THPointDerived>
+  using HomogeneousPointProduct = Eigen::Vector4<ReturnScalar<THPointDerived>>;
 
   /// Adjoint transformation
   ///
@@ -146,9 +146,9 @@ class RxSo3Base {
 
   /// Returns copy of instance casted to NewScalarType.
   ///
-  template <class NewScalarTypeT>
-  SOPHUS_FUNC [[nodiscard]] RxSo3<NewScalarTypeT> cast() const {
-    return RxSo3<NewScalarTypeT>(quaternion().template cast<NewScalarTypeT>());
+  template <class TNewScalarType>
+  SOPHUS_FUNC [[nodiscard]] RxSo3<TNewScalarType> cast() const {
+    return RxSo3<TNewScalarType>(quaternion().template cast<TNewScalarType>());
   }
 
   /// This provides unsafe read/write access to internal data. RxSO(3) is
@@ -239,9 +239,9 @@ class RxSo3Base {
 
   /// Assignment-like operator from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC RxSo3Base<DerivedT>& operator=(
-      RxSo3Base<OtherDerivedT> const& other) {
+  template <class TOtherDerived>
+  SOPHUS_FUNC RxSo3Base<TDerived>& operator=(
+      RxSo3Base<TOtherDerived> const& other) {
     quaternionNonconst() = other.quaternion();
     return *this;
   }
@@ -252,13 +252,13 @@ class RxSo3Base {
   /// Note: This function performs saturation for products close to zero in
   /// order to ensure the class invariant.
   ///
-  template <typename OtherDerivedT>
-  SOPHUS_FUNC RxSo3Product<OtherDerivedT> operator*(
-      RxSo3Base<OtherDerivedT> const& other) const {
+  template <class TOtherDerived>
+  SOPHUS_FUNC RxSo3Product<TOtherDerived> operator*(
+      RxSo3Base<TOtherDerived> const& other) const {
     using std::sqrt;
-    using ResultT = ReturnScalar<OtherDerivedT>;
+    using ResultT = ReturnScalar<TOtherDerived>;
     using QuaternionProductType =
-        typename RxSo3Product<OtherDerivedT>::QuaternionType;
+        typename RxSo3Product<TOtherDerived>::QuaternionType;
 
     QuaternionProductType result_quaternion(
         sophus::So3<double>::quaternionProduct<QuaternionProductType>(
@@ -275,7 +275,7 @@ class RxSo3Base {
       result_quaternion.normalize();
       result_quaternion.coeffs() /= sqrt(kEpsilonPlus<ResultT>);
     }
-    return RxSo3Product<OtherDerivedT>(result_quaternion);
+    return RxSo3Product<TOtherDerived>(result_quaternion);
   }
 
   /// Group action on 3-points.
@@ -287,14 +287,14 @@ class RxSo3Base {
   ///   ``p_bar = s * (bar_R_foo * p_foo)``.
   ///
   template <
-      typename PointDerivedT,
+      typename TPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<PointDerivedT, 3>::value>::type>
-  SOPHUS_FUNC PointProduct<PointDerivedT> operator*(
-      Eigen::MatrixBase<PointDerivedT> const& p) const {
+          IsFixedSizeVector<TPointDerived, 3>::value>::type>
+  SOPHUS_FUNC PointProduct<TPointDerived> operator*(
+      Eigen::MatrixBase<TPointDerived> const& p) const {
     // Follows http:///eigen.tuxfamily.org/bz/show_bug.cgi?id=459
     Scalar scale = quaternion().squaredNorm();
-    PointProduct<PointDerivedT> two_vec_cross_p = quaternion().vec().cross(p);
+    PointProduct<TPointDerived> two_vec_cross_p = quaternion().vec().cross(p);
     two_vec_cross_p += two_vec_cross_p;
     return scale * p + (quaternion().w() * two_vec_cross_p +
                         quaternion().vec().cross(two_vec_cross_p));
@@ -303,13 +303,13 @@ class RxSo3Base {
   /// Group action on homogeneous 3-points. See above for more details.
   ///
   template <
-      typename HPointDerivedT,
+      typename THPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<HPointDerivedT, 4>::value>::type>
-  SOPHUS_FUNC HomogeneousPointProduct<HPointDerivedT> operator*(
-      Eigen::MatrixBase<HPointDerivedT> const& p) const {
-    const auto rsp = *this * p.template head<3>();
-    return HomogeneousPointProduct<HPointDerivedT>(
+          IsFixedSizeVector<THPointDerived, 4>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<THPointDerived> operator*(
+      Eigen::MatrixBase<THPointDerived> const& p) const {
+    auto const rsp = *this * p.template head<3>();
+    return HomogeneousPointProduct<THPointDerived>(
         rsp(0), rsp(1), rsp(2), p(3));
   }
 
@@ -336,7 +336,7 @@ class RxSo3Base {
   /// Offset ``d`` is scaled
   ///
   SOPHUS_FUNC Hyperplane operator*(Hyperplane const& p) const {
-    const auto this_scale = scale();
+    auto const this_scale = scale();
     return Hyperplane(
         (*this) * p.normal() / this_scale, this_scale * p.offset());
   }
@@ -348,12 +348,12 @@ class RxSo3Base {
   /// order to ensure the class invariant.
   ///
   template <
-      typename OtherDerivedT,
+      typename TOtherDerived,
       typename = typename std::enable_if<
-          std::is_same<Scalar, ReturnScalar<OtherDerivedT>>::value>::type>
-  SOPHUS_FUNC RxSo3Base<DerivedT>& operator*=(
-      RxSo3Base<OtherDerivedT> const& other) {
-    *static_cast<DerivedT*>(this) = *this * other;
+          std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type>
+  SOPHUS_FUNC RxSo3Base<TDerived>& operator*=(
+      RxSo3Base<TOtherDerived> const& other) {
+    *static_cast<TDerived*>(this) = *this * other;
     return *this;
   }
 
@@ -377,13 +377,13 @@ class RxSo3Base {
     FARM_CHECK(
         quat.squaredNorm() < Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>),
         "Inverse scale factor must be greater-equal epsilon.");
-    static_cast<DerivedT*>(this)->quaternionNonconst() = quat;
+    static_cast<TDerived*>(this)->quaternionNonconst() = quat;
   }
 
   /// Accessor of quaternion.
   ///
   SOPHUS_FUNC [[nodiscard]] QuaternionType const& quaternion() const {
-    return static_cast<DerivedT const*>(this)->quaternion();
+    return static_cast<TDerived const*>(this)->quaternion();
   }
 
   /// Returns rotation matrix.
@@ -504,19 +504,19 @@ class RxSo3Base {
   /// Mutator of quaternion is private to ensure class invariant.
   ///
   SOPHUS_FUNC QuaternionType& quaternionNonconst() {
-    return static_cast<DerivedT*>(this)->quaternionNonconst();
+    return static_cast<TDerived*>(this)->quaternionNonconst();
   }
 };
 
 /// RxSo3 using storage; derived from RxSo3Base.
-template <class ScalarT, int kOptions>
-class RxSo3 : public RxSo3Base<RxSo3<ScalarT, kOptions>> {
+template <class TScalar, int kOptions>
+class RxSo3 : public RxSo3Base<RxSo3<TScalar, kOptions>> {
  public:
-  using Base = RxSo3Base<RxSo3<ScalarT, kOptions>>;
+  using Base = RxSo3Base<RxSo3<TScalar, kOptions>>;
   static int constexpr kDoF = Base::kDoF;
   static int constexpr kNumParameters = Base::kNumParameters;
 
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -525,7 +525,7 @@ class RxSo3 : public RxSo3Base<RxSo3<ScalarT, kOptions>> {
   using QuaternionMember = Eigen::Quaternion<Scalar, kOptions>;
 
   /// ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
-  friend class RxSo3Base<RxSo3<ScalarT, kOptions>>;
+  friend class RxSo3Base<RxSo3<TScalar, kOptions>>;
 
   struct RxSo3AndTheta {
     RxSo3<Scalar> rxso3;
@@ -553,8 +553,8 @@ class RxSo3 : public RxSo3Base<RxSo3<ScalarT, kOptions>> {
 
   /// Copy-like constructor from OtherDerived
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC RxSo3(RxSo3Base<OtherDerivedT> const& other)
+  template <class TOtherDerived>
+  SOPHUS_FUNC RxSo3(RxSo3Base<TOtherDerived> const& other)
       : quaternion_(other.quaternion()) {}
 
   /// Constructor from scaled rotation matrix
@@ -604,11 +604,11 @@ class RxSo3 : public RxSo3Base<RxSo3<ScalarT, kOptions>> {
   ///
   /// Precondition: quaternion must not be close to either zero or infinity.
   ///
-  template <class DT>
-  SOPHUS_FUNC explicit RxSo3(Eigen::QuaternionBase<DT> const& quat)
+  template <class TD>
+  SOPHUS_FUNC explicit RxSo3(Eigen::QuaternionBase<TD> const& quat)
       : quaternion_(quat) {
     static_assert(
-        std::is_same<typename DT::Scalar, Scalar>::value,
+        std::is_same<typename TD::Scalar, Scalar>::value,
         "must be same Scalar type.");
     FARM_CHECK(
         quaternion_.squaredNorm() >= kEpsilon<Scalar>,
@@ -622,9 +622,9 @@ class RxSo3 : public RxSo3Base<RxSo3<ScalarT, kOptions>> {
   ///
   /// Precondition: quaternion must not be close to zero.
   ///
-  template <class DT>
+  template <class TD>
   SOPHUS_FUNC explicit RxSo3(
-      Scalar const& scale, Eigen::QuaternionBase<DT> const& unit_quat)
+      Scalar const& scale, Eigen::QuaternionBase<TD> const& unit_quat)
       : RxSo3(scale, So3<Scalar>(unit_quat)) {}
 
   /// Accessor of quaternion.
@@ -643,7 +643,7 @@ class RxSo3 : public RxSo3Base<RxSo3<ScalarT, kOptions>> {
   /// Returns derivative of exp(x) wrt. x.
   ///
   SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
-      const Tangent& a) {
+      Tangent const& a) {
     using std::exp;
     using std::sqrt;
     Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
@@ -791,8 +791,8 @@ class RxSo3 : public RxSo3Base<RxSo3<ScalarT, kOptions>> {
   /// The scale factor is drawn uniformly in log2-space from [-1, 1],
   /// hence the scale is in [0.5, 2].
   ///
-  template <class UniformRandomBitGeneratorT>
-  static RxSo3 sampleUniform(UniformRandomBitGeneratorT& generator) {
+  template <class TUniformRandomBitGenerator>
+  static RxSo3 sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     using std::exp2;
     return RxSo3(
@@ -831,12 +831,12 @@ namespace Eigen {  // NOLINT
 ///
 /// Allows us to wrap RxSo3 objects around POD array (e.g. external c style
 /// quaternion).
-template <class ScalarT, int kOptions>
-class Map<sophus::RxSo3<ScalarT>, kOptions>
-    : public sophus::RxSo3Base<Map<sophus::RxSo3<ScalarT>, kOptions>> {
+template <class TScalar, int kOptions>
+class Map<sophus::RxSo3<TScalar>, kOptions>
+    : public sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>, kOptions>> {
  public:
-  using Base = sophus::RxSo3Base<Map<sophus::RxSo3<ScalarT>, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -844,7 +844,7 @@ class Map<sophus::RxSo3<ScalarT>, kOptions>
   using Adjoint = typename Base::Adjoint;
 
   /// ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
-  friend class sophus::RxSo3Base<Map<sophus::RxSo3<ScalarT>, kOptions>>;
+  friend class sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>, kOptions>>;
 
   using Base::operator=;
   using Base::operator*=;
@@ -871,12 +871,12 @@ class Map<sophus::RxSo3<ScalarT>, kOptions>
 ///
 /// Allows us to wrap RxSo3 objects around POD array (e.g. external c style
 /// quaternion).
-template <class ScalarT, int kOptions>
-class Map<sophus::RxSo3<ScalarT> const, kOptions>
-    : public sophus::RxSo3Base<Map<sophus::RxSo3<ScalarT> const, kOptions>> {
+template <class TScalar, int kOptions>
+class Map<sophus::RxSo3<TScalar> const, kOptions>
+    : public sophus::RxSo3Base<Map<sophus::RxSo3<TScalar> const, kOptions>> {
  public:
-  using Base = sophus::RxSo3Base<Map<sophus::RxSo3<ScalarT> const, kOptions>>;
-  using Scalar = ScalarT;
+  using Base = sophus::RxSo3Base<Map<sophus::RxSo3<TScalar> const, kOptions>>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;

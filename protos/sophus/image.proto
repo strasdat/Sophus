@@ -1,0 +1,21 @@
+
+// Copyright (c) 2011, Hauke Strasdat
+// Copyright (c) 2012, Steven Lovegrove
+// Copyright (c) 2021, farm-ng, inc.
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file or at
+// https://opensource.org/licenses/MIT.
+
+syntax = "proto3";
+
+import "protos/sophus/lie.proto";
+
+package farm_ng.proto;
+
+message ImageSize {
+  // Image width in pixels.
+  int32 width = 1;
+  // Image height in pixels.
+  int32 height = 2;
+}

@@ -24,9 +24,9 @@ namespace sophus::experimental {
 
 FARM_ENUM(ArgType, (variable, conditioned));
 
-template <int kTangentDim, class ManifoldT = Eigen::Vector<double, kTangentDim>>
+template <int kTangentDim, class TManifold = Eigen::Vector<double, kTangentDim>>
 struct ManifoldFamily {
-  using Manifold = ManifoldT;
+  using Manifold = TManifold;
 
   std::vector<Manifold> manifolds;
 
@@ -34,21 +34,21 @@ struct ManifoldFamily {
       Manifold const& g, Eigen::Vector<double, kTangentDim> const& vec_a);
 };
 
-template <int kTangentDim, class ManifoldT>
+template <int kTangentDim, class TManifold>
 struct Var {
   static ArgType constexpr kArgType = ArgType::variable;
 
-  Var(ManifoldFamily<kTangentDim, ManifoldT> const& family) : family(family) {}
-  ManifoldFamily<kTangentDim, ManifoldT> const& family;
+  Var(ManifoldFamily<kTangentDim, TManifold> const& family) : family(family) {}
+  ManifoldFamily<kTangentDim, TManifold> const& family;
 };
 
-template <int kTangentDim, class ManifoldT>
+template <int kTangentDim, class TManifold>
 struct CondVar {
   static ArgType constexpr kArgType = ArgType::conditioned;
 
-  CondVar(ManifoldFamily<kTangentDim, ManifoldT> const& family)
+  CondVar(ManifoldFamily<kTangentDim, TManifold> const& family)
       : family(family) {}
-  ManifoldFamily<kTangentDim, ManifoldT> const& family;
+  ManifoldFamily<kTangentDim, TManifold> const& family;
 };
 
 template <int kBlockDim>
@@ -61,8 +61,8 @@ struct LeastSquaresCostTermState {
   }
   Eigen::Matrix<double, kBlockDim, kBlockDim> hessian_block;
   Eigen::Matrix<double, kBlockDim, 1> gradient_segment;
-  double cost = 0;
-  int num_subterms = 0;
+  double cost;
+  int num_subterms;
 };
 
 template <int kBlockDim, int kNumVarArgs>
@@ -77,72 +77,72 @@ struct CostFamily {
 };
 
 /// Manifold ids of the cost term arguments
-template <int kArgs, class ConstArgT = farm_ng::Void>
+template <int kArgs, class TConstArgT = farm_ng::Void>
 struct CostTermRef {
   std::array<int, kArgs> arg_ids;
-  ConstArgT constant;
+  TConstArgT constant;
 };
 
-template <class ArgTypesT, size_t kNumArgs, size_t kI = 0>
-constexpr bool areAllVarEq(
+template <class TArgTypes, size_t kNumArgs, size_t kI = 0>
+bool constexpr areAllVarEq(
     std::array<int, kNumArgs> const& lhs,
     std::array<int, kNumArgs> const& rhs) {
   if constexpr (kI == kNumArgs) {
     return true;
   } else {
-    if constexpr (std::get<kI>(ArgTypesT::kArgTypeArray) == ArgType::variable) {
+    if constexpr (std::get<kI>(TArgTypes::kArgTypeArray) == ArgType::variable) {
       if (lhs[kI] != rhs[kI]) {
         return false;
       }
     }
-    return areAllVarEq<ArgTypesT, kNumArgs, kI + 1>(lhs, rhs);
+    return areAllVarEq<TArgTypes, kNumArgs, kI + 1>(lhs, rhs);
   }
 }
 
-template <class ArgTypesT, size_t kNumArgs, size_t kI = 0>
-constexpr bool lessFixed(
+template <class TArgTypes, size_t kNumArgs, size_t kI = 0>
+bool constexpr lessFixed(
     std::array<int, kNumArgs> const& lhs,
     std::array<int, kNumArgs> const& rhs) {
   if constexpr (kI == kNumArgs - 1) {
     return lhs[kI] <= rhs[kI];
   } else {
     if constexpr (
-        std::get<kI>(ArgTypesT::kArgTypeArray) == ArgType::conditioned) {
-      return lessFixed<ArgTypesT, kNumArgs, kI + 1>(lhs, rhs);
+        std::get<kI>(TArgTypes::kArgTypeArray) == ArgType::conditioned) {
+      return lessFixed<TArgTypes, kNumArgs, kI + 1>(lhs, rhs);
     } else {
       if (lhs[kI] == rhs[kI]) {
-        return lessFixed<ArgTypesT, kNumArgs, kI + 1>(lhs, rhs);
+        return lessFixed<TArgTypes, kNumArgs, kI + 1>(lhs, rhs);
       }
       return lhs[kI] < rhs[kI];
     }
   }
 }
 
-template <class ArgTypesT, size_t kNumArgs, size_t kI = 0>
-constexpr bool isLess(
+template <class TArgTypes, size_t kNumArgs, size_t kI = 0>
+bool constexpr isLess(
     std::array<int, kNumArgs> const& lhs,
     std::array<int, kNumArgs> const& rhs) {
   if constexpr (kI == kNumArgs) {
-    return lessFixed<ArgTypesT, kNumArgs>(lhs, rhs);
+    return lessFixed<TArgTypes, kNumArgs>(lhs, rhs);
   } else {
-    if constexpr (std::get<kI>(ArgTypesT::kArgTypeArray) == ArgType::variable) {
-      return isLess<ArgTypesT, kNumArgs, kI + 1>(lhs, rhs);
+    if constexpr (std::get<kI>(TArgTypes::kArgTypeArray) == ArgType::variable) {
+      return isLess<TArgTypes, kNumArgs, kI + 1>(lhs, rhs);
     } else {
       if (lhs[kI] == rhs[kI]) {
-        return isLess<ArgTypesT, kNumArgs, kI + 1>(lhs, rhs);
+        return isLess<TArgTypes, kNumArgs, kI + 1>(lhs, rhs);
       }
       return lhs[kI] < rhs[kI];
     }
   }
 }
 
-template <bool kCalcDx, class CostFunctorT, class... CostArgT>
+template <bool kCalcDx, class TCostFunctor, class... TCostArg>
 struct ArgTypes {
-  static int constexpr kNumArgs = sizeof...(CostArgT);
+  static int constexpr kNumArgs = sizeof...(TCostArg);
   static std::array<ArgType, kNumArgs> constexpr kArgTypeArray = {
-      {CostArgT::kArgType...}};
+      {TCostArg::kArgType...}};
   static std::array<int, kNumArgs> constexpr kArgsDimArray =
-      CostFunctorT::kArgsDimArray;
+      TCostFunctor::kArgsDimArray;
 
   static int constexpr kNumVarArgs = [](auto arg_type_array) {
     size_t num_vars = 0;
@@ -164,11 +164,11 @@ struct ArgTypes {
   static int constexpr kBlockDim = kCalcDx ? kDetailBlockDim : 0;
 };
 
-template <size_t kNumArgs, size_t kI = 0, int... kInputDim, class... ManifoldT>
+template <size_t kNumArgs, size_t kI = 0, int... kInputDim, class... TManifold>
 void costTermArgsFromIds(
-    std::tuple<ManifoldT...>& cost_term_args,
+    std::tuple<TManifold...>& cost_term_args,
     std::array<int, kNumArgs> const& arg_ids,
-    std::tuple<ManifoldFamily<kInputDim, ManifoldT>...> const&
+    std::tuple<ManifoldFamily<kInputDim, TManifold>...> const&
         manifold_family_tuple) {
   if constexpr (kI == kNumArgs) {
     return;
@@ -181,58 +181,58 @@ void costTermArgsFromIds(
   }
 }
 
-template <class TT>
+template <class TScalar>
 struct ManifoldFamilyTupleTraits;
 
-template <int... kInputDim, class... ManifoldT>
+template <int... kInputDim, class... TManifold>
 struct ManifoldFamilyTupleTraits<
-    std::tuple<ManifoldFamily<kInputDim, ManifoldT>...>> {
-  using ManifoldTuple = std::tuple<ManifoldT...>;
+    std::tuple<ManifoldFamily<kInputDim, TManifold>...>> {
+  using ManifoldTuple = std::tuple<TManifold...>;
 };
 
 template <
-    class ArgTypesT,
+    class TArgTypes,
     size_t kNumArgs,
     size_t kI = 0,
     int... kInputDim,
-    class... ManifoldT>
+    class... TManifold>
 void costTermArgsFromFixedManifolds(
     std::array<int, kNumArgs>& arg_ids,
-    std::tuple<ManifoldT...>& cost_term_args,
-    [[maybe_unused]] std::array<int, ArgTypesT::kNumFixedArgs> fixed_arg_ids,
-    std::tuple<ManifoldFamily<kInputDim, ManifoldT>...> const&
+    std::tuple<TManifold...>& cost_term_args,
+    [[maybe_unused]] std::array<int, TArgTypes::kNumFixedArgs> fixed_arg_ids,
+    std::tuple<ManifoldFamily<kInputDim, TManifold>...> const&
         manifold_family_tuple) {
-  if constexpr (kI == ArgTypesT::kNumFixedArgs) {
+  if constexpr (kI == TArgTypes::kNumFixedArgs) {
     return;
   } else {
-    static int constexpr kArgPos = std::get<kI>(ArgTypesT::kFixedArgPosArray);
+    static int constexpr kArgPos = std::get<kI>(TArgTypes::kFixedArgPosArray);
     int const fixed_id = FARM_AT(fixed_arg_ids, kI);
     std::get<kArgPos>(cost_term_args) =
         FARM_AT(std::get<kArgPos>(manifold_family_tuple).manifolds, fixed_id);
     std::get<kArgPos>(arg_ids) = std::get<kI>(fixed_arg_ids);
-    costTermArgsFromFixedManifolds<ArgTypesT, kNumArgs, kI + 1, kInputDim...>(
+    costTermArgsFromFixedManifolds<TArgTypes, kNumArgs, kI + 1, kInputDim...>(
         arg_ids, cost_term_args, fixed_arg_ids, manifold_family_tuple);
   }
 }
 
-template <bool kCalcDx = true, class CostFunctorT, class... CostTermArgT>
+template <bool kCalcDx = true, class TCostFunctor, class... TCostTermArg>
 static CostFamily<
-    ArgTypes<kCalcDx, CostFunctorT, CostTermArgT...>::kBlockDim,
-    ArgTypes<kCalcDx, CostFunctorT, CostTermArgT...>::kNumVarArgs>
+    ArgTypes<kCalcDx, TCostFunctor, TCostTermArg...>::kBlockDim,
+    ArgTypes<kCalcDx, TCostFunctor, TCostTermArg...>::kNumVarArgs>
 apply(
-    [[maybe_unused]] CostFunctorT cost_functor,
+    [[maybe_unused]] TCostFunctor cost_functor,
     std::vector<CostTermRef<
-        ArgTypes<kCalcDx, CostFunctorT, CostTermArgT...>::kNumArgs,
-        typename CostFunctorT::ConstantType>> const& arg_id_arrays,
-    CostTermArgT const&... cost_arg) {
-  using ArgTypesT = ArgTypes<kCalcDx, CostFunctorT, CostTermArgT...>;
+        ArgTypes<kCalcDx, TCostFunctor, TCostTermArg...>::kNumArgs,
+        typename TCostFunctor::ConstantType>> const& arg_id_arrays,
+    TCostTermArg const&... cost_arg) {
+  using ArgTypesT = ArgTypes<kCalcDx, TCostFunctor, TCostTermArg...>;
 
-  static auto constexpr kArgsDimArray = CostFunctorT::kArgsDimArray;
+  static auto constexpr kArgsDimArray = TCostFunctor::kArgsDimArray;
   static int constexpr kNumArgs = kArgsDimArray.size();
   static int constexpr kNumVarArgs = ArgTypesT::kNumVarArgs;
   static int constexpr kBlockDim = ArgTypesT::kBlockDim;
 
-  using ConstantType = typename CostFunctorT::ConstantType;
+  using ConstantType = typename TCostFunctor::ConstantType;
 
   auto manifold_family_tuple = std::make_tuple(cost_arg.family...);
   using ManifoldFamilyTuple = decltype(manifold_family_tuple);

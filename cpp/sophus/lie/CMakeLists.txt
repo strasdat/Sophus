@@ -26,7 +26,7 @@ endforeach()
 add_library(sophus_lie INTERFACE
   ${sophus_lie_h}
 )
-target_link_libraries(sophus_lie INTERFACE sophus_math)
+target_link_libraries(sophus_lie INTERFACE sophus_linalg)
 add_library (sophus::sophus_lie ALIAS sophus_lie)
 
 target_sources(sophus_lie INTERFACE
@@ -57,3 +57,9 @@ if(${BUILD_SOPHUS_TESTS})
                           LABELS small)
   endforeach()
 endif()
+
+if(BUILD_FARM_NG_PROTOS)
+    add_subdirectory(proto)
+endif()
+
+add_subdirectory(interp)

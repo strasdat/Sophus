@@ -9,7 +9,7 @@
 #pragma once
 
 #include "sophus/ceres/jet_helpers.h"
-#include "sophus/core/common.h"
+#include "sophus/common/common.h"
 #include "sophus/sensor/camera_transforms/affine.h"
 
 #include <Eigen/Dense>
@@ -17,29 +17,29 @@
 namespace sophus {
 class BrownConradyTransform {
  public:
-  static constexpr int kNumDistortionParams = 5;
-  static constexpr int kNumParams = kNumDistortionParams + 4;
-  static const constexpr std::string_view kProjectionModel =
+  static int constexpr kNumDistortionParams = 5;
+  static int constexpr kNumParams = kNumDistortionParams + 4;
+  static constexpr const std::string_view kProjectionModel =
       "BrownConrady: fx, fy, cx, cy, k1, k2, p1, p2, k3";
 
-  template <class ScalarT>
-  using ProjInCameraZ1Plane = Eigen::Matrix<ScalarT, 2, 1>;
-  template <class ScalarT>
-  using PixelImage = Eigen::Matrix<ScalarT, 2, 1>;
-  template <class ScalarT>
-  using Params = Eigen::Matrix<ScalarT, kNumParams, 1>;
-  template <class ScalarT>
-  using DistorationParams = Eigen::Matrix<ScalarT, kNumDistortionParams, 1>;
+  template <class TScalar>
+  using ProjInCameraZ1Plane = Eigen::Matrix<TScalar, 2, 1>;
+  template <class TScalar>
+  using PixelImage = Eigen::Matrix<TScalar, 2, 1>;
+  template <class TScalar>
+  using Params = Eigen::Matrix<TScalar, kNumParams, 1>;
+  template <class TScalar>
+  using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
-  template <class ParamScalarT, class PointScalarT>
+  template <class TParamScalarT, class TPointScalarT>
   static PixelImage<typename Eigen::ScalarBinaryOpTraits<
-      ParamScalarT,
-      PointScalarT>::ReturnType>
+      TParamScalarT,
+      TPointScalarT>::ReturnType>
   projImpl(
-      const DistorationParams<ParamScalarT>& distortion,
-      const PixelImage<PointScalarT>& point_normalized) {
+      DistorationParams<TParamScalarT> const& distortion,
+      PixelImage<TPointScalarT> const& point_normalized) {
     using ReturnScalar = typename Eigen::
-        ScalarBinaryOpTraits<ParamScalarT, PointScalarT>::ReturnType;
+        ScalarBinaryOpTraits<TParamScalarT, TPointScalarT>::ReturnType;
 
     auto x = point_normalized[0];
     auto y = point_normalized[1];
@@ -63,10 +63,10 @@ class BrownConradyTransform {
         y * cdist * icdist2 + distortion[2] * a3 + distortion[3] * a1);
   }
 
-  template <class ScalarT>
-  static PixelImage<ScalarT> unprojImpl(
-      const DistorationParams<ScalarT>& distortion,
-      const PixelImage<ScalarT>& uv_normalized) {
+  template <class TScalar>
+  static PixelImage<TScalar> unprojImpl(
+      DistorationParams<TScalar> const& distortion,
+      PixelImage<TScalar> const& uv_normalized) {
     // We had no luck with OpenCV's undistort. It seems not to be accurate if
     // "icdist" is close to 0.
     // https://github.com/opencv/opencv/blob/63bb2abadab875fc648a572faccafee134f06fc8/modules/calib3d/src/undistort.dispatch.cpp#L365
@@ -87,69 +87,69 @@ class BrownConradyTransform {
     // need to solve a less computational heavy newton iteration...
 
     // initial guess
-    PixelImage<ScalarT> xy = uv_normalized;
+    PixelImage<TScalar> xy = uv_normalized;
 
-    ScalarT p0 = distortion[0];
-    ScalarT p1 = distortion[1];
-    ScalarT p2 = distortion[2];
-    ScalarT p3 = distortion[3];
-    ScalarT p4 = distortion[4];
+    TScalar p0 = distortion[0];
+    TScalar p1 = distortion[1];
+    TScalar p2 = distortion[2];
+    TScalar p3 = distortion[3];
+    TScalar p4 = distortion[4];
 
     for (int i = 0; i < 50; ++i) {
-      ScalarT x = xy[0];
-      ScalarT y = xy[1];
-      ScalarT x2 = x * x;
-      ScalarT y2 = y * y;
-      ScalarT r2 = x2 + y2;
-      ScalarT r4 = r2 * r2;
-      ScalarT r6 = r2 * r4;
+      TScalar x = xy[0];
+      TScalar y = xy[1];
+      TScalar x2 = x * x;
+      TScalar y2 = y * y;
+      TScalar r2 = x2 + y2;
+      TScalar r4 = r2 * r2;
+      TScalar r6 = r2 * r4;
 
-      PixelImage<ScalarT> f_xy =
-          projImpl(distortion, Eigen::Matrix<ScalarT, 2, 1>(x, y)) -
+      PixelImage<TScalar> f_xy =
+          projImpl(distortion, Eigen::Matrix<TScalar, 2, 1>(x, y)) -
           uv_normalized;
 
       // calculating Jacobian of proj_impl wrt. point_normalized
-      ScalarT du_dx = p0 * r2 + p1 * r4 + ScalarT(2) * p2 * y +
-                      ScalarT(6) * p3 * x + p4 * r6 +
-                      x * (ScalarT(2) * p0 * x + ScalarT(4) * p1 * x * r2 +
-                           ScalarT(6) * p4 * x * r4) +
-                      ScalarT(1);
-      ScalarT du_dy = ScalarT(2) * p2 * x + ScalarT(2) * p3 * y +
-                      x * (ScalarT(2) * p0 * y + ScalarT(4) * p1 * y * r2 +
-                           ScalarT(6) * p4 * y * r4);
-      ScalarT dv_dx = ScalarT(2) * p2 * x + ScalarT(2) * p3 * y +
-                      y * (ScalarT(2) * p0 * x + ScalarT(4) * p1 * x * r2 +
-                           ScalarT(6) * p4 * x * r4);
-      ScalarT dv_dy = p0 * r2 + p1 * r4 + ScalarT(6) * p2 * y +
-                      ScalarT(2) * p3 * x + p4 * r6 +
-                      y * (ScalarT(2) * p0 * y + ScalarT(4) * p1 * y * r2 +
-                           ScalarT(6) * p4 * y * r4) +
-                      ScalarT(1);
+      TScalar du_dx = p0 * r2 + p1 * r4 + TScalar(2) * p2 * y +
+                      TScalar(6) * p3 * x + p4 * r6 +
+                      x * (TScalar(2) * p0 * x + TScalar(4) * p1 * x * r2 +
+                           TScalar(6) * p4 * x * r4) +
+                      TScalar(1);
+      TScalar du_dy = TScalar(2) * p2 * x + TScalar(2) * p3 * y +
+                      x * (TScalar(2) * p0 * y + TScalar(4) * p1 * y * r2 +
+                           TScalar(6) * p4 * y * r4);
+      TScalar dv_dx = TScalar(2) * p2 * x + TScalar(2) * p3 * y +
+                      y * (TScalar(2) * p0 * x + TScalar(4) * p1 * x * r2 +
+                           TScalar(6) * p4 * x * r4);
+      TScalar dv_dy = p0 * r2 + p1 * r4 + TScalar(6) * p2 * y +
+                      TScalar(2) * p3 * x + p4 * r6 +
+                      y * (TScalar(2) * p0 * y + TScalar(4) * p1 * y * r2 +
+                           TScalar(6) * p4 * y * r4) +
+                      TScalar(1);
 
       //     | du_dx  du_dy |      | a  b |
       // J = |              |  =:  |      |
       //     | dv_dx  dv_dy |      | c  d |
 
-      ScalarT a = du_dx;
-      ScalarT b = du_dy;
-      ScalarT c = dv_dx;
-      ScalarT d = dv_dy;
+      TScalar a = du_dx;
+      TScalar b = du_dy;
+      TScalar c = dv_dx;
+      TScalar d = dv_dy;
 
       // | a  b | -1       1   |  d  -b |
       // |      |     =  ----- |        |
       // | c  d |        ad-bc | -c   a |
 
-      Eigen::Matrix<ScalarT, 2, 2> m;
+      Eigen::Matrix<TScalar, 2, 2> m;
       // clang-format off
       m <<  d, -b,
            -c,  a;
       // clang-format on
 
-      Eigen::Matrix<ScalarT, 2, 2> j_inv = ScalarT(1) / (a * d - b * c) * m;
-      PixelImage<ScalarT> step = j_inv * f_xy;
+      Eigen::Matrix<TScalar, 2, 2> j_inv = TScalar(1) / (a * d - b * c) * m;
+      PixelImage<TScalar> step = j_inv * f_xy;
 
-      if (abs(jet_helpers::GetValue<ScalarT>::impl(step.squaredNorm())) <
-          sophus::kEpsilon<ScalarT> * sophus::kEpsilon<ScalarT>) {
+      if (abs(jet_helpers::GetValue<TScalar>::impl(step.squaredNorm())) <
+          sophus::kEpsilon<TScalar> * sophus::kEpsilon<TScalar>) {
         break;
       }
       xy -= step;
@@ -158,61 +158,62 @@ class BrownConradyTransform {
     return xy;
   }
 
-  template <class ParamsTypeT, class PointTypeT>
-  static PixelImage<typename PointTypeT::Scalar> warp(
-      const Eigen::MatrixBase<ParamsTypeT>& params,
-      const Eigen::MatrixBase<PointTypeT>& proj_point_in_camera_z1_plane) {
-    using ParamScalar = typename ParamsTypeT::Scalar;
+  template <class TParamsTypeT, class TPointTypeT>
+  static PixelImage<typename TPointTypeT::Scalar> warp(
+      Eigen::MatrixBase<TParamsTypeT> const& params,
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
+    using ParamScalar = typename TParamsTypeT::Scalar;
 
     static_assert(
-        ParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
+        TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
-        ParamsTypeT::RowsAtCompileTime == kNumParams,
+        TParamsTypeT::RowsAtCompileTime == kNumParams,
         "params must have exactly kNumParams rows");
     static_assert(
-        PointTypeT::ColsAtCompileTime == 1,
+        TPointTypeT::ColsAtCompileTime == 1,
         "point_camera must be a column-vector");
     static_assert(
-        PointTypeT::RowsAtCompileTime == 2,
+        TPointTypeT::RowsAtCompileTime == 2,
         "point_camera must have exactly 2 columns");
 
     Eigen::Matrix<ParamScalar, kNumDistortionParams, 1> distortion =
         params.template tail<kNumDistortionParams>();
 
-    PixelImage<typename PointTypeT::Scalar> distorted_point_in_camera_z1_plane =
-        projImpl(distortion, proj_point_in_camera_z1_plane.eval());
+    PixelImage<typename TPointTypeT::Scalar>
+        distorted_point_in_camera_z1_plane =
+            projImpl(distortion, proj_point_in_camera_z1_plane.eval());
 
     return AffineTransform::warp(
         params.template head<4>(), distorted_point_in_camera_z1_plane);
   }
 
-  template <class ScalarT>
-  static ProjInCameraZ1Plane<ScalarT> unwarp(
-      const Params<ScalarT>& params, const PixelImage<ScalarT>& pixel_image) {
-    PixelImage<ScalarT> proj_point_in_camera_z1_plane = unprojImpl(
+  template <class TScalar>
+  static ProjInCameraZ1Plane<TScalar> unwarp(
+      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
+    PixelImage<TScalar> proj_point_in_camera_z1_plane = unprojImpl(
         params.template tail<kNumDistortionParams>().eval(),
         AffineTransform::unwarp(params.template head<4>().eval(), pixel_image));
 
-    return ProjInCameraZ1Plane<ScalarT>(
+    return ProjInCameraZ1Plane<TScalar>(
         proj_point_in_camera_z1_plane[0], proj_point_in_camera_z1_plane[1]);
   }
 
-  template <class ParamsTypeT, class PointTypeT>
-  static Eigen::Matrix<typename PointTypeT::Scalar, 2, 2> dxWarp(
-      const Eigen::MatrixBase<ParamsTypeT>& params,
-      const Eigen::MatrixBase<PointTypeT>& proj_point_in_camera_z1_plane) {
+  template <class TParamsTypeT, class TPointTypeT>
+  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxWarp(
+      Eigen::MatrixBase<TParamsTypeT> const& params,
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     static_assert(
-        ParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
+        TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
-        ParamsTypeT::RowsAtCompileTime == kNumParams,
+        TParamsTypeT::RowsAtCompileTime == kNumParams,
         "params must have exactly kNumParams rows");
     static_assert(
-        PointTypeT::ColsAtCompileTime == 1,
+        TPointTypeT::ColsAtCompileTime == 1,
         "point_camera must be a column-vector");
     static_assert(
-        PointTypeT::RowsAtCompileTime == 2,
+        TPointTypeT::RowsAtCompileTime == 2,
         "point_camera must have exactly 2 columns");
-    using Scalar = typename PointTypeT::Scalar;
+    using Scalar = typename TPointTypeT::Scalar;
 
     Eigen::Matrix<Scalar, kNumDistortionParams, 1> d =
         params.template tail<kNumDistortionParams>();
@@ -237,7 +238,7 @@ class BrownConradyTransform {
     Scalar const c11 = b * c0 + b * c2 + b * c4;
     Scalar const c12 = 1.0 * b;
 
-    Eigen::Matrix<typename PointTypeT::Scalar, 2, 2> dx;
+    Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dx;
     Scalar const fx = params[0];
     Scalar const fy = params[1];
 

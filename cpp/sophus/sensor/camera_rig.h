@@ -15,7 +15,7 @@ namespace sophus {
 
 /// Camera as part of a sensor `rig`.
 struct CameraInRig {
-  explicit CameraInRig(const CameraModel& camera_model)
+  explicit CameraInRig(CameraModel const& camera_model)
       : camera_model(camera_model) {}
 
   /// Camera intrinsics
@@ -29,10 +29,7 @@ struct CameraInRig {
 struct MultiCameraRig {
   std::vector<CameraInRig> cameras_in_rig;
 
-  /// Name of the sensor rig, that its rig frame name.
-  std::string name;
-
-  void transformRig(const sophus::SE3d& new_rig_pose_rig) {
+  void transformRig(sophus::SE3d const& new_rig_pose_rig) {
     for (auto& camera_in_rig : cameras_in_rig) {
       camera_in_rig.rig_pose_camera =
           new_rig_pose_rig * camera_in_rig.rig_pose_camera;

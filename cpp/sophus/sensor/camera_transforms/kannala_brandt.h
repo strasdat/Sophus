@@ -9,7 +9,7 @@
 #pragma once
 
 #include "sophus/ceres/jet_helpers.h"
-#include "sophus/core/common.h"
+#include "sophus/common/common.h"
 #include "sophus/geometry/projection.h"
 #include "sophus/sensor/camera_transforms/affine.h"
 
@@ -22,58 +22,58 @@ namespace sophus {
 // parameters = fx, fy, cx, cy, kb0, kb1, kb2, kb3
 class KannalaBrandtK3Transform {
  public:
-  static constexpr int kNumDistortionParams = 4;
-  static constexpr int kNumParams = kNumDistortionParams + 4;
-  static const constexpr std::string_view kProjectionModel =
+  static int constexpr kNumDistortionParams = 4;
+  static int constexpr kNumParams = kNumDistortionParams + 4;
+  static constexpr const std::string_view kProjectionModel =
       "KannalaBrandtK3: fx, fy, cx, cy, kb0, kb1, kb2, kb3";
 
-  template <class ScalarT>
-  using ProjInCameraZ1Plane = Eigen::Matrix<ScalarT, 2, 1>;
-  template <class ScalarT>
-  using PixelImage = Eigen::Matrix<ScalarT, 2, 1>;
-  template <class ScalarT>
-  using Params = Eigen::Matrix<ScalarT, kNumParams, 1>;
-  template <class ScalarT>
-  using DistorationParams = Eigen::Matrix<ScalarT, kNumDistortionParams, 1>;
+  template <class TScalar>
+  using ProjInCameraZ1Plane = Eigen::Matrix<TScalar, 2, 1>;
+  template <class TScalar>
+  using PixelImage = Eigen::Matrix<TScalar, 2, 1>;
+  template <class TScalar>
+  using Params = Eigen::Matrix<TScalar, kNumParams, 1>;
+  template <class TScalar>
+  using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
-  template <class ParamsTypeT, class PointTypeT>
-  static PixelImage<typename PointTypeT::Scalar> warp(
-      const Eigen::MatrixBase<ParamsTypeT>& params,
-      const Eigen::MatrixBase<PointTypeT>& proj_point_in_camera_z1_plane) {
+  template <class TParamsTypeT, class TPointTypeT>
+  static PixelImage<typename TPointTypeT::Scalar> warp(
+      Eigen::MatrixBase<TParamsTypeT> const& params,
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     static_assert(
-        ParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
+        TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
-        ParamsTypeT::RowsAtCompileTime == kNumParams,
+        TParamsTypeT::RowsAtCompileTime == kNumParams,
         "params must have exactly kNumParams rows");
     static_assert(
-        PointTypeT::ColsAtCompileTime == 1,
+        TPointTypeT::ColsAtCompileTime == 1,
         "point_camera must be a column-vector");
     static_assert(
-        PointTypeT::RowsAtCompileTime == 2,
+        TPointTypeT::RowsAtCompileTime == 2,
         "point_camera must have exactly 2 columns");
 
-    const auto k0 = params[4];
-    const auto k1 = params[5];
-    const auto k2 = params[6];
-    const auto k3 = params[7];
+    auto const k0 = params[4];
+    auto const k1 = params[5];
+    auto const k2 = params[6];
+    auto const k3 = params[7];
 
-    const auto radius_squared =
+    auto const radius_squared =
         proj_point_in_camera_z1_plane[0] * proj_point_in_camera_z1_plane[0] +
         proj_point_in_camera_z1_plane[1] * proj_point_in_camera_z1_plane[1];
     using std::atan2;
     using std::sqrt;
 
     if (radius_squared > sophus::kEpsilonF64) {
-      const auto radius = sqrt(radius_squared);
-      const auto radius_inverse = 1.0 / radius;
-      const auto theta = atan2(radius, typename PointTypeT::Scalar(1.0));
-      const auto theta2 = theta * theta;
-      const auto theta4 = theta2 * theta2;
-      const auto theta6 = theta4 * theta2;
-      const auto theta8 = theta4 * theta4;
-      const auto r_distorted =
+      auto const radius = sqrt(radius_squared);
+      auto const radius_inverse = 1.0 / radius;
+      auto const theta = atan2(radius, typename TPointTypeT::Scalar(1.0));
+      auto const theta2 = theta * theta;
+      auto const theta4 = theta2 * theta2;
+      auto const theta6 = theta4 * theta2;
+      auto const theta8 = theta4 * theta4;
+      auto const r_distorted =
           theta * (1.0 + k0 * theta2 + k1 * theta4 + k2 * theta6 + k3 * theta8);
-      const auto scaling = r_distorted * radius_inverse;
+      auto const scaling = r_distorted * radius_inverse;
 
       return scaling * proj_point_in_camera_z1_plane.cwiseProduct(
                            params.template head<2>()) +
@@ -85,84 +85,84 @@ class KannalaBrandtK3Transform {
         params.template head<4>(), proj_point_in_camera_z1_plane);
   }
 
-  template <class ScalarT>
-  static ProjInCameraZ1Plane<ScalarT> unwarp(
-      const Params<ScalarT>& params, const PixelImage<ScalarT>& pixel_image) {
+  template <class TScalar>
+  static ProjInCameraZ1Plane<TScalar> unwarp(
+      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
     using std::abs;
     using std::sqrt;
     using std::tan;
 
     // Undistortion
-    const ScalarT fu = params[0];
-    const ScalarT fv = params[1];
-    const ScalarT u0 = params[2];
-    const ScalarT v0 = params[3];
+    const TScalar fu = params[0];
+    const TScalar fv = params[1];
+    const TScalar u0 = params[2];
+    const TScalar v0 = params[3];
 
-    const ScalarT k0 = params[4];
-    const ScalarT k1 = params[5];
-    const ScalarT k2 = params[6];
-    const ScalarT k3 = params[7];
+    const TScalar k0 = params[4];
+    const TScalar k1 = params[5];
+    const TScalar k2 = params[6];
+    const TScalar k3 = params[7];
 
-    const ScalarT un = (pixel_image(0) - u0) / fu;
-    const ScalarT vn = (pixel_image(1) - v0) / fv;
-    const ScalarT rth2 = un * un + vn * vn;
+    const TScalar un = (pixel_image(0) - u0) / fu;
+    const TScalar vn = (pixel_image(1) - v0) / fv;
+    const TScalar rth2 = un * un + vn * vn;
 
-    if (rth2 < sophus::kEpsilon<ScalarT> * sophus::kEpsilon<ScalarT>) {
-      return Eigen::Matrix<ScalarT, 2, 1>(un, vn);
+    if (rth2 < sophus::kEpsilon<TScalar> * sophus::kEpsilon<TScalar>) {
+      return Eigen::Matrix<TScalar, 2, 1>(un, vn);
     }
 
-    const ScalarT rth = sqrt(rth2);
+    const TScalar rth = sqrt(rth2);
 
     // Use Newtons method to solve for theta, 50 iterations max
-    ScalarT th = sqrt(rth);
+    TScalar th = sqrt(rth);
     for (int i = 0; i < 500; ++i) {
-      const ScalarT th2 = th * th;
-      const ScalarT th4 = th2 * th2;
-      const ScalarT th6 = th4 * th2;
-      const ScalarT th8 = th4 * th4;
+      const TScalar th2 = th * th;
+      const TScalar th4 = th2 * th2;
+      const TScalar th6 = th4 * th2;
+      const TScalar th8 = th4 * th4;
 
-      const ScalarT thd =
-          th * (ScalarT(1.0) + k0 * th2 + k1 * th4 + k2 * th6 + k3 * th8);
+      const TScalar thd =
+          th * (TScalar(1.0) + k0 * th2 + k1 * th4 + k2 * th6 + k3 * th8);
 
-      const ScalarT d_thd_wtr_th =
-          ScalarT(1.0) + ScalarT(3.0) * k0 * th2 + ScalarT(5.0) * k1 * th4 +
-          ScalarT(7.0) * k2 * th6 + ScalarT(9.0) * k3 * th8;
+      const TScalar d_thd_wtr_th =
+          TScalar(1.0) + TScalar(3.0) * k0 * th2 + TScalar(5.0) * k1 * th4 +
+          TScalar(7.0) * k2 * th6 + TScalar(9.0) * k3 * th8;
 
-      const ScalarT step = (thd - rth) / d_thd_wtr_th;
+      const TScalar step = (thd - rth) / d_thd_wtr_th;
       th -= step;
       // has converged?
-      if (abs(jet_helpers::GetValue<ScalarT>::impl(step)) <
-          sophus::kEpsilon<ScalarT>) {
+      if (abs(jet_helpers::GetValue<TScalar>::impl(step)) <
+          sophus::kEpsilon<TScalar>) {
         break;
       }
     }
 
-    ScalarT radius_undistorted = tan(th);
+    TScalar radius_undistorted = tan(th);
 
-    if (radius_undistorted < ScalarT(0.0)) {
-      return Eigen::Matrix<ScalarT, 2, 1>(
+    if (radius_undistorted < TScalar(0.0)) {
+      return Eigen::Matrix<TScalar, 2, 1>(
           -radius_undistorted * un / rth, -radius_undistorted * vn / rth);
     }
-    return Eigen::Matrix<ScalarT, 2, 1>(
+    return Eigen::Matrix<TScalar, 2, 1>(
         radius_undistorted * un / rth, radius_undistorted * vn / rth);
   }
 
-  template <class ParamsTypeT, class PointTypeT>
-  static Eigen::Matrix<typename PointTypeT::Scalar, 2, 2> dxWarp(
-      const Eigen::MatrixBase<ParamsTypeT>& params,
-      const Eigen::MatrixBase<PointTypeT>& proj_point_in_camera_z1_plane) {
+  template <class TParamsTypeT, class TPointTypeT>
+  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxWarp(
+      Eigen::MatrixBase<TParamsTypeT> const& params,
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     static_assert(
-        ParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
+        TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
-        ParamsTypeT::RowsAtCompileTime == kNumParams,
+        TParamsTypeT::RowsAtCompileTime == kNumParams,
         "params must have exactly kNumParams rows");
     static_assert(
-        PointTypeT::ColsAtCompileTime == 1,
+        TPointTypeT::ColsAtCompileTime == 1,
         "point_camera must be a column-vector");
     static_assert(
-        PointTypeT::RowsAtCompileTime == 2,
+        TPointTypeT::RowsAtCompileTime == 2,
         "point_camera must have exactly 2 columns");
-    using Scalar = typename PointTypeT::Scalar;
+    using Scalar = typename TPointTypeT::Scalar;
 
     Scalar a = proj_point_in_camera_z1_plane[0];
     Scalar b = proj_point_in_camera_z1_plane[1];
@@ -171,11 +171,11 @@ class KannalaBrandtK3Transform {
     Eigen::Matrix<Scalar, kNumDistortionParams, 1> k =
         params.template tail<kNumDistortionParams>();
 
-    const auto radius_squared = a * a + b * b;
+    auto const radius_squared = a * a + b * b;
     using std::atan2;
     using std::sqrt;
 
-    Eigen::Matrix<typename PointTypeT::Scalar, 2, 2> dx;
+    Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dx;
 
     if (radius_squared < sophus::kEpsilonSqrtF64) {
       // clang-format off

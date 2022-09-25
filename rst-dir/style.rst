@@ -146,7 +146,7 @@ For entities with non-trivial type invariant, we use the class keyword::
       static UnitVector3 fromUnitVector(const Eigen::Matrix<T, 3, 1>& v) {
         using std::abs;
         FARM_CHECK_LE((v.squaredNorm() - T(1.0)),
-                         Sophus::kEpsilon<T>);
+                         Sophus::kEpsilon<TT>);
         UnitVector3 unit_vector;
         unit_vector.vector_ = v;
         return unit_vector;

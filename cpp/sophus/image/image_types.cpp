@@ -53,7 +53,7 @@ MutImageBool neg(ImageViewBool mask) {
 std::optional<Eigen::Vector2i> firstPixel(
     ImageViewBool mask, bool truth_value) {
   for (int v = 0; v < mask.height(); ++v) {
-    const bool* p = mask.rowPtr(v);
+    bool const* p = mask.rowPtr(v);
     for (int u = 0; u < mask.width(); ++u) {
       if (p[u] == truth_value) {
         return Eigen::Vector2i(u, v);

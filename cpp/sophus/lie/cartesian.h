@@ -10,17 +10,17 @@
 /// Cartesian - Euclidean vector space as Lie group
 
 #pragma once
-#include "sophus/core/types.h"
+#include "sophus/common/types.h"
 
 namespace sophus {
-template <class ScalarT, int kM, int kOptions = 0>
+template <class TScalar, int kM, int kOptions = 0>
 class Cartesian;
 
-template <class ScalarT>
-using Cartesian2 = Cartesian<ScalarT, 2>;
+template <class TScalar>
+using Cartesian2 = Cartesian<TScalar, 2>;
 
-template <class ScalarT>
-using Cartesian3 = Cartesian<ScalarT, 3>;
+template <class TScalar>
+using Cartesian3 = Cartesian<TScalar, 3>;
 
 using Cartesian2F64 = Cartesian2<double>;
 using Cartesian3F64 = Cartesian3<double>;
@@ -33,23 +33,23 @@ using Cartesian3F64 = Cartesian3<double>;
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class ScalarT, int kM, int kOptions>
-struct traits<sophus::Cartesian<ScalarT, kM, kOptions>> {
-  using Scalar = ScalarT;
+template <class TScalar, int kM, int kOptions>
+struct traits<sophus::Cartesian<TScalar, kM, kOptions>> {
+  using Scalar = TScalar;
   using ParamsType = Eigen::Matrix<Scalar, kM, 1, kOptions>;
 };
 
-template <class ScalarT, int kM, int kOptions>
-struct traits<Map<sophus::Cartesian<ScalarT, kM>, kOptions>>
-    : traits<sophus::Cartesian<ScalarT, kM, kOptions>> {
-  using Scalar = ScalarT;
+template <class TScalar, int kM, int kOptions>
+struct traits<Map<sophus::Cartesian<TScalar, kM>, kOptions>>
+    : traits<sophus::Cartesian<TScalar, kM, kOptions>> {
+  using Scalar = TScalar;
   using ParamsType = Map<Eigen::Vector<Scalar, kM>, kOptions>;
 };
 
-template <class ScalarT, int kM, int kOptions>
-struct traits<Map<sophus::Cartesian<ScalarT, kM> const, kOptions>>
-    : traits<sophus::Cartesian<ScalarT, kM, kOptions> const> {
-  using Scalar = ScalarT;
+template <class TScalar, int kM, int kOptions>
+struct traits<Map<sophus::Cartesian<TScalar, kM> const, kOptions>>
+    : traits<sophus::Cartesian<TScalar, kM, kOptions> const> {
+  using Scalar = TScalar;
   using ParamsType = Map<Eigen::Vector<Scalar, kM> const, kOptions>;
 };
 }  // namespace internal
@@ -84,11 +84,11 @@ namespace sophus {
 ///
 /// See Cartesian class  for more details below.
 ///
-template <class DerivedT, int kM>
+template <class TDerived, int kM>
 class CartesianBase {
  public:
-  using Scalar = typename Eigen::internal::traits<DerivedT>::Scalar;
-  using ParamsType = typename Eigen::internal::traits<DerivedT>::ParamsType;
+  using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
+  using ParamsType = typename Eigen::internal::traits<TDerived>::ParamsType;
   /// Degrees of freedom of manifold, equals to number of Cartesian coordinates.
   static int constexpr kDoF = kM;
   /// Number of internal parameters used, also M.
@@ -109,19 +109,19 @@ class CartesianBase {
   /// ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
   /// types, as well as other compatible scalar types such as Ceres::Jet and
   /// double scalars with Cartesian operations.
-  template <typename OtherDerivedT>
+  template <class TOtherDerived>
   using ReturnScalar = typename Eigen::
-      ScalarBinaryOpTraits<Scalar, typename OtherDerivedT::Scalar>::ReturnType;
+      ScalarBinaryOpTraits<Scalar, typename TOtherDerived::Scalar>::ReturnType;
 
-  template <typename OtherDerivedT>
-  using CartesianSum = Cartesian<ReturnScalar<OtherDerivedT>, kM>;
+  template <class TOtherDerived>
+  using CartesianSum = Cartesian<ReturnScalar<TOtherDerived>, kM>;
 
-  template <typename PointDerivedT>
-  using PointProduct = Eigen::Vector<ReturnScalar<PointDerivedT>, kM>;
+  template <class TPointDerived>
+  using PointProduct = Eigen::Vector<ReturnScalar<TPointDerived>, kM>;
 
-  template <typename HPointDerivedT>
+  template <class THPointDerived>
   using HomogeneousPointProduct =
-      Eigen::Vector<ReturnScalar<HPointDerivedT>, kMatrixDim>;
+      Eigen::Vector<ReturnScalar<THPointDerived>, kMatrixDim>;
 
   /// Adjoint transformation
   ///
@@ -130,10 +130,10 @@ class CartesianBase {
 
   /// Returns copy of instance casted to NewScalarType.
   ///
-  template <class NewScalarTypeT>
-  SOPHUS_FUNC Cartesian<NewScalarTypeT, kM> cast() const {
-    return Cartesian<NewScalarTypeT, kM>(
-        params().template cast<NewScalarTypeT>());
+  template <class TNewScalarType>
+  SOPHUS_FUNC Cartesian<TNewScalarType, kM> cast() const {
+    return Cartesian<TNewScalarType, kM>(
+        params().template cast<TNewScalarType>());
   }
 
   /// Returns derivative of  this * exp(x)  wrt x at x=0.
@@ -185,42 +185,42 @@ class CartesianBase {
 
   /// Group multiplication, are vector additions.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC CartesianBase<DerivedT, kM>& operator=(
-      CartesianBase<OtherDerivedT, kM> const& other) {
+  template <class TOtherDerived>
+  SOPHUS_FUNC CartesianBase<TDerived, kM>& operator=(
+      CartesianBase<TOtherDerived, kM> const& other) {
     params() = other.params();
     return *this;
   }
 
   /// Group multiplication, are vector additions.
   ///
-  template <typename OtherDerivedT>
-  SOPHUS_FUNC CartesianSum<OtherDerivedT> operator*(
-      CartesianBase<OtherDerivedT, kM> const& other) const {
-    return CartesianSum<OtherDerivedT>(params() + other.params());
+  template <class TOtherDerived>
+  SOPHUS_FUNC CartesianSum<TOtherDerived> operator*(
+      CartesianBase<TOtherDerived, kM> const& other) const {
+    return CartesianSum<TOtherDerived>(params() + other.params());
   }
 
   /// Group action on points, again just vector addition.
   ///
   template <
-      typename PointDerivedT,
+      typename TPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<PointDerivedT, kM>::value>::type>
-  SOPHUS_FUNC PointProduct<PointDerivedT> operator*(
-      Eigen::MatrixBase<PointDerivedT> const& p) const {
-    return PointProduct<PointDerivedT>(params() + p);
+          IsFixedSizeVector<TPointDerived, kM>::value>::type>
+  SOPHUS_FUNC PointProduct<TPointDerived> operator*(
+      Eigen::MatrixBase<TPointDerived> const& p) const {
+    return PointProduct<TPointDerived>(params() + p);
   }
 
   /// Group action on homogeneous points. See above for more details.
   ///
   template <
-      typename HPointDerivedT,
+      typename THPointDerived,
       typename = typename std::enable_if<
-          IsFixedSizeVector<HPointDerivedT, kMatrixDim>::value>::type>
-  SOPHUS_FUNC HomogeneousPointProduct<HPointDerivedT> operator*(
-      Eigen::MatrixBase<HPointDerivedT> const& p) const {
-    const auto rp = *this * p.template head<kM>();
-    HomogeneousPointProduct<HPointDerivedT> r;
+          IsFixedSizeVector<THPointDerived, kMatrixDim>::value>::type>
+  SOPHUS_FUNC HomogeneousPointProduct<THPointDerived> operator*(
+      Eigen::MatrixBase<THPointDerived> const& p) const {
+    auto const rp = *this * p.template head<kM>();
+    HomogeneousPointProduct<THPointDerived> r;
     r << rp, p(kM);
     return r;
   }
@@ -242,32 +242,32 @@ class CartesianBase {
   /// type.
   ///
   template <
-      typename OtherDerivedT,
+      typename TOtherDerived,
       typename = typename std::enable_if<
-          std::is_same<Scalar, ReturnScalar<OtherDerivedT>>::value>::type>
-  SOPHUS_FUNC CartesianBase<DerivedT, kM>& operator*=(
-      CartesianBase<OtherDerivedT, kM> const& other) {
-    *static_cast<DerivedT*>(this) = *this * other;
+          std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type>
+  SOPHUS_FUNC CartesianBase<TDerived, kM>& operator*=(
+      CartesianBase<TOtherDerived, kM> const& other) {
+    *static_cast<TDerived*>(this) = *this * other;
     return *this;
   }
 
   /// Mutator of params vector.
   ///
   SOPHUS_FUNC ParamsType& params() {
-    return static_cast<DerivedT*>(this)->params();
+    return static_cast<TDerived*>(this)->params();
   }
 
   /// Accessor of params vector
   ///
   SOPHUS_FUNC [[nodiscard]] ParamsType const& params() const {
-    return static_cast<DerivedT const*>(this)->params();
+    return static_cast<TDerived const*>(this)->params();
   }
 };
 
 /// Cartesian using default storage; derived from CartesianBase.
-template <class ScalarT, int kM, int kOptions>
-class Cartesian : public CartesianBase<Cartesian<ScalarT, kM, kOptions>, kM> {
-  using Base = CartesianBase<Cartesian<ScalarT, kM, kOptions>, kM>;
+template <class TScalar, int kM, int kOptions>
+class Cartesian : public CartesianBase<Cartesian<TScalar, kM, kOptions>, kM> {
+  using Base = CartesianBase<Cartesian<TScalar, kM, kOptions>, kM>;
 
  public:
   static int constexpr kDoF = Base::kDoF;
@@ -275,7 +275,7 @@ class Cartesian : public CartesianBase<Cartesian<ScalarT, kM, kOptions>, kM> {
   static int constexpr kMatrixDim = Base::kMatrixDim;
   static int constexpr kPointDim = Base::kPointDim;
 
-  using Scalar = ScalarT;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -301,20 +301,20 @@ class Cartesian : public CartesianBase<Cartesian<ScalarT, kM, kOptions>, kM> {
 
   /// Copy-like constructor from OtherDerived.
   ///
-  template <class OtherDerivedT>
-  SOPHUS_FUNC Cartesian(CartesianBase<OtherDerivedT, kM> const& other)
+  template <class TOtherDerived>
+  SOPHUS_FUNC Cartesian(CartesianBase<TOtherDerived, kM> const& other)
       : params_(other.params()) {
     static_assert(
-        std::is_same<typename OtherDerivedT::Scalar, Scalar>::value,
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
         "must be same Scalar type");
   }
 
   /// Accepts either M-vector or (M+1)x(M+1) matrices.
   ///
-  template <class DT>
-  explicit SOPHUS_FUNC Cartesian(Eigen::MatrixBase<DT> const& m) {
+  template <class TD>
+  explicit SOPHUS_FUNC Cartesian(Eigen::MatrixBase<TD> const& m) {
     static_assert(
-        std::is_same<typename Eigen::MatrixBase<DT>::Scalar, Scalar>::value,
+        std::is_same<typename Eigen::MatrixBase<TD>::Scalar, Scalar>::value,
         "");
     if (m.rows() == kDoF && m.cols() == 1) {
       // trick so this compiles
@@ -446,8 +446,8 @@ class Cartesian : public CartesianBase<Cartesian<ScalarT, kM, kOptions>, kM> {
 
   /// Draws uniform samples in the range [-1, 1] per coordinates.
   ///
-  template <class UniformRandomBitGeneratorT>
-  static Cartesian sampleUniform(UniformRandomBitGeneratorT& generator) {
+  template <class TUniformRandomBitGenerator>
+  static Cartesian sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     Eigen::Vector<Scalar, kM> v;
     for (int i = 0; i < kM; ++i) {
@@ -476,14 +476,14 @@ namespace Eigen {  // NOLINT
 /// CartesianBase.
 ///
 /// Allows us to wrap Cartesian objects around POD array.
-template <class ScalarT, int kM, int kOptions>
-class Map<sophus::Cartesian<ScalarT, kM>, kOptions>
+template <class TScalar, int kM, int kOptions>
+class Map<sophus::Cartesian<TScalar, kM>, kOptions>
     : public sophus::
-          CartesianBase<Map<sophus::Cartesian<ScalarT, kM>, kOptions>, kM> {
+          CartesianBase<Map<sophus::Cartesian<TScalar, kM>, kOptions>, kM> {
  public:
   using Base =
-      sophus::CartesianBase<Map<sophus::Cartesian<ScalarT, kM>, kOptions>, kM>;
-  using Scalar = ScalarT;
+      sophus::CartesianBase<Map<sophus::Cartesian<TScalar, kM>, kOptions>, kM>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -516,15 +516,15 @@ class Map<sophus::Cartesian<ScalarT, kM>, kOptions>
 /// CartesianBase.
 ///
 /// Allows us to wrap Cartesian objects around POD array.
-template <class ScalarT, int kM, int kOptions>
-class Map<sophus::Cartesian<ScalarT, kM> const, kOptions>
+template <class TScalar, int kM, int kOptions>
+class Map<sophus::Cartesian<TScalar, kM> const, kOptions>
     : public sophus::CartesianBase<
-          Map<sophus::Cartesian<ScalarT, kM> const, kOptions>,
+          Map<sophus::Cartesian<TScalar, kM> const, kOptions>,
           kM> {
  public:
   using Base = sophus::
-      CartesianBase<Map<sophus::Cartesian<ScalarT, kM> const, kOptions>, kM>;
-  using Scalar = ScalarT;
+      CartesianBase<Map<sophus::Cartesian<TScalar, kM> const, kOptions>, kM>;
+  using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;

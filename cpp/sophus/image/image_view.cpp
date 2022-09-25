@@ -15,7 +15,7 @@ namespace details {
 void pitchedCopy(
     uint8_t* dst,
     size_t dst_pitch_bytes,
-    const uint8_t* src,
+    uint8_t const* src,
     size_t src_pitch_bytes,
     sophus::ImageSize size,
     uint8_t size_of_pixel) {

@@ -17,7 +17,7 @@ namespace sophus {
 ///
 ///   Dx proj(x) with x = (a,b,psi) being an inverse depth point.
 template <class TT>
-Eigen::Matrix<TT, 2, 3> dxProjX(const Eigen::Matrix<TT, 3, 1>& p) {
+Eigen::Matrix<TT, 2, 3> dxProjX(Eigen::Matrix<TT, 3, 1> const& p) {
   Eigen::Matrix<TT, 2, 3> dx;
 
   TT z_inv = 1 / p.z();
@@ -81,8 +81,8 @@ Eigen::Matrix<TT, 2, 6> dxProjExpXPointAt0(
 /// for psi!=0.
 template <class TT>
 Eigen::Matrix<TT, 3, 1> scaledTransform(
-    const sophus::Se3<TT>& foo_pose_bar,
-    const InverseDepthPoint3<TT>& inverse_depth_point_in_bar) {
+    sophus::Se3<TT> const& foo_pose_bar,
+    InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) {
   return foo_pose_bar.so3() *
              unproj(inverse_depth_point_in_bar.projInZ1Plane()) +
          inverse_depth_point_in_bar.psi() * foo_pose_bar.translation();
@@ -100,8 +100,8 @@ Eigen::Matrix<TT, 3, 1> scaledTransform(
 /// +/- infinity.
 template <class TT>
 Eigen::Matrix<TT, 2, 1> projTransform(
-    const sophus::Se3<TT>& foo_pose_bar,
-    const InverseDepthPoint3<TT>& inverse_depth_point_in_bar) {
+    sophus::Se3<TT> const& foo_pose_bar,
+    InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) {
   //      R * (x,y,z) + t
   //   =  z * [R * (x/z, y/z, 1) + 1/z * t]
   //
@@ -142,18 +142,18 @@ template <class TT>
 class PointTransformer {
  public:
   PointTransformer() = default;
-  explicit PointTransformer(const sophus::Se3<TT>& foo_pose_bar)
+  explicit PointTransformer(sophus::Se3<TT> const& foo_pose_bar)
       : foo_rotation_bar_(foo_pose_bar.so3().matrix()),
         bar_origin_in_foo_(foo_pose_bar.translation()) {}
 
   /// Transforms a 3-point from frame bar to frame foo.
   [[nodiscard]] Eigen::Matrix<TT, 3, 1> transform(
-      const Eigen::Matrix<TT, 3, 1>& point_in_bar) const {
+      Eigen::Matrix<TT, 3, 1> const& point_in_bar) const {
     return foo_rotation_bar_ * point_in_bar + bar_origin_in_foo_;
   }
 
   [[nodiscard]] Eigen::Matrix<TT, 3, 1> scaledTransform(
-      const InverseDepthPoint3<TT>& inverse_depth_point_in_bar) const {
+      InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) const {
     return foo_rotation_bar_ *
                unproj(inverse_depth_point_in_bar.projInZ1Plane()) +
            inverse_depth_point_in_bar.psi() * bar_origin_in_foo_;
@@ -162,14 +162,14 @@ class PointTransformer {
   /// Transforms 3-point in frame bar to foo and projects it onto the
   /// Euclidean plane z=1 in foo.
   [[nodiscard]] Eigen::Matrix<TT, 2, 1> projTransform(
-      const Eigen::Matrix<TT, 3, 1>& point_in_bar) const {
+      Eigen::Matrix<TT, 3, 1> const& point_in_bar) const {
     return proj(foo_rotation_bar_ * point_in_bar + bar_origin_in_foo_);
   }
 
   /// Transforms and projects the 3d inverse depth point in frame bar to the
   /// Euclidean plane z=1 in foo.
   [[nodiscard]] Eigen::Matrix<TT, 2, 1> projTransform(
-      const InverseDepthPoint3<TT>& inverse_depth_point_in_bar) const {
+      InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) const {
     return proj(scaledTransform(inverse_depth_point_in_bar));
   }
 
@@ -179,7 +179,7 @@ class PointTransformer {
   ///
   /// with foo_in_bar = (a,b,psi) being an inverse depth point.
   [[nodiscard]] Eigen::Matrix<TT, 2, 6> dxProjExpXTransformPointAt0(
-      const InverseDepthPoint3<TT>& inverse_depth_point_in_bar) const {
+      InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) const {
     Eigen::Matrix<TT, 2, 6> dx;
     TT i = TT(1);
     TT psi = inverse_depth_point_in_bar.psi();
@@ -200,7 +200,7 @@ class PointTransformer {
 
   [[nodiscard]] [[nodiscard]] [[nodiscard]] Eigen::Matrix<TT, 2, 3>
   dxProjTransformX(
-      const InverseDepthPoint3<TT>& inverse_depth_point_in_bar) const {
+      InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) const {
     Eigen::Vector3<TT> const& r0 = this->fooRotationBar().col(0);
     Eigen::Vector3<TT> const& r1 = this->fooRotationBar().col(1);
     Eigen::Vector3<TT> const& t = this->barOriginInFoo();

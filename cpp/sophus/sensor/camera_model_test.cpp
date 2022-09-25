@@ -8,9 +8,10 @@
 
 #include "sophus/sensor/camera_model.h"
 
+#include "sophus/calculus/num_diff.h"
 #include "sophus/image/interpolation.h"
 #include "sophus/lie/se3.h"
-#include "sophus/math/num_diff.h"
+#include "sophus/sensor/orthographic.h"
 
 #include <farm_ng/core/logging/eigen.h>
 #include <farm_ng/core/logging/logger.h>
@@ -18,7 +19,7 @@
 
 using namespace sophus;
 
-constexpr double kEps = 1e-5;
+double constexpr kEps = 1e-5;
 
 CameraModel openCvCameraModel() {
   int w = 848;
@@ -30,7 +31,7 @@ CameraModel openCvCameraModel() {
   Eigen::Matrix<double, 9, 1> get_params;
   get_params << fx, fy, cx, cy, -0.0080617731437087059, 0.04318523034453392,
       -0.039864420890808105, 0.0068964879028499126, 0.0;
-  return CameraModel("opencv", BrownConradyModel({w, h}, get_params));
+  return CameraModel(BrownConradyModel({w, h}, get_params));
 }
 
 // TODO: move to farm_ng_utils
@@ -60,24 +61,23 @@ CameraModel openCvCameraModel() {
 
 TEST(camera_model, projection_round_trip) {
   std::vector<CameraModel> camera_models;
-  CameraModel pinhole =
-      CameraModel::createDefaultPinholeModel("pinhole", {640, 480});
+  CameraModel pinhole = CameraModel::createDefaultPinholeModel({640, 480});
   Eigen::VectorXd get_params(8);
   get_params << 1000, 1000, 320, 280, 0.1, 0.01, 0.001, 0.0001;
   CameraModel kb3 = CameraModel(
-      "kb3", {640, 480}, CameraTransformType::kannala_brandt_k3, get_params);
+      {640, 480}, CameraTransformType::kannala_brandt_k3, get_params);
 
   camera_models.push_back(pinhole);
   camera_models.push_back(kb3);
   camera_models.push_back(openCvCameraModel());
 
-  for (const CameraModel& camera_model : camera_models) {
+  for (CameraModel const& camera_model : camera_models) {
     std::vector<Eigen::Vector2d> pixels_image = {
         {0, 0}, {1, 400}, {320, 240}, {319.5, 239.5}, {100, 40}, {639, 479}};
 
     Image<Eigen::Vector2f> unwarp_table = camera_model.unwarpTable();
 
-    for (const auto& pixel_image : pixels_image) {
+    for (auto const& pixel_image : pixels_image) {
       for (double d : {0.1, 0.5, 1.0, 1.1, 3.0, 15.0}) {
         Eigen::Vector3d point_in_camera =
             camera_model.camUnproj(pixel_image, d);
@@ -94,7 +94,7 @@ TEST(camera_model, projection_round_trip) {
         zero.setZero();
         Eigen::Matrix<double, 2, 6> numeric_dx =
             sophus::vectorFieldNumDiff<double, 2, 6>(
-                [&](const Eigen::Vector<double, 6>& x) -> Eigen::Vector2d {
+                [&](Eigen::Vector<double, 6> const& x) -> Eigen::Vector2d {
                   return camera_model.camProj(
                       sophus::SE3d::exp(x) * point_in_camera);
                 },
@@ -114,7 +114,7 @@ TEST(camera_model, projection_round_trip) {
       Eigen::Matrix2d dx = camera_model.dxWarp(ab_in_z1plane);
 
       Eigen::Matrix2d dx_num = sophus::vectorFieldNumDiff<double, 2, 2>(
-          [&](const Eigen::Vector2d& x) -> Eigen::Vector2d {
+          [&](Eigen::Vector2d const& x) -> Eigen::Vector2d {
             return camera_model.warp(x);
           },
           ab_in_z1plane);
@@ -147,15 +147,15 @@ TEST(camera_model, projection_round_trip) {
   tmp << 0.3, 0.5, 0.1, 0.2, -0.1, 0;
   tangent_vec.push_back(tmp);
 
-  for (const CameraModel& camera_model : camera_models) {
-    for (const Eigen::Vector<double, 6>& t : tangent_vec) {
+  for (CameraModel const& camera_model : camera_models) {
+    for (Eigen::Vector<double, 6> const& t : tangent_vec) {
       sophus::SE3d foo_pose_bar = sophus::SE3d::exp(t);
 
       PointTransformer trans(foo_pose_bar);
       std::vector<Eigen::Vector2d> pixels_image = {
           {0, 0}, {1, 400}, {320, 240}, {319.5, 239.5}, {100, 40}, {639, 479}};
 
-      for (const auto& pixel_image : pixels_image) {
+      for (auto const& pixel_image : pixels_image) {
         for (double d : {0.1, 0.5, 1.0, 1.1, 3.0, 15.0}) {
           Eigen::Vector3d point_in_bar_camera =
               camera_model.camUnproj(pixel_image, d);
@@ -333,8 +333,7 @@ TEST(camera_model, projection_round_trip) {
 // }
 
 TEST(camera_model, scale_up_down_roundtrip) {
-  CameraModel pinhole =
-      CameraModel::createDefaultPinholeModel("pinhole", {640, 480});
+  CameraModel pinhole = CameraModel::createDefaultPinholeModel({640, 480});
 
   CameraModel pinhole_binned_down = pinhole.binDown();
   FARM_CHECK_EQ(pinhole_binned_down.imageSize(), ImageSize(320, 240));
