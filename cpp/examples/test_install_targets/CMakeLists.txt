@@ -1,6 +1,6 @@
 project(SophusInstallTargetTests)
 
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -15,7 +15,11 @@ set(example_source hello_so3)
 
 foreach(example_src ${example_source})
   add_executable( ${example_src} ${example_src}.cpp)
-  target_link_libraries(${example_src} Eigen3::Eigen fmt::fmt pthread
+  target_link_libraries(${example_src}
+   Eigen3::Eigen
+   fmt::fmt
+   pthread 
+   sophus::sophus
 )
 endforeach()
 
@@ -31,10 +35,13 @@ if (BUILD_FARM_NG_PROTOS)
   find_package(Protobuf REQUIRED)
   include_directories(${Protobuf_INCLUDE_DIRS})
   add_executable(compile_all_proto compile_all_proto.cpp)
-  target_link_libraries(compile_all_proto PUBLIC fmt::fmt
+  target_link_libraries(compile_all_proto PUBLIC 
+    fmt::fmt
     Eigen3::Eigen
     protobuf::libprotobuf
-    sophus::farm_ng_core_prototools
+    farm_ng_core::farm_ng_core_prototools
     farm_ng_core::farm_ng_core_misc_proto_conv
-    sophus::sophus_sensor_proto_conv)
+    sophus::sophus_sensor_proto_conv
+    sophus::sophus_image_proto_conv
+    )
 endif()

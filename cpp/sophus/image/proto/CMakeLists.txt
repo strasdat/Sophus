@@ -1,6 +1,6 @@
 farm_ng_add_library(sophus_image_proto_conv
   NAMESPACE sophus
-  INCLUDE_DIR ../../../..
+  INCLUDE_DIR ../../..
   HEADERS
     conv.h
   SOURCES
