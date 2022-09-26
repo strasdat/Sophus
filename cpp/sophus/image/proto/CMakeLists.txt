@@ -11,7 +11,7 @@ target_link_libraries(sophus_image_proto_conv PUBLIC
   sophus_linalg
   protobuf::libprotobuf
   farm_ng_core::farm_ng_core_prototools
-  sophus_linalg_proto_defs
+  sophus_image_proto_defs
  )
 
 if(${BUILD_SOPHUS_TESTS})

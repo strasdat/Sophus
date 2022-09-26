@@ -29,7 +29,6 @@ ExternalProject_Add(Sophus
     -DBUILD_FARM_NG_PROTOS=On
     -DBUILD_SOPHUS_TESTS=ON
     TEST_BEFORE_INSTALL ON
-    INSTALL_COMMAND ""
 )
 
 
