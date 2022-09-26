@@ -59,7 +59,6 @@ endif()
 
 if (BUILD_FARM_NG_PROTOS)
   find_package(Protobuf REQUIRED)
-  include_directories(${Protobuf_INCLUDE_DIRS})
 endif()
 
 if(BUILD_FARM_NG_PROTOS)

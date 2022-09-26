@@ -33,7 +33,6 @@ endforeach()
 
 if (BUILD_FARM_NG_PROTOS)
   find_package(Protobuf REQUIRED)
-  include_directories(${Protobuf_INCLUDE_DIRS})
   add_executable(compile_all_proto compile_all_proto.cpp)
   target_link_libraries(compile_all_proto PUBLIC
     fmt::fmt
