@@ -44,6 +44,13 @@ install(EXPORT SophusTargets
     DESTINATION share/sophus/cmake
 )
 
+# This allows others to find Sophus without installing it
+# https://cmake.org/cmake/help/latest/guide/importing-exporting/index.html#exporting-targets-from-the-build-tree
+export(EXPORT SophusTargets
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/SophusTargets.cmake"
+    NAMESPACE sophus::
+)
+
 configure_file(cmake/SophusConfig.cmake.in SophusConfig.cmake @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/SophusConfig.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/SophusConfigVersion.cmake"
