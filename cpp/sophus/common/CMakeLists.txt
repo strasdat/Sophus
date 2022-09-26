@@ -13,4 +13,3 @@ farm_ng_add_library(sophus_common
 )
 
 target_link_libraries(sophus_common INTERFACE Eigen3::Eigen farm_ng_core::farm_ng_core_logging)
-

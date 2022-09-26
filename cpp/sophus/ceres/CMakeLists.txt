@@ -17,7 +17,7 @@ target_link_libraries(sophus_ceres INTERFACE sophus_lie)
 
 if(${BUILD_SOPHUS_TESTS})
   find_package(Ceres 2.1.0 REQUIRED)
-  foreach(test_basename 
+  foreach(test_basename
     rxso2
     rxso3
     se2

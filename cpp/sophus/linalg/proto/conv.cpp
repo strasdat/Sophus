@@ -81,4 +81,4 @@ proto::Vec3F64 toProto(Eigen::Vector3d const& v) {
   return proto;
 }
 
-}  // namespace farm_ng
+}  // namespace sophus

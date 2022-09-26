@@ -15,11 +15,12 @@
 
 namespace sophus {
 
-farm_ng::Expected<sophus::UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto);
+farm_ng::Expected<sophus::UnitVector3F64> fromProto(
+    proto::UnitVec3F64 const& proto);
 proto::UnitVec3F64 toProto(sophus::UnitVector3F64 const& proto);
 
 farm_ng::Expected<Eigen::Hyperplane<double, 3>> fromProto(
     proto::Hyperplane3F64 const& proto);
 proto::Hyperplane3F64 toProto(Eigen::Hyperplane<double, 3> const& plane);
 
-}  // namespace farm_ng
+}  // namespace sophus

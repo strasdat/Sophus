@@ -18,7 +18,7 @@ foreach(example_src ${example_source})
   target_link_libraries(${example_src}
    Eigen3::Eigen
    fmt::fmt
-   pthread 
+   pthread
    sophus::sophus
 )
 endforeach()
@@ -35,7 +35,7 @@ if (BUILD_FARM_NG_PROTOS)
   find_package(Protobuf REQUIRED)
   include_directories(${Protobuf_INCLUDE_DIRS})
   add_executable(compile_all_proto compile_all_proto.cpp)
-  target_link_libraries(compile_all_proto PUBLIC 
+  target_link_libraries(compile_all_proto PUBLIC
     fmt::fmt
     Eigen3::Eigen
     protobuf::libprotobuf

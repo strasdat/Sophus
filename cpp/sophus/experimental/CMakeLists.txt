@@ -15,7 +15,7 @@ foreach(x ${sophus_experimental_src_prefixes} )
     list(APPEND sophus_experimental_cpp ${x}.cpp)
     list(APPEND sophus_experimental_h ${x}.h)
 endforeach()
-farm_ng_add_library(sophus_experimental 
+farm_ng_add_library(sophus_experimental
 NAMESPACE sophus
   INCLUDE_DIR ../../
   HEADERS

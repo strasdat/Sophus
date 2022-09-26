@@ -8,10 +8,9 @@
 
 #pragma once
 
-#include <sophus/linalg.pb.h>
-
 #include <Eigen/Core>
 #include <farm_ng/core/logging/expected.h>
+#include <sophus/linalg.pb.h>
 
 namespace sophus {
 
@@ -33,4 +32,4 @@ proto::Vec3F32 toProto(Eigen::Vector3f const& v);
 Eigen::Vector3d fromProto(proto::Vec3F64 const& proto);
 proto::Vec3F64 toProto(Eigen::Vector3d const& v);
 
-}  // namespace farm_ng
+}  // namespace sophus

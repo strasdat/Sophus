@@ -27,8 +27,7 @@ farm_ng::Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
     FARM_ERROR("transform type not supported: {}", proto.transform_type());
   }
 
-  return CameraModel(
-      fromProto(proto.image_size()), model, get_params());
+  return CameraModel(fromProto(proto.image_size()), model, get_params());
 }
 
 proto::CameraModel toProto(CameraModel const& camera_model) {
@@ -52,8 +51,7 @@ farm_ng::Expected<std::vector<CameraModel>> fromProto(
   return models;
 }
 
-proto::CameraModels toProto(
-    std::vector<CameraModel> const& camera_models) {
+proto::CameraModels toProto(std::vector<CameraModel> const& camera_models) {
   proto::CameraModels proto;
   for (auto const& model : camera_models) {
     *proto.add_camera_models() = toProto(model);
@@ -61,4 +59,4 @@ proto::CameraModels toProto(
   return proto;
 }
 
-}  // namespace farm_ng
+}  // namespace sophus

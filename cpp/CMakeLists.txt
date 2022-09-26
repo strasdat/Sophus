@@ -21,7 +21,7 @@ install(TARGETS sophus
     LIBRARY DESTINATION lib
     COMPONENT Libs
   )
-  
+
 install(EXPORT SophusTargets
     FILE SophusTargets.cmake
     NAMESPACE sophus::

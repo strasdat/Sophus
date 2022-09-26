@@ -2,7 +2,7 @@ farm_ng_add_protobufs(sophus_linalg_proto_defs
     NAMESPACE sophus
     PROTO_FILES
     sophus/linalg.proto)
-  
+
 
 farm_ng_add_protobufs(sophus_lie_proto_defs
       NAMESPACE sophus
@@ -11,7 +11,7 @@ farm_ng_add_protobufs(sophus_lie_proto_defs
       DEPENDENCIES
       sophus_linalg_proto_defs)
 
-  
+
 
 
 farm_ng_add_protobufs(sophus_geometry_proto_defs
@@ -28,7 +28,7 @@ farm_ng_add_protobufs(sophus_image_proto_defs
       DEPENDENCIES
       sophus_lie_proto_defs
       sophus_geometry_proto_defs)
-  
+
 
 
 farm_ng_add_protobufs(sophus_sensor_proto_defs
@@ -37,4 +37,3 @@ farm_ng_add_protobufs(sophus_sensor_proto_defs
       sophus/sensor.proto
       DEPENDENCIES
       sophus_image_proto_defs)
-  

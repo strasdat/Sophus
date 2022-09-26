@@ -8,7 +8,7 @@ farm_ng_add_library(sophus_lie_proto_conv
 )
 
 target_link_libraries(sophus_lie_proto_conv PUBLIC
-  sophus_lie 
+  sophus_lie
   protobuf::libprotobuf
   farm_ng_core::farm_ng_core_prototools
   sophus_lie_proto_defs
@@ -21,4 +21,3 @@ if(${BUILD_SOPHUS_TESTS})
                 LINK_LIBRARIES sophus_lie_proto_conv
                 LABELS small)
 endif()
-

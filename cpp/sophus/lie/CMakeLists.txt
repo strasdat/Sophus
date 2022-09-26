@@ -5,7 +5,7 @@ sophus_lie
 
 ]]
 
-farm_ng_add_library(sophus_lie 
+farm_ng_add_library(sophus_lie
   NAMESPACE sophus
   INCLUDE_DIR ../../
   HEADERS
@@ -24,7 +24,7 @@ target_link_libraries(sophus_lie INTERFACE sophus_linalg)
 
 
 if(${BUILD_SOPHUS_TESTS})
-  foreach(test_basename 
+  foreach(test_basename
     cartesian2
     cartesian3
     common

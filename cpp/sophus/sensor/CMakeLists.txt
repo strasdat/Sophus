@@ -30,7 +30,7 @@ camera_transforms/kannala_brandt.h
 camera_transforms/orthographic.h
 SOURCES
   ${sophus_sensor_cpp})
-  
+
 target_link_libraries(sophus_sensor sophus_lie sophus_image)
 
 

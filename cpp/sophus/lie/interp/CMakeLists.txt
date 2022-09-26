@@ -15,4 +15,3 @@ farm_ng_add_library(sophus_lie_interp
   details/interpolate_impl.h
 )
 target_link_libraries(sophus_lie_interp INTERFACE sophus_lie)
-

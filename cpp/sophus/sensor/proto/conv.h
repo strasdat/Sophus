@@ -21,7 +21,6 @@ proto::CameraModel toProto(CameraModel const& camera_model);
 
 farm_ng::Expected<std::vector<CameraModel>> fromProto(
     proto::CameraModels const& proto);
-proto::CameraModels toProto(
-    std::vector<CameraModel> const& camera_models);
+proto::CameraModels toProto(std::vector<CameraModel> const& camera_models);
 
 }  // namespace sophus

@@ -58,4 +58,4 @@ proto::Se3F64 toProto(Se3F64 const& pose) {
   return proto;
 }
 
-}  // namespace farm_ng
+}  // namespace sophus

@@ -26,4 +26,4 @@ proto::ImageSize toProto(sophus::ImageSize const& image_size) {
   return proto;
 }
 
-}  // namespace farm_ng
+}  // namespace sophus

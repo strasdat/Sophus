@@ -19,7 +19,7 @@ farm_ng_add_library(sophus_geometry
 target_link_libraries(sophus_geometry INTERFACE sophus_lie)
 
 if(${BUILD_SOPHUS_TESTS})
-  foreach(test_basename 
+  foreach(test_basename
     fit_plane
     inverse_depth
     plane_conv

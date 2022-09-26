@@ -1,7 +1,7 @@
 # Place this file in a directory with:
 # - farm-ng-core # branch cmake-super-project
 # - Sophus # branch cmake-super-project
-# 
+#
 # Then:
 #  mkdir build
 #  cd build
@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.16)
 project(farm_ng_all VERSION 0.0.1)
 
 
-list(APPEND CMAKE_MODULE_PATH 
+list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_SOURCE_DIR}/farm-ng-core/cmake)
 
 set(BUILD_SHARED_LIBS ON)
@@ -33,7 +33,7 @@ ExternalProject_Add(farm-ng-core-TestInstallTargets
     PREFIX ${farm_ng_EXT_PREFIX}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/farm-ng-core/cpp/examples/test_install_targets
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/farm-ng-core-TestInstallTargets-build
-    CMAKE_ARGS ${farm_ng_DEFAULT_ARGS} 
+    CMAKE_ARGS ${farm_ng_DEFAULT_ARGS}
     -DBUILD_FARM_NG_PROTOS=ON
     INSTALL_COMMAND ""
 )
@@ -43,7 +43,7 @@ ExternalProject_Add(SophusTestInstallTargets
     PREFIX ${farm_ng_EXT_PREFIX}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Sophus/cpp/examples/test_install_targets
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/SophusTestInstallTargets-build
-    CMAKE_ARGS ${farm_ng_DEFAULT_ARGS} 
+    CMAKE_ARGS ${farm_ng_DEFAULT_ARGS}
     -DBUILD_FARM_NG_PROTOS=ON
     INSTALL_COMMAND ""
 )

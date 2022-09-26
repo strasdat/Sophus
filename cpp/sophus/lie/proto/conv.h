@@ -24,4 +24,4 @@ proto::So3F64 toProto(sophus::So3F64 const& rotation);
 farm_ng::Expected<Se3F64> fromProto(proto::Se3F64 const& proto);
 proto::Se3F64 toProto(Se3F64 const& pose);
 
-}  // namespace farm_ng
+}  // namespace sophus
