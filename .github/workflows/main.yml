@@ -77,11 +77,11 @@ jobs:
         run: ./scripts/install_deps_ubuntu.sh
         if: matrix.os == 'ubuntu-20.04' && matrix.access == 'col_major'
 
-      # - name: Install dependencies (Ubuntu, Eigen row-major)
-      #   run: ./scripts/install_deps_ubuntu.sh
-      #   env:
-      #     ROW_MAJOR_DEFAULT: ON
-      #   if: matrix.os == 'ubuntu-20.04' && matrix.access == 'row_major'
+      - name: Install dependencies (Ubuntu, Eigen row-major)
+        run: ./scripts/install_deps_ubuntu.sh
+        env:
+          ROW_MAJOR_DEFAULT: ON
+        if: matrix.os == 'ubuntu-20.04' && matrix.access == 'row_major'
 
       - name: Install dependencies (Mac)
         run: ./scripts/install_deps_mac.sh
