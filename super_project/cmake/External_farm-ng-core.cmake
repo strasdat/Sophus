@@ -6,4 +6,5 @@ ExternalProject_Add(farm-ng-core
     CMAKE_ARGS
     ${farm_ng_DEFAULT_ARGS}
     -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    -DBUILD_FARM_NG_PROTOS=On
     )
