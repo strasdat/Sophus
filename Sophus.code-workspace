@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+	    "cmake.sourceDirectory": "${workspaceFolder}/super_project",
+		"[cpp]": {
+        	"editor.defaultFormatter": "xaver.clang-format"
+    	},
+    	"clang-format.executable": "clang-format-15",
+	}
+}
