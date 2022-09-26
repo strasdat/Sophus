@@ -73,55 +73,57 @@ jobs:
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1
 
-      - name: Install libfmt / expected
-        run: ./scripts/install_fmt_expected.sh
-
       - name: Install dependencies (Ubuntu)
         run: ./scripts/install_deps_ubuntu.sh
         if: matrix.os == 'ubuntu-20.04' && matrix.access == 'col_major'
 
-      - name: Install dependencies (Ubuntu, Eigen row-major)
-        run: ./scripts/install_deps_ubuntu.sh
-        env:
-          ROW_MAJOR_DEFAULT: ON
-        if: matrix.os == 'ubuntu-20.04' && matrix.access == 'row_major'
+      # - name: Install dependencies (Ubuntu, Eigen row-major)
+      #   run: ./scripts/install_deps_ubuntu.sh
+      #   env:
+      #     ROW_MAJOR_DEFAULT: ON
+      #   if: matrix.os == 'ubuntu-20.04' && matrix.access == 'row_major'
 
       - name: Install dependencies (Mac)
         run: ./scripts/install_deps_mac.sh
         if: matrix.os == 'macos-11'
 
-      - name: Install system targets tests
-        run: |
-          mkdir -p build
-          cd build
-          pwd
-          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_FARM_NG_PROTOS=$BUILD_PROTOS ..
-          make
-          sudo make install
-          cd ..
-          cd cpp/examples/test_install_targets/
-          mkdir -p build
-          cd build
-          cmake ..
-          make
-        if: matrix.tests == 'install_target'
-
-      - name: install ceres (Mac)
-        run: |
-          ./scripts/install_ceres_mac.sh
-        if: (matrix.tests == 'clang_tidy' || matrix.tests == 'unit_test') && matrix.os == 'macos-11'
-
-      - name: install ceres (Ubuntu)
-        run:
-          ./scripts/install_ceres_ubuntu.sh
-        if: (matrix.tests == 'clang_tidy' || matrix.tests == 'unit_test') && matrix.os == 'ubuntu-20.04'
-
-      - name: clang-tidy
-        run: |
-          ./run_clang_tidy.sh
-        if: matrix.tests == 'clang_tidy'
-
       - name: Run tests
         run:
           ./scripts/run_cpp_tests.sh
         if: matrix.tests == 'unit_test'
+        
+      # - name: Install system targets tests
+      #   run: |
+      #     mkdir -p build
+      #     cd build
+      #     pwd
+      #     cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_FARM_NG_PROTOS=$BUILD_PROTOS ..
+      #     make
+      #     sudo make install
+      #     cd ..
+      #     cd cpp/examples/test_install_targets/
+      #     mkdir -p build
+      #     cd build
+      #     cmake ..
+      #     make
+      #   if: matrix.tests == 'install_target'
+
+      # - name: install ceres (Mac)
+      #   run: |
+      #     ./scripts/install_ceres_mac.sh
+      #   if: (matrix.tests == 'clang_tidy' || matrix.tests == 'unit_test') && matrix.os == 'macos-11'
+
+      # - name: install ceres (Ubuntu)
+      #   run:
+      #     ./scripts/install_ceres_ubuntu.sh
+      #   if: (matrix.tests == 'clang_tidy' || matrix.tests == 'unit_test') && matrix.os == 'ubuntu-20.04'
+
+      # - name: clang-tidy
+      #   run: |
+      #     ./run_clang_tidy.sh
+      #   if: matrix.tests == 'clang_tidy'
+
+      # - name: Run tests
+      #   run:
+      #     ./scripts/run_cpp_tests.sh
+      #   if: matrix.tests == 'unit_test'
