@@ -8,14 +8,14 @@
 
 #pragma once
 
-#include "protos/sophus/image.pb.h"
+#include "sophus/image.pb.h"
 #include "sophus/image/image_size.h"
 
 #include <farm_ng/core/logging/expected.h>
 
-namespace farm_ng {
+namespace sophus {
 
 sophus::ImageSize fromProto(proto::ImageSize const& proto);
 proto::ImageSize toProto(sophus::ImageSize const& v);
 
-}  // namespace farm_ng
+}  // namespace sophus

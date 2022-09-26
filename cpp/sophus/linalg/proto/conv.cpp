@@ -10,7 +10,7 @@
 
 #include "farm_ng/core/logging/logger.h"
 
-namespace farm_ng {
+namespace sophus {
 
 Eigen::Matrix<uint32_t, 2, 1> fromProto(proto::Vec2I64 const& proto) {
   return Eigen::Matrix<uint32_t, 2, 1>(proto.x(), proto.y());

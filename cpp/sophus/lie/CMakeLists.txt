@@ -5,55 +5,41 @@ sophus_lie
 
 ]]
 
-set(sophus_lie_src_prefixes
-  cartesian
-  rxso2
-  rxso3
-  se2
-  se3
-  sim2
-  sim3
-  so2
-  so3
-  details/sim_impl
-)
-
-set(sophus_lie_h)
-foreach(x ${sophus_lie_src_prefixes} )
-    list(APPEND sophus_lie_h ${CMAKE_CURRENT_SOURCE_DIR}/${x}.h)
-endforeach()
-
-add_library(sophus_lie INTERFACE
-  ${sophus_lie_h}
+farm_ng_add_library(sophus_lie 
+  NAMESPACE sophus
+  INCLUDE_DIR ../../
+  HEADERS
+  cartesian.h
+  rxso2.h
+  rxso3.h
+  se2.h
+  se3.h
+  sim2.h
+  sim3.h
+  so2.h
+  so3.h
+  details/sim_impl.h
 )
 target_link_libraries(sophus_lie INTERFACE sophus_linalg)
-add_library (sophus::sophus_lie ALIAS sophus_lie)
 
-target_sources(sophus_lie INTERFACE
-               FILE_SET HEADERS
-               BASE_DIRS ../..
-               FILES ${sophus_lie_h})
-
-
-set(sophus_lie_test_prefixes
-  cartesian2
-  cartesian3
-  common
-  rxso2
-  rxso3
-  se2
-  se3
-  sim2
-  sim3
-  so2
-  so3
-)
 
 if(${BUILD_SOPHUS_TESTS})
-  foreach(test_basename ${sophus_lie_test_prefixes})
+  foreach(test_basename 
+    cartesian2
+    cartesian3
+    common
+    rxso2
+    rxso3
+    se2
+    se3
+    sim2
+    sim3
+    so2
+    so3
+  )
     farm_ng_add_test(${test_basename}
                           PARENT_LIBRARY sophus_lie
-                          LINK_LIBRARIES
+                          LINK_LIBRARIES sophus_lie
                           LABELS small)
   endforeach()
 endif()

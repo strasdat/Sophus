@@ -8,19 +8,20 @@
 
 #pragma once
 
-#include "protos/sophus/sensor.pb.h"
+#include "sophus/sensor.pb.h"
 #include "sophus/sensor/camera_model.h"
 
 #include <farm_ng/core/logging/expected.h>
 
-namespace farm_ng {
+namespace sophus {
 
-Expected<sophus::CameraModel> fromProto(proto::CameraModel const& proto);
-proto::CameraModel toProto(sophus::CameraModel const& camera_model);
+farm_ng::Expected<sophus::CameraModel> fromProto(
+    proto::CameraModel const& proto);
+proto::CameraModel toProto(CameraModel const& camera_model);
 
-Expected<std::vector<sophus::CameraModel>> fromProto(
+farm_ng::Expected<std::vector<CameraModel>> fromProto(
     proto::CameraModels const& proto);
 proto::CameraModels toProto(
-    std::vector<sophus::CameraModel> const& camera_models);
+    std::vector<CameraModel> const& camera_models);
 
-}  // namespace farm_ng
+}  // namespace sophus

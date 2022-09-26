@@ -8,17 +8,17 @@
 
 #pragma once
 
-#include "protos/sophus/geometry.pb.h"
+#include "sophus/geometry.pb.h"
 #include "sophus/geometry/ray.h"
 
 #include <farm_ng/core/logging/expected.h>
 
-namespace farm_ng {
+namespace sophus {
 
-Expected<sophus::UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto);
+farm_ng::Expected<sophus::UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto);
 proto::UnitVec3F64 toProto(sophus::UnitVector3F64 const& proto);
 
-Expected<Eigen::Hyperplane<double, 3>> fromProto(
+farm_ng::Expected<Eigen::Hyperplane<double, 3>> fromProto(
     proto::Hyperplane3F64 const& proto);
 proto::Hyperplane3F64 toProto(Eigen::Hyperplane<double, 3> const& plane);
 

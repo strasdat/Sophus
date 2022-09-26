@@ -9,7 +9,7 @@
 
 syntax = "proto3";
 
-package farm_ng.proto;
+package sophus.proto;
 
 message Vec2I64 {
     int64 x = 1;

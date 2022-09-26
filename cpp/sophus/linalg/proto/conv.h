@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include "protos/sophus/linalg.pb.h"
+#include <sophus/linalg.pb.h>
 
 #include <Eigen/Core>
 #include <farm_ng/core/logging/expected.h>
 
-namespace farm_ng {
+namespace sophus {
 
 Eigen::Matrix<uint32_t, 2, 1> fromProto(proto::Vec2I64 const& proto);
 proto::Vec2I64 toProto(Eigen::Matrix<uint32_t, 2, 1> const& v);

@@ -8,9 +8,9 @@
 
 syntax = "proto3";
 
-import "protos/sophus/linalg.proto";
+import "sophus/linalg.proto";
 
-package farm_ng.proto;
+package sophus.proto;
 
 message UnitVec3F64 {
   Vec3F64 vec3 = 1;
