@@ -6,7 +6,7 @@ ExternalProject_Add(ceres
     CMAKE_ARGS
     ${farm_ng_DEFAULT_ARGS}
     -DBUILD_TESTING=OFF
-    -DBUILD_EXAMPLES=OFF 
+    -DBUILD_EXAMPLES=OFF
     -DBUILD_SHARED_LIBS=ON
     -DGFLAGS=OFF
     -DGLOG=OFF

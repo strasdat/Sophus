@@ -28,16 +28,16 @@ jobs:
             access: row_major
             build_type: Release
             protos: OFF
-          - os: ubuntu-20.04
-            tests: install_target
-            access: col_major
-            build_type: Release
-            protos: OFF
-          - os: ubuntu-20.04
-            tests: install_target
-            access: col_major
-            build_type: Release
-            protos: ON
+          # - os: ubuntu-20.04
+          #   tests: install_target
+          #   access: col_major
+          #   build_type: Release
+          #   protos: OFF
+          # - os: ubuntu-20.04
+          #   tests: install_target
+          #   access: col_major
+          #   build_type: Release
+          #   protos: ON
           - os: ubuntu-20.04
             tests: clang_tidy
             access: col_major
@@ -48,16 +48,16 @@ jobs:
             access: col_major
             build_type: Release
             protos: OFF
-          - os: macos-11
-            tests: install_target
-            access: col_major
-            build_type: Release
-            protos: OFF
-          - os: macos-11
-            tests: install_target
-            access: col_major
-            build_type: Release
-            protos: ON
+          # - os: macos-11
+          #   tests: install_target
+          #   access: col_major
+          #   build_type: Release
+          #   protos: OFF
+          # - os: macos-11
+          #   tests: install_target
+          #   access: col_major
+          #   build_type: Release
+          #   protos: ON
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
@@ -91,7 +91,7 @@ jobs:
         run:
           ./scripts/run_cpp_tests.sh
         if: matrix.tests == 'unit_test'
-        
+
       # - name: Install system targets tests
       #   run: |
       #     mkdir -p build
