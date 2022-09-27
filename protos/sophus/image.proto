@@ -9,9 +9,7 @@
 
 syntax = "proto3";
 
-import "protos/sophus/lie.proto";
-
-package farm_ng.proto;
+package sophus.proto;
 
 message ImageSize {
   // Image width in pixels.

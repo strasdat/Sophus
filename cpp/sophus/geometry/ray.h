@@ -47,7 +47,9 @@ class UnitVector3 {
     return fromUnitVector(v.normalized());
   }
 
-  Eigen::Matrix<TScalar, 3, 1> const& vector() const { return vector_; }
+  [[nodiscard]] Eigen::Matrix<TScalar, 3, 1> const& vector() const {
+    return vector_;
+  }
 
  private:
   UnitVector3() {}

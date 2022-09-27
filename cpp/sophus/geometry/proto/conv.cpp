@@ -11,19 +11,19 @@
 #include "farm_ng/core/logging/logger.h"
 #include "sophus/linalg/proto/conv.h"
 
-namespace farm_ng {
+namespace sophus {
 
-Expected<sophus::UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto) {
-  return sophus::UnitVector3F64::tryFromUnitVector(fromProto(proto.vec3()));
+farm_ng::Expected<UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto) {
+  return UnitVector3F64::tryFromUnitVector(fromProto(proto.vec3()));
 }
 
 proto::UnitVec3F64 toProto(sophus::UnitVector3F64 const& uvec) {
   proto::UnitVec3F64 proto;
-  *proto.mutable_vec3() = toProto(uvec.vector());
+  *proto.mutableVec3() = toProto(uvec.vector());
   return proto;
 }
 
-Expected<Eigen::Hyperplane<double, 3>> fromProto(
+farm_ng::Expected<Eigen::Hyperplane<double, 3>> fromProto(
     proto::Hyperplane3F64 const& proto) {
   FARM_TRY(sophus::UnitVector3F64 normal, fromProto(proto.normal()));
   return Eigen::Hyperplane<double, 3>{normal.vector(), proto.offset()};
@@ -31,10 +31,10 @@ Expected<Eigen::Hyperplane<double, 3>> fromProto(
 
 proto::Hyperplane3F64 toProto(Eigen::Hyperplane<double, 3> const& plane) {
   proto::Hyperplane3F64 proto;
-  *proto.mutable_normal() =
+  *proto.mutableNormal() =
       toProto(sophus::UnitVector3F64::fromVectorAndNormalize(plane.normal()));
-  proto.set_offset(plane.offset());
+  proto.setOffset(plane.offset());
   return proto;
 }
 
-}  // namespace farm_ng
+}  // namespace sophus

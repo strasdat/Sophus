@@ -8,9 +8,9 @@
 
 syntax = "proto3";
 
-import "protos/sophus/linalg.proto";
+import "sophus/linalg.proto";
 
-package farm_ng.proto;
+package sophus.proto;
 
 message QuaternionF64 {
   Vec3F64 imag = 1;

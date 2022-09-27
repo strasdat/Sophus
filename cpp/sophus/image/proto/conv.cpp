@@ -10,7 +10,7 @@
 
 #include "farm_ng/core/logging/logger.h"
 
-namespace farm_ng {
+namespace sophus {
 
 sophus::ImageSize fromProto(proto::ImageSize const& proto) {
   sophus::ImageSize image_size;
@@ -21,9 +21,9 @@ sophus::ImageSize fromProto(proto::ImageSize const& proto) {
 
 proto::ImageSize toProto(sophus::ImageSize const& image_size) {
   proto::ImageSize proto;
-  proto.set_width(image_size.width);
-  proto.set_height(image_size.height);
+  proto.setWidth(image_size.width);
+  proto.setHeight(image_size.height);
   return proto;
 }
 
-}  // namespace farm_ng
+}  // namespace sophus

@@ -9,10 +9,10 @@
 
 syntax = "proto3";
 
-import "protos/sophus/image.proto";
-import "protos/sophus/lie.proto";
+import "sophus/image.proto";
+import "sophus/lie.proto";
 
-package farm_ng.proto;
+package sophus.proto;
 
 
 message CameraModel {

@@ -11,54 +11,52 @@
 #include "farm_ng/core/logging/logger.h"
 #include "sophus/image/proto/conv.h"
 
-namespace farm_ng {
+namespace sophus {
 
-Expected<sophus::CameraModel> fromProto(proto::CameraModel const& proto) {
+farm_ng::Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
   auto get_params = [&proto]() -> Eigen::VectorXd {
-    Eigen::VectorXd params(proto.params_size());
+    Eigen::VectorXd params(proto.paramsSize());
     for (int i = 0; i < params.rows(); ++i) {
       params[i] = proto.params(i);
     }
     return params;
   };
 
-  sophus::CameraTransformType model = sophus::CameraTransformType::pinhole;
-  if (trySetFromString(model, proto.transform_type())) {
-    FARM_ERROR("transform type not supported: {}", proto.transform_type());
+  CameraTransformType model = CameraTransformType::pinhole;
+  if (trySetFromString(model, proto.transformType())) {
+    FARM_ERROR("transform type not supported: {}", proto.transformType());
   }
 
-  return sophus::CameraModel(
-      fromProto(proto.image_size()), model, get_params());
+  return CameraModel(fromProto(proto.imageSize()), model, get_params());
 }
 
-proto::CameraModel toProto(sophus::CameraModel const& camera_model) {
+proto::CameraModel toProto(CameraModel const& camera_model) {
   proto::CameraModel proto;
-  *proto.mutable_image_size() = toProto(camera_model.imageSize());
-  proto.set_transform_type(toString(camera_model.transformType()));
+  *proto.mutableImageSize() = toProto(camera_model.imageSize());
+  proto.setTransformType(toString(camera_model.transformType()));
   Eigen::VectorXd params = camera_model.params();
   for (int i = 0; i < params.rows(); ++i) {
-    proto.add_params(params[i]);
+    proto.addParams(params[i]);
   }
   return proto;
 }
 
-Expected<std::vector<sophus::CameraModel>> fromProto(
+farm_ng::Expected<std::vector<CameraModel>> fromProto(
     proto::CameraModels const& proto) {
-  std::vector<sophus::CameraModel> models;
-  for (int i = 0; i < proto.camera_models_size(); ++i) {
-    FARM_TRY(sophus::CameraModel cam, fromProto(proto.camera_models(i)));
+  std::vector<CameraModel> models;
+  for (int i = 0; i < proto.cameraModelsSize(); ++i) {
+    FARM_TRY(CameraModel cam, fromProto(proto.cameraModels(i)));
     models.push_back(cam);
   }
   return models;
 }
 
-proto::CameraModels toProto(
-    std::vector<sophus::CameraModel> const& camera_models) {
+proto::CameraModels toProto(std::vector<CameraModel> const& camera_models) {
   proto::CameraModels proto;
   for (auto const& model : camera_models) {
-    *proto.add_camera_models() = toProto(model);
+    *proto.addCameraModels() = toProto(model);
   }
   return proto;
 }
 
-}  // namespace farm_ng
+}  // namespace sophus

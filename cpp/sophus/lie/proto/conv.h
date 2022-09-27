@@ -8,20 +8,20 @@
 
 #pragma once
 
-#include "protos/sophus/lie.pb.h"
+#include "sophus/lie.pb.h"
 #include "sophus/lie/se3.h"
 
 #include <farm_ng/core/logging/expected.h>
 
-namespace farm_ng {
+namespace sophus {
 
 Eigen::Quaterniond fromProto(proto::QuaternionF64 const& proto);
 proto::QuaternionF64 toProto(Eigen::Quaterniond const& quat);
 
-Expected<sophus::So3F64> fromProto(proto::So3F64 const& proto);
+farm_ng::Expected<So3F64> fromProto(proto::So3F64 const& proto);
 proto::So3F64 toProto(sophus::So3F64 const& rotation);
 
-Expected<sophus::Se3F64> fromProto(proto::Se3F64 const& proto);
-proto::Se3F64 toProto(sophus::Se3F64 const& pose);
+farm_ng::Expected<Se3F64> fromProto(proto::Se3F64 const& proto);
+proto::Se3F64 toProto(Se3F64 const& pose);
 
-}  // namespace farm_ng
+}  // namespace sophus
