@@ -49,7 +49,7 @@ jobs:
 
       - name: Install dependencies (Ubuntu)
         run: ./scripts/install_deps_ubuntu.sh
-        if: matrix.os == 'ubuntu-20.04' && matrix.access == 'col_major'
+        if: matrix.os == 'ubuntu-20.04'
 
       - name: Install dependencies (Mac)
         run: ./scripts/install_deps_mac.sh
