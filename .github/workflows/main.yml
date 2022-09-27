@@ -28,16 +28,6 @@ jobs:
             access: row_major
             build_type: Release
             protos: OFF
-          # - os: ubuntu-20.04
-          #   tests: install_target
-          #   access: col_major
-          #   build_type: Release
-          #   protos: OFF
-          # - os: ubuntu-20.04
-          #   tests: install_target
-          #   access: col_major
-          #   build_type: Release
-          #   protos: ON
           - os: ubuntu-20.04
             tests: clang_tidy
             access: col_major
@@ -48,16 +38,6 @@ jobs:
             access: col_major
             build_type: Release
             protos: OFF
-          # - os: macos-11
-          #   tests: install_target
-          #   access: col_major
-          #   build_type: Release
-          #   protos: OFF
-          # - os: macos-11
-          #   tests: install_target
-          #   access: col_major
-          #   build_type: Release
-          #   protos: ON
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
@@ -92,38 +72,7 @@ jobs:
           ./scripts/run_cpp_tests.sh
         if: matrix.tests == 'unit_test'
 
-      # - name: Install system targets tests
-      #   run: |
-      #     mkdir -p build
-      #     cd build
-      #     pwd
-      #     cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_FARM_NG_PROTOS=$BUILD_PROTOS ..
-      #     make
-      #     sudo make install
-      #     cd ..
-      #     cd cpp/examples/test_install_targets/
-      #     mkdir -p build
-      #     cd build
-      #     cmake ..
-      #     make
-      #   if: matrix.tests == 'install_target'
-
-      # - name: install ceres (Mac)
-      #   run: |
-      #     ./scripts/install_ceres_mac.sh
-      #   if: (matrix.tests == 'clang_tidy' || matrix.tests == 'unit_test') && matrix.os == 'macos-11'
-
-      # - name: install ceres (Ubuntu)
-      #   run:
-      #     ./scripts/install_ceres_ubuntu.sh
-      #   if: (matrix.tests == 'clang_tidy' || matrix.tests == 'unit_test') && matrix.os == 'ubuntu-20.04'
-
-      # - name: clang-tidy
-      #   run: |
-      #     ./run_clang_tidy.sh
-      #   if: matrix.tests == 'clang_tidy'
-
-      # - name: Run tests
-      #   run:
-      #     ./scripts/run_cpp_tests.sh
-      #   if: matrix.tests == 'unit_test'
+      - name: clang-tidy
+        run: |
+          ./run_clang_tidy.sh
+        if: matrix.tests == 'clang_tidy'
