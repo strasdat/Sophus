@@ -55,13 +55,7 @@ jobs:
 
       - name: Install dependencies (Ubuntu)
         run: ./scripts/install_deps_ubuntu.sh
-        if: matrix.os == 'ubuntu-20.04' && matrix.access == 'col_major'
-
-      - name: Install dependencies (Ubuntu, Eigen row-major)
-        run: ./scripts/install_deps_ubuntu.sh
-        env:
-          ROW_MAJOR_DEFAULT: ON
-        if: matrix.os == 'ubuntu-20.04' && matrix.access == 'row_major'
+        if: matrix.os == 'ubuntu-20.04'
 
       - name: Install dependencies (Mac)
         run: ./scripts/install_deps_mac.sh
@@ -70,6 +64,8 @@ jobs:
       - name: Run tests
         run:
           ./scripts/run_cpp_tests.sh
+        env:
+          ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test'
 
       - name: clang-tidy

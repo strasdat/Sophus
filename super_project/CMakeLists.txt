@@ -7,6 +7,14 @@ cmake_minimum_required(VERSION 3.16)
 # https://semver.org/
 project(farm_ng_all VERSION 0.0.1)
 
+if("${ROW_ACCESS}" STREQUAL "col_major")
+    message(STATUS "Testing Sophus with col_major")
+    set(EIGEN_DEFAULT_TO_ROW_MAJOR Off)
+else()
+    message(STATUS "Testing Sophus with row_major")
+    set(EIGEN_DEFAULT_TO_ROW_MAJOR On)
+endif()
+
 
 list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
