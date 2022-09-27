@@ -9,4 +9,5 @@ cd build
 cmake ..
 make -j2
 
-make test
+# The make runs the tests in each of the projects built
+# there is no seperate test target
