@@ -7,4 +7,5 @@ ExternalProject_Add(farm-ng-core
     ${farm_ng_DEFAULT_ARGS}
     -DCMAKE_BUILD_TYPE=RelWithDebInfo
     -DBUILD_FARM_NG_PROTOS=On
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
     )

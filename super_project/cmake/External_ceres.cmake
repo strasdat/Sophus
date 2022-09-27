@@ -11,5 +11,6 @@ ExternalProject_Add(ceres
     -DGFLAGS=OFF
     -DGLOG=OFF
     -DMINIGLOG=ON
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
     -DCMAKE_BUILD_TYPE=RelWithDebInfo
 )
