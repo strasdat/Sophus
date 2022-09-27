@@ -20,18 +20,19 @@ include(External_eigen)
 include(External_ceres)
 include(External_farm-ng-core)
 
+set(SUPER_PROJ_FARM_NG_PROTOS OFF)
+
 ExternalProject_Add(Sophus
     DEPENDS farm-ng-core eigen ceres
     PREFIX ${farm_ng_EXT_PREFIX}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Sophus-build
     CMAKE_ARGS ${farm_ng_DEFAULT_ARGS}
-    -DBUILD_FARM_NG_PROTOS=On
+    -DBUILD_FARM_NG_PROTOS=${SUPER_PROJ_FARM_NG_PROTOS}
     -DBUILD_SOPHUS_TESTS=ON
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
     TEST_BEFORE_INSTALL ON
-    CMAKE_EXPORT_COMPILE_COMMANDS=ON
 )
-
 
 ExternalProject_Add(SophusTestInstallTargets
     DEPENDS Sophus
@@ -39,6 +40,6 @@ ExternalProject_Add(SophusTestInstallTargets
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/examples/test_install_targets
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/SophusTestInstallTargets-build
     CMAKE_ARGS ${farm_ng_DEFAULT_ARGS}
-    -DBUILD_FARM_NG_PROTOS=ON
+    -DBUILD_FARM_NG_PROTOS=${SUPER_PROJ_FARM_NG_PROTOS}
     INSTALL_COMMAND ""
 )

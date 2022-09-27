@@ -17,27 +17,14 @@ jobs:
             tests: unit_test
             access: col_major
             build_type: Release
-            protos: OFF
-          - os: ubuntu-20.04
-            tests: unit_test
-            access: col_major
-            build_type: Release
-            protos: ON
-          - os: ubuntu-20.04
-            tests: unit_test
-            access: row_major
-            build_type: Release
-            protos: OFF
           - os: ubuntu-20.04
             tests: clang_tidy
             access: col_major
             build_type: Release
-            protos: OFF
           - os: macos-11
             tests: unit_test
             access: col_major
             build_type: Release
-            protos: OFF
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
@@ -56,12 +43,6 @@ jobs:
       - name: Install dependencies (Ubuntu)
         run: ./scripts/install_deps_ubuntu.sh
         if: matrix.os == 'ubuntu-20.04' && matrix.access == 'col_major'
-
-      - name: Install dependencies (Ubuntu, Eigen row-major)
-        run: ./scripts/install_deps_ubuntu.sh
-        env:
-          ROW_MAJOR_DEFAULT: ON
-        if: matrix.os == 'ubuntu-20.04' && matrix.access == 'row_major'
 
       - name: Install dependencies (Mac)
         run: ./scripts/install_deps_mac.sh

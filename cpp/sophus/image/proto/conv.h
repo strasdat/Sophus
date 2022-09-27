@@ -16,6 +16,6 @@
 namespace sophus {
 
 sophus::ImageSize fromProto(proto::ImageSize const& proto);
-proto::ImageSize toProto(sophus::ImageSize const& v);
+proto::ImageSize toProto(sophus::ImageSize const& image_size);
 
 }  // namespace sophus
