@@ -6,7 +6,8 @@ set -e # exit on error
 cd super_project
 mkdir -p build
 cd build
-cmake ..
+cmake -DROW_ACCESS=$ROW_ACCESS ..
 make -j2
 
-make test
+# The make runs the tests in each of the projects built
+# there is no seperate test target
