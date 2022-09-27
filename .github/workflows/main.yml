@@ -18,6 +18,14 @@ jobs:
             access: col_major
             build_type: Release
           - os: ubuntu-20.04
+            tests: unit_test
+            access: col_major
+            build_type: Release
+          - os: ubuntu-20.04
+            tests: unit_test
+            access: row_major
+            build_type: Release
+          - os: ubuntu-20.04
             tests: clang_tidy
             access: col_major
             build_type: Release
@@ -28,7 +36,6 @@ jobs:
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
-      ROW_MAJOR_DEFAULT: OFF
       BUILD_PROTOS: ${{ matrix.protos }}
 
 
@@ -51,6 +58,8 @@ jobs:
       - name: Run tests
         run:
           ./scripts/run_cpp_tests.sh
+        env:
+          ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test'
 
       - name: clang-tidy
