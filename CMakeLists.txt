@@ -55,8 +55,6 @@ if(${BUILD_SOPHUS_TESTS})
 endif()
 
 
-#add_subdirectory(thirdparty/farm-ng-core)
-
 if (BUILD_FARM_NG_PROTOS)
   find_package(Protobuf REQUIRED)
 endif()
