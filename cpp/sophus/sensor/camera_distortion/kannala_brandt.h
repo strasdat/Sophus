@@ -11,7 +11,7 @@
 #include "sophus/ceres/jet_helpers.h"
 #include "sophus/common/common.h"
 #include "sophus/geometry/projection.h"
-#include "sophus/sensor/camera_transforms/affine.h"
+#include "sophus/sensor/camera_distortion/affine.h"
 
 #include <Eigen/Dense>
 
@@ -37,7 +37,7 @@ class KannalaBrandtK3Transform {
   using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
   template <class TParamsTypeT, class TPointTypeT>
-  static PixelImage<typename TPointTypeT::Scalar> warp(
+  static PixelImage<typename TPointTypeT::Scalar> distort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
       Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     static_assert(
@@ -80,13 +80,13 @@ class KannalaBrandtK3Transform {
              params.template segment<2>(2);
     }  // linearize r around radius=0
 
-    return AffineTransform::warp(
+    return AffineTransform::distort(
 
         params.template head<4>(), proj_point_in_camera_z1_plane);
   }
 
   template <class TScalar>
-  static ProjInCameraZ1Plane<TScalar> unwarp(
+  static ProjInCameraZ1Plane<TScalar> undistort(
       Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
     using std::abs;
     using std::sqrt;
@@ -148,7 +148,7 @@ class KannalaBrandtK3Transform {
   }
 
   template <class TParamsTypeT, class TPointTypeT>
-  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxWarp(
+  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxDistort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
       Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     static_assert(

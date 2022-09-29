@@ -15,28 +15,28 @@ namespace sophus {
 
 farm_ng::Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
   auto get_params = [&proto]() -> Eigen::VectorXd {
-    Eigen::VectorXd params(proto.paramsSize());
+    Eigen::VectorXd params(proto.params_size());
     for (int i = 0; i < params.rows(); ++i) {
       params[i] = proto.params(i);
     }
     return params;
   };
 
-  CameraTransformType model = CameraTransformType::pinhole;
-  if (trySetFromString(model, proto.transformType())) {
-    FARM_ERROR("transform type not supported: {}", proto.transformType());
+  CameraDistortionType model = CameraDistortionType::pinhole;
+  if (trySetFromString(model, proto.distortion_type())) {
+    FARM_ERROR("distortion type not supported: {}", proto.distortion_type());
   }
 
-  return CameraModel(fromProto(proto.imageSize()), model, get_params());
+  return CameraModel(fromProto(proto.image_size()), model, get_params());
 }
 
 proto::CameraModel toProto(CameraModel const& camera_model) {
   proto::CameraModel proto;
-  *proto.mutableImageSize() = toProto(camera_model.imageSize());
-  proto.setTransformType(toString(camera_model.transformType()));
+  *proto.mutable_image_size() = toProto(camera_model.imageSize());
+  proto.set_distortion_type(toString(camera_model.distortionType()));
   Eigen::VectorXd params = camera_model.params();
   for (int i = 0; i < params.rows(); ++i) {
-    proto.addParams(params[i]);
+    proto.add_params(params[i]);
   }
   return proto;
 }
@@ -44,8 +44,8 @@ proto::CameraModel toProto(CameraModel const& camera_model) {
 farm_ng::Expected<std::vector<CameraModel>> fromProto(
     proto::CameraModels const& proto) {
   std::vector<CameraModel> models;
-  for (int i = 0; i < proto.cameraModelsSize(); ++i) {
-    FARM_TRY(CameraModel cam, fromProto(proto.cameraModels(i)));
+  for (int i = 0; i < proto.camera_models_size(); ++i) {
+    FARM_TRY(CameraModel cam, fromProto(proto.camera_models(i)));
     models.push_back(cam);
   }
   return models;
@@ -54,7 +54,7 @@ farm_ng::Expected<std::vector<CameraModel>> fromProto(
 proto::CameraModels toProto(std::vector<CameraModel> const& camera_models) {
   proto::CameraModels proto;
   for (auto const& model : camera_models) {
-    *proto.addCameraModels() = toProto(model);
+    *proto.add_camera_models() = toProto(model);
   }
   return proto;
 }

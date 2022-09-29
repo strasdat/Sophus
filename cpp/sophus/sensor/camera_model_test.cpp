@@ -65,7 +65,7 @@ TEST(camera_model, projection_round_trip) {
   Eigen::VectorXd get_params(8);
   get_params << 1000, 1000, 320, 280, 0.1, 0.01, 0.001, 0.0001;
   CameraModel kb3 = CameraModel(
-      {640, 480}, CameraTransformType::kannala_brandt_k3, get_params);
+      {640, 480}, CameraDistortionType::kannala_brandt_k3, get_params);
 
   camera_models.push_back(pinhole);
   camera_models.push_back(kb3);
@@ -75,7 +75,7 @@ TEST(camera_model, projection_round_trip) {
     std::vector<Eigen::Vector2d> pixels_image = {
         {0, 0}, {1, 400}, {320, 240}, {319.5, 239.5}, {100, 40}, {639, 479}};
 
-    Image<Eigen::Vector2f> unwarp_table = camera_model.unwarpTable();
+    Image<Eigen::Vector2f> unwarp_table = camera_model.undistortTable();
 
     for (auto const& pixel_image : pixels_image) {
       for (double d : {0.1, 0.5, 1.0, 1.1, 3.0, 15.0}) {
@@ -102,20 +102,20 @@ TEST(camera_model, projection_round_trip) {
         FARM_CHECK_NEAR(dx, numeric_dx, 1e-2);
       }
 
-      Eigen::Vector2d ab_in_z1plane = camera_model.unwarp(pixel_image);
+      Eigen::Vector2d ab_in_z1plane = camera_model.undistort(pixel_image);
       Eigen::Vector2d ab_in_z1plane2 =
           interpolate(unwarp_table, pixel_image.cast<float>()).cast<double>();
       FARM_CHECK_NEAR(ab_in_z1plane, ab_in_z1plane2, kEps);
 
-      Eigen::Vector2d pixel_in_image = camera_model.warp(ab_in_z1plane);
+      Eigen::Vector2d pixel_in_image = camera_model.distort(ab_in_z1plane);
 
       FARM_CHECK_NEAR(pixel_image, pixel_in_image, kEps);
 
-      Eigen::Matrix2d dx = camera_model.dxWarp(ab_in_z1plane);
+      Eigen::Matrix2d dx = camera_model.dxDistort(ab_in_z1plane);
 
       Eigen::Matrix2d dx_num = sophus::vectorFieldNumDiff<double, 2, 2>(
           [&](Eigen::Vector2d const& x) -> Eigen::Vector2d {
-            return camera_model.warp(x);
+            return camera_model.distort(x);
           },
           ab_in_z1plane);
 
@@ -164,7 +164,7 @@ TEST(camera_model, projection_round_trip) {
               InverseDepthPoint3F64::fromEuclideanPoint3(point_in_bar_camera);
 
           Eigen::Matrix<double, 2, 6> dx =
-              camera_model.dxWarp(proj(foo_pose_bar * point_in_bar_camera)) *
+              camera_model.dxDistort(proj(foo_pose_bar * point_in_bar_camera)) *
               trans.dxProjExpXTransformPointAt0(inverse_depth_in_bar);
 
           Eigen::Vector<double, 6> zero;
@@ -172,7 +172,7 @@ TEST(camera_model, projection_round_trip) {
           Eigen::Matrix<double, 2, 6> const num_dx =
               vectorFieldNumDiff<double, 2, 6>(
                   [&](Eigen::Vector<double, 6> const& vec_a) {
-                    return camera_model.warp(proj(
+                    return camera_model.distort(proj(
                         sophus::Se3F64::exp(vec_a) * foo_pose_bar *
                         point_in_bar_camera));
                   },
@@ -182,7 +182,8 @@ TEST(camera_model, projection_round_trip) {
 
           {
             Eigen::Matrix<double, 2, 3> dx =
-                camera_model.dxWarp(proj(foo_pose_bar * point_in_bar_camera)) *
+                camera_model.dxDistort(
+                    proj(foo_pose_bar * point_in_bar_camera)) *
                 trans.dxProjTransformX(inverse_depth_in_bar);
 
             Eigen::Matrix<double, 2, 3> const num_dx =
@@ -300,7 +301,7 @@ TEST(camera_model, projection_round_trip) {
 //   CameraModel kb3 = CameraModel(
 //       "pinhole",
 //       {640, 480},
-//       CameraTransformType::kannala_brandt_k3,
+//       CameraDistortionType::kannala_brandt_k3,
 //       get_params);
 
 //   camera_models.push_back(pinhole);

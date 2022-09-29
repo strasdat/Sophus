@@ -28,7 +28,7 @@ include(External_eigen)
 include(External_ceres)
 include(External_farm-ng-core)
 
-set(SUPER_PROJ_FARM_NG_PROTOS OFF)
+set(SUPER_PROJ_FARM_NG_PROTOS ON)
 
 ExternalProject_Add(Sophus
     DEPENDS farm-ng-core eigen ceres

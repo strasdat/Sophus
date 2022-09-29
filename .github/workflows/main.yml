@@ -17,22 +17,32 @@ jobs:
             tests: unit_test
             access: col_major
             build_type: Release
+            build_protos: On
           - os: ubuntu-20.04
             tests: unit_test
             access: col_major
             build_type: Release
+            build_protos: Off
+          - os: ubuntu-20.04
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            build_protos: On
           - os: ubuntu-20.04
             tests: unit_test
             access: row_major
             build_type: Release
+            build_protos: On
           - os: ubuntu-20.04
             tests: clang_tidy
             access: col_major
             build_type: Release
+            build_protos: Off
           - os: macos-11
             tests: unit_test
             access: col_major
             build_type: Release
+            build_protos: On
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}

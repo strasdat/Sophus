@@ -29,7 +29,7 @@ class AffineTransform {
   using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
   template <class TParamsTypeT, class TPointTypeT>
-  static PixelImage<typename TPointTypeT::Scalar> warp(
+  static PixelImage<typename TPointTypeT::Scalar> distort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
       Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     static_assert(
@@ -50,7 +50,7 @@ class AffineTransform {
   }
 
   template <class TScalar>
-  static ProjInCameraZ1Plane<TScalar> unwarp(
+  static ProjInCameraZ1Plane<TScalar> undistort(
       Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
     TScalar proj_x_in_camera_z1_plane =
         (pixel_image.x() - TScalar(params[2])) / TScalar(params[0]);
@@ -61,7 +61,7 @@ class AffineTransform {
   }
 
   template <class TParamsTypeT, class TPointTypeT>
-  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxWarp(
+  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxDistort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
       Eigen::MatrixBase<TPointTypeT> const& /*proj_point_in_camera_z1_plane*/) {
     static_assert(
