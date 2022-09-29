@@ -10,7 +10,7 @@
 
 #include "sophus/ceres/jet_helpers.h"
 #include "sophus/common/common.h"
-#include "sophus/sensor/camera_transforms/affine.h"
+#include "sophus/sensor/camera_distortion/affine.h"
 
 #include <Eigen/Dense>
 
@@ -159,7 +159,7 @@ class BrownConradyTransform {
   }
 
   template <class TParamsTypeT, class TPointTypeT>
-  static PixelImage<typename TPointTypeT::Scalar> warp(
+  static PixelImage<typename TPointTypeT::Scalar> distort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
       Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     using ParamScalar = typename TParamsTypeT::Scalar;
@@ -183,23 +183,24 @@ class BrownConradyTransform {
         distorted_point_in_camera_z1_plane =
             projImpl(distortion, proj_point_in_camera_z1_plane.eval());
 
-    return AffineTransform::warp(
+    return AffineTransform::distort(
         params.template head<4>(), distorted_point_in_camera_z1_plane);
   }
 
   template <class TScalar>
-  static ProjInCameraZ1Plane<TScalar> unwarp(
+  static ProjInCameraZ1Plane<TScalar> undistort(
       Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
     PixelImage<TScalar> proj_point_in_camera_z1_plane = unprojImpl(
         params.template tail<kNumDistortionParams>().eval(),
-        AffineTransform::unwarp(params.template head<4>().eval(), pixel_image));
+        AffineTransform::undistort(
+            params.template head<4>().eval(), pixel_image));
 
     return ProjInCameraZ1Plane<TScalar>(
         proj_point_in_camera_z1_plane[0], proj_point_in_camera_z1_plane[1]);
   }
 
   template <class TParamsTypeT, class TPointTypeT>
-  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxWarp(
+  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxDistort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
       Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
     static_assert(

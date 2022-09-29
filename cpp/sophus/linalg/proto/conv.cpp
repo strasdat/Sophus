@@ -18,8 +18,8 @@ Eigen::Matrix<uint32_t, 2, 1> fromProto(proto::Vec2I64 const& proto) {
 
 proto::Vec2I64 toProto(Eigen::Matrix<uint32_t, 2, 1> const& v) {
   proto::Vec2I64 proto;
-  proto.setX(v.x());
-  proto.setY(v.y());
+  proto.set_x(v.x());
+  proto.set_y(v.y());
   return proto;
 }
 
@@ -29,8 +29,8 @@ Eigen::Vector2f fromProto(proto::Vec2F32 const& proto) {
 
 proto::Vec2F32 toProto(Eigen::Vector2f const& v) {
   proto::Vec2F32 proto;
-  proto.setX(v.x());
-  proto.setY(v.y());
+  proto.set_x(v.x());
+  proto.set_y(v.y());
   return proto;
 }
 
@@ -40,8 +40,8 @@ Eigen::Vector2d fromProto(proto::Vec2F64 const& proto) {
 
 proto::Vec2F64 toProto(Eigen::Vector2d const& v) {
   proto::Vec2F64 proto;
-  proto.setX(v.x());
-  proto.setY(v.y());
+  proto.set_x(v.x());
+  proto.set_y(v.y());
   return proto;
 }
 
@@ -51,9 +51,9 @@ Eigen::Matrix<uint32_t, 3, 1> fromProto(proto::Vec3I64 const& proto) {
 
 proto::Vec3I64 toProto(Eigen::Matrix<uint32_t, 3, 1> const& v) {
   proto::Vec3I64 proto;
-  proto.setX(v.x());
-  proto.setY(v.y());
-  proto.setZ(v.z());
+  proto.set_x(v.x());
+  proto.set_y(v.y());
+  proto.set_z(v.z());
   return proto;
 }
 
@@ -63,9 +63,9 @@ Eigen::Vector3f fromProto(proto::Vec3F32 const& proto) {
 
 proto::Vec3F32 toProto(Eigen::Vector3f const& v) {
   proto::Vec3F32 proto;
-  proto.setX(v.x());
-  proto.setY(v.y());
-  proto.setZ(v.z());
+  proto.set_x(v.x());
+  proto.set_y(v.y());
+  proto.set_z(v.z());
   return proto;
 }
 
@@ -75,9 +75,9 @@ Eigen::Vector3d fromProto(proto::Vec3F64 const& proto) {
 
 proto::Vec3F64 toProto(Eigen::Vector3d const& v) {
   proto::Vec3F64 proto;
-  proto.setX(v.x());
-  proto.setY(v.y());
-  proto.setZ(v.z());
+  proto.set_x(v.x());
+  proto.set_y(v.y());
+  proto.set_z(v.z());
   return proto;
 }
 

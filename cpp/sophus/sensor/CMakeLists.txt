@@ -24,10 +24,10 @@ NAMESPACE sophus
 INCLUDE_DIR ../../
 HEADERS
 ${sophus_sensor_h}
-camera_transforms/affine.h
-camera_transforms/brown_conrady.h
-camera_transforms/kannala_brandt.h
-camera_transforms/orthographic.h
+camera_distortion/affine.h
+camera_distortion/brown_conrady.h
+camera_distortion/kannala_brandt.h
+camera_distortion/orthographic.h
 SOURCES
   ${sophus_sensor_cpp})
 

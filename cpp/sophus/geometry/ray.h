@@ -84,7 +84,7 @@ class Ray3 {
   std::optional<IntersectionResult> intersect(
       Eigen::Hyperplane<TScalar, 3> const& plane) const {
     using std::abs;
-    TScalar dot_prod = plane.normal().dot(this->direction_.getVector());
+    TScalar dot_prod = plane.normal().dot(this->direction_.vector());
     if (abs(dot_prod) < sophus::kEpsilon<TScalar>) {
       return std::nullopt;
     }
@@ -98,7 +98,7 @@ class Ray3 {
   Eigen::Matrix<TScalar, 3, 1> projection(
       Eigen::Matrix<TScalar, 3, 1> const& point) const {
     return origin_ +
-           direction_.getVector().dot(point - origin_) * direction_.getVector();
+           direction_.getVector().dot(point - origin_) * direction_.vector();
   }
 
  private:

@@ -19,7 +19,7 @@ farm_ng::Expected<UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto) {
 
 proto::UnitVec3F64 toProto(sophus::UnitVector3F64 const& uvec) {
   proto::UnitVec3F64 proto;
-  *proto.mutableVec3() = toProto(uvec.vector());
+  *proto.mutable_vec3() = toProto(uvec.vector());
   return proto;
 }
 
@@ -31,9 +31,9 @@ farm_ng::Expected<Eigen::Hyperplane<double, 3>> fromProto(
 
 proto::Hyperplane3F64 toProto(Eigen::Hyperplane<double, 3> const& plane) {
   proto::Hyperplane3F64 proto;
-  *proto.mutableNormal() =
+  *proto.mutable_normal() =
       toProto(sophus::UnitVector3F64::fromVectorAndNormalize(plane.normal()));
-  proto.setOffset(plane.offset());
+  proto.set_offset(plane.offset());
   return proto;
 }
 
