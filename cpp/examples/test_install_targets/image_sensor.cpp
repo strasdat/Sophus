@@ -24,7 +24,7 @@ int main() {
   Eigen::VectorXd get_params(8);
   get_params << 1000, 1000, 320, 280, 0.1, 0.01, 0.001, 0.0001;
   CameraModel kb3 = CameraModel(
-      {640, 480}, CameraTransformType::kannala_brandt_k3, get_params);
+      {640, 480}, CameraDistortionType::kannala_brandt_k3, get_params);
 
   camera_models.push_back(pinhole);
   camera_models.push_back(kb3);

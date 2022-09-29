@@ -18,8 +18,8 @@ package sophus.proto;
 message CameraModel {
   ImageSize image_size = 1;
 
-  // Specifies the projection type.
-  string transform_type = 2;
+  // Specifies the type of distortion model.
+  string distortion_type = 2;
 
   // Parameters. Typically the first four are: fx, fy, px, py
   repeated double params = 3;

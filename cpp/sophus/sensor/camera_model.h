@@ -14,10 +14,10 @@
 #include "sophus/image/image.h"
 #include "sophus/image/image_size.h"
 #include "sophus/lie/se3.h"
-#include "sophus/sensor/camera_transforms/affine.h"
-#include "sophus/sensor/camera_transforms/brown_conrady.h"
-#include "sophus/sensor/camera_transforms/kannala_brandt.h"
-#include "sophus/sensor/camera_transforms/orthographic.h"
+#include "sophus/sensor/camera_distortion/affine.h"
+#include "sophus/sensor/camera_distortion/brown_conrady.h"
+#include "sophus/sensor/camera_distortion/kannala_brandt.h"
+#include "sophus/sensor/camera_distortion/orthographic.h"
 
 #include <Eigen/Dense>
 #include <farm_ng/core/enum/enum.h>
@@ -221,28 +221,28 @@ class CameraModelT {
   }
 
   /// Maps a 2-point in the z=1 plane of the camera to a pixel in the image.
-  [[nodiscard]] PixelImage warp(
+  [[nodiscard]] PixelImage distort(
       ProjInCameraZ1Plane const& point2_in_camera_z1_plane) const {
-    return Proj::template warp(params_, point2_in_camera_z1_plane);
+    return Proj::template distort(params_, point2_in_camera_z1_plane);
   }
 
-  [[nodiscard]] Eigen::Matrix<TScalar, 2, 2> dxWarp(
+  [[nodiscard]] Eigen::Matrix<TScalar, 2, 2> dxDistort(
       PixelImage const& pixel_in_image) const {
-    return Proj::template dxWarp(params_, pixel_in_image);
+    return Proj::template dxDistort(params_, pixel_in_image);
   }
 
   /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
-  [[nodiscard]] ProjInCameraZ1Plane unwarp(
+  [[nodiscard]] ProjInCameraZ1Plane undistort(
       PixelImage const& pixel_in_image) const {
-    return Proj::template unwarp(params_, pixel_in_image);
+    return Proj::template undistort(params_, pixel_in_image);
   }
 
-  [[nodiscard]] MutImage<Eigen::Vector2f> unwarpTable() const {
+  [[nodiscard]] MutImage<Eigen::Vector2f> undistortTable() const {
     MutImage<Eigen::Vector2f> table(image_size_);
     for (int v = 0; v < table.height(); ++v) {
       Eigen::Vector2f* row_ptr = table.rowPtrMut(v);
       for (int u = 0; u < table.width(); ++u) {
-        row_ptr[u] = this->unwarp(PixelImage(u, v)).template cast<float>();
+        row_ptr[u] = this->undistort(PixelImage(u, v)).template cast<float>();
       }
     }
     return table;
@@ -250,13 +250,13 @@ class CameraModelT {
 
   /// Projects 3-point in camera frame to a pixel in the image.
   [[nodiscard]] PixelImage camProj(PointCamera const& point_in_camera) const {
-    return Proj::template warp(params_, ::sophus::proj(point_in_camera));
+    return Proj::template distort(params_, ::sophus::proj(point_in_camera));
   }
 
   [[nodiscard]] Eigen::Matrix<TScalar, 2, 3> dxCamProjX(
       PointCamera const& point_in_camera) const {
     ProjInCameraZ1Plane point_in_z1plane = ::sophus::proj(point_in_camera);
-    return dxWarp(point_in_z1plane) * dxProjX(point_in_camera);
+    return dxDistort(point_in_z1plane) * dxProjX(point_in_camera);
   }
 
   /// Unprojects pixel in the image to point in camera frame.
@@ -265,7 +265,7 @@ class CameraModelT {
   [[nodiscard]] PointCamera camUnproj(
       PixelImage const& pixel_in_image, double depth_z) const {
     return ::sophus::unproj(
-        Proj::template unwarp(params_, pixel_in_image), depth_z);
+        Proj::template undistort(params_, pixel_in_image), depth_z);
   }
 
   /// Raw data access. To be used in ceres optimization only.
@@ -297,7 +297,7 @@ class CameraModelT {
 };
 
 /// Camera model projection type.
-FARM_ENUM(CameraTransformType, (pinhole, brown_conrady, kannala_brandt_k3));
+FARM_ENUM(CameraDistortionType, (pinhole, brown_conrady, kannala_brandt_k3));
 
 /// Pinhole camera model.
 using PinholeModel = CameraModelT<double, AffineTransform>;
@@ -309,14 +309,14 @@ using BrownConradyModel = CameraModelT<double, BrownConradyTransform>;
 using KannalaBrandtK3Model = CameraModelT<double, KannalaBrandtK3Transform>;
 
 /// Variant of camera models.
-using CameraTransformVariant =
+using CameraDistortionVariant =
     std::variant<PinholeModel, BrownConradyModel, KannalaBrandtK3Model>;
 
 static_assert(
-    std::variant_size_v<CameraTransformVariant> ==
-        getCount(CameraTransformType()),
-    "When the variant CameraTransformVariant is updated, one needs to "
-    "update the enum CameraTransformType as well, and vice versa.");
+    std::variant_size_v<CameraDistortionVariant> ==
+        getCount(CameraDistortionType()),
+    "When the variant CameraDistortionVariant is updated, one needs to "
+    "update the enum CameraDistortionType as well, and vice versa.");
 
 /// Concrete camera model class.
 class CameraModel {
@@ -332,25 +332,25 @@ class CameraModel {
   ///               specified `projection_type` (TransformModel::kNumParams).
   CameraModel(
       ImageSize image_size,
-      CameraTransformType projection_type,
+      CameraDistortionType projection_type,
       Eigen::VectorXd const& params);
 
   /// Creates default pinhole model from `image_size`.
   static CameraModel createDefaultPinholeModel(ImageSize image_size);
 
-  /// Returns string representation for the concrete camera transform flag.
-  [[nodiscard]] std::string_view cameraTransformName() const;
+  /// Returns name of the camera distortion model.
+  [[nodiscard]] std::string_view distortionModelName() const;
 
   /// Distortion variant mutator.
-  CameraTransformVariant& modelVariant() { return model_; }
+  CameraDistortionVariant& modelVariant() { return model_; }
 
   /// Distortion variant accessor.
-  [[nodiscard]] CameraTransformVariant const& modelVariant() const {
+  [[nodiscard]] CameraDistortionVariant const& modelVariant() const {
     return model_;
   }
 
   /// Camera transform flag
-  [[nodiscard]] CameraTransformType transformType() const;
+  [[nodiscard]] CameraDistortionType distortionType() const;
 
   [[nodiscard]] Eigen::Vector2d focalLength() const;
 
@@ -379,18 +379,19 @@ class CameraModel {
   [[nodiscard]] Eigen::Vector2d camProj(
       Eigen::Vector3d const& point_camera) const;
 
-  /// Maps a 2-point in the z=1 plane of the camera to a pixel in the image.
-  [[nodiscard]] Eigen::Vector2d warp(
+  /// Maps a 2-point in the z=1 plane of the camera to a (distorted) pixel in
+  /// the image.
+  [[nodiscard]] Eigen::Vector2d distort(
       Eigen::Vector2d const& point2_in_camera_z1_plane) const;
 
-  [[nodiscard]] Eigen::Matrix2d dxWarp(
+  [[nodiscard]] Eigen::Matrix2d dxDistort(
       Eigen::Vector2d const& point2_in_camera_z1_plane) const;
 
   /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
-  [[nodiscard]] Eigen::Vector2d unwarp(
+  [[nodiscard]] Eigen::Vector2d undistort(
       Eigen::Vector2d const& pixel_image) const;
 
-  [[nodiscard]] MutImage<Eigen::Vector2f> unwarpTable() const;
+  [[nodiscard]] MutImage<Eigen::Vector2f> undistortTable() const;
 
   /// Derivative of camProj(x) with respect to x=0.
   [[nodiscard]] Eigen::Matrix<double, 2, 3> dxCamProjX(
@@ -453,7 +454,7 @@ class CameraModel {
   [[nodiscard]] CameraModel scale(ImageSize image_size) const;
 
  private:
-  CameraTransformVariant model_;
+  CameraDistortionVariant model_;
 };
 
 /// Creates default pinhole model from `image_size`.

@@ -1,5 +1,5 @@
 ExternalProject_Add(eigen
-    GIT_REPOSITORY  https://gitlab.com/libeigen/eigen.git
+    GIT_REPOSITORY https://github.com/hexagon-geo-surv/eigen.git
     GIT_TAG "3.4.0"
     PREFIX ${farm_ng_EXT_PREFIX}
     CMAKE_ARGS

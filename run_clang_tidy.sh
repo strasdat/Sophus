@@ -5,7 +5,7 @@ cd super_project
 rm clang-tidy-build -rf
 mkdir clang-tidy-build
 cd clang-tidy-build
-CC=clang CXX=clang++ cmake -DSUPER_PROJ_FARM_NG_PROTOS=OFF ..
+CC=clang CXX=clang++ cmake -DSUPER_PROJ_FARM_NG_PROTOS=$BUILD_PROTOS ..
 make -j2
 cd ../..
 
