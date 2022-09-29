@@ -73,7 +73,7 @@ class Ray3 {
   UnitVector3<TScalar>& direction() { return direction_; }
 
   Eigen::Matrix<TScalar, 3, 1> pointAt(TScalar lambda) const {
-    return this->origin_ + lambda * this->direction_.getVector();
+    return this->origin_ + lambda * this->direction_.vector();
   }
 
   struct IntersectionResult {
