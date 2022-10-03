@@ -14,9 +14,7 @@ target_link_libraries(sophus_image_proto_conv PUBLIC
   sophus_image_proto_defs
  )
 
-if(${BUILD_SOPHUS_TESTS})
-  farm_ng_add_test(conv
+farm_ng_add_test(conv
                 PARENT_LIBRARY sophus_image_proto_conv
                 LINK_LIBRARIES sophus_image_proto_conv
                 LABELS small)
-endif()

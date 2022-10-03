@@ -15,9 +15,8 @@ farm_ng_add_library(sophus_ceres
 target_link_libraries(sophus_ceres INTERFACE sophus_lie)
 
 
-if(${BUILD_SOPHUS_TESTS})
-  find_package(Ceres 2.1.0 REQUIRED)
-  foreach(test_basename
+find_package(Ceres 2.1.0 REQUIRED)
+foreach(test_basename
     rxso2
     rxso3
     se2
@@ -32,5 +31,4 @@ if(${BUILD_SOPHUS_TESTS})
                         Ceres::ceres sophus_ceres
                         LABELS large)
   target_compile_definitions(${test_basename}_test_sophus_ceres PRIVATE ${ARGN})
-  endforeach()
-endif()
+endforeach()

@@ -23,8 +23,8 @@ farm_ng_add_library(sophus_lie
 target_link_libraries(sophus_lie INTERFACE sophus_linalg)
 
 
-if(${BUILD_SOPHUS_TESTS})
-  foreach(test_basename
+
+foreach(test_basename
     cartesian2
     cartesian3
     common
@@ -41,10 +41,9 @@ if(${BUILD_SOPHUS_TESTS})
                           PARENT_LIBRARY sophus_lie
                           LINK_LIBRARIES sophus_lie
                           LABELS small)
-  endforeach()
-endif()
+endforeach()
 
-if(BUILD_FARM_NG_PROTOS)
+if(FARM_NG_BUILD_PROTOS)
     add_subdirectory(proto)
 endif()
 

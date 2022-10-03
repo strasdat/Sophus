@@ -14,9 +14,7 @@ target_link_libraries(sophus_linalg_proto_conv PUBLIC
   farm_ng_core::farm_ng_core_prototools
  )
 
-if(${BUILD_SOPHUS_TESTS})
-  farm_ng_add_test(conv
+farm_ng_add_test(conv
                 PARENT_LIBRARY sophus_linalg_proto_conv
                 LINK_LIBRARIES sophus_linalg_proto_conv
                 LABELS small)
-endif()

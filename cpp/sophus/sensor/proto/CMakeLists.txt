@@ -15,9 +15,8 @@ sophus_sensor_proto_defs
 sophus_image_proto_conv
 )
 
-if(${BUILD_SOPHUS_TESTS})
+
 farm_ng_add_test(conv
               PARENT_LIBRARY sophus_sensor_proto_conv
               LINK_LIBRARIES sophus_sensor_proto_conv
               LABELS small)
-endif()

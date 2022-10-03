@@ -33,15 +33,15 @@ target_link_libraries(sophus_image sophus_geometry)
 
 
 
-if(${BUILD_SOPHUS_TESTS})
-  foreach(test_basename ${sophus_image_src_prefixes})
+
+foreach(test_basename ${sophus_image_src_prefixes})
     farm_ng_add_test(${test_basename}
                           PARENT_LIBRARY sophus_image
                           LINK_LIBRARIES sophus_image
                           LABELS small)
-  endforeach()
-endif()
+endforeach()
 
-if(BUILD_FARM_NG_PROTOS)
+
+if(FARM_NG_BUILD_PROTOS)
     add_subdirectory(proto)
 endif()

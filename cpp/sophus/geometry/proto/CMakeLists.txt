@@ -14,9 +14,7 @@ target_link_libraries(sophus_geometry_proto_conv PUBLIC
   sophus_geometry_proto_defs
   sophus_linalg_proto_conv)
 
-if(${BUILD_SOPHUS_TESTS})
-  farm_ng_add_test(conv
+farm_ng_add_test(conv
                 PARENT_LIBRARY sophus_geometry_proto_conv
                 LINK_LIBRARIES sophus_geometry_proto_conv
                 LABELS small)
-endif()

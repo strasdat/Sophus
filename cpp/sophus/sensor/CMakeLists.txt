@@ -34,15 +34,14 @@ SOURCES
 target_link_libraries(sophus_sensor sophus_lie sophus_image)
 
 
-if(${BUILD_SOPHUS_TESTS})
-  foreach(test_basename ${sophus_sensor_src_prefixes})
+
+foreach(test_basename ${sophus_sensor_src_prefixes})
     farm_ng_add_test(${test_basename}
                           PARENT_LIBRARY sophus_sensor
                           LINK_LIBRARIES sophus_sensor
                           LABELS small)
-  endforeach()
-endif()
+endforeach()
 
-if(BUILD_FARM_NG_PROTOS)
+if(FARM_NG_BUILD_PROTOS)
     add_subdirectory(proto)
 endif()

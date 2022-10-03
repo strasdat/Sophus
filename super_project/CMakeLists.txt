@@ -16,7 +16,7 @@ include(FetchContent)
 FetchContent_Declare(
   farm_ng_cmake
   GIT_REPOSITORY https://github.com/farm-ng/farm-ng-cmake.git
-  GIT_TAG v0.1.0
+  GIT_TAG 91e279de02ef3ca65c2dab17bf772ea31eb91de2
 )
 FetchContent_MakeAvailable(farm_ng_cmake)
 set(farm_ng_cmake_DIR ${farm_ng_cmake_SOURCE_DIR}/cmake)
@@ -28,6 +28,8 @@ include(External_expected)
 include(External_eigen)
 include(External_ceres)
 
+
+
 ExternalProject_Add(farm-ng-core
     DEPENDS fmt expected eigen
     GIT_REPOSITORY  "https://github.com/farm-ng/farm-ng-core.git"
@@ -37,11 +39,12 @@ ExternalProject_Add(farm-ng-core
     ${farm_ng_DEFAULT_ARGS}
     -Dfarm_ng_cmake_DIR=${farm_ng_cmake_DIR}
     -DCMAKE_BUILD_TYPE=RelWithDebInfo
-    -DBUILD_FARM_NG_PROTOS=On
+    -DFARM_NG_BUILD_PROTOS=${BUILD_PROTOS}
+    -DFARM_NG_BUILD_TESTS=ON
     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
     )
 
-set(SUPER_PROJ_FARM_NG_PROTOS ${BUILD_PROTOS})
+
 
 ExternalProject_Add(Sophus
     DEPENDS farm-ng-core eigen ceres
@@ -49,8 +52,8 @@ ExternalProject_Add(Sophus
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Sophus-build
     CMAKE_ARGS ${farm_ng_DEFAULT_ARGS}
-    -DBUILD_FARM_NG_PROTOS=${SUPER_PROJ_FARM_NG_PROTOS}
-    -DBUILD_SOPHUS_TESTS=ON
+    -DFARM_NG_BUILD_PROTOS=${BUILD_PROTOS}
+    -DSophus_BUILD_TESTS=ON
     -Dfarm_ng_cmake_DIR=${farm_ng_cmake_DIR}
     TEST_BEFORE_INSTALL ON
 )
@@ -61,6 +64,6 @@ ExternalProject_Add(SophusTestInstallTargets
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/examples/test_install_targets
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/SophusTestInstallTargets-build
     CMAKE_ARGS ${farm_ng_DEFAULT_ARGS}
-    -DBUILD_FARM_NG_PROTOS=${SUPER_PROJ_FARM_NG_PROTOS}
+    -DFARM_NG_BUILD_PROTOS=${SUPER_PROJ_FARM_NG_PROTOS}
     INSTALL_COMMAND ""
 )
