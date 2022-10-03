@@ -19,7 +19,7 @@ foreach(example_src ${example_source})
    Eigen3::Eigen
    fmt::fmt
    pthread
-   sophus::sophus
+   Sophus::sophus
 )
 endforeach()
 
@@ -27,7 +27,7 @@ set(example_source2 image_sensor)
 
 foreach(example_src ${example_source2})
   add_executable( ${example_src} ${example_src}.cpp)
-  target_link_libraries(${example_src} Eigen3::Eigen fmt::fmt pthread sophus::sophus_image sophus::sophus_sensor
+  target_link_libraries(${example_src} Eigen3::Eigen fmt::fmt pthread Sophus::sophus_image Sophus::sophus_sensor
 )
 endforeach()
 
@@ -40,7 +40,7 @@ if (BUILD_FARM_NG_PROTOS)
     protobuf::libprotobuf
     farm_ng_core::farm_ng_core_prototools
     farm_ng_core::farm_ng_core_misc_proto_conv
-    sophus::sophus_sensor_proto_conv
-    sophus::sophus_image_proto_conv
+    Sophus::sophus_sensor_proto_conv
+    Sophus::sophus_image_proto_conv
     )
 endif()
