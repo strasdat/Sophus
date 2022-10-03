@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 # https://semver.org/
-project(farm_ng_all VERSION 0.0.1)
+project(sophus_super VERSION 0.1.0)
 
 
 if("${ROW_ACCESS}" STREQUAL "col_major")
