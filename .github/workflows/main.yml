@@ -63,8 +63,7 @@ jobs:
 
       - name: Install dependencies (Mac)
         run: |
-          ./scripts/install_deps_mac.sh
-          ./script/install_mac_ports.sh
+          ./scripts/install_ci_deps_mac.sh
         if: matrix.os == 'macos-11'
 
       - name: Run tests

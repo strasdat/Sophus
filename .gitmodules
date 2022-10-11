@@ -1,4 +1,0 @@
-[submodule "super_project/farm-ng-core"]
-    active = false
-	path = super_project/farm-ng-core
-	url = git@github.com:farm-ng/farm-ng-core.git

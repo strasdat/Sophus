@@ -19,15 +19,32 @@ API documentation: https://strasdat.github.io/Sophus/
 Cross platform support
 ----------------------
 
-Sophus compiles with clang and gcc on Linux and OS X as well as msvc on Windows.
-The specific compiler and operating system versions which are supported are
-the ones which are used in the Continuous Integration (CI): See GitHubCI_ and
-AppVeyor_ for details.
+Build on MacOS
+##############
 
-However, it should work (with no to minor modification) on many other
-modern configurations as long they support c++14, CMake, Eigen 3.3.X and
-(optionally) fmt. The fmt dependency can be eliminated by passing
-"-DUSE_BASIC_LOGGING=ON" to cmake when configuring Sophus.
+Make sure ports is installed: https://www.macports.org/install.php
+
+Install dependencies, once:
+
+```
+ ./scripts/install_local_deps_mac.sh
+```
+
+From within the repo:
+
+```
+mkdir build
+cd build
+cmake ../super_project
+make -j
+```
+
+Run pre-commit before commiting changes
+
+```
+pre-commit run -a
+```
+
 
 .. _GitHubCI: https://github.com/strasdat/Sophus/actions
 
