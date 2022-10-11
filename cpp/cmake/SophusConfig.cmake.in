@@ -1,7 +1,0 @@
-@PACKAGE_INIT@
-
-include(CMakeFindDependencyMacro)
-find_dependency(Eigen3 3.4 REQUIRED)
-find_dependency(farm_ng_core REQUIRED)
-
-include ("${CMAKE_CURRENT_LIST_DIR}/SophusTargets.cmake")
