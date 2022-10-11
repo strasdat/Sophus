@@ -5,7 +5,6 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 find_package(farm_ng_cmake 0.1.0 REQUIRED)
-
 find_package(Eigen3 3.4.0 REQUIRED)
 find_package(farm_ng_core 0.1.0 REQUIRED)
 
