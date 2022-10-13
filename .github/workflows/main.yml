@@ -62,7 +62,8 @@ jobs:
         if: matrix.os == 'ubuntu-20.04'
 
       - name: Install dependencies (Mac)
-        run: ./scripts/install_deps_mac.sh
+        run: |
+          ./scripts/install_ci_deps_mac.sh
         if: matrix.os == 'macos-11'
 
       - name: Run tests
