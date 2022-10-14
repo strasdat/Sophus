@@ -10,6 +10,7 @@ set(sophus_sensor_src_prefixes
     clipping_planes
     imu_model
     camera_rig
+    orthographic
     )
 
 set(sophus_sensor_cpp)
