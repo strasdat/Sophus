@@ -17,7 +17,6 @@
 #include "sophus/sensor/camera_distortion/affine.h"
 #include "sophus/sensor/camera_distortion/brown_conrady.h"
 #include "sophus/sensor/camera_distortion/kannala_brandt.h"
-#include "sophus/sensor/camera_distortion/orthographic.h"
 
 #include <Eigen/Dense>
 #include <farm_ng/core/enum/enum.h>
@@ -321,6 +320,9 @@ static_assert(
 /// Concrete camera model class.
 class CameraModel {
  public:
+  CameraModel()
+      : model_(PinholeModel({0, 0}, Eigen::Vector4d(1.0, 1.0, 0.0, 0.0))) {}
+
   /// Constructs camera model from `frame_name` and concrete projection model.
   template <class TTransformModelT>
   CameraModel(TTransformModelT model) : model_(model) {}

@@ -122,8 +122,8 @@ struct ImageView {
   ///   }
   /// }
   [[nodiscard]] TPixel const& checked(int u, int v) const {
-    FARM_CHECK(colInBounds(u));
-    FARM_CHECK(rowInBounds(v));
+    FARM_CHECK(colInBounds(u), "u,v: {},{}, w x h: {}", u, v, imageSize());
+    FARM_CHECK(rowInBounds(v), "u,v: {},{}, w x h: {}", u, v, imageSize());
     return rowPtr(v)[u];
   }
 
