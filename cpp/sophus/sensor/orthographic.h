@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "sophus/image/image_size.h"
 #include "sophus/sensor/camera_distortion/orthographic.h"
 
 namespace sophus {
