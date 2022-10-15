@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "sophus/sensor/camera_distortion/orthographic.h"
+
 namespace sophus {
 
 /// Orthographic camera model class template.

@@ -17,7 +17,6 @@
 #include "sophus/sensor/camera_distortion/affine.h"
 #include "sophus/sensor/camera_distortion/brown_conrady.h"
 #include "sophus/sensor/camera_distortion/kannala_brandt.h"
-#include "sophus/sensor/camera_distortion/orthographic.h"
 
 #include <Eigen/Dense>
 #include <farm_ng/core/enum/enum.h>
