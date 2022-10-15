@@ -321,6 +321,9 @@ static_assert(
 /// Concrete camera model class.
 class CameraModel {
  public:
+  CameraModel()
+      : model_(PinholeModel({0, 0}, Eigen::Vector4d(1.0, 1.0, 0.0, 0.0))) {}
+
   /// Constructs camera model from `frame_name` and concrete projection model.
   template <class TTransformModelT>
   CameraModel(TTransformModelT model) : model_(model) {}

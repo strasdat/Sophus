@@ -15,6 +15,7 @@ namespace sophus {
 
 /// Camera as part of a sensor `rig`.
 struct CameraInRig {
+  CameraInRig(){}
   explicit CameraInRig(CameraModel const& camera_model)
       : camera_model(camera_model) {}
 
