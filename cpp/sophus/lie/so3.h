@@ -879,7 +879,7 @@ class So3 : public So3Base<So3<TScalar, kOptions>> {
   /// Draw uniform sample from SO(3) manifold.
   /// Based on: http://planning.cs.uiuc.edu/node198.html
   ///
-  template <class TUniformRandomBitGenerator>
+  template <std::uniform_random_bit_generator TUniformRandomBitGenerator>
   static So3 sampleUniform(TUniformRandomBitGenerator& generator) {
     static_assert(
         kIsUniformRandomBitGeneratorV<TUniformRandomBitGenerator>,

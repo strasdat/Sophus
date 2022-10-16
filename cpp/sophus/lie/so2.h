@@ -565,7 +565,7 @@ class So2 : public So2Base<So2<TScalar, kOptions>> {
 
   /// Draw uniform sample from SO(2) manifold.
   ///
-  template <class TUniformRandomBitGenerator>
+  template <std::uniform_random_bit_generator TUniformRandomBitGenerator>
   static So2 sampleUniform(TUniformRandomBitGenerator& generator) {
     static_assert(
         kIsUniformRandomBitGeneratorV<TUniformRandomBitGenerator>,

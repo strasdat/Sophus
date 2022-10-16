@@ -758,7 +758,7 @@ class Sim2 : public Sim2Base<Sim2<TScalar, kOptions>> {
   /// The scale factor is drawn uniformly in log2-space from [-1, 1],
   /// hence the scale is in [0.5, 2].
   ///
-  template <class TUniformRandomBitGenerator>
+  template <std::uniform_random_bit_generator TUniformRandomBitGenerator>
   static Sim2 sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     return Sim2(

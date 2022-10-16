@@ -446,7 +446,7 @@ class Cartesian : public CartesianBase<Cartesian<TScalar, kM, kOptions>, kM> {
 
   /// Draws uniform samples in the range [-1, 1] per coordinates.
   ///
-  template <class TUniformRandomBitGenerator>
+  template <std::uniform_random_bit_generator TUniformRandomBitGenerator>
   static Cartesian sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     Eigen::Vector<Scalar, kM> v;

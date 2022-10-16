@@ -766,7 +766,7 @@ class Se2 : public Se2Base<Se2<TScalar, kOptions>> {
   ///
   /// Translations are drawn component-wise from the range [-1, 1].
   ///
-  template <class TUniformRandomBitGenerator>
+  template <std::uniform_random_bit_generator TUniformRandomBitGenerator>
   static Se2 sampleUniform(TUniformRandomBitGenerator& generator) {
     std::uniform_real_distribution<Scalar> uniform(Scalar(-1), Scalar(1));
     return Se2(

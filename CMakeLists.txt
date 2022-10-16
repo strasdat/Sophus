@@ -31,7 +31,7 @@ if(SOPHUS_MASTER_PROJECT)
     set(CMAKE_BUILD_TYPE Release)
   endif()
 
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 20)
 
   # Set compiler specific settings (FixMe: Should not cmake do this for us automatically?)
   IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
