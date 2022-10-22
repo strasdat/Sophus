@@ -1,0 +1,6 @@
+*venv*
+*.egg*
+*build*
+*pycache*
+*pb2*
+*proto*

@@ -12,3 +12,5 @@ rst-dir/enum_sophus_*
 rst-dir/global.rst
 rst-dir/index.rst
 rst-dir/namespace_*
+.eggs
+*~
