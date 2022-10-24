@@ -12,6 +12,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <farm_ng/core/logging/eigen.h>
 #include <farm_ng/core/logging/logger.h>
 
 #include <cmath>
