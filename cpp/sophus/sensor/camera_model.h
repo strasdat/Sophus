@@ -95,6 +95,11 @@ class CameraModelT {
   CameraModelT(ImageSize const& image_size, Params const& params)
       : image_size_(image_size), params_(params) {}
 
+  CameraModelT() : image_size_({0, 0}) {
+    params_.setZero();
+    params_.template head<2>().setOnes();
+  }
+
   /// Returns camera model from raw data pointer. To be used within ceres
   /// optimization only.
   static CameraModelT fromData(TScalar const* const ptr) {
@@ -290,7 +295,6 @@ class CameraModelT {
   }
 
  private:
-  CameraModelT() = default;
   ImageSize image_size_;
   Eigen::Matrix<TScalar, kNumParams, 1> params_;
 };
