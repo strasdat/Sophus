@@ -143,7 +143,8 @@ class PointTransformer {
  public:
   PointTransformer() = default;
   explicit PointTransformer(sophus::Se3<TT> const& foo_pose_bar)
-      : foo_rotation_bar_(foo_pose_bar.so3().matrix()),
+      : foo_pose_bar_(foo_pose_bar),
+        foo_rotation_bar_(foo_pose_bar.so3().matrix()),
         bar_origin_in_foo_(foo_pose_bar.translation()) {}
 
   /// Transforms a 3-point from frame bar to frame foo.
@@ -211,6 +212,9 @@ class PointTransformer {
     return dxProjX(scaledTransform(inverse_depth_point_in_bar)) * mat_j;
   }
 
+  [[nodiscard]] sophus::Se3<TT> const& fooPoseBar() const {
+    return foo_pose_bar_;
+  }
   [[nodiscard]] Eigen::Matrix<TT, 3, 3> const& fooRotationBar() const {
     return foo_rotation_bar_;
   }
@@ -219,6 +223,7 @@ class PointTransformer {
   }
 
  private:
+  sophus::Se3<TT> foo_pose_bar_;
   Eigen::Matrix<TT, 3, 3> foo_rotation_bar_;
   Eigen::Matrix<TT, 3, 1> bar_origin_in_foo_;
 };
