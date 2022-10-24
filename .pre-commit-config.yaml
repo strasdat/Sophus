@@ -9,7 +9,7 @@ repos:
       name: pylint
       entry: pylint
       language: system
-      exclude: rst-dir
+      exclude: (rst-dir|setup.py)
       types: [python]
       args: ["--good-names-rgxs=^[_a-z][_a-z0-9]?$",
              "--max-args=10",
