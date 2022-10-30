@@ -33,9 +33,13 @@ class UnitVector3 {
   static farm_ng::Expected<UnitVector3> tryFromUnitVector(
       Eigen::Matrix<TScalar, 3, 1> const& v) {
     using std::abs;
-    if ((v.squaredNorm() - TScalar(1.0)) < sophus::kEpsilon<TScalar>) {
+    auto c = abs(v.squaredNorm() - TScalar(1.0));
+    if (c > sophus::kEpsilon<TScalar>) {
       return FARM_ERROR(
-          "v must be unit length is {}.\n{}", v.squaredNorm(), v.transpose());
+          "v must be unit length is {} - {}.\n{}",
+          v.squaredNorm(),
+          c,
+          v.transpose());
     }
     UnitVector3 unit_vector;
     unit_vector.vector_ = v;
