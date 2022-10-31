@@ -76,6 +76,7 @@ class UnitVector {
 
   // Class invariant established from sibling we're copying from
   UnitVector(UnitVector const&) = default;
+  UnitVector& operator=(UnitVector const&) = default;
 
  private:
   UnitVector() {}
@@ -92,6 +93,7 @@ class Ray {
       : origin_(origin), direction_(direction) {}
 
   Ray(Ray const&) = default;
+  Ray& operator=(Ray const&) = default;
 
   Eigen::Matrix<TScalar, kN, 1> const& origin() const { return origin_; }
   Eigen::Matrix<TScalar, kN, 1>& origin() { return origin_; }
