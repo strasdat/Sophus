@@ -39,6 +39,11 @@ struct RuntimePixelType {
         .num_bytes_per_pixel_channel =
             sizeof(typename ImageTraits<TPixel>::ChannelT)};
   }
+
+  template <class TPixel>
+  bool is() {
+    return fromTemplate<TPixel>() == *this;
+  }
 };
 
 bool operator==(RuntimePixelType const& lhs, RuntimePixelType const& rhs);
@@ -80,6 +85,29 @@ class RuntimeImage {
     static_assert(TPredicate<TPixel>::kIsTypeValid);
   }
 
+  /// Create type-image image from provided shape and pixel type.
+  /// Pixel data is left uninitialized
+  RuntimeImage(ImageShape const& shape, RuntimePixelType const& pixel_type)
+      : shape_(shape),
+        shared_(TAllocator<uint8_t>().allocate(
+            shape.height() * shape.pitchBytes())),
+        pixel_type_(pixel_type) {
+    FARM_CHECK_LE(
+        shape.width() * pixel_type.num_channels *
+            pixel_type.num_bytes_per_pixel_channel,
+        shape.pitchBytes());
+  }
+
+  /// Create type-image image from provided size and pixel type.
+  /// Pixel data is left uninitialized
+  RuntimeImage(ImageSize const& size, RuntimePixelType const& pixel_type)
+      : RuntimeImage(
+            ImageShape::makeFromSizeAndPitch<uint8_t>(
+                size,
+                size.width * pixel_type.num_channels *
+                    pixel_type.num_bytes_per_pixel_channel),
+            pixel_type) {}
+
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
   [[nodiscard]] bool has() const noexcept {
@@ -118,6 +146,13 @@ class RuntimeImage {
     FARM_UNIMPLEMENTED();
   }
 
+  /// Returns v-th row pointer.
+  ///
+  /// Precondition: v must be in [0, height).
+  [[nodiscard]] uint8_t const* rawRowPtr(int v) const {
+    return ((uint8_t*)(rawPtr()) + v * shape_.pitchBytes());
+  }
+
   [[nodiscard]] RuntimePixelType pixelType() const { return pixel_type_; }
 
   [[nodiscard]] int numChannels() const { return pixel_type_.num_channels; }
@@ -141,6 +176,7 @@ class RuntimeImage {
   [[nodiscard]] int width() const { return shape().width(); }
   [[nodiscard]] int height() const { return shape().height(); }
   [[nodiscard]] size_t pitchBytes() const { return shape().pitchBytes(); }
+  [[nodiscard]] size_t sizeBytes() const { return height() * pitchBytes(); }
 
   [[nodiscard]] size_t useCount() const { return shared_.use_count(); }
 
