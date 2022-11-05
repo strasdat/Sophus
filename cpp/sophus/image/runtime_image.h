@@ -18,9 +18,11 @@
 
 namespace sophus {
 
-template <class TPixel>
 struct AnyImagePredicate {
-  static bool constexpr kIsTypeValid = true;
+  template <class TPixel>
+  static bool constexpr isTypeValid() {
+    return true;
+  }
 };
 
 struct RuntimePixelType {
@@ -57,7 +59,7 @@ std::ostream& operator<<(std::ostream& os, RuntimePixelType const& type);
 /// Type-erased image with shared ownership, and read-only access to pixels.
 /// Type is nullable.
 template <
-    template <typename> class TPredicate = AnyImagePredicate,
+    class TPredicate = AnyImagePredicate,
     template <typename> class TAllocator = Eigen::aligned_allocator>
 class RuntimeImage {
  public:
@@ -74,7 +76,7 @@ class RuntimeImage {
       : shape_(image.shape()),
         shared_(image.shared_),
         pixel_type_(RuntimePixelType::fromTemplate<TPixel>()) {
-    static_assert(TPredicate<TPixel>::kIsTypeValid);
+    static_assert(TPredicate::template isTypeValid<TPixel>());
   }
 
   /// Create type-erased image from MutImage.
@@ -82,7 +84,7 @@ class RuntimeImage {
   template <class TPixel>
   RuntimeImage(MutImage<TPixel>&& image)
       : RuntimeImage(Image<TPixel>(std::move(image))) {
-    static_assert(TPredicate<TPixel>::kIsTypeValid);
+    static_assert(TPredicate::template isTypeValid<TPixel>());
   }
 
   /// Create type-image image from provided shape and pixel type.
@@ -92,10 +94,13 @@ class RuntimeImage {
         shared_(TAllocator<uint8_t>().allocate(
             shape.height() * shape.pitchBytes())),
         pixel_type_(pixel_type) {
+    // TODO: Missing check on ImagePredicate against pixel_type
+    //       has to be a runtime check, since we don't know at runtime.
+
     FARM_CHECK_LE(
         shape.width() * pixel_type.num_channels *
             pixel_type.num_bytes_per_pixel_channel,
-        shape.pitchBytes());
+        (int)shape.pitchBytes());
   }
 
   /// Create type-image image from provided size and pixel type.
@@ -112,7 +117,6 @@ class RuntimeImage {
   template <class TPixel>
   [[nodiscard]] bool has() const noexcept {
     RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
-    static_assert(TPredicate<TPixel>::kIsTypeValid);
     return expected_type == pixel_type_;
   }
 
@@ -196,31 +200,77 @@ class RuntimeImage {
 template <template <typename> class TAllocator = Eigen::aligned_allocator>
 using AnyImage = RuntimeImage<AnyImagePredicate, TAllocator>;
 
-template <class TPixel>
-struct IntensityImagePredicate {
-  static int const kNumChannels = ImageTraits<TPixel>::kNumChannels;
-  using ChannelT = typename ImageTraits<TPixel>::ChannelT;
-  static bool constexpr kIsTypeValid =
-      (kNumChannels == 1 || kNumChannels == 3 || kNumChannels == 4) &&
-      (std::is_same_v<ChannelT, uint8_t> ||
-       std::is_same_v<ChannelT, uint16_t> || std::is_same_v<ChannelT, float>);
-  using Variant = std::variant<
-      uint8_t,
-      uint16_t,
-      float,
-      Pixel3U8,
-      Pixel3U16,
-      Pixel3F32,
-      Pixel4U8,
-      Pixel4U16,
-      Pixel4F32>;
-  static_assert(kIsTypeValid == farm_ng::has_type_v<TPixel, Variant>);
+template <class TPixelVariant>
+struct VariantImagePredicate {
+  using PixelVariant = TPixelVariant;
+
+  template <class TPixel>
+  static bool constexpr isTypeValid() {
+    return farm_ng::has_type_v<TPixel, TPixelVariant>;
+  }
 };
+
+using IntensityImagePredicate = VariantImagePredicate<std::variant<
+    uint8_t,
+    uint16_t,
+    float,
+    Pixel3U8,
+    Pixel3U16,
+    Pixel3F32,
+    Pixel4U8,
+    Pixel4U16,
+    Pixel4F32>>;
 
 /// Image to represent intensity image / texture as grayscale (=1 channel),
 /// RGB (=3 channel ) and RGBA (=4 channel), either uint8_t [0-255],
 /// uint16 [0-65535] or float [0.0-1.0] channel type.
 template <template <typename> class TAllocator = Eigen::aligned_allocator>
 using IntensityImage = RuntimeImage<IntensityImagePredicate, TAllocator>;
+
+namespace detail {
+// Call UserFunc with TRuntimeImage cast to the appropriate concrete type
+// from the options in PixelTypes...
+template <typename UserFunc, typename TRuntimeImage, typename... PixelTypes>
+struct VisitImpl;
+
+// base case
+template <typename UserFunc, typename TRuntimeImage, typename PixelType>
+struct VisitImpl<UserFunc, TRuntimeImage, std::variant<PixelType>> {
+  static void visit(UserFunc&& func, TRuntimeImage const& image) {
+    if (image.pixelType().template is<PixelType>()) {
+      func(image.template image<PixelType>());
+    }
+  }
+};
+
+// inductive case
+template <
+    typename UserFunc,
+    typename TRuntimeImage,
+    typename PixelType,
+    typename... Rest>
+struct VisitImpl<UserFunc, TRuntimeImage, std::variant<PixelType, Rest...>> {
+  static void visit(UserFunc&& func, TRuntimeImage const& image) {
+    if (image.pixelType().template is<PixelType>()) {
+      func(image.template image<PixelType>());
+    } else {
+      VisitImpl<UserFunc, TRuntimeImage, std::variant<Rest...>>::visit(
+          std::forward<UserFunc>(func), image);
+    }
+  }
+};
+}  // namespace detail
+
+template <
+    typename UserFunc,
+    class TPredicate = IntensityImagePredicate,
+    template <typename> class TAllocator = Eigen::aligned_allocator>
+decltype(auto) visit(
+    UserFunc&& func, RuntimeImage<TPredicate, TAllocator> const& image) {
+  using TRuntimeImage = RuntimeImage<TPredicate, TAllocator>;
+  detail::
+      VisitImpl<UserFunc, TRuntimeImage, typename TPredicate::PixelVariant>::
+          visit(std::forward<UserFunc>(func), image);
+}
 
 }  // namespace sophus
