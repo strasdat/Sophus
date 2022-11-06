@@ -465,6 +465,12 @@ class Se3Base {
     return p;
   }
 
+  SOPHUS_FUNC void setParams(
+      Eigen::Vector<Scalar, kNumParameters> const& params) {
+    this->translation() = params.template tail<3>();
+    this->so3().setParams(params.template head<4>());
+  }
+
   /// Mutator of translation vector.
   ///
   SOPHUS_FUNC TranslationType& translation() {

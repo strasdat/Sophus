@@ -263,6 +263,12 @@ class So3Base {
     return unitQuaternion().coeffs();
   }
 
+  SOPHUS_FUNC void setParams(
+      Eigen::Vector<Scalar, kNumParameters> const& params) {
+    mutUnitQuaternion().coeffs() = params;
+    this->normalize();
+  }
+
   /// Returns group inverse.
   ///
   SOPHUS_FUNC [[nodiscard]] So3<Scalar> inverse() const {
