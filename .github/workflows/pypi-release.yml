@@ -12,7 +12,9 @@ jobs:
     - uses: actions/setup-python@v2
     - name: Install dependencies
       run: python3 -m pip install --upgrade setuptools wheel
-    - name: Build source
+    - name: Compile project
+      run: python3 -m pip install -e .
+    - name: Build distribution package
       run: python3 setup.py sdist bdist_wheel
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
