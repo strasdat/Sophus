@@ -18,4 +18,4 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
-        password: ${{ secrets.farm_ng_pypi_password }}
+        password: ${{ secrets.sophus_pypi_password }}
