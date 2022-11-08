@@ -153,6 +153,21 @@ class RuntimeImage {
     return ((uint8_t*)(rawPtr()) + v * shape_.pitchBytes());
   }
 
+  /// Returns subview with shared ownership semantics of whole image.
+  [[nodiscard]] RuntimeImage subview(
+      Eigen::Vector2i uv, sophus::ImageSize size) const {
+    FARM_CHECK(imageSize().contains(uv));
+    FARM_CHECK_LE(uv.x() + size.width, shape_.width());
+    FARM_CHECK_LE(uv.y() + size.height, shape_.height());
+
+    auto const shape =
+        ImageShape::makeFromSizeAndPitchUnchecked(size, pitchBytes());
+    const size_t row_offset =
+        uv.x() * numBytesPerPixelChannel() * numChannels();
+    uint8_t* ptr = shared_.get() + uv.y() * pitchBytes() + row_offset;
+    return {shape, std::shared_ptr<uint8_t>(shared_, ptr), pixel_type_};
+  }
+
   [[nodiscard]] RuntimePixelType pixelType() const { return pixel_type_; }
 
   [[nodiscard]] int numChannels() const { return pixel_type_.num_channels; }
@@ -185,6 +200,13 @@ class RuntimeImage {
   [[nodiscard]] bool isEmpty() const { return this->rawPtr() == nullptr; }
 
  private:
+  // Private constructor mainly available for constructing sub-views
+  RuntimeImage(
+      ImageShape shape,
+      std::shared_ptr<uint8_t> shared,
+      RuntimePixelType pixel_type)
+      : shape_(shape), shared_(shared), pixel_type_(pixel_type) {}
+
   ImageShape shape_ = {};
 
   std::shared_ptr<uint8_t> shared_;
