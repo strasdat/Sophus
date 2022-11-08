@@ -77,6 +77,7 @@ class Tests {
     passed &= testUnity();
     passed &= testRawDataAcces();
     passed &= testConstructors();
+    passed &= testRotThroughPoints();
     passed &= testSampleUniformSymmetry();
     passed &= testFit();
     processTestResult(passed);
@@ -213,6 +214,42 @@ class Tests {
     Eigen::Matrix3<Scalar> r = so3_vec_.front().matrix();
     So3Type so3(r);
     SOPHUS_TEST_APPROX(passed, r, so3.matrix(), kEpsilon<Scalar>, "");
+
+    return passed;
+  }
+
+  bool testRotThroughPoints() {
+    bool passed = true;
+    std::default_random_engine generator(0);
+
+    for (size_t trial = 0; trial < 5; trial++) {
+      std::normal_distribution<Scalar> normal(0, 10);
+
+      Point point_from(normal(generator), normal(generator), normal(generator));
+      Point point_to(normal(generator), normal(generator), normal(generator));
+
+      std::cerr << point_from.transpose() << std::endl;
+      std::cerr << point_to.transpose() << std::endl;
+
+      So3Type to_rot_from = So3Type::rotThroughPoints(point_from, point_to);
+
+      // Check that the resulting rotation can take ``from`` into a vector
+      // collinear with ``to``
+      SOPHUS_TEST_APPROX(
+          passed,
+          point_to.cross(to_rot_from * point_from).norm(),
+          Scalar(0.0),
+          kEpsilon<Scalar>,
+          "");
+
+      // And the reverse as a sanity check
+      SOPHUS_TEST_APPROX(
+          passed,
+          point_from.cross(to_rot_from.inverse() * point_to).norm(),
+          Scalar(0.0),
+          kEpsilon<Scalar>,
+          "");
+    }
 
     return passed;
   }
