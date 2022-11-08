@@ -2,6 +2,5 @@
 requires = [
     "setuptools",
     "farm-ng-package",
-    "farm-ng-core"
     ]
 build-backend = "setuptools.build_meta"
