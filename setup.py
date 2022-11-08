@@ -5,7 +5,7 @@ from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
 from setuptools.command.install import install
 from pathlib import Path
-from farm_ng.core.package import build_package_protos, clean_protos
+from farm_ng.package.package import build_package_protos, clean_protos
 
 
 class BuildProtosCommand(Command):
