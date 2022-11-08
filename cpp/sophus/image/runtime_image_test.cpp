@@ -209,7 +209,7 @@ TEST(IntensityImage, visitor) {
     Image<float> ref_image = std::move(mut_image);
     IntensityImage<> runtime_image = ref_image;
 
-    visit(
+    visitImage(
         [&](auto const& image) {
           using Timg = typename std::remove_reference<decltype(image)>::type;
           using TPixel = typename Timg::PixelType;
@@ -231,7 +231,7 @@ TEST(IntensityImage, visitor) {
     Image<Pixel3U8> ref_image = std::move(mut_image);
     IntensityImage<> runtime_image = ref_image;
 
-    visit(
+    visitImage(
         [&](auto const& image) {
           using Timg = typename std::remove_reference<decltype(image)>::type;
           using TPixel = typename Timg::PixelType;
@@ -251,7 +251,7 @@ TEST(IntensityImage, visitor) {
     }
     Image<Pixel3U8> ref_image = std::move(mut_image);
     IntensityImage<> runtime_image = ref_image;
-    visit(
+    visitImage(
         farm_ng::Overload{
             [&](Image<float> const& image) { FARM_CHECK(false); },
             [&](Image<Pixel3U8> const& image) {
@@ -261,7 +261,7 @@ TEST(IntensityImage, visitor) {
         },
         runtime_image);
 
-    visit(
+    visitImage(
         farm_ng::Overload{
             [&](Image<float> const& image) { FARM_CHECK(false); },
             [&](Image<uint32_t> const& image) { FARM_CHECK(false); },

@@ -265,7 +265,7 @@ template <
     typename UserFunc,
     class TPredicate = IntensityImagePredicate,
     template <typename> class TAllocator = Eigen::aligned_allocator>
-decltype(auto) visit(
+void visitImage(
     UserFunc&& func, RuntimeImage<TPredicate, TAllocator> const& image) {
   using TRuntimeImage = RuntimeImage<TPredicate, TAllocator>;
   detail::
