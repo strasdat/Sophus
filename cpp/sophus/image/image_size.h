@@ -59,6 +59,12 @@ class ImageShape {
  public:
   ImageShape() = default;
 
+  ImageShape(ImageSize image_size, size_t pitch_bytes)
+      : image_size_(image_size), pitch_bytes_(pitch_bytes) {}
+
+  ImageShape(int width, int height, size_t pitch_bytes)
+      : image_size_(width, height), pitch_bytes_(pitch_bytes) {}
+
   template <class PixelType>
   [[nodiscard]] static ImageShape makeFromSizeAndPitch(
       ImageSize image_size, size_t pitch_bytes) {
