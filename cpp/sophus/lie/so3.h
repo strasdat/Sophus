@@ -876,30 +876,6 @@ class So3 : public So3Base<So3<TScalar, kOptions>> {
     return So3::exp(Eigen::Vector3<Scalar>(Scalar(0), Scalar(0), z));
   }
 
-  /// Construct rotation which would take direction vector ``from`` into ``to``
-  /// such that ``to \propto rotThroughPoints(from,to) * from``. I.e. that the
-  /// rotated point ``from`` is colinear with ``to`` (equal up to scale)
-  ///
-  /// The axis of rotation is perpendicular to both ``from`` and ``to``.
-  ///
-  static SOPHUS_FUNC So3 rotThroughPoints(Point const& from, Point const& to) {
-    const Scalar to_sq_from_sq = from.squaredNorm() * to.squaredNorm();
-    const Point to_cross_from = to.cross(from);
-    const Scalar to_cross_from_sq = to_cross_from.squaredNorm();
-
-    // TODO: doesn't take into account when collinear reversed.
-    if (to_cross_from_sq >= sophus::kEpsilon<Scalar>) {
-      using std::sqrt;
-      const Point axis = to_cross_from / sqrt(to_cross_from_sq);
-      // if to_cross_from_sq is non-zero, to_sq_to_sq will be too
-      const Scalar sin_theta = sqrt(to_cross_from_sq / to_sq_from_sq);
-      const Scalar theta = asin(sin_theta);
-      return So3::exp(axis * theta);
-    } else {
-      return So3();
-    }
-  }
-
   /// Draw uniform sample from SO(3) manifold.
   /// Based on: http://planning.cs.uiuc.edu/node198.html
   ///
