@@ -253,19 +253,19 @@ TEST(IntensityImage, visitor) {
     IntensityImage<> runtime_image = ref_image;
     visitImage(
         farm_ng::Overload{
-            [&](Image<float> const&) { FARM_CHECK(false); },
-            [&](Image<Pixel3U8> const&) {
+            [&](Image<float> const& /*unused*/) { FARM_CHECK(false); },
+            [&](Image<Pixel3U8> const& /*unused*/) {
               // Should execute here
             },
-            [&](auto const&) { FARM_CHECK(false); },
+            [&](auto const& /*unused*/) { FARM_CHECK(false); },
         },
         runtime_image);
 
     visitImage(
         farm_ng::Overload{
-            [&](Image<float> const&) { FARM_CHECK(false); },
-            [&](Image<uint32_t> const&) { FARM_CHECK(false); },
-            [&](auto const&) {
+            [&](Image<float> const& /*unused*/) { FARM_CHECK(false); },
+            [&](Image<uint32_t> const& /*unused*/) { FARM_CHECK(false); },
+            [&](auto const& /*unused*/) {
               // Should execute here
             },
         },

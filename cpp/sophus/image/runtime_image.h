@@ -230,47 +230,47 @@ using IntensityImage = RuntimeImage<IntensityImagePredicate, TAllocator>;
 namespace detail {
 // Call UserFunc with TRuntimeImage cast to the appropriate concrete type
 // from the options in PixelTypes...
-template <typename UserFunc, typename TRuntimeImage, typename... PixelTypes>
+template <typename TUserFunc, typename TRuntimeImage, typename... TPixelTypes>
 struct VisitImpl;
 
 // base case
-template <typename UserFunc, typename TRuntimeImage, typename PixelType>
-struct VisitImpl<UserFunc, TRuntimeImage, std::variant<PixelType>> {
-  static void visit(UserFunc&& func, TRuntimeImage const& image) {
-    if (image.pixelType().template is<PixelType>()) {
-      func(image.template image<PixelType>());
+template <typename TUserFunc, typename TRuntimeImage, typename TPixelType>
+struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType>> {
+  static void visit(TUserFunc&& func, TRuntimeImage const& image) {
+    if (image.pixelType().template is<TPixelType>()) {
+      func(image.template image<TPixelType>());
     }
   }
 };
 
 // inductive case
 template <
-    typename UserFunc,
+    typename TUserFunc,
     typename TRuntimeImage,
-    typename PixelType,
-    typename... Rest>
-struct VisitImpl<UserFunc, TRuntimeImage, std::variant<PixelType, Rest...>> {
-  static void visit(UserFunc&& func, TRuntimeImage const& image) {
-    if (image.pixelType().template is<PixelType>()) {
-      func(image.template image<PixelType>());
+    typename TPixelType,
+    typename... TRest>
+struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType, TRest...>> {
+  static void visit(TUserFunc&& func, TRuntimeImage const& image) {
+    if (image.pixelType().template is<TPixelType>()) {
+      func(image.template image<TPixelType>());
     } else {
-      VisitImpl<UserFunc, TRuntimeImage, std::variant<Rest...>>::visit(
-          std::forward<UserFunc>(func), image);
+      VisitImpl<TUserFunc, TRuntimeImage, std::variant<TRest...>>::visit(
+          std::forward<TUserFunc>(func), image);
     }
   }
 };
 }  // namespace detail
 
 template <
-    typename UserFunc,
+    typename TUserFunc,
     class TPredicate = IntensityImagePredicate,
     template <typename> class TAllocator = Eigen::aligned_allocator>
 void visitImage(
-    UserFunc&& func, RuntimeImage<TPredicate, TAllocator> const& image) {
+    TUserFunc&& func, RuntimeImage<TPredicate, TAllocator> const& image) {
   using TRuntimeImage = RuntimeImage<TPredicate, TAllocator>;
   detail::
-      VisitImpl<UserFunc, TRuntimeImage, typename TPredicate::PixelVariant>::
-          visit(std::forward<UserFunc>(func), image);
+      VisitImpl<TUserFunc, TRuntimeImage, typename TPredicate::PixelVariant>::
+          visit(std::forward<TUserFunc>(func), image);
 }
 
 }  // namespace sophus
