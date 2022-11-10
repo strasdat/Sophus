@@ -70,6 +70,14 @@ class ImageShape {
     return shape;
   }
 
+  [[nodiscard]] static ImageShape makeFromSizeAndPitchUnchecked(
+      ImageSize image_size, size_t pitch_bytes) {
+    ImageShape shape;
+    shape.image_size_ = image_size;
+    shape.pitch_bytes_ = pitch_bytes;
+    return shape;
+  }
+
   template <class TPixelTypeT>
   [[nodiscard]] static ImageShape makeFromSize(sophus::ImageSize image_size) {
     return makeFromSizeAndPitch<TPixelTypeT>(

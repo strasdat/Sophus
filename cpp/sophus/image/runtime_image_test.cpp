@@ -147,6 +147,31 @@ void plusOne(MutImageView<float> mut_view) {
   }
 }
 
+TEST(IntensityImage, subview) {
+  MutImage<float> mut_image(ImageSize(4, 4));
+  for (int y = 0; y < 4; ++y) {
+    for (int x = 0; x < 4; ++x) {
+      mut_image.checkedMut(x, y) = 4 * y + x;
+    }
+  }
+
+  Image<float> ref_image = std::move(mut_image);
+  IntensityImage<> runtime_image = ref_image;
+  IntensityImage<> runtime_sub = runtime_image.subview({1, 1}, {2, 2});
+  FARM_CHECK_EQ(runtime_sub.width(), 2);
+  FARM_CHECK_EQ(runtime_sub.height(), 2);
+
+  {
+    Image<float> sub = runtime_sub.image<float>();
+
+    for (int y = 0; y < 2; ++y) {
+      for (int x = 0; x < 2; ++x) {
+        FARM_CHECK_EQ(sub.checked(x, y), ref_image.checked(x + 1, y + 1));
+      }
+    }
+  }
+}
+
 TEST(ClassHierarchy, call_function) {
   // The sum function takes a ImageView<float> as input. Hence we can pass in:
   //  - ImageView<float>
