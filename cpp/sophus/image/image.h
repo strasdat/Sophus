@@ -191,11 +191,7 @@ class MutImage : public MutImageView<TPixel> {
   std::shared_ptr<uint8_t> shared_;  // NOLINT
 };
 
-template <
-    template <typename>
-    class TPredicate,
-    template <typename>
-    class TAllocator>
+template <class TPredicate, template <typename> class TAllocator>
 class RuntimeImage;
 
 /// Image read-only access to pixels and shared ownership, hence cheap to copy.
@@ -264,11 +260,7 @@ class Image : public ImageView<TPixel> {
   template <class TT, template <typename> class TAllocator2T>
   friend class MutImage;
 
-  template <
-      template <typename>
-      class TPredicate,
-      template <typename>
-      class TAllocator2T>
+  template <class TPredicate, template <typename> class TAllocator2T>
   friend class RuntimeImage;
 
   explicit Image(ImageView<TPixel> view) : ImageView<TPixel>(view) {}
