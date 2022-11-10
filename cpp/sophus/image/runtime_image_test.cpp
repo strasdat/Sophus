@@ -9,6 +9,7 @@
 #include "sophus/image/runtime_image.h"
 
 #include <farm_ng/core/logging/logger.h>
+#include <farm_ng/core/misc/variant_utils.h>
 #include <gtest/gtest.h>
 
 using namespace sophus;
@@ -194,4 +195,80 @@ TEST(ClassHierarchy, call_function) {
 
   // won't compile, since Image is a ImageView but not a MutImageView:
   // plusOne(image);
+}
+
+TEST(IntensityImage, visitor) {
+  {
+    MutImage<float> mut_image(ImageSize(4, 4));
+    for (int y = 0; y < 4; ++y) {
+      for (int x = 0; x < 4; ++x) {
+        mut_image.uncheckedMut(x, y) = 4 * y + x;
+      }
+    }
+
+    Image<float> ref_image = std::move(mut_image);
+    IntensityImage<> runtime_image = ref_image;
+
+    visitImage(
+        [&](auto const& image) {
+          using Timg = typename std::remove_reference<decltype(image)>::type;
+          using TPixel = typename Timg::PixelType;
+          FARM_CHECK(runtime_image.template has<TPixel>());
+          if constexpr (std::is_same_v<TPixel, float>) {
+            FARM_CHECK(image.hasSameData(ref_image));
+          }
+        },
+        runtime_image);
+  }
+
+  {
+    MutImage<Pixel3U8> mut_image(ImageSize(4, 4));
+    for (int y = 0; y < 4; ++y) {
+      for (int x = 0; x < 4; ++x) {
+        mut_image.uncheckedMut(x, y) = Pixel3U8(x, y, 1);
+      }
+    }
+    Image<Pixel3U8> ref_image = std::move(mut_image);
+    IntensityImage<> runtime_image = ref_image;
+
+    visitImage(
+        [&](auto const& image) {
+          using Timg = typename std::remove_reference<decltype(image)>::type;
+          using TPixel = typename Timg::PixelType;
+          FARM_CHECK(runtime_image.template has<TPixel>());
+          if constexpr (std::is_same_v<TPixel, Pixel3U8>) {
+            FARM_CHECK(image.hasSameData(ref_image));
+          }
+        },
+        runtime_image);
+  }
+  {
+    MutImage<Pixel3U8> mut_image(ImageSize(4, 4));
+    for (int y = 0; y < 4; ++y) {
+      for (int x = 0; x < 4; ++x) {
+        mut_image.uncheckedMut(x, y) = Pixel3U8(x, y, 1);
+      }
+    }
+    Image<Pixel3U8> ref_image = std::move(mut_image);
+    IntensityImage<> runtime_image = ref_image;
+    visitImage(
+        farm_ng::Overload{
+            [&](Image<float> const& /*unused*/) { FARM_CHECK(false); },
+            [&](Image<Pixel3U8> const& /*unused*/) {
+              // Should execute here
+            },
+            [&](auto const& /*unused*/) { FARM_CHECK(false); },
+        },
+        runtime_image);
+
+    visitImage(
+        farm_ng::Overload{
+            [&](Image<float> const& /*unused*/) { FARM_CHECK(false); },
+            [&](Image<uint32_t> const& /*unused*/) { FARM_CHECK(false); },
+            [&](auto const& /*unused*/) {
+              // Should execute here
+            },
+        },
+        runtime_image);
+  }
 }
