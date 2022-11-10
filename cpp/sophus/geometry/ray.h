@@ -9,6 +9,7 @@
 #pragma once
 
 #include "sophus/common/common.h"
+#include "sophus/lie/so3.h"
 
 #include <Eigen/Dense>
 #include <farm_ng/core/logging/expected.h>
@@ -134,5 +135,51 @@ class Ray {
   Eigen::Matrix<TScalar, kN, 1> origin_;
   UnitVector<TScalar, kN> direction_;
 };
+
+/// Construct rotation which would take unit direction vector ``from`` into
+/// ``to`` such that ``to = rotThroughPoints(from,to) * from``. I.e. that the
+/// rotated point ``from`` is colinear with ``to`` (equal up to scale)
+///
+/// The axis of rotation is perpendicular to both ``from`` and ``to``.
+///
+template <class TScalar>
+SOPHUS_FUNC So3<TScalar> rotThroughPoints(
+    UnitVector3<TScalar> const& from, UnitVector3<TScalar> const& to) {
+  using std::abs;
+  using std::atan2;
+  Eigen::Vector<TScalar, 3> from_cross_to = from.vector().cross(to.vector());
+  TScalar n = from_cross_to.norm();
+  if (abs(n) < sophus::kEpsilon<TScalar>) {
+    return So3<TScalar>();
+  }
+  // https://stackoverflow.com/a/32724066
+  TScalar angle = atan2(n, from.vector().dot(to.vector()));
+
+  return So3<TScalar>::exp(angle * from_cross_to / n);
+}
+
+/// Construct rotation which would take direction vector ``from`` into ``to``
+/// such that ``to \propto rotThroughPoints(from,to) * from``. I.e. that the
+/// rotated point ``from`` is colinear with ``to`` (equal up to scale)
+///
+/// The axis of rotation is perpendicular to both ``from`` and ``to``.
+///
+/// Precondition: Neither ``from`` nor ``to`` must be zero. This is unchecked.
+template <class TScalar>
+SOPHUS_FUNC So3<TScalar> rotThroughPoints(
+    Eigen::Vector<TScalar, 3> const& from,
+    Eigen::Vector<TScalar, 3> const& to) {
+  using std::abs;
+  using std::atan2;
+  Eigen::Vector<TScalar, 3> from_cross_to = from.cross(to);
+  TScalar n = from_cross_to.norm();
+  if (abs(n) < sophus::kEpsilon<TScalar>) {
+    return So3<TScalar>();
+  }
+  // https://stackoverflow.com/a/32724066
+  TScalar angle = atan2(n, from.dot(to));
+
+  return So3<TScalar>::exp(angle * from_cross_to / n);
+}
 
 }  // namespace sophus
