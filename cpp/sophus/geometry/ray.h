@@ -167,7 +167,8 @@ SOPHUS_FUNC So3<TScalar> rotThroughPoints(
 /// Precondition: Neither ``from`` nor ``to`` must be zero. This is unchecked.
 template <class TScalar>
 SOPHUS_FUNC So3<TScalar> rotThroughPoints(
-    Eigen::Vector<TScalar, 3> const& from, Eigen::Vector<TScalar, 3> const& to) {
+    Eigen::Vector<TScalar, 3> const& from,
+    Eigen::Vector<TScalar, 3> const& to) {
   using std::abs;
   using std::atan2;
   Eigen::Vector<TScalar, 3> from_cross_to = from.cross(to);
