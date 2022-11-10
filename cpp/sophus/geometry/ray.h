@@ -142,20 +142,20 @@ class Ray {
 ///
 /// The axis of rotation is perpendicular to both ``from`` and ``to``.
 ///
-template <class Scalar>
-SOPHUS_FUNC So3<Scalar> rotThroughPoints(
-    UnitVector3<Scalar> const& from, UnitVector3<Scalar> const& to) {
+template <class TScalar>
+SOPHUS_FUNC So3<TScalar> rotThroughPoints(
+    UnitVector3<TScalar> const& from, UnitVector3<TScalar> const& to) {
   using std::abs;
   using std::atan2;
-  Eigen::Vector<Scalar, 3> from_cross_to = from.vector().cross(to.vector());
-  Scalar n = from_cross_to.norm();
-  if (abs(n) < sophus::kEpsilon<Scalar>) {
-    return So3<Scalar>();
+  Eigen::Vector<TScalar, 3> from_cross_to = from.vector().cross(to.vector());
+  TScalar n = from_cross_to.norm();
+  if (abs(n) < sophus::kEpsilon<TScalar>) {
+    return So3<TScalar>();
   }
   // https://stackoverflow.com/a/32724066
-  Scalar angle = atan2(n, from.vector().dot(to.vector()));
+  TScalar angle = atan2(n, from.vector().dot(to.vector()));
 
-  return So3<Scalar>::exp(angle * from_cross_to / n);
+  return So3<TScalar>::exp(angle * from_cross_to / n);
 }
 
 /// Construct rotation which would take direction vector ``from`` into ``to``
@@ -165,20 +165,20 @@ SOPHUS_FUNC So3<Scalar> rotThroughPoints(
 /// The axis of rotation is perpendicular to both ``from`` and ``to``.
 ///
 /// Precondition: Neither ``from`` nor ``to`` must be zero. This is unchecked.
-template <class Scalar>
-SOPHUS_FUNC So3<Scalar> rotThroughPoints(
-    Eigen::Vector<Scalar, 3> const& from, Eigen::Vector<Scalar, 3> const& to) {
+template <class TScalar>
+SOPHUS_FUNC So3<TScalar> rotThroughPoints(
+    Eigen::Vector<TScalar, 3> const& from, Eigen::Vector<TScalar, 3> const& to) {
   using std::abs;
   using std::atan2;
-  Eigen::Vector<Scalar, 3> from_cross_to = from.cross(to);
-  Scalar n = from_cross_to.norm();
-  if (abs(n) < sophus::kEpsilon<Scalar>) {
-    return So3<Scalar>();
+  Eigen::Vector<TScalar, 3> from_cross_to = from.cross(to);
+  TScalar n = from_cross_to.norm();
+  if (abs(n) < sophus::kEpsilon<TScalar>) {
+    return So3<TScalar>();
   }
   // https://stackoverflow.com/a/32724066
-  Scalar angle = atan2(n, from.dot(to));
+  TScalar angle = atan2(n, from.dot(to));
 
-  return So3<Scalar>::exp(angle * from_cross_to / n);
+  return So3<TScalar>::exp(angle * from_cross_to / n);
 }
 
 }  // namespace sophus
