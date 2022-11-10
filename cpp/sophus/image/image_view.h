@@ -72,7 +72,7 @@ struct ImageView {
   [[nodiscard]] bool isEmpty() const { return this->ptr_ == nullptr; }
 
   /// Returns true if view is contiguous.
-  [[nodiscard]] bool isContiguous() {
+  [[nodiscard]] bool isContiguous() const {
     return imageSize().width * sizeof(TPixel) == shape().pitchBytes();
   }
 

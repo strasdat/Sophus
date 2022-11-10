@@ -42,8 +42,12 @@ struct RuntimePixelType {
             sizeof(typename ImageTraits<TPixel>::ChannelT)};
   }
 
+  [[nodiscard]] inline int bytesPerPixel() const {
+    return num_channels * num_bytes_per_pixel_channel;
+  }
+
   template <class TPixel>
-  bool is() {
+  [[nodiscard]] bool is() {
     return fromTemplate<TPixel>() == *this;
   }
 };
