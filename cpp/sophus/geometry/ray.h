@@ -151,11 +151,11 @@ SOPHUS_FUNC So3<Scalar> rotThroughPoints(
   Scalar n = from_cross_to.norm();
   if (abs(n) < sophus::kEpsilon<Scalar>) {
     return So3<Scalar>();
-  } else {
-    // https://stackoverflow.com/a/32724066
-    Scalar angle = atan2(n, from.vector().dot(to.vector()));
-    return So3<Scalar>::exp(angle * from_cross_to / n);
   }
+  // https://stackoverflow.com/a/32724066
+  Scalar angle = atan2(n, from.vector().dot(to.vector()));
+
+  return So3<Scalar>::exp(angle * from_cross_to / n);
 }
 
 /// Construct rotation which would take direction vector ``from`` into ``to``
@@ -174,11 +174,11 @@ SOPHUS_FUNC So3<Scalar> rotThroughPoints(
   Scalar n = from_cross_to.norm();
   if (abs(n) < sophus::kEpsilon<Scalar>) {
     return So3<Scalar>();
-  } else {
-    // https://stackoverflow.com/a/32724066
-    Scalar angle = atan2(n, from.dot(to));
-    return So3<Scalar>::exp(angle * from_cross_to / n);
   }
+  // https://stackoverflow.com/a/32724066
+  Scalar angle = atan2(n, from.dot(to));
+
+  return So3<Scalar>::exp(angle * from_cross_to / n);
 }
 
 }  // namespace sophus
