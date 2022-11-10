@@ -161,6 +161,20 @@ struct ImageView {
   }
 
   /// Performs reduction / fold on image view.
+  template <class TFunc>
+  void visit(TFunc const& user_function) const {
+    FARM_CHECK(!this->isEmpty());
+
+    for (int v = 0; v < this->shape_.height(); ++v) {
+      TPixel const* p = this->rowPtr(v);
+      TPixel const* end_of_row = p + this->shape_.width();
+      for (; p != end_of_row; ++p) {
+        user_function(*p);
+      }
+    }
+  }
+
+  /// Performs reduction / fold on image view.
   template <class TReduceOp, class TVal>
   [[nodiscard]] TVal reduce(
       TReduceOp const& reduce_op, TVal val = TVal{}) const {

@@ -1,6 +1,6 @@
 [build-system]
 requires = [
     "setuptools",
-    "farm-ng-core @ git+https://github.com/farm-ng/farm-ng-core@main"
+    "farm-ng-package",
     ]
 build-backend = "setuptools.build_meta"
