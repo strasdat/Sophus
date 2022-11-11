@@ -23,7 +23,7 @@ farm_ng::Expected<Z1ProjCameraModel> fromProto(
     return params;
   };
 
-  Z1ProjDistortationType model = Z1ProjDistortationType::pinhole;
+  Z1ProjDistortionType model = Z1ProjDistortionType::pinhole;
   if (trySetFromString(model, proto.distortion_type())) {
     FARM_ERROR("distortion type not supported: {}", proto.distortion_type());
   }

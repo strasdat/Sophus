@@ -66,7 +66,7 @@ TEST(camera_model, projection_round_trip) {
   Eigen::VectorXd get_params(8);
   get_params << 1000, 1000, 320, 280, 0.1, 0.01, 0.001, 0.0001;
   Z1ProjCameraModel kb3 = Z1ProjCameraModel(
-      {640, 480}, Z1ProjDistortationType::kannala_brandt_k3, get_params);
+      {640, 480}, Z1ProjDistortionType::kannala_brandt_k3, get_params);
 
   z1_cameras.push_back(pinhole);
   z1_cameras.push_back(kb3);

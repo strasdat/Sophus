@@ -14,19 +14,19 @@ namespace sophus {
 
 namespace {
 Z1ProjDistortationVariant getModelFromType(
-    Z1ProjDistortationType projection_type,
+    Z1ProjDistortionType projection_type,
     ImageSize image_size,
     Eigen::VectorXd const& params) {
   switch (projection_type) {
-    case Z1ProjDistortationType::pinhole: {
+    case Z1ProjDistortionType::pinhole: {
       return PinholeModel(image_size, params);
       break;
     }
-    case Z1ProjDistortationType::brown_conrady: {
+    case Z1ProjDistortionType::brown_conrady: {
       return BrownConradyModel(image_size, params);
       break;
     }
-    case Z1ProjDistortationType::kannala_brandt_k3: {
+    case Z1ProjDistortionType::kannala_brandt_k3: {
       return KannalaBrandtModel(image_size, params);
       break;
     }
@@ -37,7 +37,7 @@ Z1ProjDistortationVariant getModelFromType(
 
 Z1ProjCameraModel::Z1ProjCameraModel(
     ImageSize image_size,
-    Z1ProjDistortationType projection_type,
+    Z1ProjDistortionType projection_type,
     Eigen::VectorXd const& params)
     : model_(getModelFromType(projection_type, image_size, params)) {}
 
@@ -217,16 +217,16 @@ bool Z1ProjCameraModel::contains(
       this->model_);
 }
 
-Z1ProjDistortationType Z1ProjCameraModel::distortionType() const {
+Z1ProjDistortionType Z1ProjCameraModel::distortionType() const {
   return std::visit(
       [](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         if constexpr (std::is_same_v<T, PinholeModel>) {
-          return Z1ProjDistortationType::pinhole;
+          return Z1ProjDistortionType::pinhole;
         } else if constexpr (std::is_same_v<T, BrownConradyModel>) {
-          return Z1ProjDistortationType::brown_conrady;
+          return Z1ProjDistortionType::brown_conrady;
         } else if constexpr (std::is_same_v<T, KannalaBrandtModel>) {
-          return Z1ProjDistortationType::kannala_brandt_k3;
+          return Z1ProjDistortionType::kannala_brandt_k3;
         } else {
           static_assert(farm_ng::AlwaysFalse<T>, "non-exhaustive visitor!");
         }

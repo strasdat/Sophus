@@ -320,7 +320,7 @@ class Z1ProjCameraModelT {
 };
 
 /// Camera model projection type.
-FARM_ENUM(Z1ProjDistortationType, (pinhole, brown_conrady, kannala_brandt_k3));
+FARM_ENUM(Z1ProjDistortionType, (pinhole, brown_conrady, kannala_brandt_k3));
 
 /// Pinhole camera model.
 using PinholeModel = Z1ProjCameraModelT<double, AffineZ1Projection>;
@@ -338,9 +338,9 @@ using Z1ProjDistortationVariant =
 
 static_assert(
     std::variant_size_v<Z1ProjDistortationVariant> ==
-        getCount(Z1ProjDistortationType()),
+        getCount(Z1ProjDistortionType()),
     "When the variant Z1ProjDistortationVariant is updated, one needs to "
-    "update the enum Z1ProjDistortationType as well, and vice versa.");
+    "update the enum Z1ProjDistortionType as well, and vice versa.");
 
 /// Concrete camera model class.
 class Z1ProjCameraModel {
@@ -359,7 +359,7 @@ class Z1ProjCameraModel {
   ///               specified `projection_type` (TransformModel::kNumParams).
   Z1ProjCameraModel(
       ImageSize image_size,
-      Z1ProjDistortationType projection_type,
+      Z1ProjDistortionType projection_type,
       Eigen::VectorXd const& params);
 
   /// Creates default pinhole model from `image_size`.
@@ -377,7 +377,7 @@ class Z1ProjCameraModel {
   }
 
   /// Camera distortion flag
-  [[nodiscard]] Z1ProjDistortationType distortionType() const;
+  [[nodiscard]] Z1ProjDistortionType distortionType() const;
 
   [[nodiscard]] Eigen::Vector2d focalLength() const;
 
@@ -509,7 +509,7 @@ class CameraModel {
   // ///               specified `projection_type` (TransformModel::kNumParams).
   // Z1ProjCameraModel(
   //     ImageSize image_size,
-  //     Z1ProjDistortationType projection_type,
+  //     Z1ProjDistortionType projection_type,
   //     Eigen::VectorXd const& params);
 
   /// Creates default pinhole model from `image_size`.
