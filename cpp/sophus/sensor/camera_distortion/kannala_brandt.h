@@ -17,10 +17,10 @@
 
 namespace sophus {
 
-// https://github.com/facebookincubator/isometric_pattern_matcher/blob/main/IsometricPatternMatcher/CameraModels.h
+// https://github.com/facebookincubator/isometric_pattern_matcher/blob/main/IsometricPatternMatcher/Z1ProjCameraModels.h
 //
 // parameters = fx, fy, cx, cy, kb0, kb1, kb2, kb3
-class KannalaBrandtK3Transform {
+class KannalaBrandtZ1Projection {
  public:
   static int constexpr kNumDistortionParams = 4;
   static int constexpr kNumParams = kNumDistortionParams + 4;
@@ -80,7 +80,7 @@ class KannalaBrandtK3Transform {
              params.template segment<2>(2);
     }  // linearize r around radius=0
 
-    return AffineTransform::distort(
+    return AffineZ1Projection::distort(
 
         params.template head<4>(), proj_point_in_camera_z1_plane);
   }

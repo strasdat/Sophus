@@ -15,7 +15,7 @@ import "sophus/lie.proto";
 package sophus.proto;
 
 
-message CameraModel {
+message Z1ProjCameraModel {
   ImageSize image_size = 1;
 
   // Specifies the type of distortion model.
@@ -25,8 +25,8 @@ message CameraModel {
   repeated double params = 3;
 };
 
-message CameraModels {
-  repeated CameraModel camera_models = 1;
+message Z1ProjCameraModels {
+  repeated Z1ProjCameraModel camera_models = 1;
 }
 
 message ClippingPlanes {
@@ -35,7 +35,7 @@ message ClippingPlanes {
 }
 
 message CameraInRig {
-  CameraModel camera_model = 1;
+  Z1ProjCameraModel camera_model = 1;
 
   Se3F64 rig_pose_camera = 2;
 }

@@ -21,7 +21,7 @@ using namespace sophus;
 
 double constexpr kEps = 1e-5;
 
-CameraModel openCvCameraModel() {
+Z1ProjCameraModel openCvZ1ProjCameraModel() {
   int w = 848;
   int h = 800;
   double fx = 286;
@@ -31,7 +31,7 @@ CameraModel openCvCameraModel() {
   Eigen::Matrix<double, 9, 1> get_params;
   get_params << fx, fy, cx, cy, -0.0080617731437087059, 0.04318523034453392,
       -0.039864420890808105, 0.0068964879028499126, 0.0;
-  return CameraModel(BrownConradyModel({w, h}, get_params));
+  return Z1ProjCameraModel(BrownConradyModel({w, h}, get_params));
 }
 
 // TODO: move to farm_ng_utils
@@ -60,18 +60,27 @@ CameraModel openCvCameraModel() {
 // }
 
 TEST(camera_model, projection_round_trip) {
-  std::vector<CameraModel> camera_models;
-  CameraModel pinhole = CameraModel::createDefaultPinholeModel({640, 480});
+  std::vector<Z1ProjCameraModel> z1_cameras;
+  Z1ProjCameraModel pinhole =
+      Z1ProjCameraModel::createDefaultPinholeModel({640, 480});
   Eigen::VectorXd get_params(8);
   get_params << 1000, 1000, 320, 280, 0.1, 0.01, 0.001, 0.0001;
-  CameraModel kb3 = CameraModel(
-      {640, 480}, CameraDistortionType::kannala_brandt_k3, get_params);
+  Z1ProjCameraModel kb3 = Z1ProjCameraModel(
+      {640, 480}, Z1ProjDistortationType::kannala_brandt_k3, get_params);
 
-  camera_models.push_back(pinhole);
-  camera_models.push_back(kb3);
-  camera_models.push_back(openCvCameraModel());
+  z1_cameras.push_back(pinhole);
+  z1_cameras.push_back(kb3);
+  z1_cameras.push_back(openCvZ1ProjCameraModel());
 
-  for (CameraModel const& camera_model : camera_models) {
+  std::vector<CameraModel> cameras;
+  cameras.push_back(pinhole);
+  cameras.push_back(kb3);
+  cameras.push_back(openCvZ1ProjCameraModel());
+  OrthographicModel ortho(
+      {640, 480}, Eigen::Vector2d(1.0, 1.0), Eigen::Vector2d(0.0, 0.0));
+  cameras.push_back(ortho);
+
+  for (Z1ProjCameraModel const& camera_model : z1_cameras) {
     std::vector<Eigen::Vector2d> pixels_image = {
         {0, 0}, {1, 400}, {320, 240}, {319.5, 239.5}, {100, 40}, {639, 479}};
 
@@ -129,6 +138,24 @@ TEST(camera_model, projection_round_trip) {
     }
   }
 
+  for (CameraModel const& camera_model : cameras) {
+    std::vector<Eigen::Vector2d> pixels_image = {
+        {0, 0}, {1, 400}, {320, 240}, {319.5, 239.5}, {100, 40}, {639, 479}};
+
+    for (auto const& pixel_image : pixels_image) {
+      for (double d : {0.1, 0.5, 1.0, 1.1, 3.0, 15.0}) {
+        Eigen::Vector3d point_in_camera =
+            camera_model.camUnproj(pixel_image, d);
+        FARM_CHECK_NEAR(d, point_in_camera.z(), kEps);
+
+        Eigen::Vector2d pixel_image2 = camera_model.camProj(point_in_camera);
+
+        EXPECT_NEAR(pixel_image.x(), pixel_image2.x(), kEps);
+        EXPECT_NEAR(pixel_image.y(), pixel_image2.y(), kEps);
+      }
+    }
+  }
+
   std::vector<Eigen::Vector<double, 6>> tangent_vec;
 
   Eigen::Vector<double, 6> tmp;
@@ -147,7 +174,7 @@ TEST(camera_model, projection_round_trip) {
   tmp << 0.3, 0.5, 0.1, 0.2, -0.1, 0;
   tangent_vec.push_back(tmp);
 
-  for (CameraModel const& camera_model : camera_models) {
+  for (Z1ProjCameraModel const& camera_model : z1_cameras) {
     for (Eigen::Vector<double, 6> const& t : tangent_vec) {
       sophus::SE3d foo_pose_bar = sophus::SE3d::exp(t);
 
@@ -204,7 +231,7 @@ TEST(camera_model, projection_round_trip) {
 // TODO: move to farm_ng_utils / or opencv deps just for the tests
 
 // TEST(camera_model, brown_conrady_compare_to_opencv) {
-//   CameraModel opencv_model = openCvCameraModel();
+//   Z1ProjCameraModel opencv_model = openCvZ1ProjCameraModel();
 
 //   cv::Mat dist_coeffs(5, 1, cv::DataType<double>::type);
 //   for (int i = 0; i < 5; ++i) {
@@ -293,22 +320,22 @@ TEST(camera_model, projection_round_trip) {
 //     FARM_CHECK_EQ(img_pyr[1].at<float>(0, 5), 0.0);
 //   }
 
-//   std::vector<CameraModel> camera_models;
-//   CameraModel pinhole =
-//       CameraModel::createDefaultPinholeModel("pinhole", {640, 480});
+//   std::vector<Z1ProjCameraModel> z1_cameras;
+//   Z1ProjCameraModel pinhole =
+//       Z1ProjCameraModel::createDefaultPinholeModel("pinhole", {640, 480});
 //   Eigen::VectorXd get_params(8);
 //   get_params << 1000, 1000, 320, 280, 0.1, 0.01, 0.001, 0.0001;
-//   CameraModel kb3 = CameraModel(
+//   Z1ProjCameraModel kb3 = Z1ProjCameraModel(
 //       "pinhole",
 //       {640, 480},
-//       CameraDistortionType::kannala_brandt_k3,
+//       Z1ProjDistortationType::kannala_brandt_k3,
 //       get_params);
 
-//   camera_models.push_back(pinhole);
-//   camera_models.push_back(kb3);
-//   camera_models.push_back(openCvCameraModel());
+//   z1_cameras.push_back(pinhole);
+//   z1_cameras.push_back(kb3);
+//   z1_cameras.push_back(openCvZ1ProjCameraModel());
 
-//   for (const CameraModel& camera_model : camera_models) {
+//   for (const Z1ProjCameraModel& camera_model : z1_cameras) {
 //     std::vector<Eigen::Vector2d> pixels_lvl0 = {{0, 0}, {4, 0}, {8, 4}};
 //     std::vector<Eigen::Vector2d> pixels_lvl1 = {{0, 0}, {2, 0}, {4, 2}};
 
@@ -334,17 +361,18 @@ TEST(camera_model, projection_round_trip) {
 // }
 
 TEST(camera_model, scale_up_down_roundtrip) {
-  CameraModel pinhole = CameraModel::createDefaultPinholeModel({640, 480});
+  Z1ProjCameraModel pinhole =
+      Z1ProjCameraModel::createDefaultPinholeModel({640, 480});
 
-  CameraModel pinhole_binned_down = pinhole.binDown();
+  Z1ProjCameraModel pinhole_binned_down = pinhole.binDown();
   FARM_CHECK_EQ(pinhole_binned_down.imageSize(), ImageSize(320, 240));
-  CameraModel pinhole_binned_down_and_up = pinhole_binned_down.binUp();
+  Z1ProjCameraModel pinhole_binned_down_and_up = pinhole_binned_down.binUp();
   FARM_CHECK_EQ(pinhole.params(), pinhole_binned_down_and_up.params());
   FARM_CHECK_EQ(pinhole.imageSize(), pinhole_binned_down_and_up.imageSize());
 
-  CameraModel pinhole_subsampled_down = pinhole.subsampleDown();
+  Z1ProjCameraModel pinhole_subsampled_down = pinhole.subsampleDown();
   FARM_CHECK_EQ(pinhole_subsampled_down.imageSize(), ImageSize(320, 240));
-  CameraModel pinhole_subsample_down_and_up =
+  Z1ProjCameraModel pinhole_subsample_down_and_up =
       pinhole_subsampled_down.subsampleUp();
   FARM_CHECK_EQ(pinhole.params(), pinhole_subsample_down_and_up.params());
   FARM_CHECK_EQ(pinhole.imageSize(), pinhole_subsample_down_and_up.imageSize());
@@ -402,8 +430,8 @@ TEST(camera_model, ortho_cam) {
 //       img_src.at<float>(cv::Point(i + x_img_src, j + y_img_src)) = 0.0;
 //     }
 //   }
-//   CameraModel pinhole_src =
-//       CameraModel::createDefaultPinholeModel("pinhole", {16, 16});
+//   Z1ProjCameraModel pinhole_src =
+//       Z1ProjCameraModel::createDefaultPinholeModel("pinhole", {16, 16});
 //   double z = 10.0;
 //   Eigen::Vector3d xyz =
 //       pinhole_src.camUnproj(Eigen::Vector2d(x_img_src, y_img_src), z);
@@ -411,7 +439,7 @@ TEST(camera_model, ortho_cam) {
 //   // Test subsample path
 //   cv::Mat img_dst_subsample;
 //   cv::pyrDown(img_src, img_dst_subsample);
-//   CameraModel pinhole_subsample_down = pinhole_src.subsampleDown();
+//   Z1ProjCameraModel pinhole_subsample_down = pinhole_src.subsampleDown();
 //   Eigen::Vector2d img_pt_subsample_proj =
 //   pinhole_subsample_down.camProj(xyz); Eigen::Vector2d img_pt_subsample =
 //   findImagePoint(img_dst_subsample, 4, 4, 2);
@@ -420,7 +448,7 @@ TEST(camera_model, ortho_cam) {
 
 //   // Test binned path
 //   cv::Mat img_dst_binned = binImageDown(img_src);
-//   CameraModel pinhole_binned_down = pinhole_src.binDown();
+//   Z1ProjCameraModel pinhole_binned_down = pinhole_src.binDown();
 //   Eigen::Vector2d img_pt_bin_proj = pinhole_binned_down.camProj(xyz);
 //   Eigen::Vector2d img_pt_bin = findImagePoint(img_dst_binned, 4, 4, 2);
 //   EXPECT_NEAR(img_pt_bin(0), img_pt_bin_proj(0), 0.1);

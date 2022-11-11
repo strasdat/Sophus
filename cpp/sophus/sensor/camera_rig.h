@@ -16,11 +16,11 @@ namespace sophus {
 /// Camera as part of a sensor `rig`.
 struct CameraInRig {
   CameraInRig() {}
-  explicit CameraInRig(CameraModel const& camera_model)
+  explicit CameraInRig(Z1ProjCameraModel const& camera_model)
       : camera_model(camera_model) {}
 
   /// Camera intrinsics
-  CameraModel camera_model;
+  Z1ProjCameraModel camera_model;
 
   /// Camera extrinsics
   sophus::SE3d rig_pose_camera;

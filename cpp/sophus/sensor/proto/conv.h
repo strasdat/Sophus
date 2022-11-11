@@ -15,12 +15,13 @@
 
 namespace sophus {
 
-farm_ng::Expected<sophus::CameraModel> fromProto(
-    proto::CameraModel const& proto);
-proto::CameraModel toProto(CameraModel const& camera_model);
+farm_ng::Expected<sophus::Z1ProjCameraModel> fromProto(
+    proto::Z1ProjCameraModel const& proto);
+proto::Z1ProjCameraModel toProto(Z1ProjCameraModel const& camera_model);
 
-farm_ng::Expected<std::vector<CameraModel>> fromProto(
-    proto::CameraModels const& proto);
-proto::CameraModels toProto(std::vector<CameraModel> const& camera_models);
+farm_ng::Expected<std::vector<Z1ProjCameraModel>> fromProto(
+    proto::Z1ProjCameraModels const& proto);
+proto::Z1ProjCameraModels toProto(
+    std::vector<Z1ProjCameraModel> const& camera_models);
 
 }  // namespace sophus

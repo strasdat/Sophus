@@ -15,7 +15,7 @@
 #include <Eigen/Dense>
 
 namespace sophus {
-class BrownConradyTransform {
+class BrownConradyZ1Projection {
  public:
   static int constexpr kNumDistortionParams = 5;
   static int constexpr kNumParams = kNumDistortionParams + 4;
@@ -183,7 +183,7 @@ class BrownConradyTransform {
         distorted_point_in_camera_z1_plane =
             projImpl(distortion, proj_point_in_camera_z1_plane.eval());
 
-    return AffineTransform::distort(
+    return AffineZ1Projection::distort(
         params.template head<4>(), distorted_point_in_camera_z1_plane);
   }
 
@@ -192,7 +192,7 @@ class BrownConradyTransform {
       Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
     PixelImage<TScalar> proj_point_in_camera_z1_plane = unprojImpl(
         params.template tail<kNumDistortionParams>().eval(),
-        AffineTransform::undistort(
+        AffineZ1Projection::undistort(
             params.template head<4>().eval(), pixel_image));
 
     return ProjInCameraZ1Plane<TScalar>(

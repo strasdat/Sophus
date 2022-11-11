@@ -13,7 +13,8 @@
 
 namespace sophus {
 
-farm_ng::Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
+farm_ng::Expected<Z1ProjCameraModel> fromProto(
+    proto::Z1ProjCameraModel const& proto) {
   auto get_params = [&proto]() -> Eigen::VectorXd {
     Eigen::VectorXd params(proto.params_size());
     for (int i = 0; i < params.rows(); ++i) {
@@ -22,16 +23,16 @@ farm_ng::Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
     return params;
   };
 
-  CameraDistortionType model = CameraDistortionType::pinhole;
+  Z1ProjDistortationType model = Z1ProjDistortationType::pinhole;
   if (trySetFromString(model, proto.distortion_type())) {
     FARM_ERROR("distortion type not supported: {}", proto.distortion_type());
   }
 
-  return CameraModel(fromProto(proto.image_size()), model, get_params());
+  return Z1ProjCameraModel(fromProto(proto.image_size()), model, get_params());
 }
 
-proto::CameraModel toProto(CameraModel const& camera_model) {
-  proto::CameraModel proto;
+proto::Z1ProjCameraModel toProto(Z1ProjCameraModel const& camera_model) {
+  proto::Z1ProjCameraModel proto;
   *proto.mutable_image_size() = toProto(camera_model.imageSize());
   proto.set_distortion_type(toString(camera_model.distortionType()));
   Eigen::VectorXd params = camera_model.params();
@@ -41,18 +42,19 @@ proto::CameraModel toProto(CameraModel const& camera_model) {
   return proto;
 }
 
-farm_ng::Expected<std::vector<CameraModel>> fromProto(
-    proto::CameraModels const& proto) {
-  std::vector<CameraModel> models;
+farm_ng::Expected<std::vector<Z1ProjCameraModel>> fromProto(
+    proto::Z1ProjCameraModels const& proto) {
+  std::vector<Z1ProjCameraModel> models;
   for (int i = 0; i < proto.camera_models_size(); ++i) {
-    FARM_TRY(CameraModel cam, fromProto(proto.camera_models(i)));
+    FARM_TRY(Z1ProjCameraModel cam, fromProto(proto.camera_models(i)));
     models.push_back(cam);
   }
   return models;
 }
 
-proto::CameraModels toProto(std::vector<CameraModel> const& camera_models) {
-  proto::CameraModels proto;
+proto::Z1ProjCameraModels toProto(
+    std::vector<Z1ProjCameraModel> const& camera_models) {
+  proto::Z1ProjCameraModels proto;
   for (auto const& model : camera_models) {
     *proto.add_camera_models() = toProto(model);
   }

@@ -12,7 +12,7 @@
 
 namespace sophus {
 
-class AffineTransform {
+class AffineZ1Projection {
  public:
   static int constexpr kNumDistortionParams = 0;
   static int constexpr kNumParams = 4;

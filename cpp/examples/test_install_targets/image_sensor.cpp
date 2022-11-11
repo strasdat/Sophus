@@ -19,12 +19,13 @@ int main() {
   Image<float> image(std::move(mut_image));
   AnyImage<> any_image(image);
 
-  std::vector<CameraModel> camera_models;
-  CameraModel pinhole = CameraModel::createDefaultPinholeModel({640, 480});
+  std::vector<Z1ProjCameraModel> camera_models;
+  Z1ProjCameraModel pinhole =
+      Z1ProjCameraModel::createDefaultPinholeModel({640, 480});
   Eigen::VectorXd get_params(8);
   get_params << 1000, 1000, 320, 280, 0.1, 0.01, 0.001, 0.0001;
-  CameraModel kb3 = CameraModel(
-      {640, 480}, CameraDistortionType::kannala_brandt_k3, get_params);
+  Z1ProjCameraModel kb3 = Z1ProjCameraModel(
+      {640, 480}, Z1ProjDistortationType::kannala_brandt_k3, get_params);
 
   camera_models.push_back(pinhole);
   camera_models.push_back(kb3);

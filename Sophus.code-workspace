@@ -7,8 +7,13 @@
 	"settings": {
 	    "cmake.sourceDirectory": "${workspaceFolder}/super_project",
 		"[cpp]": {
-        	"editor.defaultFormatter": "xaver.clang-format"
+        	"editor.defaultFormatter": "ms-vscode.cpptools"
     	},
-    	"clang-format.executable": "clang-format-15",
+		"clang-format.executable": "clang-format-15",
+		"files.associations": {
+			"core": "cpp",
+			"fft": "cpp",
+			"specialfunctions": "cpp"
+		},
 	}
 }

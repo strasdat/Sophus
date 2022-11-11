@@ -92,10 +92,6 @@ class OrthographicModelT {
     FARM_FATAL("not implemented");
   }
 
-  [[nodiscard]] DistorationParams distortionParams() const {
-    return params_.template tail<kNumDistortionParams>();
-  }
-
   Eigen::Matrix<TScalar, kNumParams, 1>& params() { return params_; }
 
   [[nodiscard]] Eigen::Matrix<TScalar, kNumParams, 1> const& params() const {
@@ -113,7 +109,7 @@ class OrthographicModelT {
 
   TScalar* data() { return params_.data(); }
 
-  [[nodiscard]] ImageSize const& imageSize() const { return image_size_; }
+  [[nodiscard]] ImageSize imageSize() const { return image_size_; }
 
   /// Creates default pinhole model from `image_size`.
   [[nodiscard]] bool contains(
