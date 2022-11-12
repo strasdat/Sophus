@@ -256,6 +256,15 @@ Z1ProjCameraModel Z1ProjCameraModel::scale(ImageSize image_size) const {
       this->model_));
 }
 
+Eigen::VectorXd CameraModel::params() const {
+  return std::visit(
+      [&](auto&& arg) -> Eigen::VectorXd { return arg.params(); }, model_);
+}
+
+void CameraModel::setParams(Eigen::VectorXd const& params) {
+  return std::visit([&](auto&& arg) -> void { arg.setParams(params); }, model_);
+}
+
 Eigen::Vector2d CameraModel::camProj(
     Eigen::Vector3d const& point_camera) const {
   return std::visit(

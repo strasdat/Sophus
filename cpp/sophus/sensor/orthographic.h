@@ -67,7 +67,7 @@ class OrthographicModelT {
 
   // maps top most vertical pixel coordinate (-0.5) to y-coordinate in 3d.
   [[nodiscard]] TScalar top() const {
-    return scaleY() * TScalar(-0.5) * offsetY();
+    return scaleY() * TScalar(-0.5) + offsetY();
   }
 
   // maps bottom most vertical pixel coordinate (height-0.5) to y-coordinate in
@@ -92,7 +92,7 @@ class OrthographicModelT {
     FARM_FATAL("not implemented");
   }
 
-  Eigen::Matrix<TScalar, kNumParams, 1>& params() { return params_; }
+  void setParams(Eigen::VectorXd const& params) { params_ = params; }
 
   [[nodiscard]] Eigen::Matrix<TScalar, kNumParams, 1> const& params() const {
     return params_;
@@ -172,10 +172,10 @@ Eigen::AlignedBox<TScalar, 2> boundingBoxFromOrthoCam(
   Eigen::Matrix<TScalar, 2, 1>& min = bounding_box.min();
   Eigen::Matrix<TScalar, 2, 1>& max = bounding_box.max();
 
-  min.x() = ortho_cam.offsetX() - 0.5 * ortho_cam.scaleX();
-  min.y() = ortho_cam.offsetY() - 0.5 * ortho_cam.scaleY();
-  max.x() = ortho_cam.imageSize().width * ortho_cam.scaleX() + min.x();
-  max.y() = ortho_cam.imageSize().height * ortho_cam.scaleY() + min.y();
+  min.x() = ortho_cam.left();
+  min.y() = ortho_cam.top();
+  max.x() = ortho_cam.right();
+  max.y() = ortho_cam.bottom();
 
   return bounding_box;
 }
