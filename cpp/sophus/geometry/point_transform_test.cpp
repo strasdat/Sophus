@@ -10,6 +10,7 @@
 
 #include "farm_ng/core/logging/eigen.h"
 #include "sophus/calculus/num_diff.h"
+#include "sophus/sensor/camera_projection/projection_z1.h"
 
 #include <gtest/gtest.h>
 
@@ -35,7 +36,7 @@ TEST(inverse_depth, integrations) {
     {
       Eigen::Vector3d point = inv_dept_point.toEuclideanPoint3();
 
-      Eigen::Matrix<double, 2, 3> dx = dxProjX(point);
+      Eigen::Matrix<double, 2, 3> dx = ProjectionZ1::dxProjX(point);
       Eigen::Matrix<double, 2, 3> const num_dx =
           vectorFieldNumDiff<double, 2, 3>(
               [](Eigen::Vector3d const& x) { return proj(x); }, point);

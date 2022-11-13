@@ -359,10 +359,10 @@ TEST(camera_model, ortho_cam) {
 
   OrthographicModel ortho_cam =
       orthoCamFromBoundingBox(bounding_box, ImageSize(600, 400));
-  EXPECT_NEAR(ortho_cam.scaleX(), 0.005, 1e-9);
-  EXPECT_NEAR(ortho_cam.scaleY(), 0.005, 1e-9);
-  EXPECT_NEAR(ortho_cam.offsetX(), -1.4975, 1e-9);
-  EXPECT_NEAR(ortho_cam.offsetY(), -0.9975, 1e-9);
+  EXPECT_NEAR(ortho_cam.focalLength().x(), 200, 1e-9);
+  EXPECT_NEAR(ortho_cam.focalLength().y(), 200, 1e-9);
+  EXPECT_NEAR(ortho_cam.principalPoint().x(), 299.5, 1e-9);
+  EXPECT_NEAR(ortho_cam.principalPoint().y(), 199.5, 1e-9);
 
   std::vector<Eigen::Vector2d> obs(
       {Eigen::Vector2d(-0.5, -0.5),

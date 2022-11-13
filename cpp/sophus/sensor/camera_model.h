@@ -17,6 +17,8 @@
 #include "sophus/sensor/camera_distortion/affine.h"
 #include "sophus/sensor/camera_distortion/brown_conrady.h"
 #include "sophus/sensor/camera_distortion/kannala_brandt.h"
+#include "sophus/sensor/camera_projection/projection_ortho.h"
+#include "sophus/sensor/camera_projection/projection_z1.h"
 
 #include <Eigen/Dense>
 #include <farm_ng/core/enum/enum.h>
@@ -76,18 +78,19 @@ Eigen::Matrix<TScalar, 2, 1> binUp(Eigen::Matrix<TScalar, 2, 1> const& in) {
 }
 
 /// Camera model class template for pinhole-like camera projections.
-template <class TScalar, class TProjection>
+template <class TScalar, class TDistortion, class TProj = ProjectionZ1>
 class CameraModelT {
  public:
-  using Proj = TProjection;
-  static int constexpr kNumDistortionParams = Proj::kNumDistortionParams;
-  static int constexpr kNumParams = Proj::kNumParams;
+  using Distortion = TDistortion;
+  using Proj = TProj;
+  static int constexpr kNumDistortionParams = Distortion::kNumDistortionParams;
+  static int constexpr kNumParams = Distortion::kNumParams;
   static constexpr const std::string_view kProjectionModel =
-      Proj::kProjectionModel;
+      Distortion::kProjectionModel;
 
   using PointCamera = Eigen::Matrix<TScalar, 3, 1>;
   using PixelImage = Eigen::Matrix<TScalar, 2, 1>;
-  using ProjInCameraZ1Plane = Eigen::Matrix<TScalar, 2, 1>;
+  using ProjInCameraLifted = Eigen::Matrix<TScalar, 2, 1>;
   using Params = Eigen::Matrix<TScalar, kNumParams, 1>;
   using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
@@ -226,19 +229,19 @@ class CameraModelT {
 
   /// Maps a 2-point in the z=1 plane of the camera to a pixel in the image.
   [[nodiscard]] PixelImage distort(
-      ProjInCameraZ1Plane const& point2_in_camera_z1_plane) const {
-    return Proj::template distort(params_, point2_in_camera_z1_plane);
+      ProjInCameraLifted const& point2_in_camera_lifted) const {
+    return Distortion::template distort(params_, point2_in_camera_lifted);
   }
 
   [[nodiscard]] Eigen::Matrix<TScalar, 2, 2> dxDistort(
       PixelImage const& pixel_in_image) const {
-    return Proj::template dxDistort(params_, pixel_in_image);
+    return Distortion::template dxDistort(params_, pixel_in_image);
   }
 
   /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
-  [[nodiscard]] ProjInCameraZ1Plane undistort(
+  [[nodiscard]] ProjInCameraLifted undistort(
       PixelImage const& pixel_in_image) const {
-    return Proj::template undistort(params_, pixel_in_image);
+    return Distortion::template undistort(params_, pixel_in_image);
   }
 
   [[nodiscard]] MutImage<Eigen::Vector2f> undistortTable() const {
@@ -254,13 +257,13 @@ class CameraModelT {
 
   /// Projects 3-point in camera frame to a pixel in the image.
   [[nodiscard]] PixelImage camProj(PointCamera const& point_in_camera) const {
-    return Proj::template distort(params_, ::sophus::proj(point_in_camera));
+    return Distortion::template distort(params_, Proj::proj(point_in_camera));
   }
 
   [[nodiscard]] Eigen::Matrix<TScalar, 2, 3> dxCamProjX(
       PointCamera const& point_in_camera) const {
-    ProjInCameraZ1Plane point_in_z1plane = ::sophus::proj(point_in_camera);
-    return dxDistort(point_in_z1plane) * dxProjX(point_in_camera);
+    ProjInCameraLifted point_in_lifted = Proj::proj(point_in_camera);
+    return dxDistort(point_in_lifted) * Proj::dxProjX(point_in_camera);
   }
 
   /// Unprojects pixel in the image to point in camera frame.
@@ -268,8 +271,8 @@ class CameraModelT {
   /// The point is projected onto the xy-plane at z = `depth_z`.
   [[nodiscard]] PointCamera camUnproj(
       PixelImage const& pixel_in_image, double depth_z) const {
-    return ::sophus::unproj(
-        Proj::template undistort(params_, pixel_in_image), depth_z);
+    return Proj::unproj(
+        Distortion::template undistort(params_, pixel_in_image), depth_z);
   }
 
   /// Raw data access. To be used in ceres optimization only.
@@ -300,20 +303,30 @@ class CameraModelT {
 };
 
 /// Camera model projection type.
-FARM_ENUM(CameraDistortionType, (pinhole, brown_conrady, kannala_brandt_k3));
+FARM_ENUM(
+    CameraDistortionType,
+    (pinhole, brown_conrady, kannala_brandt_k3, orthographic));
 
 /// Pinhole camera model.
-using PinholeModel = CameraModelT<double, AffineTransform>;
+using PinholeModel = CameraModelT<double, AffineTransform, ProjectionZ1>;
 
 /// Brown Conrady camera model.
-using BrownConradyModel = CameraModelT<double, BrownConradyTransform>;
+using BrownConradyModel =
+    CameraModelT<double, BrownConradyTransform, ProjectionZ1>;
 
 /// KannalaBrandt camera model with k0, k1, k2, k3.
-using KannalaBrandtK3Model = CameraModelT<double, KannalaBrandtK3Transform>;
+using KannalaBrandtK3Model =
+    CameraModelT<double, KannalaBrandtK3Transform, ProjectionZ1>;
+
+using OrthographicModel =
+    CameraModelT<double, AffineTransform, ProjectionOrtho>;
 
 /// Variant of camera models.
-using CameraDistortionVariant =
-    std::variant<PinholeModel, BrownConradyModel, KannalaBrandtK3Model>;
+using CameraDistortionVariant = std::variant<
+    PinholeModel,
+    BrownConradyModel,
+    KannalaBrandtK3Model,
+    OrthographicModel>;
 
 static_assert(
     std::variant_size_v<CameraDistortionVariant> ==
@@ -388,10 +401,10 @@ class CameraModel {
   /// Maps a 2-point in the z=1 plane of the camera to a (distorted) pixel in
   /// the image.
   [[nodiscard]] Eigen::Vector2d distort(
-      Eigen::Vector2d const& point2_in_camera_z1_plane) const;
+      Eigen::Vector2d const& point2_in_camera_lifted) const;
 
   [[nodiscard]] Eigen::Matrix2d dxDistort(
-      Eigen::Vector2d const& point2_in_camera_z1_plane) const;
+      Eigen::Vector2d const& point2_in_camera_lifted) const;
 
   /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
   [[nodiscard]] Eigen::Vector2d undistort(

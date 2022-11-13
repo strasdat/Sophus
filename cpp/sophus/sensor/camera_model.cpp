@@ -30,6 +30,10 @@ CameraDistortionVariant getModelFromType(
       return KannalaBrandtK3Model(image_size, params);
       break;
     }
+    case CameraDistortionType::orthographic: {
+      return OrthographicModel(image_size, params);
+      break;
+    }
   }
   FARM_FATAL("logic error");
 }
@@ -222,6 +226,8 @@ CameraDistortionType CameraModel::distortionType() const {
           return CameraDistortionType::brown_conrady;
         } else if constexpr (std::is_same_v<T, KannalaBrandtK3Model>) {
           return CameraDistortionType::kannala_brandt_k3;
+        } else if constexpr (std::is_same_v<T, OrthographicModel>) {
+          return CameraDistortionType::orthographic;
         } else {
           static_assert(farm_ng::AlwaysFalse<T>, "non-exhaustive visitor!");
         }
