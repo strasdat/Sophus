@@ -9,7 +9,8 @@
 #pragma once
 
 #include "sophus/common/common.h"
-#include "sophus/lie/so3.h"
+#include "sophus/lie/se2.h"
+#include "sophus/lie/se3.h"
 
 #include <Eigen/Dense>
 #include <farm_ng/core/logging/expected.h>
@@ -135,6 +136,43 @@ class Ray {
   Eigen::Matrix<TScalar, kN, 1> origin_;
   UnitVector<TScalar, kN> direction_;
 };
+
+template <class TScalar>
+inline UnitVector<TScalar, 2> operator*(
+    So2<TScalar> const& bar_rotation_foo, UnitVector<TScalar, 2> const& v_foo) {
+  return UnitVector<TScalar, 2>::fromUnitVector(
+      bar_rotation_foo * v_foo.vector());
+}
+
+template <class TScalar>
+inline UnitVector<TScalar, 3> operator*(
+    So3<TScalar> const& bar_rotation_foo, UnitVector<TScalar, 3> const& v_foo) {
+  return UnitVector<TScalar, 3>::fromUnitVector(
+      bar_rotation_foo * v_foo.vector());
+}
+
+template <class TScalar>
+inline Ray<TScalar, 2> operator*(
+    Se2<TScalar> const& bar_pose_foo, Ray<TScalar, 2> const& ray_foo) {
+  return Ray<TScalar, 2>(
+      bar_pose_foo * ray_foo.origin(),
+      bar_pose_foo.so2() * ray_foo.direction());
+}
+
+template <class TScalar>
+inline Ray<TScalar, 3> operator*(
+    Se3<TScalar> const& bar_pose_foo, Ray<TScalar, 3> const& ray_foo) {
+  return Ray<TScalar, 3>(
+      bar_pose_foo * ray_foo.origin(),
+      bar_pose_foo.so3() * ray_foo.direction());
+}
+
+template <class TScalar>
+inline Ray<TScalar, 3> operator*(
+    Se3<TScalar> const& bar_pose_foo, UnitVector<TScalar, 3> const& v_foo) {
+  return Ray<TScalar, 3>(
+      bar_pose_foo.translation(), bar_pose_foo.so3() * v_foo);
+}
 
 /// Construct rotation which would take unit direction vector ``from`` into
 /// ``to`` such that ``to = rotThroughPoints(from,to) * from``. I.e. that the
