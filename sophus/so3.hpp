@@ -343,7 +343,7 @@ class SO3Base {
 
   template <typename QuaternionProductType, typename QuaternionTypeA,
             typename QuaternionTypeB>
-  static QuaternionProductType QuaternionProduct(const QuaternionTypeA& a,
+  SOPHUS_FUNC static QuaternionProductType QuaternionProduct(const QuaternionTypeA& a,
                                                  const QuaternionTypeB& b) {
     return QuaternionProductType(
         a.w() * b.w() - a.x() * b.x() - a.y() * b.y() - a.z() * b.z(),
