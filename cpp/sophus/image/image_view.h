@@ -390,6 +390,24 @@ class MutImageView : public ImageView<TPixel> {
     }
   }
 
+  /// For each pixel in `this` with coordinates (u,v), populates with the user
+  /// provided function, evaluated as `uv_op(u,v)`, where u and v are integers
+  /// such that u \in [0, width), v \in [0, height)
+  ///
+  /// Preconditions: this must not be empty.
+  template <class TUVOperation>
+  void generate(TUVOperation const& uv_op) const {
+    FARM_CHECK(!this->isEmpty());
+
+    for (int v = 0; v < this->shape_.height(); ++v) {
+      TPixel* p = this->rowPtrMut(v);
+      TPixel const* end_of_row = p + this->shape_.width();
+      for (int u = 0; p != end_of_row; ++p, ++u) {
+        *p = uv_op(u, v);
+      }
+    }
+  }
+
   /// Transforms view using unary operation and assigns result to this.
   ///
   /// Preconditions:
