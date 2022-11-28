@@ -239,21 +239,30 @@ CameraModel CameraModel::createDefaultPinholeModel(ImageSize image_size) {
   return CameraModel(::sophus::createDefaultPinholeModel(image_size));
 }
 
-PinholeModel createDefaultPinholeModel(ImageSize image_size) {
-  double fx = image_size.width * 0.5;
-  double fy = fx;
-  double cx = (image_size.width - 1.0) * 0.5;
-  double cy = (image_size.height - 1.0) * 0.5;
-
-  return PinholeModel(image_size, {fx, fy, cx, cy});
-}
-
 CameraModel CameraModel::scale(ImageSize image_size) const {
   return CameraModel(std::visit(
       [&image_size](auto&& arg) -> CameraDistortionVariant {
         return arg.scale(image_size);
       },
       this->model_));
+}
+
+PinholeModel createDefaultPinholeModel(ImageSize image_size) {
+  double const fx = image_size.width * 0.5;
+  double const fy = fx;
+  double const cx = (image_size.width - 1.0) * 0.5;
+  double const cy = (image_size.height - 1.0) * 0.5;
+
+  return PinholeModel(image_size, {fx, fy, cx, cy});
+}
+
+OrthographicModel createDefaultOrthoModel(ImageSize image_size) {
+  double const sx = 1.0;
+  double const sy = 1.0;
+  double const cx = 0.0;
+  double const cy = 0.0;
+
+  return OrthographicModel(image_size, {sx, sy, cx, cy});
 }
 
 }  // namespace sophus

@@ -357,6 +357,10 @@ class CameraModel {
   /// Creates default pinhole model from `image_size`.
   static CameraModel createDefaultPinholeModel(ImageSize image_size);
 
+  /// Returns true if this camera remains default-initialized with zero image
+  /// dimensions.
+  [[nodiscard]] bool isEmpty() const { return imageSize() == ImageSize(0, 0); }
+
   /// Returns name of the camera distortion model.
   [[nodiscard]] std::string_view distortionModelName() const;
 
@@ -478,5 +482,8 @@ class CameraModel {
 
 /// Creates default pinhole model from `image_size`.
 PinholeModel createDefaultPinholeModel(ImageSize image_size);
+
+/// Creates default orthographic model from `image_size`.
+OrthographicModel createDefaultOrthoModel(ImageSize image_size);
 
 }  // namespace sophus
