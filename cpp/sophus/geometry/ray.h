@@ -111,54 +111,86 @@ inline Ray<TScalar, 3> operator*(
       bar_pose_foo.translation(), bar_pose_foo.so3() * v_foo);
 }
 
-template <typename T>
+template <class T>
 Ray2<T> operator*(Sim2<T> const& b_from_a, Ray2<T> const& ray_a) {
   return Ray2<T>(
       b_from_a * ray_a.origin(), b_from_a.rxso2() * ray_a.direction());
 }
 
-template <typename T>
+template <class T>
 Ray3<T> operator*(Sim3<T> const& b_from_a, Ray3<T> const& ray_a) {
   return Ray3<T>(
       b_from_a * ray_a.origin(), b_from_a.rxso3() * ray_a.direction());
 }
 
-// For two lines:
-//   line_a: x = A + lambda * B
-//   line_b: y = C + mu * D
-// returns distances [lambda, mu] along the respective rays, corresponding to
-// the closest approach of x and y according to an l2 distance measure. lambda
-// and mu may be positive or negative.
-//
-// TODO: what if they are parallel? Presumably E * line_a.direction() will be 0.
-//       should we return an optional?
+template <class TScalar>
+struct ClosestApproachResult {
+  TScalar lambda0;
+  TScalar lambda1;
+  TScalar min_distance;
+};
+
+/// For two parametric lines in lambda0 and lambda1 respectively,
+/// ```
+///   line_0: x(lambda0) = o0 + lambda0 * d0
+///   line_1: y(lambda1) = o1 + lambda1 * d1
+/// ```
+/// returns distances [lambda0, lambda1] along the respective rays,
+/// corresponding to the closest approach of x and y according to an l2 distance
+/// measure. lambda0 and lambda1 may be positive or negative. If line_0 and
+/// line_1 are parallel, returns nullopt as no unique solution exists
 template <class T>
-std::array<T, 2> closestApproachDistances(
-    Ray3<T> const& line_a, Ray3<T> const& line_b) {
-  // E = B.D.D^T \in R^3
-  const Eigen::Matrix<T, 1, 3> E = line_a.direction().transpose() *
-                                   line_b.direction() *
-                                   line_b.direction().transpose();
+std::optional<ClosestApproachResult<T>> closestApproachParameters(
+    Ray3<T> const& line_0, Ray3<T> const& line_1) {
+  using std::abs;
+  // Closest approach when line segment connecting closest points on each line
+  // is perpendicular to both d0 and d1, thus:
+  // ```
+  //    x(lambda0)-y(lambda1) = thi*(d0 X d1), for free scalar thi.
+  // => o0-o1 + lambda0*d0 - lambda1*d1 - thi*(d0Xd1) = 0
+  // => (d0|-d1|-d0Xd1).(lambda0,lambda1,thi)^T = -(o0-o1)
+  //           A       .        x               =   b
+  // ```
 
-  // lambda = E*(A-C) / (E*B)
-  const T lambda =
-      E * (line_a.origin() - line_b.origin()) / (E * line_a.direction());
+  Eigen::Vector<T, 3> const d0_cross_d1 =
+      line_0.direction().vector().cross(line_1.direction().vector());
 
-  // mu = (A-C-lambda*B)*D
-  const T mu =
-      (line_a.origin() - line_b.origin() - lambda * line_a.direction()) *
-      line_b.direction();
-  return {lambda, mu};
+  T const d0_cross_s1_length = d0_cross_d1.norm();
+
+  if (d0_cross_s1_length < kEpsilon<T>) {
+    // Rays are parrallel so no unique solution exists.
+    return std::nullopt;
+  }
+
+  Eigen::Matrix<T, 3, 3> A;
+  A << line_0.direction().vector(), -line_1.direction().vector(), -d0_cross_d1;
+
+  Eigen::Vector<T, 3> const b = line_1.origin() - line_0.origin();
+
+  Eigen::Vector<T, 3> const x = A.lu().solve(b);
+  T const lambda0 = x[0];
+  T const lambda1 = x[1];
+  T const min_distance = d0_cross_s1_length * x[2];
+
+  return ClosestApproachResult<T>{lambda0, lambda1, min_distance};
 }
 
-// For two lines ``line_a`` and ``line_b`` returns the mid-point of the line
-// segment connecting one point from each of the lines which are closest to
-// one another according to the l2 distance measure.
+/// For two lines ``line_0`` and ``line_1`` returns the mid-point of the line
+/// segment connecting one point from each of the lines which are closest to
+/// one another according to the l2 distance measure.
+///
+/// If line_0 and line_1 are parallel, returns nullopt as no unique solution
+/// exists
 template <class T>
-Eigen::Vector3<T> closestApproach(
-    Ray3<T> const& line_a, Ray3<T> const& line_b) {
-  auto [lambda, mu] = closestApproachDistances(line_a, line_b);
-  return (line_a.pointAt(lambda) + line_b.pointAt(mu)) / static_cast<T>(2.0);
+std::optional<Eigen::Vector3<T>> closestApproach(
+    Ray3<T> const& line_0, Ray3<T> const& line_1) {
+  auto maybe_result = closestApproachParameters(line_0, line_1);
+  if (!maybe_result) {
+    return std::nullopt;
+  }
+  return (line_0.pointAt(maybe_result->lambda0) +
+          line_1.pointAt(maybe_result->lambda1)) /
+         static_cast<T>(2.0);
 }
 
 }  // namespace sophus
