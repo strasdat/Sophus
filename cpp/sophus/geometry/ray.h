@@ -165,12 +165,13 @@ std::optional<ClosestApproachResult<TT>> closestApproachParameters(
     return std::nullopt;
   }
 
-  Eigen::Matrix<TT, 3, 3> A;
-  A << line_0.direction().vector(), -line_1.direction().vector(), -d0_cross_d1;
+  Eigen::Matrix<TT, 3, 3> mat_a;
+  mat_a << line_0.direction().vector(), -line_1.direction().vector(),
+      -d0_cross_d1;
 
   Eigen::Vector<TT, 3> const b = line_1.origin() - line_0.origin();
 
-  Eigen::Vector<TT, 3> const x = A.lu().solve(b);
+  Eigen::Vector<TT, 3> const x = mat_a.lu().solve(b);
   TT const lambda0 = x[0];
   TT const lambda1 = x[1];
   TT const min_distance = d0_cross_s1_length * x[2];
