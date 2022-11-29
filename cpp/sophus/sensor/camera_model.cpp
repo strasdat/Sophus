@@ -111,19 +111,19 @@ Eigen::Vector3d CameraModel::camUnproj(
 }
 
 Eigen::Vector2d CameraModel::distort(
-    Eigen::Vector2d const& point2_in_camera_z1_plane) const {
+    Eigen::Vector2d const& point2_in_camera_lifted) const {
   return std::visit(
       [&](auto&& arg) -> Eigen::Vector2d {
-        return arg.distort(point2_in_camera_z1_plane);
+        return arg.distort(point2_in_camera_lifted);
       },
       model_);
 }
 
 Eigen::Matrix2d CameraModel::dxDistort(
-    Eigen::Vector2d const& point2_in_camera_z1_plane) const {
+    Eigen::Vector2d const& point2_in_camera_lifted) const {
   return std::visit(
       [&](auto&& arg) -> Eigen::Matrix2d {
-        return arg.dxDistort(point2_in_camera_z1_plane);
+        return arg.dxDistort(point2_in_camera_lifted);
       },
       model_);
 }

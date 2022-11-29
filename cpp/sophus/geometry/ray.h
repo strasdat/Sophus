@@ -46,13 +46,17 @@ class Ray {
   Ray(Ray const&) = default;
   Ray& operator=(Ray const&) = default;
 
-  Eigen::Matrix<TScalar, kN, 1> const& origin() const { return origin_; }
-  Eigen::Matrix<TScalar, kN, 1>& origin() { return origin_; }
+  [[nodiscard]] Eigen::Matrix<TScalar, kN, 1> const& origin() const {
+    return origin_;
+  }
+  [[nodiscard]] Eigen::Matrix<TScalar, kN, 1>& origin() { return origin_; }
 
-  UnitVector<TScalar, kN> const& direction() const { return direction_; }
-  UnitVector<TScalar, kN>& direction() { return direction_; }
+  [[nodiscard]] UnitVector<TScalar, kN> const& direction() const {
+    return direction_;
+  }
+  [[nodiscard]] UnitVector<TScalar, kN>& direction() { return direction_; }
 
-  Eigen::Matrix<TScalar, kN, 1> pointAt(TScalar lambda) const {
+  [[nodiscard]] Eigen::Matrix<TScalar, kN, 1> pointAt(TScalar lambda) const {
     return this->origin_ + lambda * this->direction_.vector();
   }
 
@@ -61,7 +65,7 @@ class Ray {
     Eigen::Matrix<TScalar, kN, 1> point;
   };
 
-  std::optional<IntersectionResult> intersect(
+  [[nodiscard]] std::optional<IntersectionResult> intersect(
       Eigen::Hyperplane<TScalar, kN> const& plane) const {
     using std::abs;
     TScalar dot_prod = plane.normal().dot(this->direction_.vector());
@@ -75,7 +79,7 @@ class Ray {
     return result;
   }
 
-  Eigen::Matrix<TScalar, kN, 1> projection(
+  [[nodiscard]] Eigen::Matrix<TScalar, kN, 1> projection(
       Eigen::Matrix<TScalar, kN, 1> const& point) const {
     return origin_ +
            direction_.getVector().dot(point - origin_) * direction_.vector();
@@ -86,48 +90,47 @@ class Ray {
   UnitVector<TScalar, kN> direction_;
 };
 
-template <class TScalar>
-inline Ray<TScalar, 2> operator*(
-    Se2<TScalar> const& bar_pose_foo, Ray<TScalar, 2> const& ray_foo) {
-  return Ray<TScalar, 2>(
+template <class TT>
+inline Ray<TT, 2> operator*(
+    Se2<TT> const& bar_pose_foo, Ray<TT, 2> const& ray_foo) {
+  return Ray<TT, 2>(
       bar_pose_foo * ray_foo.origin(),
       bar_pose_foo.so2() * ray_foo.direction());
 }
 
-template <class TScalar>
-inline Ray<TScalar, 3> operator*(
-    Se3<TScalar> const& bar_pose_foo, Ray<TScalar, 3> const& ray_foo) {
-  return Ray<TScalar, 3>(
+template <class TT>
+inline Ray<TT, 3> operator*(
+    Se3<TT> const& bar_pose_foo, Ray<TT, 3> const& ray_foo) {
+  return Ray<TT, 3>(
       bar_pose_foo * ray_foo.origin(),
       bar_pose_foo.so3() * ray_foo.direction());
 }
 
 // Arbitrary 6-DoF transformation of a unit vector promotes it to a ray
 // having a potentially non-zero origin.
-template <class TScalar>
-inline Ray<TScalar, 3> operator*(
-    Se3<TScalar> const& bar_pose_foo, UnitVector<TScalar, 3> const& v_foo) {
-  return Ray<TScalar, 3>(
-      bar_pose_foo.translation(), bar_pose_foo.so3() * v_foo);
+template <class TT>
+inline Ray<TT, 3> operator*(
+    Se3<TT> const& bar_pose_foo, UnitVector<TT, 3> const& v_foo) {
+  return Ray<TT, 3>(bar_pose_foo.translation(), bar_pose_foo.so3() * v_foo);
 }
 
-template <class T>
-Ray2<T> operator*(Sim2<T> const& b_from_a, Ray2<T> const& ray_a) {
-  return Ray2<T>(
+template <class TT>
+Ray2<TT> operator*(Sim2<TT> const& b_from_a, Ray2<TT> const& ray_a) {
+  return Ray2<TT>(
       b_from_a * ray_a.origin(), b_from_a.rxso2() * ray_a.direction());
 }
 
-template <class T>
-Ray3<T> operator*(Sim3<T> const& b_from_a, Ray3<T> const& ray_a) {
-  return Ray3<T>(
+template <class TT>
+Ray3<TT> operator*(Sim3<TT> const& b_from_a, Ray3<TT> const& ray_a) {
+  return Ray3<TT>(
       b_from_a * ray_a.origin(), b_from_a.rxso3() * ray_a.direction());
 }
 
-template <class TScalar>
+template <class TT>
 struct ClosestApproachResult {
-  TScalar lambda0;
-  TScalar lambda1;
-  TScalar min_distance;
+  TT lambda0;
+  TT lambda1;
+  TT min_distance;
 };
 
 /// For two parametric lines in lambda0 and lambda1 respectively,
@@ -139,9 +142,9 @@ struct ClosestApproachResult {
 /// corresponding to the closest approach of x and y according to an l2 distance
 /// measure. lambda0 and lambda1 may be positive or negative. If line_0 and
 /// line_1 are parallel, returns nullopt as no unique solution exists
-template <class T>
-std::optional<ClosestApproachResult<T>> closestApproachParameters(
-    Ray3<T> const& line_0, Ray3<T> const& line_1) {
+template <class TT>
+std::optional<ClosestApproachResult<TT>> closestApproachParameters(
+    Ray3<TT> const& line_0, Ray3<TT> const& line_1) {
   using std::abs;
   // Closest approach when line segment connecting closest points on each line
   // is perpendicular to both d0 and d1, thus:
@@ -152,27 +155,27 @@ std::optional<ClosestApproachResult<T>> closestApproachParameters(
   //           A       .        x               =   b
   // ```
 
-  Eigen::Vector<T, 3> const d0_cross_d1 =
+  Eigen::Vector<TT, 3> const d0_cross_d1 =
       line_0.direction().vector().cross(line_1.direction().vector());
 
-  T const d0_cross_s1_length = d0_cross_d1.norm();
+  TT const d0_cross_s1_length = d0_cross_d1.norm();
 
-  if (d0_cross_s1_length < kEpsilon<T>) {
+  if (d0_cross_s1_length < kEpsilon<TT>) {
     // Rays are parrallel so no unique solution exists.
     return std::nullopt;
   }
 
-  Eigen::Matrix<T, 3, 3> A;
+  Eigen::Matrix<TT, 3, 3> A;
   A << line_0.direction().vector(), -line_1.direction().vector(), -d0_cross_d1;
 
-  Eigen::Vector<T, 3> const b = line_1.origin() - line_0.origin();
+  Eigen::Vector<TT, 3> const b = line_1.origin() - line_0.origin();
 
-  Eigen::Vector<T, 3> const x = A.lu().solve(b);
-  T const lambda0 = x[0];
-  T const lambda1 = x[1];
-  T const min_distance = d0_cross_s1_length * x[2];
+  Eigen::Vector<TT, 3> const x = A.lu().solve(b);
+  TT const lambda0 = x[0];
+  TT const lambda1 = x[1];
+  TT const min_distance = d0_cross_s1_length * x[2];
 
-  return ClosestApproachResult<T>{lambda0, lambda1, min_distance};
+  return ClosestApproachResult<TT>{lambda0, lambda1, min_distance};
 }
 
 /// For two lines ``line_0`` and ``line_1`` returns the mid-point of the line
@@ -181,16 +184,16 @@ std::optional<ClosestApproachResult<T>> closestApproachParameters(
 ///
 /// If line_0 and line_1 are parallel, returns nullopt as no unique solution
 /// exists
-template <class T>
-std::optional<Eigen::Vector3<T>> closestApproach(
-    Ray3<T> const& line_0, Ray3<T> const& line_1) {
+template <class TT>
+std::optional<Eigen::Vector3<TT>> closestApproach(
+    Ray3<TT> const& line_0, Ray3<TT> const& line_1) {
   auto maybe_result = closestApproachParameters(line_0, line_1);
   if (!maybe_result) {
     return std::nullopt;
   }
   return (line_0.pointAt(maybe_result->lambda0) +
           line_1.pointAt(maybe_result->lambda1)) /
-         static_cast<T>(2.0);
+         static_cast<TT>(2.0);
 }
 
 }  // namespace sophus
