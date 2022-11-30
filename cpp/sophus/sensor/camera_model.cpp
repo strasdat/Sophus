@@ -30,6 +30,10 @@ CameraDistortionVariant getModelFromType(
       return KannalaBrandtK3Model(image_size, params);
       break;
     }
+    case CameraDistortionType::orthographic: {
+      return OrthographicModel(image_size, params);
+      break;
+    }
   }
   FARM_FATAL("logic error");
 }
@@ -107,19 +111,19 @@ Eigen::Vector3d CameraModel::camUnproj(
 }
 
 Eigen::Vector2d CameraModel::distort(
-    Eigen::Vector2d const& point2_in_camera_z1_plane) const {
+    Eigen::Vector2d const& point2_in_camera_lifted) const {
   return std::visit(
       [&](auto&& arg) -> Eigen::Vector2d {
-        return arg.distort(point2_in_camera_z1_plane);
+        return arg.distort(point2_in_camera_lifted);
       },
       model_);
 }
 
 Eigen::Matrix2d CameraModel::dxDistort(
-    Eigen::Vector2d const& point2_in_camera_z1_plane) const {
+    Eigen::Vector2d const& point2_in_camera_lifted) const {
   return std::visit(
       [&](auto&& arg) -> Eigen::Matrix2d {
-        return arg.dxDistort(point2_in_camera_z1_plane);
+        return arg.dxDistort(point2_in_camera_lifted);
       },
       model_);
 }
@@ -222,6 +226,8 @@ CameraDistortionType CameraModel::distortionType() const {
           return CameraDistortionType::brown_conrady;
         } else if constexpr (std::is_same_v<T, KannalaBrandtK3Model>) {
           return CameraDistortionType::kannala_brandt_k3;
+        } else if constexpr (std::is_same_v<T, OrthographicModel>) {
+          return CameraDistortionType::orthographic;
         } else {
           static_assert(farm_ng::AlwaysFalse<T>, "non-exhaustive visitor!");
         }
@@ -233,21 +239,30 @@ CameraModel CameraModel::createDefaultPinholeModel(ImageSize image_size) {
   return CameraModel(::sophus::createDefaultPinholeModel(image_size));
 }
 
-PinholeModel createDefaultPinholeModel(ImageSize image_size) {
-  double fx = image_size.width * 0.5;
-  double fy = fx;
-  double cx = (image_size.width - 1.0) * 0.5;
-  double cy = (image_size.height - 1.0) * 0.5;
-
-  return PinholeModel(image_size, {fx, fy, cx, cy});
-}
-
 CameraModel CameraModel::scale(ImageSize image_size) const {
   return CameraModel(std::visit(
       [&image_size](auto&& arg) -> CameraDistortionVariant {
         return arg.scale(image_size);
       },
       this->model_));
+}
+
+PinholeModel createDefaultPinholeModel(ImageSize image_size) {
+  double const fx = image_size.width * 0.5;
+  double const fy = fx;
+  double const cx = (image_size.width - 1.0) * 0.5;
+  double const cy = (image_size.height - 1.0) * 0.5;
+
+  return PinholeModel(image_size, {fx, fy, cx, cy});
+}
+
+OrthographicModel createDefaultOrthoModel(ImageSize image_size) {
+  double const sx = 1.0;
+  double const sy = 1.0;
+  double const cx = 0.0;
+  double const cy = 0.0;
+
+  return OrthographicModel(image_size, {sx, sy, cx, cy});
 }
 
 }  // namespace sophus

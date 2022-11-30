@@ -224,6 +224,17 @@ class Image : public ImageView<TPixel> {
     return Image(MutImage<TPixel>::makeCopyFrom(view));
   }
 
+  /// Allocated and generates image from provided function taking u,v indices
+  ///
+  /// Memory allocation will happen.
+  template <class TUVOperation>
+  [[nodiscard]] static Image makeGenerative(
+      ImageSize size, TUVOperation const& uv_op) {
+    MutImage<TPixel> mut_image(size);
+    mut_image.generate(uv_op);
+    return mut_image;
+  }
+
   /// Creates new Image given view and unary transform function.
   ///
   /// image(u, v) = unary_op(view(u, v));
