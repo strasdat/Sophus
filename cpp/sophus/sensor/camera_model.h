@@ -401,10 +401,10 @@ class CameraModel {
   /// Maps a 2-point in the z=1 plane of the camera to a (distorted) pixel in
   /// the image.
   [[nodiscard]] Eigen::Vector2d distort(
-      Eigen::Vector2d const& point2_in_camera_lifted) const;
+      Eigen::Vector2d const& point2_in_camera_z1_plane) const;
 
   [[nodiscard]] Eigen::Matrix2d dxDistort(
-      Eigen::Vector2d const& point2_in_camera_lifted) const;
+      Eigen::Vector2d const& point2_in_camera_z1_plane) const;
 
   /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
   [[nodiscard]] Eigen::Vector2d undistort(
