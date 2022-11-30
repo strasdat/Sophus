@@ -31,6 +31,11 @@ ImageSize half(ImageSize image_size) {
 bool operator==(ImageSize const& lhs, ImageSize const& rhs) {
   return lhs.width == rhs.width && lhs.height == rhs.height;
 }
+
+bool operator!=(ImageSize const& lhs, ImageSize const& rhs) {
+  return lhs.width != rhs.width || lhs.height != rhs.height;
+}
+
 bool operator<(ImageSize const& lhs, ImageSize const& rhs) {
   return std::make_pair(lhs.width, lhs.height) <
          std::make_pair(rhs.width, rhs.height);
@@ -44,6 +49,11 @@ std::ostream& operator<<(std::ostream& os, ImageSize const& image_size) {
 bool operator==(ImageShape const& lhs, ImageShape const& rhs) {
   return lhs.imageSize() == rhs.imageSize() &&
          lhs.pitchBytes() == rhs.pitchBytes();
+}
+
+bool operator!=(ImageShape const& lhs, ImageShape const& rhs) {
+  return lhs.imageSize() != rhs.imageSize() ||
+         lhs.pitchBytes() != rhs.pitchBytes();
 }
 
 std::ostream& operator<<(std::ostream& os, ImageShape const& shape) {
