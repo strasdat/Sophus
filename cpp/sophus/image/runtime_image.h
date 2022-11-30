@@ -117,6 +117,16 @@ class RuntimeImage {
                     pixel_type.num_bytes_per_pixel_channel),
             pixel_type) {}
 
+  static RuntimeImage makeUnownedRuntimeImageViewFromRawPtr(
+      ImageShape const& image_shape,
+      RuntimePixelType const& pixel_type,
+      void* ptr) {
+    // Create a shared_ptr wrapper with no-op deleter around unmanaged ptr.
+    std::shared_ptr<uint8_t> not_shared(
+        static_cast<uint8_t*>(ptr), [](uint8_t*) {});
+    return RuntimeImage(image_shape, not_shared, pixel_type);
+  }
+
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
   [[nodiscard]] bool has() const noexcept {
