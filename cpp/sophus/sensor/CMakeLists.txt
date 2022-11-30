@@ -28,7 +28,8 @@ ${sophus_sensor_h}
 camera_distortion/affine.h
 camera_distortion/brown_conrady.h
 camera_distortion/kannala_brandt.h
-camera_distortion/orthographic.h
+camera_projection/projection_z1.h
+camera_projection/projection_ortho.h
 SOURCES
   ${sophus_sensor_cpp})
 

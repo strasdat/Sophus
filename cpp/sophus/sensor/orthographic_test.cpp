@@ -11,4 +11,4 @@
 #include <farm_ng/core/logging/logger.h>
 #include <gtest/gtest.h>
 
-using namespace sophus;
+// using namespace sophus;

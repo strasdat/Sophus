@@ -10,31 +10,15 @@
 
 #include "sophus/geometry/inverse_depth.h"
 #include "sophus/lie/se3.h"
+#include "sophus/sensor/camera_projection/projection_z1.h"
 
 namespace sophus {
-
-/// Returns point derivative of inverse depth point projection:
-///
-///   Dx proj(x) with x = (a,b,psi) being an inverse depth point.
-template <class TT>
-Eigen::Matrix<TT, 2, 3> dxProjX(Eigen::Matrix<TT, 3, 1> const& p) {
-  Eigen::Matrix<TT, 2, 3> dx;
-
-  TT z_inv = 1 / p.z();
-  TT z_sq = p.z() * p.z();
-  // clang-format off
-  dx <<
-      z_inv,     0, -p.x()/z_sq,
-          0, z_inv, -p.y()/z_sq;
-
-  return dx;
-}
 
 /// Projects 3-point (a,b,psi) = (x/z,y/z,1/z) through the origin (0,0,0) onto
 /// the plane z=1. Hence it returns (a,b) = (x/z, y/z).
 template <class TT>
 Eigen::Matrix<TT, 2, 1> proj(
-    const InverseDepthPoint3<TT>& inverse_depth_point) {
+    InverseDepthPoint3<TT> const& inverse_depth_point) {
   return inverse_depth_point.projInZ1Plane();
 }
 
@@ -43,7 +27,7 @@ Eigen::Matrix<TT, 2, 1> proj(
 ///   Dx proj(x) with x = (a,b,psi) being an inverse depth point.
 template <class TT>
 Eigen::Matrix<TT, 2, 3> dxProjX(
-    const InverseDepthPoint3<TT>& /*inverse_depth_point*/) {
+    InverseDepthPoint3<TT> const& /*inverse_depth_point*/) {
   Eigen::Matrix<TT, 2, 3> dx;
   dx.setIdentity();
   return dx;
@@ -56,7 +40,7 @@ Eigen::Matrix<TT, 2, 3> dxProjX(
 /// with y = (a,b,psi) being an inverse depth point.
 template <class TT>
 Eigen::Matrix<TT, 2, 6> dxProjExpXPointAt0(
-    const InverseDepthPoint3<TT>& inverse_depth_point) {
+    InverseDepthPoint3<TT> const& inverse_depth_point) {
   Eigen::Matrix<TT, 2, 6> dx;
   TT i = TT(1);
   TT psi = inverse_depth_point.psi();
@@ -199,6 +183,7 @@ class PointTransformer {
     return dx;
   }
 
+  // Assuming ProjectionZ1 based camera
   [[nodiscard]] [[nodiscard]] [[nodiscard]] Eigen::Matrix<TT, 2, 3>
   dxProjTransformX(
       InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) const {
@@ -209,7 +194,8 @@ class PointTransformer {
     Eigen::Matrix3<TT> mat_j;
     mat_j << r0, r1, t;
 
-    return dxProjX(scaledTransform(inverse_depth_point_in_bar)) * mat_j;
+    return ProjectionZ1::dxProjX(scaledTransform(inverse_depth_point_in_bar)) *
+           mat_j;
   }
 
   [[nodiscard]] sophus::Se3<TT> const& fooPoseBar() const {
