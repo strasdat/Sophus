@@ -127,6 +127,11 @@ class RuntimeImage {
     return RuntimeImage(image_shape, not_shared, pixel_type);
   }
 
+  template <typename TT>
+  static RuntimeImage makeCopyFrom(ImageView<TT> image_view) {
+    return Image<TT>::makeCopyFrom(image_view);
+  }
+
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
   [[nodiscard]] bool has() const noexcept {
