@@ -86,6 +86,30 @@ def zero_vector6():
     return vector6(0, 0, 0, 0, 0, 0)
 
 
+def vector7(a, b, c, d, e, f, g):
+    """TODO(docstring)"""
+
+    return sympy.Matrix([a, b, c, d, e, f, g])
+
+
+def zero_vector7():
+    """TODO(docstring)"""
+
+    return vector7(0, 0, 0, 0, 0, 0, 0)
+
+
+def vector8(a, b, c, d, e, f, g, h):
+    """TODO(docstring)"""
+
+    return sympy.Matrix([a, b, c, d, e, f, g, h])
+
+
+def zero_vector8():
+    """TODO(docstring)"""
+
+    return vector8(0, 0, 0, 0, 0, 0, 0, 0)
+
+
 def proj(v):
     """TODO(docstring)"""
 

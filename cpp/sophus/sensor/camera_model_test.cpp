@@ -28,9 +28,9 @@ CameraModel openCvCameraModel() {
   double fy = fx;
   double cx = (w - 1.0) * 0.5;
   double cy = (h - 1.0) * 0.5;
-  Eigen::Matrix<double, 9, 1> get_params;
-  get_params << fx, fy, cx, cy, -0.0080617731437087059, 0.04318523034453392,
-      -0.039864420890808105, 0.0068964879028499126, 0.0;
+  Eigen::Matrix<double, 12, 1> get_params;
+  get_params << fx, fy, cx, cy, 0.726405, -0.0148413, 1.38447e-05, 0.000419742,
+      -0.00514224, 1.06774, 0.128429, -0.019901;
   return CameraModel(BrownConradyModel({w, h}, get_params));
 }
 
