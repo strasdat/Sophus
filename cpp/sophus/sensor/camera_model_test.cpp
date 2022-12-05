@@ -99,7 +99,21 @@ TEST(camera_model, projection_round_trip) {
                       sophus::SE3d::exp(x) * point_in_camera);
                 },
                 zero);
-        FARM_CHECK_NEAR(dx, numeric_dx, 1e-2);
+
+        // TODO: Make this a macro. Following
+        // https://floating-point-gui.de/errors/comparison/
+        for (int j = 0; j < 6; ++j) {
+          for (int i = 0; i < 2; ++i) {
+            if (std::abs(numeric_dx(i, j)) < 1e-3) {
+              FARM_CHECK_NEAR(dx, numeric_dx, 1e-2);
+            } else {
+              double ratio = dx(i, j) / numeric_dx(i, j);
+
+              FARM_CHECK_NEAR(
+                  ratio, 1.0, 1e-2, "{} vs. {}", dx(i, j), numeric_dx(i, j));
+            }
+          }
+        }
       }
 
       Eigen::Vector2d ab_in_z1plane = camera_model.undistort(pixel_image);
@@ -178,8 +192,19 @@ TEST(camera_model, projection_round_trip) {
                   },
                   zero);
 
-          FARM_CHECK_NEAR(dx, num_dx, 0.005);
+          // TODO: Make this a macro.
+          for (int j = 0; j < 6; ++j) {
+            for (int i = 0; i < 2; ++i) {
+              if (std::abs(num_dx(i, j)) < 1e-3) {
+                FARM_CHECK_NEAR(dx, num_dx, 1e-2);
+              } else {
+                double ratio = dx(i, j) / num_dx(i, j);
 
+                FARM_CHECK_NEAR(
+                    ratio, 1.0, 1e-2, "{} vs. {}", dx(i, j), num_dx(i, j));
+              }
+            }
+          }
           {
             Eigen::Matrix<double, 2, 3> dx =
                 camera_model.dxDistort(
@@ -193,7 +218,19 @@ TEST(camera_model, projection_round_trip) {
                           InverseDepthPoint3F64::fromAbAndPsi(ab_psi)));
                     },
                     inverse_depth_in_bar.params());
-            FARM_CHECK_NEAR(dx, num_dx, kEpsilonSqrtF64);
+            // TODO: Make this a macro.
+            for (int j = 0; j < 3; ++j) {
+              for (int i = 0; i < 2; ++i) {
+                if (std::abs(num_dx(i, j)) < 1e-3) {
+                  FARM_CHECK_NEAR(dx, num_dx, 1e-2);
+                } else {
+                  double ratio = dx(i, j) / num_dx(i, j);
+
+                  FARM_CHECK_NEAR(
+                      ratio, 1.0, 1e-2, "{} vs. {}", dx(i, j), num_dx(i, j));
+                }
+              }
+            }
           }
         }
       }

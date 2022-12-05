@@ -107,8 +107,8 @@ struct ImageTraits {
   static int const kNumChannels = 1;
   using TPixel = TT;
   using ChannelT = TPixel;
-  // static_assert(
-  //     std::is_floating_point_v<ChannelT> || std::is_unsigned_v<ChannelT>);
+  static_assert(
+      std::is_floating_point_v<ChannelT> || std::is_unsigned_v<ChannelT>);
 };
 
 template <class TT, int kNumChannelsT>
