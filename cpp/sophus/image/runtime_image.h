@@ -123,7 +123,7 @@ class RuntimeImage {
       void* ptr) {
     // Create a shared_ptr wrapper with no-op deleter around unmanaged ptr.
     std::shared_ptr<uint8_t> not_shared(
-        static_cast<uint8_t*>(ptr), [](uint8_t*) {});
+        static_cast<uint8_t*>(ptr), [](uint8_t* /*unused*/) {});
     return RuntimeImage(image_shape, not_shared, pixel_type);
   }
 

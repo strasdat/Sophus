@@ -89,20 +89,9 @@ class BrownConradyTransform {
     // initial guess
     PixelImage<TScalar> xy = uv_normalized;
 
-    TScalar p0 = distortion[0];
-    TScalar p1 = distortion[1];
-    TScalar p2 = distortion[2];
-    TScalar p3 = distortion[3];
-    TScalar p4 = distortion[4];
-
     for (int i = 0; i < 50; ++i) {
       TScalar x = xy[0];
       TScalar y = xy[1];
-      TScalar x2 = x * x;
-      TScalar y2 = y * y;
-      TScalar r2 = x2 + y2;
-      TScalar r4 = r2 * r2;
-      TScalar r6 = r2 * r4;
 
       PixelImage<TScalar> f_xy =
           projImpl(distortion, Eigen::Matrix<TScalar, 2, 1>(x, y)) -
