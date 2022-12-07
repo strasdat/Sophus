@@ -10,6 +10,7 @@ farm_ng_add_library(sophus_image_proto_conv
 target_link_libraries(sophus_image_proto_conv PUBLIC
   sophus_linalg
   protobuf::libprotobuf
+  farm_ng_core::farm_ng_core_proto_defs
   farm_ng_core::farm_ng_core_prototools
   sophus_image_proto_defs
  )
