@@ -14,31 +14,43 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
+            compiler: gcc
             tests: unit_test
             access: col_major
             build_type: Release
             build_protos: On
           - os: ubuntu-20.04
+            compiler: clang
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            build_protos: On
+          - os: ubuntu-20.04
+            compiler: gcc
             tests: unit_test
             access: col_major
             build_type: Release
             build_protos: Off
           - os: ubuntu-20.04
+            compiler: gcc
             tests: unit_test
             access: col_major
             build_type: Release
             build_protos: On
           - os: ubuntu-20.04
+            compiler: gcc
             tests: unit_test
             access: row_major
             build_type: Release
             build_protos: On
           - os: ubuntu-20.04
+            compiler: clang
             tests: clang_tidy
             access: col_major
             build_type: Release
             build_protos: Off
           - os: macos-11
+            compiler: clang
             tests: unit_test
             access: col_major
             build_type: Release
@@ -66,12 +78,20 @@ jobs:
           ./scripts/install_ci_deps_mac.sh
         if: matrix.os == 'macos-11'
 
-      - name: Run tests
+      - name: Compile (gcc) & tests
         run:
-          ./scripts/run_cpp_tests.sh
+          ./scripts/compile_gcc.sh
         env:
           ROW_ACCESS: matrix.access
-        if: matrix.tests == 'unit_test'
+        if: matrix.tests == 'unit_test' && matrix.compiler == 'gcc'
+
+      - name: Compile (clang) & tests
+        run:
+          ./scripts/compile_clang.sh
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'unit_test' && matrix.compiler == 'clang'
+
 
       - name: clang-tidy
         run: |

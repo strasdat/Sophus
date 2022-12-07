@@ -11,6 +11,7 @@ target_link_libraries(sophus_linalg_proto_conv PUBLIC
   sophus_linalg
   sophus_linalg_proto_defs
   protobuf::libprotobuf
+  farm_ng_core::farm_ng_core_proto_defs
   farm_ng_core::farm_ng_core_prototools
  )
 
