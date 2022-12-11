@@ -60,113 +60,19 @@ bool operator==(RuntimePixelType const& lhs, RuntimePixelType const& rhs);
 /// "4U8";
 std::ostream& operator<<(std::ostream& os, RuntimePixelType const& type);
 
-/// Type-erased image with shared ownership, and read-only access to pixels.
-/// Type is nullable.
-template <
-    class TPredicate = AnyImagePredicate,
-    template <typename> class TAllocator = Eigen::aligned_allocator>
-class RuntimeImage {
+template <class TPredicate = AnyImagePredicate>
+class RuntimeImageView {
  public:
-  /// Empty image.
-  RuntimeImage() = default;
-
-  /// Create type-erased image from Image.
-  ///
-  /// Ownership is shared between RuntimeImage and Image, and hence the
-  /// reference count will be increased by one (unless input is empty).
-  /// By design not "explicit".
-  template <class TPixel>
-  RuntimeImage(Image<TPixel, TAllocator> const& image)
-      : shape_(image.shape()),
-        shared_(image.shared_),
-        pixel_type_(RuntimePixelType::fromTemplate<TPixel>()) {
-    static_assert(TPredicate::template isTypeValid<TPixel>());
-  }
-
-  /// Create type-erased image from MutImage.
-  /// By design not "explicit".
-  template <class TPixel>
-  RuntimeImage(MutImage<TPixel>&& image)
-      : RuntimeImage(Image<TPixel>(std::move(image))) {
-    static_assert(TPredicate::template isTypeValid<TPixel>());
-  }
-
-  /// Create type-image image from provided shape and pixel type.
-  /// Pixel data is left uninitialized
-  RuntimeImage(ImageShape const& shape, RuntimePixelType const& pixel_type)
-      : shape_(shape),
-        shared_(TAllocator<uint8_t>().allocate(
-            shape.height() * shape.pitchBytes())),
-        pixel_type_(pixel_type) {
-    // TODO: Missing check on ImagePredicate against pixel_type
-    //       has to be a runtime check, since we don't know at runtime.
-
-    FARM_CHECK_LE(
-        shape.width() * pixel_type.num_channels *
-            pixel_type.num_bytes_per_pixel_channel,
-        (int)shape.pitchBytes());
-  }
-
-  /// Create type-image image from provided size and pixel type.
-  /// Pixel data is left uninitialized
-  RuntimeImage(ImageSize const& size, RuntimePixelType const& pixel_type)
-      : RuntimeImage(
-            ImageShape::makeFromSizeAndPitch<uint8_t>(
-                size,
-                size.width * pixel_type.num_channels *
-                    pixel_type.num_bytes_per_pixel_channel),
-            pixel_type) {}
-
-  static RuntimeImage makeUnownedRuntimeImageViewFromRawPtr(
+  RuntimeImageView(
       ImageShape const& image_shape,
       RuntimePixelType const& pixel_type,
-      void* ptr) {
-    // Create a shared_ptr wrapper with no-op deleter around unmanaged ptr.
-    std::shared_ptr<uint8_t> not_shared(
-        static_cast<uint8_t*>(ptr), [](uint8_t*) {});
-    return RuntimeImage(image_shape, not_shared, pixel_type);
-  }
-
-  template <typename TT>
-  static RuntimeImage makeCopyFrom(ImageView<TT> image_view) {
-    return Image<TT>::makeCopyFrom(image_view);
-  }
+      void* ptr) {}
 
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
   [[nodiscard]] bool has() const noexcept {
     RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
     return expected_type == pixel_type_;
-  }
-
-  /// Returns typed image.
-  ///
-  /// Precondition: this->has<TPixel>()
-  template <class TPixel>
-  [[nodiscard]] Image<TPixel, TAllocator> image() const noexcept {
-    if (!this->has<TPixel>()) {
-      RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
-
-      FARM_FATAL(
-          "expected type: {}\n"
-          "actual type: {}",
-          expected_type,
-          pixel_type_);
-    }
-
-    return Image<TPixel, TAllocator>(
-        ImageView<TPixel>(shape_, reinterpret_cast<TPixel*>(shared_.get())),
-        shared_);
-  }
-
-  template <class TPixel>
-  Image<TPixel, TAllocator> reinterpretAs(
-      ImageSize reinterpreted_size) const noexcept {
-    FARM_CHECK_LE(
-        reinterpreted_size.width * sizeof(TPixel), shape().pitch_bytes_);
-    FARM_CHECK_LE(reinterpreted_size.height, height());
-
-    FARM_UNIMPLEMENTED();
   }
 
   /// Returns v-th row pointer.
@@ -176,24 +82,7 @@ class RuntimeImage {
     return ((uint8_t*)(rawPtr()) + v * shape_.pitchBytes());
   }
 
-  /// Returns subview with shared ownership semantics of whole image.
-  [[nodiscard]] RuntimeImage subview(
-      Eigen::Vector2i uv, sophus::ImageSize size) const {
-    FARM_CHECK(imageSize().contains(uv));
-    FARM_CHECK_LE(uv.x() + size.width, shape_.width());
-    FARM_CHECK_LE(uv.y() + size.height, shape_.height());
-
-    auto const shape =
-        ImageShape::makeFromSizeAndPitchUnchecked(size, pitchBytes());
-    const size_t row_offset =
-        uv.x() * numBytesPerPixelChannel() * numChannels();
-    uint8_t* ptr = shared_.get() + uv.y() * pitchBytes() + row_offset;
-    return {shape, std::shared_ptr<uint8_t>(shared_, ptr), pixel_type_};
-  }
-
-  [[nodiscard]] RuntimePixelType pixelType() const { return pixel_type_; }
-
-  [[nodiscard]] int numChannels() const { return pixel_type_.num_channels; }
+  [[nodiscard]] uint8_t const* rawPtr() const { return ptr_; }
 
   /// Number of bytes per channel of a single pixel.
   ///
@@ -215,25 +104,150 @@ class RuntimeImage {
   [[nodiscard]] int height() const { return shape().height(); }
   [[nodiscard]] size_t pitchBytes() const { return shape().pitchBytes(); }
   [[nodiscard]] size_t sizeBytes() const { return height() * pitchBytes(); }
+  [[nodiscard]] bool isEmpty() const { return this->rawPtr() == nullptr; }
+
+  [[nodiscard]] RuntimePixelType pixelType() const { return pixel_type_; }
+  [[nodiscard]] int numChannels() const {
+    return this->pixel_type_.num_channels;
+  }
+
+  /// Returns subview with shared ownership semantics of whole image.
+  [[nodiscard]] RuntimeImageView subview(
+      Eigen::Vector2i uv, sophus::ImageSize size) const {
+    FARM_CHECK(imageSize().contains(uv));
+    FARM_CHECK_LE(uv.x() + size.width, this->shape_.width());
+    FARM_CHECK_LE(uv.y() + size.height, this->shape_.height());
+
+    auto const shape =
+        ImageShape::makeFromSizeAndPitchUnchecked(size, pitchBytes());
+    const size_t row_offset =
+        uv.x() * numBytesPerPixelChannel() * numChannels();
+    uint8_t* ptr = this->rawPtr() + uv.y() * pitchBytes() + row_offset;
+    return {shape, ptr, this->pixel_type_};
+  }
+
+ protected:
+  RuntimeImageView() = default;
+
+  ImageShape shape_ = {};
+  uint8_t* ptr_;
+  RuntimePixelType pixel_type_;
+};
+
+/// Type-erased image with shared ownership, and read-only access to pixels.
+/// Type is nullable.
+template <
+    class TPredicate = AnyImagePredicate,
+    template <typename> class TAllocator = Eigen::aligned_allocator>
+class RuntimeImage : public RuntimeImageView<TPredicate> {
+ public:
+  /// Empty image.
+  RuntimeImage() = default;
+
+  /// Create type-erased image from Image.
+  ///
+  /// Ownership is shared between RuntimeImage and Image, and hence the
+  /// reference count will be increased by one (unless input is empty).
+  /// By design not "explicit".
+  template <class TPixel>
+  RuntimeImage(Image<TPixel, TAllocator> const& image)
+      : RuntimeImage(
+            image.shape(),
+            RuntimePixelType::fromTemplate<TPixel>(),
+            image.shared_) {
+    static_assert(TPredicate::template isTypeValid<TPixel>());
+  }
+
+  /// Create type-erased image from MutImage.
+  /// By design not "explicit".
+  template <class TPixel>
+  RuntimeImage(MutImage<TPixel>&& image)
+      : RuntimeImage(Image<TPixel>(std::move(image))) {
+    static_assert(TPredicate::template isTypeValid<TPixel>());
+  }
+
+  /// Create type-image image from provided shape and pixel type.
+  /// Pixel data is left uninitialized
+  RuntimeImage(ImageShape const& shape, RuntimePixelType const& pixel_type)
+      : RuntimeImage(
+            shape,
+            pixel_type,
+            std::shared_ptr<uint8_t>(TAllocator<uint8_t>().allocate(
+                shape.height() * shape.pitchBytes()))) {
+    // TODO: Missing check on ImagePredicate against pixel_type
+    //       has to be a runtime check, since we don't know at runtime.
+
+    FARM_CHECK_LE(
+        shape.width() * pixel_type.num_channels *
+            pixel_type.num_bytes_per_pixel_channel,
+        (int)shape.pitchBytes());
+  }
+
+  /// Create type-image image from provided size and pixel type.
+  /// Pixel data is left uninitialized
+  RuntimeImage(ImageSize const& size, RuntimePixelType const& pixel_type)
+      : RuntimeImage(
+            ImageShape::makeFromSizeAndPitch<uint8_t>(
+                size,
+                size.width * pixel_type.num_channels *
+                    pixel_type.num_bytes_per_pixel_channel),
+            pixel_type) {}
+
+  template <typename TT>
+  static RuntimeImage makeCopyFrom(ImageView<TT> image_view) {
+    return Image<TT>::makeCopyFrom(image_view);
+  }
+
+  /// Return true is this contains data of type TPixel.
+  template <class TPixel>
+  [[nodiscard]] bool has() const noexcept {
+    RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
+    return expected_type == this->pixel_type_;
+  }
+
+  /// Returns typed image.
+  ///
+  /// Precondition: this->has<TPixel>()
+  template <class TPixel>
+  [[nodiscard]] Image<TPixel, TAllocator> image() const noexcept {
+    if (!this->has<TPixel>()) {
+      RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
+
+      FARM_FATAL(
+          "expected type: {}\n"
+          "actual type: {}",
+          expected_type,
+          this->pixel_type_);
+    }
+
+    return Image<TPixel, TAllocator>(
+        ImageView<TPixel>(
+            this->shape_, reinterpret_cast<TPixel*>(shared_.get())),
+        shared_);
+  }
+
+  template <class TPixel>
+  Image<TPixel, TAllocator> reinterpretAs(
+      ImageSize reinterpreted_size) const noexcept {
+    FARM_CHECK_LE(
+        reinterpreted_size.width * sizeof(TPixel), this->shape().pitch_bytes_);
+    FARM_CHECK_LE(reinterpreted_size.height, this->height());
+
+    FARM_UNIMPLEMENTED();
+  }
 
   [[nodiscard]] size_t useCount() const { return shared_.use_count(); }
-
-  [[nodiscard]] uint8_t const* rawPtr() const { return shared_.get(); }
-
-  [[nodiscard]] bool isEmpty() const { return this->rawPtr() == nullptr; }
 
  private:
   // Private constructor mainly available for constructing sub-views
   RuntimeImage(
       ImageShape shape,
-      std::shared_ptr<uint8_t> shared,
-      RuntimePixelType pixel_type)
-      : shape_(shape), shared_(shared), pixel_type_(pixel_type) {}
-
-  ImageShape shape_ = {};
+      RuntimePixelType pixel_type,
+      std::shared_ptr<uint8_t> shared)
+      : RuntimeImageView<TPredicate>(shape, pixel_type, shared.get()),
+        shared_(shared) {}
 
   std::shared_ptr<uint8_t> shared_;
-  RuntimePixelType pixel_type_;
 };
 
 /// Image representing any number of channels (>=1) and any floating and
