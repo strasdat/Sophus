@@ -147,7 +147,7 @@ void plusOne(MutImageView<float> mut_view) {
   }
 }
 
-TEST(IntensityImage, subview) {
+TEST(IntensityImageView, subview) {
   MutImage<float> mut_image(ImageSize(4, 4));
   for (int y = 0; y < 4; ++y) {
     for (int x = 0; x < 4; ++x) {
@@ -278,8 +278,8 @@ TEST(IntensityImage, visitor) {
     IntensityImage<> runtime_image = ref_image;
     visitImage(
         farm_ng::Overload{
-            [&](Image<float> const& /*unused*/) { FARM_CHECK(false); },
-            [&](Image<Pixel3U8> const& /*unused*/) {
+            [&](ImageView<float> const& /*unused*/) { FARM_CHECK(false); },
+            [&](ImageView<Pixel3U8> /*unused*/) {
               // Should execute here
             },
             [&](auto const& /*unused*/) { FARM_CHECK(false); },
@@ -288,12 +288,34 @@ TEST(IntensityImage, visitor) {
 
     visitImage(
         farm_ng::Overload{
-            [&](Image<float> const& /*unused*/) { FARM_CHECK(false); },
-            [&](Image<uint32_t> const& /*unused*/) { FARM_CHECK(false); },
+            [&](ImageView<float> /*unused*/) { FARM_CHECK(false); },
+            [&](ImageView<uint32_t> /*unused*/) { FARM_CHECK(false); },
             [&](auto const& /*unused*/) {
               // Should execute here
             },
         },
         runtime_image);
+  }
+
+  {
+    MutImage<float> mut_image(ImageSize(4, 4));
+    for (int y = 0; y < 4; ++y) {
+      for (int x = 0; x < 4; ++x) {
+        mut_image.uncheckedMut(x, y) = 4 * y + x;
+      }
+    }
+
+    Image<float> ref_image = std::move(mut_image);
+    IntensityImage<> runtime_image = ref_image;
+    IntensityImageView runtime_sub = runtime_image.subview({1, 1}, {2, 2});
+
+    visitImage(
+        farm_ng::Overload{
+            [&](ImageView<float> /*unused*/) {  // Should execute here
+            },
+            [&](ImageView<uint32_t> /*unused*/) { FARM_CHECK(false); },
+            [&](auto const& /*unused*/) { FARM_CHECK(false); },
+        },
+        runtime_sub);
   }
 }
