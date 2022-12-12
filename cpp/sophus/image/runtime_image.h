@@ -317,7 +317,7 @@ template <typename TUserFunc, typename TRuntimeImage, typename TPixelType>
 struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType>> {
   static void visit(TUserFunc&& func, TRuntimeImage const& image) {
     if (image.pixelType().template is<TPixelType>()) {
-      func(image.template image<TPixelType>());
+      func(image.template imageView<TPixelType>());
     }
   }
 };

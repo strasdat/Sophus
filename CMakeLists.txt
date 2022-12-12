@@ -54,7 +54,7 @@ if(SOPHUS_MASTER_PROJECT)
 endif()
 
 
-option(BUILD_SOPHUS_TESTS "Build tests." OFF)
+option(BUILD_SOPHUS_TESTS "Build tests." ON)
 if(${BUILD_SOPHUS_TESTS})
     farm_ng_enable_testing()
 endif()
