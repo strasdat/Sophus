@@ -157,12 +157,12 @@ TEST(IntensityImage, subview) {
 
   Image<float> ref_image = std::move(mut_image);
   IntensityImage<> runtime_image = ref_image;
-  IntensityImage<> runtime_sub = runtime_image.subview({1, 1}, {2, 2});
+  IntensityImageView runtime_sub = runtime_image.subview({1, 1}, {2, 2});
   FARM_CHECK_EQ(runtime_sub.width(), 2);
   FARM_CHECK_EQ(runtime_sub.height(), 2);
 
   {
-    Image<float> sub = runtime_sub.image<float>();
+    ImageView<float> sub = runtime_sub.imageView<float>();
 
     for (int y = 0; y < 2; ++y) {
       for (int x = 0; x < 2; ++x) {
