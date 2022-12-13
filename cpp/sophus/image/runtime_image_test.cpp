@@ -318,4 +318,24 @@ TEST(IntensityImage, visitor) {
         },
         runtime_sub);
   }
+
+  {
+    MutImage<float> mut_image(ImageSize(4, 4));
+    for (int y = 0; y < 4; ++y) {
+      for (int x = 0; x < 4; ++x) {
+        mut_image.uncheckedMut(x, y) = 4 * y + x;
+      }
+    }
+
+    IntensityImageView runtime_sub(mut_image);
+
+    visitImage(
+        farm_ng::Overload{
+            [&](ImageView<float> /*unused*/) {  // Should execute here
+            },
+            [&](ImageView<uint32_t> /*unused*/) { FARM_CHECK(false); },
+            [&](auto const& /*unused*/) { FARM_CHECK(false); },
+        },
+        runtime_sub);
+  }
 }
