@@ -317,7 +317,7 @@ template <typename TUserFunc, typename TRuntimeImage, typename TPixelType>
 struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType>> {
   static void visit(TUserFunc&& func, TRuntimeImage const& image) {
     if (image.pixelType().template is<TPixelType>()) {
-      func(image.template image<TPixelType>());
+      func(image.template imageView<TPixelType>());
     }
   }
 };
@@ -331,7 +331,7 @@ template <
 struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType, TRest...>> {
   static void visit(TUserFunc&& func, TRuntimeImage const& image) {
     if (image.pixelType().template is<TPixelType>()) {
-      func(image.template image<TPixelType>());
+      func(image.template imageView<TPixelType>());
     } else {
       VisitImpl<TUserFunc, TRuntimeImage, std::variant<TRest...>>::visit(
           std::forward<TUserFunc>(func), image);
@@ -340,6 +340,7 @@ struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType, TRest...>> {
 };
 }  // namespace detail
 
+// RuntimeImage visitor
 template <
     typename TUserFunc,
     class TPredicate = IntensityImagePredicate,
@@ -350,6 +351,18 @@ void visitImage(
   detail::
       VisitImpl<TUserFunc, TRuntimeImage, typename TPredicate::PixelVariant>::
           visit(std::forward<TUserFunc>(func), image);
+}
+
+// RuntimeImageView visitor - shares same implementation than the one for
+// RuntimeImage
+template <typename TUserFunc, class TPredicate = IntensityImagePredicate>
+void visitImage(TUserFunc&& func, RuntimeImageView<TPredicate> const& image) {
+  using RuntimeImageView = RuntimeImageView<TPredicate>;
+  detail::VisitImpl<
+      TUserFunc,
+      RuntimeImageView,
+      typename TPredicate::PixelVariant>::
+      visit(std::forward<TUserFunc>(func), image);
 }
 
 }  // namespace sophus
