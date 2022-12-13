@@ -63,6 +63,18 @@ std::ostream& operator<<(std::ostream& os, RuntimePixelType const& type);
 template <class TPredicate = AnyImagePredicate>
 class RuntimeImageView {
  public:
+  /// Create type-erased image view from ImageView.
+  ///
+  /// By design not "explicit".
+  template <class TPixel>
+  RuntimeImageView(ImageView<TPixel> const& image)
+      : RuntimeImageView(
+            image.shape(),
+            RuntimePixelType::fromTemplate<TPixel>(),
+            image.ptr()) {
+    static_assert(TPredicate::template isTypeValid<TPixel>());
+  }
+
   RuntimeImageView(
       ImageShape const& image_shape,
       RuntimePixelType const& pixel_type,
