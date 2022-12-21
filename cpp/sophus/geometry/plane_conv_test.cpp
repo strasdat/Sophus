@@ -38,9 +38,9 @@ bool test2dGeometry() {
         makeHyperplaneUnique(Eigen::Hyperplane<TScalar, 2>(
             Eigen::Vector2<TScalar>::Random().normalized(),
             Eigen::Vector2<TScalar>::Random()));
-    sophus::Se2<TScalar> foo_pose_plane = se2FromLine(line_in_foo);
+    sophus::Se2<TScalar> foo_from_plane = se2FromLine(line_in_foo);
     Eigen::Hyperplane<TScalar, 2> result_plane_foo =
-        lineFromSe2(foo_pose_plane);
+        lineFromSe2(foo_from_plane);
     SOPHUS_TEST_APPROX(
         passed,
         line_in_foo.normal().eval(),
@@ -54,8 +54,8 @@ bool test2dGeometry() {
   std::vector<Se2<TScalar>, Eigen::aligned_allocator<Se2<TScalar>>>
       ts_foo_line = getTestSE2s<TScalar>();
 
-  for (Se2<TScalar> const& foo_pose_line : ts_foo_line) {
-    Eigen::Hyperplane<TScalar, 2> line_in_foo = lineFromSe2(foo_pose_line);
+  for (Se2<TScalar> const& foo_from_line : ts_foo_line) {
+    Eigen::Hyperplane<TScalar, 2> line_in_foo = lineFromSe2(foo_from_line);
     Se2<TScalar> t2_foo_line = se2FromLine(line_in_foo);
     Eigen::Hyperplane<TScalar, 2> line2_foo = lineFromSe2(t2_foo_line);
     SOPHUS_TEST_APPROX(
@@ -133,9 +133,9 @@ bool test3dGeometry() {
         makeHyperplaneUnique(Eigen::Hyperplane<TScalar, 3>(
             Eigen::Vector3<TScalar>::Random().normalized(),
             Eigen::Vector3<TScalar>::Random()));
-    sophus::Se3<TScalar> foo_pose_plane = se3FromPlane(plane_in_foo);
+    sophus::Se3<TScalar> foo_from_plane = se3FromPlane(plane_in_foo);
     Eigen::Hyperplane<TScalar, 3> result_plane_foo =
-        planeFromSe3(foo_pose_plane);
+        planeFromSe3(foo_from_plane);
     SOPHUS_TEST_APPROX(
         passed,
         plane_in_foo.normal().eval(),
@@ -149,8 +149,8 @@ bool test3dGeometry() {
   std::vector<Se3<TScalar>, Eigen::aligned_allocator<Se3<TScalar>>>
       ts_foo_plane = getTestSE3s<TScalar>();
 
-  for (Se3<TScalar> const& foo_pose_plane : ts_foo_plane) {
-    Eigen::Hyperplane<TScalar, 3> plane_in_foo = planeFromSe3(foo_pose_plane);
+  for (Se3<TScalar> const& foo_from_plane : ts_foo_plane) {
+    Eigen::Hyperplane<TScalar, 3> plane_in_foo = planeFromSe3(foo_from_plane);
     Se3<TScalar> t2_foo_plane = se3FromPlane(plane_in_foo);
     Eigen::Hyperplane<TScalar, 3> plane2_foo = planeFromSe3(t2_foo_plane);
     SOPHUS_TEST_APPROX(

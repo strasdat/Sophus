@@ -163,9 +163,9 @@ TEST(camera_model, projection_round_trip) {
 
   for (CameraModel const& camera_model : camera_models) {
     for (Eigen::Vector<double, 6> const& t : tangent_vec) {
-      sophus::SE3d foo_pose_bar = sophus::SE3d::exp(t);
+      sophus::SE3d foo_from_bar = sophus::SE3d::exp(t);
 
-      PointTransformer trans(foo_pose_bar);
+      PointTransformer trans(foo_from_bar);
       std::vector<Eigen::Vector2d> pixels_image = {
           {0, 0}, {1, 400}, {320, 240}, {319.5, 239.5}, {100, 40}, {639, 479}};
 
@@ -178,7 +178,7 @@ TEST(camera_model, projection_round_trip) {
               InverseDepthPoint3F64::fromEuclideanPoint3(point_in_bar_camera);
 
           Eigen::Matrix<double, 2, 6> dx =
-              camera_model.dxDistort(proj(foo_pose_bar * point_in_bar_camera)) *
+              camera_model.dxDistort(proj(foo_from_bar * point_in_bar_camera)) *
               trans.dxProjExpXTransformPointAt0(inverse_depth_in_bar);
 
           Eigen::Vector<double, 6> zero;
@@ -187,7 +187,7 @@ TEST(camera_model, projection_round_trip) {
               vectorFieldNumDiff<double, 2, 6>(
                   [&](Eigen::Vector<double, 6> const& vec_a) {
                     return camera_model.distort(proj(
-                        sophus::Se3F64::exp(vec_a) * foo_pose_bar *
+                        sophus::Se3F64::exp(vec_a) * foo_from_bar *
                         point_in_bar_camera));
                   },
                   zero);
@@ -208,7 +208,7 @@ TEST(camera_model, projection_round_trip) {
           {
             Eigen::Matrix<double, 2, 3> dx =
                 camera_model.dxDistort(
-                    proj(foo_pose_bar * point_in_bar_camera)) *
+                    proj(foo_from_bar * point_in_bar_camera)) *
                 trans.dxProjTransformX(inverse_depth_in_bar);
 
             Eigen::Matrix<double, 2, 3> const num_dx =

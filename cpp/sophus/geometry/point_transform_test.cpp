@@ -94,15 +94,15 @@ TEST(point_transform, integrations) {
   double const eps = sophus::kEpsilon<double>;
 
   for (Eigen::Vector<double, 6> const& t : tangent_vec) {
-    sophus::SE3d foo_pose_bar = sophus::SE3d::exp(t);
-    PointTransformer<double> foo_transform_bar(foo_pose_bar);
+    sophus::SE3d foo_from_bar = sophus::SE3d::exp(t);
+    PointTransformer<double> foo_transform_bar(foo_from_bar);
 
     // For points not at infinity
     for (auto const& point_in_bar : point_vec) {
       InverseDepthPoint3F64 inverse_depth_in_bar =
           InverseDepthPoint3F64::fromEuclideanPoint3(point_in_bar);
 
-      Eigen::Vector3d point_in_foo = foo_pose_bar * point_in_bar;
+      Eigen::Vector3d point_in_foo = foo_from_bar * point_in_bar;
       Eigen::Vector3d point_in_foo2 = foo_transform_bar.transform(point_in_bar);
 
       FARM_CHECK_NEAR(point_in_foo, point_in_foo2, eps);
@@ -112,7 +112,7 @@ TEST(point_transform, integrations) {
       Eigen::Vector2d xy1_by_z_in_foo2 =
           foo_transform_bar.projTransform(point_in_bar);
       Eigen::Vector2d xy1_by_z_in_foo3 =
-          projTransform(foo_pose_bar, inverse_depth_in_bar);
+          projTransform(foo_from_bar, inverse_depth_in_bar);
       Eigen::Vector2d xy1_by_z_in_foo4 =
           foo_transform_bar.projTransform(inverse_depth_in_bar);
 
@@ -167,11 +167,11 @@ TEST(point_transform, integrations) {
       inverse_depth_in_bar.psi() = 0.0;  // set z to infinity
 
       Eigen::Vector2d xy1_by_inf_in_foo =
-          projTransform(foo_pose_bar, inverse_depth_in_bar);
+          projTransform(foo_from_bar, inverse_depth_in_bar);
       Eigen::Vector2d xy1_by_inf_in_foo1 =
           foo_transform_bar.projTransform(inverse_depth_in_bar);
       Eigen::Vector2d xy1_by_inf_in_foo2 =
-          proj(foo_pose_bar.so3() * point_in_bar.normalized());
+          proj(foo_from_bar.so3() * point_in_bar.normalized());
 
       FARM_CHECK_NEAR(xy1_by_inf_in_foo, xy1_by_inf_in_foo1, eps);
       FARM_CHECK_NEAR(xy1_by_inf_in_foo, xy1_by_inf_in_foo2, eps);

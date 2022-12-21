@@ -68,7 +68,7 @@ class BasisSplineFn {
   using Transformation = typename LieGroup::Transformation;
   using Tangent = typename LieGroup::Tangent;
 
-  static LieGroup parentPoseSpline(
+  static LieGroup parentFromSpline(
       LieGroup const& parent_ts_control_point,
       std::tuple<Tangent, Tangent, Tangent> const& control_tagent_vectors,
       double u) {
@@ -77,7 +77,7 @@ class BasisSplineFn {
            std::get<2>(aa);
   }
 
-  static Transformation dtParentPoseSpline(
+  static Transformation dtParentFromSpline(
       LieGroup const& parent_ts_control_point,
       std::tuple<Tangent, Tangent, Tangent> const& control_tagent_vectors,
       double u,
@@ -93,7 +93,7 @@ class BasisSplineFn {
              std::get<2>(dt_aa)));
   }
 
-  static Transformation dt2ParentPoseSpline(
+  static Transformation dt2ParentFromSpline(
       LieGroup const& parent_ts_control_point,
       std::tuple<Tangent, Tangent, Tangent> const& control_tagent_vectors,
       double u,
@@ -186,110 +186,110 @@ struct BasisSplineSegment {
         raw_params2_(raw_ptr2),
         raw_params3_(raw_ptr3) {}
 
-  [[nodiscard]] Eigen::Map<TLieGroup const> worldPoseFooPrev() const {
+  [[nodiscard]] Eigen::Map<TLieGroup const> worldFromFooPrev() const {
     return Eigen::Map<TLieGroup const>(raw_params0_);
   }
-  [[nodiscard]] Eigen::Map<TLieGroup const> worldPoseFoo0() const {
+  [[nodiscard]] Eigen::Map<TLieGroup const> worldFromFoo0() const {
     return Eigen::Map<TLieGroup const>(raw_params1_);
   }
 
-  [[nodiscard]] Eigen::Map<TLieGroup const> worldPoseFoo1() const {
+  [[nodiscard]] Eigen::Map<TLieGroup const> worldFromFoo1() const {
     return Eigen::Map<TLieGroup const>(raw_params2_);
   }
 
-  [[nodiscard]] Eigen::Map<TLieGroup const> worldPoseFoo2() const {
+  [[nodiscard]] Eigen::Map<TLieGroup const> worldFromFoo2() const {
     return Eigen::Map<TLieGroup const>(raw_params3_);
   }
-  TLieGroup parentPoseSpline(double u) {
+  TLieGroup parentFromSpline(double u) {
     switch (segment_case_) {
       case SegmentCase::first:
-        return BasisSplineFn<TLieGroup>::parentPoseSpline(
-            worldPoseFoo0(),
+        return BasisSplineFn<TLieGroup>::parentFromSpline(
+            worldFromFoo0(),
             std::make_tuple(
-                (worldPoseFoo0().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo2()).log()),
+                (worldFromFoo0().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo2()).log()),
             u);
       case SegmentCase::normal:
-        return BasisSplineFn<TLieGroup>::parentPoseSpline(
-            worldPoseFooPrev(),
+        return BasisSplineFn<TLieGroup>::parentFromSpline(
+            worldFromFooPrev(),
             std::make_tuple(
-                (worldPoseFooPrev().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo2()).log()),
+                (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo2()).log()),
             u);
       case SegmentCase::last:
-        return BasisSplineFn<TLieGroup>::parentPoseSpline(
-            worldPoseFooPrev(),
+        return BasisSplineFn<TLieGroup>::parentFromSpline(
+            worldFromFooPrev(),
             std::make_tuple(
-                (worldPoseFooPrev().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo1()).log()),
+                (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo1()).log()),
             u);
     }
     FARM_CHECK(false, "logic error");
   }
 
-  Transformation dtParentPoseSpline(double u, double delta_t) {
+  Transformation dtParentFromSpline(double u, double delta_t) {
     switch (segment_case_) {
       case SegmentCase::first:
-        return BasisSplineFn<TLieGroup>::dtParentPoseSpline(
-            worldPoseFoo0(),
+        return BasisSplineFn<TLieGroup>::dtParentFromSpline(
+            worldFromFoo0(),
             std::make_tuple(
-                (worldPoseFoo0().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo2()).log()),
+                (worldFromFoo0().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo2()).log()),
             u,
             delta_t);
       case SegmentCase::normal:
-        return BasisSplineFn<TLieGroup>::dtParentPoseSpline(
-            worldPoseFooPrev(),
+        return BasisSplineFn<TLieGroup>::dtParentFromSpline(
+            worldFromFooPrev(),
             std::make_tuple(
-                (worldPoseFooPrev().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo2()).log()),
+                (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo2()).log()),
             u,
             delta_t);
       case SegmentCase::last:
-        return BasisSplineFn<TLieGroup>::dtParentPoseSpline(
-            worldPoseFooPrev(),
+        return BasisSplineFn<TLieGroup>::dtParentFromSpline(
+            worldFromFooPrev(),
             std::make_tuple(
-                (worldPoseFooPrev().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo1()).log()),
+                (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo1()).log()),
             u,
             delta_t);
     }
     FARM_CHECK(false, "logic error");
   }
 
-  Transformation dt2ParentPoseSpline(double u, double delta_t) {
+  Transformation dt2ParentFromSpline(double u, double delta_t) {
     switch (segment_case_) {
       case SegmentCase::first:
-        return BasisSplineFn<TLieGroup>::dt2ParentPoseSpline(
-            worldPoseFoo0(),
+        return BasisSplineFn<TLieGroup>::dt2ParentFromSpline(
+            worldFromFoo0(),
             std::make_tuple(
-                (worldPoseFoo0().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo2()).log()),
+                (worldFromFoo0().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo2()).log()),
             u,
             delta_t);
       case SegmentCase::normal:
-        return BasisSplineFn<TLieGroup>::dt2ParentPoseSpline(
-            worldPoseFooPrev(),
+        return BasisSplineFn<TLieGroup>::dt2ParentFromSpline(
+            worldFromFooPrev(),
             std::make_tuple(
-                (worldPoseFooPrev().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo2()).log()),
+                (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo2()).log()),
             u,
             delta_t);
       case SegmentCase::last:
-        return BasisSplineFn<TLieGroup>::dt2ParentPoseSpline(
-            worldPoseFooPrev(),
+        return BasisSplineFn<TLieGroup>::dt2ParentFromSpline(
+            worldFromFooPrev(),
             std::make_tuple(
-                (worldPoseFooPrev().inverse() * worldPoseFoo0()).log(),
-                (worldPoseFoo0().inverse() * worldPoseFoo1()).log(),
-                (worldPoseFoo1().inverse() * worldPoseFoo1()).log()),
+                (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
+                (worldFromFoo0().inverse() * worldFromFoo1()).log(),
+                (worldFromFoo1().inverse() * worldFromFoo1()).log()),
             u,
             delta_t);
     }
@@ -322,7 +322,7 @@ class BasisSplineImpl {
         parent_Ts_control_point_.size());
   }
 
-  [[nodiscard]] LieGroup parentPoseSpline(int i, double u) const {
+  [[nodiscard]] LieGroup parentFromSpline(int i, double u) const {
     FARM_CHECK(i >= 0, "i = {}", i);
     FARM_CHECK(
         i < this->getNumSegments(),
@@ -348,10 +348,10 @@ class BasisSplineImpl {
                parent_Ts_control_point_[idx_0].data(),
                parent_Ts_control_point_[idx_1].data(),
                parent_Ts_control_point_[idx_2].data())
-        .parentPoseSpline(u);
+        .parentFromSpline(u);
   }
 
-  [[nodiscard]] Transformation dtParentPoseSpline(int i, double u) const {
+  [[nodiscard]] Transformation dtParentFromSpline(int i, double u) const {
     FARM_CHECK(i >= 0, "i = {}", i);
     FARM_CHECK(
         i < this->getNumSegments(),
@@ -377,10 +377,10 @@ class BasisSplineImpl {
                parent_Ts_control_point_[idx_0].data(),
                parent_Ts_control_point_[idx_1].data(),
                parent_Ts_control_point_[idx_2].data())
-        .dtParentPoseSpline(u, delta_transform_);
+        .dtParentFromSpline(u, delta_transform_);
   }
 
-  [[nodiscard]] Transformation dt2ParentPoseSpline(int i, double u) const {
+  [[nodiscard]] Transformation dt2ParentFromSpline(int i, double u) const {
     FARM_CHECK(i >= 0, "i = {}", i);
     FARM_CHECK(
         i < this->getNumSegments(),
@@ -406,14 +406,14 @@ class BasisSplineImpl {
                parent_Ts_control_point_[idx_0].data(),
                parent_Ts_control_point_[idx_1].data(),
                parent_Ts_control_point_[idx_2].data())
-        .dt2ParentPoseSpline(u, delta_transform_);
+        .dt2ParentFromSpline(u, delta_transform_);
   }
 
-  [[nodiscard]] std::vector<LieGroup> const& parentPosesControlPoint() const {
+  [[nodiscard]] std::vector<LieGroup> const& parentFromsControlPoint() const {
     return parent_Ts_control_point_;
   }
 
-  std::vector<LieGroup>& parentPosesControlPoint() {
+  std::vector<LieGroup>& parentFromsControlPoint() {
     return parent_Ts_control_point_;
   }
 
@@ -445,20 +445,20 @@ class BasisSpline {
       std::vector<LieGroup> parent_ts_control_point, double t0, double delta_t)
       : impl_(std::move(parent_ts_control_point), delta_t), t0_(t0) {}
 
-  [[nodiscard]] LieGroup parentPoseSpline(double t) const {
+  [[nodiscard]] LieGroup parentFromSpline(double t) const {
     IndexAndU index_and_u = this->indexAndU(t);
 
-    return impl_.parentPoseSpline(index_and_u.i, index_and_u.u);
+    return impl_.parentFromSpline(index_and_u.i, index_and_u.u);
   }
 
-  [[nodiscard]] Transformation dtParentPoseSpline(double t) const {
+  [[nodiscard]] Transformation dtParentFromSpline(double t) const {
     IndexAndU index_and_u = this->indexAndU(t);
-    return impl_.dtParentPoseSpline(index_and_u.i, index_and_u.u);
+    return impl_.dtParentFromSpline(index_and_u.i, index_and_u.u);
   }
 
-  [[nodiscard]] Transformation dt2ParentPoseSpline(double t) const {
+  [[nodiscard]] Transformation dt2ParentFromSpline(double t) const {
     IndexAndU index_and_u = this->indexAndU(t);
-    return impl_.dt2ParentPoseSpline(index_and_u.i, index_and_u.u);
+    return impl_.dt2ParentFromSpline(index_and_u.i, index_and_u.u);
   }
 
   [[nodiscard]] double t0() const { return t0_; }
@@ -467,12 +467,12 @@ class BasisSpline {
     return t0_ + impl_.deltaT() * getNumSegments();
   }
 
-  [[nodiscard]] std::vector<LieGroup> const& parentPosesControlPoint() const {
-    return impl_.parentPosesControlPoint();
+  [[nodiscard]] std::vector<LieGroup> const& parentFromsControlPoint() const {
+    return impl_.parentFromsControlPoint();
   }
 
-  std::vector<LieGroup>& parentPosesControlPoint() {
-    return impl_.parentPosesControlPoint();
+  std::vector<LieGroup>& parentFromsControlPoint() {
+    return impl_.parentFromsControlPoint();
   }
 
   [[nodiscard]] int getNumSegments() const { return impl_.getNumSegments(); }

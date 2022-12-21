@@ -23,24 +23,24 @@ struct CameraInRig {
   CameraModel camera_model;
 
   /// Camera extrinsics
-  sophus::SE3d rig_pose_camera;
+  sophus::SE3d rig_from_camera;
 };
 
 /// Sensor rig with multiple cameras.
 struct MultiCameraRig {
   std::vector<CameraInRig> cameras_in_rig;
 
-  void transformRig(sophus::SE3d const& new_rig_pose_rig) {
+  void transformRig(sophus::SE3d const& new_rig_from_rig) {
     for (auto& camera_in_rig : cameras_in_rig) {
-      camera_in_rig.rig_pose_camera =
-          new_rig_pose_rig * camera_in_rig.rig_pose_camera;
+      camera_in_rig.rig_from_camera =
+          new_rig_from_rig * camera_in_rig.rig_from_camera;
     }
   }
 
   void transformRig(uint32_t camera_num) {
-    sophus::SE3d new_rig_pose_rig =
-        cameras_in_rig[camera_num].rig_pose_camera.inverse();
-    transformRig(new_rig_pose_rig);
+    sophus::SE3d new_rig_from_rig =
+        cameras_in_rig[camera_num].rig_from_camera.inverse();
+    transformRig(new_rig_from_rig);
   }
 };
 

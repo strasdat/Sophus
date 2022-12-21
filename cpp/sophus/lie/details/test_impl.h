@@ -723,8 +723,8 @@ class LieGroupTests {
 
         BasisSplineImpl<LieGroup> spline(control_poses, 1.0);
 
-        LieGroup t = spline.parentPoseSpline(0.0, 1.0);
-        LieGroup t2 = spline.parentPoseSpline(1.0, 0.0);
+        LieGroup t = spline.parentFromSpline(0.0, 1.0);
+        LieGroup t2 = spline.parentFromSpline(1.0, 0.0);
 
         SOPHUS_TEST_APPROX(
             passed,
@@ -733,10 +733,10 @@ class LieGroupTests {
             10 * small_eps_sqrt,
             "parent_T_spline");
 
-        Transformation dt_parent_t_spline = spline.dtParentPoseSpline(0.0, 0.5);
+        Transformation dt_parent_t_spline = spline.dtParentFromSpline(0.0, 0.5);
         Transformation dt_parent_t_spline2 = curveNumDiff(
             [&](double u_bar) -> Transformation {
-              return spline.parentPoseSpline(0.0, u_bar).matrix();
+              return spline.parentFromSpline(0.0, u_bar).matrix();
             },
             0.5);
         SOPHUS_TEST_APPROX(
@@ -747,10 +747,10 @@ class LieGroupTests {
             "Dt_parent_T_spline");
 
         Transformation dt2_parent_t_spline =
-            spline.dt2ParentPoseSpline(0.0, 0.5);
+            spline.dt2ParentFromSpline(0.0, 0.5);
         Transformation dt2_parent_t_spline2 = curveNumDiff(
             [&](double u_bar) -> Transformation {
-              return spline.dtParentPoseSpline(0.0, u_bar).matrix();
+              return spline.dtParentFromSpline(0.0, u_bar).matrix();
             },
             0.5);
         SOPHUS_TEST_APPROX(
@@ -766,10 +766,10 @@ class LieGroupTests {
           BasisSpline<LieGroup> spline(control_poses, t0, delta_t);
           double t = t0 + frac * delta_t;
 
-          Transformation dt_parent_t_spline = spline.dtParentPoseSpline(t);
+          Transformation dt_parent_t_spline = spline.dtParentFromSpline(t);
           Transformation dt_parent_t_spline2 = curveNumDiff(
               [&](double t_bar) -> Transformation {
-                return spline.parentPoseSpline(t_bar).matrix();
+                return spline.parentFromSpline(t_bar).matrix();
               },
               t);
           SOPHUS_TEST_APPROX(
@@ -779,10 +779,10 @@ class LieGroupTests {
               80 * small_eps_sqrt,
               "Dt_parent_T_spline");
 
-          Transformation dt2_parent_t_spline = spline.dt2ParentPoseSpline(t);
+          Transformation dt2_parent_t_spline = spline.dt2ParentFromSpline(t);
           Transformation dt2_parent_t_spline2 = curveNumDiff(
               [&](double t_bar) -> Transformation {
-                return spline.dtParentPoseSpline(t_bar).matrix();
+                return spline.dtParentFromSpline(t_bar).matrix();
               },
               t);
           SOPHUS_TEST_APPROX(

@@ -60,16 +60,16 @@ Eigen::Matrix<TT, 2, 6> dxProjExpXPointAt0(
 ///
 /// Given (a,b,psi) being the inverse depth point in frame bar, it returns
 ///
-///   psi * (foo_pose_bar * inverse_depth_point_in_bar.toEuclideanPoint3())
+///   psi * (foo_from_bar * inverse_depth_point_in_bar.toEuclideanPoint3())
 ///
 /// for psi!=0.
 template <class TT>
 Eigen::Matrix<TT, 3, 1> scaledTransform(
-    sophus::Se3<TT> const& foo_pose_bar,
+    sophus::Se3<TT> const& foo_from_bar,
     InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) {
-  return foo_pose_bar.so3() *
+  return foo_from_bar.so3() *
              unproj(inverse_depth_point_in_bar.projInZ1Plane()) +
-         inverse_depth_point_in_bar.psi() * foo_pose_bar.translation();
+         inverse_depth_point_in_bar.psi() * foo_from_bar.translation();
 }
 
 /// Transforms inverse_depth point from frame bar to frame foo followed by a
@@ -78,13 +78,13 @@ Eigen::Matrix<TT, 3, 1> scaledTransform(
 /// If psi != 0, hence the point is not at +/- infinity, this function is
 /// equivalent to:
 ///
-///   camProj(foo_pose_bar * inverse_depth_point_in_bar.toEuclideanPoint3());
+///   camProj(foo_from_bar * inverse_depth_point_in_bar.toEuclideanPoint3());
 ///
 /// However, this function can also applied when 1/z==0, hence the point is at
 /// +/- infinity.
 template <class TT>
 Eigen::Matrix<TT, 2, 1> projTransform(
-    sophus::Se3<TT> const& foo_pose_bar,
+    sophus::Se3<TT> const& foo_from_bar,
     InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) {
   //      R * (x,y,z) + t
   //   =  z * [R * (x/z, y/z, 1) + 1/z * t]
@@ -95,20 +95,20 @@ Eigen::Matrix<TT, 2, 1> projTransform(
   //   =  proj(R * (x/z, y/z, 1) + 1/z * t)
   //
   // qed.
-  //       with R := foo_pose_bar.so3(),
-  //            t := foo_pose_bar.translation()
+  //       with R := foo_from_bar.so3(),
+  //            t := foo_from_bar.translation()
   //            (x/z, y/z, 1) := unproj(rojInZ1Plane())
   //            1/z := psi()
   //
-  return proj(scaledTransform(foo_pose_bar, inverse_depth_point_in_bar));
+  return proj(scaledTransform(foo_from_bar, inverse_depth_point_in_bar));
 }
 
 /// Functor to efficiently transform a number of point given a Se3 pose.
 ///
 /// When transforming a point `point_in_bar` given a sophus::Se3 pose
-/// `foo_pose_bar`, one can simply use
+/// `foo_from_bar`, one can simply use
 ///
-///   ``Eigen::Vector3d  = foo_pose_bar * point_in_bar;``
+///   ``Eigen::Vector3d  = foo_from_bar * point_in_bar;``
 ///
 /// Internally, this applies the (unit) quaternion to the left and the right of
 /// the point to rotate it and then adds the translation:
@@ -126,10 +126,10 @@ template <class TT>
 class PointTransformer {
  public:
   PointTransformer() = default;
-  explicit PointTransformer(sophus::Se3<TT> const& foo_pose_bar)
-      : foo_pose_bar_(foo_pose_bar),
-        foo_rotation_bar_(foo_pose_bar.so3().matrix()),
-        bar_origin_in_foo_(foo_pose_bar.translation()) {}
+  explicit PointTransformer(sophus::Se3<TT> const& foo_from_bar)
+      : foo_from_bar_(foo_from_bar),
+        foo_rotation_bar_(foo_from_bar.so3().matrix()),
+        bar_origin_in_foo_(foo_from_bar.translation()) {}
 
   /// Transforms a 3-point from frame bar to frame foo.
   [[nodiscard]] Eigen::Matrix<TT, 3, 1> transform(
@@ -160,7 +160,7 @@ class PointTransformer {
 
   /// Returns pose derivative of inverse depth point projection at the identity:
   ///
-  ///   Dx proj(exp(x) * foo_pose_bar * foo_in_bar.toEuclideanPoint3()) at x=0
+  ///   Dx proj(exp(x) * foo_from_bar * foo_in_bar.toEuclideanPoint3()) at x=0
   ///
   /// with foo_in_bar = (a,b,psi) being an inverse depth point.
   [[nodiscard]] Eigen::Matrix<TT, 2, 6> dxProjExpXTransformPointAt0(
@@ -198,8 +198,8 @@ class PointTransformer {
            mat_j;
   }
 
-  [[nodiscard]] sophus::Se3<TT> const& fooPoseBar() const {
-    return foo_pose_bar_;
+  [[nodiscard]] sophus::Se3<TT> const& fooFromBar() const {
+    return foo_from_bar_;
   }
   [[nodiscard]] Eigen::Matrix<TT, 3, 3> const& fooRotationBar() const {
     return foo_rotation_bar_;
@@ -209,7 +209,7 @@ class PointTransformer {
   }
 
  private:
-  sophus::Se3<TT> foo_pose_bar_;
+  sophus::Se3<TT> foo_from_bar_;
   Eigen::Matrix<TT, 3, 3> foo_rotation_bar_;
   Eigen::Matrix<TT, 3, 1> bar_origin_in_foo_;
 };

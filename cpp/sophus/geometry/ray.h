@@ -92,26 +92,26 @@ class Ray {
 
 template <class TT>
 inline Ray<TT, 2> operator*(
-    Se2<TT> const& bar_pose_foo, Ray<TT, 2> const& ray_foo) {
+    Se2<TT> const& bar_from_foo, Ray<TT, 2> const& ray_foo) {
   return Ray<TT, 2>(
-      bar_pose_foo * ray_foo.origin(),
-      bar_pose_foo.so2() * ray_foo.direction());
+      bar_from_foo * ray_foo.origin(),
+      bar_from_foo.so2() * ray_foo.direction());
 }
 
 template <class TT>
 inline Ray<TT, 3> operator*(
-    Se3<TT> const& bar_pose_foo, Ray<TT, 3> const& ray_foo) {
+    Se3<TT> const& bar_from_foo, Ray<TT, 3> const& ray_foo) {
   return Ray<TT, 3>(
-      bar_pose_foo * ray_foo.origin(),
-      bar_pose_foo.so3() * ray_foo.direction());
+      bar_from_foo * ray_foo.origin(),
+      bar_from_foo.so3() * ray_foo.direction());
 }
 
 // Arbitrary 6-DoF transformation of a unit vector promotes it to a ray
 // having a potentially non-zero origin.
 template <class TT>
 inline Ray<TT, 3> operator*(
-    Se3<TT> const& bar_pose_foo, UnitVector<TT, 3> const& v_foo) {
-  return Ray<TT, 3>(bar_pose_foo.translation(), bar_pose_foo.so3() * v_foo);
+    Se3<TT> const& bar_from_foo, UnitVector<TT, 3> const& v_foo) {
+  return Ray<TT, 3>(bar_from_foo.translation(), bar_from_foo.so3() * v_foo);
 }
 
 template <class TT>
