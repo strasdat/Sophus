@@ -309,40 +309,40 @@ always:
    (`class` looks less similar to `template` keyword).
 
 
-Poses, points, velocities
--------------------------
+Transformations, points, velocities
+-----------------------------------
 
-Pose and points convention
-**************************
+Rigid body transform and points convention
+******************************************
 
-Given a point in frame ``foo``, the ``bar_pose_foo`` is the pose (or rigid body
-transform) which maps the point to frame ``bar``:
+Given a point in frame ``foo``, ``bar_from_foo`` is the rigid body
+transform which maps the point to frame ``bar``:
 
-    point_in_bar = bar_pose_foo * point_in_foo
+    point_in_bar = bar_from_foo * point_in_foo
 
 Note that the frame names line up: ``bar`` - ``bar``, ``foo`` - ``foo``.
-
 
 Some details
 ************
 
- - If we have a list (or vector, or map) of poses we write::
+ - If necessary to resolved ambiguities, e.g. between rotations and rigid
+   body transforms, we use a corresponding notation, e.g.
+   ``bar_form_foo_rotation``, ``bar_form_foo_se3s`` etc.
 
-      bar_poses_foo
+ - If we have a list (or vector, or map) of transforms we write:, e.g.:
 
- - Poses with compound frame names, such as ``robot_base`` or ``left_camera``,
-   are written as follows::
+      bar_from_foo_rotations
 
-      robot_base_pose_left_camera
+ - Transforms with compound frame names, such as ``robot_base`` or
+   ``left_camera``, are written as follows::
+
+      robot_base_from_left_camera
 
  - For functions and methods we use ``camelCase``. Examples::
 
-      this->calcRobotBasePoseLeftCamera();
+      this->calcRobotBaseFromLeftCamera();
 
-      other->setBarPoseFoo(bar_pose_foo);
-
- - For other, similar entities, such as rotations, we use a corresponding
-   notation, e.g. ``bar_rotation_foo``.
+      other->setBarFromFoo(bar_from_foo);
 
  - We use the ``entity_in_frame`` conventions for points and other entities
    which have one frame attached to it. Examples:
@@ -352,14 +352,71 @@ Some details
    * ``camera_position_in_world`` (or short ``camera_in_world``)
    * ...
 
-  - When storing poses / using them in interfaces, prefer the
-    ``parent_pose_child`` convention.
+  - When storing transforms / using them in interfaces, prefer the
+    ``parent_from_child`` convention.
 
-    E.g. ``world_pose_sensor_rig``, ``sensor_rig_pose_camera``,
-    ``robot_pose_imu`` (and not ``sensor_rig_pose_world`` etc.).
+    E.g. ``world_from_sensor_rig``, ``sensor_rig_from_camera``,
+    ``robot_from_imu`` (and not ``sensor_rig_from_world`` etc.).
 
     It is easier to reason about the pose of camera in the world frame, then
     the pose of the world origin in the camera frame.
+
+
+Some geeky notes about the terms poses, orientation and position
+================================================================
+
+* Note: This section can be safely skipped - and is merely targeting notation
+geeks.
+
+The notation and terms above (and in Sophus in general) is of a functional
+nature - describing motions/actions of rigid bodies in space.
+
+For instance, ``world_from_camera_transform`` describes the rotations followed
+by a translation to be applied to points in the camera reference frame in order
+to map them with the corresponding set of points in the world frame.
+
+This motion is mainly metaphorically as it merely a way to describe the
+structural relationship between the world reference frame and the camera frame.
+
+An alternative and equivalent terminology follows a *predicative* description,
+describing structural relationship directly.
+
+Instead of (rigid body) transformation, one would use the term (rigid body)
+pose. Similarly instead of rotation (transformations) and translation
+(transformations), one would use the terms orientation and position.
+
+The intro of this chapter would be written as such:
+
+  bar_anchored_foo_pose is the rigid body transform which relates points in
+  frame foo to points in frame bar such as:
+
+      point_in_bar = bar_anchored_foo_pose * point_in_foo
+
+  Note that the frame names line up: bar - bar, foo - foo.
+
+
+In Sophus, function, variable names etc. follow the *functional* convention
+using terms such as rotation and translation.
+
+However, some concepts are easier understood using a *predicative* description
+ - hence in comments and descriptions, predicative terms such as pose and
+ position are used when it may facilitate explaining the underlying concept.
+
+For instance, depending on the context we may prefer
+
+  ``world_from_camera_rotation`` describes the orientation of camera,
+  with respect to the world reference frame.
+
+over
+
+  ``world_from_camera_rotation`` is the rotation transformation, which
+  maps a set of points in the camera camera, to corresponding point set
+  in the world reference frame.
+
+
+[See Schwank: "Cognitive Structures and Cognitive Strategies in Algorithmic
+Thinking", https://link.springer.com/chapter/10.1007/978-3-662-11334-9_22 for
+background on functional vs. predicative thinking.]
 
 
 Angular and linear velocities
@@ -372,14 +429,14 @@ most of the time two frames are sufficient.
 For example, for the linear velocity *of* the ``IMU`` module *as seen from* and
 *expressed in* the ``world`` frame, we use::
 
-    world_velocity_imu
+    world_from_imu_velocity
 
 For the corresponding angular rate (or rotational velocity), we write::
 
-    world_angular_rate_imu
+    world_from_imu_angular_rate
 
 
 If there is a use-case where three frames are involved, as in the angular
 rate *of* frame C *as seen from* frame B, *expressed in* frame A, we use::
 
-    a_angular_rate_b_of_c
+    a_from_b_of_c_angular_rate

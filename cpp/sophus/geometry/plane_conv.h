@@ -142,9 +142,9 @@ So3<TScalar> so3FromPlane(Eigen::Vector3<TScalar> const& normal_in_foo) {
 /// Note: The plane is defined by X-axis of the ``line`` frame.
 ///
 template <class TScalar>
-Eigen::Hyperplane<TScalar, 2> lineFromSe2(Se2<TScalar> const& foo_pose_line) {
+Eigen::Hyperplane<TScalar, 2> lineFromSe2(Se2<TScalar> const& foo_from_line) {
   return Eigen::Hyperplane<TScalar, 2>(
-      normalFromSo2(foo_pose_line.so2()), foo_pose_line.translation());
+      normalFromSo2(foo_from_line.so2()), foo_from_line.translation());
 }
 
 /// Returns the pose ``T_foo_line``, given a line in reference frame ``foo``.
@@ -165,12 +165,12 @@ Se2<TScalar> se2FromLine(Eigen::Hyperplane<TScalar, 2> const& line_in_foo) {
 /// Note: The plane is defined by XY-plane of the frame ``plane``.
 ///
 template <class TScalar>
-Eigen::Hyperplane<TScalar, 3> planeFromSe3(Se3<TScalar> const& foo_pose_plane) {
+Eigen::Hyperplane<TScalar, 3> planeFromSe3(Se3<TScalar> const& foo_from_plane) {
   return Eigen::Hyperplane<TScalar, 3>(
-      normalFromSo3(foo_pose_plane.so3()), foo_pose_plane.translation());
+      normalFromSo3(foo_from_plane.so3()), foo_from_plane.translation());
 }
 
-/// Returns the pose ``foo_pose_plane``, given a plane in reference frame
+/// Returns the pose ``foo_from_plane``, given a plane in reference frame
 /// ``foo``.
 ///
 /// Note: The plane is defined by XY-plane of the frame ``plane``.

@@ -252,10 +252,10 @@ class TestSe3(unittest.TestCase):
 
     def test_matrix(self):
         """TODO(docstring)"""
-        foo_pose_bar = Se3.exp(self.upsilon_omega)
-        foo_transform_bar = foo_pose_bar.matrix()
+        foo_from_bar = Se3.exp(self.upsilon_omega)
+        foo_transform_bar = foo_from_bar.matrix()
         point_bar = self.p
-        p1_foo = foo_pose_bar * point_bar
+        p1_foo = foo_from_bar * point_bar
         p2_foo = proj(foo_transform_bar * unproj(point_bar))
         self.assertEqual(sympy.simplify(p1_foo - p2_foo), zero_vector3())
 
