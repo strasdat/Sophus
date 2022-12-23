@@ -22,8 +22,7 @@ Eigen::Vector2<typename TPoint::Scalar> proj(
   using Scalar = typename TPoint::Scalar;
 
   static_assert(TPoint::ColsAtCompileTime == 1, "p must be a column-vector");
-  static_assert(
-      TPoint::RowsAtCompileTime == 3, "p must have exactly 3 columns");
+  static_assert(TPoint::RowsAtCompileTime == 3, "p must have exactly 3 rows");
   return Eigen::Vector2<Scalar>(p.x() / p.z(), p.y() / p.z());
 }
 
@@ -35,8 +34,7 @@ Eigen::Vector3<typename TPoint::Scalar> unproj(
     const typename TPoint::Scalar& z = 1.0) {
   using Scalar = typename TPoint::Scalar;
   static_assert(TPoint::ColsAtCompileTime == 1, "p must be a column-vector");
-  static_assert(
-      TPoint::RowsAtCompileTime == 2, "p must have exactly 3 columns");
+  static_assert(TPoint::RowsAtCompileTime == 2, "p must have exactly 2 rows");
   return Eigen::Vector3<Scalar>(z * p.x(), z * p.y(), z);
 }
 
