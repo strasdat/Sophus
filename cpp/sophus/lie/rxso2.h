@@ -95,7 +95,7 @@ class RxSo2Base {
   /// (one for rotation and one for scaling).
   static int constexpr kDoF = 2;
   /// Number of internal parameters used (complex number is a tuple).
-  static int constexpr kNumParameters = 2;
+  static int constexpr kNumParams = 2;
   /// Group transformations are 2x2 matrices.
   static int constexpr kMatrixDim = 2;
   /// Points are 2-dimensional
@@ -326,9 +326,9 @@ class RxSo2Base {
 
   /// Returns derivative of  this * RxSo2::exp(x) wrt. x at x=0
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParameters, kDoF>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
   dxThisMulExpXAt0() const {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> d;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> d;
     // clang-format off
     d << -complex().y(), complex().x(),
             complex().x(), complex().y();
@@ -338,9 +338,9 @@ class RxSo2Base {
 
   /// Returns derivative of log(this^{-1} * x) by x at x=this.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParameters>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParams>
   dxLogThisInvTimesXAtThis() const {
-    Eigen::Matrix<Scalar, kDoF, kNumParameters> d;
+    Eigen::Matrix<Scalar, kDoF, kNumParams> d;
     const Scalar norm_sq_inv = Scalar(1.) / complex().squaredNorm();
     // clang-format off
     d << -complex().y(), complex().x(),
@@ -353,7 +353,7 @@ class RxSo2Base {
   ///
   /// It returns (c[0], c[1]), with c being the  complex number.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParameters> params()
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
       const {
     return complex();
   }
@@ -471,7 +471,7 @@ class RxSo2 : public RxSo2Base<RxSo2<TScalar>> {
   SOPHUS_FUNC RxSo2& operator=(RxSo2 const& other) = default;
 
   static int constexpr kDoF = Base::kDoF;
-  static int constexpr kNumParameters = Base::kNumParameters;
+  static int constexpr kNumParams = Base::kNumParams;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -548,7 +548,7 @@ class RxSo2 : public RxSo2Base<RxSo2<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. ``x``
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpX(
       Tangent const& a) {
     using std::cos;
     using std::exp;
@@ -556,7 +556,7 @@ class RxSo2 : public RxSo2Base<RxSo2<TScalar>> {
     Scalar const theta = a[0];
     Scalar const sigma = a[1];
 
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> d;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> d;
     // clang-format off
     d << -sin(theta), cos(theta),
             cos(theta), sin(theta);
@@ -566,8 +566,8 @@ class RxSo2 : public RxSo2Base<RxSo2<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. x_i at x=0.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpXAt0() {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> d;
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpXAt0() {
+    Eigen::Matrix<Scalar, kNumParams, kDoF> d;
     Scalar const i(1.);
     Scalar const o(0.);
     // clang-format off

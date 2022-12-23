@@ -59,7 +59,7 @@ class LieGroupTests {
   static int constexpr kPointDim = LieGroup::kPointDim;
   static int constexpr kMatrixDim = LieGroup::kMatrixDim;
   static int constexpr kDoF = LieGroup::kDoF;
-  static int constexpr kNumParameters = LieGroup::kNumParameters;
+  static int constexpr kNumParams = LieGroup::kNumParams;
 
   LieGroupTests(
       std::vector<LieGroup, Eigen::aligned_allocator<LieGroup>> const&
@@ -187,7 +187,7 @@ class LieGroupTests {
           transpose(foo_transform_bar.matrix()),
           transpose(foo_t3_bar.matrix()));
 
-      LieGroup foo_t4_bar(foo_transform_bar.matrix());
+      LieGroup foo_t4_bar = LieGroup::fromMatrix(foo_transform_bar.matrix());
       SOPHUS_TEST_APPROX(
           passed,
           foo_transform_bar.matrix(),
@@ -261,10 +261,10 @@ class LieGroupTests {
     bool passed = true;
     for (size_t j = 0; j < tangent_vec_.size(); ++j) {
       Tangent a = tangent_vec_[j];
-      Eigen::Matrix<Scalar, kNumParameters, kDoF> d = LieGroup::dxExpX(a);
-      Eigen::Matrix<Scalar, kNumParameters, kDoF> jac_num =
-          vectorFieldNumDiff<Scalar, kNumParameters, kDoF>(
-              [](Tangent const& x) -> Eigen::Vector<Scalar, kNumParameters> {
+      Eigen::Matrix<Scalar, kNumParams, kDoF> d = LieGroup::dxExpX(a);
+      Eigen::Matrix<Scalar, kNumParams, kDoF> jac_num =
+          vectorFieldNumDiff<Scalar, kNumParams, kDoF>(
+              [](Tangent const& x) -> Eigen::Vector<Scalar, kNumParams> {
                 return LieGroup::exp(x).params();
               },
               a);
@@ -275,10 +275,10 @@ class LieGroupTests {
 
     Tangent o;
     setToZero(o);
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j = LieGroup::dxExpXAt0();
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j_num =
-        vectorFieldNumDiff<Scalar, kNumParameters, kDoF>(
-            [](Tangent const& x) -> Eigen::Vector<Scalar, kNumParameters> {
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j = LieGroup::dxExpXAt0();
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j_num =
+        vectorFieldNumDiff<Scalar, kNumParams, kDoF>(
+            [](Tangent const& x) -> Eigen::Vector<Scalar, kNumParams> {
               return LieGroup::exp(x).params();
             },
             o);
@@ -287,10 +287,10 @@ class LieGroupTests {
     for (size_t i = 0; i < group_vec_.size(); ++i) {
       LieGroup t = group_vec_[i];
 
-      Eigen::Matrix<Scalar, kNumParameters, kDoF> j = t.dxThisMulExpXAt0();
-      Eigen::Matrix<Scalar, kNumParameters, kDoF> j_num =
-          vectorFieldNumDiff<Scalar, kNumParameters, kDoF>(
-              [t](Tangent const& x) -> Eigen::Vector<Scalar, kNumParameters> {
+      Eigen::Matrix<Scalar, kNumParams, kDoF> j = t.dxThisMulExpXAt0();
+      Eigen::Matrix<Scalar, kNumParams, kDoF> j_num =
+          vectorFieldNumDiff<Scalar, kNumParams, kDoF>(
+              [t](Tangent const& x) -> Eigen::Vector<Scalar, kNumParams> {
                 return (t * LieGroup::exp(x)).params();
               },
               o);

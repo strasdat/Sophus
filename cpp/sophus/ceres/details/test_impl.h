@@ -96,7 +96,7 @@ struct LieGroupCeresTests {
   template <class TScalar>
   using StdVector = std::vector<TScalar, Eigen::aligned_allocator<TScalar>>;
   static int constexpr kMatrixDim = LieGroupF64::kMatrixDim;
-  static int constexpr kNumParameters = LieGroupF64::kNumParameters;
+  static int constexpr kNumParams = LieGroupF64::kNumParams;
   static int constexpr kDoF = LieGroupF64::kDoF;
 
   struct TestLieGroupCostFunctor {
@@ -259,7 +259,7 @@ struct LieGroupCeresTests {
       initial_error += squaredNorm(delta_log);
       problem.AddParameterBlock(
           v_estimate.back().data(),
-          LieGroupF64::kNumParameters,
+          LieGroupF64::kNumParams,
           parametrization);
     }
 
@@ -277,8 +277,8 @@ struct LieGroupCeresTests {
         ceres::CostFunction* cost = new ceres::AutoDiffCostFunction<
             TestGraphFunctor,
             LieGroupF64::kDoF,
-            LieGroupF64::kNumParameters,
-            LieGroupF64::kNumParameters>(new TestGraphFunctor(diff * delta));
+            LieGroupF64::kNumParams,
+            LieGroupF64::kNumParams>(new TestGraphFunctor(diff * delta));
         // For real-world problems you should consider using robust
         // loss-function
         problem.AddResidualBlock(
@@ -323,20 +323,20 @@ struct LieGroupCeresTests {
     // Specify local update rule for our parameter
 
     auto parameterization = new sophus::Manifold<TLieGroup>;
-    problem.AddParameterBlock(t_wr.data(), kNumParameters, parameterization);
+    problem.AddParameterBlock(t_wr.data(), kNumParams, parameterization);
 
     // Create and add cost functions. Derivatives will be evaluated via
     // automatic differentiation
     ceres::CostFunction* cost_function1 = new ceres::AutoDiffCostFunction<
         TestLieGroupCostFunctor,
         LieGroupF64::kDoF,
-        LieGroupF64::kNumParameters>(
+        LieGroupF64::kNumParams>(
         new TestLieGroupCostFunctor(t_w_targ.inverse()));
     problem.AddResidualBlock(cost_function1, nullptr, t_wr.data());
     ceres::CostFunction* cost_function2 = new ceres::AutoDiffCostFunction<
         TestPointCostFunctor,
         kNumPointParameters,
-        kNumParameters,
+        kNumParams,
         kNumPointParameters>(
         new TestPointCostFunctor(t_w_targ.inverse(), point_b));
     problem.AddResidualBlock(
@@ -370,9 +370,9 @@ struct LieGroupCeresTests {
 
     bool passed = true;
     auto coeffs =
-        Eigen::Map<const Eigen::Matrix<double, kNumParameters, 1>>(x.data());
+        Eigen::Map<const Eigen::Matrix<double, kNumParams, 1>>(x.data());
     auto coeffs_y =
-        Eigen::Map<const Eigen::Matrix<double, kNumParameters, 1>>(y.data());
+        Eigen::Map<const Eigen::Matrix<double, kNumParams, 1>>(y.data());
     std::cerr << "XPlusZeroIsXAt " << coeffs.transpose() << std::endl;
     passed &= xPlusZeroIsXAt(x);
     std::cerr << "XMinusXIsZeroAt " << coeffs.transpose() << std::endl;
@@ -473,11 +473,11 @@ struct LieGroupCeresTests {
 
     Eigen::Matrix<
         double,
-        kNumParameters,
+        kNumParams,
         kDoF,
         kDoF == 1 ? Eigen::ColMajor : Eigen::RowMajor>
         jplus;
-    Eigen::Matrix<double, kDoF, kNumParameters, Eigen::RowMajor> jminus;
+    Eigen::Matrix<double, kDoF, kNumParams, Eigen::RowMajor> jminus;
 
     passed &= manifold.PlusJacobian(x.data(), jplus.data());
     processTestResult(passed);

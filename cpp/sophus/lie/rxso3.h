@@ -87,7 +87,7 @@ class RxSo3Base {
   /// (three for rotation and one for scaling).
   static int constexpr kDoF = 4;
   /// Number of internal parameters used (quaternion is a 4-tuple).
-  static int constexpr kNumParameters = 4;
+  static int constexpr kNumParams = 4;
   /// Group transformations are 3x3 matrices.
   static int constexpr kMatrixDim = 3;
   /// Points are 3-dimensional
@@ -357,7 +357,7 @@ class RxSo3Base {
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real), with q being the
   /// quaternion.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParameters> params()
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
       const {
     return quaternion().coeffs();
   }
@@ -452,9 +452,9 @@ class RxSo3Base {
 
   /// Returns derivative of  this * RxSo3::exp(x) wrt. x at x=0
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParameters, kDoF>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
   dxThisMulExpXAt0() const {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     Eigen::Quaternion<Scalar> const q = quaternion();
     j.col(3) = q.coeffs() * Scalar(0.5);
     Scalar const c0 = Scalar(0.5) * q.w();
@@ -481,10 +481,10 @@ class RxSo3Base {
 
   /// Returns derivative of log(this^{-1} * x) by x at x=this.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParameters>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParams>
   dxLogThisInvTimesXAtThis() const {
     auto& q = quaternion();
-    Eigen::Matrix<Scalar, kDoF, kNumParameters> j;
+    Eigen::Matrix<Scalar, kDoF, kNumParams> j;
     // clang-format off
     j << q.w(),  q.z(), -q.y(), -q.x(),
         -q.z(),  q.w(),  q.x(), -q.y(),
@@ -509,7 +509,7 @@ class RxSo3 : public RxSo3Base<RxSo3<TScalar>> {
  public:
   using Base = RxSo3Base<RxSo3<TScalar>>;
   static int constexpr kDoF = Base::kDoF;
-  static int constexpr kNumParameters = Base::kNumParameters;
+  static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
@@ -630,18 +630,18 @@ class RxSo3 : public RxSo3Base<RxSo3<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. x_i at x=0.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpXAt0() {
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpXAt0() {
     static Scalar const kH(0.5);
-    return kH * Eigen::Matrix<Scalar, kNumParameters, kDoF>::Identity();
+    return kH * Eigen::Matrix<Scalar, kNumParams, kDoF>::Identity();
   }
 
   /// Returns derivative of exp(x) wrt. x.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpX(
       Tangent const& a) {
     using std::exp;
     using std::sqrt;
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     Eigen::Vector3<Scalar> const omega = a.template head<3>();
     Scalar const sigma = a[3];
     Eigen::Quaternion<Scalar> quat = So3<Scalar>::exp(omega).unitQuaternion();

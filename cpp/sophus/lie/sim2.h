@@ -102,7 +102,7 @@ class Sim2Base {
   static int constexpr kDoF = 4;
   /// Number of internal parameters used (2-tuple for complex number, two for
   /// translation).
-  static int constexpr kNumParameters = 4;
+  static int constexpr kNumParams = 4;
   /// Group transformations are 3x3 matrices.
   static int constexpr kMatrixDim = 3;
   /// Points are 2-dimensional
@@ -315,9 +315,9 @@ class Sim2Base {
   /// It returns (c[0], c[1], t[0], t[1]),
   /// with c being the complex number, t the translation 3-vector.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParameters> params()
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
       const {
-    Eigen::Vector<Scalar, kNumParameters> p;
+    Eigen::Vector<Scalar, kNumParams> p;
     p << rxso2().params(), translation();
     return p;
   }
@@ -337,9 +337,9 @@ class Sim2Base {
 
   /// Returns derivative of  this * Sim2::exp(x)  wrt. x at x=0.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParameters, kDoF>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
   dxThisMulExpXAt0() const {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> d;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> d;
     d.template block<2, 2>(0, 0).setZero();
     d.template block<2, 2>(0, 2) = rxso2().dxThisMulExpXAt0();
     d.template block<2, 2>(2, 2).setZero();
@@ -349,9 +349,9 @@ class Sim2Base {
 
   /// Returns derivative of log(this^{-1} * x) by x at x=this.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParameters>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParams>
   dxLogThisInvTimesXAtThis() const {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> d;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> d;
     d.template block<2, 2>(0, 0).setZero();
     d.template block<2, 2>(0, 2) = rxso2().inverse().matrix();
     d.template block<2, 2>(2, 0) = rxso2().dxLogThisInvTimesXAtThis();
@@ -455,7 +455,7 @@ class Sim2 : public Sim2Base<Sim2<TScalar>> {
   SOPHUS_FUNC Sim2& operator=(Sim2 const& other) = default;
 
   static int constexpr kDoF = Base::kDoF;
-  static int constexpr kNumParameters = Base::kNumParameters;
+  static int constexpr kNumParams = Base::kNumParams;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -552,8 +552,8 @@ class Sim2 : public Sim2Base<Sim2<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. x_i at x=0.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpXAt0() {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpXAt0() {
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     j.template block<2, 2>(0, 0).setZero();
     j.template block<2, 2>(0, 2) = RxSo2<Scalar>::dxExpXAt0();
     j.template block<2, 2>(2, 0).setIdentity();
@@ -563,7 +563,7 @@ class Sim2 : public Sim2Base<Sim2<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. x.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpX(
       Tangent const& vec_a) {
     static Eigen::Matrix2<Scalar> const kI = Eigen::Matrix2<Scalar>::Identity();
     static Scalar const kOne(1.0);
@@ -580,7 +580,7 @@ class Sim2 : public Sim2Base<Sim2<TScalar>> {
         details::calcW<Scalar, 2>(omega, theta, sigma);
     Eigen::Vector2<Scalar> const upsilon = vec_a.segment(0, 2);
 
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     j.template block<2, 2>(0, 0).setZero();
     j.template block<2, 2>(0, 2) =
         RxSo2<Scalar>::dxExpX(vec_a.template tail<2>());
@@ -798,12 +798,12 @@ SOPHUS_FUNC Sim2<TScalar>::Sim2() : translation_(TranslationMember::Zero()) {
       std::is_standard_layout<Sim2>::value,
       "Assume standard layout for the use of offsetof check below.");
   static_assert(
-      offsetof(Sim2, rxso2_) + sizeof(Scalar) * RxSo2<Scalar>::kNumParameters ==
+      offsetof(Sim2, rxso2_) + sizeof(Scalar) * RxSo2<Scalar>::kNumParams ==
           offsetof(Sim2, translation_),
       "This class assumes packed storage and hence will only work "
       "correctly depending on the compiler (options) - in "
       "particular when using [this->data(), this-data() + "
-      "kNumParameters] to access the raw data in a contiguous fashion.");
+      "kNumParams] to access the raw data in a contiguous fashion.");
 }
 
 }  // namespace sophus
@@ -831,7 +831,7 @@ class Map<sophus::Sim2<TScalar>>
 
   SOPHUS_FUNC explicit Map(Scalar* coeffs)
       : rxso2_(coeffs),
-        translation_(coeffs + sophus::RxSo2<Scalar>::kNumParameters) {}
+        translation_(coeffs + sophus::RxSo2<Scalar>::kNumParams) {}
 
   /// Mutator of RxSo2
   ///
@@ -880,7 +880,7 @@ class Map<sophus::Sim2<TScalar> const>
 
   SOPHUS_FUNC explicit Map(Scalar const* coeffs)
       : rxso2_(coeffs),
-        translation_(coeffs + sophus::RxSo2<Scalar>::kNumParameters) {}
+        translation_(coeffs + sophus::RxSo2<Scalar>::kNumParams) {}
 
   /// Accessor of RxSo2
   ///

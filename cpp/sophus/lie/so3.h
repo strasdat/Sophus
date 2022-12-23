@@ -94,7 +94,7 @@ class So3Base {
   /// Degrees of freedom of group, number of dimensions in tangent space.
   static int constexpr kDoF = 3;
   /// Number of internal parameters used (quaternion is a 4-tuple).
-  static int constexpr kNumParameters = 4;
+  static int constexpr kNumParams = 4;
   /// Group transformations are 3x3 matrices.
   static int constexpr kMatrixDim = 3;
   /// Points are 3-dimensional/ Include only the selective set of Eigen headers
@@ -207,9 +207,9 @@ class So3Base {
 
   /// Returns derivative of  this * So3::exp(x)  wrt. x at x=0.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParameters, kDoF>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
   dxThisMulExpXAt0() const {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     Eigen::Quaternion<Scalar> const q = unitQuaternion();
     Scalar const c0 = Scalar(0.5) * q.w();
     Scalar const c1 = Scalar(0.5) * q.z();
@@ -236,10 +236,10 @@ class So3Base {
 
   /// Returns derivative of log(this^{-1} * x) wrt. x at x=this.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParameters>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParams>
   dxLogThisInvTimesXAtThis() const {
     auto& q = unitQuaternion();
-    Eigen::Matrix<Scalar, kDoF, kNumParameters> j;
+    Eigen::Matrix<Scalar, kDoF, kNumParams> j;
     // clang-format off
     j << q.w(),  q.z(), -q.y(), -q.x(),
         -q.z(),  q.w(),  q.x(), -q.y(),
@@ -253,13 +253,13 @@ class So3Base {
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real), with q being the
   /// unit quaternion.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParameters> params()
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
       const {
     return unitQuaternion().coeffs();
   }
 
   SOPHUS_FUNC void setParams(
-      Eigen::Vector<Scalar, kNumParameters> const& params) {
+      Eigen::Vector<Scalar, kNumParams> const& params) {
     mutUnitQuaternion().coeffs() = params;
     this->normalize();
   }
@@ -502,7 +502,7 @@ class So3 : public So3Base<So3<TScalar>> {
  public:
   using Base = So3Base<So3<TScalar>>;
   static int constexpr kDoF = Base::kDoF;
-  static int constexpr kNumParameters = Base::kNumParameters;
+  static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
@@ -645,7 +645,7 @@ class So3 : public So3Base<So3<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. x.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpX(
       Tangent const& omega) {
     using std::cos;
     using std::exp;
@@ -677,7 +677,7 @@ class So3 : public So3Base<So3<TScalar>> {
     Scalar const c18 = omega[1] * omega[2];
     Scalar const c19 = -c10 * c18 + c13 * c18;
     Scalar const c20 = Scalar(0.5) * c5 * c7;
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     j(0, 0) = -c0 * c10 + c0 * c13 + c8;
     j(0, 1) = c16;
     j(0, 2) = c17;
@@ -695,8 +695,8 @@ class So3 : public So3Base<So3<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. x_i at x=0.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpXAt0() {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpXAt0() {
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     // clang-format off
     j <<  Scalar(0.5),   Scalar(0),   Scalar(0),
             Scalar(0), Scalar(0.5),   Scalar(0),

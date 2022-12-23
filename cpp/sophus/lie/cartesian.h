@@ -92,7 +92,7 @@ class CartesianBase {
   /// Degrees of freedom of manifold, equals to number of Cartesian coordinates.
   static int constexpr kDoF = kM;
   /// Number of internal parameters used, also M.
-  static int constexpr kNumParameters = kM;
+  static int constexpr kNumParams = kM;
   /// Group transformations are (M+1)x(M+1) matrices.
   static int constexpr kMatrixDim = kM + 1;
   static int constexpr kPointDim = kM;
@@ -138,18 +138,18 @@ class CartesianBase {
 
   /// Returns derivative of  this * exp(x)  wrt x at x=0.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParameters, kDoF>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
   dxThisMulExpXAt0() const {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> m;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> m;
     m.setIdentity();
     return m;
   }
 
   /// Returns derivative of log(this^{-1} * x) by x at x=this.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParameters, kDoF>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
   dxLogThisInvTimesXAtThis() const {
-    Eigen::Matrix<Scalar, kDoF, kNumParameters> m;
+    Eigen::Matrix<Scalar, kDoF, kNumParams> m;
     m.setIdentity();
     return m;
   }
@@ -271,7 +271,7 @@ class Cartesian : public CartesianBase<Cartesian<TScalar, kM>, kM> {
 
  public:
   static int constexpr kDoF = Base::kDoF;
-  static int constexpr kNumParameters = Base::kNumParameters;
+  static int constexpr kNumParams = Base::kNumParams;
   static int constexpr kMatrixDim = Base::kMatrixDim;
   static int constexpr kPointDim = Base::kPointDim;
 
@@ -338,15 +338,15 @@ class Cartesian : public CartesianBase<Cartesian<TScalar, kM>, kM> {
 
   /// Returns derivative of exp(x) wrt. x.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpXAt0() {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> m;
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpXAt0() {
+    Eigen::Matrix<Scalar, kNumParams, kDoF> m;
     m.setIdentity();
     return m;
   }
 
   /// Returns derivative of exp(x) wrt. x_i at x=0.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpX(
       Tangent const& /*unused*/) {
     return dxExpXAt0();
   }

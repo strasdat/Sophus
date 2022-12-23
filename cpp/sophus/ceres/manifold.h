@@ -22,7 +22,7 @@ class Manifold : public ceres::Manifold {
   using TangentMap = typename sophus::Mapper<Tangent>::Map;
   using TangentConstMap = typename sophus::Mapper<Tangent>::ConstMap;
   static int constexpr kDoF = LieGroupF64::kDoF;
-  static int constexpr kNumParameters = LieGroupF64::kNumParameters;
+  static int constexpr kNumParams = LieGroupF64::kNumParams;
 
   /// LieGroup plus operation for Ceres
   ///
@@ -47,7 +47,7 @@ class Manifold : public ceres::Manifold {
     Eigen::Map<LieGroupF64 const> t(t_raw);
     Eigen::Map<Eigen::Matrix<
         double,
-        kNumParameters,
+        kNumParams,
         kDoF,
         kDoF == 1 ? Eigen::ColMajor : Eigen::RowMajor>>
         jacobian(jacobian_raw);
@@ -68,14 +68,14 @@ class Manifold : public ceres::Manifold {
 
   bool MinusJacobian(double const* x_raw, double* jacobian_raw) const override {
     Eigen::Map<LieGroupF64 const> x(x_raw);
-    Eigen::Map<Eigen::Matrix<double, kDoF, kNumParameters, Eigen::RowMajor>>
+    Eigen::Map<Eigen::Matrix<double, kDoF, kNumParams, Eigen::RowMajor>>
         jacobian(jacobian_raw);
     jacobian = x.dxLogThisInvTimesXAtThis();
     return true;
   }
 
   [[nodiscard]] int AmbientSize() const override {
-    return LieGroupF64::kNumParameters;
+    return LieGroupF64::kNumParams;
   }
 
   [[nodiscard]] int TangentSize() const override { return LieGroupF64::kDoF; }

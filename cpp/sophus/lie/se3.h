@@ -101,7 +101,7 @@ class Se3Base {
   static int constexpr kDoF = 6;
   /// Number of internal parameters used (4-tuple for quaternion, three for
   /// translation).
-  static int constexpr kNumParameters = 7;
+  static int constexpr kNumParams = 7;
   /// Group transformations are 4x4 matrices.
   static int constexpr kMatrixDim = 4;
   /// Points are 3-dimensional
@@ -170,9 +170,9 @@ class Se3Base {
 
   /// Returns derivative of  this * exp(x)  wrt x at x=0.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParameters, kDoF>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
   dxThisMulExpXAt0() const {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     Eigen::Quaternion<Scalar> const q = unitQuaternion();
     Scalar const c0 = Scalar(0.5) * q.w();
     Scalar const c1 = Scalar(0.5) * q.z();
@@ -243,9 +243,9 @@ class Se3Base {
 
   /// Returns derivative of log(this^{-1} * x) by x at x=this.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParameters>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParams>
   dxLogThisInvTimesXAtThis() const {
-    Eigen::Matrix<Scalar, kDoF, kNumParameters> j;
+    Eigen::Matrix<Scalar, kDoF, kNumParams> j;
     j.template block<3, 4>(0, 0).setZero();
     j.template block<3, 3>(0, 4) = so3().inverse().matrix();
     j.template block<3, 4>(3, 0) = so3().dxLogThisInvTimesXAtThis();
@@ -457,15 +457,15 @@ class Se3Base {
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real, t[0], t[1], t[2]),
   /// with q being the unit quaternion, t the translation 3-vector.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParameters> params()
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
       const {
-    Eigen::Vector<Scalar, kNumParameters> p;
+    Eigen::Vector<Scalar, kNumParams> p;
     p << so3().params(), translation();
     return p;
   }
 
   SOPHUS_FUNC void setParams(
-      Eigen::Vector<Scalar, kNumParameters> const& params) {
+      Eigen::Vector<Scalar, kNumParams> const& params) {
     this->translation() = params.template tail<3>();
     this->so3().setParams(params.template head<4>());
   }
@@ -496,7 +496,7 @@ class Se3 : public Se3Base<Se3<TScalar>> {
 
  public:
   static int constexpr kDoF = Base::kDoF;
-  static int constexpr kNumParameters = Base::kNumParameters;
+  static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
@@ -691,13 +691,13 @@ class Se3 : public Se3Base<Se3<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. x.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpX(
       Tangent const& upsilon_omega) {
     using std::cos;
     using std::pow;
     using std::sin;
     using std::sqrt;
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> j;
+    Eigen::Matrix<Scalar, kNumParams, kDoF> j;
     Eigen::Vector<Scalar, 3> upsilon = upsilon_omega.template head<3>();
     Eigen::Vector<Scalar, 3> omega = upsilon_omega.template tail<3>();
 
@@ -873,8 +873,8 @@ class Se3 : public Se3Base<Se3<TScalar>> {
 
   /// Returns derivative of exp(x) wrt. x_i at x=0.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpXAt0() {
-    Eigen::Matrix<Scalar, kNumParameters, kDoF> dx;
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpXAt0() {
+    Eigen::Matrix<Scalar, kNumParams, kDoF> dx;
     Scalar const o(0);
     Scalar const h(0.5);
     Scalar const i(1);
@@ -1125,12 +1125,12 @@ SOPHUS_FUNC Se3<TScalar>::Se3() : translation_(TranslationMember::Zero()) {
       std::is_standard_layout<Se3>::value,
       "Assume standard layout for the use of offsetof check below.");
   static_assert(
-      offsetof(Se3, so3_) + sizeof(Scalar) * So3<Scalar>::kNumParameters ==
+      offsetof(Se3, so3_) + sizeof(Scalar) * So3<Scalar>::kNumParams ==
           offsetof(Se3, translation_),
       "This class assumes packed storage and hence will only work "
       "correctly depending on the compiler (options) - in "
       "particular when using [this->data(), this-data() + "
-      "kNumParameters] to access the raw data in a contiguous fashion.");
+      "kNumParams] to access the raw data in a contiguous fashion.");
 }
 }  // namespace sophus
 
@@ -1157,7 +1157,7 @@ class Map<sophus::Se3<TScalar>>
 
   SOPHUS_FUNC explicit Map(Scalar* coeffs)
       : so3_(coeffs),
-        translation_(coeffs + sophus::So3<Scalar>::kNumParameters) {}
+        translation_(coeffs + sophus::So3<Scalar>::kNumParams) {}
 
   /// Mutator of So3
   ///
@@ -1207,7 +1207,7 @@ class Map<sophus::Se3<TScalar> const>
 
   SOPHUS_FUNC explicit Map(Scalar const* coeffs)
       : so3_(coeffs),
-        translation_(coeffs + sophus::So3<Scalar>::kNumParameters) {}
+        translation_(coeffs + sophus::So3<Scalar>::kNumParams) {}
 
   /// Accessor of So3
   ///

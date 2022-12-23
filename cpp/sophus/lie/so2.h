@@ -38,20 +38,20 @@ namespace internal {
 template <class TScalar>
 struct traits<sophus::So2<TScalar>> {
   using Scalar = TScalar;
-  using ComplexType = Eigen::Matrix<Scalar, 2, 1>;
+  using ParamsType = Eigen::Matrix<Scalar, 2, 1>;
 };
 
 template <class TScalar>
 struct traits<Map<sophus::So2<TScalar>>> : traits<sophus::So2<TScalar>> {
   using Scalar = TScalar;
-  using ComplexType = Map<Eigen::Vector2<Scalar>>;
+  using ParamsType = Map<Eigen::Vector2<Scalar>>;
 };
 
 template <class TScalar>
 struct traits<Map<sophus::So2<TScalar> const>>
     : traits<sophus::So2<TScalar> const> {
   using Scalar = TScalar;
-  using ComplexType = Map<Eigen::Vector2<Scalar> const>;
+  using ParamsType = Map<Eigen::Vector2<Scalar> const>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -87,23 +87,24 @@ template <class TDerived>
 class So2Base {
  public:
   using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
-  using ComplexT = typename Eigen::internal::traits<TDerived>::ComplexType;
-  using ComplexTemporaryType = Eigen::Matrix<Scalar, 2, 1>;
+  using Params = typename Eigen::internal::traits<TDerived>::ParamsType;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space (one
   /// since we only have in-plane rotations).
   static int constexpr kDoF = 1;
   /// Number of internal parameters used (complex numbers are a tuples).
-  static int constexpr kNumParameters = 2;
+  static int constexpr kNumParams = 2;
   /// Group transformations are 2x2 matrices.
   static int constexpr kMatrixDim = 2;
-  /// Points are 3-dimensional
+  /// Points are 2-dimensional
   static int constexpr kPointDim = 2;
+
+  using ParamsTemporaryType = Eigen::Matrix<Scalar, kNumParams, 1>;
   using Transformation = Eigen::Matrix<Scalar, kMatrixDim, kMatrixDim>;
   using Point = Eigen::Vector2<Scalar>;
   using HomogeneousPoint = Eigen::Vector3<Scalar>;
-  using Line = Eigen::ParametrizedLine<Scalar, 2>;
-  using Hyperplane = Eigen::Hyperplane<Scalar, 2>;
+  using Line = Eigen::ParametrizedLine<Scalar, kPointDim>;
+  using Hyperplane = Eigen::Hyperplane<Scalar, kPointDim>;
   using Tangent = Scalar;
   using Adjoint = Scalar;
 
@@ -134,30 +135,10 @@ class So2Base {
   ///
   SOPHUS_FUNC [[nodiscard]] Adjoint adj() const { return Scalar(1); }
 
-  /// Returns copy of instance casted to NewScalarType.
-  ///
-  template <class TNewScalarType>
-  SOPHUS_FUNC [[nodiscard]] So2<TNewScalarType> cast() const {
-    return So2<TNewScalarType>(unitComplex().template cast<TNewScalarType>());
-  }
-
-  /// This provides unsafe read/write access to internal data. SO(2) is
-  /// represented by a unit complex number (two parameters). When using direct
-  /// write access, the user needs to take care of that the complex number stays
-  /// normalized.
-  ///
-  SOPHUS_FUNC Scalar* data() { return mutUnitComplex().data(); }
-
-  /// Const version of data() above.
-  ///
-  SOPHUS_FUNC [[nodiscard]] Scalar const* data() const {
-    return unitComplex().data();
-  }
-
   /// Returns group inverse.
   ///
   SOPHUS_FUNC [[nodiscard]] So2<Scalar> inverse() const {
-    return So2<Scalar>(unitComplex().x(), -unitComplex().y());
+    return So2<Scalar>::fromRealAndImag(unitComplex().x(), -unitComplex().y());
   }
 
   /// Logarithmic map
@@ -187,7 +168,7 @@ class So2Base {
     FARM_CHECK(
         length >= kEpsilon<Scalar>,
         "Complex number should not be close to zero!");
-    mutUnitComplex() /= length;
+    mutParams() /= length;
   }
 
   /// Returns 2x2 matrix representation of the instance.
@@ -196,8 +177,8 @@ class So2Base {
   /// ``det(R)=1``, thus the so-called "rotation matrix".
   ///
   SOPHUS_FUNC [[nodiscard]] Transformation matrix() const {
-    Scalar const& real = unitComplex().x();
-    Scalar const& imag = unitComplex().y();
+    Scalar const& real = params().x();
+    Scalar const& imag = params().y();
     Transformation mat_r;
     // clang-format off
     mat_r <<
@@ -212,7 +193,7 @@ class So2Base {
   template <class TOtherDerived>
   SOPHUS_FUNC So2Base<TDerived>& operator=(
       So2Base<TOtherDerived> const& other) {
-    mutUnitComplex() = other.unitComplex();
+    mutParams() = other.params();
     return *this;
   }
 
@@ -241,10 +222,10 @@ class So2Base {
     // http://stackoverflow.com/a/12934750 for details).
     if (squared_norm != ResultT(1.0)) {
       ResultT const scale = ResultT(2.0) / (ResultT(1.0) + squared_norm);
-      return So2Product<TOtherDerived>(
+      return So2Product<TOtherDerived>::fromRealAndImag(
           result_real * scale, result_imag * scale);
     }
-    return So2Product<TOtherDerived>(result_real, result_imag);
+    return So2Product<TOtherDerived>::fromRealAndImag(result_real, result_imag);
   }
 
   /// Group action on 2-points.
@@ -325,58 +306,79 @@ class So2Base {
 
   /// Returns derivative of  this * So2::exp(x)  wrt. x at x=0.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParameters, kDoF>
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
   dxThisMulExpXAt0() const {
-    return Eigen::Matrix<Scalar, kNumParameters, kDoF>(
+    return Eigen::Matrix<Scalar, kNumParams, kDoF>(
         -unitComplex()[1], unitComplex()[0]);
+  }
+
+  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParams>
+  dxLogThisInvTimesXAtThis() const {
+    return Eigen::Matrix<Scalar, kDoF, kNumParams>(
+        -unitComplex()[1], unitComplex()[0]);
+  }
+
+  // begin(accessors)
+
+  /// Returns copy of instance casted to NewScalarType.
+  ///
+  template <class TNewScalarType>
+  SOPHUS_FUNC [[nodiscard]] So2<TNewScalarType> cast() const {
+    return So2<TNewScalarType>(unitComplex().template cast<TNewScalarType>());
+  }
+
+  /// This provides unsafe read/write access to internal data. SO(2) is
+  /// represented by a unit complex number (two parameters). When using direct
+  /// write access, the user needs to take care of that the complex number stays
+  /// normalized.
+  ///
+  SOPHUS_FUNC Scalar* data() { return mutParams().data(); }
+
+  /// Const version of data() above.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Scalar const* data() const {
+    return params().data();
   }
 
   /// Returns internal parameters of SO(2).
   ///
   /// It returns (c[0], c[1]), with c being the unit complex number.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParameters> params()
-      const {
-    return unitComplex();
+  SOPHUS_FUNC [[nodiscard]] Params const& params() const {
+    return static_cast<TDerived const*>(this)->params();
   }
 
-  /// Returns derivative of log(this^{-1} * x) by x at x=this.
+  /// Accessor of unit complex number.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kDoF, kNumParameters>
-  dxLogThisInvTimesXAtThis() const {
-    return Eigen::Matrix<Scalar, kDoF, kNumParameters>(
-        -unitComplex()[1], unitComplex()[0]);
+  SOPHUS_FUNC [[nodiscard]] Params const& unitComplex() const {
+    return this->params();
   }
 
   /// Takes in complex number / tuple and normalizes it.
   ///
   /// Precondition: The complex number must not be close to zero.
   ///
-  SOPHUS_FUNC void setComplex(Point const& complex) {
-    mutUnitComplex() = complex;
+  SOPHUS_FUNC void setComplex(Point const& complex) { setParams(complex); }
+
+  /// Takes in complex number / tuple and normalizes it.
+  ///
+  /// Precondition: The complex number must not be close to zero.
+  ///
+  SOPHUS_FUNC void setParams(Point const& params) {
+    mutParams() = params;
     normalize();
   }
 
-  /// Takes in complex number / tuple and normalizes it.
-  ///
-  /// Precondition: The complex number must not be close to zero.
-  ///
-  SOPHUS_FUNC void setParam(Point const& complex) { setComplex(); }
-
-  /// Accessor of unit quaternion.
-  ///
-  SOPHUS_FUNC [[nodiscard]] ComplexT const& unitComplex() const {
-    return static_cast<TDerived const*>(this)->unitComplex();
-  }
+  // end(accessors)
 
  private:
-  /// Mutator of unit_complex is private to ensure class invariant. That is
+  /// Mutator of prams is private to ensure class invariant. That is
   /// the complex number must stay close to unit length.
   ///
   SOPHUS_FUNC
-  ComplexT& mutUnitComplex() {
-    return static_cast<TDerived*>(this)->mutUnitComplex();
-  }
+  Params& mutParams() { return static_cast<TDerived*>(this)->mutParams(); }
 };
 
 /// So2 using  default storage; derived from So2Base.
@@ -385,7 +387,7 @@ class So2 : public So2Base<So2<TScalar>> {
  public:
   using Base = So2Base<So2<TScalar>>;
   static int constexpr kDoF = Base::kDoF;
-  static int constexpr kNumParameters = Base::kNumParameters;
+  static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
@@ -393,9 +395,9 @@ class So2 : public So2Base<So2<TScalar>> {
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using ComplexMember = Eigen::Matrix<Scalar, 2, 1>;
+  using Params = Eigen::Matrix<Scalar, 2, 1>;
 
-  /// ``Base`` is friend so unit_complex_nonconst can be accessed from ``Base``.
+  /// ``Base`` is friend so params_nonconst can be accessed from ``Base``.
   friend class So2Base<So2<Scalar>>;
 
   using Base::operator=;
@@ -407,9 +409,11 @@ class So2 : public So2Base<So2<TScalar>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+  // begin(constr)
+
   /// Default constructor initializes unit complex number to identity rotation.
   ///
-  SOPHUS_FUNC So2() : unit_complex_(Scalar(1), Scalar(0)) {}
+  SOPHUS_FUNC So2() : params_(Scalar(1), Scalar(0)) {}
 
   /// Copy constructor
   ///
@@ -419,56 +423,91 @@ class So2 : public So2Base<So2<TScalar>> {
   ///
   template <class TOtherDerived>
   SOPHUS_FUNC So2(So2Base<TOtherDerived> const& other)
-      : unit_complex_(other.unitComplex()) {}
+      : params_(other.unitComplex()) {}
 
-  /// Constructor from rotation matrix
+  // end(constr)
+
+  // begin(static factories)
+
+  /// Create So2 given arbitrary 2x2 matrix.
+  ///
+  template <class TS = Scalar>
+  static SOPHUS_FUNC std::enable_if_t<std::is_floating_point<TS>::value, So2>
+  fitToSo2(Transformation const& r) {
+    return So2::fromMatrix(makeRotationMatrix(r));
+  }
+
+  /// Create from rotation matrix
   ///
   /// Precondition: rotation matrix need to be orthogonal with determinant of 1.
   ///
-  SOPHUS_FUNC explicit So2(Transformation const& mat_r)
-      : unit_complex_(
-            Scalar(0.5) * (mat_r(0, 0) + mat_r(1, 1)),
-            Scalar(0.5) * (mat_r(1, 0) - mat_r(0, 1))) {
+  static SOPHUS_FUNC So2 fromMatrix(Transformation const& mat_r) {
     FARM_CHECK(isOrthogonal(mat_r), "R is not orthogonal:\n {}", mat_r);
     FARM_CHECK(
         mat_r.determinant() > Scalar(0),
         "det(R) is not positive: {}",
         mat_r.determinant());
+    auto so2 = So2::uninitialized();
+    so2.params_ = Params(
+        Scalar(0.5) * (mat_r(0, 0) + mat_r(1, 1)),
+        Scalar(0.5) * (mat_r(1, 0) - mat_r(0, 1)));
+    return so2;
   }
 
-  /// Constructor from pair of real and imaginary number.
+  /// Create from an rotation angle.
   ///
-  /// Precondition: The pair must not be close to zero.
-  ///
-  SOPHUS_FUNC So2(Scalar const& real, Scalar const& imag)
-      : unit_complex_(real, imag) {
-    Base::normalize();
+  SOPHUS_FUNC static So2 fromAngle(Scalar theta) {
+    auto so2 = So2::uninitialized();
+    so2.params_ = So2<Scalar>::exp(theta).params_;
+    return so2;
   }
 
-  /// Constructor from 2-vector.
+  /// Create from complex 2-vector (real, imag).
   ///
   /// Precondition: The vector must not be close to zero.
   ///
   template <class TD>
-  SOPHUS_FUNC explicit So2(Eigen::MatrixBase<TD> const& complex)
-      : unit_complex_(complex) {
+  SOPHUS_FUNC static So2 fromComplex(Eigen::MatrixBase<TD> const& complex) {
+    return So2::fromParams(complex);
+  }
+
+  /// Create from  2-vector.
+  ///
+  /// Precondition: The vector must not be close to zero.
+  ///
+  template <class TD>
+  SOPHUS_FUNC static So2 fromParams(Eigen::MatrixBase<TD> const& params) {
+    auto so2 = So2::uninitialized();
+    so2.params_ = params;
+    so2.normalize();
+    return so2;
+  }
+
+  /// Create from pair of real and imaginary number.
+  ///
+  /// Precondition: The pair must not be close to zero.
+  ///
+  SOPHUS_FUNC static So2 fromRealAndImag(
+      Scalar const& real, Scalar const& imag) {
+    return So2::fromParams(Params(real, imag));
+  }
+
+  /// Draw uniform sample from SO(2) manifold.
+  ///
+  template <class TUniformRandomBitGenerator>
+  static So2 sampleUniform(TUniformRandomBitGenerator& generator) {
     static_assert(
-        std::is_same<typename TD::Scalar, Scalar>::value,
-        "must be same Scalar type");
-    Base::normalize();
+        kIsUniformRandomBitGeneratorV<TUniformRandomBitGenerator>,
+        "generator must meet the UniformRandomBitGenerator concept");
+    std::uniform_real_distribution<Scalar> uniform(-kPi<Scalar>, kPi<Scalar>);
+    return So2::fromAngle(uniform(generator));
   }
 
-  /// Constructor from an rotation angle.
+  /// Create with uninitialized storage.
   ///
-  SOPHUS_FUNC explicit So2(Scalar theta) {
-    mutUnitComplex() = So2<Scalar>::exp(theta).unitComplex();
-  }
+  SOPHUS_FUNC static So2 uninitialized() { return So2(details::UninitTag{}); }
 
-  /// Accessor of unit complex number
-  ///
-  SOPHUS_FUNC [[nodiscard]] ComplexMember const& unitComplex() const {
-    return unit_complex_;
-  }
+  // end(static factories)
 
   /// Group exponential
   ///
@@ -482,22 +521,22 @@ class So2 : public So2Base<So2<TScalar>> {
   SOPHUS_FUNC static So2<Scalar> exp(Tangent const& theta) {
     using std::cos;
     using std::sin;
-    return So2<Scalar>(cos(theta), sin(theta));
+    return So2<Scalar>::fromRealAndImag(cos(theta), sin(theta));
   }
 
   /// Returns derivative of exp(x) wrt. x.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpX(
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpX(
       Tangent const& theta) {
     using std::cos;
     using std::sin;
-    return Eigen::Matrix<Scalar, kNumParameters, kDoF>(-sin(theta), cos(theta));
+    return Eigen::Matrix<Scalar, kNumParams, kDoF>(-sin(theta), cos(theta));
   }
 
   /// Returns derivative of exp(x) wrt. x_i at x=0.
   ///
-  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParameters, kDoF> dxExpXAt0() {
-    return Eigen::Matrix<Scalar, kNumParameters, kDoF>(Scalar(0), Scalar(1));
+  SOPHUS_FUNC static Eigen::Matrix<Scalar, kNumParams, kDoF> dxExpXAt0() {
+    return Eigen::Matrix<Scalar, kNumParams, kDoF>(Scalar(0), Scalar(1));
   }
 
   /// Returns derivative of exp(x) * p wrt. x_i at x=0.
@@ -546,14 +585,6 @@ class So2 : public So2Base<So2<TScalar>> {
     return omega;
   }
 
-  /// Returns closed So2 given arbitrary 2x2 matrix.
-  ///
-  template <class TS = Scalar>
-  static SOPHUS_FUNC std::enable_if_t<std::is_floating_point<TS>::value, So2>
-  fitToSo2(Transformation const& r) {
-    return So2(makeRotationMatrix(r));
-  }
-
   /// Lie bracket
   ///
   /// It returns the Lie bracket of SO(2). Since SO(2) is a commutative group,
@@ -562,17 +593,6 @@ class So2 : public So2Base<So2<TScalar>> {
   SOPHUS_FUNC static Tangent lieBracket(
       Tangent const& /*unused*/, Tangent const& /*unused*/) {
     return Scalar(0);
-  }
-
-  /// Draw uniform sample from SO(2) manifold.
-  ///
-  template <class TUniformRandomBitGenerator>
-  static So2 sampleUniform(TUniformRandomBitGenerator& generator) {
-    static_assert(
-        kIsUniformRandomBitGeneratorV<TUniformRandomBitGenerator>,
-        "generator must meet the UniformRandomBitGenerator concept");
-    std::uniform_real_distribution<Scalar> uniform(-kPi<Scalar>, kPi<Scalar>);
-    return So2(uniform(generator));
   }
 
   /// vee-operator
@@ -592,12 +612,20 @@ class So2 : public So2Base<So2<TScalar>> {
     return omega(1, 0);
   }
 
+  /// Accessor of unit complex number.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Params const& params() const {
+    return this->params_;
+  }
+
  protected:
+  explicit SOPHUS_FUNC So2(details::UninitTag tag) {}
+
   /// Mutator of complex number is protected to ensure class invariant.
   ///
-  SOPHUS_FUNC ComplexMember& mutUnitComplex() { return unit_complex_; }
+  SOPHUS_FUNC Params& mutParams() { return params_; }
 
-  ComplexMember unit_complex_;  // NOLINT
+  Params params_;  // NOLINT
 };
 
 }  // namespace sophus
@@ -621,7 +649,7 @@ class Map<sophus::So2<TScalar>>
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
 
-  /// ``Base`` is friend so unit_complex_nonconst can be accessed from ``Base``.
+  /// ``Base`` is friend so params_nonconst can be accessed from ``Base``.
   friend class sophus::So2Base<Map<sophus::So2<TScalar>>>;
 
   using Base::operator=;
@@ -629,22 +657,21 @@ class Map<sophus::So2<TScalar>>
   using Base::operator*;
 
   SOPHUS_FUNC
-  explicit Map(Scalar* coeffs) : unit_complex_(coeffs) {}
+  explicit Map(Scalar* coeffs) : params_(coeffs) {}
 
   /// Accessor of unit complex number.
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector2<Scalar>> const& unitComplex()
-      const {
-    return unit_complex_;
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector2<Scalar>> const& params() const {
+    return params_;
   }
 
  protected:
   /// Mutator of unit_complex is protected to ensure class invariant.
   ///
   SOPHUS_FUNC
-  Map<Eigen::Vector2<Scalar>>& mutUnitComplex() { return unit_complex_; }
+  Map<Eigen::Vector2<Scalar>>& mutParams() { return params_; }
 
-  Map<Eigen::Matrix<Scalar, 2, 1>> unit_complex_;  // NOLINT
+  Map<Eigen::Matrix<Scalar, 2, 1>> params_;  // NOLINT
 };
 
 /// Specialization of Eigen::Map for ``So2 const``; derived from So2Base.
@@ -666,18 +693,18 @@ class Map<sophus::So2<TScalar> const>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC explicit Map(Scalar const* coeffs) : unit_complex_(coeffs) {}
+  SOPHUS_FUNC explicit Map(Scalar const* coeffs) : params_(coeffs) {}
 
   /// Accessor of unit complex number.
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector2<Scalar> const> const&
-  unitComplex() const {
-    return unit_complex_;
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector2<Scalar> const> const& params()
+      const {
+    return params_;
   }
 
  protected:
   /// Mutator of unit_complex is protected to ensure class invariant.
   ///
-  Map<Eigen::Matrix<Scalar, 2, 1> const> unit_complex_;  // NOLINT
+  Map<Eigen::Matrix<Scalar, 2, 1> const> params_;  // NOLINT
 };
 }  // namespace Eigen

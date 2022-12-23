@@ -125,12 +125,12 @@ class Tests {
         map_of_so2.unitComplex().eval(),
         "");
 
-    So2Type const const_so2(raw2);
+    So2Type const const_so2 = So2Type::fromParams(raw2);
     for (int i = 0; i < 2; ++i) {
       SOPHUS_TEST_EQUAL(passed, const_so2.data()[i], raw2.data()[i], "");
     }
 
-    So2Type so2(raw2);
+    So2Type so2 = So2Type::fromParams(raw2);
     for (int i = 0; i < 2; ++i) {
       so2.data()[i] = raw[i];
     }
@@ -156,7 +156,7 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
-    copy = So2Type(Scalar(0.5));
+    copy = So2Type::fromAngle(Scalar(0.5));
     map1 = copy;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
@@ -166,7 +166,7 @@ class Tests {
   bool testConstructors() {
     bool passed = true;
     Eigen::Matrix2<Scalar> r = so2_vec_.front().matrix();
-    So2Type so2(r);
+    So2Type so2 = So2Type::fromMatrix(r);
     SOPHUS_TEST_APPROX(passed, r, so2.matrix(), kEpsilon<Scalar>, "");
 
     return passed;
