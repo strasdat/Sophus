@@ -362,6 +362,12 @@ class So2Base {
     normalize();
   }
 
+  /// Takes in complex number / tuple and normalizes it.
+  ///
+  /// Precondition: The complex number must not be close to zero.
+  ///
+  SOPHUS_FUNC void setParam(Point const& complex) { setComplex(); }
+
   /// Accessor of unit quaternion.
   ///
   SOPHUS_FUNC [[nodiscard]] ComplexT const& unitComplex() const {
