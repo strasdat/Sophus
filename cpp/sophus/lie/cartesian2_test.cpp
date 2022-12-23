@@ -20,8 +20,7 @@ template class Map<sophus::Cartesian<double, 2> const>;
 
 namespace sophus {
 
-template class Cartesian<double, 2, Eigen::AutoAlign>;
-template class Cartesian<float, 2, Eigen::DontAlign>;
+template class Cartesian<double, 2>;
 #if SOPHUS_CERES
 template class Cartesian<ceres::Jet<double, 2>, 2>;
 #endif

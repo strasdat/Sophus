@@ -14,13 +14,13 @@
 #include "so3.h"
 
 namespace sophus {
-template <class TScalar, int kOptions = 0>
+template <class TScalar>
 class RxSo3;
 using RxSo3F64 = RxSo3<double>;
 using RxSo3F32 = RxSo3<float>;
 
-template <class TScalar, int kOptions = 0>
-/* [[deprecated]] */ using RxSO3 = RxSo3<TScalar, kOptions>;
+template <class TScalar>
+/* [[deprecated]] */ using RxSO3 = RxSo3<TScalar>;
 /* [[deprecated]] */ using RxSO3d = RxSo3F64;
 /* [[deprecated]] */ using RxSO3f = RxSo3F32;
 }  // namespace sophus
@@ -28,27 +28,23 @@ template <class TScalar, int kOptions = 0>
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class TScalar, int kOptionsT>
-struct traits<sophus::RxSo3<TScalar, kOptionsT>> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<sophus::RxSo3<TScalar>> {
   using Scalar = TScalar;
-  using QuaternionType = Eigen::Quaternion<Scalar, kOptions>;
+  using QuaternionType = Eigen::Quaternion<Scalar>;
 };
 
-template <class TScalar, int kOptionsT>
-struct traits<Map<sophus::RxSo3<TScalar>, kOptionsT>>
-    : traits<sophus::RxSo3<TScalar, kOptionsT>> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<Map<sophus::RxSo3<TScalar>>> : traits<sophus::RxSo3<TScalar>> {
   using Scalar = TScalar;
-  using QuaternionType = Map<Eigen::Quaternion<Scalar>, kOptions>;
+  using QuaternionType = Map<Eigen::Quaternion<Scalar>>;
 };
 
-template <class TScalar, int kOptionsT>
-struct traits<Map<sophus::RxSo3<TScalar> const, kOptionsT>>
-    : traits<sophus::RxSo3<TScalar, kOptionsT> const> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<Map<sophus::RxSo3<TScalar> const>>
+    : traits<sophus::RxSo3<TScalar> const> {
   using Scalar = TScalar;
-  using QuaternionType = Map<Eigen::Quaternion<Scalar> const, kOptions>;
+  using QuaternionType = Map<Eigen::Quaternion<Scalar> const>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -82,11 +78,10 @@ namespace sophus {
 template <class TDerived>
 class RxSo3Base {
  public:
-  static int constexpr kOptions = Eigen::internal::traits<TDerived>::kOptions;
   using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using QuaternionType =
       typename Eigen::internal::traits<TDerived>::QuaternionType;
-  using QuaternionTemporaryType = Eigen::Quaternion<Scalar, kOptions>;
+  using QuaternionTemporaryType = Eigen::Quaternion<Scalar>;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (three for rotation and one for scaling).
@@ -509,10 +504,10 @@ class RxSo3Base {
 };
 
 /// RxSo3 using storage; derived from RxSo3Base.
-template <class TScalar, int kOptions>
-class RxSo3 : public RxSo3Base<RxSo3<TScalar, kOptions>> {
+template <class TScalar>
+class RxSo3 : public RxSo3Base<RxSo3<TScalar>> {
  public:
-  using Base = RxSo3Base<RxSo3<TScalar, kOptions>>;
+  using Base = RxSo3Base<RxSo3<TScalar>>;
   static int constexpr kDoF = Base::kDoF;
   static int constexpr kNumParameters = Base::kNumParameters;
 
@@ -522,10 +517,10 @@ class RxSo3 : public RxSo3Base<RxSo3<TScalar, kOptions>> {
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using QuaternionMember = Eigen::Quaternion<Scalar, kOptions>;
+  using QuaternionMember = Eigen::Quaternion<Scalar>;
 
   /// ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
-  friend class RxSo3Base<RxSo3<TScalar, kOptions>>;
+  friend class RxSo3Base<RxSo3<TScalar>>;
 
   struct RxSo3AndTheta {
     RxSo3<Scalar> rxso3;
@@ -831,11 +826,11 @@ namespace Eigen {  // NOLINT
 ///
 /// Allows us to wrap RxSo3 objects around POD array (e.g. external c style
 /// quaternion).
-template <class TScalar, int kOptions>
-class Map<sophus::RxSo3<TScalar>, kOptions>
-    : public sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>, kOptions>> {
+template <class TScalar>
+class Map<sophus::RxSo3<TScalar>>
+    : public sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>>> {
  public:
-  using Base = sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>, kOptions>>;
+  using Base = sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>>>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -844,7 +839,7 @@ class Map<sophus::RxSo3<TScalar>, kOptions>
   using Adjoint = typename Base::Adjoint;
 
   /// ``Base`` is friend so quaternion_nonconst can be accessed from ``Base``.
-  friend class sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>, kOptions>>;
+  friend class sophus::RxSo3Base<Map<sophus::RxSo3<TScalar>>>;
 
   using Base::operator=;
   using Base::operator*=;
@@ -854,28 +849,28 @@ class Map<sophus::RxSo3<TScalar>, kOptions>
 
   /// Accessor of quaternion.
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Quaternion<Scalar>, kOptions> const&
-  quaternion() const {
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Quaternion<Scalar>> const& quaternion()
+      const {
     return quaternion_;
   }
 
  protected:
-  SOPHUS_FUNC Map<Eigen::Quaternion<Scalar>, kOptions>& quaternionNonconst() {
+  SOPHUS_FUNC Map<Eigen::Quaternion<Scalar>>& quaternionNonconst() {
     return quaternion_;
   }
 
-  Map<Eigen::Quaternion<Scalar>, kOptions> quaternion_;  // NOLINT
+  Map<Eigen::Quaternion<Scalar>> quaternion_;  // NOLINT
 };
 
 /// Specialization of Eigen::Map for ``RxSo3 const``; derived from RxSo3Base.
 ///
 /// Allows us to wrap RxSo3 objects around POD array (e.g. external c style
 /// quaternion).
-template <class TScalar, int kOptions>
-class Map<sophus::RxSo3<TScalar> const, kOptions>
-    : public sophus::RxSo3Base<Map<sophus::RxSo3<TScalar> const, kOptions>> {
+template <class TScalar>
+class Map<sophus::RxSo3<TScalar> const>
+    : public sophus::RxSo3Base<Map<sophus::RxSo3<TScalar> const>> {
  public:
-  using Base = sophus::RxSo3Base<Map<sophus::RxSo3<TScalar> const, kOptions>>;
+  using Base = sophus::RxSo3Base<Map<sophus::RxSo3<TScalar> const>>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -892,12 +887,11 @@ class Map<sophus::RxSo3<TScalar> const, kOptions>
   /// Accessor of quaternion.
   ///
   SOPHUS_FUNC
-  [[nodiscard]] Map<Eigen::Quaternion<Scalar> const, kOptions> const&
-  quaternion() const {
+  [[nodiscard]] Map<Eigen::Quaternion<Scalar> const> const& quaternion() const {
     return quaternion_;
   }
 
  protected:
-  Map<Eigen::Quaternion<Scalar> const, kOptions> quaternion_;  // NOLINT
+  Map<Eigen::Quaternion<Scalar> const> quaternion_;  // NOLINT
 };
 }  // namespace Eigen

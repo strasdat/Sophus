@@ -24,13 +24,13 @@
 #include <optional>
 
 namespace sophus {
-template <class TScalar, int kOptions = 0>
+template <class TScalar>
 class So3;
 using So3F64 = So3<double>;
 using So3F32 = So3<float>;
 
-template <class TScalar, int kOptions = 0>
-/* [[deprecated]] */ using SO3 = So3<TScalar, kOptions>;
+template <class TScalar>
+/* [[deprecated]] */ using SO3 = So3<TScalar>;
 /* [[deprecated]] */ using SO3d = So3F64;
 /* [[deprecated]] */ using SO3f = So3F32;
 }  // namespace sophus
@@ -38,27 +38,23 @@ template <class TScalar, int kOptions = 0>
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class TScalar, int kOptionsT>
-struct traits<sophus::So3<TScalar, kOptionsT>> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<sophus::So3<TScalar>> {
   using Scalar = TScalar;
-  using QuaternionType = Eigen::Quaternion<Scalar, kOptions>;
+  using QuaternionType = Eigen::Quaternion<Scalar>;
 };
 
-template <class TScalar, int kOptionsT>
-struct traits<Map<sophus::So3<TScalar>, kOptionsT>>
-    : traits<sophus::So3<TScalar, kOptionsT>> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<Map<sophus::So3<TScalar>>> : traits<sophus::So3<TScalar>> {
   using Scalar = TScalar;
-  using QuaternionType = Map<Eigen::Quaternion<Scalar>, kOptions>;
+  using QuaternionType = Map<Eigen::Quaternion<Scalar>>;
 };
 
-template <class TScalar, int kOptionsT>
-struct traits<Map<sophus::So3<TScalar> const, kOptionsT>>
-    : traits<sophus::So3<TScalar, kOptionsT> const> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<Map<sophus::So3<TScalar> const>>
+    : traits<sophus::So3<TScalar> const> {
   using Scalar = TScalar;
-  using QuaternionType = Map<Eigen::Quaternion<Scalar> const, kOptions>;
+  using QuaternionType = Map<Eigen::Quaternion<Scalar> const>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -90,11 +86,10 @@ namespace sophus {
 template <class TDerived>
 class So3Base {
  public:
-  static int constexpr kOptions = Eigen::internal::traits<TDerived>::kOptions;
   using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using QuaternionType =
       typename Eigen::internal::traits<TDerived>::QuaternionType;
-  using QuaternionTemporaryType = Eigen::Quaternion<Scalar, kOptions>;
+  using QuaternionTemporaryType = Eigen::Quaternion<Scalar>;
 
   /// Degrees of freedom of group, number of dimensions in tangent space.
   static int constexpr kDoF = 3;
@@ -502,10 +497,10 @@ class So3Base {
 };
 
 /// So3 using default storage; derived from So3Base.
-template <class TScalar, int kOptions>
-class So3 : public So3Base<So3<TScalar, kOptions>> {
+template <class TScalar>
+class So3 : public So3Base<So3<TScalar>> {
  public:
-  using Base = So3Base<So3<TScalar, kOptions>>;
+  using Base = So3Base<So3<TScalar>>;
   static int constexpr kDoF = Base::kDoF;
   static int constexpr kNumParameters = Base::kNumParameters;
 
@@ -515,7 +510,7 @@ class So3 : public So3Base<So3<TScalar, kOptions>> {
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using QuaternionMember = Eigen::Quaternion<Scalar, kOptions>;
+  using QuaternionMember = Eigen::Quaternion<Scalar>;
 
   struct So3AndTheta {
     So3<Scalar> so3;
@@ -524,7 +519,7 @@ class So3 : public So3Base<So3<TScalar, kOptions>> {
 
   /// ``Base`` is friend so unit_quaternion_nonconst can be accessed from
   /// ``Base``.
-  friend class So3Base<So3<Scalar, kOptions>>;
+  friend class So3Base<So3<Scalar>>;
 
   using Base::operator=;
 
@@ -938,11 +933,11 @@ namespace Eigen {  // NOLINT
 ///
 /// Allows us to wrap So3 objects around POD array (e.g. external c style
 /// quaternion).
-template <class TScalar, int kOptions>
-class Map<sophus::So3<TScalar>, kOptions>
-    : public sophus::So3Base<Map<sophus::So3<TScalar>, kOptions>> {
+template <class TScalar>
+class Map<sophus::So3<TScalar>>
+    : public sophus::So3Base<Map<sophus::So3<TScalar>>> {
  public:
-  using Base = sophus::So3Base<Map<sophus::So3<TScalar>, kOptions>>;
+  using Base = sophus::So3Base<Map<sophus::So3<TScalar>>>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -952,7 +947,7 @@ class Map<sophus::So3<TScalar>, kOptions>
 
   /// ``Base`` is friend so unit_quaternion_nonconst can be accessed from
   /// ``Base``.
-  friend class sophus::So3Base<Map<sophus::So3<TScalar>, kOptions>>;
+  friend class sophus::So3Base<Map<sophus::So3<TScalar>>>;
 
   using Base::operator=;
   using Base::operator*=;
@@ -962,7 +957,7 @@ class Map<sophus::So3<TScalar>, kOptions>
 
   /// Accessor of unit quaternion.
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Quaternion<Scalar>, kOptions> const&
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Quaternion<Scalar>> const&
   unitQuaternion() const {
     return unit_quaternion_;
   }
@@ -970,22 +965,22 @@ class Map<sophus::So3<TScalar>, kOptions>
  protected:
   /// Mutator of unit_quaternion is protected to ensure class invariant.
   ///
-  SOPHUS_FUNC Map<Eigen::Quaternion<Scalar>, kOptions>& mutUnitQuaternion() {
+  SOPHUS_FUNC Map<Eigen::Quaternion<Scalar>>& mutUnitQuaternion() {
     return unit_quaternion_;
   }
 
-  Map<Eigen::Quaternion<Scalar>, kOptions> unit_quaternion_;  // NOLINT
+  Map<Eigen::Quaternion<Scalar>> unit_quaternion_;  // NOLINT
 };
 
 /// Specialization of Eigen::Map for ``So3 const``; derived from So3Base.
 ///
 /// Allows us to wrap So3 objects around POD array (e.g. external c style
 /// quaternion).
-template <class TScalar, int kOptions>
-class Map<sophus::So3<TScalar> const, kOptions>
-    : public sophus::So3Base<Map<sophus::So3<TScalar> const, kOptions>> {
+template <class TScalar>
+class Map<sophus::So3<TScalar> const>
+    : public sophus::So3Base<Map<sophus::So3<TScalar> const>> {
  public:
-  using Base = sophus::So3Base<Map<sophus::So3<TScalar> const, kOptions>>;
+  using Base = sophus::So3Base<Map<sophus::So3<TScalar> const>>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -1001,14 +996,14 @@ class Map<sophus::So3<TScalar> const, kOptions>
   /// Accessor of unit quaternion.
   ///
   SOPHUS_FUNC
-  [[nodiscard]] Map<Eigen::Quaternion<Scalar> const, kOptions> const&
-  unitQuaternion() const {
+  [[nodiscard]] Map<Eigen::Quaternion<Scalar> const> const& unitQuaternion()
+      const {
     return unit_quaternion_;
   }
 
  protected:
   /// Mutator of unit_quaternion is protected to ensure class invariant.
   ///
-  Map<Eigen::Quaternion<Scalar> const, kOptions> unit_quaternion_;  // NOLINT
+  Map<Eigen::Quaternion<Scalar> const> unit_quaternion_;  // NOLINT
 };
 }  // namespace Eigen

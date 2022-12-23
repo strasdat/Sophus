@@ -13,7 +13,7 @@
 #include "sophus/common/types.h"
 
 namespace sophus {
-template <class TScalar, int kM, int kOptions = 0>
+template <class TScalar, int kM>
 class Cartesian;
 
 template <class TScalar>
@@ -33,24 +33,24 @@ using Cartesian3F64 = Cartesian3<double>;
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class TScalar, int kM, int kOptions>
-struct traits<sophus::Cartesian<TScalar, kM, kOptions>> {
+template <class TScalar, int kM>
+struct traits<sophus::Cartesian<TScalar, kM>> {
   using Scalar = TScalar;
-  using ParamsType = Eigen::Matrix<Scalar, kM, 1, kOptions>;
+  using ParamsType = Eigen::Matrix<Scalar, kM, 1>;
 };
 
-template <class TScalar, int kM, int kOptions>
-struct traits<Map<sophus::Cartesian<TScalar, kM>, kOptions>>
-    : traits<sophus::Cartesian<TScalar, kM, kOptions>> {
+template <class TScalar, int kM>
+struct traits<Map<sophus::Cartesian<TScalar, kM>>>
+    : traits<sophus::Cartesian<TScalar, kM>> {
   using Scalar = TScalar;
-  using ParamsType = Map<Eigen::Vector<Scalar, kM>, kOptions>;
+  using ParamsType = Map<Eigen::Vector<Scalar, kM>>;
 };
 
-template <class TScalar, int kM, int kOptions>
-struct traits<Map<sophus::Cartesian<TScalar, kM> const, kOptions>>
-    : traits<sophus::Cartesian<TScalar, kM, kOptions> const> {
+template <class TScalar, int kM>
+struct traits<Map<sophus::Cartesian<TScalar, kM> const>>
+    : traits<sophus::Cartesian<TScalar, kM> const> {
   using Scalar = TScalar;
-  using ParamsType = Map<Eigen::Vector<Scalar, kM> const, kOptions>;
+  using ParamsType = Map<Eigen::Vector<Scalar, kM> const>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -265,9 +265,9 @@ class CartesianBase {
 };
 
 /// Cartesian using default storage; derived from CartesianBase.
-template <class TScalar, int kM, int kOptions>
-class Cartesian : public CartesianBase<Cartesian<TScalar, kM, kOptions>, kM> {
-  using Base = CartesianBase<Cartesian<TScalar, kM, kOptions>, kM>;
+template <class TScalar, int kM>
+class Cartesian : public CartesianBase<Cartesian<TScalar, kM>, kM> {
+  using Base = CartesianBase<Cartesian<TScalar, kM>, kM>;
 
  public:
   static int constexpr kDoF = Base::kDoF;
@@ -280,7 +280,7 @@ class Cartesian : public CartesianBase<Cartesian<TScalar, kM, kOptions>, kM> {
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
-  using ParamsMember = Eigen::Matrix<Scalar, kM, 1, kOptions>;
+  using ParamsMember = Eigen::Matrix<Scalar, kM, 1>;
 
   using Base::operator=;
 
@@ -476,13 +476,11 @@ namespace Eigen {  // NOLINT
 /// CartesianBase.
 ///
 /// Allows us to wrap Cartesian objects around POD array.
-template <class TScalar, int kM, int kOptions>
-class Map<sophus::Cartesian<TScalar, kM>, kOptions>
-    : public sophus::
-          CartesianBase<Map<sophus::Cartesian<TScalar, kM>, kOptions>, kM> {
+template <class TScalar, int kM>
+class Map<sophus::Cartesian<TScalar, kM>>
+    : public sophus::CartesianBase<Map<sophus::Cartesian<TScalar, kM>>, kM> {
  public:
-  using Base =
-      sophus::CartesianBase<Map<sophus::Cartesian<TScalar, kM>, kOptions>, kM>;
+  using Base = sophus::CartesianBase<Map<sophus::Cartesian<TScalar, kM>>, kM>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -497,33 +495,30 @@ class Map<sophus::Cartesian<TScalar, kM>, kOptions>
 
   /// Mutator of params vector
   ///
-  SOPHUS_FUNC Map<Eigen::Vector<Scalar, kM>, kOptions>& params() {
-    return params_;
-  }
+  SOPHUS_FUNC Map<Eigen::Vector<Scalar, kM>>& params() { return params_; }
 
   /// Accessor of params vector
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector<Scalar, kM>, kOptions> const&
-  params() const {
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector<Scalar, kM>> const& params()
+      const {
     return params_;
   }
 
  protected:
-  Map<Eigen::Vector<Scalar, kM>, kOptions> params_;  // NOLINT
+  Map<Eigen::Vector<Scalar, kM>> params_;  // NOLINT
 };
 
 /// Specialization of Eigen::Map for ``Cartesian const``; derived from
 /// CartesianBase.
 ///
 /// Allows us to wrap Cartesian objects around POD array.
-template <class TScalar, int kM, int kOptions>
-class Map<sophus::Cartesian<TScalar, kM> const, kOptions>
-    : public sophus::CartesianBase<
-          Map<sophus::Cartesian<TScalar, kM> const, kOptions>,
-          kM> {
+template <class TScalar, int kM>
+class Map<sophus::Cartesian<TScalar, kM> const>
+    : public sophus::
+          CartesianBase<Map<sophus::Cartesian<TScalar, kM> const>, kM> {
  public:
-  using Base = sophus::
-      CartesianBase<Map<sophus::Cartesian<TScalar, kM> const, kOptions>, kM>;
+  using Base =
+      sophus::CartesianBase<Map<sophus::Cartesian<TScalar, kM> const>, kM>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -537,12 +532,11 @@ class Map<sophus::Cartesian<TScalar, kM> const, kOptions>
   /// Accessor of params vector
   ///
   SOPHUS_FUNC
-  [[nodiscard]] Map<Eigen::Vector<Scalar, kM> const, kOptions> const& params()
-      const {
+  [[nodiscard]] Map<Eigen::Vector<Scalar, kM> const> const& params() const {
     return params_;
   }
 
  protected:
-  Map<Eigen::Vector<Scalar, kM> const, kOptions> params_;  // NOLINT
+  Map<Eigen::Vector<Scalar, kM> const> params_;  // NOLINT
 };
 }  // namespace Eigen

@@ -23,8 +23,7 @@ template class Map<sophus::Se2<double> const>;
 
 namespace sophus {
 
-template class Se2<double, Eigen::AutoAlign>;
-template class Se2<double, Eigen::DontAlign>;
+template class Se2<double>;
 #if SOPHUS_CERES
 template class Se2<ceres::Jet<double, 3>>;
 #endif
