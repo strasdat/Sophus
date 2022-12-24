@@ -349,8 +349,7 @@ class Sim3Base {
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real, t[0], t[1], t[2]),
   /// with q being the quaternion, t the translation 3-vector.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
-      const {
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params() const {
     Eigen::Vector<Scalar, kNumParams> p;
     p << rxso3().params(), translation();
     return p;

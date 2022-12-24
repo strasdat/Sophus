@@ -171,23 +171,6 @@ class So2Base {
     mutParams() /= length;
   }
 
-  /// Returns 2x2 matrix representation of the instance.
-  ///
-  /// For SO(2), the matrix representation is an orthogonal matrix ``R`` with
-  /// ``det(R)=1``, thus the so-called "rotation matrix".
-  ///
-  SOPHUS_FUNC [[nodiscard]] Transformation matrix() const {
-    Scalar const& real = params().x();
-    Scalar const& imag = params().y();
-    Transformation mat_r;
-    // clang-format off
-    mat_r <<
-      real, -imag,
-      imag,  real;
-    // clang-format on
-    return mat_r;
-  }
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class TOtherDerived>
@@ -342,6 +325,23 @@ class So2Base {
     return params().data();
   }
 
+  /// Returns 2x2 matrix representation of the instance.
+  ///
+  /// For SO(2), the matrix representation is an orthogonal matrix ``R`` with
+  /// ``det(R)=1``, thus the so-called "rotation matrix".
+  ///
+  SOPHUS_FUNC [[nodiscard]] Transformation matrix() const {
+    Scalar const& real = params().x();
+    Scalar const& imag = params().y();
+    Transformation mat_r;
+    // clang-format off
+    mat_r <<
+      real, -imag,
+      imag,  real;
+    // clang-format on
+    return mat_r;
+  }
+
   /// Returns internal parameters of SO(2).
   ///
   /// It returns (c[0], c[1]), with c being the unit complex number.
@@ -350,10 +350,13 @@ class So2Base {
     return static_cast<TDerived const*>(this)->params();
   }
 
-  /// Accessor of unit complex number.
+  /// Returns 2x2 matrix representation of the instance.
   ///
-  SOPHUS_FUNC [[nodiscard]] Params const& unitComplex() const {
-    return this->params();
+  /// For SO(2), the matrix representation is an orthogonal matrix ``R`` with
+  /// ``det(R)=1``, thus the so-called "rotation matrix".
+  ///
+  SOPHUS_FUNC [[nodiscard]] Transformation rotationMatrix() const {
+    return this->matrix();
   }
 
   /// Takes in complex number / tuple and normalizes it.
@@ -369,6 +372,12 @@ class So2Base {
   SOPHUS_FUNC void setParams(Point const& params) {
     mutParams() = params;
     normalize();
+  }
+
+  /// Accessor of unit complex number.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Params const& unitComplex() const {
+    return this->params();
   }
 
   // end(accessors)
@@ -390,12 +399,12 @@ class So2 : public So2Base<So2<TScalar>> {
   static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
+  using Params = Eigen::Matrix<Scalar, 2, 1>;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using Params = Eigen::Matrix<Scalar, 2, 1>;
 
   /// ``Base`` is friend so params_nonconst can be accessed from ``Base``.
   friend class So2Base<So2<Scalar>>;
@@ -427,13 +436,13 @@ class So2 : public So2Base<So2<TScalar>> {
 
   // end(constr)
 
-  // begin(static factories)
+  // begin(factories)
 
   /// Create So2 given arbitrary 2x2 matrix.
   ///
   template <class TS = Scalar>
   static SOPHUS_FUNC std::enable_if_t<std::is_floating_point<TS>::value, So2>
-  fitToSo2(Transformation const& r) {
+  fitFrom(Transformation const& r) {
     return So2::fromMatrix(makeRotationMatrix(r));
   }
 
@@ -612,16 +621,20 @@ class So2 : public So2Base<So2<TScalar>> {
     return omega(1, 0);
   }
 
-  /// Accessor of unit complex number.
+  // begin(accessors)
+
+  /// Accessor of params
   ///
   SOPHUS_FUNC [[nodiscard]] Params const& params() const {
     return this->params_;
   }
 
+  // end(accessors)
+
  protected:
   explicit SOPHUS_FUNC So2(details::UninitTag tag) {}
 
-  /// Mutator of complex number is protected to ensure class invariant.
+  /// Mutator of params is protected to ensure class invariant.
   ///
   SOPHUS_FUNC Params& mutParams() { return params_; }
 

@@ -9,6 +9,9 @@
 		"[cpp]": {
         	"editor.defaultFormatter": "ms-vscode.cpptools"
     	},
-    	"clang-format.executable": "clang-format-15",
+		"clang-format.executable": "clang-format-15",
+		"files.associations": {
+			"fft": "cpp"
+		},
 	}
 }

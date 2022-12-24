@@ -357,8 +357,7 @@ class RxSo3Base {
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real), with q being the
   /// quaternion.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
-      const {
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params() const {
     return quaternion().coeffs();
   }
 

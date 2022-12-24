@@ -34,6 +34,7 @@ struct traits<sophus::Se2<TScalar>> {
   using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector2<Scalar>>;
   using So2Type = Map<sophus::So2<Scalar>>;
+  using ParamsType = Eigen::Matrix<Scalar, 4, 1>;
 };
 
 template <class TScalar>
@@ -41,6 +42,7 @@ struct traits<Map<sophus::Se2<TScalar>>> : traits<sophus::Se2<TScalar>> {
   using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector2<Scalar>>;
   using So2Type = Map<sophus::So2<Scalar>>;
+  using ParamsType = Map<Eigen::Vector4<Scalar>>;
 };
 
 template <class TScalar>
@@ -49,6 +51,7 @@ struct traits<Map<sophus::Se2<TScalar> const>>
   using Scalar = TScalar;
   using TranslationType = Map<Eigen::Vector2<Scalar> const>;
   using So2Type = Map<sophus::So2<Scalar> const>;
+  using ParamsType = Map<Eigen::Vector4<Scalar> const>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -93,6 +96,7 @@ class Se2Base {
   using TranslationType =
       typename Eigen::internal::traits<TDerived>::TranslationType;
   using So2Type = typename Eigen::internal::traits<TDerived>::So2Type;
+  using Params = typename Eigen::internal::traits<TDerived>::ParamsType;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (two for translation, three for rotation).
@@ -145,15 +149,6 @@ class Se2Base {
     return res;
   }
 
-  /// Returns copy of instance casted to NewScalarType.
-  ///
-  template <class TNewScalarType>
-  SOPHUS_FUNC [[nodiscard]] Se2<TNewScalarType> cast() const {
-    return Se2<TNewScalarType>(
-        so2().template cast<TNewScalarType>(),
-        translation().template cast<TNewScalarType>());
-  }
-
   /// Returns derivative of  this * exp(x)  wrt x at x=0.
   ///
   SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, kNumParams, kDoF>
@@ -185,7 +180,8 @@ class Se2Base {
   ///
   SOPHUS_FUNC [[nodiscard]] Se2<Scalar> inverse() const {
     So2<Scalar> const inv = so2().inverse();
-    return Se2<Scalar>(inv, inv * (translation() * Scalar(-1)));
+    return Se2<Scalar>::fromSo2AndTrans(
+        inv, inv * (translation() * Scalar(-1)));
   }
 
   /// Logarithmic map
@@ -228,35 +224,6 @@ class Se2Base {
   ///
   SOPHUS_FUNC void normalize() { so2().normalize(); }
 
-  /// Returns 3x3 matrix representation of the instance.
-  ///
-  /// It has the following form:
-  ///
-  /// ```
-  ///   | R t |
-  ///   | o 1 |
-  /// ```
-  ///
-  /// where ``R`` is a 2x2 rotation matrix, ``t`` a translation 2-vector and
-  /// ``o`` a 2-column vector of zeros.
-  ///
-  SOPHUS_FUNC [[nodiscard]] Transformation matrix() const {
-    Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<2, 3>() = matrix2x3();
-    homogenious_matrix.row(2) =
-        Eigen::Matrix<Scalar, 1, 3>(Scalar(0), Scalar(0), Scalar(1));
-    return homogenious_matrix;
-  }
-
-  /// Returns the significant first two rows of the matrix above.
-  ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, 2, 3> matrix2x3() const {
-    Eigen::Matrix<Scalar, 2, 3> matrix;
-    matrix.template topLeftCorner<2, 2>() = rotationMatrix();
-    matrix.col(2) = translation();
-    return matrix;
-  }
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class TOtherDerived>
@@ -272,7 +239,7 @@ class Se2Base {
   template <class TOtherDerived>
   SOPHUS_FUNC Se2Product<TOtherDerived> operator*(
       Se2Base<TOtherDerived> const& other) const {
-    return Se2Product<TOtherDerived>(
+    return Se2Product<TOtherDerived>::fromSo2AndTrans(
         so2() * other.so2(), translation() + so2() * other.translation());
   }
 
@@ -349,15 +316,63 @@ class Se2Base {
     return *this;
   }
 
+  // begin(accessors)
+
+  /// Returns copy of instance casted to NewScalarType.
+  ///
+  template <class TNewScalarType>
+  SOPHUS_FUNC [[nodiscard]] Se2<TNewScalarType> cast() const {
+    return Se2<TNewScalarType>::fromSo2AndTrans(
+        so2().template cast<TNewScalarType>(),
+        translation().template cast<TNewScalarType>());
+  }
+
+  /// This provides unsafe read/write access to internal data. SO(2) is
+  /// represented by a complex number (two parameters). When using direct  write
+  /// access, the user needs to take care of that the complex number stays
+  /// normalized.
+  ///
+  SOPHUS_FUNC Scalar* data() { return mutParams().data(); }
+
+  /// Const version of data() above.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Scalar const* data() const {
+    return params().data();
+  }
+
+  /// Returns 3x3 matrix representation of the instance.
+  ///
+  /// It has the following form:
+  ///
+  /// ```
+  ///   | R t |
+  ///   | o 1 |
+  /// ```
+  ///
+  /// where ``R`` is a 2x2 rotation matrix, ``t`` a translation 2-vector and
+  /// ``o`` a 2-column vector of zeros.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Transformation matrix() const {
+    Transformation homogenious_matrix;
+    homogenious_matrix.template topLeftCorner<2, 3>() = matrix2x3();
+    homogenious_matrix.row(2) =
+        Eigen::Matrix<Scalar, 1, 3>(Scalar(0), Scalar(0), Scalar(1));
+    return homogenious_matrix;
+  }
+
+  /// Returns the significant first two rows of the matrix above.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Eigen::Matrix<Scalar, 2, 3> matrix2x3() const {
+    Eigen::Matrix<Scalar, 2, 3> matrix;
+    matrix.template topLeftCorner<2, 2>() = rotationMatrix();
+    matrix.col(2) = translation();
+    return matrix;
+  }
+
   /// Returns internal parameters of SE(2).
   ///
-  /// It returns (c[0], c[1], t[0], t[1]),
-  /// with c being the unit complex number, t the translation 3-vector.
-  ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params() const {
-    Eigen::Vector<Scalar, kNumParams> p;
-    p << so2().params(), translation();
-    return p;
+  SOPHUS_FUNC [[nodiscard]] Params const& params() const {
+    return static_cast<TDerived const*>(this)->params();
   }
 
   /// Returns rotation matrix.
@@ -374,7 +389,7 @@ class Se2Base {
     return so2().setComplex(complex);
   }
 
-  /// Sets ``so3`` using ``rotation_matrix``.
+  /// Sets ``So2`` using ``rotation_matrix``.
   ///
   /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   ///
@@ -389,12 +404,21 @@ class Se2Base {
     so2().setComplex(complex);
   }
 
-  /// Mutator of So3 group.
+  /// Returns internal parameters of SE(2).
+  ///
+  /// It returns (c[0], c[1], t[0], t[1]),
+  /// with c being the unit complex number, t the translation 3-vector.
+  ///
+  SOPHUS_FUNC void setParams(Point const& params) {
+    mutParams() = params;
+    so2().normalize();
+  }
+  /// Mutator of So2 group.
   ///
   SOPHUS_FUNC
   So2Type& so2() { return static_cast<TDerived*>(this)->so2(); }
 
-  /// Accessor of So3 group.
+  /// Accessor of So2 group.
   ///
   SOPHUS_FUNC [[nodiscard]] So2Type const& so2() const {
     return static_cast<TDerived const*>(this)->so2();
@@ -416,10 +440,19 @@ class Se2Base {
   /// Accessor of unit complex number.
   ///
   SOPHUS_FUNC [[nodiscard]]
-  typename Eigen::internal::traits<TDerived>::So2Type::ParamsT const&
+  typename Eigen::internal::traits<TDerived>::So2Type::Params const&
   unitComplex() const {
     return so2().unitComplex();
   }
+
+  // end(accessors)
+
+ private:
+  /// Mutator of params is private to ensure class invariant. That is
+  /// the complex number must stay close to unit length.
+  ///
+  SOPHUS_FUNC
+  Params& mutParams() { return static_cast<TDerived*>(this)->mutParams(); }
 };
 
 /// Se2 using default storage; derived from Se2Base.
@@ -431,6 +464,7 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
+  using Params = Eigen::Matrix<Scalar, 4, 1>;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -448,6 +482,8 @@ class Se2 : public Se2Base<Se2<TScalar>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+  // begin(constr)
+
   /// Default constructor initializes rigid body motion to the identity.
   ///
   SOPHUS_FUNC Se2();
@@ -456,30 +492,95 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   ///
   SOPHUS_FUNC Se2(Se2 const& other) = default;
 
-  // /// Copy-like constructor from OtherDerived
-  // ///
-  // template <class TOtherDerived>
-  // SOPHUS_FUNC Se2(Se2Base<TOtherDerived> const& other)
-  //     : so2_(other.so2()), translation_(other.translation()) {
-  //   static_assert(
-  //       std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
-  //       "must be same Scalar type");
-  // }
+  /// Copy-like constructor from OtherDerived
+  ///
+  template <class TOtherDerived>
+  SOPHUS_FUNC Se2(Se2Base<TOtherDerived> const& other)
+      : so2_(other.so2()), translation_(other.translation()) {
+    static_assert(
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
+        "must be same Scalar type");
+  }
 
-  // /// Constructor from So3 and translation vector
-  // ///
-  // template <class TOtherDerived, class TD>
-  // SOPHUS_FUNC Se2(
-  //     So2Base<TOtherDerived> const& so2,
-  //     Eigen::MatrixBase<TD> const& translation)
-  //     : so2_(so2), translation_(translation) {
-  //   static_assert(
-  //       std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
-  //       "must be same Scalar type");
-  //   static_assert(
-  //       std::is_same<typename TD::Scalar, Scalar>::value,
-  //       "must be same Scalar type");
-  // }
+  // end(constr)
+
+  // begin(factories)
+
+  /// Create from So2 and translation vector
+  ///
+  template <class TOtherDerived, class TD>
+  SOPHUS_FUNC static Se2 fromSo2AndTrans(
+      So2Base<TOtherDerived> const& so2,
+      Eigen::MatrixBase<TD> const& translation) {
+    static_assert(
+        std::is_same<typename TOtherDerived::Scalar, Scalar>::value,
+        "must be same Scalar type");
+    static_assert(
+        std::is_same<typename TD::Scalar, Scalar>::value,
+        "must be same Scalar type");
+    Se2 se2 = Se2::uninitialized();
+    se2.so2_ = so2;
+    se2.translation_ = translation;
+    return se2;
+  }
+
+  /// Create from translation.
+  ///
+  template <class TD>
+  SOPHUS_FUNC static Se2 fromAngleAndTrans(
+      Scalar const& angle, Eigen::MatrixBase<TD> const& translation) {
+    return fromSo2AndTrans(So2<Scalar>::fromAngle(angle), translation);
+  }
+
+  /// Create from angle.
+  ///
+  SOPHUS_FUNC static Se2 fromAngle(Scalar const& angle) {
+    return fromAngleAndTrans(angle, Eigen::Vector2d::Zero());
+  }
+
+  /// Create from 3x3 matrix
+  ///
+  /// Preconditions:
+  ///  - Rotation matrix needs to be orthogonal with determinant of 1.
+  //   - The last row must be ``(0, 0, 1)``.
+  ///
+  SOPHUS_FUNC static Se2 fromMatrix(Transformation const& mat3x3) {
+    auto se2 = Se2::uninitialized();
+    se2.so2_ =
+        So2<Scalar>::fromMatrix(mat3x3.template topLeftCorner<2, 2>().eval());
+    se2.translation_ = mat3x3.template block<2, 1>(0, 2);
+    return se2;
+  }
+
+  /// Create from So2.
+  ///
+  template <class TOtherDerived>
+  SOPHUS_FUNC static Se2 fromSo2(So2Base<TOtherDerived> const& so2) {
+    return fromSo2AndTrans(so2, Eigen::Vector2d::Zero());
+  }
+
+  /// Create a translation only SE(2) instance.
+  ///
+  template <class TX, class TY>
+  static SOPHUS_FUNC Se2 fromTrans(TX const& x, TY const& y) {
+    return fromTrans(Eigen::Vector<Scalar, 2>(x, y));
+  }
+
+  static SOPHUS_FUNC Se2 fromTrans(Eigen::Vector2<Scalar> const& xy) {
+    return Se2::fromSo2AndTrans(So2<Scalar>{}, xy);
+  }
+
+  /// Create x-axis translation.
+  ///
+  static SOPHUS_FUNC Se2 fromTransX(Scalar const& x) {
+    return Se2::fromTrans(x, Scalar(0));
+  }
+
+  /// Create y-axis translation.
+  ///
+  static SOPHUS_FUNC Se2 fromTransY(Scalar const& y) {
+    return Se2::fromTrans(Scalar(0), y);
+  }
 
   // /// Constructor from rotation matrix and translation vector
   // ///
@@ -503,49 +604,11 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   //     Eigen::Vector2<Scalar> const& complex, Point const& translation)
   //     : so2_(complex), translation_(translation) {}
 
-  // /// Constructor from 3x3 matrix
-  // ///
-  // /// Precondition: Rotation matrix needs to be orthogonal with determinant
-  // /// of 1. The last row must be ``(0, 0, 1)``.
-  // ///
-  // SOPHUS_FUNC explicit Se2(Transformation const& mat3x3)
-  //     : so2_(mat3x3.template topLeftCorner<2, 2>().eval()),
-  //       translation_(mat3x3.template block<2, 1>(0, 2)) {}
-
-  /// This provides unsafe read/write access to internal data. SO(2) is
-  /// represented by a complex number (two parameters). When using direct write
-  /// access, the user needs to take care of that the complex number stays
-  /// normalized.
+  /// Create with uninitialized storage.
   ///
-  SOPHUS_FUNC Scalar* data() {
-    // so2_ and translation_ are layed out sequentially with no padding
-    return so2_.data();
-  }
+  SOPHUS_FUNC static Se2 uninitialized() { return Se2(details::UninitTag{}); }
 
-  /// Const version of data() above.
-  ///
-  SOPHUS_FUNC [[nodiscard]] Scalar const* data() const {
-    /// so2_ and translation_ are layed out sequentially with no padding
-    return so2_.data();
-  }
-
-  /// Accessor of So3
-  ///
-  SOPHUS_FUNC So2Member& so2() { return so2_; }
-
-  /// Mutator of So3
-  ///
-  SOPHUS_FUNC [[nodiscard]] So2Member const& so2() const { return so2_; }
-
-  /// Mutator of translation vector
-  ///
-  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
-
-  /// Accessor of translation vector
-  ///
-  SOPHUS_FUNC [[nodiscard]] TranslationMember const& translation() const {
-    return translation_;
-  }
+  // end(static factories)
 
   /// Returns derivative of exp(x) wrt. x.
   ///
@@ -670,7 +733,7 @@ class Se2 : public Se2Base<Se2<TScalar>> {
         sin_theta_by_theta * vec_a[0] - one_minus_cos_theta_by_theta * vec_a[1],
         one_minus_cos_theta_by_theta * vec_a[0] +
             sin_theta_by_theta * vec_a[1]);
-    return Se2<Scalar>(so2, trans);
+    return Se2<Scalar>::fromSo2AndTrans(so2, trans);
   }
 
   /// Returns closest Se3 given arbitrary 4x4 matrix.
@@ -679,7 +742,7 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   static SOPHUS_FUNC std::enable_if_t<std::is_floating_point<TS>::value, Se2>
   fitToSe2(Eigen::Matrix3<Scalar> const& mat3x3) {
     return Se2(
-        So2<Scalar>::fitToSo2(mat3x3.template block<2, 2>(0, 0)),
+        So2<Scalar>::fitFrom(mat3x3.template block<2, 2>(0, 0)),
         mat3x3.template block<2, 1>(0, 2));
   }
 
@@ -754,12 +817,6 @@ class Se2 : public Se2Base<Se2<TScalar>> {
         Scalar(0));
   }
 
-  /// Construct pure rotation.
-  ///
-  static SOPHUS_FUNC Se2 rot(Scalar const& x) {
-    return Se2(So2<Scalar>(x), Eigen::Vector2<Scalar>::Zero());
-  }
-
   /// Draw uniform sample from SE(2) manifold.
   ///
   /// Translations are drawn component-wise from the range [-1, 1].
@@ -770,29 +827,6 @@ class Se2 : public Se2Base<Se2<TScalar>> {
     return Se2(
         So2<Scalar>::sampleUniform(generator),
         Eigen::Vector2<Scalar>(uniform(generator), uniform(generator)));
-  }
-
-  /// Construct a translation only SE(2) instance.
-  ///
-  template <class TX, class TY>
-  static SOPHUS_FUNC Se2 trans(TX const& x, TY const& y) {
-    return Se2(So2<Scalar>(), Eigen::Vector2<Scalar>(x, y));
-  }
-
-  static SOPHUS_FUNC Se2 trans(Eigen::Vector2<Scalar> const& xy) {
-    return Se2(So2<Scalar>(), xy);
-  }
-
-  /// Construct x-axis translation.
-  ///
-  static SOPHUS_FUNC Se2 transX(Scalar const& x) {
-    return Se2::trans(x, Scalar(0));
-  }
-
-  /// Construct y-axis translation.
-  ///
-  static SOPHUS_FUNC Se2 transY(Scalar const& y) {
-    return Se2::trans(Scalar(0), y);
   }
 
   /// vee-operator
@@ -819,16 +853,50 @@ class Se2 : public Se2Base<Se2<TScalar>> {
     return upsilon_omega;
   }
 
+  // begin(accessors)
+
+  /// Accessor of params
+  ///
+  SOPHUS_FUNC [[nodiscard]] Params const& params() const {
+    return this->params_;
+  }
+
+  /// Accessor of So3
+  ///
+  SOPHUS_FUNC So2Member& so2() { return so2_; }
+
+  /// Mutator of So3
+  ///
+  SOPHUS_FUNC [[nodiscard]] So2Member const& so2() const { return so2_; }
+
+  /// Mutator of translation vector
+  ///
+  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
+
+  /// Accessor of translation vector
+  ///
+  SOPHUS_FUNC [[nodiscard]] TranslationMember const& translation() const {
+    return translation_;
+  }
+  // end(accessors)
+
  protected:
+  explicit SOPHUS_FUNC Se2(details::UninitTag tag)
+      : so2_(params_.data()),
+        translation_(params_.data() + sophus::So2<Scalar>::kNumParams) {}
+
+  /// Mutator of params is protected to ensure class invariant.
+  ///
+  SOPHUS_FUNC Params& mutParams() { return params_; }
+
   Eigen::Vector<Scalar, kNumParams> params_;  // NOLINT
   So2Member so2_;                             // NOLINT
   TranslationMember translation_;             // NOLINT
 };
 
 template <class TScalar>
-SOPHUS_FUNC Se2<TScalar>::Se2()
-    : so2_(params_.data()),
-      translation_(params_.data() + sophus::So2<Scalar>::kNumParams) {
+SOPHUS_FUNC Se2<TScalar>::Se2() : Se2(details::UninitTag{}) {
+  so2_ = So2<TScalar>();
   translation_.setZero();
 }
 
@@ -857,13 +925,25 @@ class Map<sophus::Se2<TScalar>>
 
   SOPHUS_FUNC
   explicit Map(Scalar* coeffs)
-      : so2_(coeffs), translation_(coeffs + sophus::So2<Scalar>::kNumParams) {}
+      : params_(coeffs),
+        so2_(coeffs),
+        translation_(coeffs + sophus::So2<Scalar>::kNumParams) {}
 
-  /// Mutator of So3
+  /// Mutator of translation vector
+  ///
+  SOPHUS_FUNC Map<Eigen::Vector4<Scalar>>& params() { return params_; }
+
+  /// Accessor of translation vector
+  ///
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector4<Scalar>> const& params() const {
+    return params_;
+  }
+
+  /// Mutator of So2
   ///
   SOPHUS_FUNC Map<sophus::So2<Scalar>>& so2() { return so2_; }
 
-  /// Accessor of So3
+  /// Accessor of So2
   ///
   SOPHUS_FUNC [[nodiscard]] Map<sophus::So2<Scalar>> const& so2() const {
     return so2_;
@@ -883,6 +963,11 @@ class Map<sophus::Se2<TScalar>>
   }
 
  protected:
+  /// Mutator of params is protected to ensure class invariant.
+  ///
+  SOPHUS_FUNC Map<Eigen::Vector4<Scalar>>& mutParams() { return params_; }
+
+  Map<Eigen::Vector4<Scalar>> params_;       // NOLINT
   Map<sophus::So2<Scalar>> so2_;             // NOLINT
   Map<Eigen::Vector2<Scalar>> translation_;  // NOLINT
 };
@@ -906,9 +991,18 @@ class Map<sophus::Se2<TScalar> const>
   using Base::operator*;
 
   SOPHUS_FUNC explicit Map(Scalar const* coeffs)
-      : so2_(coeffs), translation_(coeffs + sophus::So2<Scalar>::kNumParams) {}
+      : params_(coeffs),
+        so2_(coeffs),
+        translation_(coeffs + sophus::So2<Scalar>::kNumParams) {}
 
-  /// Accessor of So3
+  /// Accessor of translation vector
+  ///
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector4<Scalar> const> const& params()
+      const {
+    return params_;
+  }
+
+  /// Accessor of So2
   ///
   SOPHUS_FUNC [[nodiscard]] Map<sophus::So2<Scalar> const> const& so2() const {
     return so2_;
@@ -922,6 +1016,7 @@ class Map<sophus::Se2<TScalar> const>
   }
 
  protected:
+  Map<Eigen::Vector4<Scalar> const> params_;       // NOLINT
   Map<sophus::So2<Scalar> const> so2_;             // NOLINT
   Map<Eigen::Vector2<Scalar> const> translation_;  // NOLINT
 };

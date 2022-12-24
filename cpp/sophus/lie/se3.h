@@ -457,15 +457,13 @@ class Se3Base {
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real, t[0], t[1], t[2]),
   /// with q being the unit quaternion, t the translation 3-vector.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
-      const {
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params() const {
     Eigen::Vector<Scalar, kNumParams> p;
     p << so3().params(), translation();
     return p;
   }
 
-  SOPHUS_FUNC void setParams(
-      Eigen::Vector<Scalar, kNumParams> const& params) {
+  SOPHUS_FUNC void setParams(Eigen::Vector<Scalar, kNumParams> const& params) {
     this->translation() = params.template tail<3>();
     this->so3().setParams(params.template head<4>());
   }
@@ -1156,8 +1154,7 @@ class Map<sophus::Se3<TScalar>>
   using Base::operator*;
 
   SOPHUS_FUNC explicit Map(Scalar* coeffs)
-      : so3_(coeffs),
-        translation_(coeffs + sophus::So3<Scalar>::kNumParams) {}
+      : so3_(coeffs), translation_(coeffs + sophus::So3<Scalar>::kNumParams) {}
 
   /// Mutator of So3
   ///
@@ -1206,8 +1203,7 @@ class Map<sophus::Se3<TScalar> const>
   using Base::operator*;
 
   SOPHUS_FUNC explicit Map(Scalar const* coeffs)
-      : so3_(coeffs),
-        translation_(coeffs + sophus::So3<Scalar>::kNumParams) {}
+      : so3_(coeffs), translation_(coeffs + sophus::So3<Scalar>::kNumParams) {}
 
   /// Accessor of So3
   ///

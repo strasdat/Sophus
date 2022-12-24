@@ -253,13 +253,11 @@ class So3Base {
   /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real), with q being the
   /// unit quaternion.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
-      const {
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params() const {
     return unitQuaternion().coeffs();
   }
 
-  SOPHUS_FUNC void setParams(
-      Eigen::Vector<Scalar, kNumParams> const& params) {
+  SOPHUS_FUNC void setParams(Eigen::Vector<Scalar, kNumParams> const& params) {
     mutUnitQuaternion().coeffs() = params;
     this->normalize();
   }

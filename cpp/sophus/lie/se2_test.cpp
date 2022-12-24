@@ -39,25 +39,23 @@ class Tests {
   Scalar const k_pi = kPi<Scalar>;  // NOLINT
 
   Tests() {
+    se2_vec_.push_back(Se2Type::fromTrans(Point(Scalar(0), Scalar(0))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.0)), Point(Scalar(0), Scalar(0))));
+        Se2Type::fromAngleAndTrans(0.2, Point(Scalar(10), Scalar(0))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.2)), Point(Scalar(10), Scalar(0))));
+        Se2Type::fromAngleAndTrans(0., Point(Scalar(0), Scalar(100))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.)), Point(Scalar(0), Scalar(100))));
+        Se2Type::fromAngleAndTrans(-1., Point(Scalar(20), -Scalar(1))));
+    se2_vec_.push_back(Se2Type::fromAngleAndTrans(
+        0.00001, Point(Scalar(-0.00000001), Scalar(0.0000000001))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(-1.)), Point(Scalar(20), -Scalar(1))));
-    se2_vec_.push_back(Se2Type(
-        So2Type(Scalar(0.00001)),
-        Point(Scalar(-0.00000001), Scalar(0.0000000001))));
+        Se2Type::fromAngleAndTrans(0.2, Point(Scalar(0), Scalar(0))) *
+        Se2Type::fromAngleAndTrans(k_pi, Point(Scalar(0), Scalar(0))) *
+        Se2Type::fromAngleAndTrans(-0.2, Point(Scalar(0), Scalar(0))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.2)), Point(Scalar(0), Scalar(0))) *
-        Se2Type(So2Type(k_pi), Point(Scalar(0), Scalar(0))) *
-        Se2Type(So2Type(Scalar(-0.2)), Point(Scalar(0), Scalar(0))));
-    se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.3)), Point(Scalar(2), Scalar(0))) *
-        Se2Type(So2Type(k_pi), Point(Scalar(0), Scalar(0))) *
-        Se2Type(So2Type(Scalar(-0.3)), Point(Scalar(0), Scalar(6))));
+        Se2Type::fromAngleAndTrans(0.3, Point(Scalar(2), Scalar(0))) *
+        Se2Type::fromAngle(k_pi) *
+        Se2Type::fromAngleAndTrans(-0.3, Point(Scalar(0), Scalar(6))));
 
     Tangent tmp;
     tmp << Scalar(0), Scalar(0), Scalar(0);

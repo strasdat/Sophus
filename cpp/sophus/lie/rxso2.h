@@ -353,8 +353,7 @@ class RxSo2Base {
   ///
   /// It returns (c[0], c[1]), with c being the  complex number.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
-      const {
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params() const {
     return complex();
   }
 

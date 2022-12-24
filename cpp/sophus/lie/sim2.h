@@ -315,8 +315,7 @@ class Sim2Base {
   /// It returns (c[0], c[1], t[0], t[1]),
   /// with c being the complex number, t the translation 3-vector.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params()
-      const {
+  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params() const {
     Eigen::Vector<Scalar, kNumParams> p;
     p << rxso2().params(), translation();
     return p;
