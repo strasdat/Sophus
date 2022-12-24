@@ -93,7 +93,7 @@ class So3Base {
   using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using QuaternionType =
       typename Eigen::internal::traits<TDerived>::QuaternionType;
-  using Params = typename Eigen::internal::traits<TDerived>::ParamsType;
+  using ParamsType = typename Eigen::internal::traits<TDerived>::ParamsType;
 
   /// Degrees of freedom of group, number of dimensions in tangent space.
   static int constexpr kDoF = 3;
@@ -201,12 +201,12 @@ class So3Base {
   /// Note: The first three Scalars represent the imaginary parts, while the
   /// forth Scalar represent the real part.
   ///
-  SOPHUS_FUNC Scalar* data() { return mutUnitQuaternion().coeffs().data(); }
+  SOPHUS_FUNC Scalar* data() { return mutParams().data(); }
 
   /// Const version of data() above.
   ///
   SOPHUS_FUNC [[nodiscard]] Scalar const* data() const {
-    return unitQuaternion().coeffs().data();
+    return params().data();
   }
 
   /// Returns derivative of  this * So3::exp(x)  wrt. x at x=0.
@@ -250,20 +250,6 @@ class So3Base {
          q.y(), -q.x(),  q.w(), -q.z();
     // clang-format on
     return j * Scalar(2.);
-  }
-
-  /// Returns internal parameters of SO(3).
-  ///
-  /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real), with q being the
-  /// unit quaternion.
-  ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Vector<Scalar, kNumParams> params() const {
-    return unitQuaternion().coeffs();
-  }
-
-  SOPHUS_FUNC void setParams(Eigen::Vector<Scalar, kNumParams> const& params) {
-    mutUnitQuaternion().coeffs() = params;
-    this->normalize();
   }
 
   /// Returns group inverse.
@@ -343,21 +329,18 @@ class So3Base {
   /// this function directly.
   ///
   SOPHUS_FUNC void normalize() {
-    Scalar length = mutUnitQuaternion().norm();
+    Scalar length = params().norm();
     FARM_CHECK(
         length >= kEpsilon<Scalar>,
         "Quaternion ({}) should not be close to zero!",
-        mutUnitQuaternion().coeffs().transpose());
-    mutUnitQuaternion().coeffs() /= length;
+        params().transpose());
+    mutParams() /= length;
   }
 
-  /// Returns 3x3 matrix representation of the instance.
-  ///
-  /// For SO(3), the matrix representation is an orthogonal matrix ``R`` with
-  /// ``det(R)=1``, thus the so-called "rotation matrix".
+  /// Returns 3x3 matrix.
   ///
   SOPHUS_FUNC [[nodiscard]] Transformation matrix() const {
-    return unitQuaternion().toRotationMatrix();
+    return unitQuaternion().matrix();
   }
 
   /// Assignment-like operator from OtherDerived.
@@ -365,7 +348,7 @@ class So3Base {
   template <class TOtherDerived>
   SOPHUS_FUNC So3Base<TDerived>& operator=(
       So3Base<TOtherDerived> const& other) {
-    mutUnitQuaternion() = other.unitQuaternion();
+    mutParams() = other.params();
     return *this;
   }
 
@@ -474,27 +457,46 @@ class So3Base {
     return *this;
   }
 
-  /// Takes in quaternion, and normalizes it.
-  ///
-  /// Precondition: The quaternion must not be close to zero.
-  ///
-  SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quaternion) {
-    mutUnitQuaternion() = quaternion;
-    normalize();
-  }
-
   /// Accessor of unit quaternion.
   ///
   SOPHUS_FUNC [[nodiscard]] QuaternionType const& unitQuaternion() const {
     return static_cast<TDerived const*>(this)->unitQuaternion();
   }
 
+  /// Takes in quaternion, and normalizes it.
+  ///
+  /// Precondition: The quaternion must not be close to zero.
+  ///
+  template <class TD>
+  SOPHUS_FUNC void setQuaternion(QuaternionBase<TD> const& quaternion) {
+    this->setParams(quaternion.params());
+  }
+
+  /// Takes in params (quaternion), and normalizes it.
+  ///
+  /// Precondition: The quaternion must not be close to zero.
+  ///
+  template <class TD>
+  SOPHUS_FUNC void setParams(Eigen::MatrixBase<Scalar> const& params) {
+    this->mutParams() = params;
+    normalize();
+  }
+
+  /// Returns internal parameters of SO(3).
+  ///
+  /// It returns (q.imag[0], q.imag[1], q.imag[2], q.real), with q being the
+  /// unit quaternion.
+  ///
+  SOPHUS_FUNC [[nodiscard]] ParamsType const& params() const {
+    return static_cast<TDerived const*>(this)->params();
+  }
+
  private:
-  /// Mutator of unit_quaternion is private to ensure class invariant. That is
+  /// Mutator of params is private to ensure class invariant. That is
   /// the quaternion must stay close to unit length.;
   ///
-  SOPHUS_FUNC QuaternionType& mutUnitQuaternion() {
-    return static_cast<TDerived*>(this)->mutUnitQuaternion();
+  SOPHUS_FUNC QuaternionType& mutParams() {
+    return static_cast<TDerived*>(this)->mutParams();
   }
 };
 
@@ -507,7 +509,7 @@ class So3 : public So3Base<So3<TScalar>> {
   static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
-  using Params = typename Base::Params;
+  using ParamsType = typename Base::ParamsType;
   using QuaternionType = Eigen::Map<Quaternion<Scalar>>;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -571,12 +573,6 @@ class So3 : public So3Base<So3<TScalar>> {
         std::is_same<typename Eigen::QuaternionBase<TD>::Scalar, Scalar>::value,
         "Input must be of same scalar type");
     Base::normalize();
-  }
-
-  /// Accessor of unit quaternion.
-  ///
-  SOPHUS_FUNC [[nodiscard]] QuaternionType const& unitQuaternion() const {
-    return params_;
   }
 
   /// Returns the left Jacobian on lie group. See 1st entry in rightmost column
@@ -765,13 +761,9 @@ class So3 : public So3Base<So3<TScalar>> {
       real_factor = cos(half_theta);
     }
 
-    So3 so3;
-    so3.mutUnitQuaternion() = QuaternionType(
-        real_factor,
-        imag_factor * omega.x(),
-        imag_factor * omega.y(),
-        imag_factor * omega.z());
-    so3_and_theta.so3 = so3;
+    so3_and_theta.so3.mutParams() =
+        sophus::Quaternion<Scalar>::fromRealAndImag(real_factor, imag_factor * omega)
+            .params();
     FARM_CHECK(
         abs(so3_and_theta.so3.unitQuaternion().squaredNorm() - Scalar(1)) <
             sophus::kEpsilon<Scalar>,
@@ -920,12 +912,23 @@ class So3 : public So3Base<So3<TScalar>> {
     return Tangent(omega(2, 1), omega(0, 2), omega(1, 0));
   }
 
+  // BEGIN(accessors)
+
+  /// Accessor of unit quaternion.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Eigen::Map<sophus::Quaternion<Scalar> const>
+  unitQuaternion() const {
+    return Eigen::Map<sophus::Quaternion<Scalar> const>(params_.data());
+  }
+
+  // END(accessors)
+
  protected:
   /// Mutator of params is protected to ensure class invariant.
   ///
-  SOPHUS_FUNC Params& mutParams() { return params_; }
+  SOPHUS_FUNC ParamsType& mutParams() { return params_; }
 
-  Params params_;  // NOLINT
+  ParamsType params_;  // NOLINT
 };
 
 }  // namespace sophus
@@ -941,7 +944,7 @@ class Map<sophus::So3<TScalar>>
  public:
   using Base = sophus::So3Base<Map<sophus::So3<TScalar>>>;
   using Scalar = TScalar;
-  using Params = typename Base::Params;
+  using ParamsType = typename Base::ParamsType;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -985,7 +988,7 @@ class Map<sophus::So3<TScalar> const>
  public:
   using Base = sophus::So3Base<Map<sophus::So3<TScalar> const>>;
   using Scalar = TScalar;
-  using Params = typename Base::Params;
+  using ParamsType = typename Base::ParamsType;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;

@@ -96,7 +96,7 @@ class Se2Base {
   using TranslationType =
       typename Eigen::internal::traits<TDerived>::TranslationType;
   using So2Type = typename Eigen::internal::traits<TDerived>::So2Type;
-  using Params = typename Eigen::internal::traits<TDerived>::ParamsType;
+  using ParamsType = typename Eigen::internal::traits<TDerived>::ParamsType;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (two for translation, three for rotation).
@@ -315,7 +315,7 @@ class Se2Base {
     return *this;
   }
 
-  // begin(accessors)
+  // BEGIN(accessors)
 
   /// Returns copy of instance casted to NewScalarType.
   ///
@@ -370,7 +370,7 @@ class Se2Base {
 
   /// Returns internal parameters of SE(2).
   ///
-  SOPHUS_FUNC [[nodiscard]] Params const& params() const {
+  SOPHUS_FUNC [[nodiscard]] ParamsType const& params() const {
     return static_cast<TDerived const*>(this)->params();
   }
 
@@ -441,19 +441,19 @@ class Se2Base {
   /// Accessor of unit complex number.
   ///
   SOPHUS_FUNC [[nodiscard]]
-  typename Eigen::internal::traits<TDerived>::So2Type::Params const&
+  typename Eigen::internal::traits<TDerived>::So2Type::ParamsType const&
   unitComplex() const {
     return so2().unitComplex();
   }
 
-  // end(accessors)
+  // END(accessors)
 
  private:
   /// Mutator of params is private to ensure class invariant. That is
   /// the complex number must stay close to unit length.
   ///
   SOPHUS_FUNC
-  Params& mutParams() { return static_cast<TDerived*>(this)->mutParams(); }
+  ParamsType& mutParams() { return static_cast<TDerived*>(this)->mutParams(); }
 };
 
 /// Se2 using default storage; derived from Se2Base.
@@ -465,7 +465,7 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
-  using Params = Eigen::Matrix<Scalar, 4, 1>;
+  using ParamsType = Eigen::Matrix<Scalar, 4, 1>;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -483,7 +483,7 @@ class Se2 : public Se2Base<Se2<TScalar>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  // begin(constr)
+  // BEGIN(constr)
 
   /// Default constructor initializes rigid body motion to the identity.
   ///
@@ -504,9 +504,9 @@ class Se2 : public Se2Base<Se2<TScalar>> {
     params_ = other.params();
   }
 
-  // end(constr)
+  // END(constr)
 
-  // begin(factories)
+  // BEGIN(factories)
 
   /// Returns closest Se3 given arbitrary 3x3 matrix.
   ///
@@ -638,7 +638,7 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   ///
   SOPHUS_FUNC static Se2 uninitialized() { return Se2(details::UninitTag{}); }
 
-  // end(static factories)
+  // END(static factories)
 
   /// Returns derivative of exp(x) wrt. x.
   ///
@@ -873,11 +873,11 @@ class Se2 : public Se2Base<Se2<TScalar>> {
     return upsilon_omega;
   }
 
-  // begin(accessors)
+  // BEGIN(accessors)
 
   /// Accessor of params
   ///
-  SOPHUS_FUNC [[nodiscard]] Params const& params() const {
+  SOPHUS_FUNC [[nodiscard]] ParamsType const& params() const {
     return this->params_;
   }
 
@@ -898,7 +898,7 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   SOPHUS_FUNC [[nodiscard]] TranslationView const& translation() const {
     return translation_;
   }
-  // end(accessors)
+  // END(accessors)
 
  protected:
   explicit SOPHUS_FUNC Se2(details::UninitTag tag)
@@ -908,7 +908,7 @@ class Se2 : public Se2Base<Se2<TScalar>> {
  public:
   /// Mutator of params is protected to ensure class invariant.
   ///
-  SOPHUS_FUNC Params& mutParams() { return params_; }
+  SOPHUS_FUNC ParamsType& mutParams() { return params_; }
 
   Eigen::Vector<Scalar, kNumParams> params_;  // NOLINT
   So2View so2_;                             // NOLINT

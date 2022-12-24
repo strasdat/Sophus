@@ -34,6 +34,12 @@ template <class TScalar>
 }  // namespace sophus
 
 namespace Eigen {  // NOLINT
+template <class TScalar>
+class Map<sophus::So2<TScalar>>;
+
+template <class TScalar>
+class Map<sophus::So2<TScalar>>;
+
 namespace internal {
 
 template <class TScalar>
@@ -58,6 +64,16 @@ struct traits<Map<sophus::So2<TScalar> const>>
 }  // namespace Eigen
 
 namespace sophus {
+
+template <class TScalar>
+using MutSo2View = Eigen::Map<sophus::So2<TScalar>>;
+using MutSo2ViewF64 = MutSo2View<double>;
+using MutSo2ViewF32 = MutSo2View<float>;
+
+template <class TScalar>
+using So2View = Eigen::Map<sophus::So2<TScalar> const>;
+using So2ViewF64 = So2View<double>;
+using So2ViewF32 = So2View<float>;
 
 /// So2 base type - implements So2 class but is storage agnostic.
 ///
@@ -88,7 +104,7 @@ template <class TDerived>
 class So2Base {
  public:
   using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
-  using Params = typename Eigen::internal::traits<TDerived>::ParamsType;
+  using ParamsType = typename Eigen::internal::traits<TDerived>::ParamsType;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space (one
   /// since we only have in-plane rotations).
@@ -304,7 +320,7 @@ class So2Base {
         -unitComplex()[1], unitComplex()[0]);
   }
 
-  // begin(accessors)
+  // BEGIN(accessors)
 
   /// Returns copy of instance casted to NewScalarType.
   ///
@@ -347,7 +363,7 @@ class So2Base {
   ///
   /// It returns (c[0], c[1]), with c being the unit complex number.
   ///
-  SOPHUS_FUNC [[nodiscard]] Params const& params() const {
+  SOPHUS_FUNC [[nodiscard]] ParamsType const& params() const {
     return static_cast<TDerived const*>(this)->params();
   }
 
@@ -409,18 +425,17 @@ class So2Base {
 
   /// Accessor of unit complex number.
   ///
-  SOPHUS_FUNC [[nodiscard]] Params const& unitComplex() const {
+  SOPHUS_FUNC [[nodiscard]] ParamsType const& unitComplex() const {
     return this->params();
   }
-
-  // end(accessors)
+  // END(accessors)
 
  private:
   /// Mutator of prams is private to ensure class invariant. That is
   /// the complex number must stay close to unit length.
   ///
   SOPHUS_FUNC
-  Params& mutParams() { return static_cast<TDerived*>(this)->mutParams(); }
+  ParamsType& mutParams() { return static_cast<TDerived*>(this)->mutParams(); }
 };
 
 /// So2 using  default storage; derived from So2Base.
@@ -432,7 +447,7 @@ class So2 : public So2Base<So2<TScalar>> {
   static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
-  using Params = Eigen::Matrix<Scalar, 2, 1>;
+  using ParamsType = Eigen::Matrix<Scalar, 2, 1>;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -451,7 +466,7 @@ class So2 : public So2Base<So2<TScalar>> {
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  // begin(constr)
+  // BEGIN(constr)
 
   /// Default constructor initializes unit complex number to identity rotation.
   ///
@@ -467,9 +482,9 @@ class So2 : public So2Base<So2<TScalar>> {
   SOPHUS_FUNC So2(So2Base<TOtherDerived> const& other)
       : params_(other.unitComplex()) {}
 
-  // end(constr)
+  // END(constr)
 
-  // begin(factories)
+  // BEGIN(factories)
   /// Create So2 given arbitrary 2x2 matrix.
   ///
   template <class TS = Scalar>
@@ -522,7 +537,7 @@ class So2 : public So2Base<So2<TScalar>> {
   ///
   SOPHUS_FUNC static So2 fromRealAndImag(
       Scalar const& real, Scalar const& imag) {
-    return So2::fromParams(Params(real, imag));
+    return So2::fromParams(ParamsType(real, imag));
   }
 
   /// Draw uniform sample from SO(2) manifold.
@@ -548,7 +563,7 @@ class So2 : public So2Base<So2<TScalar>> {
   ///
   SOPHUS_FUNC static So2 uninitialized() { return So2(details::UninitTag{}); }
 
-  // end(static factories)
+  // END(static factories)
 
   /// Group exponential
   ///
@@ -653,24 +668,24 @@ class So2 : public So2Base<So2<TScalar>> {
     return omega(1, 0);
   }
 
-  // begin(accessors)
+  // BEGIN(accessors)
 
   /// Accessor of params
   ///
-  SOPHUS_FUNC [[nodiscard]] Params const& params() const {
+  SOPHUS_FUNC [[nodiscard]] ParamsType const& params() const {
     return this->params_;
   }
 
-  // end(accessors)
+  // END(accessors)
 
  protected:
   explicit SOPHUS_FUNC So2(details::UninitTag tag) {}
 
   /// Mutator of params is protected to ensure class invariant.
   ///
-  SOPHUS_FUNC Params& mutParams() { return params_; }
+  SOPHUS_FUNC ParamsType& mutParams() { return params_; }
 
-  Params params_;  // NOLINT
+  ParamsType params_;  // NOLINT
 };
 
 }  // namespace sophus
@@ -748,8 +763,6 @@ class Map<sophus::So2<TScalar> const>
   }
 
  protected:
-  /// Mutator of unit_complex is protected to ensure class invariant.
-  ///
   Map<Eigen::Matrix<Scalar, 2, 1> const> params_;  // NOLINT
 };
 }  // namespace Eigen
