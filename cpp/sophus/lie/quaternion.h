@@ -97,14 +97,14 @@ class QuaternionBase {
 
   /// Accessor of params.
   ///
-  SOPHUS_FUNC [[nodiscard]] Eigen::Map<Eigen::Vector3<Scalar>> imag() const {
-    return Eigen::Map<Eigen::Vector3<Scalar>>(params().data());
+  SOPHUS_FUNC [[nodiscard]] Eigen::Map<Eigen::Vector3<Scalar> const> imag() const {
+    return Eigen::Map<Eigen::Vector3<Scalar>const>(params().data());
   }
 
   /// Accessor of params.
   ///
   SOPHUS_FUNC [[nodiscard]] Params const& params() const {
-    return static_cast<TDerived*>(this)->params();
+    return static_cast<TDerived const*>(this)->params();
   }
 
   SOPHUS_FUNC [[nodiscard]] Scalar const& real() const { return params()[3]; }
