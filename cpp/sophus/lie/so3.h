@@ -12,6 +12,7 @@
 #pragma once
 
 #include "sophus/common/types.h"
+#include "sophus/lie/quaternion.h"
 #include "sophus/lie/so2.h"
 #include "sophus/linalg/rotation_matrix.h"
 
@@ -41,20 +42,23 @@ namespace internal {
 template <class TScalar>
 struct traits<sophus::So3<TScalar>> {
   using Scalar = TScalar;
-  using QuaternionType = Eigen::Quaternion<Scalar>;
+  using QuaternionType = Map<sophus::Quaternion<Scalar>>;
+  using ParamsType = Eigen::Matrix<Scalar, 4, 1>;
 };
 
 template <class TScalar>
 struct traits<Map<sophus::So3<TScalar>>> : traits<sophus::So3<TScalar>> {
   using Scalar = TScalar;
-  using QuaternionType = Map<Eigen::Quaternion<Scalar>>;
+  using QuaternionType = Map<sophus::Quaternion<Scalar>>;
+  using ParamsType = Map<Eigen::Vector4<Scalar>>;
 };
 
 template <class TScalar>
 struct traits<Map<sophus::So3<TScalar> const>>
     : traits<sophus::So3<TScalar> const> {
   using Scalar = TScalar;
-  using QuaternionType = Map<Eigen::Quaternion<Scalar> const>;
+  using QuaternionType = Map<sophus::Quaternion<Scalar> const>;
+  using ParamsType = Map<Eigen::Vector4<Scalar> const>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -89,7 +93,7 @@ class So3Base {
   using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using QuaternionType =
       typename Eigen::internal::traits<TDerived>::QuaternionType;
-  using QuaternionTemporaryType = Eigen::Quaternion<Scalar>;
+  using Params = typename Eigen::internal::traits<TDerived>::ParamsType;
 
   /// Degrees of freedom of group, number of dimensions in tangent space.
   static int constexpr kDoF = 3;
@@ -503,12 +507,13 @@ class So3 : public So3Base<So3<TScalar>> {
   static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
+  using Params = typename Base::Params;
+  using QuaternionType = Eigen::Map<Quaternion<Scalar>>;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using QuaternionMember = Eigen::Quaternion<Scalar>;
 
   struct So3AndTheta {
     So3<Scalar> so3;
@@ -530,8 +535,7 @@ class So3 : public So3Base<So3<TScalar>> {
 
   /// Default constructor initializes unit quaternion to identity rotation.
   ///
-  SOPHUS_FUNC So3()
-      : unit_quaternion_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
+  SOPHUS_FUNC So3() : params_(Scalar(1), Scalar(0), Scalar(0), Scalar(0)) {}
 
   /// Copy constructor
   ///
@@ -541,14 +545,14 @@ class So3 : public So3Base<So3<TScalar>> {
   ///
   template <class TOtherDerived>
   SOPHUS_FUNC So3(So3Base<TOtherDerived> const& other)
-      : unit_quaternion_(other.unitQuaternion()) {}
+      : params_(other.unitQuaternion()) {}
 
   /// Constructor from rotation matrix
   ///
   /// Precondition: rotation matrix needs to be orthogonal with determinant
   /// of 1.
   ///
-  SOPHUS_FUNC So3(Transformation const& r) : unit_quaternion_(r) {
+  SOPHUS_FUNC So3(Transformation const& r) : params_(r) {
     FARM_CHECK(isOrthogonal(r), "R is not orthogonal:\n {}", r * r.transpose());
     FARM_CHECK(
         r.determinant() > Scalar(0),
@@ -562,7 +566,7 @@ class So3 : public So3Base<So3<TScalar>> {
   ///
   template <class TD>
   SOPHUS_FUNC explicit So3(Eigen::QuaternionBase<TD> const& quat)
-      : unit_quaternion_(quat) {
+      : params_(quat) {
     static_assert(
         std::is_same<typename Eigen::QuaternionBase<TD>::Scalar, Scalar>::value,
         "Input must be of same scalar type");
@@ -571,8 +575,8 @@ class So3 : public So3Base<So3<TScalar>> {
 
   /// Accessor of unit quaternion.
   ///
-  SOPHUS_FUNC [[nodiscard]] QuaternionMember const& unitQuaternion() const {
-    return unit_quaternion_;
+  SOPHUS_FUNC [[nodiscard]] QuaternionType const& unitQuaternion() const {
+    return params_;
   }
 
   /// Returns the left Jacobian on lie group. See 1st entry in rightmost column
@@ -762,7 +766,7 @@ class So3 : public So3Base<So3<TScalar>> {
     }
 
     So3 so3;
-    so3.mutUnitQuaternion() = QuaternionMember(
+    so3.mutUnitQuaternion() = QuaternionType(
         real_factor,
         imag_factor * omega.x(),
         imag_factor * omega.y(),
@@ -896,7 +900,7 @@ class So3 : public So3Base<So3<TScalar>> {
     const Scalar b = sqrt(u1);
 
     return So3(
-        QuaternionMember(a * sin(u2), a * cos(u2), b * sin(u3), b * cos(u3)));
+        QuaternionType(a * sin(u2), a * cos(u2), b * sin(u3), b * cos(u3)));
   }
 
   /// vee-operator
@@ -917,11 +921,11 @@ class So3 : public So3Base<So3<TScalar>> {
   }
 
  protected:
-  /// Mutator of unit_quaternion is protected to ensure class invariant.
+  /// Mutator of params is protected to ensure class invariant.
   ///
-  SOPHUS_FUNC QuaternionMember& mutUnitQuaternion() { return unit_quaternion_; }
+  SOPHUS_FUNC Params& mutParams() { return params_; }
 
-  QuaternionMember unit_quaternion_;  // NOLINT
+  Params params_;  // NOLINT
 };
 
 }  // namespace sophus
@@ -937,6 +941,7 @@ class Map<sophus::So3<TScalar>>
  public:
   using Base = sophus::So3Base<Map<sophus::So3<TScalar>>>;
   using Scalar = TScalar;
+  using Params = typename Base::Params;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -951,23 +956,23 @@ class Map<sophus::So3<TScalar>>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC explicit Map(Scalar* coeffs) : unit_quaternion_(coeffs) {}
+  SOPHUS_FUNC explicit Map(Scalar* coeffs) : params_(coeffs) {}
 
   /// Accessor of unit quaternion.
   ///
   SOPHUS_FUNC [[nodiscard]] Map<Eigen::Quaternion<Scalar>> const&
   unitQuaternion() const {
-    return unit_quaternion_;
+    return params_;
   }
 
  protected:
   /// Mutator of unit_quaternion is protected to ensure class invariant.
   ///
   SOPHUS_FUNC Map<Eigen::Quaternion<Scalar>>& mutUnitQuaternion() {
-    return unit_quaternion_;
+    return params_;
   }
 
-  Map<Eigen::Quaternion<Scalar>> unit_quaternion_;  // NOLINT
+  Map<Eigen::Quaternion<Scalar>> params_;  // NOLINT
 };
 
 /// Specialization of Eigen::Map for ``So3 const``; derived from So3Base.
@@ -980,6 +985,7 @@ class Map<sophus::So3<TScalar> const>
  public:
   using Base = sophus::So3Base<Map<sophus::So3<TScalar> const>>;
   using Scalar = TScalar;
+  using Params = typename Base::Params;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -989,19 +995,19 @@ class Map<sophus::So3<TScalar> const>
   using Base::operator*=;
   using Base::operator*;
 
-  SOPHUS_FUNC explicit Map(Scalar const* coeffs) : unit_quaternion_(coeffs) {}
+  SOPHUS_FUNC explicit Map(Scalar const* coeffs) : params_(coeffs) {}
 
   /// Accessor of unit quaternion.
   ///
   SOPHUS_FUNC
   [[nodiscard]] Map<Eigen::Quaternion<Scalar> const> const& unitQuaternion()
       const {
-    return unit_quaternion_;
+    return params_;
   }
 
  protected:
   /// Mutator of unit_quaternion is protected to ensure class invariant.
   ///
-  Map<Eigen::Quaternion<Scalar> const> unit_quaternion_;  // NOLINT
+  Map<Eigen::Quaternion<Scalar> const> params_;  // NOLINT
 };
 }  // namespace Eigen

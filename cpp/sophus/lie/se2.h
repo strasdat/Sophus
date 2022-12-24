@@ -471,8 +471,8 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using So2Member = Eigen::Map<So2<Scalar>>;
-  using TranslationMember = Eigen::Map<Eigen::Matrix<Scalar, 2, 1>>;
+  using So2View = Eigen::Map<So2<Scalar>>;
+  using TranslationView = Eigen::Map<Eigen::Matrix<Scalar, 2, 1>>;
 
   using Base::operator=;
 
@@ -883,19 +883,19 @@ class Se2 : public Se2Base<Se2<TScalar>> {
 
   /// Accessor of So3
   ///
-  SOPHUS_FUNC So2Member& so2() { return so2_; }
+  SOPHUS_FUNC So2View& so2() { return so2_; }
 
   /// Mutator of So3
   ///
-  SOPHUS_FUNC [[nodiscard]] So2Member const& so2() const { return so2_; }
+  SOPHUS_FUNC [[nodiscard]] So2View const& so2() const { return so2_; }
 
   /// Mutator of translation vector
   ///
-  SOPHUS_FUNC TranslationMember& translation() { return translation_; }
+  SOPHUS_FUNC TranslationView& translation() { return translation_; }
 
   /// Accessor of translation vector
   ///
-  SOPHUS_FUNC [[nodiscard]] TranslationMember const& translation() const {
+  SOPHUS_FUNC [[nodiscard]] TranslationView const& translation() const {
     return translation_;
   }
   // end(accessors)
@@ -911,8 +911,8 @@ class Se2 : public Se2Base<Se2<TScalar>> {
   SOPHUS_FUNC Params& mutParams() { return params_; }
 
   Eigen::Vector<Scalar, kNumParams> params_;  // NOLINT
-  So2Member so2_;                             // NOLINT
-  TranslationMember translation_;             // NOLINT
+  So2View so2_;                             // NOLINT
+  TranslationView translation_;             // NOLINT
 };
 
 template <class TScalar>
