@@ -15,6 +15,7 @@
 
 // Include only the selective set of Eigen headers that we need.
 // This helps when using Sophus with unusual compilers, like nvcc.
+#include "farm_ng/core/logging/expected.h"
 #include "sophus/common/types.h"
 #include "sophus/linalg/rotation_matrix.h"
 
@@ -171,23 +172,6 @@ class So2Base {
     mutParams() /= length;
   }
 
-  /// Returns 2x2 matrix representation of the instance.
-  ///
-  /// For SO(2), the matrix representation is an orthogonal matrix ``R`` with
-  /// ``det(R)=1``, thus the so-called "rotation matrix".
-  ///
-  SOPHUS_FUNC [[nodiscard]] Transformation matrix() const {
-    Scalar const& real = params().x();
-    Scalar const& imag = params().y();
-    Transformation mat_r;
-    // clang-format off
-    mat_r <<
-      real, -imag,
-      imag,  real;
-    // clang-format on
-    return mat_r;
-  }
-
   /// Assignment-like operator from OtherDerived.
   ///
   template <class TOtherDerived>
@@ -342,6 +326,23 @@ class So2Base {
     return params().data();
   }
 
+  /// Returns 2x2 matrix representation of the instance.
+  ///
+  /// For SO(2), the matrix representation is an orthogonal matrix ``R`` with
+  /// ``det(R)=1``, thus the so-called "rotation matrix".
+  ///
+  SOPHUS_FUNC [[nodiscard]] Transformation matrix() const {
+    Scalar const& real = params().x();
+    Scalar const& imag = params().y();
+    Transformation mat_r;
+    // clang-format off
+    mat_r <<
+      real, -imag,
+      imag,  real;
+    // clang-format on
+    return mat_r;
+  }
+
   /// Returns internal parameters of SO(2).
   ///
   /// It returns (c[0], c[1]), with c being the unit complex number.
@@ -350,10 +351,13 @@ class So2Base {
     return static_cast<TDerived const*>(this)->params();
   }
 
-  /// Accessor of unit complex number.
+  /// Returns 2x2 matrix representation of the instance.
   ///
-  SOPHUS_FUNC [[nodiscard]] Params const& unitComplex() const {
-    return this->params();
+  /// For SO(2), the matrix representation is an orthogonal matrix ``R`` with
+  /// ``det(R)=1``, thus the so-called "rotation matrix".
+  ///
+  SOPHUS_FUNC [[nodiscard]] Transformation rotationMatrix() const {
+    return this->matrix();
   }
 
   /// Takes in complex number / tuple and normalizes it.
@@ -369,6 +373,44 @@ class So2Base {
   SOPHUS_FUNC void setParams(Point const& params) {
     mutParams() = params;
     normalize();
+  }
+
+  /// Tries to sets ``So2`` using ``mat_r``.
+  ///
+  /// For success,  ``mat_r`` must be orthogonal and ``det(mat_r)=1``.
+  ///
+  SOPHUS_FUNC [[nodiscard]] farm_ng::Expected<farm_ng::Success> trySetMatrix(
+      Eigen::Matrix<Scalar, 2, 2> const& mat_r) {
+    farm_ng::Error error;
+    if (!isOrthogonal(mat_r)) {
+      error.details.push_back(
+          FARM_ERROR_DETAIL("R is not orthogonal:\n {}", mat_r));
+    }
+    if (mat_r.determinant() <= Scalar(0)) {
+      error.details.push_back(
+          FARM_ERROR_DETAIL("det(R) is not positive: {}", mat_r.determinant()));
+    }
+    if (!error.details.empty()) {
+      return tl::unexpected(error);
+    }
+    this->mutParams()[0] = Scalar(0.5) * (mat_r(0, 0) + mat_r(1, 1));
+    this->mutParams()[1] = Scalar(0.5) * (mat_r(1, 0) - mat_r(0, 1));
+    return farm_ng::Success{};
+  }
+
+  /// Sets ``So2`` using ``rotation_matrix``.
+  ///
+  /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
+  ///
+  SOPHUS_FUNC void setMatrix(Eigen::Matrix<Scalar, 2, 2> const& mat_r) {
+    auto maybe_success = trySetMatrix(mat_r);
+    FARM_UNWRAP(maybe_success);
+  }
+
+  /// Accessor of unit complex number.
+  ///
+  SOPHUS_FUNC [[nodiscard]] Params const& unitComplex() const {
+    return this->params();
   }
 
   // end(accessors)
@@ -390,12 +432,12 @@ class So2 : public So2Base<So2<TScalar>> {
   static int constexpr kNumParams = Base::kNumParams;
 
   using Scalar = TScalar;
+  using Params = Eigen::Matrix<Scalar, 2, 1>;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using Params = Eigen::Matrix<Scalar, 2, 1>;
 
   /// ``Base`` is friend so params_nonconst can be accessed from ``Base``.
   friend class So2Base<So2<Scalar>>;
@@ -419,7 +461,7 @@ class So2 : public So2Base<So2<TScalar>> {
   ///
   SOPHUS_FUNC So2(So2 const& other) = default;
 
-  /// Copy-like constructor from OtherDerived.
+  /// Create from OtherDerived.
   ///
   template <class TOtherDerived>
   SOPHUS_FUNC So2(So2Base<TOtherDerived> const& other)
@@ -427,31 +469,13 @@ class So2 : public So2Base<So2<TScalar>> {
 
   // end(constr)
 
-  // begin(static factories)
-
+  // begin(factories)
   /// Create So2 given arbitrary 2x2 matrix.
   ///
   template <class TS = Scalar>
   static SOPHUS_FUNC std::enable_if_t<std::is_floating_point<TS>::value, So2>
-  fitToSo2(Transformation const& r) {
+  fitFrom(Transformation const& r) {
     return So2::fromMatrix(makeRotationMatrix(r));
-  }
-
-  /// Create from rotation matrix
-  ///
-  /// Precondition: rotation matrix need to be orthogonal with determinant of 1.
-  ///
-  static SOPHUS_FUNC So2 fromMatrix(Transformation const& mat_r) {
-    FARM_CHECK(isOrthogonal(mat_r), "R is not orthogonal:\n {}", mat_r);
-    FARM_CHECK(
-        mat_r.determinant() > Scalar(0),
-        "det(R) is not positive: {}",
-        mat_r.determinant());
-    auto so2 = So2::uninitialized();
-    so2.params_ = Params(
-        Scalar(0.5) * (mat_r(0, 0) + mat_r(1, 1)),
-        Scalar(0.5) * (mat_r(1, 0) - mat_r(0, 1)));
-    return so2;
   }
 
   /// Create from an rotation angle.
@@ -469,6 +493,15 @@ class So2 : public So2Base<So2<TScalar>> {
   template <class TD>
   SOPHUS_FUNC static So2 fromComplex(Eigen::MatrixBase<TD> const& complex) {
     return So2::fromParams(complex);
+  }
+
+  /// Create from rotation matrix
+  ///
+  /// Precondition: rotation matrix need to be orthogonal with determinant of 1.
+  ///
+  static SOPHUS_FUNC So2 fromMatrix(Transformation const& mat_r) {
+    auto maybe_so2 = So2::tryFromMatrix(mat_r);
+    return FARM_UNWRAP(maybe_so2);
   }
 
   /// Create from  2-vector.
@@ -501,6 +534,14 @@ class So2 : public So2Base<So2<TScalar>> {
         "generator must meet the UniformRandomBitGenerator concept");
     std::uniform_real_distribution<Scalar> uniform(-kPi<Scalar>, kPi<Scalar>);
     return So2::fromAngle(uniform(generator));
+  }
+
+  /// Try create from rotation matrix
+  ///
+  static SOPHUS_FUNC farm_ng::Expected<So2> tryFromMatrix(
+      Transformation const& mat_r) {
+    auto so2 = So2::uninitialized();
+    return so2;
   }
 
   /// Create with uninitialized storage.
@@ -612,16 +653,20 @@ class So2 : public So2Base<So2<TScalar>> {
     return omega(1, 0);
   }
 
-  /// Accessor of unit complex number.
+  // begin(accessors)
+
+  /// Accessor of params
   ///
   SOPHUS_FUNC [[nodiscard]] Params const& params() const {
     return this->params_;
   }
 
+  // end(accessors)
+
  protected:
   explicit SOPHUS_FUNC So2(details::UninitTag tag) {}
 
-  /// Mutator of complex number is protected to ensure class invariant.
+  /// Mutator of params is protected to ensure class invariant.
   ///
   SOPHUS_FUNC Params& mutParams() { return params_; }
 

@@ -178,8 +178,8 @@ class Tests {
 
     for (int i = 0; i < 100; ++i) {
       Eigen::Matrix2<Scalar> r = Eigen::Matrix2<Scalar>::Random();
-      So2Type so2 = So2Type::fitToSo2(r);
-      So2Type so2_2 = So2Type::fitToSo2(so2.matrix());
+      So2Type so2 = So2Type::fitFrom(r);
+      So2Type so2_2 = So2Type::fitFrom(so2.matrix());
 
       SOPHUS_TEST_APPROX(
           passed, so2.matrix(), so2_2.matrix(), kEpsilon<Scalar>, "");

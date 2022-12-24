@@ -9,6 +9,14 @@
 		"[cpp]": {
         	"editor.defaultFormatter": "ms-vscode.cpptools"
     	},
-    	"clang-format.executable": "clang-format-15",
+		"clang-format.executable": "clang-format-15",
+		"files.associations": {
+			"fft": "cpp",
+			"__split_buffer": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"string": "cpp",
+			"vector": "cpp"
+		},
 	}
 }

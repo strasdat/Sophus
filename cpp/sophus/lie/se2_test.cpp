@@ -39,25 +39,23 @@ class Tests {
   Scalar const k_pi = kPi<Scalar>;  // NOLINT
 
   Tests() {
+    se2_vec_.push_back(Se2Type::fromT(Point(Scalar(0), Scalar(0))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.0)), Point(Scalar(0), Scalar(0))));
+        Se2Type::fromAngleAndT(0.2, Point(Scalar(10), Scalar(0))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.2)), Point(Scalar(10), Scalar(0))));
+        Se2Type::fromAngleAndT(0., Point(Scalar(0), Scalar(100))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.)), Point(Scalar(0), Scalar(100))));
+        Se2Type::fromAngleAndT(-1., Point(Scalar(20), -Scalar(1))));
+    se2_vec_.push_back(Se2Type::fromAngleAndT(
+        0.00001, Point(Scalar(-0.00000001), Scalar(0.0000000001))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(-1.)), Point(Scalar(20), -Scalar(1))));
-    se2_vec_.push_back(Se2Type(
-        So2Type(Scalar(0.00001)),
-        Point(Scalar(-0.00000001), Scalar(0.0000000001))));
+        Se2Type::fromAngleAndT(0.2, Point(Scalar(0), Scalar(0))) *
+        Se2Type::fromAngleAndT(k_pi, Point(Scalar(0), Scalar(0))) *
+        Se2Type::fromAngleAndT(-0.2, Point(Scalar(0), Scalar(0))));
     se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.2)), Point(Scalar(0), Scalar(0))) *
-        Se2Type(So2Type(k_pi), Point(Scalar(0), Scalar(0))) *
-        Se2Type(So2Type(Scalar(-0.2)), Point(Scalar(0), Scalar(0))));
-    se2_vec_.push_back(
-        Se2Type(So2Type(Scalar(0.3)), Point(Scalar(2), Scalar(0))) *
-        Se2Type(So2Type(k_pi), Point(Scalar(0), Scalar(0))) *
-        Se2Type(So2Type(Scalar(-0.3)), Point(Scalar(0), Scalar(6))));
+        Se2Type::fromAngleAndT(Scalar(0.3), Point(Scalar(2), Scalar(0))) *
+        Se2Type::fromAngle(Scalar(k_pi)) *
+        Se2Type::fromAngleAndT(Scalar(-0.3), Point(Scalar(0), Scalar(6))));
 
     Tangent tmp;
     tmp << Scalar(0), Scalar(0), Scalar(0);
@@ -169,13 +167,12 @@ class Tests {
         map_of_se3.translation().eval(),
         "");
 
-    Se2Type const const_se2(
-        raw2.template head<2>().eval(), raw2.template tail<2>().eval());
+    Se2Type const const_se2 = Se2Type::fromParams(raw2);
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, const_se2.data()[i], raw2.data()[i], "");
     }
 
-    Se2Type se2(raw2.template head<2>().eval(), raw2.template tail<2>().eval());
+    Se2Type se2 = Se2Type::fromParams(raw2);
     for (int i = 0; i < 4; ++i) {
       SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw2.data()[i], "");
     }
@@ -184,10 +181,10 @@ class Tests {
       SOPHUS_TEST_EQUAL(passed, se2.data()[i], raw.data()[i], "");
     }
 
-    Se2Type trans = Se2Type::transX(Scalar(0.2));
+    Se2Type trans = Se2Type::fromTx(Scalar(0.2));
     SOPHUS_TEST_APPROX(
         passed, trans.translation().x(), Scalar(0.2), kEpsilon<Scalar>, "");
-    trans = Se2Type::transY(Scalar(0.7));
+    trans = Se2Type::fromTy(Scalar(0.7));
     SOPHUS_TEST_APPROX(
         passed, trans.translation().y(), Scalar(0.7), kEpsilon<Scalar>, "");
 
@@ -211,7 +208,8 @@ class Tests {
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
     // type -> map assignment
-    copy = Se2Type::trans(Scalar(4), Scalar(5)) * Se2Type::rot(Scalar(0.5));
+    copy =
+        Se2Type::fromT(Scalar(4), Scalar(5)) * Se2Type::fromAngle(Scalar(0.5));
     map1 = copy;
     SOPHUS_TEST_EQUAL(passed, map1.matrix(), copy.matrix(), "");
 
@@ -221,7 +219,7 @@ class Tests {
   bool testMutatingAccessors() {
     bool passed = true;
     Se2Type se2;
-    So2Type r(Scalar(0.2));
+    So2Type r = So2Type::fromAngle(0.2);
     se2.setRotationMatrix(r.matrix());
     SOPHUS_TEST_APPROX(
         passed, se2.rotationMatrix(), r.matrix(), kEpsilon<Scalar>, "");
@@ -247,31 +245,19 @@ class Tests {
 
     SOPHUS_TEST_APPROX(
         passed,
-        Se2Type(so2.log(), translation).matrix(),
+        Se2Type::fromAngleAndT(so2.log(), translation).matrix(),
         se2.matrix(),
         kEpsilon<Scalar>,
         "");
     SOPHUS_TEST_APPROX(
         passed,
-        Se2Type(so2, translation).matrix(),
+        Se2Type::fromSo2AndT(so2, translation).matrix(),
         se2.matrix(),
         kEpsilon<Scalar>,
         "");
     SOPHUS_TEST_APPROX(
         passed,
-        Se2Type(so2.matrix(), translation).matrix(),
-        se2.matrix(),
-        kEpsilon<Scalar>,
-        "");
-    SOPHUS_TEST_APPROX(
-        passed,
-        Se2Type(so2.unitComplex(), translation).matrix(),
-        se2.matrix(),
-        kEpsilon<Scalar>,
-        "");
-    SOPHUS_TEST_APPROX(
-        passed,
-        Se2Type(se2.matrix()).matrix(),
+        Se2Type::fromMatrix(se2.matrix()).matrix(),
         se2.matrix(),
         kEpsilon<Scalar>,
         "");
@@ -284,8 +270,8 @@ class Tests {
     bool passed = true;
     for (int i = 0; i < 100; ++i) {
       Eigen::Matrix3<Scalar> t = Eigen::Matrix3<Scalar>::Random();
-      Se2Type se2 = Se2Type::fitToSe2(t);
-      Se2Type se2_2 = Se2Type::fitToSe2(se2.matrix());
+      Se2Type se2 = Se2Type::fitFrom(t);
+      Se2Type se2_2 = Se2Type::fitFrom(se2.matrix());
 
       SOPHUS_TEST_APPROX(
           passed, se2.matrix(), se2_2.matrix(), kEpsilon<Scalar>, "");

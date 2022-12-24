@@ -19,9 +19,7 @@ namespace sophus {
 
 namespace details {
 
-struct UninitTag{
-
-};
+struct UninitTag {};
 
 template <class TScalar>
 class MaxMetric {

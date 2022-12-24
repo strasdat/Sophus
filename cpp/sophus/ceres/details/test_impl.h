@@ -258,9 +258,7 @@ struct LieGroupCeresTests {
       v_estimate.emplace_back(v * delta);
       initial_error += squaredNorm(delta_log);
       problem.AddParameterBlock(
-          v_estimate.back().data(),
-          LieGroupF64::kNumParams,
-          parametrization);
+          v_estimate.back().data(), LieGroupF64::kNumParams, parametrization);
     }
 
     // For simplicity of graph generation, we use a complete (undirected) graph.
