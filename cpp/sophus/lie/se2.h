@@ -381,8 +381,8 @@ class Se2Base {
   /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   ///
   SOPHUS_FUNC void setRotationMatrix(Eigen::Matrix<Scalar, 2, 2> const& r) {
-    FARM_CHECK(isOrthogonal(r), "R is not orthogonal:\n {}", r);
-    FARM_CHECK(
+    FARM_ASSERT(isOrthogonal(r), "R is not orthogonal:\n {}", r);
+    FARM_ASSERT(
         r.determinant() > Scalar(0),
         "det(R) is not positive: {}",
         r.determinant());
@@ -706,7 +706,7 @@ class Se2 : public Se2Base<Se2<TScalar, kOptions>> {
   /// Precondition: ``i`` must be in 0, 1 or 2.
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
-    FARM_CHECK(i >= 0 || i <= 2, "i should be in range [0,2].");
+    FARM_ASSERT(i >= 0 || i <= 2, "i should be in range [0,2].");
     Tangent e;
     e.setZero();
     e[i] = Scalar(1);
@@ -811,7 +811,7 @@ class Se2 : public Se2Base<Se2<TScalar, kOptions>> {
   ///                |  0  0  0 |
   ///
   SOPHUS_FUNC static Tangent vee(Transformation const& omega) {
-    FARM_CHECK(
+    FARM_ASSERT(
         omega.row(2).template lpNorm<1>() < kEpsilon<Scalar>,
         "Omega: \n{}",
         omega);

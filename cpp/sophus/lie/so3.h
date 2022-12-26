@@ -305,7 +305,7 @@ class So3Base {
     if (squared_n < kEpsilon<Scalar> * kEpsilon<Scalar>) {
       // If quaternion is normalized and n=0, then w should be 1;
       // w=0 should never happen here!
-      FARM_CHECK(
+      FARM_ASSERT(
           abs(w) >= kEpsilon<Scalar>,
           "Quaternion ({}) should be normalized!",
           unitQuaternion().coeffs().transpose().eval());
@@ -341,7 +341,7 @@ class So3Base {
   ///
   SOPHUS_FUNC void normalize() {
     Scalar length = mutUnitQuaternion().norm();
-    FARM_CHECK(
+    FARM_ASSERT(
         length >= kEpsilon<Scalar>,
         "Quaternion ({}) should not be close to zero!",
         mutUnitQuaternion().coeffs().transpose());
@@ -550,8 +550,9 @@ class So3 : public So3Base<So3<TScalar, kOptions>> {
   /// of 1.
   ///
   SOPHUS_FUNC So3(Transformation const& r) : unit_quaternion_(r) {
-    FARM_CHECK(isOrthogonal(r), "R is not orthogonal:\n {}", r * r.transpose());
-    FARM_CHECK(
+    FARM_ASSERT(
+        isOrthogonal(r), "R is not orthogonal:\n {}", r * r.transpose());
+    FARM_ASSERT(
         r.determinant() > Scalar(0),
         "det(R) is not positive: {}",
         r.determinant());
@@ -769,7 +770,7 @@ class So3 : public So3Base<So3<TScalar, kOptions>> {
         imag_factor * omega.y(),
         imag_factor * omega.z());
     so3_and_theta.so3 = so3;
-    FARM_CHECK(
+    FARM_ASSERT(
         abs(so3_and_theta.so3.unitQuaternion().squaredNorm() - Scalar(1)) <
             sophus::kEpsilon<Scalar>,
         "So3::exp failed! omega: {}, real: {}, img: {}",
@@ -808,7 +809,7 @@ class So3 : public So3Base<So3<TScalar, kOptions>> {
   /// Precondition: ``i`` must be 0, 1 or 2.
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
-    FARM_CHECK(i >= 0 && i <= 2, "i should be in range [0,2].");
+    FARM_ASSERT(i >= 0 && i <= 2, "i should be in range [0,2].");
     Tangent e;
     e.setZero();
     e[i] = Scalar(1);

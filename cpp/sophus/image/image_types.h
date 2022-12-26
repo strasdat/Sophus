@@ -192,15 +192,15 @@ std::optional<Eigen::Vector2i> firstFalsePixel(ImageViewBool mask);
 
 /// If it is false that `left_image` == `right_image`, print formatted error
 /// message and then panic.
-#define FARM_CHECK_IMAGE_EQ(left_image, right_image, ...)                     \
-  FARM_CHECK_EQ(                                                              \
+#define FARM_ASSERT_IMAGE_EQ(left_image, right_image, ...)                    \
+  FARM_ASSERT_EQ(                                                             \
       (left_image).imageSize(),                                               \
       (right_image).imageSize(),                                              \
-      "Inside: FARM_CHECK_IMAGE_EQ.");                                        \
+      "Inside: FARM_ASSERT_IMAGE_EQ.");                                       \
   do {                                                                        \
     if (!(left_image).hasSameData(right_image)) {                             \
       ::sophus::MutImageBool mask = isEqualMask((left_image), (right_image)); \
-      FARM_IMPL_LOG_HEADER("FARM_CHECK_IMAGE_EQ failed");                     \
+      FARM_IMPL_LOG_HEADER("FARM_ASSERT_IMAGE_EQ failed");                    \
       FARM_IMPL_LOG_PRINTLN(                                                  \
           "Number of pixel failing: {} / {}",                                 \
           countFalse(mask),                                                   \

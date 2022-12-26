@@ -20,7 +20,7 @@ namespace sophus {
 template <class TT>
 TT interpolate(sophus::ImageView<TT> const& image, Eigen::Vector2f uv) {
   sophus::ImageSize image_size = image.imageSize();
-  FARM_CHECK(image_size.contains(uv), "{} vs {}", image_size, uv.transpose());
+  FARM_ASSERT(image_size.contains(uv), "{} vs {}", image_size, uv.transpose());
   float iu = NAN;
   float iv = NAN;
   float frac_u = std::modf(uv.x(), &iu);

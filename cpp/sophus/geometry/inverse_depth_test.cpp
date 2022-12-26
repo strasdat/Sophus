@@ -20,6 +20,6 @@ TEST(inverse_depth, integrations) {
     auto inv_depth_point = InverseDepthPoint3F64::fromEuclideanPoint3(point);
     Eigen::Vector3d point2 = inv_depth_point.toEuclideanPoint3();
 
-    FARM_CHECK_NEAR(point, point2, kEpsilonF64);
+    FARM_ASSERT_NEAR(point, point2, kEpsilonF64);
   }
 }

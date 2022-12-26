@@ -40,7 +40,7 @@ class UnitVector {
   static UnitVector fromUnitVector(Eigen::Matrix<TScalar, kN, 1> const& v) {
     farm_ng::Expected<UnitVector> e_vec = tryFromUnitVector(v);
     if (!e_vec.has_value()) {
-      FARM_FATAL("{}", e_vec.error());
+      FARM_PANIC("{}", e_vec.error());
     }
     return e_vec.value();
   }
@@ -48,10 +48,12 @@ class UnitVector {
   static farm_ng::Expected<UnitVector> tryFromUnitVector(
       Eigen::Matrix<TScalar, kN, 1> const& v) {
     using std::abs;
-    if (abs(v.squaredNorm() - TScalar(1.0)) > sophus::kEpsilon<TScalar>) {
-      return FARM_ERROR(
-          "v must be unit length is {}.\n{}", v.squaredNorm(), v.transpose());
-    }
+    FARM_ASSERT_OR_ERROR(
+        abs(v.squaredNorm() - TScalar(1.0)) < sophus::kEpsilon<TScalar>,
+        "v must be unit length is {}.\n{}",
+        v.squaredNorm(),
+        v.transpose());
+
     UnitVector unit_vector;
     unit_vector.vector_ = v;
     return unit_vector;

@@ -35,7 +35,7 @@ CameraDistortionVariant getModelFromType(
       break;
     }
   }
-  FARM_FATAL("logic error");
+  FARM_PANIC("logic error");
 }
 }  // namespace
 
@@ -189,8 +189,8 @@ CameraModel CameraModel::binUp() const {
 
 CameraModel CameraModel::roi(
     Eigen::Vector2i const& top_left, ImageSize roi_size) const {
-  FARM_CHECK_LE(top_left.x() + roi_size.width, imageSize().width);
-  FARM_CHECK_LE(top_left.y() + roi_size.height, imageSize().height);
+  FARM_ASSERT_LE(top_left.x() + roi_size.width, imageSize().width);
+  FARM_ASSERT_LE(top_left.y() + roi_size.height, imageSize().height);
   return CameraModel(std::visit(
       [&](auto&& arg) -> CameraDistortionVariant {
         return arg.roi(top_left, roi_size);

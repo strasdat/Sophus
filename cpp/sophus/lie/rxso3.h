@@ -266,7 +266,7 @@ class RxSo3Base {
 
     ResultT scale = result_quaternion.squaredNorm();
     if (scale < kEpsilon<ResultT>) {
-      FARM_CHECK(scale > ResultT(0), "Scale must be greater zero.");
+      FARM_ASSERT(scale > ResultT(0), "Scale must be greater zero.");
       /// Saturation to ensure class invariant.
       result_quaternion.normalize();
       result_quaternion.coeffs() *= sqrt(kEpsilonPlus<ResultT>);
@@ -371,10 +371,10 @@ class RxSo3Base {
   ///
   /// Precondition: ``quat`` must not be close to either zero or infinity
   SOPHUS_FUNC void setQuaternion(Eigen::Quaternion<Scalar> const& quat) {
-    FARM_CHECK(
+    FARM_ASSERT(
         quat.squaredNorm() > kEpsilon<Scalar> * kEpsilon<Scalar>,
         "Scale factor must be greater-equal epsilon.");
-    FARM_CHECK(
+    FARM_ASSERT(
         quat.squaredNorm() < Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>),
         "Inverse scale factor must be greater-equal epsilon.");
     static_cast<TDerived*>(this)->quaternionNonconst() = quat;
@@ -431,10 +431,10 @@ class RxSo3Base {
     Scalar squared_scale =
         Scalar(1. / 3.) *
         (squared_s_r(0, 0) + squared_s_r(1, 1) + squared_s_r(2, 2));
-    FARM_CHECK(
+    FARM_ASSERT(
         squared_scale >= kEpsilon<Scalar> * kEpsilon<Scalar>,
         "Scale factor must be greater-equal epsilon.");
-    FARM_CHECK(
+    FARM_ASSERT(
         squared_scale < Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>),
         "Inverse scale factor must be greater-equal epsilon.");
     Scalar scale = sqrt(squared_scale);
@@ -574,10 +574,10 @@ class RxSo3 : public RxSo3Base<RxSo3<TScalar, kOptions>> {
   ///
   SOPHUS_FUNC RxSo3(Scalar const& scale, Transformation const& r)
       : quaternion_(r) {
-    FARM_CHECK(
+    FARM_ASSERT(
         scale >= kEpsilon<Scalar>,
         "Scale factor must be greater-equal epsilon.");
-    FARM_CHECK(
+    FARM_ASSERT(
         scale < Scalar(1.) / kEpsilon<Scalar>,
         "Inverse scale factor must be greater-equal epsilon.");
     using std::sqrt;
@@ -590,10 +590,10 @@ class RxSo3 : public RxSo3Base<RxSo3<TScalar, kOptions>> {
   ///
   SOPHUS_FUNC RxSo3(Scalar const& scale, So3<Scalar> const& so3)
       : quaternion_(so3.unitQuaternion()) {
-    FARM_CHECK(
+    FARM_ASSERT(
         scale >= kEpsilon<Scalar>,
         "Scale factor must be greater-equal epsilon.");
-    FARM_CHECK(
+    FARM_ASSERT(
         scale < Scalar(1.) / kEpsilon<Scalar>,
         "Inverse scale factor must be greater-equal epsilon.");
     using std::sqrt;
@@ -610,10 +610,10 @@ class RxSo3 : public RxSo3Base<RxSo3<TScalar, kOptions>> {
     static_assert(
         std::is_same<typename TD::Scalar, Scalar>::value,
         "must be same Scalar type.");
-    FARM_CHECK(
+    FARM_ASSERT(
         quaternion_.squaredNorm() >= kEpsilon<Scalar>,
         "Scale factor must be greater-equal epsilon.");
-    FARM_CHECK(
+    FARM_ASSERT(
         quat.squaredNorm() < Scalar(1.) / kEpsilon<Scalar>,
         "Inverse scale factor must be greater-equal epsilon.");
   }
@@ -737,7 +737,7 @@ class RxSo3 : public RxSo3Base<RxSo3<TScalar, kOptions>> {
   /// Precondition: ``i`` must be 0, 1, 2 or 3.
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
-    FARM_CHECK(i >= 0 && i <= 3, "i should be in range [0,3].");
+    FARM_ASSERT(i >= 0 && i <= 3, "i should be in range [0,3].");
     Tangent e;
     e.setZero();
     e[i] = Scalar(1);

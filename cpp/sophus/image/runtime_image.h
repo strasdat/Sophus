@@ -129,9 +129,9 @@ class RuntimeImageView {
   /// Returns subview with shared ownership semantics of whole image.
   [[nodiscard]] RuntimeImageView subview(
       Eigen::Vector2i uv, sophus::ImageSize size) const {
-    FARM_CHECK(imageSize().contains(uv));
-    FARM_CHECK_LE(uv.x() + size.width, this->shape_.width());
-    FARM_CHECK_LE(uv.y() + size.height, this->shape_.height());
+    FARM_ASSERT(imageSize().contains(uv));
+    FARM_ASSERT_LE(uv.x() + size.width, this->shape_.width());
+    FARM_ASSERT_LE(uv.y() + size.height, this->shape_.height());
 
     auto const shape =
         ImageShape::makeFromSizeAndPitchUnchecked(size, pitchBytes());
@@ -149,7 +149,7 @@ class RuntimeImageView {
     if (!this->has<TPixel>()) {
       RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
 
-      FARM_FATAL(
+      FARM_PANIC(
           "expected type: {}\n"
           "actual type: {}",
           expected_type,
@@ -211,7 +211,7 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
     // TODO: Missing check on ImagePredicate against pixel_type
     //       has to be a runtime check, since we don't know at runtime.
 
-    FARM_CHECK_LE(
+    FARM_ASSERT_LE(
         shape.width() * pixel_type.num_channels *
             pixel_type.num_bytes_per_pixel_channel,
         (int)shape.pitchBytes());
@@ -247,7 +247,7 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
     if (!this->has<TPixel>()) {
       RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
 
-      FARM_FATAL(
+      FARM_PANIC(
           "expected type: {}\n"
           "actual type: {}",
           expected_type,
@@ -263,9 +263,9 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
   template <class TPixel>
   Image<TPixel, TAllocator> reinterpretAs(
       ImageSize reinterpreted_size) const noexcept {
-    FARM_CHECK_LE(
+    FARM_ASSERT_LE(
         reinterpreted_size.width * sizeof(TPixel), this->shape().pitch_bytes_);
-    FARM_CHECK_LE(reinterpreted_size.height, this->height());
+    FARM_ASSERT_LE(reinterpreted_size.height, this->height());
 
     FARM_UNIMPLEMENTED();
   }

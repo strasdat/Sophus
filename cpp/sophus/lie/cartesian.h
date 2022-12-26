@@ -322,7 +322,7 @@ class Cartesian : public CartesianBase<Cartesian<TScalar, kM, kOptions>, kM> {
     } else if (m.rows() == kMatrixDim && m.cols() == kMatrixDim) {
       params_ = m.template block<kM, 1>(0, kM);
     } else {
-      FARM_CHECK(false, "{} {}", m.rows(), m.cols());
+      FARM_ASSERT(false, "{} {}", m.rows(), m.cols());
     }
   }
 
@@ -401,7 +401,7 @@ class Cartesian : public CartesianBase<Cartesian<TScalar, kM, kOptions>, kM> {
   /// Precondition: ``i`` must be in [0, M-1].
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
-    FARM_CHECK(i >= 0 && i <= kM, "i should be in range [0,M-1].");
+    FARM_ASSERT(i >= 0 && i <= kM, "i should be in range [0,M-1].");
     Tangent e;
     e.setZero();
     e[i] = Scalar(1);
