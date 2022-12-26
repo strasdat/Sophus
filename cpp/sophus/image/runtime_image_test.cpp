@@ -12,7 +12,7 @@
 
 using namespace sophus;
 
-#define FARM_NG_TEST_IMG_EQ(lhs, rhs) /* NOLINT*/               \
+#define SOPHUS_TEST_IMG_EQ(lhs, rhs) /* NOLINT*/                \
   do {                                                          \
     SOPHUS_ASSERT_EQ(lhs.imageSize(), rhs.imageSize());         \
     for (int v = 0; v < lhs.imageSize().height; ++v) {          \

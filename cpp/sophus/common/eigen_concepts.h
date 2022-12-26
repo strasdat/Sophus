@@ -18,39 +18,40 @@ namespace sophus {
 // These concept let us match Eigen's CRTP pattern and capture the true Derived
 // type safely
 
-template <class Derived>
-concept EigenType = DerivedFrom<Derived, Eigen::EigenBase<Derived>>;
+template <class TDerived>
+concept EigenType = DerivedFrom<TDerived, Eigen::EigenBase<TDerived>>;
 
-template <class Derived>
-concept EigenDenseType = DerivedFrom<Derived, Eigen::DenseBase<Derived>>;
+template <class TDerived>
+concept EigenDenseType = DerivedFrom<TDerived, Eigen::DenseBase<TDerived>>;
 
-template <class Derived>
-concept EigenMatrixType = DerivedFrom<Derived, Eigen::MatrixBase<Derived>>;
+template <class TDerived>
+concept EigenMatrixType = DerivedFrom<TDerived, Eigen::MatrixBase<TDerived>>;
 
-template <class Derived>
-concept EigenArrayType = DerivedFrom<Derived, Eigen::ArrayBase<Derived>>;
+template <class TDerived>
+concept EigenArrayType = DerivedFrom<TDerived, Eigen::ArrayBase<TDerived>>;
 
-template <class T1, typename T2>
-concept EigenSameDim = requires(T1, T2) {
-  EigenDenseType<T1>&& EigenDenseType<T2> &&
-      (T1::RowsAtCompileTime == Eigen::Dynamic ||
-       T1::RowsAtCompileTime == T2::RowsAtCompileTime) &&
-      (T1::ColsAtCompileTime == Eigen::Dynamic ||
-       T1::ColsAtCompileTime == T2::ColsAtCompileTime);
+template <class TT1, typename TT2>
+concept EigenSameDim = requires(TT1, TT2) {
+  EigenDenseType<TT1>&& EigenDenseType<TT2> &&
+      (TT1::RowsAtCompileTime == Eigen::Dynamic ||
+       TT1::RowsAtCompileTime == TT2::RowsAtCompileTime) &&
+      (TT1::ColsAtCompileTime == Eigen::Dynamic ||
+       TT1::ColsAtCompileTime == TT2::ColsAtCompileTime);
 };
 
-template <int Rows, int Cols, typename T>
-concept EigenWithDim = requires(T) {
-  EigenDenseType<T>&& T::RowsAtCompileTime == Rows&& T::ColsAtCompileTime ==
-      Cols;
+template <int kRows, int kCols, typename TT>
+concept EigenWithDim = requires(TT) {
+  EigenDenseType<TT>&& TT::RowsAtCompileTime == kRows&& TT::ColsAtCompileTime ==
+      kCols;
 };
 
-template <int Rows, int Cols, typename T>
-concept EigenWithDimOrDynamic = requires(T) {
-  EigenDenseType<T> &&
-      (T::RowsAtCompileTime == Eigen::Dynamic ||
-       T::RowsAtCompileTime == Rows) &&
-      (T::ColsAtCompileTime == Eigen::Dynamic || T::ColsAtCompileTime == Cols);
+template <int kRows, int kCols, typename TT>
+concept EigenWithDimOrDynamic = requires(TT) {
+  EigenDenseType<TT> &&
+      (TT::RowsAtCompileTime == Eigen::Dynamic ||
+       TT::RowsAtCompileTime == kRows) &&
+      (TT::ColsAtCompileTime == Eigen::Dynamic ||
+       TT::ColsAtCompileTime == kCols);
 };
 
 }  // namespace sophus

@@ -49,7 +49,7 @@ struct ProjectionOrtho {
   template <class TScalar>
   static Eigen::Matrix<TScalar, 2, 3> dxProjX(
       Eigen::Matrix<TScalar, 3, 1> const& /*unused*/) {
-    FARM_UNIMPLEMENTED();
+    SOPHUS_UNIMPLEMENTED();
   }
 };
 

@@ -53,6 +53,14 @@
 #define SOPHUS_ASSERT_NE(...) FARM_ASSERT_NE(__VA_ARGS__)
 #define SOPHUS_ASSERT_NEAR(...) FARM_ASSERT_NEAR(__VA_ARGS__)
 #define SOPHUS_ASSERT_OR_ERROR(...) FARM_ASSERT_OR_ERROR(__VA_ARGS__)
+#define SOPHUS_INFO(...) FARM_INFO(__VA_ARGS__)
+#define SOPHUS_PANIC(...) FARM_FORMAT(__VA_ARGS__)
+#define SOPHUS_UNIMPLEMENTED(...) FARM_UNIMPLEMENTED(__VA_ARGS__)
+#define SOPHUS_UNWRAP(...) FARM_UNWRAP(__VA_ARGS__)
+
+// from <farm_ng/core/logging/expected.h>
+#define SOPHUS_TRY(...) FARM_TRY(__VA_ARGS__)
+#define SOPHUS_UNEXPECTED(...) FARM_UNEXPECTED(__VA_ARGS__)
 
 namespace sophus {
 

@@ -33,7 +33,7 @@ CameraDistortionVariant getModelFromType(
       break;
     }
   }
-  FARM_PANIC("logic error");
+  SOPHUS_PANIC("logic error");
 }
 }  // namespace
 

@@ -146,7 +146,7 @@ class RuntimeImageView {
     if (!this->has<TPixel>()) {
       RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
 
-      FARM_PANIC(
+      SOPHUS_PANIC(
           "expected type: {}\n"
           "actual type: {}",
           expected_type,
@@ -244,7 +244,7 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
     if (!this->has<TPixel>()) {
       RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
 
-      FARM_PANIC(
+      SOPHUS_PANIC(
           "expected type: {}\n"
           "actual type: {}",
           expected_type,
@@ -264,7 +264,7 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
         reinterpreted_size.width * sizeof(TPixel), this->shape().pitch_bytes_);
     SOPHUS_ASSERT_LE(reinterpreted_size.height, this->height());
 
-    FARM_UNIMPLEMENTED();
+    SOPHUS_UNIMPLEMENTED();
   }
 
   [[nodiscard]] size_t useCount() const { return shared_.use_count(); }

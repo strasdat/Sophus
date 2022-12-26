@@ -24,8 +24,8 @@ namespace sophus {
 
 // Probably frowned upon, but we'll inherit from the std::library traits
 // for ordinary scalars etc.
-template <class T>
-struct MultiDimLimits : public std::numeric_limits<T> {};
+template <class TT>
+struct MultiDimLimits : public std::numeric_limits<TT> {};
 
 template <EigenDenseType TT>
 class MultiDimLimits<TT> {
@@ -34,12 +34,12 @@ class MultiDimLimits<TT> {
   static int constexpr kRows = TT::RowsAtCompileTime;
   static int constexpr kCols = TT::ColsAtCompileTime;
 
-  static bool constexpr is_specialized = true;
-  static bool constexpr has_infinity =
+  static bool constexpr kIsSpecialized = true;
+  static bool constexpr kHasInfinity =
       std::numeric_limits<TScalar>::has_infinity;
-  static bool constexpr has_quiet_NaN =
+  static bool constexpr kHasQuietNan =
       std::numeric_limits<TScalar>::has_quiet_NaN;
-  static bool constexpr has_signaling_NaN =
+  static bool constexpr kHasSignalingNan =
       std::numeric_limits<TScalar>::has_signaling_NaN;
   /// ... plus a bunch more if we need them
 

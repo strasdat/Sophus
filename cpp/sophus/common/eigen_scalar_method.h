@@ -77,61 +77,61 @@ class Max<TT> {
 template <class TScalar>
 class Cast {
  public:
-  template <class To>
-  static To impl(TScalar const& s) {
-    return static_cast<To>(s);
+  template <class TTo>
+  static TTo impl(TScalar const& s) {
+    return static_cast<TTo>(s);
   }
-  template <class To>
-  static To implScalar(TScalar const& s) {
-    return static_cast<To>(s);
+  template <class TTo>
+  static TTo implScalar(TScalar const& s) {
+    return static_cast<TTo>(s);
   }
 };
 
 template <EigenType TT>
 class Cast<TT> {
  public:
-  template <class To>
+  template <class TTo>
   static auto impl(TT const& v) {
-    return v.template cast<typename To::Scalar>().eval();
+    return v.template cast<typename TTo::Scalar>().eval();
   }
-  template <class To>
+  template <class TTo>
   static auto implScalar(TT const& v) {
-    return v.template cast<To>().eval();
+    return v.template cast<TTo>().eval();
   }
 };
 
 template <class TT>
 class Cast<sophus::So3<TT>> {
  public:
-  template <class To>
+  template <class TTo>
   static auto impl(sophus::So3<TT> const& v) {
-    return v.template cast<typename To::Scalar>();
+    return v.template cast<typename TTo::Scalar>();
   }
-  template <class To>
+  template <class TTo>
   static auto implScalar(sophus::So3<TT> const& v) {
-    return v.template cast<To>();
+    return v.template cast<TTo>();
   }
 };
 
 template <class TT>
 class Cast<sophus::Se3<TT>> {
  public:
-  template <class To>
+  template <class TTo>
   static auto impl(sophus::Se3<TT> const& v) {
-    return v.template cast<typename To::Scalar>();
+    return v.template cast<typename TTo::Scalar>();
   }
-  template <class To>
+  template <class TTo>
   static auto implScalar(sophus::Se3<TT> const& v) {
-    return v.template cast<To>();
+    return v.template cast<TTo>();
   }
 };
 
 template <class TT>
 class Cast<std::vector<TT>> {
  public:
-  template <class To>
+  template <class TTo>
   static auto impl(std::vector<TT> const& v) {
-    using ToEl = std::decay_t<decltype(*std::declval<To>().data())>;
+    using ToEl = std::decay_t<decltype(*std::declval<TTo>().data())>;
     std::vector<ToEl> r;
     r.reserve(v.size());
     for (auto const& el : v) {
@@ -139,9 +139,9 @@ class Cast<std::vector<TT>> {
     }
     return r;
   }
-  template <class To>
+  template <class TTo>
   static auto implScalar(std::vector<TT> const& v) {
-    using ToEl = decltype(Cast<TT>::template implScalar<To>(v[0]));
+    using ToEl = decltype(Cast<TT>::template implScalar<TTo>(v[0]));
     std::vector<ToEl> r;
     r.reserve(v.size());
     for (auto const& el : v) {
@@ -216,14 +216,14 @@ class Reduce {
  public:
   using Aggregate = TScalar;
 
-  template <class TReduce, class Func>
-  static void impl_unary(TScalar const& s, TReduce& reduce, Func const& f) {
+  template <class TReduce, class TFunc>
+  static void implUnary(TScalar const& s, TReduce& reduce, TFunc const& f) {
     f(s, reduce);
   }
 
-  template <class TReduce, class Func>
-  static void impl_binary(
-      TScalar const& a, TScalar const& b, TReduce& reduce, Func const& f) {
+  template <class TReduce, class TFunc>
+  static void implBinary(
+      TScalar const& a, TScalar const& b, TReduce& reduce, TFunc const& f) {
     f(a, b, reduce);
   }
 };
@@ -231,8 +231,8 @@ class Reduce {
 template <EigenDenseType TT>
 class Reduce<TT> {
  public:
-  template <class TReduce, class Func>
-  static void impl_unary(TT const& v, TReduce& reduce, Func const& f) {
+  template <class TReduce, class TFunc>
+  static void implUnary(TT const& v, TReduce& reduce, TFunc const& f) {
     for (int r = 0; r < v.rows(); ++r) {
       for (int c = 0; c < v.cols(); ++c) {
         f(v(r, c), reduce);
@@ -240,9 +240,9 @@ class Reduce<TT> {
     }
   }
 
-  template <class TReduce, class Func>
-  static void impl_binary(
-      TT const& a, TT const& b, TReduce& reduce, Func const& f) {
+  template <class TReduce, class TFunc>
+  static void implBinary(
+      TT const& a, TT const& b, TReduce& reduce, TFunc const& f) {
     for (int r = 0; r < a.rows(); ++r) {
       for (int c = 0; c < a.cols(); ++c) {
         f(a(r, c), b(r, c), reduce);
@@ -258,14 +258,14 @@ auto zero() {
   return details::Zero<TT>::impl();
 }
 
-template <class To, class TT>
+template <class TTo, class TT>
 auto cast(const TT& p) {
-  return details::Cast<TT>::template impl<To>(p);
+  return details::Cast<TT>::template impl<TTo>(p);
 }
 
-template <Arithmetic To, class TT>
+template <Arithmetic TTo, class TT>
 auto cast(const TT& p) {
-  return details::Cast<TT>::template implScalar<To>(p);
+  return details::Cast<TT>::template implScalar<TTo>(p);
 }
 
 template <class TT>

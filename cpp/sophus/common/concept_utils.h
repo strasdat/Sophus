@@ -12,16 +12,16 @@
 
 namespace sophus {
 
-template <class Derived, class Base>
-concept DerivedFrom = std::is_base_of_v<Base, Derived>;
+template <class TDerived, class TBase>
+concept DerivedFrom = std::is_base_of_v<TBase, TDerived>;
 
-template <class T, class U>
-concept SameAs = std::is_same_v<T, U>;
+template <class TT, class TU>
+concept SameAs = std::is_same_v<TT, TU>;
 
-template <class T>
-concept EnumType = std::is_enum_v<T>;
+template <class TT>
+concept EnumType = std::is_enum_v<TT>;
 
-template <class T>
-concept Arithmetic = std::is_arithmetic_v<T>;
+template <class TT>
+concept Arithmetic = std::is_arithmetic_v<TT>;
 
 }  // namespace sophus
