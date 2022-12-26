@@ -169,7 +169,7 @@ class RuntimeImageView {
 /// Type is nullable.
 template <
     class TPredicate = AnyImagePredicate,
-    template <typename> class TAllocator = Eigen::aligned_allocator>
+    template <class> class TAllocator = Eigen::aligned_allocator>
 class RuntimeImage : public RuntimeImageView<TPredicate> {
  public:
   /// Empty image.
@@ -224,7 +224,7 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
                     pixel_type.num_bytes_per_pixel_channel),
             pixel_type) {}
 
-  template <typename TT>
+  template <class TT>
   static RuntimeImage makeCopyFrom(ImageView<TT> image_view) {
     return Image<TT>::makeCopyFrom(image_view);
   }
@@ -283,7 +283,7 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
 
 /// Image representing any number of channels (>=1) and any floating and
 /// unsigned integral channel type.
-template <template <typename> class TAllocator = Eigen::aligned_allocator>
+template <template <class> class TAllocator = Eigen::aligned_allocator>
 using AnyImage = RuntimeImage<AnyImagePredicate, TAllocator>;
 using AnyImageView = RuntimeImageView<AnyImagePredicate>;
 
@@ -311,18 +311,18 @@ using IntensityImagePredicate = VariantImagePredicate<std::variant<
 /// Image to represent intensity image / texture as grayscale (=1 channel),
 /// RGB (=3 channel ) and RGBA (=4 channel), either uint8_t [0-255],
 /// uint16 [0-65535] or float [0.0-1.0] channel type.
-template <template <typename> class TAllocator = Eigen::aligned_allocator>
+template <template <class> class TAllocator = Eigen::aligned_allocator>
 using IntensityImage = RuntimeImage<IntensityImagePredicate, TAllocator>;
 using IntensityImageView = RuntimeImageView<IntensityImagePredicate>;
 
 namespace detail {
 // Call UserFunc with TRuntimeImage cast to the appropriate concrete type
 // from the options in PixelTypes...
-template <typename TUserFunc, typename TRuntimeImage, typename... TPixelTypes>
+template <class TUserFunc, typename TRuntimeImage, typename... TPixelTypes>
 struct VisitImpl;
 
 // base case
-template <typename TUserFunc, typename TRuntimeImage, typename TPixelType>
+template <class TUserFunc, typename TRuntimeImage, typename TPixelType>
 struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType>> {
   static void visit(TUserFunc&& func, TRuntimeImage const& image) {
     if (image.pixelType().template is<TPixelType>()) {
@@ -353,7 +353,7 @@ struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType, TRest...>> {
 template <
     typename TUserFunc,
     class TPredicate = IntensityImagePredicate,
-    template <typename> class TAllocator = Eigen::aligned_allocator>
+    template <class> class TAllocator = Eigen::aligned_allocator>
 void visitImage(
     TUserFunc&& func, RuntimeImage<TPredicate, TAllocator> const& image) {
   using TRuntimeImage = RuntimeImage<TPredicate, TAllocator>;
@@ -364,7 +364,7 @@ void visitImage(
 
 // RuntimeImageView visitor - shares same implementation than the one for
 // RuntimeImage
-template <typename TUserFunc, class TPredicate = IntensityImagePredicate>
+template <class TUserFunc, class TPredicate = IntensityImagePredicate>
 void visitImage(TUserFunc&& func, RuntimeImageView<TPredicate> const& image) {
   using RuntimeImageView = RuntimeImageView<TPredicate>;
   detail::VisitImpl<

@@ -22,7 +22,7 @@ namespace sophus {
 
 // Types are largely inspired / derived from Pangolin.
 
-template <class TPixel, template <typename> class TAllocator>
+template <class TPixel, template <class> class TAllocator>
 class Image;
 
 /// A image with write access to pixels and exclusive ownership. There is no
@@ -35,7 +35,7 @@ class Image;
 /// Similar to Pangolin::ManagedImage.
 template <
     class TPixel,
-    template <typename> class TAllocator = Eigen::aligned_allocator>
+    template <class> class TAllocator = Eigen::aligned_allocator>
 class MutImage : public MutImageView<TPixel> {
  public:
   struct TypedDeleterImpl {
@@ -63,7 +63,7 @@ class MutImage : public MutImageView<TPixel> {
     std::optional<TypedDeleterImpl> image_deleter;
   };
 
-  template <class TT, template <typename> class TAllocator2T>
+  template <class TT, template <class> class TAllocator2T>
   friend class Image;
 
   /// Constructs empty image.
@@ -189,7 +189,7 @@ class MutImage : public MutImageView<TPixel> {
   std::shared_ptr<uint8_t> shared_;  // NOLINT
 };
 
-template <class TPredicate, template <typename> class TAllocator>
+template <class TPredicate, template <class> class TAllocator>
 class RuntimeImage;
 
 /// Image read-only access to pixels and shared ownership, hence cheap to copy.
@@ -198,7 +198,7 @@ class RuntimeImage;
 /// Image has close interop with RuntimeImage (see below).
 template <
     class TPixel,
-    template <typename> class TAllocator = Eigen::aligned_allocator>
+    template <class> class TAllocator = Eigen::aligned_allocator>
 class Image : public ImageView<TPixel> {
  public:
   /// Constructs empty image.
@@ -266,10 +266,10 @@ class Image : public ImageView<TPixel> {
   }
 
  private:
-  template <class TT, template <typename> class TAllocator2T>
+  template <class TT, template <class> class TAllocator2T>
   friend class MutImage;
 
-  template <class TPredicate, template <typename> class TAllocator2T>
+  template <class TPredicate, template <class> class TAllocator2T>
   friend class RuntimeImage;
 
   explicit Image(ImageView<TPixel> view) : ImageView<TPixel>(view) {}

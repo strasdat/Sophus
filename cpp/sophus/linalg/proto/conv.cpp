@@ -8,8 +8,6 @@
 
 #include "sophus/linalg/proto/conv.h"
 
-#include "farm_ng/core/logging/logger.h"
-
 namespace sophus {
 
 Eigen::Matrix<uint32_t, 2, 1> fromProto(proto::Vec2I64 const& proto) {

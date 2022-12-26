@@ -8,7 +8,6 @@
 
 #include "sophus/geometry/point_transform.h"
 
-#include "farm_ng/core/logging/eigen.h"
 #include "sophus/calculus/num_diff.h"
 #include "sophus/sensor/camera_projection/projection_z1.h"
 
