@@ -30,5 +30,7 @@ TEST(ray, simple_ray3) {
   auto maybe_mid_a_c = closestApproach(line_a, line_c);
   EXPECT_TRUE((bool)maybe_mid_a_c);
   SOPHUS_ASSERT_NEAR(
-      FARM_UNWRAP(maybe_mid_a_c), Eigen::Vector3d(0.0, 0.0, 0.0), kEpsilonF64);
+      SOPHUS_UNWRAP(maybe_mid_a_c),
+      Eigen::Vector3d(0.0, 0.0, 0.0),
+      kEpsilonF64);
 }

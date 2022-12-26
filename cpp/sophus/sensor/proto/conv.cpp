@@ -22,9 +22,10 @@ Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
   };
 
   CameraDistortionType model = CameraDistortionType::pinhole;
-  if (trySetFromString(model, proto.distortion_type())) {
-    FARM_ERROR("distortion type not supported: {}", proto.distortion_type());
-  }
+  SOPHUS_ASSERT_OR_ERROR(
+      trySetFromString(model, proto.distortion_type()),
+      "distortion type not supported: {}",
+      proto.distortion_type());
 
   return CameraModel(fromProto(proto.image_size()), model, get_params());
 }
@@ -43,7 +44,7 @@ proto::CameraModel toProto(CameraModel const& camera_model) {
 Expected<std::vector<CameraModel>> fromProto(proto::CameraModels const& proto) {
   std::vector<CameraModel> models;
   for (int i = 0; i < proto.camera_models_size(); ++i) {
-    FARM_TRY(CameraModel cam, fromProto(proto.camera_models(i)));
+    SOPHUS_TRY(CameraModel cam, fromProto(proto.camera_models(i)));
     models.push_back(cam);
   }
   return models;

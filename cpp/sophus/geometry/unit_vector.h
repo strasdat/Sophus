@@ -38,7 +38,7 @@ class UnitVector {
   static UnitVector fromUnitVector(Eigen::Matrix<TScalar, kN, 1> const& v) {
     Expected<UnitVector> e_vec = tryFromUnitVector(v);
     if (!e_vec.has_value()) {
-      FARM_PANIC("{}", e_vec.error());
+      SOPHUS_PANIC("{}", e_vec.error());
     }
     return e_vec.value();
   }

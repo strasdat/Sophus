@@ -18,7 +18,7 @@ GyroModelVariant getModelFromType(
       break;
     }
   }
-  FARM_PANIC("logic error");
+  SOPHUS_PANIC("logic error");
 }
 
 AcceleroModelVariant getModelFromType(
@@ -29,7 +29,7 @@ AcceleroModelVariant getModelFromType(
       break;
     }
   }
-  FARM_PANIC("logic error");
+  SOPHUS_PANIC("logic error");
 }
 
 Eigen::Vector3d ImuModel::gyroMeasurement(

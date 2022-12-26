@@ -9,7 +9,11 @@ farm_ng_add_library(sophus_common
   INCLUDE_DIR ../../
   HEADERS
   common.h
+  concept_utils.h
+  eigen_concepts.h
+  eigen_scalar_method.h
   enum.h
+  multi_dim_limits.h
   types.h
 )
 

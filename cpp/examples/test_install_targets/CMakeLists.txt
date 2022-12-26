@@ -2,12 +2,27 @@ project(SophusInstallTargetTests)
 
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_CXX_STANDARD 17)
-
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
-find_package(Sophus 22.99.0 REQUIRED)
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+
+set(PKG_CONFIG_USE_CMAKE_PREFIX_PATH ON)
+set(BUILD_SHARED_LIBS ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Coarsely, the c++ standard used is c++17 plus concepts from c++20.
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+  # For clang, c++20 is enabled, but only concepts shall be used from the features newly added.
+  set(CMAKE_CXX_STANDARD 20)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -Wsign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wreorder-ctor -Wreorder-init-list")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fconcepts")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable -Wno-unused-function -Wno-maybe-uninitialized")
+endif()
+
+find_package(Sophus 23.0.1 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(Eigen3 3.4.0 REQUIRED)
 

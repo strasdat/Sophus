@@ -131,7 +131,7 @@ TEST(camera_model, projection_round_trip) {
           },
           ab_in_z1plane);
 
-      // FARM_LOG_INFO(
+      // SOPHUS_INFO(
       //     "name: {} point: \n{}\ndx: \n{}",
       //     camera_model.frameName(),
       //     ab_in_z1plane,

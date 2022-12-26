@@ -34,10 +34,10 @@ TEST(ImageBool, logic) {
   SOPHUS_ASSERT(!isAllTrue(equal_mask));
   SOPHUS_ASSERT(isAnyTrue(equal_mask));
   auto maybe_pixel = firstFalsePixel(equal_mask);
-  Eigen::Vector2i first_false_pixel = FARM_UNWRAP(maybe_pixel);
+  Eigen::Vector2i first_false_pixel = SOPHUS_UNWRAP(maybe_pixel);
   SOPHUS_ASSERT_EQ(first_false_pixel, Eigen::Vector2i(1, 1));
   auto maybe_true_pixel = firstTruePixel(equal_mask);
-  Eigen::Vector2i first_true_pixel = FARM_UNWRAP(maybe_true_pixel);
+  Eigen::Vector2i first_true_pixel = SOPHUS_UNWRAP(maybe_true_pixel);
   SOPHUS_ASSERT_EQ(first_true_pixel, Eigen::Vector2i(0, 0));
 }
 

@@ -16,8 +16,8 @@
 namespace sophus {
 
 namespace {
-template <class T>
-concept Subtractable = requires(T a, T b) {
+template <class TT>
+concept Subtractable = requires(TT a, TT b) {
   b - a;
 };
 }  // namespace
@@ -31,59 +31,61 @@ class Interval {
  public:
   Interval() = default;
   Interval(Interval const&) = default;
-  Interval(Interval&&) = default;
+  Interval(Interval&&) noexcept = default;
   Interval& operator=(Interval const&) = default;
 
-  Interval(TPixel const& p) : min_max{p, p} {}
+  Interval(TPixel const& p) : min_max_{p, p} {}
 
-  Interval(TPixel const& p1, TPixel const& p2) : min_max{p1, p1} { extend(p2); }
-
-  TPixel const& min() const { return min_max[0]; }
-  TPixel const& max() const { return min_max[1]; }
-
-  TPixel clamp(TPixel const& x) const {
-    return sophus::max(sophus::min(x, min_max[1]), min_max[0]);
+  Interval(TPixel const& p1, TPixel const& p2) : min_max_{p1, p1} {
+    extend(p2);
   }
 
-  bool contains(TPixel const& x) const {
+  [[nodiscard]] TPixel const& min() const { return min_max_[0]; }
+  [[nodiscard]] TPixel const& max() const { return min_max_[1]; }
+
+  [[nodiscard]] TPixel clamp(TPixel const& x) const {
+    return sophus::max(sophus::min(x, min_max_[1]), min_max_[0]);
+  }
+
+  [[nodiscard]] bool contains(TPixel const& x) const {
     return allTrue(eval(min() <= x)) && allTrue(eval(x <= max()));
   }
 
-  auto fractionalPosition(Eigen::Array2d const& x) const {
+  [[nodiscard]] auto fractionalPosition(Eigen::Array2d const& x) const {
     return eval(
         (x - sophus::cast<double>(min())) / sophus::cast<double>(range()));
   }
 
   // Only applicable if minmax object is valid()
-  auto range() const requires Subtractable<TPixel> {
+  [[nodiscard]] auto range() const requires Subtractable<TPixel> {
     return eval(max() - min());
   }
-  auto mid() const { return eval(min() + range() / 2); }
+  [[nodiscard]] auto mid() const { return eval(min() + range() / 2); }
 
   Interval<TPixel>& extend(Interval const& o) {
-    min_max[0] = sophus::min(min(), o.min());
-    min_max[1] = sophus::max(max(), o.max());
+    min_max_[0] = sophus::min(min(), o.min());
+    min_max_[1] = sophus::max(max(), o.max());
     return *this;
   }
 
   Interval<TPixel>& extend(TPixel const& p) {
-    min_max[0] = sophus::min(min(), p);
-    min_max[1] = sophus::max(max(), p);
+    min_max_[0] = sophus::min(min(), p);
+    min_max_[1] = sophus::max(max(), p);
     return *this;
   }
 
-  Interval<TPixel> translated(TPixel const& p) const {
-    return {min_max[0] + p, min_max[1] + p};
+  [[nodiscard]] Interval<TPixel> translated(TPixel const& p) const {
+    return {min_max_[0] + p, min_max_[1] + p};
   }
 
-  template <class To>
-  Interval<To> cast() const {
-    return Interval<To>(sophus::cast<To>(min()), sophus::cast<To>(max()));
+  template <class TTo>
+  Interval<TTo> cast() const {
+    return Interval<TTo>(sophus::cast<TTo>(min()), sophus::cast<TTo>(max()));
   }
 
-  bool empty() const {
-    return min_max[0] == MultiDimLimits<TPixel>::max() ||
-           min_max[1] == MultiDimLimits<TPixel>::lowest();
+  [[nodiscard]] bool empty() const {
+    return min_max_[0] == MultiDimLimits<TPixel>::max() ||
+           min_max_[1] == MultiDimLimits<TPixel>::lowest();
   }
 
   static Interval<TPixel> open() {
@@ -101,7 +103,7 @@ class Interval {
  private:
   // invariant that min_max[0] <= min_max[1]
   // or min_max is as below when uninitialized
-  std::array<TPixel, 2> min_max = {
+  std::array<TPixel, 2> min_max_ = {
       MultiDimLimits<TPixel>::max(), MultiDimLimits<TPixel>::min()};
 };
 
@@ -109,30 +111,30 @@ namespace details {
 template <class TScalar>
 class Cast<Interval<TScalar>> {
  public:
-  template <class To>
-  static Interval<To> impl(Interval<TScalar> const& v) {
-    return v.template cast<To>();
+  template <class TTo>
+  static Interval<TTo> impl(Interval<TScalar> const& v) {
+    return v.template cast<TTo>();
   }
-  template <class To>
+  template <class TTo>
   static auto implScalar(Interval<TScalar> const& v) {
-    using ElT = decltype(cast<To>(std::declval<TScalar>()));
+    using ElT = decltype(cast<TTo>(std::declval<TScalar>()));
     return v.template cast<ElT>();
   }
 };
 }  // namespace details
 
-template <class T>
-bool operator==(Interval<T> const& lhs, Interval<T> const& rhs) {
+template <class TT>
+bool operator==(Interval<TT> const& lhs, Interval<TT> const& rhs) {
   return lhs.min() == rhs.min() && lhs.max() == rhs.max();
 }
 
-template <class T>
-auto relative(T p, Interval<T> region) {
+template <class TT>
+auto relative(TT p, Interval<TT> region) {
   return (p - region.min()).eval();
 }
 
-template <class T>
-auto normalized(T p, Interval<T> region) {
+template <class TT>
+auto normalized(TT p, Interval<TT> region) {
   return (cast<double>(p - region.min()) / cast<double>(region.range())).eval();
 }
 

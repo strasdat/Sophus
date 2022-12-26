@@ -205,7 +205,7 @@ std::optional<Eigen::Vector2i> firstFalsePixel(ImageViewBool mask);
           countFalse(mask),                                                   \
           mask.imageSize().area());                                           \
       auto maybe_uv = firstFalsePixel(mask);                                  \
-      ::Eigen::Vector2i uv = FARM_UNWRAP(maybe_uv);                           \
+      ::Eigen::Vector2i uv = SOPHUS_UNWRAP(maybe_uv);                         \
       int u = uv[0];                                                          \
       int v = uv[1];                                                          \
       FARM_IMPL_LOG_PRINTLN(                                                  \
