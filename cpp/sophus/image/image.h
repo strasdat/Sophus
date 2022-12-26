@@ -13,10 +13,8 @@
 /// for details.
 #pragma once
 
+#include "sophus/common/enum.h"
 #include "sophus/image/image_view.h"
-
-#include <farm_ng/core/enum/enum.h>
-#include <farm_ng/core/logging/logger.h>
 
 #include <optional>
 
@@ -76,7 +74,7 @@ class MutImage : public MutImageView<TPixel> {
   /// If shape is not empty, memory allocation will happen.
   explicit MutImage(ImageShape shape) : MutImageView<TPixel>(shape, nullptr) {
     if (shape.sizeBytes() != 0u) {
-      FARM_ASSERT_EQ(shape.sizeBytes() % sizeof(TPixel), 0);
+      SOPHUS_ASSERT_EQ(shape.sizeBytes() % sizeof(TPixel), 0);
       this->shared_.reset(
           (uint8_t*)(TAllocator<TPixel>().allocate(
               shape.sizeBytes() / sizeof(TPixel))),
@@ -176,7 +174,7 @@ class MutImage : public MutImageView<TPixel> {
  protected:
   /// Leaks memory and returns deleter.
   Deleter leakAndReturnDeleter() {
-    FARM_ASSERT(!this->isEmpty());
+    SOPHUS_ASSERT(!this->isEmpty());
     Deleter& del = *std::get_deleter<Deleter>(shared_);
     Deleter del_copy = del;
     del.image_deleter.reset();

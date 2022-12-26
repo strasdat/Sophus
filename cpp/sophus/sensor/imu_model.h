@@ -8,10 +8,10 @@
 
 #pragma once
 
+#include "sophus/common/enum.h"
 #include "sophus/lie/se3.h"
 
 #include <Eigen/Dense>
-#include <farm_ng/core/enum/enum.h>
 
 #include <variant>
 
@@ -111,9 +111,9 @@ struct ScalingNonOrthogonalityAcceleroModel {
   Eigen::Matrix<TT, 3, 1> accel_bias;
 };
 
-FARM_ENUM(GyroModelType, (scaling_non_orthogonality));
+SOPHUS_ENUM(GyroModelType, (scaling_non_orthogonality));
 
-FARM_ENUM(AcceleroModelType, (scaling_non_orthogonality));
+SOPHUS_ENUM(AcceleroModelType, (scaling_non_orthogonality));
 
 using GyroModelVariant = std::variant<ScalingNonOrthogonalityGyroModel<double>>;
 using AcceleroModelVariant =

@@ -6,7 +6,8 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include <farm_ng/core/logging/logger.h>
+#include "sophus/common/common.h"
+
 #include <gtest/gtest.h>
 #include <sophus/geometry/fit_plane.h>
 

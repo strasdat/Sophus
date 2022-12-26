@@ -27,7 +27,7 @@ proto::QuaternionF64 toProto(Eigen::Quaterniond const& quat) {
   return proto;
 }
 
-farm_ng::Expected<So3F64> fromProto(proto::So3F64 const& proto) {
+Expected<So3F64> fromProto(proto::So3F64 const& proto) {
   Eigen::Quaterniond quat = fromProto(proto.unit_quaternion());
   static double constexpr kEps = 1e-6;
   if (std::abs(quat.squaredNorm() - 1.0) > kEps) {
@@ -46,7 +46,7 @@ proto::So3F64 toProto(sophus::So3F64 const& rotation) {
   return proto;
 }
 
-farm_ng::Expected<sophus::Se3F64> fromProto(proto::Se3F64 const& proto) {
+Expected<sophus::Se3F64> fromProto(proto::Se3F64 const& proto) {
   FARM_TRY(sophus::So3F64 so3, fromProto(proto.so3()));
   return sophus::SE3d(so3, fromProto(proto.translation()));
 }

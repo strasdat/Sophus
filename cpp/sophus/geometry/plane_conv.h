@@ -34,7 +34,7 @@ Eigen::Vector2<TScalar> normalFromSo2(So2<TScalar> const& foo_rotation_line) {
 ///
 template <class TScalar>
 So2<TScalar> so2FromNormal(Eigen::Vector2<TScalar> normal_in_foo) {
-  FARM_ASSERT(
+  SOPHUS_ASSERT(
       normal_in_foo.squaredNorm() > kEpsilon<TScalar>,
       "{}",
       normal_in_foo.transpose().eval());
@@ -69,7 +69,7 @@ Eigen::Matrix3<TScalar> rotationFromNormal(
         Eigen::Vector3<TScalar>(TScalar(1), TScalar(0), TScalar(0)),
     Eigen::Vector3<TScalar> y_dir_hint_foo =
         Eigen::Vector3<TScalar>(TScalar(0), TScalar(1), TScalar(0))) {
-  FARM_ASSERT(
+  SOPHUS_ASSERT(
       x_dir_hint_foo.dot(y_dir_hint_foo) < kEpsilon<TScalar>,
       "xDirHint ({}) and yDirHint ({}) must be perpendicular.",
       x_dir_hint_foo.transpose(),
@@ -79,15 +79,15 @@ Eigen::Matrix3<TScalar> rotationFromNormal(
   TScalar const x_dir_hint_foo_sqr_length = x_dir_hint_foo.squaredNorm();
   TScalar const y_dir_hint_foo_sqr_length = y_dir_hint_foo.squaredNorm();
   TScalar const normal_foo_sqr_length = normal_in_foo.squaredNorm();
-  FARM_ASSERT(
+  SOPHUS_ASSERT(
       x_dir_hint_foo_sqr_length > kEpsilon<TScalar>,
       "{}",
       x_dir_hint_foo.transpose());
-  FARM_ASSERT(
+  SOPHUS_ASSERT(
       y_dir_hint_foo_sqr_length > kEpsilon<TScalar>,
       "{}",
       y_dir_hint_foo.transpose());
-  FARM_ASSERT(
+  SOPHUS_ASSERT(
       normal_foo_sqr_length > kEpsilon<TScalar>,
       "{}",
       normal_in_foo.transpose());
@@ -118,7 +118,7 @@ Eigen::Matrix3<TScalar> rotationFromNormal(
   }
   TScalar det = basis_foo.determinant();
   // sanity check
-  FARM_ASSERT(
+  SOPHUS_ASSERT(
       abs(det - TScalar(1)) < kEpsilon<TScalar>,
       "Determinant of basis is not 1, but {}. Basis is \n{}\n",
       det,

@@ -13,7 +13,7 @@
 
 namespace sophus {
 
-farm_ng::Expected<UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto) {
+Expected<UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto) {
   return UnitVector3F64::tryFromUnitVector(fromProto(proto.vec3()));
 }
 
@@ -23,7 +23,7 @@ proto::UnitVec3F64 toProto(sophus::UnitVector3F64 const& uvec) {
   return proto;
 }
 
-farm_ng::Expected<Eigen::Hyperplane<double, 3>> fromProto(
+Expected<Eigen::Hyperplane<double, 3>> fromProto(
     proto::Hyperplane3F64 const& proto) {
   FARM_TRY(sophus::UnitVector3F64 normal, fromProto(proto.normal()));
   return Eigen::Hyperplane<double, 3>{normal.vector(), proto.offset()};

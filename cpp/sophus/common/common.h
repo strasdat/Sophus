@@ -13,7 +13,10 @@
 
 #include <Eigen/Core>
 #include <farm_ng/core/logging/eigen.h>
+#include <farm_ng/core/logging/expected.h>
+#include <farm_ng/core/logging/format.h>
 #include <farm_ng/core/logging/logger.h>
+#include <farm_ng/core/misc/variant_utils.h>
 
 #include <cmath>
 #include <cstdio>
@@ -37,7 +40,26 @@
 
 #define SOPHUS_FUNC EIGEN_DEVICE_FUNC
 
+// from <farm_ng/core/logging/format.h>cd
+#define SOPHUS_FORMAT(...) FARM_FORMAT(__VA_ARGS__)
+
+// from <farm_ng/core/logging/logger.h>
+#define SOPHUS_ASSERT(...) FARM_ASSERT(__VA_ARGS__)
+#define SOPHUS_ASSERT_EQ(...) FARM_ASSERT_EQ(__VA_ARGS__)
+#define SOPHUS_ASSERT_GE(...) FARM_ASSERT_GE(__VA_ARGS__)
+#define SOPHUS_ASSERT_GT(...) FARM_ASSERT_GT(__VA_ARGS__)
+#define SOPHUS_ASSERT_LE(...) FARM_ASSERT_LE(__VA_ARGS__)
+#define SOPHUS_ASSERT_LT(...) FARM_ASSERT_LT(__VA_ARGS__)
+#define SOPHUS_ASSERT_NE(...) FARM_ASSERT_NE(__VA_ARGS__)
+#define SOPHUS_ASSERT_NEAR(...) FARM_ASSERT_NEAR(__VA_ARGS__)
+#define SOPHUS_ASSERT_OR_ERROR(...) FARM_ASSERT_OR_ERROR(__VA_ARGS__)
+
 namespace sophus {
+
+using ::farm_ng::AlwaysFalse;  // <farm_ng/core/misc/variant_utils.h>
+using ::farm_ng::Expected;     // <farm_ng/core/logging/expected.h>
+using ::farm_ng::has_type_v;   // <farm_ng/core/misc/variant_utils.h>
+using ::farm_ng::Overload;     // <farm_ng/core/misc/variant_utils.h>
 
 template <class TScalar>
 TScalar const kEpsilon = TScalar(1e-10);

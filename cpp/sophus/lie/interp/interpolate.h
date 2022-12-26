@@ -39,7 +39,7 @@ interpolate(
     TScalar2 p = TScalar2(0.5f)) {
   using Scalar = typename TGroup::Scalar;
   Scalar inter_p(p);
-  FARM_ASSERT(
+  SOPHUS_ASSERT(
       inter_p >= Scalar(0) && inter_p <= Scalar(1),
       "p ({}) must in [0, 1].",
       inter_p);

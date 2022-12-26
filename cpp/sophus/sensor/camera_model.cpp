@@ -8,8 +8,6 @@
 
 #include "sophus/sensor/camera_model.h"
 
-#include <farm_ng/core/misc/variant_utils.h>
-
 namespace sophus {
 
 namespace {
@@ -189,8 +187,8 @@ CameraModel CameraModel::binUp() const {
 
 CameraModel CameraModel::roi(
     Eigen::Vector2i const& top_left, ImageSize roi_size) const {
-  FARM_ASSERT_LE(top_left.x() + roi_size.width, imageSize().width);
-  FARM_ASSERT_LE(top_left.y() + roi_size.height, imageSize().height);
+  SOPHUS_ASSERT_LE(top_left.x() + roi_size.width, imageSize().width);
+  SOPHUS_ASSERT_LE(top_left.y() + roi_size.height, imageSize().height);
   return CameraModel(std::visit(
       [&](auto&& arg) -> CameraDistortionVariant {
         return arg.roi(top_left, roi_size);
@@ -229,7 +227,7 @@ CameraDistortionType CameraModel::distortionType() const {
         } else if constexpr (std::is_same_v<T, OrthographicModel>) {
           return CameraDistortionType::orthographic;
         } else {
-          static_assert(farm_ng::AlwaysFalse<T>, "non-exhaustive visitor!");
+          static_assert(AlwaysFalse<T>, "non-exhaustive visitor!");
         }
       },
       this->modelVariant());

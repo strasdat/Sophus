@@ -15,8 +15,6 @@
 #include "sophus/lie/so3.h"
 
 #include <Eigen/Dense>
-#include <farm_ng/core/logging/expected.h>
-#include <farm_ng/core/logging/logger.h>
 
 namespace sophus {
 
@@ -38,17 +36,17 @@ class UnitVector {
  public:
   // Precondition: v must be of unit length.
   static UnitVector fromUnitVector(Eigen::Matrix<TScalar, kN, 1> const& v) {
-    farm_ng::Expected<UnitVector> e_vec = tryFromUnitVector(v);
+    Expected<UnitVector> e_vec = tryFromUnitVector(v);
     if (!e_vec.has_value()) {
       FARM_PANIC("{}", e_vec.error());
     }
     return e_vec.value();
   }
 
-  static farm_ng::Expected<UnitVector> tryFromUnitVector(
+  static Expected<UnitVector> tryFromUnitVector(
       Eigen::Matrix<TScalar, kN, 1> const& v) {
     using std::abs;
-    FARM_ASSERT_OR_ERROR(
+    SOPHUS_ASSERT_OR_ERROR(
         abs(v.squaredNorm() - TScalar(1.0)) < sophus::kEpsilon<TScalar>,
         "v must be unit length is {}.\n{}",
         v.squaredNorm(),

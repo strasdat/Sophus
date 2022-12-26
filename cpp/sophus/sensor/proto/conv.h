@@ -11,16 +11,12 @@
 #include "sophus/sensor.pb.h"
 #include "sophus/sensor/camera_model.h"
 
-#include <farm_ng/core/logging/expected.h>
-
 namespace sophus {
 
-farm_ng::Expected<sophus::CameraModel> fromProto(
-    proto::CameraModel const& proto);
+Expected<sophus::CameraModel> fromProto(proto::CameraModel const& proto);
 proto::CameraModel toProto(CameraModel const& camera_model);
 
-farm_ng::Expected<std::vector<CameraModel>> fromProto(
-    proto::CameraModels const& proto);
+Expected<std::vector<CameraModel>> fromProto(proto::CameraModels const& proto);
 proto::CameraModels toProto(std::vector<CameraModel> const& camera_models);
 
 }  // namespace sophus

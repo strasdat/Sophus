@@ -34,7 +34,7 @@ template <class TSequenceContainer>
 std::optional<typename TSequenceContainer::value_type> iterativeMean(
     TSequenceContainer const& foo_transforms_bar, int max_num_iterations) {
   size_t k_matrix_dim = foo_transforms_bar.size();
-  FARM_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
+  SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
 
   using Group = typename TSequenceContainer::value_type;
   using Scalar = typename Group::Scalar;
@@ -86,7 +86,7 @@ std::enable_if_t<
 average(TSequenceContainer const& foo_transforms_bar) {
   size_t k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
-  FARM_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
+  SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
 
   Eigen::Vector<TScalar, kPointDim> average;
   average.setZero();
@@ -109,7 +109,7 @@ average(TSequenceContainer const& foo_transforms_bar) {
   // ftp://ftp-sop.inria.fr/epidaure/Publications/Arsigny/arsigny_rr_biinvariant_average.pdf.
   size_t k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
-  FARM_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
+  SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
   So2<TScalar> foo_transform_average = foo_transforms_bar.front();
   TScalar w = TScalar(1. / k_matrix_dim);
 
@@ -131,7 +131,7 @@ std::enable_if_t<
 average(TSequenceContainer const& foo_transforms_bar) {
   size_t k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
-  FARM_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
+  SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
   RxSo2<TScalar> foo_transform_average = foo_transforms_bar.front();
   TScalar w = TScalar(1. / k_matrix_dim);
 
@@ -164,7 +164,7 @@ Eigen::Quaternion<TScalar> averageUnitQuaternion(
   // This:  http://stackoverflow.com/a/27410865/1221742
   size_t k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
-  FARM_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
+  SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
   Eigen::Matrix<TScalar, 4, Eigen::Dynamic> q(4, k_matrix_dim);
   int i = 0;
   TScalar w = TScalar(1. / k_matrix_dim);
@@ -222,7 +222,7 @@ average(TSequenceContainer const& foo_transforms_bar) {
   size_t k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
 
-  FARM_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
+  SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
   TScalar scale_sum = TScalar(0);
   using std::exp;
   using std::log;
