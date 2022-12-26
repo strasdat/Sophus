@@ -14,7 +14,7 @@ namespace sophus {
 
 /// Templated local parameterization for LieGroup [with implemented
 /// LieGroup::Dx_this_mul_exp_x_at_0() ]
-template <template <typename, int = 0> class TLieGroup>
+template <template <class, int = 0> class TLieGroup>
 class Manifold : public ceres::Manifold {
  public:
   using LieGroupF64 = TLieGroup<double>;

@@ -21,16 +21,17 @@
 
 #pragma once
 
+#include "sophus/calculus/interval.h"
 #include "sophus/image/image_size.h"
 
 namespace sophus {
 
 // Types are largely inspired / derived from Pangolin.
 
-template <class TPixel, template <typename> class TAllocator>
+template <class TPixel, template <class> class TAllocator>
 class MutImage;
 
-template <class TPixel, template <typename> class TAllocator>
+template <class TPixel, template <class> class TAllocator>
 class Image;
 
 /// A view of an (immutable) image, which does not own the data.
@@ -249,10 +250,10 @@ struct ImageView {
   TPixel const* ptr_ = nullptr;  // NOLINT
 
  private:
-  template <class TT, template <typename> class TAllocator>
+  template <class TT, template <class> class TAllocator>
   friend class MutImage;
 
-  template <class TT, template <typename> class TAllocator>
+  template <class TT, template <class> class TAllocator>
   friend class Image;
 };
 
@@ -479,5 +480,26 @@ class MutImageView : public ImageView<TPixel> {
         this->rowPtrMut(uv.y()) + uv.x());
   }
 };
+
+template <class TPixel>
+Interval<TPixel> finiteInterval(sophus::ImageView<TPixel> const& image) {
+  return image.reduce(
+      [](TPixel v, auto& min_max) {
+        if (isFinite(v)) {
+          min_max.extend(v);
+        }
+      },
+      Interval<TPixel>{});
+}
+
+template <class TPixel>
+inline Interval<Eigen::Vector2i> imageCoordsInterval(
+    sophus::ImageView<TPixel> const& image, int border = 0) {
+  // e.g. 10x10 image has valid values [0, ..., 9] in both dimensions
+  // a border of 2 would make valid range [2, ..., 7]
+  return Interval<Eigen::Vector2i>(Eigen::Vector2i(border, border))
+      .extend(Eigen::Vector2i(
+          image.width() - border - 1, image.height() - border - 1));
+}
 
 }  // namespace sophus

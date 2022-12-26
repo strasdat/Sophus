@@ -11,7 +11,6 @@
 #include <gtest/gtest.h>
 
 using namespace sophus;
-using namespace farm_ng;
 
 TEST(interpolation, unit) {
   int w = 3;

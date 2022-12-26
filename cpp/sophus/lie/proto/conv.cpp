@@ -8,7 +8,6 @@
 
 #include "sophus/lie/proto/conv.h"
 
-#include "farm_ng/core/logging/logger.h"
 #include "sophus/linalg/proto/conv.h"
 
 namespace sophus {

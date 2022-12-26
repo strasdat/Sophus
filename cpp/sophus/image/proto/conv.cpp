@@ -8,8 +8,6 @@
 
 #include "sophus/image/proto/conv.h"
 
-#include "farm_ng/core/logging/logger.h"
-
 namespace sophus {
 
 sophus::ImageSize fromProto(proto::ImageSize const& proto) {
