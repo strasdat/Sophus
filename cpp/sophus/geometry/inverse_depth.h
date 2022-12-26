@@ -94,7 +94,7 @@ class InverseDepthPoint3 {
 
   T* data() { return ab_and_psi_.data(); }
 
-  [[nodiscard]] [[nodiscard]] Eigen::Matrix<T, 3, 1> const& params() const {
+  [[nodiscard]] Eigen::Matrix<T, 3, 1> const& params() const {
     return ab_and_psi_;
   }
 

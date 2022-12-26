@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "sophus/calculus/interval.h"
 #include "sophus/common/common.h"
 
 #include <Eigen/Dense>
@@ -20,27 +21,44 @@ namespace sophus {
 struct ImageSize {
   ImageSize() = default;
   ImageSize(int width, int height) : width(width), height(height) {}
+  static ImageSize from(Eigen::Array2<int> const& arr) {
+    return {arr[0], arr[1]};
+  }
 
-  [[nodiscard]] [[nodiscard]] int area() const { return width * height; }
+  [[nodiscard]] int area() const { return width * height; }
+
+  /// Returns true if obs is within image.
+  ///
+  /// Positive border makes the image frame smaller.
+  [[nodiscard]] bool contains(Eigen::Vector2i const& obs, int border = 0) const;
+  [[nodiscard]] bool contains(
+      Eigen::Vector2f const& obs, float border = 0.f) const;
+  [[nodiscard]] bool contains(
+      Eigen::Vector2d const& obs, double border = 0.0) const;
+
+  [[nodiscard]] bool isEmpty() const { return width == 0 && height == 0; }
+
+  [[nodiscard]] Eigen::Array2<int> array() const {
+    return Eigen::Array2<int>(width, height);
+  }
 
   /// Horizontal width of images, i.e. number of columns.
   int width = 0;
 
   /// Vertical height of images, i.e. number of rows.
   int height = 0;
-
-  /// Returns true if obs is within image.
-  ///
-  /// Positive border makes the image frame smaller.
-  [[nodiscard]] [[nodiscard]] bool contains(
-      Eigen::Vector2i const& obs, int border = 0) const;
-  [[nodiscard]] [[nodiscard]] bool contains(
-      Eigen::Vector2f const& obs, float border = 0.f) const;
-  [[nodiscard]] [[nodiscard]] bool contains(
-      Eigen::Vector2d const& obs, double border = 0.0) const;
-
-  [[nodiscard]] bool isEmpty() const { return width == 0 && height == 0; }
 };
+
+// TODO: make member function?
+template <class TPixel>
+inline Interval<Eigen::Array2<int>> imageCoordsInterval(
+    ImageSize image_size, int border = 0) {
+  // e.g. 10x10 image has valid values [0, ..., 9] in both dimensions
+  // a border of 2 would make valid range [2, ..., 7]
+  return Interval<Eigen::Array2<int>>(Eigen::Vector2i(border, border))
+      .extend(Eigen::Array2<int>(
+          image_size.width - border - 1, image_size.height - border - 1));
+}
 
 /// Equality operator.
 bool operator==(ImageSize const& lhs, ImageSize const& rhs);

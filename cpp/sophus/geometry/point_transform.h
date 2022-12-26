@@ -184,8 +184,7 @@ class PointTransformer {
   }
 
   // Assuming ProjectionZ1 based camera
-  [[nodiscard]] [[nodiscard]] [[nodiscard]] Eigen::Matrix<TT, 2, 3>
-  dxProjTransformX(
+  [[nodiscard]] [[nodiscard]] Eigen::Matrix<TT, 2, 3> dxProjTransformX(
       InverseDepthPoint3<TT> const& inverse_depth_point_in_bar) const {
     Eigen::Vector3<TT> const& r0 = this->fooRotationBar().col(0);
     Eigen::Vector3<TT> const& r1 = this->fooRotationBar().col(1);

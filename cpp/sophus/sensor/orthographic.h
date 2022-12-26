@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "sophus/calculus/interval.h"
 #include "sophus/image/image_size.h"
 #include "sophus/sensor/camera_model.h"
 
@@ -20,7 +21,8 @@ using OrthographicModelT =
 /// Returns orthographic camera model given bounding box and image size.
 template <class TScalar>
 OrthographicModelT<TScalar> orthoCamFromBoundingBox(
-    Eigen::AlignedBox<TScalar, 2> const& bounding_box, ImageSize image_size) {
+    Interval<Eigen::Array<TScalar, 2, 1>> const& bounding_box,
+    ImageSize image_size) {
   // (-0.5, -0.5)   -> (min.x, min.y)
   // (-0.5, h-0.5)  -> (min.x, max.y)
   // (w-0.5, -0.5)  -> (max.x, min.y)
@@ -36,12 +38,11 @@ OrthographicModelT<TScalar> orthoCamFromBoundingBox(
   // w = sx * (max.x  - min.x)
   // sx = w / (max.x  - min.x)
 
-  Eigen::Array<TScalar, 2, 1> const range =
-      bounding_box.max() - bounding_box.min();
+  Eigen::Array<TScalar, 2, 1> const range = bounding_box.range();
   Eigen::Array<TScalar, 2, 1> const scale =
       Eigen::Array<TScalar, 2, 1>(image_size.width, image_size.height) / range;
   Eigen::Array<TScalar, 2, 1> const offset =
-      -(0.5 + bounding_box.min().array() * scale);
+      -(0.5 + bounding_box.min() * scale);
 
   Eigen::Matrix<TScalar, 4, 1> const params(
       scale.x(), scale.y(), offset.x(), offset.y());
@@ -52,19 +53,17 @@ OrthographicModelT<TScalar> orthoCamFromBoundingBox(
 /// Returns 2d bounding box corresponding the the given orthographic camera
 /// model.
 template <class TScalar>
-Eigen::AlignedBox<TScalar, 2> boundingBoxFromOrthoCam(
+Interval<Eigen::Array<TScalar, 2, 1>> boundingBoxFromOrthoCam(
     OrthographicModelT<TScalar> const& ortho_cam) {
-  Eigen::AlignedBox<TScalar, 2> bounding_box;
+  Eigen::Array<TScalar, 2, 1> min = Eigen::Array<TScalar, 2, 1>{
+      (-ortho_cam.principalPoint().array() - 0.5) /
+      ortho_cam.focalLength().array()};
 
-  Eigen::Array<TScalar, 2, 1> const imsize(
-      ortho_cam.imageSize().width, ortho_cam.imageSize().height);
-
-  bounding_box.min() = (-ortho_cam.principalPoint().array() - 0.5) /
-                       ortho_cam.focalLength().array();
-  bounding_box.max() =
-      bounding_box.min().array() + imsize / ortho_cam.focalLength().array();
-
-  return bounding_box;
+  return Interval<Eigen::Array<TScalar, 2, 1>>(
+      min,
+      Eigen::Array<TScalar, 2, 1>{
+          min + ortho_cam.imageSize().array().template cast<TScalar>() /
+                    ortho_cam.focalLength().array()});
 }
 
 }  // namespace sophus
