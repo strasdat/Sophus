@@ -18,16 +18,16 @@ using namespace sophus;
 TEST(MutImage, empty) {
   {
     MutImage<float> mut_image;
-    FARM_CHECK(mut_image.isEmpty());
+    FARM_ASSERT(mut_image.isEmpty());
 
     MutImage<float> mut_image_copy = MutImage<float>::makeCopyFrom(mut_image);
-    FARM_CHECK(mut_image.isEmpty());
+    FARM_ASSERT(mut_image.isEmpty());
   }
   {
     ImageSize size23(2, 3);
     MutImage<float> mut_image(size23);
-    FARM_CHECK(!mut_image.isEmpty());
-    FARM_CHECK_EQ(mut_image.imageSize(), size23);
+    FARM_ASSERT(!mut_image.isEmpty());
+    FARM_ASSERT_EQ(mut_image.imageSize(), size23);
   }
 }
 
@@ -37,54 +37,54 @@ TEST(MutImage, create_copy_access) {
       {2, 3}, 2 * sizeof(float) + sizeof(float));
   MutImage<float> mut_image(shape);
   mut_image.fill(0.25f);
-  FARM_CHECK(!mut_image.isEmpty());
-  FARM_CHECK_EQ(mut_image.shape(), shape);
+  FARM_ASSERT(!mut_image.isEmpty());
+  FARM_ASSERT_EQ(mut_image.shape(), shape);
 
   // 2a. create a copy of it.
   MutImage<float> mut_image_copy = MutImage<float>::makeCopyFrom(mut_image);
   // 2b. test that copy contains the data expected.
-  FARM_CHECK(!mut_image.isEmpty());
-  FARM_CHECK_IMAGE_EQ(mut_image, mut_image_copy);
+  FARM_ASSERT(!mut_image.isEmpty());
+  FARM_ASSERT_IMAGE_EQ(mut_image, mut_image_copy);
 
   // 3a. create a copy of it.
   MutImage<float> mut_image_copy2 = MutImage<float>::makeCopyFrom(mut_image);
   // 3b. test reset.
   mut_image_copy.reset();
-  FARM_CHECK(mut_image_copy.isEmpty());
+  FARM_ASSERT(mut_image_copy.isEmpty());
   // 3c. test swap.
   mut_image_copy2.swap(mut_image_copy);
-  FARM_CHECK(!mut_image_copy.isEmpty());
-  FARM_CHECK(mut_image_copy2.isEmpty());
-  FARM_CHECK_IMAGE_EQ(mut_image, mut_image_copy);
+  FARM_ASSERT(!mut_image_copy.isEmpty());
+  FARM_ASSERT(mut_image_copy2.isEmpty());
+  FARM_ASSERT_IMAGE_EQ(mut_image, mut_image_copy);
 
   // 4a. move out of mut_image_copy
   mut_image_copy2 = std::move(mut_image_copy);
   // 4b. test ...
-  FARM_CHECK(mut_image_copy.isEmpty());  // NOLINT
-  FARM_CHECK_IMAGE_EQ(mut_image, mut_image_copy2);
+  FARM_ASSERT(mut_image_copy.isEmpty());  // NOLINT
+  FARM_ASSERT_IMAGE_EQ(mut_image, mut_image_copy2);
 
   // 5a. move out of empty image
   mut_image_copy2 = std::move(mut_image_copy);
   // 5b. test that source and destination are both empty now.
-  FARM_CHECK(mut_image_copy.isEmpty());  // NOLINT
-  FARM_CHECK(mut_image_copy2.isEmpty());
+  FARM_ASSERT(mut_image_copy.isEmpty());  // NOLINT
+  FARM_ASSERT(mut_image_copy2.isEmpty());
 
   // 6a. create a copy of image and move it into mut_image2.
   MutImage<float> mut_image_copy3 = MutImage<float>::makeCopyFrom(mut_image);
   MutImage<float> mut_image2 = std::move(mut_image_copy3);
   // 6b test mut_image == mut_image2
-  FARM_CHECK_EQ(mut_image2.imageSize(), mut_image.imageSize());
+  FARM_ASSERT_EQ(mut_image2.imageSize(), mut_image.imageSize());
   for (int v = 0; v < mut_image.imageSize().height; ++v) {
     for (int u = 0; u < mut_image.imageSize().width; ++u) {
-      FARM_CHECK_EQ(mut_image2.checked(u, v), mut_image.checked(u, v));
+      FARM_ASSERT_EQ(mut_image2.checked(u, v), mut_image.checked(u, v));
     }
   }
 
   // 7a. move out of empty mut_image_copy2
   MutImage<float> image3 = std::move(mut_image_copy2);
   // 7b. test that source and destination are both empty now.
-  FARM_CHECK(image3.isEmpty());
-  FARM_CHECK(mut_image_copy2.isEmpty());  // NOLINT
+  FARM_ASSERT(image3.isEmpty());
+  FARM_ASSERT(mut_image_copy2.isEmpty());  // NOLINT
 }
 
 TEST(MutImage, makeFromTransform) {
@@ -98,7 +98,7 @@ TEST(MutImage, makeFromTransform) {
 
   for (int v = 0; v < 3; ++v) {
     for (int u = 0; u < 2; ++u) {
-      FARM_CHECK_EQ(pattern.checked(u, v), Pixel3F32(1.f, 0.5f, 0.1f));
+      FARM_ASSERT_EQ(pattern.checked(u, v), Pixel3F32(1.f, 0.5f, 0.1f));
     }
   }
 }
@@ -108,16 +108,16 @@ TEST(Image, empty_and_non_empty) {
   MutImage<float> mut_image(size64);
   mut_image.fill(0.5f);
   MutImage<float> copy = MutImage<float>::makeCopyFrom(mut_image);
-  FARM_CHECK_EQ(copy.imageSize(), size64);
+  FARM_ASSERT_EQ(copy.imageSize(), size64);
 
   Image image(std::move(copy));
-  FARM_CHECK(copy.isEmpty());  // NOLINT
-  FARM_CHECK_EQ(image.imageSize(), size64);
-  FARM_CHECK_EQ(image.useCount(), 1);
+  FARM_ASSERT(copy.isEmpty());  // NOLINT
+  FARM_ASSERT_EQ(image.imageSize(), size64);
+  FARM_ASSERT_EQ(image.useCount(), 1);
 
   Image empty_image(std::move(copy));
-  FARM_CHECK(empty_image.isEmpty());
-  FARM_CHECK_EQ(empty_image.useCount(), 0);
+  FARM_ASSERT(empty_image.isEmpty());
+  FARM_ASSERT_EQ(empty_image.useCount(), 0);
 }
 
 TEST(Image, shared_ownership) {
@@ -127,17 +127,17 @@ TEST(Image, shared_ownership) {
   Image image(std::move(mut_image));
 
   Image image2 = image;
-  FARM_CHECK_EQ(image.useCount(), 2);
-  FARM_CHECK_EQ(image2.useCount(), 2);
+  FARM_ASSERT_EQ(image.useCount(), 2);
+  FARM_ASSERT_EQ(image2.useCount(), 2);
 
   float const* image2_ptr = image2.ptr();
-  FARM_CHECK(image2_ptr != nullptr);
+  FARM_ASSERT(image2_ptr != nullptr);
 
   MutImage<float> copy2 = MutImage<float>::makeCopyFrom(std::move(image2));
-  FARM_CHECK_EQ(image2.useCount(), 2);  // NOLINT
-  FARM_CHECK_NE(size_t(copy2.ptr()), size_t(image2_ptr));
+  FARM_ASSERT_EQ(image2.useCount(), 2);  // NOLINT
+  FARM_ASSERT_NE(size_t(copy2.ptr()), size_t(image2_ptr));
 
   image2 = image;
-  FARM_CHECK_EQ(image.useCount(), 2);
-  FARM_CHECK_EQ(image2.useCount(), 2);
+  FARM_ASSERT_EQ(image.useCount(), 2);
+  FARM_ASSERT_EQ(image2.useCount(), 2);
 }

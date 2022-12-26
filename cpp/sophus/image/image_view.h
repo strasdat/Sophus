@@ -124,8 +124,8 @@ struct ImageView {
   ///   }
   /// }
   [[nodiscard]] TPixel const& checked(int u, int v) const {
-    FARM_CHECK(colInBounds(u), "u,v: {},{}, w x h: {}", u, v, imageSize());
-    FARM_CHECK(rowInBounds(v), "u,v: {},{}, w x h: {}", u, v, imageSize());
+    FARM_ASSERT(colInBounds(u), "u,v: {},{}, w x h: {}", u, v, imageSize());
+    FARM_ASSERT(rowInBounds(v), "u,v: {},{}, w x h: {}", u, v, imageSize());
     return rowPtr(v)[u];
   }
 
@@ -151,10 +151,10 @@ struct ImageView {
   /// Returns subview.
   [[nodiscard]] ImageView subview(
       Eigen::Vector2i uv, sophus::ImageSize size) const {
-    FARM_CHECK(colInBounds(uv[0]));
-    FARM_CHECK(rowInBounds(uv[1]));
-    FARM_CHECK_LE(uv.x() + size.width, shape_.width());
-    FARM_CHECK_LE(uv.y() + size.height, shape_.height());
+    FARM_ASSERT(colInBounds(uv[0]));
+    FARM_ASSERT(rowInBounds(uv[1]));
+    FARM_ASSERT_LE(uv.x() + size.width, shape_.width());
+    FARM_ASSERT_LE(uv.y() + size.height, shape_.height());
     return ImageView(
         ImageShape::makeFromSizeAndPitch<TPixel>(size, shape_.pitchBytes()),
         rowPtr(uv.y()) + uv.x());
@@ -163,7 +163,7 @@ struct ImageView {
   /// Performs reduction / fold on image view.
   template <class TFunc>
   void visit(TFunc const& user_function) const {
-    FARM_CHECK(!this->isEmpty());
+    FARM_ASSERT(!this->isEmpty());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
       TPixel const* p = this->rowPtr(v);
@@ -178,7 +178,7 @@ struct ImageView {
   template <class TReduceOp, class TVal>
   [[nodiscard]] TVal reduce(
       TReduceOp const& reduce_op, TVal val = TVal{}) const {
-    FARM_CHECK(!this->isEmpty());
+    FARM_ASSERT(!this->isEmpty());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
       TPixel const* p = this->rowPtr(v);
@@ -195,7 +195,7 @@ struct ImageView {
   [[nodiscard]] TVal shortCircuitReduce(
       TShortCircuitReduceOp const& short_circuit_reduce_op,
       TVal val = TVal{}) const {
-    FARM_CHECK(!this->isEmpty());
+    FARM_ASSERT(!this->isEmpty());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
       TPixel const* p = this->rowPtr(v);
@@ -326,12 +326,12 @@ class MutImageView : public ImageView<TPixel> {
   ///
   /// No-op if view is empty.
   void copyDataFrom(ImageView<TPixel> view) const {
-    FARM_CHECK_EQ(this->isEmpty(), view.isEmpty());
+    FARM_ASSERT_EQ(this->isEmpty(), view.isEmpty());
 
     if (this->isEmpty()) {
       return;
     }
-    FARM_CHECK_EQ(this->imageSize(), view.imageSize());
+    FARM_ASSERT_EQ(this->imageSize(), view.imageSize());
     details::pitchedCopy(
         (uint8_t*)this->ptr(),
         this->shape().pitchBytes(),
@@ -353,8 +353,8 @@ class MutImageView : public ImageView<TPixel> {
   /// Note:
   ///  * panics if u,v is invalid.
   [[nodiscard]] TPixel& checkedMut(int u, int v) const {
-    FARM_CHECK(this->colInBounds(u));
-    FARM_CHECK(this->rowInBounds(v));
+    FARM_ASSERT(this->colInBounds(u));
+    FARM_ASSERT(this->rowInBounds(v));
     return rowPtrMut(v)[u];
   }
 
@@ -379,7 +379,7 @@ class MutImageView : public ImageView<TPixel> {
   /// Preconditions: this must not be empty.
   template <class TUnaryOperation>
   void mutate(TUnaryOperation const& unary_op) const {
-    FARM_CHECK(!this->isEmpty());
+    FARM_ASSERT(!this->isEmpty());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
       TPixel* p = this->rowPtrMut(v);
@@ -397,7 +397,7 @@ class MutImageView : public ImageView<TPixel> {
   /// Preconditions: this must not be empty.
   template <class TUVOperation>
   void generate(TUVOperation const& uv_op) const {
-    FARM_CHECK(!this->isEmpty());
+    FARM_ASSERT(!this->isEmpty());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
       TPixel* p = this->rowPtrMut(v);
@@ -416,8 +416,8 @@ class MutImageView : public ImageView<TPixel> {
   template <class TOtherPixel, class TUnaryOperation>
   void transformFrom(
       ImageView<TOtherPixel> view, TUnaryOperation const& unary_op) const {
-    FARM_CHECK(!this->isEmpty());
-    FARM_CHECK_EQ(view.imageSize(), this->imageSize());
+    FARM_ASSERT(!this->isEmpty());
+    FARM_ASSERT_EQ(view.imageSize(), this->imageSize());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
       TPixel* mut_p = this->rowPtrMut(v);
@@ -440,9 +440,9 @@ class MutImageView : public ImageView<TPixel> {
       ImageView<TLhsPixel> lhs,
       ImageView<TRhsPixel> rhs,
       TBinaryOperation const& binary_op) const {
-    FARM_CHECK(!this->isEmpty());
-    FARM_CHECK_EQ(lhs.imageSize(), this->imageSize());
-    FARM_CHECK_EQ(rhs.imageSize(), this->imageSize());
+    FARM_ASSERT(!this->isEmpty());
+    FARM_ASSERT_EQ(lhs.imageSize(), this->imageSize());
+    FARM_ASSERT_EQ(rhs.imageSize(), this->imageSize());
 
     for (int v = 0; v < this->shape_.height(); ++v) {
       TPixel* mut_p = this->rowPtrMut(v);
@@ -470,10 +470,10 @@ class MutImageView : public ImageView<TPixel> {
   /// Returns mutable subview.
   [[nodiscard]] MutImageView mutSubview(
       Eigen::Vector2i uv, sophus::ImageSize size) const {
-    FARM_CHECK(this->colInBounds(uv[0]));
-    FARM_CHECK(this->rowInBounds(uv[1]));
-    FARM_CHECK_LE(uv.x() + size.width, this->shape().width());
-    FARM_CHECK_LE(uv.y() + size.height, this->shape().height());
+    FARM_ASSERT(this->colInBounds(uv[0]));
+    FARM_ASSERT(this->rowInBounds(uv[1]));
+    FARM_ASSERT_LE(uv.x() + size.width, this->shape().width());
+    FARM_ASSERT_LE(uv.y() + size.height, this->shape().height());
 
     return MutImageView(
         ImageShape::makeFromSizeAndPitch<TPixel>(

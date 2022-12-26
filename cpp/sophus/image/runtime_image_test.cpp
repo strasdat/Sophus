@@ -14,14 +14,14 @@
 
 using namespace sophus;
 
-#define FARM_NG_TEST_IMG_EQ(lhs, rhs) /* NOLINT*/            \
-  do {                                                       \
-    FARM_CHECK_EQ(lhs.imageSize(), rhs.imageSize());         \
-    for (int v = 0; v < lhs.imageSize().height; ++v) {       \
-      for (int u = 0; u < lhs.imageSize().width; ++u) {      \
-        FARM_CHECK_EQ(lhs.checked(u, v), rhs.checked(u, v)); \
-      }                                                      \
-    }                                                        \
+#define FARM_NG_TEST_IMG_EQ(lhs, rhs) /* NOLINT*/             \
+  do {                                                        \
+    FARM_ASSERT_EQ(lhs.imageSize(), rhs.imageSize());         \
+    for (int v = 0; v < lhs.imageSize().height; ++v) {        \
+      for (int u = 0; u < lhs.imageSize().width; ++u) {       \
+        FARM_ASSERT_EQ(lhs.checked(u, v), rhs.checked(u, v)); \
+      }                                                       \
+    }                                                         \
   } while (false)
 
 TEST(AnyImage, create_access_and_extract) {
@@ -31,21 +31,21 @@ TEST(AnyImage, create_access_and_extract) {
   Image<float> image(std::move(mut_image));
   AnyImage<> any_image(image);
 
-  FARM_CHECK_EQ(image.useCount(), 2);
-  FARM_CHECK_EQ(any_image.useCount(), 2);
+  FARM_ASSERT_EQ(image.useCount(), 2);
+  FARM_ASSERT_EQ(any_image.useCount(), 2);
 
-  FARM_CHECK_EQ(any_image.numChannels(), 1);
-  FARM_CHECK_EQ(any_image.numBytesPerPixelChannel(), sizeof(float));
-  FARM_CHECK_EQ(any_image.numberType(), NumberType::floating_point);
+  FARM_ASSERT_EQ(any_image.numChannels(), 1);
+  FARM_ASSERT_EQ(any_image.numBytesPerPixelChannel(), sizeof(float));
+  FARM_ASSERT_EQ(any_image.numberType(), NumberType::floating_point);
 
-  FARM_CHECK(!any_image.has<uint16_t>());
-  FARM_CHECK(!any_image.has<double>());
-  FARM_CHECK(any_image.has<float>());
-  FARM_CHECK(!(any_image.has<Eigen::Vector3f>()));
+  FARM_ASSERT(!any_image.has<uint16_t>());
+  FARM_ASSERT(!any_image.has<double>());
+  FARM_ASSERT(any_image.has<float>());
+  FARM_ASSERT(!(any_image.has<Eigen::Vector3f>()));
 
   Image<float> image2 = any_image.image<float>();
-  FARM_CHECK_EQ(any_image.useCount(), 3);
-  FARM_CHECK_EQ(image2.useCount(), 3);
+  FARM_ASSERT_EQ(any_image.useCount(), 3);
+  FARM_ASSERT_EQ(image2.useCount(), 3);
 
   // Getting a mut-view from a shared image will give the power to modify
   // the underlying data. Be careful!
@@ -53,8 +53,8 @@ TEST(AnyImage, create_access_and_extract) {
       MutImageView<float>::unsafeConstCast(image2);  // NOLINT
   mut_view.checkedMut(0, 0) = 0.9f;
 
-  FARM_CHECK_EQ(image.checked(0, 0), 0.9f);
-  FARM_CHECK_EQ(image2.checked(0, 0), 0.9f);
+  FARM_ASSERT_EQ(image.checked(0, 0), 0.9f);
+  FARM_ASSERT_EQ(image2.checked(0, 0), 0.9f);
 }
 
 TEST(IntensityImage, create_access_and_extract) {
@@ -65,7 +65,7 @@ TEST(IntensityImage, create_access_and_extract) {
   IntensityImage<> texture(image);
 
   // Won't compile since IntensityImage can't be uint16_t.
-  // FARM_CHECK(!shared_texture_image.has<uint16_t>());
+  // FARM_ASSERT(!shared_texture_image.has<uint16_t>());
 }
 
 TEST(AnyImage, runtime_type_info) {
@@ -74,54 +74,54 @@ TEST(AnyImage, runtime_type_info) {
     MutImage<float> mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    FARM_CHECK_EQ(any_image.numberType(), NumberType::floating_point);
-    FARM_CHECK_EQ(any_image.numChannels(), 1);
-    FARM_CHECK_EQ(any_image.numBytesPerPixelChannel(), 4);
+    FARM_ASSERT_EQ(any_image.numberType(), NumberType::floating_point);
+    FARM_ASSERT_EQ(any_image.numChannels(), 1);
+    FARM_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 4);
   }
   {
     const ImageSize size64{6, 4};
     MutImage<uint8_t> mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    FARM_CHECK_EQ(any_image.numberType(), NumberType::fixed_point);
-    FARM_CHECK_EQ(any_image.numChannels(), 1);
-    FARM_CHECK_EQ(any_image.numBytesPerPixelChannel(), 1);
+    FARM_ASSERT_EQ(any_image.numberType(), NumberType::fixed_point);
+    FARM_ASSERT_EQ(any_image.numChannels(), 1);
+    FARM_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 1);
   }
   {
     const ImageSize size64{6, 4};
     MutImage3F32 mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    FARM_CHECK_EQ(any_image.numberType(), NumberType::floating_point);
-    FARM_CHECK_EQ(any_image.numChannels(), 3);
-    FARM_CHECK_EQ(any_image.numBytesPerPixelChannel(), 4);
+    FARM_ASSERT_EQ(any_image.numberType(), NumberType::floating_point);
+    FARM_ASSERT_EQ(any_image.numChannels(), 3);
+    FARM_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 4);
   }
   {
     const ImageSize size64{6, 4};
     MutImage3U8 mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    FARM_CHECK_EQ(any_image.numberType(), NumberType::fixed_point);
-    FARM_CHECK_EQ(any_image.numChannels(), 3);
-    FARM_CHECK_EQ(any_image.numBytesPerPixelChannel(), 1);
+    FARM_ASSERT_EQ(any_image.numberType(), NumberType::fixed_point);
+    FARM_ASSERT_EQ(any_image.numChannels(), 3);
+    FARM_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 1);
   }
   {
     const ImageSize size64{6, 4};
     MutImage<Eigen::Vector4f> mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    FARM_CHECK_EQ(any_image.numberType(), NumberType::floating_point);
-    FARM_CHECK_EQ(any_image.numChannels(), 4);
-    FARM_CHECK_EQ(any_image.numBytesPerPixelChannel(), 4);
+    FARM_ASSERT_EQ(any_image.numberType(), NumberType::floating_point);
+    FARM_ASSERT_EQ(any_image.numChannels(), 4);
+    FARM_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 4);
   }
   {
     const ImageSize size64{6, 4};
     MutImage4U8 mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    FARM_CHECK_EQ(any_image.numberType(), NumberType::fixed_point);
-    FARM_CHECK_EQ(any_image.numChannels(), 4);
-    FARM_CHECK_EQ(any_image.numBytesPerPixelChannel(), 1);
+    FARM_ASSERT_EQ(any_image.numberType(), NumberType::fixed_point);
+    FARM_ASSERT_EQ(any_image.numChannels(), 4);
+    FARM_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 1);
   }
 }
 
@@ -158,15 +158,15 @@ TEST(IntensityImageView, subview) {
   Image<float> ref_image = std::move(mut_image);
   IntensityImage<> runtime_image = ref_image;
   IntensityImageView runtime_sub = runtime_image.subview({1, 1}, {2, 2});
-  FARM_CHECK_EQ(runtime_sub.width(), 2);
-  FARM_CHECK_EQ(runtime_sub.height(), 2);
+  FARM_ASSERT_EQ(runtime_sub.width(), 2);
+  FARM_ASSERT_EQ(runtime_sub.height(), 2);
 
   {
     ImageView<float> sub = runtime_sub.imageView<float>();
 
     for (int y = 0; y < 2; ++y) {
       for (int x = 0; x < 2; ++x) {
-        FARM_CHECK_EQ(sub.checked(x, y), ref_image.checked(x + 1, y + 1));
+        FARM_ASSERT_EQ(sub.checked(x, y), ref_image.checked(x + 1, y + 1));
       }
     }
   }
@@ -188,20 +188,20 @@ TEST(ClassHierarchy, call_function) {
   ImageSize image_size(3, 2);
   ImageView<float> view(image_size, data.data());
   float s = sum(view);
-  FARM_CHECK_EQ(s, 3.f);
+  FARM_ASSERT_EQ(s, 3.f);
 
   MutImageView<float> mut_view(image_size, data.data());
   s = sum(view);
-  FARM_CHECK_EQ(s, 3.f);
+  FARM_ASSERT_EQ(s, 3.f);
 
   MutImage<float> mut_image(image_size);
   mut_image.fill(0.5f);
   s = sum(mut_image);
-  FARM_CHECK_EQ(s, 3.f);
+  FARM_ASSERT_EQ(s, 3.f);
 
   Image<float> image = Image<float>::makeCopyFrom(mut_image);
   s = sum(image);
-  FARM_CHECK_EQ(s, 3.f);
+  FARM_ASSERT_EQ(s, 3.f);
 
   // The plusOne function takes a MutImageView<float> as input. Hence we can
   // pass in:
@@ -209,11 +209,11 @@ TEST(ClassHierarchy, call_function) {
   //  - MutImage<float>
   plusOne(mut_view);
   s = sum(mut_view);
-  FARM_CHECK_EQ(s, 9.f);
+  FARM_ASSERT_EQ(s, 9.f);
 
   plusOne(mut_image);
   s = sum(mut_image);
-  FARM_CHECK_EQ(s, 9.f);
+  FARM_ASSERT_EQ(s, 9.f);
 
   // won't compile, since ImageView is not a MutImageView:
   // plusOne(view);
@@ -238,9 +238,9 @@ TEST(IntensityImage, visitor) {
         [&](auto const& image) {
           using Timg = typename std::remove_reference<decltype(image)>::type;
           using TPixel = typename Timg::PixelType;
-          FARM_CHECK(runtime_image.template has<TPixel>());
+          FARM_ASSERT(runtime_image.template has<TPixel>());
           if constexpr (std::is_same_v<TPixel, float>) {
-            FARM_CHECK(image.hasSameData(ref_image));
+            FARM_ASSERT(image.hasSameData(ref_image));
           }
         },
         runtime_image);
@@ -260,9 +260,9 @@ TEST(IntensityImage, visitor) {
         [&](auto const& image) {
           using Timg = typename std::remove_reference<decltype(image)>::type;
           using TPixel = typename Timg::PixelType;
-          FARM_CHECK(runtime_image.template has<TPixel>());
+          FARM_ASSERT(runtime_image.template has<TPixel>());
           if constexpr (std::is_same_v<TPixel, Pixel3U8>) {
-            FARM_CHECK(image.hasSameData(ref_image));
+            FARM_ASSERT(image.hasSameData(ref_image));
           }
         },
         runtime_image);
@@ -278,18 +278,18 @@ TEST(IntensityImage, visitor) {
     IntensityImage<> runtime_image = ref_image;
     visitImage(
         farm_ng::Overload{
-            [&](ImageView<float> const& /*unused*/) { FARM_CHECK(false); },
+            [&](ImageView<float> const& /*unused*/) { FARM_ASSERT(false); },
             [&](ImageView<Pixel3U8> /*unused*/) {
               // Should execute here
             },
-            [&](auto const& /*unused*/) { FARM_CHECK(false); },
+            [&](auto const& /*unused*/) { FARM_ASSERT(false); },
         },
         runtime_image);
 
     visitImage(
         farm_ng::Overload{
-            [&](ImageView<float> /*unused*/) { FARM_CHECK(false); },
-            [&](ImageView<uint32_t> /*unused*/) { FARM_CHECK(false); },
+            [&](ImageView<float> /*unused*/) { FARM_ASSERT(false); },
+            [&](ImageView<uint32_t> /*unused*/) { FARM_ASSERT(false); },
             [&](auto const& /*unused*/) {
               // Should execute here
             },
@@ -313,8 +313,8 @@ TEST(IntensityImage, visitor) {
         farm_ng::Overload{
             [&](ImageView<float> /*unused*/) {  // Should execute here
             },
-            [&](ImageView<uint32_t> /*unused*/) { FARM_CHECK(false); },
-            [&](auto const& /*unused*/) { FARM_CHECK(false); },
+            [&](ImageView<uint32_t> /*unused*/) { FARM_ASSERT(false); },
+            [&](auto const& /*unused*/) { FARM_ASSERT(false); },
         },
         runtime_sub);
   }
@@ -333,8 +333,8 @@ TEST(IntensityImage, visitor) {
         farm_ng::Overload{
             [&](ImageView<float> /*unused*/) {  // Should execute here
             },
-            [&](ImageView<uint32_t> /*unused*/) { FARM_CHECK(false); },
-            [&](auto const& /*unused*/) { FARM_CHECK(false); },
+            [&](ImageView<uint32_t> /*unused*/) { FARM_ASSERT(false); },
+            [&](auto const& /*unused*/) { FARM_ASSERT(false); },
         },
         runtime_sub);
   }

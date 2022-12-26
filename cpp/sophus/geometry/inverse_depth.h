@@ -62,7 +62,7 @@ class InverseDepthPoint3 {
   static InverseDepthPoint3 fromEuclideanPoint3(
       Eigen::Matrix<T, 3, 1> const& p) {
     using std::abs;
-    FARM_CHECK_GE(abs(p.z()), sophus::kEpsilon<T>);
+    FARM_ASSERT_GE(abs(p.z()), sophus::kEpsilon<T>);
     return InverseDepthPoint3(p.x() / p.z(), p.y() / p.z(), 1.0 / p.z());
   }
 
@@ -76,7 +76,7 @@ class InverseDepthPoint3 {
   InverseDepthPoint3(
       Eigen::Matrix<T, 2, 1> const& proj_in_z1_plane, T const& one_by_z)
       : ab_and_psi_(proj_in_z1_plane[0], proj_in_z1_plane[1], one_by_z) {
-    FARM_CHECK_GE(ab_and_psi_.norm(), sophus::kEpsilon<T>);
+    FARM_ASSERT_GE(ab_and_psi_.norm(), sophus::kEpsilon<T>);
   }
 
   InverseDepthPoint3(T const& x_by_z, T const& y_by_z, T const& one_by_z)
@@ -104,7 +104,7 @@ class InverseDepthPoint3 {
   /// infinity.
   [[nodiscard]] Eigen::Matrix<T, 3, 1> toEuclideanPoint3() const {
     using std::abs;
-    FARM_CHECK_GE(abs(psi()), sophus::kEpsilon<T>);
+    FARM_ASSERT_GE(abs(psi()), sophus::kEpsilon<T>);
 
     return Eigen::Matrix<T, 3, 1>(
         ab_and_psi_.x() / psi(), ab_and_psi_.y() / psi(), T(1) / psi());

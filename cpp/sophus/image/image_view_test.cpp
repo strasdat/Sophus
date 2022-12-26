@@ -17,10 +17,10 @@ using namespace sophus;
 
 TEST(ImageView, empty) {
   ImageView<float> view;
-  FARM_CHECK(view.isEmpty());
-  FARM_CHECK_EQ(view.imageSize(), ImageSize(0, 0));
-  FARM_CHECK_EQ(view.shape().pitchBytes(), 0u);
-  FARM_CHECK(view.ptr() == nullptr);
+  FARM_ASSERT(view.isEmpty());
+  FARM_ASSERT_EQ(view.imageSize(), ImageSize(0, 0));
+  FARM_ASSERT_EQ(view.shape().pitchBytes(), 0u);
+  FARM_ASSERT(view.ptr() == nullptr);
 }
 
 TEST(ImageView, create_and_access) {
@@ -35,28 +35,28 @@ TEST(ImageView, create_and_access) {
   {
     ImageSize image_size(3, 2);
     ImageView<uint16_t> view(image_size, data_u16.data());
-    FARM_CHECK_EQ(image_size, view.imageSize());
-    FARM_CHECK_EQ(
+    FARM_ASSERT_EQ(image_size, view.imageSize());
+    FARM_ASSERT_EQ(
         image_size.width * sizeof(uint16_t), view.shape().pitchBytes());
 
-    FARM_CHECK(!view.rowInBounds(-1));
-    FARM_CHECK(view.rowInBounds(0));
-    FARM_CHECK(view.rowInBounds(1));
-    FARM_CHECK(!view.rowInBounds(2));
+    FARM_ASSERT(!view.rowInBounds(-1));
+    FARM_ASSERT(view.rowInBounds(0));
+    FARM_ASSERT(view.rowInBounds(1));
+    FARM_ASSERT(!view.rowInBounds(2));
 
-    FARM_CHECK_EQ(view.checked(0, 0), 0);
-    FARM_CHECK_EQ(view.checked(0, 1), 10);
-    FARM_CHECK_EQ(view.checked(2, 0), 2);
+    FARM_ASSERT_EQ(view.checked(0, 0), 0);
+    FARM_ASSERT_EQ(view.checked(0, 1), 10);
+    FARM_ASSERT_EQ(view.checked(2, 0), 2);
 
-    FARM_CHECK_EQ(size_t(view.ptr()), size_t(data_u16.data()));
+    FARM_ASSERT_EQ(size_t(view.ptr()), size_t(data_u16.data()));
 
     ImageSize col_view_size(1, 2);
     ImageView<uint16_t> col1 = view.subview({1, 0}, col_view_size);
-    FARM_CHECK_EQ(view.shape().pitchBytes(), col1.shape().pitchBytes());
+    FARM_ASSERT_EQ(view.shape().pitchBytes(), col1.shape().pitchBytes());
 
-    FARM_CHECK_EQ(col1.checked(0, 0), 1);
-    FARM_CHECK_EQ(col1.checked(0, 1), 11);
-    FARM_CHECK_EQ(col_view_size, col1.imageSize());
+    FARM_ASSERT_EQ(col1.checked(0, 0), 1);
+    FARM_ASSERT_EQ(col1.checked(0, 1), 11);
+    FARM_ASSERT_EQ(col_view_size, col1.imageSize());
   }
 
   ImageSize image_size(1, 2);
@@ -66,23 +66,23 @@ TEST(ImageView, create_and_access) {
       ImageShape::makeFromSizeAndPitch<Pixel2U16>(
           image_size, image_size.width * sizeof(Pixel2U16) + sizeof(uint16_t)),
       (Pixel2U16*)data_u16.data());
-  FARM_CHECK_EQ(view.imageSize(), image_size);
-  FARM_CHECK_EQ(view.shape().pitchBytes(), 6);
+  FARM_ASSERT_EQ(view.imageSize(), image_size);
+  FARM_ASSERT_EQ(view.shape().pitchBytes(), 6);
 
-  FARM_CHECK_EQ(view.checked(0, 0), Pixel2U16(0, 1));
-  FARM_CHECK_EQ(view.checked(0, 1), Pixel2U16(10, 11));
+  FARM_ASSERT_EQ(view.checked(0, 0), Pixel2U16(0, 1));
+  FARM_ASSERT_EQ(view.checked(0, 1), Pixel2U16(10, 11));
 }
 
 TEST(MutImageView, empty) {
   MutImageView<float> mut_view;
-  FARM_CHECK(mut_view.isEmpty());
-  FARM_CHECK_EQ(mut_view.imageSize(), ImageSize(0, 0));
-  FARM_CHECK_EQ(mut_view.shape().pitchBytes(), 0u);
-  FARM_CHECK(mut_view.ptrMut() == nullptr);
+  FARM_ASSERT(mut_view.isEmpty());
+  FARM_ASSERT_EQ(mut_view.imageSize(), ImageSize(0, 0));
+  FARM_ASSERT_EQ(mut_view.shape().pitchBytes(), 0u);
+  FARM_ASSERT(mut_view.ptrMut() == nullptr);
 
   MutImageView<float> mut_view2;
   mut_view.copyDataFrom(mut_view2);
-  FARM_CHECK(mut_view2.isEmpty());
+  FARM_ASSERT(mut_view2.isEmpty());
 }
 
 TEST(MutImageView, create_and_access) {
@@ -105,27 +105,27 @@ TEST(MutImageView, create_and_access) {
   MutImageView<uint16_t> mut_view(image_size, mut_data_u16.data());
   mut_view.copyDataFrom(view);
 
-  FARM_CHECK_IMAGE_EQ(view, mut_view);
+  FARM_ASSERT_IMAGE_EQ(view, mut_view);
 
   mut_view.fill(111);
   for (int v = 0; v < image_size.height; ++v) {
     for (int u = 0; u < image_size.width; ++u) {
-      FARM_CHECK_EQ(mut_view.checked(u, v), 111);
+      FARM_ASSERT_EQ(mut_view.checked(u, v), 111);
     }
   }
 
   ImageSize col_view_size(1, 2);
   MutImageView<uint16_t> mut_col1 = mut_view.mutSubview({1, 0}, col_view_size);
-  FARM_CHECK_EQ(mut_view.shape().pitchBytes(), mut_col1.shape().pitchBytes());
+  FARM_ASSERT_EQ(mut_view.shape().pitchBytes(), mut_col1.shape().pitchBytes());
 
   mut_col1.fill(222);
 
   for (int v = 0; v < image_size.height; ++v) {
     for (int u = 0; u < image_size.width; ++u) {
       if (u == 1) {
-        FARM_CHECK_EQ(mut_view.checked(u, v), 222);
+        FARM_ASSERT_EQ(mut_view.checked(u, v), 222);
       } else {
-        FARM_CHECK_EQ(mut_view.checked(u, v), 111);
+        FARM_ASSERT_EQ(mut_view.checked(u, v), 111);
       }
     }
   }
@@ -137,9 +137,9 @@ TEST(MutImageView, create_and_access) {
             image_size,
             image_size.width * sizeof(Pixel2U16) + sizeof(uint16_t)),
         (Pixel2U16*)data_u16.data());
-    FARM_CHECK_EQ(mut_view.imageSize(), image_size);
-    FARM_CHECK_EQ(mut_view.shape().pitchBytes(), 6);
-    FARM_CHECK_EQ(mut_view.checked(0, 0), Pixel2U16(0, 1));
-    FARM_CHECK_EQ(mut_view.checked(0, 1), Pixel2U16(10, 11));
+    FARM_ASSERT_EQ(mut_view.imageSize(), image_size);
+    FARM_ASSERT_EQ(mut_view.shape().pitchBytes(), 6);
+    FARM_ASSERT_EQ(mut_view.checked(0, 0), Pixel2U16(0, 1));
+    FARM_ASSERT_EQ(mut_view.checked(0, 1), Pixel2U16(10, 11));
   }
 }

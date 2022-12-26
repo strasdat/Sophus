@@ -189,7 +189,7 @@ class So2Base {
     using std::hypot;
     // Avoid under/overflows for higher precision
     Scalar length = hypot(unitComplex().x(), unitComplex().y());
-    FARM_CHECK(
+    FARM_ASSERT(
         length >= kEpsilon<Scalar>,
         "Complex number should not be close to zero!");
     mutUnitComplex() /= length;
@@ -428,8 +428,8 @@ class So2 : public So2Base<So2<TScalar, kOptions>> {
       : unit_complex_(
             Scalar(0.5) * (mat_r(0, 0) + mat_r(1, 1)),
             Scalar(0.5) * (mat_r(1, 0) - mat_r(0, 1))) {
-    FARM_CHECK(isOrthogonal(mat_r), "R is not orthogonal:\n {}", mat_r);
-    FARM_CHECK(
+    FARM_ASSERT(isOrthogonal(mat_r), "R is not orthogonal:\n {}", mat_r);
+    FARM_ASSERT(
         mat_r.determinant() > Scalar(0),
         "det(R) is not positive: {}",
         mat_r.determinant());

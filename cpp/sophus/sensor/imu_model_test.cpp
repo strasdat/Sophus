@@ -39,12 +39,12 @@ TEST(imu_model, smoke) {
 
   ImuModel imu_model = ImuModel(gyro_model, accel_model);
 
-  FARM_CHECK_EQ(
+  FARM_ASSERT_EQ(
       gyro_model.gyroMeasurement(imu_vel), imu_model.gyroMeasurement(imu_vel));
-  FARM_CHECK_EQ(
+  FARM_ASSERT_EQ(
       accel_model.acceleroMeasurement(imu_acc),
       imu_model.acceleroMeasurement(imu_acc));
 
-  FARM_CHECK_NEAR(vel_meas, imu_model.gyroMeasurement(imu_vel), tolerance);
-  FARM_CHECK_NEAR(acc_meas, imu_model.acceleroMeasurement(imu_acc), tolerance);
+  FARM_ASSERT_NEAR(vel_meas, imu_model.gyroMeasurement(imu_vel), tolerance);
+  FARM_ASSERT_NEAR(acc_meas, imu_model.acceleroMeasurement(imu_acc), tolerance);
 }

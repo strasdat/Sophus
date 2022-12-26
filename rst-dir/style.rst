@@ -145,7 +145,7 @@ For entities with non-trivial type invariant, we use the class keyword::
       // Precondition: v must be of unit length.
       static UnitVector3 fromUnitVector(const Eigen::Matrix<T, 3, 1>& v) {
         using std::abs;
-        FARM_CHECK_LE((v.squaredNorm() - T(1.0)),
+        FARM_ASSERT_LE((v.squaredNorm() - T(1.0)),
                          Sophus::kEpsilon<TT>);
         UnitVector3 unit_vector;
         unit_vector.vector_ = v;
@@ -226,7 +226,7 @@ in values through CLI11::
 
     std::string example_input = "ambient";
     VizMatrialType material;
-    FARM_CHECK(trySetFromString(material, example_input));
+    FARM_ASSERT(trySetFromString(material, example_input));
 
 
 Constants

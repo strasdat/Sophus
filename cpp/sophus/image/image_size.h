@@ -70,7 +70,7 @@ class ImageShape {
   template <class PixelType>
   [[nodiscard]] static ImageShape makeFromSizeAndPitch(
       ImageSize image_size, size_t pitch_bytes) {
-    FARM_CHECK_GE(pitch_bytes, image_size.width * sizeof(PixelType));
+    FARM_ASSERT_GE(pitch_bytes, image_size.width * sizeof(PixelType));
     ImageShape shape;
     shape.image_size_ = image_size;
     shape.pitch_bytes_ = pitch_bytes;

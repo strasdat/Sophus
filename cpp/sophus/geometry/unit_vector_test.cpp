@@ -29,14 +29,14 @@ TEST(unitvec, copy3) {
   auto a = UnitVector3<double>::fromUnitVector({1.0, 0.0, 0.0});
   auto b = UnitVector3<double>::fromUnitVector({0.0, 1.0, 0.0});
   UnitVector3<double> c = a;
-  FARM_CHECK_NEAR(a.vector(), c.vector(), kEpsilonF64);
+  FARM_ASSERT_NEAR(a.vector(), c.vector(), kEpsilonF64);
 
   c = UnitVector3<double>(b);
-  FARM_CHECK_NEAR(b.vector(), c.vector(), kEpsilonF64);
+  FARM_ASSERT_NEAR(b.vector(), c.vector(), kEpsilonF64);
 
   auto d = (a = b);
-  FARM_CHECK_NEAR(d.vector(), a.vector(), kEpsilonF64);
-  FARM_CHECK_NEAR(d.vector(), b.vector(), kEpsilonF64);
+  FARM_ASSERT_NEAR(d.vector(), a.vector(), kEpsilonF64);
+  FARM_ASSERT_NEAR(d.vector(), b.vector(), kEpsilonF64);
 }
 
 TEST(unitvec, testRotThroughPoints) {
@@ -61,17 +61,17 @@ TEST(unitvec, testRotThroughPoints) {
 
       // Check that the resulting rotation can take ``from`` into a vector
       // collinear with ``to``
-      FARM_CHECK_NEAR(
+      FARM_ASSERT_NEAR(
           point_to.cross(to_rot_from * point_from).norm(), 0.0, kEpsilonF64);
-      FARM_CHECK_NEAR(
+      FARM_ASSERT_NEAR(
           point_to.cross(to_rot_from2 * point_from).norm(), 0.0, kEpsilonF64);
 
       // And the reverse as a sanity check
-      FARM_CHECK_NEAR(
+      FARM_ASSERT_NEAR(
           point_from.cross(to_rot_from.inverse() * point_to).norm(),
           0.0,
           kEpsilonF64);
-      FARM_CHECK_NEAR(
+      FARM_ASSERT_NEAR(
           point_from.cross(to_rot_from2.inverse() * point_to).norm(),
           0.0,
           kEpsilonF64);

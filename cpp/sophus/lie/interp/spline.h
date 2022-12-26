@@ -35,16 +35,16 @@ class SplineBasisFunction {
   }
 
   static SOPHUS_FUNC Eigen::Vector3<TScalar> b(TScalar const& u) {
-    // FARM_CHECK(u >= TScalar(0), "but %", u);
-    // FARM_CHECK(u < TScalar(1), "but %", u);
+    // FARM_ASSERT(u >= TScalar(0), "but %", u);
+    // FARM_ASSERT(u < TScalar(1), "but %", u);
     TScalar u_square(u * u);
     return c() * Eigen::Vector4<TScalar>(TScalar(1), u, u_square, u * u_square);
   }
 
   static SOPHUS_FUNC Eigen::Vector3<TScalar> dtB(
       TScalar const& u, TScalar const& delta_t) {
-    // FARM_CHECK(u >= TScalar(0), "but %", u);
-    // FARM_CHECK(u < TScalar(1), "but %", u);
+    // FARM_ASSERT(u >= TScalar(0), "but %", u);
+    // FARM_ASSERT(u < TScalar(1), "but %", u);
     return (TScalar(1) / delta_t) * c() *
            Eigen::Vector4<TScalar>(
                TScalar(0), TScalar(1), TScalar(2) * u, TScalar(3) * u * u);
@@ -52,8 +52,8 @@ class SplineBasisFunction {
 
   static SOPHUS_FUNC Eigen::Vector3<TScalar> dt2B(
       TScalar const& u, TScalar const& delta_t) {
-    // FARM_CHECK(u >= TScalar(0), "but %", u);
-    // FARM_CHECK(u < TScalar(1), "but %", u);
+    // FARM_ASSERT(u >= TScalar(0), "but %", u);
+    // FARM_ASSERT(u < TScalar(1), "but %", u);
     return (TScalar(1) / (delta_t * delta_t)) * c() *
            Eigen::Vector4<TScalar>(
                TScalar(0), TScalar(0), TScalar(2), TScalar(6) * u);
@@ -227,7 +227,7 @@ struct BasisSplineSegment {
                 (worldFromFoo1().inverse() * worldFromFoo1()).log()),
             u);
     }
-    FARM_CHECK(false, "logic error");
+    FARM_ASSERT(false, "logic error");
   }
 
   Transformation dtParentFromSpline(double u, double delta_t) {
@@ -260,7 +260,7 @@ struct BasisSplineSegment {
             u,
             delta_t);
     }
-    FARM_CHECK(false, "logic error");
+    FARM_ASSERT(false, "logic error");
   }
 
   Transformation dt2ParentFromSpline(double u, double delta_t) {
@@ -293,7 +293,7 @@ struct BasisSplineSegment {
             u,
             delta_t);
     }
-    FARM_CHECK(false, "logic error");
+    FARM_ASSERT(false, "logic error");
   }
 
  private:
@@ -316,15 +316,15 @@ class BasisSplineImpl {
       std::vector<LieGroup> const& parent_ts_control_point, double delta_t)
       : parent_Ts_control_point_(parent_ts_control_point),
         delta_transform_(delta_t) {
-    FARM_CHECK(
+    FARM_ASSERT(
         parent_Ts_control_point_.size() >= 2u,
         ", but {}",
         parent_Ts_control_point_.size());
   }
 
   [[nodiscard]] LieGroup parentFromSpline(int i, double u) const {
-    FARM_CHECK(i >= 0, "i = {}", i);
-    FARM_CHECK(
+    FARM_ASSERT(i >= 0, "i = {}", i);
+    FARM_ASSERT(
         i < this->getNumSegments(),
         "i = {};  this->getNumSegments() = {};  "
         "parent_Ts_control_point_.size() = {}",
@@ -352,8 +352,8 @@ class BasisSplineImpl {
   }
 
   [[nodiscard]] Transformation dtParentFromSpline(int i, double u) const {
-    FARM_CHECK(i >= 0, "i = {}", i);
-    FARM_CHECK(
+    FARM_ASSERT(i >= 0, "i = {}", i);
+    FARM_ASSERT(
         i < this->getNumSegments(),
         "i = {};  this->getNumSegments() = {};  "
         "parent_Ts_control_point_.size() = {}",
@@ -381,8 +381,8 @@ class BasisSplineImpl {
   }
 
   [[nodiscard]] Transformation dt2ParentFromSpline(int i, double u) const {
-    FARM_CHECK(i >= 0, "i = {}", i);
-    FARM_CHECK(
+    FARM_ASSERT(i >= 0, "i = {}", i);
+    FARM_ASSERT(
         i < this->getNumSegments(),
         "i = {};  this->getNumSegments() = {};  "
         "parent_Ts_control_point_.size() = {}",
@@ -482,8 +482,8 @@ class BasisSpline {
   [[nodiscard]] double deltaT() const { return impl_.deltaT(); }
 
   [[nodiscard]] IndexAndU indexAndU(double t) const {
-    FARM_CHECK(t >= t0_, "{} vs. {}", t, t0_);
-    FARM_CHECK(t <= this->tmax(), "{} vs. {}", t, this->tmax());
+    FARM_ASSERT(t >= t0_, "{} vs. {}", t, t0_);
+    FARM_ASSERT(t <= this->tmax(), "{} vs. {}", t, this->tmax());
 
     double s = this->s(t);
     double i = NAN;

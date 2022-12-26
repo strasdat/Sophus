@@ -76,7 +76,7 @@ class MutImage : public MutImageView<TPixel> {
   /// If shape is not empty, memory allocation will happen.
   explicit MutImage(ImageShape shape) : MutImageView<TPixel>(shape, nullptr) {
     if (shape.sizeBytes() != 0u) {
-      FARM_CHECK_EQ(shape.sizeBytes() % sizeof(TPixel), 0);
+      FARM_ASSERT_EQ(shape.sizeBytes() % sizeof(TPixel), 0);
       this->shared_.reset(
           (uint8_t*)(TAllocator<TPixel>().allocate(
               shape.sizeBytes() / sizeof(TPixel))),
@@ -176,7 +176,7 @@ class MutImage : public MutImageView<TPixel> {
  protected:
   /// Leaks memory and returns deleter.
   Deleter leakAndReturnDeleter() {
-    FARM_CHECK(!this->isEmpty());
+    FARM_ASSERT(!this->isEmpty());
     Deleter& del = *std::get_deleter<Deleter>(shared_);
     Deleter del_copy = del;
     del.image_deleter.reset();

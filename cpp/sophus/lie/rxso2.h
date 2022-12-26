@@ -367,10 +367,10 @@ class RxSo2Base {
   ///
   /// Precondition: ``z`` must not be close to either zero or infinity.
   SOPHUS_FUNC void setComplex(Eigen::Vector2<Scalar> const& z) {
-    FARM_CHECK(
+    FARM_ASSERT(
         z.squaredNorm() > kEpsilon<Scalar> * kEpsilon<Scalar>,
         "Scale factor must be greater-equal epsilon.");
-    FARM_CHECK(
+    FARM_ASSERT(
         z.squaredNorm() < Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>),
         "Inverse scale factor must be greate-equal epsilon.");
     static_cast<TDerived*>(this)->mutComplex() = z;
@@ -424,7 +424,7 @@ class RxSo2Base {
   ///
   SOPHUS_FUNC void setScaledRotationMatrix(
       Transformation const& mat_scaled_rot) {
-    FARM_CHECK(
+    FARM_ASSERT(
         isScaledOrthogonalAndPositive(mat_scaled_rot),
         "mat_scaled_rot must be scaled orthogonal:\n {}",
         mat_scaled_rot);
@@ -525,12 +525,12 @@ class RxSo2 : public RxSo2Base<RxSo2<TScalar, kOptions>> {
   /// Precondition: complex number must not be close to either zero or infinity
   ///
   SOPHUS_FUNC explicit RxSo2(Eigen::Vector2<Scalar> const& z) : complex_(z) {
-    FARM_CHECK(
+    FARM_ASSERT(
         complex_.squaredNorm() >= kEpsilon<Scalar> * kEpsilon<Scalar>,
         "Scale factor must be greater-equal epsilon: {} vs {}",
         complex_.squaredNorm(),
         kEpsilon<Scalar> * kEpsilon<Scalar>);
-    FARM_CHECK(
+    FARM_ASSERT(
         complex_.squaredNorm() <=
             Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>),
         "Inverse scale factor must be greater-equal epsilon: % vs %",
@@ -639,7 +639,7 @@ class RxSo2 : public RxSo2Base<RxSo2<TScalar, kOptions>> {
   /// Precondition: ``i`` must be 0, or 1.
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
-    FARM_CHECK(i >= 0 && i <= 1, "i should be 0 or 1.");
+    FARM_ASSERT(i >= 0 && i <= 1, "i should be 0 or 1.");
     Tangent e;
     e.setZero();
     e[i] = Scalar(1);

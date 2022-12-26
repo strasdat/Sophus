@@ -733,7 +733,7 @@ class Sim3 : public Sim3Base<Sim3<TScalar, kOptions>> {
   /// Precondition: ``i`` must be in [0, 6].
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
-    FARM_CHECK(i >= 0 || i <= 6, "i should be in range [0,6].");
+    FARM_ASSERT(i >= 0 || i <= 6, "i should be in range [0,6].");
     Tangent e;
     e.setZero();
     e[i] = Scalar(1);
