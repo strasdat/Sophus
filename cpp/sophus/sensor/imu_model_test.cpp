@@ -8,8 +8,6 @@
 
 #include "sophus/sensor/imu_model.h"
 
-#include <farm_ng/core/logging/eigen.h>
-#include <farm_ng/core/logging/logger.h>
 #include <gtest/gtest.h>
 
 using namespace sophus;
@@ -39,12 +37,13 @@ TEST(imu_model, smoke) {
 
   ImuModel imu_model = ImuModel(gyro_model, accel_model);
 
-  FARM_ASSERT_EQ(
+  SOPHUS_ASSERT_EQ(
       gyro_model.gyroMeasurement(imu_vel), imu_model.gyroMeasurement(imu_vel));
-  FARM_ASSERT_EQ(
+  SOPHUS_ASSERT_EQ(
       accel_model.acceleroMeasurement(imu_acc),
       imu_model.acceleroMeasurement(imu_acc));
 
-  FARM_ASSERT_NEAR(vel_meas, imu_model.gyroMeasurement(imu_vel), tolerance);
-  FARM_ASSERT_NEAR(acc_meas, imu_model.acceleroMeasurement(imu_acc), tolerance);
+  SOPHUS_ASSERT_NEAR(vel_meas, imu_model.gyroMeasurement(imu_vel), tolerance);
+  SOPHUS_ASSERT_NEAR(
+      acc_meas, imu_model.acceleroMeasurement(imu_acc), tolerance);
 }

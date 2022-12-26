@@ -13,8 +13,6 @@
 #include "sophus/lie/se3.h"
 #include "sophus/sensor/orthographic.h"
 
-#include <farm_ng/core/logging/eigen.h>
-#include <farm_ng/core/logging/logger.h>
 #include <gtest/gtest.h>
 
 using namespace sophus;
@@ -38,7 +36,7 @@ CameraModel openCvCameraModel() {
 
 // Eigen::Vector2d findImagePoint(
 //     cv::Mat image, int near_x, int near_y, int window) {
-//   FARM_ASSERT_EQ(image.type(), CV_32FC1);
+//   SOPHUS_ASSERT_EQ(image.type(), CV_32FC1);
 //   double x_res = 0;
 //   double y_res = 0;
 //   double total = 0;
@@ -81,7 +79,7 @@ TEST(camera_model, projection_round_trip) {
       for (double d : {0.1, 0.5, 1.0, 1.1, 3.0, 15.0}) {
         Eigen::Vector3d point_in_camera =
             camera_model.camUnproj(pixel_image, d);
-        FARM_ASSERT_NEAR(d, point_in_camera.z(), kEps);
+        SOPHUS_ASSERT_NEAR(d, point_in_camera.z(), kEps);
 
         Eigen::Vector2d pixel_image2 = camera_model.camProj(point_in_camera);
 
@@ -105,11 +103,11 @@ TEST(camera_model, projection_round_trip) {
         for (int j = 0; j < 6; ++j) {
           for (int i = 0; i < 2; ++i) {
             if (std::abs(numeric_dx(i, j)) < 1e-3) {
-              FARM_ASSERT_NEAR(dx, numeric_dx, 1e-2);
+              SOPHUS_ASSERT_NEAR(dx, numeric_dx, 1e-2);
             } else {
               double ratio = dx(i, j) / numeric_dx(i, j);
 
-              FARM_ASSERT_NEAR(
+              SOPHUS_ASSERT_NEAR(
                   ratio, 1.0, 1e-2, "{} vs. {}", dx(i, j), numeric_dx(i, j));
             }
           }
@@ -119,11 +117,11 @@ TEST(camera_model, projection_round_trip) {
       Eigen::Vector2d ab_in_z1plane = camera_model.undistort(pixel_image);
       Eigen::Vector2d ab_in_z1plane2 =
           interpolate(unwarp_table, pixel_image.cast<float>()).cast<double>();
-      FARM_ASSERT_NEAR(ab_in_z1plane, ab_in_z1plane2, kEps);
+      SOPHUS_ASSERT_NEAR(ab_in_z1plane, ab_in_z1plane2, kEps);
 
       Eigen::Vector2d pixel_in_image = camera_model.distort(ab_in_z1plane);
 
-      FARM_ASSERT_NEAR(pixel_image, pixel_in_image, kEps);
+      SOPHUS_ASSERT_NEAR(pixel_image, pixel_in_image, kEps);
 
       Eigen::Matrix2d dx = camera_model.dxDistort(ab_in_z1plane);
 
@@ -139,7 +137,7 @@ TEST(camera_model, projection_round_trip) {
       //     ab_in_z1plane,
       //     dx);
 
-      FARM_ASSERT_NEAR(dx, dx_num, kEps);
+      SOPHUS_ASSERT_NEAR(dx, dx_num, kEps);
     }
   }
 
@@ -196,11 +194,11 @@ TEST(camera_model, projection_round_trip) {
           for (int j = 0; j < 6; ++j) {
             for (int i = 0; i < 2; ++i) {
               if (std::abs(num_dx(i, j)) < 1e-3) {
-                FARM_ASSERT_NEAR(dx, num_dx, 1e-2);
+                SOPHUS_ASSERT_NEAR(dx, num_dx, 1e-2);
               } else {
                 double ratio = dx(i, j) / num_dx(i, j);
 
-                FARM_ASSERT_NEAR(
+                SOPHUS_ASSERT_NEAR(
                     ratio, 1.0, 1e-2, "{} vs. {}", dx(i, j), num_dx(i, j));
               }
             }
@@ -222,11 +220,11 @@ TEST(camera_model, projection_round_trip) {
             for (int j = 0; j < 3; ++j) {
               for (int i = 0; i < 2; ++i) {
                 if (std::abs(num_dx(i, j)) < 1e-3) {
-                  FARM_ASSERT_NEAR(dx, num_dx, 1e-2);
+                  SOPHUS_ASSERT_NEAR(dx, num_dx, 1e-2);
                 } else {
                   double ratio = dx(i, j) / num_dx(i, j);
 
-                  FARM_ASSERT_NEAR(
+                  SOPHUS_ASSERT_NEAR(
                       ratio, 1.0, 1e-2, "{} vs. {}", dx(i, j), num_dx(i, j));
                 }
               }
@@ -292,12 +290,12 @@ TEST(camera_model, projection_round_trip) {
 //     std::vector<cv::Mat> img_pyr;
 //     cv::buildPyramid(img, img_pyr, 2);
 
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 0), 0.0);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 1), 0.0625);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 2), 0.375);  // pixel 2 at level 1
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 3), 0.0625);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 4), 0.0);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 5), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 0), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 1), 0.0625);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 2), 0.375);  // pixel 2 at level
+//     1 SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 3), 0.0625);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 4), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 5), 0.0);
 //   }
 //   {
 //     // Proof: pixel 5 on level 0 maps to pixel 2.5 on level 1.
@@ -307,12 +305,12 @@ TEST(camera_model, projection_round_trip) {
 //     std::vector<cv::Mat> img_pyr;
 //     cv::buildPyramid(img, img_pyr, 2);
 
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 0), 0.0);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 1), 0.0);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 2), 0.25);  // pixel 2 at level 1
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 3), 0.25);  // pixel 3 at level 1
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 4), 0.0);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 5), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 0), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 1), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 2), 0.25);  // pixel 2 at level
+//     1 SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 3), 0.25);  // pixel 3 at
+//     level 1 SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 4), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 5), 0.0);
 //   }
 //   {
 //     // Proof: pixel 6 on level 0 maps to pixel 3 on level 1.
@@ -322,12 +320,12 @@ TEST(camera_model, projection_round_trip) {
 //     std::vector<cv::Mat> img_pyr;
 //     cv::buildPyramid(img, img_pyr, 2);
 
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 0), 0.0);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 1), 0.0);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 2), 0.0625);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 3), 0.375);  // pixel 3 at level 1
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 4), 0.0625);
-//     FARM_ASSERT_EQ(img_pyr[1].at<float>(0, 5), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 0), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 1), 0.0);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 2), 0.0625);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 3), 0.375);  // pixel 3 at level
+//     1 SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 4), 0.0625);
+//     SOPHUS_ASSERT_EQ(img_pyr[1].at<float>(0, 5), 0.0);
 //   }
 
 //   std::vector<CameraModel> camera_models;
@@ -349,7 +347,7 @@ TEST(camera_model, projection_round_trip) {
 //     std::vector<Eigen::Vector2d> pixels_lvl0 = {{0, 0}, {4, 0}, {8, 4}};
 //     std::vector<Eigen::Vector2d> pixels_lvl1 = {{0, 0}, {2, 0}, {4, 2}};
 
-//     FARM_ASSERT_EQ(pixels_lvl0.size(), pixels_lvl1.size());
+//     SOPHUS_ASSERT_EQ(pixels_lvl0.size(), pixels_lvl1.size());
 
 //     for (size_t i = 0; i < pixels_lvl0.size(); ++i) {
 //       Eigen::Vector3d point_image =
@@ -357,10 +355,10 @@ TEST(camera_model, projection_round_trip) {
 //       point_image2 =
 //           camera_model.subsampleDown().camUnproj(pixels_lvl1[i], 1.0);
 
-//       FARM_ASSERT_EQ(
+//       SOPHUS_ASSERT_EQ(
 //           camera_model.imageSize().width,
 //           camera_model.subsampleDown().imageSize().width * 2);
-//       FARM_ASSERT_EQ(
+//       SOPHUS_ASSERT_EQ(
 //           camera_model.imageSize().height,
 //           camera_model.subsampleDown().imageSize().height * 2);
 //       for (int r = 0; r < 3; ++r) {
@@ -374,17 +372,17 @@ TEST(camera_model, scale_up_down_roundtrip) {
   CameraModel pinhole = CameraModel::createDefaultPinholeModel({640, 480});
 
   CameraModel pinhole_binned_down = pinhole.binDown();
-  FARM_ASSERT_EQ(pinhole_binned_down.imageSize(), ImageSize(320, 240));
+  SOPHUS_ASSERT_EQ(pinhole_binned_down.imageSize(), ImageSize(320, 240));
   CameraModel pinhole_binned_down_and_up = pinhole_binned_down.binUp();
-  FARM_ASSERT_EQ(pinhole.params(), pinhole_binned_down_and_up.params());
-  FARM_ASSERT_EQ(pinhole.imageSize(), pinhole_binned_down_and_up.imageSize());
+  SOPHUS_ASSERT_EQ(pinhole.params(), pinhole_binned_down_and_up.params());
+  SOPHUS_ASSERT_EQ(pinhole.imageSize(), pinhole_binned_down_and_up.imageSize());
 
   CameraModel pinhole_subsampled_down = pinhole.subsampleDown();
-  FARM_ASSERT_EQ(pinhole_subsampled_down.imageSize(), ImageSize(320, 240));
+  SOPHUS_ASSERT_EQ(pinhole_subsampled_down.imageSize(), ImageSize(320, 240));
   CameraModel pinhole_subsample_down_and_up =
       pinhole_subsampled_down.subsampleUp();
-  FARM_ASSERT_EQ(pinhole.params(), pinhole_subsample_down_and_up.params());
-  FARM_ASSERT_EQ(
+  SOPHUS_ASSERT_EQ(pinhole.params(), pinhole_subsample_down_and_up.params());
+  SOPHUS_ASSERT_EQ(
       pinhole.imageSize(), pinhole_subsample_down_and_up.imageSize());
 }
 

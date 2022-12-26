@@ -56,7 +56,7 @@ template <class TScalar>
 class SetElementAt<TScalar, TScalar> {
  public:
   static void impl(TScalar& s, TScalar value, int at) {
-    FARM_ASSERT(at == 0, "is {}", at);
+    SOPHUS_ASSERT(at == 0, "is {}", at);
     s = value;
   }
 };
@@ -66,7 +66,7 @@ class SetElementAt<Eigen::Vector<TScalar, kMatrixDim>, TScalar> {
  public:
   static void impl(
       Eigen::Vector<TScalar, kMatrixDim>& v, TScalar value, int at) {
-    FARM_ASSERT(at >= 0 && at < kMatrixDim, "is {}", at);
+    SOPHUS_ASSERT(at >= 0 && at < kMatrixDim, "is {}", at);
     v[at] = value;
   }
 };

@@ -8,7 +8,6 @@
 
 #include "sophus/linalg/proto/conv.h"
 
-#include <farm_ng/core/logging/logger.h>
 #include <gtest/gtest.h>
 
 using namespace farm_ng;

@@ -9,6 +9,7 @@ farm_ng_add_library(sophus_common
   INCLUDE_DIR ../../
   HEADERS
   common.h
+  enum.h
   types.h
 )
 

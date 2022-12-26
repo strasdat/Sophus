@@ -8,7 +8,6 @@
 
 #include "sophus/image/interpolation.h"
 
-#include <farm_ng/core/logging/logger.h>
 #include <gtest/gtest.h>
 
 using namespace sophus;
@@ -24,7 +23,7 @@ TEST(interpolation, unit) {
   for (float v = 0; v <= h - 1.f; v += 0.1) {
     for (float u = 0; u <= w - 1.f; u += 0.1) {
       float val = interpolate(img, Eigen::Vector2f(u, v));
-      FARM_ASSERT_EQ(val, 0.f);
+      SOPHUS_ASSERT_EQ(val, 0.f);
     }
   }
 
@@ -33,30 +32,30 @@ TEST(interpolation, unit) {
   img.uncheckedMut(u, v) = 0.5f;
 
   float val = interpolate(img, Eigen::Vector2f(0, 0));
-  FARM_ASSERT_EQ(val, 0.f);
+  SOPHUS_ASSERT_EQ(val, 0.f);
 
   val = interpolate(img, Eigen::Vector2f(1, 0));
-  FARM_ASSERT_EQ(val, 0.5f);
+  SOPHUS_ASSERT_EQ(val, 0.5f);
 
   val = interpolate(img, Eigen::Vector2f(0.25, 0));
-  FARM_ASSERT_EQ(val, 0.125f);
+  SOPHUS_ASSERT_EQ(val, 0.125f);
 
   val = interpolate(img, Eigen::Vector2f(0.5, 0));
-  FARM_ASSERT_EQ(val, 0.25f);
+  SOPHUS_ASSERT_EQ(val, 0.25f);
 
   val = interpolate(img, Eigen::Vector2f(0.75, 0));
-  FARM_ASSERT_EQ(val, 0.375f);
+  SOPHUS_ASSERT_EQ(val, 0.375f);
 
   u = 1;
   v = 1;
   img.uncheckedMut(u, v) = 1.f;
 
   val = interpolate(img, Eigen::Vector2f(0, 0));
-  FARM_ASSERT_EQ(val, 0.f);
+  SOPHUS_ASSERT_EQ(val, 0.f);
 
   val = interpolate(img, Eigen::Vector2f(1.0, 0.5));
-  FARM_ASSERT_EQ(val, 0.75f);
+  SOPHUS_ASSERT_EQ(val, 0.75f);
 
   val = interpolate(img, Eigen::Vector2f(0.5, 0.5));
-  FARM_ASSERT_EQ(val, 0.375f);
+  SOPHUS_ASSERT_EQ(val, 0.375f);
 }

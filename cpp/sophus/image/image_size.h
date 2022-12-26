@@ -8,8 +8,9 @@
 
 #pragma once
 
+#include "sophus/common/common.h"
+
 #include <Eigen/Dense>
-#include <farm_ng/core/logging/logger.h>
 
 #include <iostream>
 
@@ -70,7 +71,7 @@ class ImageShape {
   template <class PixelType>
   [[nodiscard]] static ImageShape makeFromSizeAndPitch(
       ImageSize image_size, size_t pitch_bytes) {
-    FARM_ASSERT_GE(pitch_bytes, image_size.width * sizeof(PixelType));
+    SOPHUS_ASSERT_GE(pitch_bytes, image_size.width * sizeof(PixelType));
     ImageShape shape;
     shape.image_size_ = image_size;
     shape.pitch_bytes_ = pitch_bytes;

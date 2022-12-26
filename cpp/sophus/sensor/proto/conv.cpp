@@ -13,7 +13,7 @@
 
 namespace sophus {
 
-farm_ng::Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
+Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
   auto get_params = [&proto]() -> Eigen::VectorXd {
     Eigen::VectorXd params(proto.params_size());
     for (int i = 0; i < params.rows(); ++i) {
@@ -41,8 +41,7 @@ proto::CameraModel toProto(CameraModel const& camera_model) {
   return proto;
 }
 
-farm_ng::Expected<std::vector<CameraModel>> fromProto(
-    proto::CameraModels const& proto) {
+Expected<std::vector<CameraModel>> fromProto(proto::CameraModels const& proto) {
   std::vector<CameraModel> models;
   for (int i = 0; i < proto.camera_models_size(); ++i) {
     FARM_TRY(CameraModel cam, fromProto(proto.camera_models(i)));

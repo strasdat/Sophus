@@ -16,8 +16,6 @@
 #include "sophus/lie/sim3.h"
 
 #include <Eigen/Dense>
-#include <farm_ng/core/logging/expected.h>
-#include <farm_ng/core/logging/logger.h>
 
 #include <optional>
 

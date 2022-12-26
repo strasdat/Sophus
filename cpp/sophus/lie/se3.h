@@ -445,8 +445,8 @@ class Se3Base {
   /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   ///-
   SOPHUS_FUNC void setRotationMatrix(Eigen::Matrix3<Scalar> const& mat_r) {
-    FARM_ASSERT(isOrthogonal(mat_r), "R is not orthogonal:\n {}", mat_r);
-    FARM_ASSERT(
+    SOPHUS_ASSERT(isOrthogonal(mat_r), "R is not orthogonal:\n {}", mat_r);
+    SOPHUS_ASSERT(
         mat_r.determinant() > Scalar(0),
         "det(R) is not positive: {}",
         mat_r.determinant());
@@ -569,7 +569,7 @@ class Se3 : public Se3Base<Se3<TScalar, kOptions>> {
   SOPHUS_FUNC explicit Se3(Eigen::Matrix4<Scalar> const& mat_t)
       : so3_(mat_t.template topLeftCorner<3, 3>()),
         translation_(mat_t.template block<3, 1>(0, 3)) {
-    FARM_ASSERT(
+    SOPHUS_ASSERT(
         (mat_t.row(3) - Eigen::Matrix<Scalar, 1, 4>(
                             Scalar(0), Scalar(0), Scalar(0), Scalar(1)))
                 .squaredNorm() < kEpsilon<Scalar>,
@@ -976,7 +976,7 @@ class Se3 : public Se3Base<Se3<TScalar, kOptions>> {
   /// Precondition: ``i`` must be in [0, 5].
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
-    FARM_ASSERT(i >= 0 && i <= 5, "i should be in range [0,5].");
+    SOPHUS_ASSERT(i >= 0 && i <= 5, "i should be in range [0,5].");
     Tangent e;
     e.setZero();
     e[i] = Scalar(1);

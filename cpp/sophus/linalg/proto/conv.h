@@ -9,7 +9,6 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <farm_ng/core/logging/expected.h>
 #include <sophus/linalg.pb.h>
 
 namespace sophus {

@@ -694,7 +694,7 @@ class Sim2 : public Sim2Base<Sim2<TScalar, kOptions>> {
   /// Precondition: ``i`` must be in [0, 3].
   ///
   SOPHUS_FUNC static Transformation generator(int i) {
-    FARM_ASSERT(i >= 0 || i <= 3, "i should be in range [0,3].");
+    SOPHUS_ASSERT(i >= 0 || i <= 3, "i should be in range [0,3].");
     Tangent e;
     e.setZero();
     e[i] = Scalar(1);

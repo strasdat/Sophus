@@ -10,7 +10,6 @@
 
 #include "sophus/lie/se3.h"
 
-#include <farm_ng/core/logging/eigen.h>
 #include <gtest/gtest.h>
 
 using namespace sophus;
@@ -20,6 +19,6 @@ TEST(inverse_depth, integrations) {
     auto inv_depth_point = InverseDepthPoint3F64::fromEuclideanPoint3(point);
     Eigen::Vector3d point2 = inv_depth_point.toEuclideanPoint3();
 
-    FARM_ASSERT_NEAR(point, point2, kEpsilonF64);
+    SOPHUS_ASSERT_NEAR(point, point2, kEpsilonF64);
   }
 }

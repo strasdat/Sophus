@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream& os, RuntimePixelType const& type) {
       break;
     }
   }
-  os << FARM_FORMAT(
+  os << SOPHUS_FORMAT(
       "{}{}{}",
       type.num_channels,
       type_char,

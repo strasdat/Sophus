@@ -8,12 +8,8 @@
 
 #pragma once
 
-#include "sophus/image.pb.h"
-#include "sophus/image/image_size.h"
+#include "sophus/common/common.h"
 
-namespace sophus {
+#include <farm_ng/core/enum/enum.h>
 
-sophus::ImageSize fromProto(proto::ImageSize const& proto);
-proto::ImageSize toProto(sophus::ImageSize const& image_size);
-
-}  // namespace sophus
+#define SOPHUS_ENUM(...) FARM_ENUM(__VA_ARGS__)

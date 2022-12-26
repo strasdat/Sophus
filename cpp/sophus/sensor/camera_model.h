@@ -9,6 +9,7 @@
 #pragma once
 
 #include "sophus/common/common.h"
+#include "sophus/common/enum.h"
 #include "sophus/geometry/point_transform.h"
 #include "sophus/geometry/projection.h"
 #include "sophus/image/image.h"
@@ -21,8 +22,6 @@
 #include "sophus/sensor/camera_projection/projection_z1.h"
 
 #include <Eigen/Dense>
-#include <farm_ng/core/enum/enum.h>
-#include <farm_ng/core/logging/logger.h>
 
 #include <numeric>
 #include <variant>
@@ -303,7 +302,7 @@ class CameraModelT {
 };
 
 /// Camera model projection type.
-FARM_ENUM(
+SOPHUS_ENUM(
     CameraDistortionType,
     (pinhole, brown_conrady, kannala_brandt_k3, orthographic));
 

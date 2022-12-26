@@ -31,7 +31,7 @@ TEST(inverse_depth, integrations) {
             inv_dept_point.projInZ1Plane().x(),
             inv_dept_point.projInZ1Plane().y(),
             inv_dept_point.psi()));
-    FARM_ASSERT_NEAR(dx, num_dx, kEpsilonF64);
+    SOPHUS_ASSERT_NEAR(dx, num_dx, kEpsilonF64);
 
     {
       Eigen::Vector3d point = inv_dept_point.toEuclideanPoint3();
@@ -40,7 +40,7 @@ TEST(inverse_depth, integrations) {
       Eigen::Matrix<double, 2, 3> const num_dx =
           vectorFieldNumDiff<double, 2, 3>(
               [](Eigen::Vector3d const& x) { return proj(x); }, point);
-      FARM_ASSERT_NEAR(dx, num_dx, kEpsilonSqrtF64);
+      SOPHUS_ASSERT_NEAR(dx, num_dx, kEpsilonSqrtF64);
     }
   }
 
@@ -55,7 +55,7 @@ TEST(inverse_depth, integrations) {
           return proj(sophus::Se3F64::exp(vec_a) * point.toEuclideanPoint3());
         },
         zero);
-    FARM_ASSERT_NEAR(dx, num_dx, kEpsilonSqrtF64);
+    SOPHUS_ASSERT_NEAR(dx, num_dx, kEpsilonSqrtF64);
 
     Eigen::Matrix<double, 2, 6> const num_dx2 =
         vectorFieldNumDiff<double, 2, 6>(
@@ -63,7 +63,7 @@ TEST(inverse_depth, integrations) {
               return projTransform(sophus::Se3F64::exp(vec_a), point);
             },
             zero);
-    FARM_ASSERT_NEAR(num_dx2, num_dx, kEpsilonF64);
+    SOPHUS_ASSERT_NEAR(num_dx2, num_dx, kEpsilonF64);
   }
 }
 
@@ -105,7 +105,7 @@ TEST(point_transform, integrations) {
       Eigen::Vector3d point_in_foo = foo_from_bar * point_in_bar;
       Eigen::Vector3d point_in_foo2 = foo_transform_bar.transform(point_in_bar);
 
-      FARM_ASSERT_NEAR(point_in_foo, point_in_foo2, eps);
+      SOPHUS_ASSERT_NEAR(point_in_foo, point_in_foo2, eps);
 
       Eigen::Vector2d xy1_by_z_in_foo =
           proj(foo_transform_bar.transform(point_in_bar));
@@ -116,9 +116,9 @@ TEST(point_transform, integrations) {
       Eigen::Vector2d xy1_by_z_in_foo4 =
           foo_transform_bar.projTransform(inverse_depth_in_bar);
 
-      FARM_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo2, eps);
-      FARM_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo3, eps);
-      FARM_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo4, eps);
+      SOPHUS_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo2, eps);
+      SOPHUS_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo3, eps);
+      SOPHUS_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo4, eps);
 
       Eigen::Matrix<double, 2, 6> dx =
           foo_transform_bar.dxProjExpXTransformPointAt0(inverse_depth_in_bar);
@@ -143,8 +143,8 @@ TEST(point_transform, integrations) {
                     inverse_depth_in_bar.psi() * exp_a.translation());
               },
               zero);
-      FARM_ASSERT_NEAR(dx, num_dx, 10 * kEpsilonSqrtF64);
-      FARM_ASSERT_NEAR(num_dx, num_dx2, kEpsilonSqrtF64);
+      SOPHUS_ASSERT_NEAR(dx, num_dx, 10 * kEpsilonSqrtF64);
+      SOPHUS_ASSERT_NEAR(num_dx, num_dx2, kEpsilonSqrtF64);
       {
         Eigen::Matrix<double, 2, 3> dx =
             foo_transform_bar.dxProjTransformX(inverse_depth_in_bar);
@@ -156,7 +156,7 @@ TEST(point_transform, integrations) {
                       InverseDepthPoint3F64::fromAbAndPsi(ab_psi)));
                 },
                 inverse_depth_in_bar.params());
-        FARM_ASSERT_NEAR(dx, num_dx, 0.002);
+        SOPHUS_ASSERT_NEAR(dx, num_dx, 0.002);
       }
     }
 
@@ -173,8 +173,8 @@ TEST(point_transform, integrations) {
       Eigen::Vector2d xy1_by_inf_in_foo2 =
           proj(foo_from_bar.so3() * point_in_bar.normalized());
 
-      FARM_ASSERT_NEAR(xy1_by_inf_in_foo, xy1_by_inf_in_foo1, eps);
-      FARM_ASSERT_NEAR(xy1_by_inf_in_foo, xy1_by_inf_in_foo2, eps);
+      SOPHUS_ASSERT_NEAR(xy1_by_inf_in_foo, xy1_by_inf_in_foo1, eps);
+      SOPHUS_ASSERT_NEAR(xy1_by_inf_in_foo, xy1_by_inf_in_foo2, eps);
 
       Eigen::Matrix<double, 2, 6> dx =
           foo_transform_bar.dxProjExpXTransformPointAt0(inverse_depth_in_bar);
@@ -190,7 +190,7 @@ TEST(point_transform, integrations) {
                     inverse_depth_in_bar.psi() * exp_a.translation());
               },
               zero);
-      FARM_ASSERT_NEAR(dx, num_dx2, kEpsilonSqrtF64);
+      SOPHUS_ASSERT_NEAR(dx, num_dx2, kEpsilonSqrtF64);
     }
   }
 }

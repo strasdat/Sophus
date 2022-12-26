@@ -8,9 +8,6 @@
 
 #include "sophus/sensor/imu_model.h"
 
-#include <farm_ng/core/logging/logger.h>
-#include <farm_ng/core/misc/variant_utils.h>
-
 namespace sophus {
 
 GyroModelVariant getModelFromType(
@@ -62,7 +59,7 @@ GyroModelType ImuModel::gyroModelType() const {
                           ScalingNonOrthogonalityGyroModel<double>>) {
           return GyroModelType::scaling_non_orthogonality;
         } else {
-          static_assert(farm_ng::AlwaysFalse<T>, "non-exhaustive visitor!");
+          static_assert(::sophus::AlwaysFalse<T>, "non-exhaustive visitor!");
         }
       },
       this->gyroModel());
@@ -86,7 +83,7 @@ AcceleroModelType ImuModel::acceleroModelType() const {
                           ScalingNonOrthogonalityAcceleroModel<double>>) {
           return AcceleroModelType::scaling_non_orthogonality;
         } else {
-          static_assert(farm_ng::AlwaysFalse<T>, "non-exhaustive visitor!");
+          static_assert(AlwaysFalse<T>, "non-exhaustive visitor!");
         }
       },
       this->acceleroModel());

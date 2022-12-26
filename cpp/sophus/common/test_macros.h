@@ -10,8 +10,6 @@
 
 #include "sophus/common/types.h"
 
-#include <farm_ng/core/logging/format.h>
-
 #include <iostream>
 #include <sstream>
 
@@ -91,9 +89,9 @@ void processTestResult(bool passed) {
 #define SOPHUS_TEST(passed, condition, descr, ...)                     \
   do {                                                                 \
     if (!(condition)) {                                                \
-      std::string msg = FARM_FORMAT(                                   \
+      std::string msg = SOPHUS_FORMAT(                                 \
           "condition ``{}`` is false\n", SOPHUS_STRINGIFY(condition)); \
-      msg += FARM_FORMAT(descr, ##__VA_ARGS__);                        \
+      msg += SOPHUS_FORMAT(descr, ##__VA_ARGS__);                      \
       sophus::details::testFailed(                                     \
           passed, SOPHUS_FUNCTION, __FILE__, __LINE__, msg);           \
     }                                                                  \
@@ -104,13 +102,13 @@ void processTestResult(bool passed) {
 #define SOPHUS_TEST_EQUAL(passed, left, right, descr, ...)   \
   do {                                                       \
     if (left != right) {                                     \
-      std::string msg = FARM_FORMAT(                         \
+      std::string msg = SOPHUS_FORMAT(                       \
           "{} (={}) is not equal to {} (={})\n",             \
           SOPHUS_STRINGIFY(left),                            \
           sophus::details::pretty(left),                     \
           SOPHUS_STRINGIFY(right),                           \
           sophus::details::pretty(right));                   \
-      msg += FARM_FORMAT(descr, ##__VA_ARGS__);              \
+      msg += SOPHUS_FORMAT(descr, ##__VA_ARGS__);            \
       sophus::details::testFailed(                           \
           passed, SOPHUS_FUNCTION, __FILE__, __LINE__, msg); \
     }                                                        \
@@ -121,13 +119,13 @@ void processTestResult(bool passed) {
 #define SOPHUS_TEST_NEQ(passed, left, right, descr, ...)     \
   do {                                                       \
     if (left == right) {                                     \
-      std::string msg = FARM_FORMAT(                         \
+      std::string msg = SOPHUS_FORMAT(                       \
           "{} (={}) should not be equal to {} (={})\n",      \
           SOPHUS_STRINGIFY(left),                            \
           sophus::details::pretty(left),                     \
           SOPHUS_STRINGIFY(right),                           \
           sophus::details::pretty(right));                   \
-      msg += FARM_FORMAT(descr, ##__VA_ARGS__);              \
+      msg += SOPHUS_FORMAT(descr, ##__VA_ARGS__);            \
       sophus::details::testFailed(                           \
           passed, SOPHUS_FUNCTION, __FILE__, __LINE__, msg); \
     }                                                        \
@@ -139,7 +137,7 @@ void processTestResult(bool passed) {
   do {                                                              \
     auto nrm = sophus::maxMetric((left), (right));                  \
     if (!(nrm < (thr))) {                                           \
-      std::string msg = FARM_FORMAT(                                \
+      std::string msg = SOPHUS_FORMAT(                              \
           "{} (={}) is not approx {} (={}); {} is {}; nrm is {}\n", \
           SOPHUS_STRINGIFY(left),                                   \
           sophus::details::pretty(left),                            \
@@ -148,7 +146,7 @@ void processTestResult(bool passed) {
           SOPHUS_STRINGIFY(thr),                                    \
           sophus::details::pretty(thr),                             \
           nrm);                                                     \
-      msg += FARM_FORMAT(descr, ##__VA_ARGS__);                     \
+      msg += SOPHUS_FORMAT(descr, ##__VA_ARGS__);                   \
       sophus::details::testFailed(                                  \
           passed, SOPHUS_FUNCTION, __FILE__, __LINE__, msg);        \
     }                                                               \
@@ -160,7 +158,7 @@ void processTestResult(bool passed) {
   do {                                                                       \
     auto nrm = sophus::maxMetric((left), (right));                           \
     if (nrm < (thr)) {                                                       \
-      std::string msg = FARM_FORMAT(                                         \
+      std::string msg = SOPHUS_FORMAT(                                       \
           "{} (={}) is approx {} (={}), but it should not!\n {} is {}; nrm " \
           "is {}\n",                                                         \
           SOPHUS_STRINGIFY(left),                                            \
@@ -170,7 +168,7 @@ void processTestResult(bool passed) {
           SOPHUS_STRINGIFY(thr),                                             \
           sophus::details::pretty(thr),                                      \
           nrm);                                                              \
-      msg += FARM_FORMAT(descr, ##__VA_ARGS__);                              \
+      msg += SOPHUS_FORMAT(descr, ##__VA_ARGS__);                            \
       sophus::details::testFailed(                                           \
           passed, SOPHUS_FUNCTION, __FILE__, __LINE__, msg);                 \
     }                                                                        \
