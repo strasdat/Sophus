@@ -177,7 +177,7 @@ struct ImageView {
   template <class TReduceOp, class TVal>
   [[nodiscard]] TVal reduce(
       TReduceOp const& reduce_op, TVal val = TVal{}) const {
-    SOPHUS_ASSERT(!this->isEmpty());
+    SOPHUS_ASSERT(!this->isEmpty());  // NOLINT
 
     for (int v = 0; v < this->shape_.height(); ++v) {
       TPixel const* p = this->rowPtr(v);

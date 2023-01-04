@@ -3,17 +3,6 @@ repos:
     rev: 22.3.0
     hooks:
     - id: black
-  - repo: local
-    hooks:
-    - id: pylint
-      name: pylint
-      entry: pylint
-      language: system
-      exclude: (rst-dir|setup.py)
-      types: [python]
-      args: ["--good-names-rgxs=^[_a-z][_a-z0-9]?$",
-             "--max-args=10",
-             "--min-similarity-lines=30"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.1.0
     hooks:

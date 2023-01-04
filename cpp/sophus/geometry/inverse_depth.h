@@ -52,64 +52,64 @@ namespace sophus {
 ///  - points close to zero, in front: psi == 1/z == +999999
 ///  - points close to zero, behind:   psi == 1/z == -999999
 ///
-template <class T>
+template <class TT>
 class InverseDepthPoint3 {
  public:
   InverseDepthPoint3() {}
 
   static InverseDepthPoint3 fromEuclideanPoint3(
-      Eigen::Matrix<T, 3, 1> const& p) {
+      Eigen::Matrix<TT, 3, 1> const& p) {
     using std::abs;
-    SOPHUS_ASSERT_GE(abs(p.z()), sophus::kEpsilon<T>);
+    SOPHUS_ASSERT_GE(abs(p.z()), sophus::kEpsilon<TT>);
     return InverseDepthPoint3(p.x() / p.z(), p.y() / p.z(), 1.0 / p.z());
   }
 
   static InverseDepthPoint3 fromAbAndPsi(
-      Eigen::Matrix<T, 3, 1> const& ab_and_psi) {
+      Eigen::Matrix<TT, 3, 1> const& ab_and_psi) {
     InverseDepthPoint3 p;
     p.ab_and_psi_ = ab_and_psi;
     return p;
   }
 
   InverseDepthPoint3(
-      Eigen::Matrix<T, 2, 1> const& proj_in_z1_plane, T const& one_by_z)
+      Eigen::Matrix<TT, 2, 1> const& proj_in_z1_plane, TT const& one_by_z)
       : ab_and_psi_(proj_in_z1_plane[0], proj_in_z1_plane[1], one_by_z) {
-    SOPHUS_ASSERT_GE(ab_and_psi_.norm(), sophus::kEpsilon<T>);
+    SOPHUS_ASSERT_GE(ab_and_psi_.norm(), sophus::kEpsilon<TT>);
   }
 
-  InverseDepthPoint3(T const& x_by_z, T const& y_by_z, T const& one_by_z)
+  InverseDepthPoint3(TT const& x_by_z, TT const& y_by_z, TT const& one_by_z)
       : ab_and_psi_(x_by_z, y_by_z, one_by_z) {}
 
   // Returns the projection of the point (x,y,z) onto the plane z=1.
   // Hence (a, b) = ("x / z", "y / z").
-  [[nodiscard]] Eigen::Matrix<T, 2, 1> projInZ1Plane() const {
+  [[nodiscard]] Eigen::Matrix<TT, 2, 1> projInZ1Plane() const {
     return ab_and_psi_.template head<2>();
   }
 
   /// Returns inverse depth psi, hence "1 / z".
-  [[nodiscard]] T const& psi() const { return ab_and_psi_[2]; }
-  T& psi() { return ab_and_psi_[2]; }
+  [[nodiscard]] TT const& psi() const { return ab_and_psi_[2]; }
+  TT& psi() { return ab_and_psi_[2]; }
 
-  [[nodiscard]] T const* data() const { return ab_and_psi_.data(); }
+  [[nodiscard]] TT const* data() const { return ab_and_psi_.data(); }
 
-  T* data() { return ab_and_psi_.data(); }
+  TT* data() { return ab_and_psi_.data(); }
 
-  [[nodiscard]] Eigen::Matrix<T, 3, 1> const& params() const {
+  [[nodiscard]] Eigen::Matrix<TT, 3, 1> const& params() const {
     return ab_and_psi_;
   }
 
   /// Precondition: psi must not be close to 0, hence z must not be near
   /// infinity.
-  [[nodiscard]] Eigen::Matrix<T, 3, 1> toEuclideanPoint3() const {
+  [[nodiscard]] Eigen::Matrix<TT, 3, 1> toEuclideanPoint3() const {
     using std::abs;
-    SOPHUS_ASSERT_GE(abs(psi()), sophus::kEpsilon<T>);
+    SOPHUS_ASSERT_GE(abs(psi()), sophus::kEpsilon<TT>);
 
-    return Eigen::Matrix<T, 3, 1>(
-        ab_and_psi_.x() / psi(), ab_and_psi_.y() / psi(), T(1) / psi());
+    return Eigen::Matrix<TT, 3, 1>(
+        ab_and_psi_.x() / psi(), ab_and_psi_.y() / psi(), TT(1) / psi());
   }
 
  private:
-  Eigen::Matrix<T, 3, 1> ab_and_psi_;
+  Eigen::Matrix<TT, 3, 1> ab_and_psi_;
 };
 
 using InverseDepthPoint3F64 = InverseDepthPoint3<double>;
