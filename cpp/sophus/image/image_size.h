@@ -86,10 +86,10 @@ class ImageShape {
   ImageShape(int width, int height, size_t pitch_bytes)
       : image_size_(width, height), pitch_bytes_(pitch_bytes) {}
 
-  template <class PixelType>
+  template <class TPixelType>
   [[nodiscard]] static ImageShape makeFromSizeAndPitch(
       ImageSize image_size, size_t pitch_bytes) {
-    SOPHUS_ASSERT_GE(pitch_bytes, image_size.width * sizeof(PixelType));
+    SOPHUS_ASSERT_GE(pitch_bytes, image_size.width * sizeof(TPixelType));
     ImageShape shape;
     shape.image_size_ = image_size;
     shape.pitch_bytes_ = pitch_bytes;

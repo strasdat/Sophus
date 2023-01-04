@@ -16,7 +16,7 @@ include(FetchContent)
 FetchContent_Declare(
   farm_ng_cmake
   GIT_REPOSITORY https://github.com/farm-ng/farm-ng-cmake.git
-  GIT_TAG ae21a4f8214b6a3dc248422928f1571cf8387a2e
+  GIT_TAG 031979bdca37cd8777674ce1329ff7dcc612d929
 )
 FetchContent_MakeAvailable(farm_ng_cmake)
 set(farm_ng_cmake_DIR ${farm_ng_cmake_SOURCE_DIR}/cmake)
@@ -31,7 +31,7 @@ include(External_ceres)
 ExternalProject_Add(farm-ng-core
     DEPENDS fmt expected eigen
     GIT_REPOSITORY  "https://github.com/farm-ng/farm-ng-core.git"
-    GIT_TAG "ff841025c374e6ec8560412c3b5e28f1f6986a79"
+    GIT_TAG "0038641a5a9d50681d7379a3f6d96e062d6abd26"
     PREFIX ${farm_ng_EXT_PREFIX}
     CMAKE_ARGS
     ${farm_ng_DEFAULT_ARGS}
