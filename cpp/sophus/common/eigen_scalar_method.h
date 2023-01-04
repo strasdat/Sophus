@@ -25,8 +25,7 @@ namespace details {
 // EigenDenseType may be a map or view or abstract base class or something.
 // This is an alias for the corresponding concrete type with storage
 template <EigenDenseType TT>
-using EigenConcreteType =
-    std::remove_reference_t<decltype(std::declval<TT>().eval())>;
+using EigenConcreteType = std::decay_t<decltype(std::declval<TT>().eval())>;
 
 template <class TScalar>
 class Square {
