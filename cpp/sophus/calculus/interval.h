@@ -90,13 +90,15 @@ class Interval {
 
   static Interval<TPixel> open() {
     Interval<TPixel> mm;
-    mm.min_max = {MultiDimLimits<TPixel>::min(), MultiDimLimits<TPixel>::max()};
+    mm.min_max_ = {
+        MultiDimLimits<TPixel>::min(), MultiDimLimits<TPixel>::max()};
     return mm;
   }
 
   static Interval<TPixel> closed() {
     Interval<TPixel> mm;
-    mm.min_max = {MultiDimLimits<TPixel>::max(), MultiDimLimits<TPixel>::min()};
+    mm.min_max_ = {
+        MultiDimLimits<TPixel>::max(), MultiDimLimits<TPixel>::min()};
     return mm;
   }
 
