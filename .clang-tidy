@@ -30,6 +30,7 @@ CheckOptions:
   - {key: readability-identifier-naming.StructCase, value: CamelCase}
   - {key: readability-identifier-naming.TemplateParameterCase, value: CamelCase}
   - {key: readability-identifier-naming.TemplateParameterPrefix, value: T}
+  - {key: readability-identifier-naming.TemplateParameterIgnoredRegexp, value: 'expr-type'}
   - {key: readability-identifier-naming.TypedefCase, value: CamelCase}
 
   - {key: readability-identifier-naming.FunctionCase, value: camelBack}
