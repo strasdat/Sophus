@@ -31,7 +31,7 @@ include(External_ceres)
 ExternalProject_Add(farm-ng-core
     DEPENDS fmt expected eigen
     GIT_REPOSITORY  "https://github.com/farm-ng/farm-ng-core.git"
-    GIT_TAG "0038641a5a9d50681d7379a3f6d96e062d6abd26"
+    GIT_TAG "c90f2b7cf6cd87e7de7d679421c1bfd636c71279"
     PREFIX ${farm_ng_EXT_PREFIX}
     CMAKE_ARGS
     ${farm_ng_DEFAULT_ARGS}
