@@ -1,0 +1,3 @@
+[submodule "cpp/thirdparty/json"]
+	path = cpp/thirdparty/nlohmann_json
+	url = git@github.com:nlohmann/json.git

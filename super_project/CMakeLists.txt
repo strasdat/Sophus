@@ -43,8 +43,21 @@ ExternalProject_Add(farm-ng-core
 
 set(SUPER_PROJ_FARM_NG_PROTOS ${BUILD_PROTOS})
 
+
+ExternalProject_Add(nlohmann_json
+    GIT_REPOSITORY  "https://github.com/nlohmann/json.git"
+    GIT_TAG "v3.11.2"
+    PREFIX ${farm_ng_EXT_PREFIX}
+    CMAKE_ARGS
+    ${farm_ng_DEFAULT_ARGS}
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+    )
+
+
+
 ExternalProject_Add(Sophus
-    DEPENDS farm-ng-core eigen ceres
+    DEPENDS farm-ng-core eigen ceres nlohmann_json
     PREFIX ${farm_ng_EXT_PREFIX}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Sophus-build

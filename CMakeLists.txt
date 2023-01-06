@@ -23,6 +23,8 @@ endif ()
 
 option(SOPHUS_INSTALL "Generate the install target." ${SOPHUS_MASTER_PROJECT})
 option(SOPHUS_USE_BASIC_LOGGING "Use basic logging (in ensure and test macros)" OFF)
+option(FOO_USE_EXTERNAL_JSON "Use an external JSON library" OFF)
+option(BUILD_SOPHUS_EXAMPLES "Build examples." ON)
 
 option(BUILD_SOPHUS_TESTS "Build tests." ON)
 if(${BUILD_SOPHUS_TESTS})

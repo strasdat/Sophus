@@ -25,6 +25,7 @@ endif()
 find_package(Sophus 23.0.1 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(Eigen3 3.4.0 REQUIRED)
+find_package(nlohmann REQUIRED)
 
 set(example_source hello_so3)
 
