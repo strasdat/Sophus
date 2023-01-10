@@ -302,6 +302,11 @@ TT max(const TT& a, const TT& b) {
   return details::Max<TT>::impl(a, b);
 }
 
+template <class TT>
+TT clamp(const TT& val, const TT& a, const TT& b) {
+  return sophus::max(a, sophus::min(val, b));
+}
+
 template <class TT, class TFunc, class TReduce>
 void reduceArg(const TT& x, TReduce& reduce, TFunc&& func) {
   details::Reduce<TT>::impl_unary(x, reduce, std::forward<TFunc>(func));

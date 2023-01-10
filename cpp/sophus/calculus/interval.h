@@ -22,122 +22,199 @@ concept Subtractable = requires(TT a, TT b) {
 };
 }  // namespace
 
-// This works a lot like Eigens::AlignedBox, but supports
-// TPixel as a scalar or vector element for use with generic
-// image reductions etc
-// The range of values is represented by min,max inclusive.
-template <class TPixel>
+/// A closed interval [a, b] with a either being a scalar (e.g. float, double)
+/// or fixed length vector/array
+/// (such as Eigen::Vector3f or Eigen::Array2d).
+///
+/// Special case for integer numbers:
+///
+///    An integer number X is considered being equivalent to a real interval
+///    [X-0.5, X+0.5].
+template <class TPoint>
 class Interval {
  public:
-  Interval() = default;
-  Interval(Interval const&) = default;
-  Interval(Interval&&) noexcept = default;
-  Interval& operator=(Interval const&) = default;
+  static bool constexpr isInteger = false;
+  using Point = TPoint;
 
-  Interval(TPixel const& p) : min_max_{p, p} {}
+  /// Constructs and empty interval.
+  static Interval<TPoint> empty() noexcept {
+    Interval<TPoint> mm;
+    mm.min_max_ = {
+        MultiDimLimits<TPoint>::max(), MultiDimLimits<TPoint>::min()};
+    return mm;
+  }
 
-  Interval(TPixel const& p1, TPixel const& p2) : min_max_{p1, p1} {
+  /// Constructs unbounded interval.
+  ///
+  /// If TPoint is floating point, the interval is [-inf, +inf].
+  static Interval<TPoint> unbounded() noexcept {
+    Interval<TPoint> mm;
+    mm.min_max_ = {
+        MultiDimLimits<TPoint>::min(), MultiDimLimits<TPoint>::max()};
+    return mm;
+  }
+
+  /// Constructs an interval from a given point.
+  ///
+  /// If TPoint is a floating point then the interval is considered degenerated.
+  Interval(TPoint const& p) noexcept : min_max_{p, p} {
+    // FARM_ASSERT(!std::isnan(p));
+  }
+
+  /// Constructs Interval from two points p1 and p2.
+  ///
+  /// The points need not to be ordered. After construction it will be true that
+  /// p1 <= p2.
+  Interval(TPoint const& p1, TPoint const& p2) noexcept : min_max_{p1, p1} {
+    // FARM_ASSERT(!std::isnan(p1));
+    // FARM_ASSERT(!std::isnan(p2));
+
     extend(p2);
   }
 
-  [[nodiscard]] TPixel const& min() const { return min_max_[0]; }
-  [[nodiscard]] TPixel const& max() const { return min_max_[1]; }
+  /// Returns the lower bound of the interval.
+  [[nodiscard]] TPoint const& min() const noexcept { return min_max_[0]; }
 
-  [[nodiscard]] TPixel clamp(TPixel const& x) const {
-    return sophus::max(sophus::min(x, min_max_[1]), min_max_[0]);
+  /// Returns the upper bound of the interval.
+  [[nodiscard]] TPoint const& max() const noexcept { return min_max_[1]; }
+
+  /// Returns the clamped version of the given point.
+  [[nodiscard]] TPoint clamp(TPoint const& point) const noexcept {
+    return sophus::clamp(point, min_max_[0], min_max_[1]);
   }
 
-  [[nodiscard]] bool contains(TPixel const& x) const {
-    return allTrue(eval(min() <= x)) && allTrue(eval(x <= max()));
+  /// Returns true if the interval contains the given point.
+  [[nodiscard]] bool contains(TPoint const& point) const noexcept {
+    return allTrue(eval(min() <= point)) && allTrue(eval(point <= max()));
   }
 
-  [[nodiscard]] auto fractionalPosition(Eigen::Array2d const& x) const {
-    return eval(
-        (x - sophus::cast<double>(min())) / sophus::cast<double>(range()));
-  }
-
-  // Only applicable if minmax object is valid()
-  [[nodiscard]] auto range() const requires Subtractable<TPixel> {
+  /// Returns the range of the interval.
+  ///
+  /// It is zero if the interval is not proper.
+  [[nodiscard]] TPoint range() const noexcept requires Subtractable<TPoint> {
+    if constexpr (isInteger) {
+      //  For integers, we consider e.g. {2} == [1.5, 2.5] hence range of
+      //  Interval(2, 3) == [1.5, 3.5] is 2.
+      return eval(max() - min()) + 1;
+    }
     return eval(max() - min());
   }
-  [[nodiscard]] auto mid() const { return eval(min() + range() / 2); }
 
-  Interval<TPixel>& extend(Interval const& o) {
-    min_max_[0] = sophus::min(min(), o.min());
-    min_max_[1] = sophus::max(max(), o.max());
+  /// Returns the mid point.
+  ///
+  /// Note: If TPoint is an integer point then the result will be rounded to the
+  /// closed integer.
+  [[nodiscard]] TPoint mid() const noexcept {
+    return eval(min() + range() / 2);
+  }
+
+  /// Extends this by other interval.
+  Interval<TPoint>& extend(Interval const& other) noexcept {
+    min_max_[0] = sophus::min(min(), other.min());
+    min_max_[1] = sophus::max(max(), other.max());
     return *this;
   }
 
-  Interval<TPixel>& extend(TPixel const& p) {
-    min_max_[0] = sophus::min(min(), p);
-    min_max_[1] = sophus::max(max(), p);
+  /// Extends this by given point.
+  Interval<TPoint>& extend(TPoint const& point) noexcept {
+    min_max_[0] = sophus::min(min(), point);
+    min_max_[1] = sophus::max(max(), point);
     return *this;
   }
 
-  [[nodiscard]] Interval<TPixel> translated(TPixel const& p) const {
+  /// TODO: remove - or long comment
+  [[nodiscard]] auto fractionalPosition(Eigen::Array2d const& point) const {
+    return eval(
+        (point - sophus::cast<double>(min())) / sophus::cast<double>(range()));
+  }
+
+  /// Returns translated interval.
+  [[nodiscard]] Interval<TPoint> translated(TPoint const& p) const noexcept {
     return {min_max_[0] + p, min_max_[1] + p};
   }
 
-  template <class TTo>
-  Interval<TTo> cast() const {
-    return Interval<TTo>(sophus::cast<TTo>(min()), sophus::cast<TTo>(max()));
+  template <class TOtherPoint>
+  Interval<TOtherPoint> cast() const noexcept {
+    if (isEmpty()) {
+      return Interval<TOtherPoint>::empty();
+    }
+    if constexpr (isInteger == Interval<TOtherPoint>::isInteger) {
+      // case 1: floating => floating  and integer => integer is trivial
+      return Interval<TOtherPoint>(
+          sophus::cast<TOtherPoint>(min()), sophus::cast<TOtherPoint>(max()));
+    }
+    if constexpr (isInteger && !Interval<TOtherPoint>::isInteger) {
+      // case 2: integer to floating.
+      //
+      // example: [2, 5] -> [1.5, 5.5]
+      return Interval<TOtherPoint>(
+          sophus::cast<TOtherPoint>(min() - 0.5),
+          sophus::cast<TOtherPoint>(max() + 0.5));
+    }
+    // case 3: floating to integer.
+    static_assert(
+        isInteger || !Interval<TOtherPoint>::isInteger,
+        "For floating to integer: call encloseCast() or roundCast() instead.");
   }
 
-  [[nodiscard]] bool empty() const {
-    return min_max_[0] == MultiDimLimits<TPixel>::max() ||
-           min_max_[1] == MultiDimLimits<TPixel>::lowest();
+#if 0
+  /// Returns the smallest integer interval which contains this.
+  ///
+  /// example: [1.2, 1.3] -> [1, 2]
+  template <class TOtherPoint>
+  Interval<TOtherPoint> encloseCast() const noexcept {
+    static_assert(!isInteger && Interval<TOtherPoint>::isInteger);
+    return Interval<TOtherPoint>(
+        sophus::cast<TOtherPoint>(sophus::floor(min())),
+        sophus::cast<TOtherPoint>(sophus::ceil(max())));
   }
 
-  static Interval<TPixel> open() {
-    Interval<TPixel> mm;
-    mm.min_max_ = {
-        MultiDimLimits<TPixel>::min(), MultiDimLimits<TPixel>::max()};
-    return mm;
+  /// Rounds given interval bounds and returns resulting integer interval.
+  ///
+  /// example: [1.2, 2.3] -> [1, 2]
+  /// example: [1.1, 2.7] -> [1, 3]
+  template <class TOtherPoint>
+  Interval<TOtherPoint> roundCast() const noexcept {
+    static_assert(!isInteger && Interval<TOtherPoint>::isInteger);
+    return Interval<TOtherPoint>(
+        sophus::cast<TOtherPoint>(sophus::round(min())),
+        sophus::cast<TOtherPoint>(sophus::round(max())));
+  }
+#endif
+
+  /// Returns true if interval is empty.
+  [[nodiscard]] bool isEmpty() const noexcept {
+    return allTrue(this->min() == MultiDimLimits<TPoint>::max()) ||
+           allTrue(this->max() == MultiDimLimits<TPoint>::lowest());
   }
 
-  static Interval<TPixel> closed() {
-    Interval<TPixel> mm;
-    mm.min_max_ = {
-        MultiDimLimits<TPixel>::max(), MultiDimLimits<TPixel>::min()};
-    return mm;
+  /// Returns true if interval contains a single floating point number.
+  [[nodiscard]] bool isDegenerated() const noexcept {
+    return !isInteger && allTrue(min() == max());
+  }
+
+  /// Returns true if interval is neither empty nor degenerated.
+  /// Hence it contains a range of values.
+  [[nodiscard]] bool isProper() const noexcept {
+    return !this->isEmpty() && !this->isDegenerated();
+  }
+
+  /// Returns true if interval has no bounds.
+  [[nodiscard]] bool isUnbounded() const noexcept {
+    return allTrue(this->min() == MultiDimLimits<TPoint>::min()) &&
+           allTrue(this->max() == MultiDimLimits<TPoint>::max());
   }
 
  private:
-  // invariant that min_max[0] <= min_max[1]
-  // or min_max is as below when uninitialized
-  std::array<TPixel, 2> min_max_ = {
-      MultiDimLimits<TPixel>::max(), MultiDimLimits<TPixel>::min()};
-};
+  Interval() = default;
 
-namespace details {
-template <class TScalar>
-class Cast<Interval<TScalar>> {
- public:
-  template <class TTo>
-  static Interval<TTo> impl(Interval<TScalar> const& v) {
-    return v.template cast<TTo>();
-  }
-  template <class TTo>
-  static auto implScalar(Interval<TScalar> const& v) {
-    using ElT = decltype(cast<TTo>(std::declval<TScalar>()));
-    return v.template cast<ElT>();
-  }
+  // invariant: this->isEmpty() or min_max[0] <= min_max[1]
+  std::array<TPoint, 2> min_max_;
 };
-}  // namespace details
 
 template <class TT>
 bool operator==(Interval<TT> const& lhs, Interval<TT> const& rhs) {
   return lhs.min() == rhs.min() && lhs.max() == rhs.max();
-}
-
-template <class TT>
-auto relative(TT p, Interval<TT> region) {
-  return (p - region.min()).eval();
-}
-
-template <class TT>
-auto normalized(TT p, Interval<TT> region) {
-  return (cast<double>(p - region.min()) / cast<double>(region.range())).eval();
 }
 
 }  // namespace sophus
