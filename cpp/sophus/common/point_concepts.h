@@ -54,4 +54,30 @@ concept EigenWithDimOrDynamic = requires(TT) {
        TT::ColsAtCompileTime == kCols);
 };
 
+template <class TT>
+concept RealScalarType = std::is_floating_point_v<TT>;
+
+template <class TT>
+concept IntegerScalarType = std::is_integral_v<TT>;
+
+template <class TT>
+concept ScalarType = RealScalarType<TT> || IntegerScalarType<TT>;
+
+template <class TT>
+concept RealEigenDenseType =
+    EigenDenseType<TT> && std::is_floating_point_v<typename TT::Scalar>;
+
+template <class TT>
+concept IntegerEigenDenseType =
+    EigenDenseType<TT> && std::is_integral_v<typename TT::Scalar>;
+
+template <class TT>
+concept RealPointType = RealScalarType<TT> || RealEigenDenseType<TT>;
+
+template <class TT>
+concept IntegerPointType = IntegerScalarType<TT> || IntegerEigenDenseType<TT>;
+
+template <class TT>
+concept PointType = RealPointType<TT> || IntegerPointType<TT>;
+
 }  // namespace sophus

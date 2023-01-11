@@ -10,55 +10,50 @@
 #pragma once
 
 #include "sophus/common/common.h"
-#include "sophus/common/eigen_scalar_method.h"
-#include "sophus/common/multi_dim_limits.h"
+#include "sophus/common/point_methods.h"
+#include "sophus/common/point_traits.h"
 
 namespace sophus {
 
-namespace {
-template <class TT>
-concept Subtractable = requires(TT a, TT b) {
-  b - a;
-};
-}  // namespace
-
-/// A closed interval [a, b] with a either being a scalar (e.g. float, double)
-/// or fixed length vector/array
-/// (such as Eigen::Vector3f or Eigen::Array2d).
+/// A closed interval [a, b] with a being the lower bound (=min) and b being the
+/// upper bound (=max).
+///
+/// Here, the bounds a, b sre either boths  scalars (e.g. floats, doubles)
+/// or fixed length vectors/arrays (such as Eigen::Vector3f or Eigen::Array2d).
 ///
 /// Special case for integer numbers:
 ///
 ///    An integer number X is considered being equivalent to a real interval
 ///    [X-0.5, X+0.5].
-template <class TPoint>
+template <PointType TPoint>
 class Interval {
  public:
-  static bool constexpr isInteger = false;
+  static bool constexpr kIsInteger = PointTypeLimits<TPoint>::kIsInteger;
   using Point = TPoint;
 
   /// Constructs and empty interval.
   static Interval<TPoint> empty() noexcept {
-    Interval<TPoint> mm;
-    mm.min_max_ = {
-        MultiDimLimits<TPoint>::max(), MultiDimLimits<TPoint>::min()};
-    return mm;
+    Interval<TPoint> interval;
+    interval.min_max_ = {
+        PointTypeLimits<TPoint>::max(), PointTypeLimits<TPoint>::lowest()};
+    return interval;
   }
 
   /// Constructs unbounded interval.
   ///
   /// If TPoint is floating point, the interval is [-inf, +inf].
   static Interval<TPoint> unbounded() noexcept {
-    Interval<TPoint> mm;
-    mm.min_max_ = {
-        MultiDimLimits<TPoint>::min(), MultiDimLimits<TPoint>::max()};
-    return mm;
+    Interval<TPoint> interval;
+    interval.min_max_ = {
+        PointTypeLimits<TPoint>::min(), PointTypeLimits<TPoint>::max()};
+    return interval;
   }
 
   /// Constructs an interval from a given point.
   ///
   /// If TPoint is a floating point then the interval is considered degenerated.
   Interval(TPoint const& p) noexcept : min_max_{p, p} {
-    // FARM_ASSERT(!std::isnan(p));
+    FARM_ASSERT(!isNan(p));
   }
 
   /// Constructs Interval from two points p1 and p2.
@@ -66,8 +61,8 @@ class Interval {
   /// The points need not to be ordered. After construction it will be true that
   /// p1 <= p2.
   Interval(TPoint const& p1, TPoint const& p2) noexcept : min_max_{p1, p1} {
-    // FARM_ASSERT(!std::isnan(p1));
-    // FARM_ASSERT(!std::isnan(p2));
+    FARM_ASSERT(!isNan(p1));
+    FARM_ASSERT(!isNan(p2));
 
     extend(p2);
   }
@@ -91,8 +86,8 @@ class Interval {
   /// Returns the range of the interval.
   ///
   /// It is zero if the interval is not proper.
-  [[nodiscard]] TPoint range() const noexcept requires Subtractable<TPoint> {
-    if constexpr (isInteger) {
+  [[nodiscard]] TPoint range() const noexcept {
+    if constexpr (kIsInteger) {
       //  For integers, we consider e.g. {2} == [1.5, 2.5] hence range of
       //  Interval(2, 3) == [1.5, 3.5] is 2.
       return eval(max() - min()) + 1;
@@ -138,12 +133,12 @@ class Interval {
     if (isEmpty()) {
       return Interval<TOtherPoint>::empty();
     }
-    if constexpr (isInteger == Interval<TOtherPoint>::isInteger) {
+    if constexpr (kIsInteger == Interval<TOtherPoint>::kIsInteger) {
       // case 1: floating => floating  and integer => integer is trivial
       return Interval<TOtherPoint>(
           sophus::cast<TOtherPoint>(min()), sophus::cast<TOtherPoint>(max()));
     }
-    if constexpr (isInteger && !Interval<TOtherPoint>::isInteger) {
+    if constexpr (kIsInteger && !Interval<TOtherPoint>::kIsInteger) {
       // case 2: integer to floating.
       //
       // example: [2, 5] -> [1.5, 5.5]
@@ -153,17 +148,16 @@ class Interval {
     }
     // case 3: floating to integer.
     static_assert(
-        isInteger || !Interval<TOtherPoint>::isInteger,
+        kIsInteger || !Interval<TOtherPoint>::kIsInteger,
         "For floating to integer: call encloseCast() or roundCast() instead.");
   }
 
-#if 0
   /// Returns the smallest integer interval which contains this.
   ///
   /// example: [1.2, 1.3] -> [1, 2]
   template <class TOtherPoint>
   Interval<TOtherPoint> encloseCast() const noexcept {
-    static_assert(!isInteger && Interval<TOtherPoint>::isInteger);
+    static_assert(!kIsInteger && Interval<TOtherPoint>::kIsInteger);
     return Interval<TOtherPoint>(
         sophus::cast<TOtherPoint>(sophus::floor(min())),
         sophus::cast<TOtherPoint>(sophus::ceil(max())));
@@ -175,22 +169,21 @@ class Interval {
   /// example: [1.1, 2.7] -> [1, 3]
   template <class TOtherPoint>
   Interval<TOtherPoint> roundCast() const noexcept {
-    static_assert(!isInteger && Interval<TOtherPoint>::isInteger);
+    static_assert(!kIsInteger && Interval<TOtherPoint>::kIsInteger);
     return Interval<TOtherPoint>(
         sophus::cast<TOtherPoint>(sophus::round(min())),
         sophus::cast<TOtherPoint>(sophus::round(max())));
   }
-#endif
 
   /// Returns true if interval is empty.
   [[nodiscard]] bool isEmpty() const noexcept {
-    return allTrue(this->min() == MultiDimLimits<TPoint>::max()) ||
-           allTrue(this->max() == MultiDimLimits<TPoint>::lowest());
+    return allTrue(this->min() == PointTypeLimits<TPoint>::max()) ||
+           allTrue(this->max() == PointTypeLimits<TPoint>::lowest());
   }
 
   /// Returns true if interval contains a single floating point number.
   [[nodiscard]] bool isDegenerated() const noexcept {
-    return !isInteger && allTrue(min() == max());
+    return !kIsInteger && allTrue(min() == max());
   }
 
   /// Returns true if interval is neither empty nor degenerated.
@@ -201,8 +194,8 @@ class Interval {
 
   /// Returns true if interval has no bounds.
   [[nodiscard]] bool isUnbounded() const noexcept {
-    return allTrue(this->min() == MultiDimLimits<TPoint>::min()) &&
-           allTrue(this->max() == MultiDimLimits<TPoint>::max());
+    return allTrue(this->min() == PointTypeLimits<TPoint>::min()) &&
+           allTrue(this->max() == PointTypeLimits<TPoint>::max());
   }
 
  private:
@@ -216,5 +209,17 @@ template <class TT>
 bool operator==(Interval<TT> const& lhs, Interval<TT> const& rhs) {
   return lhs.min() == rhs.min() && lhs.max() == rhs.max();
 }
+
+using IntervalI = Interval<int>;
+using IntervalF32 = Interval<float>;
+using IntervalF64 = Interval<double>;
+
+using Interval2I = Interval<Eigen::Array2<int>>;
+using Interval2F32 = Interval<Eigen::Array2<float>>;
+using Interval2F64 = Interval<Eigen::Array2<double>>;
+
+using Interval3I = Interval<Eigen::Array2<int>>;
+using Interval3F32 = Interval<Eigen::Array2<float>>;
+using Interval3F64 = Interval<Eigen::Array2<double>>;
 
 }  // namespace sophus
