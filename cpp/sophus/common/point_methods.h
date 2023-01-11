@@ -249,7 +249,7 @@ class IsNan<TScalar> {
 template <EigenDenseType TPoint>
 class IsNan<TPoint> {
  public:
-  static bool impl(TPoint const& p) { return p.isNaN().all(); }
+  static bool impl(TPoint const& p) { return p.array().isNaN().all(); }
 };
 
 template <class TScalar>
@@ -423,6 +423,28 @@ auto round(TPoint p) {
     e = sophus::round(e);
   }
   return p;
+}
+
+template <ScalarType TPoint>
+[[nodiscard]] auto plus(TPoint p, TPoint s) {
+  p += s;
+  return p;
+}
+
+template <EigenDenseType TPoint>
+[[nodiscard]] auto plus(TPoint p, typename TPoint::Scalar s) {
+  p.array() += s;
+  return p;
+}
+
+template <ScalarType TPoint>
+[[nodiscard]] bool isLessEqual(TPoint const& lhs, TPoint const& rhs) {
+  return lhs <= rhs;
+}
+
+template <EigenDenseType TPoint>
+[[nodiscard]] bool isLessEqual(TPoint const& lhs, TPoint const& rhs) {
+  return allTrue(eval(lhs.array() <= rhs.array()));
 }
 
 }  // namespace sophus

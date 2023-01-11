@@ -10,10 +10,10 @@ farm_ng_add_library(sophus_common
   HEADERS
   common.h
   concept_utils.h
-  eigen_concepts.h
-  eigen_scalar_method.h
   enum.h
-  multi_dim_limits.h
+  point_concepts.h
+  point_methods.h
+  point_traits.h
   types.h
 )
 

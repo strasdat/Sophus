@@ -14,25 +14,25 @@ using namespace sophus;
 
 TEST(Interval, unit) {
   // constr
-  auto empty_f64 = IntervalF64::empty();
+  auto empty_f64 = SegmentF64::empty();
   EXPECT_TRUE(empty_f64.isEmpty());
   EXPECT_FALSE(empty_f64.isDegenerated());
   EXPECT_FALSE(empty_f64.isProper());
   EXPECT_FALSE(empty_f64.isUnbounded());
 
-  auto unbounded_f32 = IntervalF32::unbounded();
+  auto unbounded_f32 = SegmentF32::unbounded();
   EXPECT_FALSE(unbounded_f32.isEmpty());
   EXPECT_FALSE(unbounded_f32.isDegenerated());
   EXPECT_TRUE(unbounded_f32.isProper());
   EXPECT_TRUE(unbounded_f32.isUnbounded());
 
-  auto one_i = IntervalI(1);
+  auto one_i = SegmentI::from(1);
   EXPECT_FALSE(one_i.isEmpty());
   EXPECT_FALSE(one_i.isDegenerated());
   EXPECT_TRUE(one_i.isProper());
   EXPECT_FALSE(one_i.isUnbounded());
 
-  auto two_f32 = IntervalF32(2.f);
+  auto two_f32 = SegmentF32::from(2.f);
   EXPECT_FALSE(two_f32.isEmpty());
   EXPECT_TRUE(two_f32.isDegenerated());
   EXPECT_FALSE(two_f32.isProper());

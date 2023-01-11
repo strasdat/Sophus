@@ -69,6 +69,8 @@ using ::farm_ng::Expected;     // <farm_ng/core/logging/expected.h>
 using ::farm_ng::has_type_v;   // <farm_ng/core/misc/variant_utils.h>
 using ::farm_ng::Overload;     // <farm_ng/core/misc/variant_utils.h>
 
+struct UninitTag {};
+
 template <class TScalar>
 TScalar const kEpsilon = TScalar(1e-10);
 
