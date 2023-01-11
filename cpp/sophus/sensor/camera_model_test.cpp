@@ -387,7 +387,7 @@ TEST(camera_model, scale_up_down_roundtrip) {
 }
 
 TEST(camera_model, ortho_cam) {
-  Interval<Eigen::Array<double, 2, 1>> bounding_box({-1.5, -1.0}, {1.5, 1.0});
+  auto bounding_box = Region2F64::fromMinMax({-1.5, -1.0}, {1.5, 1.0});
 
   OrthographicModel ortho_cam =
       orthoCamFromBoundingBox(bounding_box, ImageSize(600, 400));
@@ -416,8 +416,7 @@ TEST(camera_model, ortho_cam) {
     EXPECT_NEAR(coord.y(), coord2.y(), 1e-5);
   }
 
-  Interval<Eigen::Array<double, 2, 1>> bounding_box2 =
-      boundingBoxFromOrthoCam(ortho_cam);
+  Region2F64 bounding_box2 = boundingBoxFromOrthoCam(ortho_cam);
 
   EXPECT_NEAR(bounding_box.min().x(), bounding_box2.min().x(), 1e-5);
   EXPECT_NEAR(bounding_box.min().y(), bounding_box2.min().y(), 1e-5);

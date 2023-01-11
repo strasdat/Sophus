@@ -494,7 +494,7 @@ Interval<TPixel> finiteInterval(sophus::ImageView<TPixel> const& image) {
 
 // TODO: make member function?
 template <class TPixel>
-inline Interval<Eigen::Vector2i> imageCoordsInterval(
+inline Region2I imageCoordsInterval(
     sophus::ImageView<TPixel> const& image, int border = 0) {
   return imageCoordsInterval(image.imageSize(), border);
 }

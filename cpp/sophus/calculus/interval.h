@@ -31,40 +31,68 @@ class Interval {
   static bool constexpr kIsInteger = PointTypeLimits<TPoint>::kIsInteger;
   using Point = TPoint;
 
-  /// Constructs and empty interval.
+  /// Creates an uninitialized interval.
+  static Interval<TPoint> uninitialized() noexcept {
+    return Interval(UninitTag{});
+  }
+
+  /// Creates and empty interval.
   static Interval<TPoint> empty() noexcept {
-    Interval<TPoint> interval;
+    auto interval = Interval<TPoint>::uninitialized();
     interval.min_max_ = {
         PointTypeLimits<TPoint>::max(), PointTypeLimits<TPoint>::lowest()};
     return interval;
   }
 
-  /// Constructs unbounded interval.
+  /// Creates unbounded interval.
   ///
   /// If TPoint is floating point, the interval is [-inf, +inf].
   static Interval<TPoint> unbounded() noexcept {
-    Interval<TPoint> interval;
+    auto interval = Interval<TPoint>::uninitialized();
     interval.min_max_ = {
         PointTypeLimits<TPoint>::min(), PointTypeLimits<TPoint>::max()};
     return interval;
   }
 
-  /// Constructs an interval from a given point.
+  /// Creates an interval from a given point.
   ///
   /// If TPoint is a floating point then the interval is considered degenerated.
-  Interval(TPoint const& p) noexcept : min_max_{p, p} {
+  static Interval<TPoint> from(TPoint const& p) noexcept {
+    auto interval = Interval<TPoint>::empty();
     FARM_ASSERT(!isNan(p));
+    interval.extend(p);
+    return interval;
   }
 
-  /// Constructs Interval from two points p1 and p2.
+  /// Creates Interval from two points, min and max.
   ///
-  /// The points need not to be ordered. After construction it will be true that
-  /// p1 <= p2.
-  Interval(TPoint const& p1, TPoint const& p2) noexcept : min_max_{p1, p1} {
+  /// The points min, max need not to be ordered. After construction it will be
+  /// true that this->min() <= this->max().
+  static Interval<TPoint> fromMinMax(
+      TPoint const& min, TPoint const& max) noexcept {
+    auto interval = Interval<TPoint>::empty();
+    FARM_ASSERT(!isNan(min));
+    FARM_ASSERT(!isNan(max));
+    interval.extend(min);
+    interval.extend(max);
+    return interval;
+  }
+
+  /// Convenient constructor to create a  Segment from two points p1 and p2.
+  ///
+  /// The points need not to be ordered. After construction it will be true
+  /// that this->min() <= this->max().
+  ///
+  /// Note: This constructor is only available for scalar intervals (=
+  /// segments). For multi-dim interval (= regions) use the  fromMinMax()
+  /// factory instead.,
+  template <class TScalar>
+  requires std::is_same_v<TPoint, TScalar> Interval(
+      TScalar const& p1, TScalar const& p2)
+  noexcept : min_max_{p1, p1} {
     FARM_ASSERT(!isNan(p1));
     FARM_ASSERT(!isNan(p2));
-
-    extend(p2);
+    this->extend(p2);
   }
 
   /// Returns the lower bound of the interval.
@@ -80,7 +108,7 @@ class Interval {
 
   /// Returns true if the interval contains the given point.
   [[nodiscard]] bool contains(TPoint const& point) const noexcept {
-    return allTrue(eval(min() <= point)) && allTrue(eval(point <= max()));
+    return isLessEqual(min(), point) && isLessEqual(point, max());
   }
 
   /// Returns the range of the interval.
@@ -90,15 +118,15 @@ class Interval {
     if constexpr (kIsInteger) {
       //  For integers, we consider e.g. {2} == [1.5, 2.5] hence range of
       //  Interval(2, 3) == [1.5, 3.5] is 2.
-      return eval(max() - min()) + 1;
+      return plus(eval(max() - min()), 1);
     }
     return eval(max() - min());
   }
 
   /// Returns the mid point.
   ///
-  /// Note: If TPoint is an integer point then the result will be rounded to the
-  /// closed integer.
+  /// Note: If TPoint is an integer point then the result will be rounded to
+  /// the closed integer.
   [[nodiscard]] TPoint mid() const noexcept {
     return eval(min() + range() / 2);
   }
@@ -117,15 +145,9 @@ class Interval {
     return *this;
   }
 
-  /// TODO: remove - or long comment
-  [[nodiscard]] auto fractionalPosition(Eigen::Array2d const& point) const {
-    return eval(
-        (point - sophus::cast<double>(min())) / sophus::cast<double>(range()));
-  }
-
   /// Returns translated interval.
   [[nodiscard]] Interval<TPoint> translated(TPoint const& p) const noexcept {
-    return {min_max_[0] + p, min_max_[1] + p};
+    return Interval<TPoint>::fromMinMax(min_max_[0] + p, min_max_[1] + p);
   }
 
   template <class TOtherPoint>
@@ -143,13 +165,14 @@ class Interval {
       //
       // example: [2, 5] -> [1.5, 5.5]
       return Interval<TOtherPoint>(
-          sophus::cast<TOtherPoint>(min() - 0.5),
-          sophus::cast<TOtherPoint>(max() + 0.5));
+          plus(sophus::cast<TOtherPoint>(min()), -0.5),
+          plus(sophus::cast<TOtherPoint>(max()), 0.5));
     }
     // case 3: floating to integer.
     static_assert(
         kIsInteger || !Interval<TOtherPoint>::kIsInteger,
-        "For floating to integer: call encloseCast() or roundCast() instead.");
+        "For floating to integer: call encloseCast() or roundCast() "
+        "instead.");
   }
 
   /// Returns the smallest integer interval which contains this.
@@ -199,7 +222,7 @@ class Interval {
   }
 
  private:
-  Interval() = default;
+  explicit Interval(UninitTag) {}
 
   // invariant: this->isEmpty() or min_max[0] <= min_max[1]
   std::array<TPoint, 2> min_max_;
@@ -210,16 +233,20 @@ bool operator==(Interval<TT> const& lhs, Interval<TT> const& rhs) {
   return lhs.min() == rhs.min() && lhs.max() == rhs.max();
 }
 
-using IntervalI = Interval<int>;
-using IntervalF32 = Interval<float>;
-using IntervalF64 = Interval<double>;
+using SegmentI = Interval<int>;
+using SegmentF32 = Interval<float>;
+using SegmentF64 = Interval<double>;
 
-using Interval2I = Interval<Eigen::Array2<int>>;
-using Interval2F32 = Interval<Eigen::Array2<float>>;
-using Interval2F64 = Interval<Eigen::Array2<double>>;
+using Region2I = Interval<Eigen::Vector2<int>>;
+using Region2F32 = Interval<Eigen::Vector2<float>>;
+using Region2F64 = Interval<Eigen::Vector2<double>>;
 
-using Interval3I = Interval<Eigen::Array2<int>>;
-using Interval3F32 = Interval<Eigen::Array2<float>>;
-using Interval3F64 = Interval<Eigen::Array2<double>>;
+using Region3I = Interval<Eigen::Vector3<int>>;
+using Region3F32 = Interval<Eigen::Vector3<float>>;
+using Region3F64 = Interval<Eigen::Vector3<double>>;
+
+using Region4I = Interval<Eigen::Vector4<int>>;
+using Region4F32 = Interval<Eigen::Vector4<float>>;
+using Region4F64 = Interval<Eigen::Vector4<double>>;
 
 }  // namespace sophus

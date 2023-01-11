@@ -51,12 +51,12 @@ struct ImageSize {
 
 // TODO: make member function?
 template <class TPixel>
-inline Interval<Eigen::Array2<int>> imageCoordsInterval(
-    ImageSize image_size, int border = 0) {
+inline Region2I imageCoordsInterval(ImageSize image_size, int border = 0) {
   // e.g. 10x10 image has valid values [0, ..., 9] in both dimensions
   // a border of 2 would make valid range [2, ..., 7]
-  return Interval<Eigen::Array2<int>>(Eigen::Vector2i(border, border))
-      .extend(Eigen::Array2<int>(
+  return Region2I::fromMinMax(
+      Eigen::Vector2i(border, border),
+      Eigen::Vector2i(
           image_size.width - border - 1, image_size.height - border - 1));
 }
 

@@ -21,7 +21,7 @@ using OrthographicModelT =
 /// Returns orthographic camera model given bounding box and image size.
 template <class TScalar>
 OrthographicModelT<TScalar> orthoCamFromBoundingBox(
-    Interval<Eigen::Array<TScalar, 2, 1>> const& bounding_box,
+    Interval<Eigen::Vector<TScalar, 2>> const& bounding_box,
     ImageSize image_size) {
   // (-0.5, -0.5)   -> (min.x, min.y)
   // (-0.5, h-0.5)  -> (min.x, max.y)
@@ -42,7 +42,7 @@ OrthographicModelT<TScalar> orthoCamFromBoundingBox(
   Eigen::Array<TScalar, 2, 1> const scale =
       Eigen::Array<TScalar, 2, 1>(image_size.width, image_size.height) / range;
   Eigen::Array<TScalar, 2, 1> const offset =
-      -(0.5 + bounding_box.min() * scale);
+      -(0.5 + bounding_box.min().array() * scale);
 
   Eigen::Matrix<TScalar, 4, 1> const params(
       scale.x(), scale.y(), offset.x(), offset.y());
@@ -53,17 +53,15 @@ OrthographicModelT<TScalar> orthoCamFromBoundingBox(
 /// Returns 2d bounding box corresponding the the given orthographic camera
 /// model.
 template <class TScalar>
-Interval<Eigen::Array<TScalar, 2, 1>> boundingBoxFromOrthoCam(
+Interval<Eigen::Vector<TScalar, 2>> boundingBoxFromOrthoCam(
     OrthographicModelT<TScalar> const& ortho_cam) {
-  Eigen::Array<TScalar, 2, 1> min = Eigen::Array<TScalar, 2, 1>{
-      (-ortho_cam.principalPoint().array() - 0.5) /
-      ortho_cam.focalLength().array()};
-
-  return Interval<Eigen::Array<TScalar, 2, 1>>(
+  Eigen::Vector<TScalar, 2> min = (-ortho_cam.principalPoint().array() - 0.5) /
+                                  ortho_cam.focalLength().array();
+  return Interval<Eigen::Vector<TScalar, 2>>::fromMinMax(
       min,
-      Eigen::Array<TScalar, 2, 1>{
-          min + ortho_cam.imageSize().array().template cast<TScalar>() /
-                    ortho_cam.focalLength().array()});
+      Eigen::Vector<TScalar, 2>{
+          min.array() + ortho_cam.imageSize().array().template cast<TScalar>() /
+                            ortho_cam.focalLength().array()});
 }
 
 }  // namespace sophus
