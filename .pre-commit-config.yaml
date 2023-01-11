@@ -28,6 +28,12 @@ repos:
       - id: clang-format
         files: \.(h|hpp|cpp)$
         exclude: (py|thirdparty)/.*$
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: b367d44fc93cb994af9d18b9578861478755ad0e
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, docs, style, refactor, perf, test, ci, build, chore, revert, bot]
   - repo: local
     hooks:
       - id: pragma-once
@@ -48,9 +54,8 @@ repos:
         language: pygrep
         files: \.(h|hpp|cpp)$
         exclude: (py|thirdparty/.*$)
-  - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v2.1.1
-    hooks:
-      - id: conventional-pre-commit
-        stages: [commit-msg]
-        args: [feat, fix, docs, style, refactor, perf, test, ci, build, chore, revert]
+ci:
+    autofix_commit_msg: |
+        bot: auto fixes from pre-commit.com hooks
+
+        for more information, see https://pre-commit.ci
