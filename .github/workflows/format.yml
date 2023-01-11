@@ -19,3 +19,5 @@ jobs:
             pre-commit install
         - name: Run pre-commit checks
           run: pre-commit run --all-files
+        - uses: pre-commit-ci/lite-action@v1.0.0
+          if: always()
