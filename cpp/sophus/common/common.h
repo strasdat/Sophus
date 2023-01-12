@@ -54,7 +54,7 @@
 #define SOPHUS_ASSERT_NEAR(...) FARM_ASSERT_NEAR(__VA_ARGS__)
 #define SOPHUS_ASSERT_OR_ERROR(...) FARM_ASSERT_OR_ERROR(__VA_ARGS__)
 #define SOPHUS_INFO(...) FARM_INFO(__VA_ARGS__)
-#define SOPHUS_PANIC(...) FARM_FORMAT(__VA_ARGS__)
+#define SOPHUS_PANIC(...) FARM_PANIC(__VA_ARGS__)
 #define SOPHUS_UNIMPLEMENTED(...) FARM_UNIMPLEMENTED(__VA_ARGS__)
 #define SOPHUS_UNWRAP(...) FARM_UNWRAP(__VA_ARGS__)
 
@@ -64,10 +64,14 @@
 
 namespace sophus {
 
-using ::farm_ng::AlwaysFalse;  // <farm_ng/core/misc/variant_utils.h>
-using ::farm_ng::Expected;     // <farm_ng/core/logging/expected.h>
-using ::farm_ng::has_type_v;   // <farm_ng/core/misc/variant_utils.h>
-using ::farm_ng::Overload;     // <farm_ng/core/misc/variant_utils.h>
+// from <farm_ng/core/misc/variant_utils.h>
+using ::farm_ng::AlwaysFalse;
+using ::farm_ng::has_type_v;
+using ::farm_ng::Overload;
+
+// from <farm_ng/core/logging/expected.h>
+using ::farm_ng::Expected;
+using ::farm_ng::Success;
 
 struct UninitTag {};
 

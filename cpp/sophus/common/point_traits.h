@@ -17,14 +17,17 @@
 namespace sophus {
 
 template <class TPoint>
-struct PointTypeLimits;
+struct PointTraits;
 
 template <ScalarType TPoint>
-struct PointTypeLimits<TPoint> {
+struct PointTraits<TPoint> {
   using Scalar = TPoint;
 
   static bool constexpr kIsFloatingPoint = std::is_floating_point_v<Scalar>;
   static bool constexpr kIsInteger = std::is_integral_v<Scalar>;
+
+  static int constexpr kRows = 1;
+  static int constexpr kCols = 1;
 
   static bool constexpr kHasInfinity =
       std::numeric_limits<Scalar>::has_infinity;
@@ -39,7 +42,7 @@ struct PointTypeLimits<TPoint> {
 };
 
 template <EigenDenseType TPoint>
-struct PointTypeLimits<TPoint> {
+struct PointTraits<TPoint> {
   using Scalar = typename TPoint::Scalar;
   static int constexpr kRows = TPoint::RowsAtCompileTime;
   static int constexpr kCols = TPoint::ColsAtCompileTime;

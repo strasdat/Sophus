@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "sophus/calculus/interval.h"
+#include "sophus/calculus/region.h"
 #include "sophus/common/common.h"
 
 #include <Eigen/Dense>

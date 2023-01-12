@@ -447,4 +447,43 @@ template <EigenDenseType TPoint>
   return allTrue(eval(lhs.array() <= rhs.array()));
 }
 
+template <ScalarType TPoint>
+[[nodiscard]] Expected<TPoint> tryGetElem(
+    TPoint const& p, size_t row, size_t col = 0) {
+  if (row == 0 && col == 0) {
+    return p;
+  }
+  return SOPHUS_UNEXPECTED("row ({}) and col ({}) must be 0", row, col);
+}
+
+template <EigenDenseType TPoint>
+[[nodiscard]] Expected<TPoint> tryGetElem(
+    TPoint const& p, size_t row, size_t col = 0) {
+  if (row < p.rows() && col < p.cols()) {
+    return p(row, col);
+  }
+  return SOPHUS_UNEXPECTED(
+      "({}, {}) access of array of size {} x {}", row, col, p.rows(), p.cols());
+}
+
+template <ScalarType TPoint>
+[[nodiscard]] Expected<Success> trySetElem(
+    TPoint& p, TPoint s, size_t row, size_t col = 0) {
+  if (row == 0 && col == 0) {
+    p = s;
+    return Success{};
+  }
+  return SOPHUS_UNEXPECTED("row ({}) and col ({}) must be 0", row, col);
+}
+
+template <EigenDenseType TPoint>
+[[nodiscard]] Expected<Success> trySetElem(
+    TPoint& p, typename TPoint::Scalar s, size_t row, size_t col = 0) {
+  if (row == 0 && col == 0) {
+    p(row, col) = s;
+    return Success{};
+  }
+  return SOPHUS_UNEXPECTED("row ({}) and col ({}) must be 0", row, col);
+}
+
 }  // namespace sophus

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "sophus/calculus/interval.h"
+#include "sophus/calculus/region.h"
 #include "sophus/image/image_size.h"
 #include "sophus/sensor/camera_model.h"
 
@@ -21,8 +21,7 @@ using OrthographicModelT =
 /// Returns orthographic camera model given bounding box and image size.
 template <class TScalar>
 OrthographicModelT<TScalar> orthoCamFromBoundingBox(
-    Interval<Eigen::Vector<TScalar, 2>> const& bounding_box,
-    ImageSize image_size) {
+    Region2<TScalar> const& bounding_box, ImageSize image_size) {
   // (-0.5, -0.5)   -> (min.x, min.y)
   // (-0.5, h-0.5)  -> (min.x, max.y)
   // (w-0.5, -0.5)  -> (max.x, min.y)
@@ -53,15 +52,14 @@ OrthographicModelT<TScalar> orthoCamFromBoundingBox(
 /// Returns 2d bounding box corresponding the the given orthographic camera
 /// model.
 template <class TScalar>
-Interval<Eigen::Vector<TScalar, 2>> boundingBoxFromOrthoCam(
+Region2<TScalar> boundingBoxFromOrthoCam(
     OrthographicModelT<TScalar> const& ortho_cam) {
   Eigen::Vector<TScalar, 2> min = (-ortho_cam.principalPoint().array() - 0.5) /
                                   ortho_cam.focalLength().array();
-  return Interval<Eigen::Vector<TScalar, 2>>::fromMinMax(
+  return Region2<TScalar>::fromMinMax(
       min,
-      Eigen::Vector<TScalar, 2>{
-          min.array() + ortho_cam.imageSize().array().template cast<TScalar>() /
-                            ortho_cam.focalLength().array()});
+      min.array() + ortho_cam.imageSize().array().template cast<TScalar>() /
+                        ortho_cam.focalLength().array());
 }
 
 }  // namespace sophus
