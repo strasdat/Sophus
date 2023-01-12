@@ -26,7 +26,6 @@ find_package(farm_ng_cmake REQUIRED)
 include(External_fmt)
 include(External_expected)
 include(External_eigen)
-include(External_ceres)
 
 ExternalProject_Add(farm-ng-core
     DEPENDS fmt expected eigen
@@ -43,8 +42,16 @@ ExternalProject_Add(farm-ng-core
 
 set(SUPER_PROJ_FARM_NG_PROTOS ${BUILD_PROTOS})
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(sophus_ceres_deps "")
+else()
+  include(External_ceres)
+  set(sophus_ceres_deps "ceres")
+endif()
+
+
 ExternalProject_Add(Sophus
-    DEPENDS farm-ng-core eigen ceres
+    DEPENDS farm-ng-core eigen ${sophus_ceres_deps}
     PREFIX ${farm_ng_EXT_PREFIX}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Sophus-build
