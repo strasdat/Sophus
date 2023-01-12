@@ -21,6 +21,10 @@ if (NOT DEFINED SOPHUS_MASTER_PROJECT)
   endif ()
 endif ()
 
+if (${COVERAGE})
+  set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} --coverage")
+endif()
+
 option(SOPHUS_INSTALL "Generate the install target." ${SOPHUS_MASTER_PROJECT})
 option(SOPHUS_USE_BASIC_LOGGING "Use basic logging (in ensure and test macros)" OFF)
 

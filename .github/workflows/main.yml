@@ -49,6 +49,12 @@ jobs:
             access: col_major
             build_type: Release
             build_protos: Off
+          - os: ubuntu-20.04
+            compiler: gcc
+            tests: coverage
+            access: col_major
+            build_type: Debug
+            build_protos: On
           - os: macos-11
             compiler: clang
             tests: unit_test
@@ -92,6 +98,16 @@ jobs:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.compiler == 'clang'
 
+      - name: Compile (clang) & tests coverage
+        run:
+          ./scripts/compile_gcc_coverage.sh
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'coverage'
+
+      - name: Coverage report
+        run: gcovr
+        if: matrix.tests == 'coverage'
 
       - name: clang-tidy
         run: |
