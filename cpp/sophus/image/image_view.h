@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "sophus/calculus/interval.h"
+#include "sophus/calculus/region.h"
 #include "sophus/image/image_size.h"
 
 namespace sophus {
@@ -482,14 +482,14 @@ class MutImageView : public ImageView<TPixel> {
 };
 
 template <class TPixel>
-Interval<TPixel> finiteInterval(sophus::ImageView<TPixel> const& image) {
+Region<TPixel> finiteInterval(sophus::ImageView<TPixel> const& image) {
   return image.reduce(
       [](TPixel v, auto& min_max) {
         if (isFinite(v)) {
           min_max.extend(v);
         }
       },
-      Interval<TPixel>{});
+      Region<TPixel>{});
 }
 
 // TODO: make member function?
