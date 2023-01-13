@@ -8,12 +8,14 @@ farm_ng_add_library(sophus_common
   NAMESPACE sophus
   INCLUDE_DIR ../../
   HEADERS
+  cast.h
   common.h
   concept_utils.h
   enum.h
   point_concepts.h
   point_methods.h
   point_traits.h
+  reduce.h
   types.h
 )
 
