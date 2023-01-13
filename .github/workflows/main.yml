@@ -72,8 +72,7 @@ jobs:
         with:
           submodules: "recursive"
 
-      - name: ccache
-        uses: hendrikmuhs/ccache-action@v1
+      - uses: hendrikmuhs/ccache-action@v1
 
       - name: Install dependencies (Ubuntu)
         run: ./scripts/install_deps_ubuntu.sh
@@ -103,10 +102,6 @@ jobs:
           ./scripts/compile_gcc_coverage.sh
         env:
           ROW_ACCESS: matrix.access
-        if: matrix.tests == 'coverage'
-
-      - name: Coverage report
-        run: gcovr
         if: matrix.tests == 'coverage'
 
       - name: clang-tidy
