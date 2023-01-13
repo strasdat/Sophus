@@ -228,4 +228,14 @@ template <EigenDenseType TPoint>
   return SOPHUS_UNEXPECTED("row ({}) and col ({}) must be 0", row, col);
 }
 
+template <ScalarType TPoint>
+[[nodiscard]] auto transpose(TPoint p) {
+  return p;
+}
+
+template <EigenDenseType TPoint>
+[[nodiscard]] auto transpose(TPoint p) {
+  return p.transpose();
+}
+
 }  // namespace sophus
