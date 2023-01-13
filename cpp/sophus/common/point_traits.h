@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "point_concepts.h"
+#include "sophus/common/point_concepts.h"
 
 #include <Eigen/Core>
 
