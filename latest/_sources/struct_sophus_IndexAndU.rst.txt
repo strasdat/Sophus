@@ -1,0 +1,23 @@
+.. index:: pair: struct; sophus::IndexAndU
+.. _doxid-structsophus_1_1_index_and_u:
+
+struct sophus::IndexAndU
+========================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <spline.h>
+	
+	struct IndexAndU {
+		// fields
+	
+		int :target:`i<doxid-structsophus_1_1_index_and_u_1a11b6ad3e473606b6973af6a5065a5716>`;
+		double :target:`u<doxid-structsophus_1_1_index_and_u_1aebcb8eeafb7579b127b355a201e31f8b>`;
+	};

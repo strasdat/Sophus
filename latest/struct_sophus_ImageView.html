@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>template struct sophus::ImageView &mdash; Sophus  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="struct sophus::IndexAndU" href="struct_sophus_IndexAndU.html" />
+    <link rel="prev" title="template struct sophus::ImageTraits&lt;Eigen::Matrix&lt;TT, kNumChannelsT, 1&gt;&gt;" href="struct_sophus_ImageTraits-2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Sophus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/strasdat/Sophus">GitHub Page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="style.html">C++ Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pysophus.html">Sympy API - Symbolic Sophus In Python</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="global.html">Global Namespace</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="namespace_Eigen.html">namespace Eigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="namespace_ceres.html">namespace ceres</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="namespace_sophus.html">namespace sophus</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus_detail.html">namespace sophus::detail</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus_jet_helpers.html">namespace sophus::jet_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enum_sophus_SegmentCase.html">enum sophus::SegmentCase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_AnyImagePredicate.html">struct sophus::AnyImagePredicate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_BasisSplineSegment.html">template struct sophus::BasisSplineSegment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_CameraInRig.html">struct sophus::CameraInRig</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ClippingPlanes.html">struct sophus::ClippingPlanes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ClosestApproachResult.html">template struct sophus::ClosestApproachResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_GetScalar.html">template struct sophus::GetScalar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_GetScalar-2.html">template struct sophus::GetScalar&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageSize.html">struct sophus::ImageSize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageTraits.html">template struct sophus::ImageTraits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageTraits-2.html">template struct sophus::ImageTraits&lt;Eigen::Matrix&lt;TT, kNumChannelsT, 1&gt;&gt;</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">template struct sophus::ImageView</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IndexAndU.html">struct sophus::IndexAndU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFixedSizeVector.html">template struct sophus::IsFixedSizeVector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFloatingPoint.html">template struct sophus::IsFloatingPoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFloatingPoint-2.html">template struct sophus::IsFloatingPoint&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsUniformRandomBitGenerator.html">template struct sophus::IsUniformRandomBitGenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_LieGroupCeresTests.html">template struct sophus::LieGroupCeresTests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Mapper.html">template struct sophus::Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Mapper-2.html">template struct sophus::Mapper&lt;TScalar, typename std::enable_if&lt;kIsMappableV&lt;TScalar&gt;&gt;::type&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_MultiCameraRig.html">struct sophus::MultiCameraRig</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_PointTraits.html">template struct sophus::PointTraits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_PointTraits-2.html">template struct sophus::PointTraits&lt;TPoint&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ProjectionOrtho.html">struct sophus::ProjectionOrtho</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ProjectionZ1.html">struct sophus::ProjectionZ1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Random.html">template struct sophus::Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Random-2.html">template struct sophus::Random&lt;double&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_RuntimePixelType.html">struct sophus::RuntimePixelType</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityAcceleroModel.html">template struct sophus::ScalingNonOrthogonalityAcceleroModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityGyroModel.html">template struct sophus::ScalingNonOrthogonalityGyroModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_UninitTag.html">struct sophus::UninitTag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_VariantImagePredicate.html">template struct sophus::VariantImagePredicate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_AffineTransform.html">class sophus::AffineTransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSpline.html">template class sophus::BasisSpline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSplineFn.html">template class sophus::BasisSplineFn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSplineImpl.html">template class sophus::BasisSplineImpl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BrownConradyTransform.html">class sophus::BrownConradyTransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CameraModel.html">class sophus::CameraModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CameraModelT.html">template class sophus::CameraModelT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Cartesian.html">template class sophus::Cartesian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CartesianBase.html">template class sophus::CartesianBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Image.html">template class sophus::Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_ImageShape.html">class sophus::ImageShape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_ImuModel.html">class sophus::ImuModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_InverseDepthPoint3.html">template class sophus::InverseDepthPoint3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_KannalaBrandtK3Transform.html">class sophus::KannalaBrandtK3Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_LieGroupTests.html">template class sophus::LieGroupTests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Manifold.html">template class sophus::Manifold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_MutImage.html">template class sophus::MutImage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_MutImageView.html">template class sophus::MutImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_PointTransformer.html">template class sophus::PointTransformer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Ray.html">template class sophus::Ray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Region.html">template class sophus::Region</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RuntimeImage.html">template class sophus::RuntimeImage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RuntimeImageView.html">template class sophus::RuntimeImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo2.html">template class sophus::RxSo2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo2Base.html">template class sophus::RxSo2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo3.html">template class sophus::RxSo3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo3Base.html">template class sophus::RxSo3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se2.html">template class sophus::Se2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se2Base.html">template class sophus::Se2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se3.html">template class sophus::Se3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se3Base.html">template class sophus::Se3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim2.html">template class sophus::Sim2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim2Base.html">template class sophus::Sim2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim3.html">template class sophus::Sim3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim3Base.html">template class sophus::Sim3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So2.html">template class sophus::So2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So2Base.html">template class sophus::So2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So3.html">template class sophus::So3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So3Base.html">template class sophus::So3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_SplineBasisFunction.html">template class sophus::SplineBasisFunction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Tests.html">template class sophus::Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_UnitVector.html">template class sophus::UnitVector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart.html">template struct RotationalPart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-2.html">template struct RotationalPart&lt;sophus::Sim2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-3.html">template struct RotationalPart&lt;sophus::Sim3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-4.html">template struct RotationalPart&lt;sophus::SO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-5.html">template struct RotationalPart&lt;sophus::SE3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-6.html">template struct RotationalPart&lt;sophus::RxSO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-7.html">template struct RotationalPart&lt;sophus::Se2F64&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-8.html">template struct RotationalPart&lt;sophus::RxSO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-9.html">template struct RotationalPart&lt;sophus::SO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sophus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="global.html">Global Namespace</a></li>
+          <li class="breadcrumb-item"><a href="namespace_sophus.html">namespace sophus</a></li>
+      <li class="breadcrumb-item active">template struct sophus::ImageView</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/struct_sophus_ImageView.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="template-struct-sophus-imageview">
+<span id="doxid-structsophus-1-1-image-view"></span><span id="index-0"></span><h1>template struct sophus::ImageView<a class="headerlink" href="#template-struct-sophus-imageview" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>A view of an (immutable) image, which does not own the data. <a class="reference internal" href="#details-structsophus-1-1-image-view"><span class="std std-ref">More…</span></a></p>
+<pre class="highlight doxyrest-overview-code-block literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;image_view.h&gt;</span><span class="cp"></span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPixel</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">ImageView</span> <span class="p">{</span>
+    <span class="c1">// typedefs</span>
+
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-structsophus-1-1-image-view-1a824084f4aff167459313deffc016842b">PixelType</span><span></span> <span class="o">=</span> <span class="n">TPixel</span> <span class="p">;</span>
+
+    <span class="c1">// construction</span>
+
+    <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1ac2e2480739a582d0bdb0a5360c43d7d3"><span class="std std-ref">ImageView</span></a><span></span><span class="p">();</span>
+    <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a19f110c25cb862f1d15f65fb7ff1f695"><span class="std std-ref">ImageView</span></a><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a><span></span> <span class="n">shape</span><span class="p">,</span> <span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <span class="n">ptr</span><span class="p">);</span>
+    <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a419a7e560d60fee8d436bc9a95069304"><span class="std std-ref">ImageView</span></a><span></span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">sophus::ImageSize</span></a><span></span> <span class="n">image_size</span><span class="p">,</span> <span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <span class="n">ptr</span><span class="p">);</span>
+
+    <span class="c1">// methods</span>
+
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1ae44579c06f0dc6c89c960b153c076ed9"><span class="std std-ref">isEmpty</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a97bf64cfd7432518442b0f54262f56f7"><span class="std std-ref">isContiguous</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">sophus::ImageSize</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1aad892d6f77fa63451e76624713b24908"><span class="std std-ref">imageSize</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a46ebaa9fd38c3216576b8fae690b3b9b"><span class="std std-ref">shape</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-structsophus-1-1-image-view-1ac719f68b41c8af953d6ebc239192ceeb">width</span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-structsophus-1-1-image-view-1a4aa4a7d41508c32e464bce5e36260945">height</span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">size_t</span> <span class="doxyrest-code-target target" id="doxid-structsophus-1-1-image-view-1aa25fa2b48e9979f4e4854d46430a8695">pitchBytes</span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a62b279caff31b08bfcff294e1518fd07"><span class="std std-ref">colInBounds</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1ab9be65c29efe027adc8669484dc1ef96"><span class="std std-ref">rowInBounds</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1ac2fd0caae912334d8cfba0152ea2eda0"><span class="std std-ref">rowPtr</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">TPixel</span> <span class="k">const</span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1acd29b4985412381df7385cd887f6d591"><span class="std std-ref">checked</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">TPixel</span> <span class="k">const</span><span class="o">&amp;</span> <span class="doxyrest-code-target target" id="doxid-structsophus-1-1-image-view-1a237f9159c75cb276635dbd45d9faebb9">checked</span><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="n">uv</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">TPixel</span> <span class="k">const</span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a912b28894dfdb53310f8c5fe07d87fb9"><span class="std std-ref">unchecked</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">TPixel</span> <span class="k">const</span><span class="o">&amp;</span> <span class="doxyrest-code-target target" id="doxid-structsophus-1-1-image-view-1a615cbb9c94939364913c46d8348dbc15">unchecked</span><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="n">uv</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1ab89ef317eebaf3a71f15d7a723ea01a3"><span class="std std-ref">ptr</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">ImageView</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a198df907fecd7103724f1ffd02f8310c"><span class="std std-ref">subview</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="n">uv</span><span class="p">,</span> <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">sophus::ImageSize</span></a><span></span> <span class="n">size</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TFunc</span><span class="o">&gt;</span>
+    <span class="kt">void</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a2355eb158506aafc762a7a057975c13b"><span class="std std-ref">visit</span></a><span></span><span class="p">(</span><span class="n">TFunc</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">user_function</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TReduceOp</span><span class="p">,</span> <span class="k">class</span> <span class="n">TVal</span><span class="o">&gt;</span>
+    <span class="n">TVal</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1ad6ee10edcbc6267d9d92eb66e77a291e"><span class="std std-ref">reduce</span></a><span></span><span class="p">(</span>
+        <span class="n">TReduceOp</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">reduce_op</span><span class="p">,</span>
+        <span class="n">TVal</span> <span class="n">val</span> <span class="o">=</span> <span class="n">TVal</span><span class="p">{}</span>
+        <span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TShortCircuitReduceOp</span><span class="p">,</span> <span class="k">class</span> <span class="n">TVal</span><span class="o">&gt;</span>
+    <span class="n">TVal</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a8fc012bee1f58e9fd976125a216fc650"><span class="std std-ref">shortCircuitReduce</span></a><span></span><span class="p">(</span>
+        <span class="n">TShortCircuitReduceOp</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">short_circuit_reduce_op</span><span class="p">,</span>
+        <span class="n">TVal</span> <span class="n">val</span> <span class="o">=</span> <span class="n">TVal</span><span class="p">{}</span>
+        <span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a8d34fd6288b9faf9e5cf7457c2136809"><span class="std std-ref">operator==</span></a><span></span><span class="p">(</span><span class="n">ImageView</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a17ad6c4e80f27ebb8be855b1e8a602ca"><span class="std std-ref">operator!=</span></a><span></span><span class="p">(</span><span class="n">ImageView</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a2b9537ef883c762342bc956a4bbcad35"><span class="std std-ref">hasSameData</span></a><span></span><span class="p">(</span><span class="n">ImageView</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+
+<span class="k">protected</span><span class="o">:</span>
+    <span class="c1">// fields</span>
+
+    <a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a><span></span> <span class="doxyrest-code-target target" id="doxid-structsophus-1-1-image-view-1a5fdbe7864c510048142e9af82735d501">shape_</span><span></span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <span class="doxyrest-code-target target" id="doxid-structsophus-1-1-image-view-1a771ec00e4928adc63935e2f3d456ff2d">ptr_</span><span></span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+
+    <span class="c1">// methods</span>
+
+    <span class="kt">void</span> <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a528bbadf7c273703e3b2d3aac877152b"><span class="std std-ref">setViewToEmpty</span></a><span></span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="c1">// direct descendants</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPixel</span><span class="o">&gt;</span>
+<span class="k">class</span> <a class="reference internal" href="class_sophus_MutImageView.html#doxid-classsophus-1-1-mut-image-view"><span class="std std-ref">MutImageView</span></a><span></span><span class="p">;</span></pre>
+</section>
+<section id="detailed-documentation">
+<span id="details-structsophus-1-1-image-view"></span><h2>Detailed Documentation<a class="headerlink" href="#detailed-documentation" title="Permalink to this headline">¶</a></h2>
+<p>A view of an (immutable) image, which does not own the data.</p>
+<p>The API of <a class="reference internal" href="#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a> allows for read-only access. There is an escape hook for write access, see <a class="reference internal" href="class_sophus_MutImageView.html#doxid-classsophus-1-1-mut-image-view-1a75758f23b087e537d59dfde22de0490e"><span class="std std-ref">MutImageView::unsafeConstCast</span></a> below.</p>
+<p>ImageViews are nullable. In that case <code class="docutils literal notranslate"><span class="pre">this-&gt;</span><a class="reference internal" href="#doxid-structsophus-1-1-image-view-1ae44579c06f0dc6c89c960b153c076ed9"><span class="std std-ref"><span class="pre">isEmpty()</span></span></a></code> is true.</p>
+<p>Details on equality comparison, the state of the object, and const-correctness.</p>
+<p><a class="reference internal" href="#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a> is a “shallow-compare type” similar to std::span&lt;Pixel const&gt; and std::unique_ptr&lt;Pixel const&gt;. In particular, we define that the state of an <a class="reference internal" href="#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a> instance consists of the shape of the image <code class="docutils literal notranslate"><span class="pre">shape_</span></code> (see <a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a>) and the pointer address to the first pixel <code class="docutils literal notranslate"><span class="pre">ptr_</span></code>. No public member method can change the pointer nor the shape, hence they are all marked const.</p>
+<section id="construction">
+<h3>Construction<a class="headerlink" href="#construction" title="Permalink to this headline">¶</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1ac2e2480739a582d0bdb0a5360c43d7d3"><span id="index-1"></span><span></span><span class="n">ImageView</span><span class="p">()</span></pre>
+<p>Default constructor creates an empty image.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a19f110c25cb862f1d15f65fb7ff1f695"><span id="index-2"></span><span></span><span class="n">ImageView</span><span class="p">(</span><a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a><span></span> <span class="n">shape</span><span class="p">,</span> <span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <span class="n">ptr</span><span class="p">)</span></pre>
+<p>Creates view from shape and pointer to first pixel.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a419a7e560d60fee8d436bc9a95069304"><span id="index-3"></span><span></span><span class="n">ImageView</span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">sophus::ImageSize</span></a><span></span> <span class="n">image_size</span><span class="p">,</span> <span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <span class="n">ptr</span><span class="p">)</span></pre>
+<p>Creates view from image size and pointer to first pixel. The image is assumed to be contiguous and the pitch is set accordingly.</p>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1ae44579c06f0dc6c89c960b153c076ed9"><span id="index-4"></span><span></span><span class="kt">bool</span> <span class="n">isEmpty</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns true if view is empty.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a97bf64cfd7432518442b0f54262f56f7"><span id="index-5"></span><span></span><span class="kt">bool</span> <span class="n">isContiguous</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns true if view is contiguous.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1aad892d6f77fa63451e76624713b24908"><span id="index-6"></span><a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">sophus::ImageSize</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">imageSize</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a>. It is {0,0} if view is empty.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a46ebaa9fd38c3216576b8fae690b3b9b"><span id="index-7"></span><a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">shape</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns <a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a>. It is {{0,0}, 0} is view is empty.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a62b279caff31b08bfcff294e1518fd07"><span id="index-8"></span><span></span><span class="kt">bool</span> <span class="n">colInBounds</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns true if u is in [0, width).</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1ab9be65c29efe027adc8669484dc1ef96"><span id="index-9"></span><span></span><span class="kt">bool</span> <span class="n">rowInBounds</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns true if v is in [0, height).</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1ac2fd0caae912334d8cfba0152ea2eda0"><span id="index-10"></span><span></span><span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <span class="n">rowPtr</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns v-th row pointer.</p>
+<p>Precondition: v must be in [0, height).</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1acd29b4985412381df7385cd887f6d591"><span id="index-11"></span><span></span><span class="n">TPixel</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">checked</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns pixel u, v.</p>
+<p>Precondition: u must be in [0, width) and v must be in [0, height).</p>
+<p>Note:</p>
+<ul class="simple">
+<li><p>panics if u.v is invalid,</p></li>
+</ul>
+<p>This is a costly function to call - e.g. when iterating over the whole image. Use the following instead:</p>
+<p>for (int v=0; v&lt;view.shape(). <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1a4aa4a7d41508c32e464bce5e36260945"><span class="std std-ref">height()</span></a>; ++v) { TPixel const* row = img.rowPtr(v); for (int u=0; u&lt;view.shape(). <a class="reference internal" href="#doxid-structsophus-1-1-image-view-1ac719f68b41c8af953d6ebc239192ceeb"><span class="std std-ref">width()</span></a>; ++u) { PixetT p = row[u]; } }</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a912b28894dfdb53310f8c5fe07d87fb9"><span id="index-12"></span><span></span><span class="n">TPixel</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">unchecked</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns pixel u, v.</p>
+<p>Precondition: u must be in [0, width) and v must be in [0, height). Silent UB on failure.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1ab89ef317eebaf3a71f15d7a723ea01a3"><span id="index-13"></span><span></span><span class="n">TPixel</span> <span class="k">const</span><span class="o">*</span> <span class="n">ptr</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns pointer to first pixel.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a198df907fecd7103724f1ffd02f8310c"><span id="index-14"></span><span></span><span class="n">ImageView</span> <span class="n">subview</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="n">uv</span><span class="p">,</span> <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">sophus::ImageSize</span></a><span></span> <span class="n">size</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns subview.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a2355eb158506aafc762a7a057975c13b"><span id="index-15"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TFunc</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">visit</span><span class="p">(</span><span class="n">TFunc</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">user_function</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Performs reduction / fold on image view.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1ad6ee10edcbc6267d9d92eb66e77a291e"><span id="index-16"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TReduceOp</span><span class="p">,</span> <span class="k">class</span> <span class="n">TVal</span><span class="o">&gt;</span>
+<span class="n">TVal</span> <span class="n">reduce</span><span class="p">(</span>
+    <span class="n">TReduceOp</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">reduce_op</span><span class="p">,</span>
+    <span class="n">TVal</span> <span class="n">val</span> <span class="o">=</span> <span class="n">TVal</span><span class="p">{}</span>
+    <span class="p">)</span> <span class="k">const</span></pre>
+<p>Performs reduction / fold on image view.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a8fc012bee1f58e9fd976125a216fc650"><span id="index-17"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TShortCircuitReduceOp</span><span class="p">,</span> <span class="k">class</span> <span class="n">TVal</span><span class="o">&gt;</span>
+<span class="n">TVal</span> <span class="n">shortCircuitReduce</span><span class="p">(</span>
+    <span class="n">TShortCircuitReduceOp</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">short_circuit_reduce_op</span><span class="p">,</span>
+    <span class="n">TVal</span> <span class="n">val</span> <span class="o">=</span> <span class="n">TVal</span><span class="p">{}</span>
+    <span class="p">)</span> <span class="k">const</span></pre>
+<p>Performs reduction / fold on image view with short circuit condition.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a8d34fd6288b9faf9e5cf7457c2136809"><span id="index-18"></span><span></span><span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">ImageView</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>The equality operator is deleted to avoid confusion. Since <a class="reference internal" href="#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a> is a “shallow-copy” type, a consistently defined equality would check for equality of its (shallow) state:</p>
+<p><code class="docutils literal notranslate"><span class="pre">this-&gt;shape_</span> <span class="pre">==</span> <span class="pre">rhs.shape()</span> <span class="pre">&amp;&amp;</span> <span class="pre">this-&gt;ptr_</span> <span class="pre">==</span> <span class="pre">rhs.ptr_</span></code> `</p>
+<p>However, some users might expect that equality would check for pixel values equality and return true for identical copies of data blocks.</p>
+<p>Here we follow std::span which also does not offer equality comparions.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a17ad6c4e80f27ebb8be855b1e8a602ca"><span id="index-19"></span><span></span><span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="n">ImageView</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>The in-equality operator is deleted to avoid confusion.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a2b9537ef883c762342bc956a4bbcad35"><span id="index-20"></span><span></span><span class="kt">bool</span> <span class="n">hasSameData</span><span class="p">(</span><span class="n">ImageView</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns true both views have the same size and contain the same data.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-structsophus-1-1-image-view-1a528bbadf7c273703e3b2d3aac877152b"><span id="index-21"></span><span></span><span class="kt">void</span> <span class="n">setViewToEmpty</span><span class="p">()</span></pre>
+<p>Resets view such that it is empty.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="struct_sophus_ImageTraits-2.html" class="btn btn-neutral float-left" title="template struct sophus::ImageTraits&lt;Eigen::Matrix&lt;TT, kNumChannelsT, 1&gt;&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="struct_sophus_IndexAndU.html" class="btn btn-neutral float-right" title="struct sophus::IndexAndU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

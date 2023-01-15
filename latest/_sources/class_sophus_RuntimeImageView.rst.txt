@@ -1,0 +1,152 @@
+.. index:: pair: class; sophus::RuntimeImageView
+.. _doxid-classsophus_1_1_runtime_image_view:
+
+template class sophus::RuntimeImageView
+=======================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <runtime_image.h>
+	
+	template <class TPredicate = AnyImagePredicate>
+	class RuntimeImageView {
+	public:
+		// construction
+	
+		template <class TPixel>
+		:ref:`RuntimeImageView<doxid-classsophus_1_1_runtime_image_view_1af3f1352d79dae6e05d9410b29efa7c97>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> const& image);
+	
+		:target:`RuntimeImageView<doxid-classsophus_1_1_runtime_image_view_1a644f384f6f7480d7e99f81c22cf13603>`(
+			:ref:`ImageShape<doxid-classsophus_1_1_image_shape>` const& image_shape,
+			:ref:`RuntimePixelType<doxid-structsophus_1_1_runtime_pixel_type>` const& pixel_type,
+			void const* ptr
+			);
+
+		// methods
+	
+		template <class TPixel>
+		bool :ref:`has<doxid-classsophus_1_1_runtime_image_view_1a350924ab9f5901f56936123a49f4537a>`() const;
+	
+		uint8_t const* :ref:`rawRowPtr<doxid-classsophus_1_1_runtime_image_view_1a1b1d9f2c2a6f9799a00b24336adb8ce2>`(int v) const;
+		uint8_t const* :target:`rawPtr<doxid-classsophus_1_1_runtime_image_view_1a650dbeb9b2a37d044273edae614ce557>`() const;
+		int :ref:`numBytesPerPixelChannel<doxid-classsophus_1_1_runtime_image_view_1a8c32fc7a36d7c616dc155a85b8cd31e9>`() const;
+		NumberType :target:`numberType<doxid-classsophus_1_1_runtime_image_view_1aecc09d61612e9aecc930cf97f09fc623>`() const;
+		:ref:`ImageShape<doxid-classsophus_1_1_image_shape>` const& :target:`shape<doxid-classsophus_1_1_runtime_image_view_1ae87c94fd7686b168f8c8b081d767729a>`() const;
+		:ref:`ImageSize<doxid-structsophus_1_1_image_size>` const& :target:`imageSize<doxid-classsophus_1_1_runtime_image_view_1a045d6801a35b210ac6ac3794f9f1dd93>`() const;
+		int :target:`width<doxid-classsophus_1_1_runtime_image_view_1a4d7ccdf58eb3963134d93f5d20607b07>`() const;
+		int :target:`height<doxid-classsophus_1_1_runtime_image_view_1ab331ab3d0e8d2e0bd112b1841819d05f>`() const;
+		size_t :target:`pitchBytes<doxid-classsophus_1_1_runtime_image_view_1aaaf6d5889a98d317648ce6a479d7cc18>`() const;
+		size_t :target:`sizeBytes<doxid-classsophus_1_1_runtime_image_view_1ac74dca327f936079213c0b7e23ceb665>`() const;
+		bool :target:`isEmpty<doxid-classsophus_1_1_runtime_image_view_1abb4f4b334474ee7885a862748ea95ac3>`() const;
+		:ref:`RuntimePixelType<doxid-structsophus_1_1_runtime_pixel_type>` :target:`pixelType<doxid-classsophus_1_1_runtime_image_view_1ac7c126db1956c7d206b08962ccf6c7a2>`() const;
+		int :target:`numChannels<doxid-classsophus_1_1_runtime_image_view_1ab8e3f726a9a73855ea605f4271ebf330>`() const;
+		RuntimeImageView :ref:`subview<doxid-classsophus_1_1_runtime_image_view_1af63a75c9a27d62b65144feece43bd6c4>`(Eigen::Vector2i uv, :ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` size) const;
+	
+		template <class TPixel>
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> :ref:`imageView<doxid-classsophus_1_1_runtime_image_view_1aeb3fa5d5f1d0d6f68dfd656a3dda16a3>`() const;
+
+	protected:
+		// fields
+	
+		:ref:`ImageShape<doxid-classsophus_1_1_image_shape>` :target:`shape_<doxid-classsophus_1_1_runtime_image_view_1ae1aed5aa6cd11d4373aee15148fe8175>` = {};
+		:ref:`RuntimePixelType<doxid-structsophus_1_1_runtime_pixel_type>` :target:`pixel_type_<doxid-classsophus_1_1_runtime_image_view_1a25639fd605871522d4d22fc29a014714>`;
+		uint8_t const* :target:`ptr_<doxid-classsophus_1_1_runtime_image_view_1a1c5e45b22a2ef42ddcc6a4e49888fb8e>`;
+
+		// construction
+	
+		:target:`RuntimeImageView<doxid-classsophus_1_1_runtime_image_view_1ab3bb0f2da5b3c39f0a0f6a03a32a32e9>`();
+	};
+.. _details-classsophus_1_1_runtime_image_view:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Construction
+------------
+
+.. index:: pair: function; RuntimeImageView
+.. _doxid-classsophus_1_1_runtime_image_view_1af3f1352d79dae6e05d9410b29efa7c97:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TPixel>
+	RuntimeImageView(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> const& image)
+
+Create type-erased image view from :ref:`ImageView <doxid-structsophus_1_1_image_view>`.
+
+By design not "explicit".
+
+Methods
+-------
+
+.. index:: pair: function; has
+.. _doxid-classsophus_1_1_runtime_image_view_1a350924ab9f5901f56936123a49f4537a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TPixel>
+	bool has() const
+
+Return true is this contains data of type TPixel.
+
+.. index:: pair: function; rawRowPtr
+.. _doxid-classsophus_1_1_runtime_image_view_1a1b1d9f2c2a6f9799a00b24336adb8ce2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	uint8_t const* rawRowPtr(int v) const
+
+Returns v-th row pointer.
+
+Precondition: v must be in [0, height).
+
+.. index:: pair: function; numBytesPerPixelChannel
+.. _doxid-classsophus_1_1_runtime_image_view_1a8c32fc7a36d7c616dc155a85b8cd31e9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int numBytesPerPixelChannel() const
+
+Number of bytes per channel of a single pixel.
+
+E.g. a pixel of Eigen::Matrix<uint8_t, 3, 1> has 1 byte per channel.
+
+.. index:: pair: function; subview
+.. _doxid-classsophus_1_1_runtime_image_view_1af63a75c9a27d62b65144feece43bd6c4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	RuntimeImageView subview(Eigen::Vector2i uv, :ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` size) const
+
+Returns subview with shared ownership semantics of whole image.
+
+.. index:: pair: function; imageView
+.. _doxid-classsophus_1_1_runtime_image_view_1aeb3fa5d5f1d0d6f68dfd656a3dda16a3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TPixel>
+	:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> imageView() const
+
+Returns typed image.
+
+Precondition: this-> :ref:`has\<TPixel>() <doxid-classsophus_1_1_runtime_image_view_1a350924ab9f5901f56936123a49f4537a>`
+

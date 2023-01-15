@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>template class sophus::LieGroupTests &mdash; Sophus  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="template class sophus::Manifold" href="class_sophus_Manifold.html" />
+    <link rel="prev" title="class sophus::KannalaBrandtK3Transform" href="class_sophus_KannalaBrandtK3Transform.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Sophus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/strasdat/Sophus">GitHub Page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="style.html">C++ Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pysophus.html">Sympy API - Symbolic Sophus In Python</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="global.html">Global Namespace</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="namespace_Eigen.html">namespace Eigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="namespace_ceres.html">namespace ceres</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="namespace_sophus.html">namespace sophus</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus_detail.html">namespace sophus::detail</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus_jet_helpers.html">namespace sophus::jet_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enum_sophus_SegmentCase.html">enum sophus::SegmentCase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_AnyImagePredicate.html">struct sophus::AnyImagePredicate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_BasisSplineSegment.html">template struct sophus::BasisSplineSegment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_CameraInRig.html">struct sophus::CameraInRig</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ClippingPlanes.html">struct sophus::ClippingPlanes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ClosestApproachResult.html">template struct sophus::ClosestApproachResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_GetScalar.html">template struct sophus::GetScalar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_GetScalar-2.html">template struct sophus::GetScalar&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageSize.html">struct sophus::ImageSize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageTraits.html">template struct sophus::ImageTraits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageTraits-2.html">template struct sophus::ImageTraits&lt;Eigen::Matrix&lt;TT, kNumChannelsT, 1&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageView.html">template struct sophus::ImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IndexAndU.html">struct sophus::IndexAndU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFixedSizeVector.html">template struct sophus::IsFixedSizeVector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFloatingPoint.html">template struct sophus::IsFloatingPoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFloatingPoint-2.html">template struct sophus::IsFloatingPoint&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsUniformRandomBitGenerator.html">template struct sophus::IsUniformRandomBitGenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_LieGroupCeresTests.html">template struct sophus::LieGroupCeresTests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Mapper.html">template struct sophus::Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Mapper-2.html">template struct sophus::Mapper&lt;TScalar, typename std::enable_if&lt;kIsMappableV&lt;TScalar&gt;&gt;::type&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_MultiCameraRig.html">struct sophus::MultiCameraRig</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_PointTraits.html">template struct sophus::PointTraits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_PointTraits-2.html">template struct sophus::PointTraits&lt;TPoint&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ProjectionOrtho.html">struct sophus::ProjectionOrtho</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ProjectionZ1.html">struct sophus::ProjectionZ1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Random.html">template struct sophus::Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Random-2.html">template struct sophus::Random&lt;double&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_RuntimePixelType.html">struct sophus::RuntimePixelType</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityAcceleroModel.html">template struct sophus::ScalingNonOrthogonalityAcceleroModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityGyroModel.html">template struct sophus::ScalingNonOrthogonalityGyroModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_UninitTag.html">struct sophus::UninitTag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_VariantImagePredicate.html">template struct sophus::VariantImagePredicate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_AffineTransform.html">class sophus::AffineTransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSpline.html">template class sophus::BasisSpline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSplineFn.html">template class sophus::BasisSplineFn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSplineImpl.html">template class sophus::BasisSplineImpl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BrownConradyTransform.html">class sophus::BrownConradyTransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CameraModel.html">class sophus::CameraModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CameraModelT.html">template class sophus::CameraModelT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Cartesian.html">template class sophus::Cartesian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CartesianBase.html">template class sophus::CartesianBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Image.html">template class sophus::Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_ImageShape.html">class sophus::ImageShape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_ImuModel.html">class sophus::ImuModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_InverseDepthPoint3.html">template class sophus::InverseDepthPoint3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_KannalaBrandtK3Transform.html">class sophus::KannalaBrandtK3Transform</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">template class sophus::LieGroupTests</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Manifold.html">template class sophus::Manifold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_MutImage.html">template class sophus::MutImage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_MutImageView.html">template class sophus::MutImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_PointTransformer.html">template class sophus::PointTransformer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Ray.html">template class sophus::Ray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Region.html">template class sophus::Region</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RuntimeImage.html">template class sophus::RuntimeImage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RuntimeImageView.html">template class sophus::RuntimeImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo2.html">template class sophus::RxSo2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo2Base.html">template class sophus::RxSo2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo3.html">template class sophus::RxSo3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo3Base.html">template class sophus::RxSo3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se2.html">template class sophus::Se2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se2Base.html">template class sophus::Se2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se3.html">template class sophus::Se3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se3Base.html">template class sophus::Se3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim2.html">template class sophus::Sim2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim2Base.html">template class sophus::Sim2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim3.html">template class sophus::Sim3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim3Base.html">template class sophus::Sim3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So2.html">template class sophus::So2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So2Base.html">template class sophus::So2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So3.html">template class sophus::So3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So3Base.html">template class sophus::So3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_SplineBasisFunction.html">template class sophus::SplineBasisFunction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Tests.html">template class sophus::Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_UnitVector.html">template class sophus::UnitVector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart.html">template struct RotationalPart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-2.html">template struct RotationalPart&lt;sophus::Sim2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-3.html">template struct RotationalPart&lt;sophus::Sim3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-4.html">template struct RotationalPart&lt;sophus::SO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-5.html">template struct RotationalPart&lt;sophus::SE3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-6.html">template struct RotationalPart&lt;sophus::RxSO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-7.html">template struct RotationalPart&lt;sophus::Se2F64&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-8.html">template struct RotationalPart&lt;sophus::RxSO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-9.html">template struct RotationalPart&lt;sophus::SO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sophus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="global.html">Global Namespace</a></li>
+          <li class="breadcrumb-item"><a href="namespace_sophus.html">namespace sophus</a></li>
+      <li class="breadcrumb-item active">template class sophus::LieGroupTests</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/class_sophus_LieGroupTests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="template-class-sophus-liegrouptests">
+<span id="doxid-classsophus-1-1-lie-group-tests"></span><span id="index-0"></span><h1>template class sophus::LieGroupTests<a class="headerlink" href="#template-class-sophus-liegrouptests" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<pre class="highlight doxyrest-overview-code-block literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;test_impl.h&gt;</span><span class="cp"></span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TLieGroup</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="n">LieGroupTests</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// typedefs</span>
+
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a6ce63c05d6a840ef445d2e9bc8b5868d">LieGroup</span><span></span> <span class="o">=</span> <span class="n">TLieGroup</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4">Scalar</span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Scalar</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ab22e195f3e2aa2b76eb43b78a47780d8">Transformation</span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Transformation</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a6d31f72ee94140feeb3bc065e0e877e1">Tangent</span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Tangent</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a9603aea8e33f14def1a747c984c31981">Point</span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Point</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a738f724d87299de6ace3d06668ea65e5">HomogeneousPoint</span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">HomogeneousPoint</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ae783bd5e657a9a26876c017819d69ddb">ConstPointMap</span><span></span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Map</span><span class="o">&lt;</span><span class="k">const</span> <a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9603aea8e33f14def1a747c984c31981"><span class="std std-ref">Point</span></a><span></span><span class="o">&gt;</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a41f4939e782c96460992facc2fcd3f0f">Line</span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Line</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a74a94418f9e7cbd3e3ef256affe01e7c">Hyperplane</span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Hyperplane</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1af75c238f4fa6bf992e7b3ef409be7f4d">Adjoint</span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Adjoint</span> <span class="p">;</span>
+
+    <span class="c1">// fields</span>
+
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a634da78451e248eb0269c392a68a7d8d">kPointDim</span><span></span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">kPointDim</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a8fe84654850f8d36266b06d5d236ebfe">kMatrixDim</span><span></span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">kMatrixDim</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a59e17d546a97a12e02a211d8fb194ed1">kDoF</span><span></span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">kDoF</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ab5e9ce99f331a099b06f07e4ad87c9d2">kNumParameters</span><span></span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">kNumParameters</span><span class="p">;</span>
+
+    <span class="c1">// construction</span>
+
+    <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a78e9a06bb0b486d0c7483fe8b1a4e735">LieGroupTests</span><span></span><span class="p">(</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a6ce63c05d6a840ef445d2e9bc8b5868d"><span class="std std-ref">LieGroup</span></a><span></span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a6ce63c05d6a840ef445d2e9bc8b5868d"><span class="std std-ref">LieGroup</span></a><span></span><span class="o">&gt;&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">group_vec</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a6d31f72ee94140feeb3bc065e0e877e1"><span class="std std-ref">Tangent</span></a><span></span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a6d31f72ee94140feeb3bc065e0e877e1"><span class="std std-ref">Tangent</span></a><span></span><span class="o">&gt;&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">tangent_vec</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9603aea8e33f14def1a747c984c31981"><span class="std std-ref">Point</span></a><span></span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9603aea8e33f14def1a747c984c31981"><span class="std std-ref">Point</span></a><span></span><span class="o">&gt;&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point_vec</span>
+        <span class="p">);</span>
+
+    <span class="c1">// methods</span>
+
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a98ae94410d518e008bbd80bfc02553de">adjointTest</span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TG</span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TG</span><span class="p">,</span> <a class="reference internal" href="class_sophus_So3.html#doxid-classsophus-1-1-so3"><span class="std std-ref">So3</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="o">||</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TG</span><span class="p">,</span> <a class="reference internal" href="class_sophus_Se3.html#doxid-classsophus-1-1-se3"><span class="std std-ref">Se3</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a15e3e167fd275bbccfd546898ac4bbf0">leftJacobianTest</span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TG</span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;!</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TG</span><span class="p">,</span> <a class="reference internal" href="class_sophus_So3.html#doxid-classsophus-1-1-so3"><span class="std std-ref">So3</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="o">||</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TG</span><span class="p">,</span> <a class="reference internal" href="class_sophus_Se3.html#doxid-classsophus-1-1-se3"><span class="std std-ref">Se3</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="p">),</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a311de8ad8d5e5cb4c075b25c5d04f052">leftJacobianTest</span><span></span><span class="p">();</span>
+
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a8e31beaa740936d85bba54a3f82750b3">moreJacobiansTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a850f0839433730f93e36608eb3766d8c">contructorAndAssignmentTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a28d71a2f9a1b4f1678e64a7f5f5423eb">derivativeTest</span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TG</span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">&gt;</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a130cfd7dc17a22efec7828ed5fd0a421">additionalDerivativeTest</span><span></span><span class="p">();</span>
+
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a8cc9b98c5a0f12ad1d5bcb41fa1ee134">productTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ad3f06fdd325041da01944c8c1b1b9398">expLogTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a8a6134db20da92794e5bac99de352039">expMapTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1af24ed28723a43fe405d8adba65411a7f">groupActionTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a9d8947a6056aa13cdfd3277efe42b412">lineActionTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a76fb8cbdda0b7072bacbcc8ad52eabd3">planeActionTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a562335dd15cf0b8c82803fd014a91eab">lieBracketTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a65eacae42f331e7ca16cd6c86e2bc349">veeHatTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1aa28b9649d2d71383bd4360ce5801eb34">newDeleteSmokeTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1aefdb8b69038f6c4f0c245ce363ea9cf2">interpolateAndMeanTest</span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a099d332b69f515362fef71256c3f6c00">testRandomSmoke</span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TS</span><span class="p">,</span> <span class="kt">float</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1abebc9445d05afe1c7f84787f868cea4b">testSpline</span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;!</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TS</span><span class="p">,</span> <span class="kt">float</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ae5f7520a250ca27839cedc685cd334d0">testSpline</span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">TS</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a66c7addad1edc5d416e83e4a5e2b45a5">doAllTestsPass</span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;!</span><span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">TS</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a65f2d630f8716638df26c1c373856a27">doAllTestsPass</span><span></span><span class="p">();</span>
+<span class="p">};</span></pre>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="class_sophus_KannalaBrandtK3Transform.html" class="btn btn-neutral float-left" title="class sophus::KannalaBrandtK3Transform" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="class_sophus_Manifold.html" class="btn btn-neutral float-right" title="template class sophus::Manifold" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

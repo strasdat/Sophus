@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Namespace &mdash; Sophus  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="namespace Eigen" href="namespace_Eigen.html" />
+    <link rel="prev" title="Sympy API - Symbolic Sophus In Python" href="pysophus.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Sophus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/strasdat/Sophus">GitHub Page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="style.html">C++ Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pysophus.html">Sympy API - Symbolic Sophus In Python</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Global Namespace</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="namespace_Eigen.html">namespace Eigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="namespace_ceres.html">namespace ceres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="namespace_sophus.html">namespace sophus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart.html">template struct RotationalPart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-2.html">template struct RotationalPart&lt;sophus::Sim2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-3.html">template struct RotationalPart&lt;sophus::Sim3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-4.html">template struct RotationalPart&lt;sophus::SO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-5.html">template struct RotationalPart&lt;sophus::SE3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-6.html">template struct RotationalPart&lt;sophus::RxSO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-7.html">template struct RotationalPart&lt;sophus::Se2F64&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-8.html">template struct RotationalPart&lt;sophus::RxSO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-9.html">template struct RotationalPart&lt;sophus::SO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#macros">Macros</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sophus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Global Namespace</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/global.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="global"></span><section id="global-namespace">
+<span id="index-0"></span><h1>Global Namespace<a class="headerlink" href="#global-namespace" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<pre class="highlight doxyrest-overview-code-block literal-block"><span></span><span class="c1">// namespaces</span>
+
+<span class="k">namespace</span> <a class="reference internal" href="namespace_Eigen.html#doxid-namespace-eigen"><span class="std std-ref">Eigen</span></a><span></span><span class="p">;</span>
+<span class="k">namespace</span> <a class="reference internal" href="namespace_ceres.html#doxid-namespaceceres"><span class="std std-ref">ceres</span></a><span></span><span class="p">;</span>
+<span class="k">namespace</span> <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus"><span class="std std-ref">sophus</span></a><span></span><span class="p">;</span>
+    <span class="k">namespace</span> <a class="reference internal" href="namespace_sophus_detail.html#doxid-namespacesophus-1-1detail"><span class="std std-ref">sophus::detail</span></a><span></span><span class="p">;</span>
+    <span class="k">namespace</span> <a class="reference internal" href="namespace_sophus_jet_helpers.html#doxid-namespacesophus-1-1jet-helpers"><span class="std std-ref">sophus::jet_helpers</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// typedefs</span>
+
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2rxso2-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642">StdVector</span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2rxso3-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642">StdVector</span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2se2-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642">StdVector</span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2se3-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642">StdVector</span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2sim2-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642">StdVector</span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2sim3-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642">StdVector</span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2so2-test-8cpp-1a37b05f138e42d01eb88dd6fe6fd04268">StdVector</span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TScalar</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TScalar</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2so3-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642">StdVector</span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+
+<span class="c1">// structs</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TLieGroup</span><span class="o">&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart.html#doxid-struct-rotational-part"><span class="std std-ref">RotationalPart</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-2.html#doxid-struct-rotational-part-3-01sophus-1-1-sim2d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::Sim2d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-3.html#doxid-struct-rotational-part-3-01sophus-1-1-sim3d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::Sim3d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-4.html#doxid-struct-rotational-part-3-01sophus-1-1-s-o2d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::SO2d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-5.html#doxid-struct-rotational-part-3-01sophus-1-1-s-e3d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::SE3d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-6.html#doxid-struct-rotational-part-3-01sophus-1-1-rx-s-o3d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::RxSO3d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-7.html#doxid-struct-rotational-part-3-01sophus-1-1-se2-f64-01-4"><span class="std std-ref">RotationalPart&lt;sophus::Se2F64&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-8.html#doxid-struct-rotational-part-3-01sophus-1-1-rx-s-o2d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::RxSO2d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-9.html#doxid-struct-rotational-part-3-01sophus-1-1-s-o3d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::SO3d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global variables</span>
+
+<span class="k">constexpr</span> <span class="kt">double</span> <span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1af76b1cbee6975410245bb3137a44df6a">kEps</span><span></span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<span class="n">sophus_calculus</span> <span class="doxyrest-code-target target" id="doxid-calculus-2-c-make-lists-8txt-1ac9767726d526853033499b7b1bb4ba8d">farm_ng_add_library</span><span></span><span class="p">(</span><span class="n">sophus_calculus</span> <span class="n">NAMESPACE</span> <span class="n">sophus</span> <span class="n">INCLUDE_DIR</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">HEADERS</span> <span class="n">num_diff</span><span class="p">.</span><span class="n">h</span> <span class="n">region</span><span class="p">.</span> <span class="n">h</span><span class="p">);</span>
+<span class="n">sophus_ceres</span> <span class="doxyrest-code-target target" id="doxid-ceres-2-c-make-lists-8txt-1ab087ddefa22800a657cec159cd5f6eb1">farm_ng_add_library</span><span></span><span class="p">(</span><span class="n">sophus_ceres</span> <span class="n">NAMESPACE</span> <span class="n">sophus</span> <span class="n">INCLUDE_DIR</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">HEADERS</span> <span class="n">jet_helpers</span><span class="p">.</span><span class="n">h</span> <span class="n">manifold</span><span class="p">.</span><span class="n">h</span> <span class="n">typetraits</span><span class="p">.</span> <span class="n">h</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-ceres-2-c-make-lists-8txt-1abce78632778f332bf7ebaa6bf9da3e20">find_package</span><span></span><span class="p">(</span><span class="n">Ceres</span> <span class="mf">2.1.0</span> <span class="n">REQUIRED</span><span class="p">);</span>
+<span class="n">sophus_geometry</span> <span class="doxyrest-code-target target" id="doxid-geometry-2-c-make-lists-8txt-1ac5af3e3bd14427db1e0e5528ca46af05">farm_ng_add_library</span><span></span><span class="p">(</span><span class="n">sophus_geometry</span> <span class="n">NAMESPACE</span> <span class="n">sophus</span> <span class="n">INCLUDE_DIR</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">HEADERS</span> <span class="n">fit_plane</span><span class="p">.</span><span class="n">h</span> <span class="n">inverse_depth</span><span class="p">.</span><span class="n">h</span> <span class="n">plane_conv</span><span class="p">.</span><span class="n">h</span> <span class="n">point_transform</span><span class="p">.</span><span class="n">h</span> <span class="n">projection</span><span class="p">.</span><span class="n">h</span> <span class="n">unit_vector</span><span class="p">.</span><span class="n">h</span> <span class="n">ray</span><span class="p">.</span> <span class="n">h</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-geometry-2-c-make-lists-8txt-1ac3bb42a77a2fca2ea1c4c749ce6442d4">foreach</span><span></span><span class="p">(</span><span class="n">test_basename</span> <span class="n">fit_plane</span> <span class="n">inverse_depth</span> <span class="n">plane_conv</span> <span class="n">point_transform</span> <span class="n">projection</span> <span class="n">unit_vector</span> <span class="n">ray</span><span class="p">);</span>
+<span class="n">sophus_image</span> <span class="doxyrest-code-target target" id="doxid-image-2-c-make-lists-8txt-1aeb78c187ac17753aa548ec01c8d70c22">set</span><span></span><span class="p">(</span><span class="n">sophus_image_src_prefixes</span> <span class="n">interpolation</span> <span class="n">image</span> <span class="n">image_size</span> <span class="n">image_types</span> <span class="n">image_view</span> <span class="n">runtime_image</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-2-c-make-lists-8txt-1af11fb813573ad109986ecf98ccb2adaf">list</span><span></span><span class="p">(</span><span class="n">APPEND</span> <span class="n">sophus_image_cpp</span> <span class="err">$</span><span class="p">{</span><span class="n">x</span><span class="p">}.</span> <span class="n">cpp</span><span class="p">);</span>
+<span class="n">h</span> <span class="doxyrest-code-target target" id="doxid-image-2-c-make-lists-8txt-1aa61ee307b2daf1e98f4271c7c8e73efe">endforeach</span><span></span><span class="p">();</span>
+<span class="n">sophus_lie</span> <span class="doxyrest-code-target target" id="doxid-lie-2-c-make-lists-8txt-1a09adc7a00d35eff99eb25da51709e635">farm_ng_add_library</span><span></span><span class="p">(</span><span class="n">sophus_lie</span> <span class="n">NAMESPACE</span> <span class="n">sophus</span> <span class="n">INCLUDE_DIR</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">HEADERS</span> <span class="n">cartesian</span><span class="p">.</span><span class="n">h</span> <span class="n">rxso2</span><span class="p">.</span><span class="n">h</span> <span class="n">rxso3</span><span class="p">.</span><span class="n">h</span> <span class="n">se2</span><span class="p">.</span><span class="n">h</span> <span class="n">se3</span><span class="p">.</span><span class="n">h</span> <span class="n">sim2</span><span class="p">.</span><span class="n">h</span> <span class="n">sim3</span><span class="p">.</span><span class="n">h</span> <span class="n">so2</span><span class="p">.</span><span class="n">h</span> <span class="n">so3</span><span class="p">.</span><span class="n">h</span> <span class="n">details</span><span class="o">/</span><span class="n">sim_impl</span><span class="p">.</span> <span class="n">h</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-lie-2-c-make-lists-8txt-1a6d462f20eac9e012a799360c0e1707eb">foreach</span><span></span><span class="p">(</span><span class="n">test_basename</span> <span class="n">cartesian2</span> <span class="n">cartesian3</span> <span class="n">common</span> <span class="n">rxso2</span> <span class="n">rxso3</span> <span class="n">se2</span> <span class="n">se3</span> <span class="n">sim2</span> <span class="n">sim3</span> <span class="n">so2</span> <span class="n">so3</span><span class="p">);</span>
+<span class="n">sophus_sensor</span> <span class="doxyrest-code-target target" id="doxid-sensor-2-c-make-lists-8txt-1a4deefe3ef82322b8ef39e304f2461b34">set</span><span></span><span class="p">(</span><span class="n">sophus_sensor_src_prefixes</span> <span class="n">camera_model</span> <span class="n">clipping_planes</span> <span class="n">imu_model</span> <span class="n">camera_rig</span> <span class="n">orthographic</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-sensor-2-c-make-lists-8txt-1a80bbdb79c3ab98ebd3644f5ba8191b35">list</span><span></span><span class="p">(</span><span class="n">APPEND</span> <span class="n">sophus_sensor_cpp</span> <span class="err">$</span><span class="p">{</span><span class="n">x</span><span class="p">}.</span> <span class="n">cpp</span><span class="p">);</span>
+<span class="n">h</span> <span class="doxyrest-code-target target" id="doxid-sensor-2-c-make-lists-8txt-1aa159bf81ab9afde9078969044abdcdc8">endforeach</span><span></span><span class="p">();</span>
+
+<span class="doxyrest-code-target target" id="doxid-region-test-8cpp-1a94d929eadb462b65b863f3d4117c11c4">TEST</span><span></span><span class="p">(</span>
+    <span class="n">ScalarRegion</span><span class="p">,</span>
+    <span class="n">unit</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2rxso2-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0">main</span><span></span><span class="p">(</span>
+    <span class="kt">int</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">**</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2rxso2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2rxso3-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0">main</span><span></span><span class="p">(</span>
+    <span class="kt">int</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">**</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2rxso3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2se2-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0">main</span><span></span><span class="p">(</span>
+    <span class="kt">int</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">**</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2se2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2se3-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0">main</span><span></span><span class="p">(</span>
+    <span class="kt">int</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">**</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2se3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2sim2-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0">main</span><span></span><span class="p">(</span>
+    <span class="kt">int</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">**</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2sim2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2sim3-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0">main</span><span></span><span class="p">(</span>
+    <span class="kt">int</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">**</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2sim3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2so2-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0">main</span><span></span><span class="p">(</span>
+    <span class="kt">int</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">**</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2so2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2so3-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0">main</span><span></span><span class="p">(</span>
+    <span class="kt">int</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">**</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2so3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="doxyrest-code-target target" id="doxid-fit-plane-test-8cpp-1ac8682f9164703b2e9327dc9a2c3128a9">TEST</span><span></span><span class="p">(</span>
+    <span class="n">fit_plane</span><span class="p">,</span>
+    <span class="n">smoke</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-inverse-depth-test-8cpp-1a23a4dfe5f9538a1dce3d489759f957b7">TEST</span><span></span><span class="p">(</span>
+    <span class="n">inverse_depth</span><span class="p">,</span>
+    <span class="n">integrations</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-plane-conv-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+
+<span class="doxyrest-code-target target" id="doxid-point-transform-test-8cpp-1a23a4dfe5f9538a1dce3d489759f957b7">TEST</span><span></span><span class="p">(</span>
+    <span class="n">inverse_depth</span><span class="p">,</span>
+    <span class="n">integrations</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-point-transform-test-8cpp-1aa59b0667c46d8a2cfdb2141a4807cab7">TEST</span><span></span><span class="p">(</span>
+    <span class="n">point_transform</span><span class="p">,</span>
+    <span class="n">integrations</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-ray-test-8cpp-1a2325a5fea618d7c767c3e418a4037a66">TEST</span><span></span><span class="p">(</span>
+    <span class="n">ray</span><span class="p">,</span>
+    <span class="n">simple_ray3</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-unit-vector-test-8cpp-1ae52d2f370b2df52c00edfc8d58931a24">TEST</span><span></span><span class="p">(</span>
+    <span class="n">unitvec</span><span class="p">,</span>
+    <span class="n">unit2</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-unit-vector-test-8cpp-1a28e0ecb93357fd288c72a9072f8c7dcc">TEST</span><span></span><span class="p">(</span>
+    <span class="n">unitvec</span><span class="p">,</span>
+    <span class="n">unit3</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-unit-vector-test-8cpp-1a8051eff3b082e5018ae69eb21b8d64dd">TEST</span><span></span><span class="p">(</span>
+    <span class="n">unitvec</span><span class="p">,</span>
+    <span class="n">copy3</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-unit-vector-test-8cpp-1aab680c85e9ef5f09e38c8ec2ea6f91a0">TEST</span><span></span><span class="p">(</span>
+    <span class="n">unitvec</span><span class="p">,</span>
+    <span class="n">testRotThroughPoints</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-size-test-8cpp-1af15dff884104c3bc7dca72f9a126e62c">TEST</span><span></span><span class="p">(</span>
+    <span class="n">image_size</span><span class="p">,</span>
+    <span class="n">smoke</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1ac4736237b4d942ed8245443f240bd607">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_sophus_MutImage.html#doxid-classsophus-1-1-mut-image"><span class="std std-ref">MutImage</span></a><span></span><span class="p">,</span>
+    <span class="n">empty</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1a56ba0e1f798d3a82aae84c5be1f773c6">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_sophus_MutImage.html#doxid-classsophus-1-1-mut-image"><span class="std std-ref">MutImage</span></a><span></span><span class="p">,</span>
+    <span class="n">create_copy_access</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1a059be5d4f232be4e2c6a388d8821d736">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_sophus_MutImage.html#doxid-classsophus-1-1-mut-image"><span class="std std-ref">MutImage</span></a><span></span><span class="p">,</span>
+    <span class="n">makeFromTransform</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1a969d85cafd6e70bd9374655f6c1c6ad7">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_sophus_Image.html#doxid-classsophus-1-1-image"><span class="std std-ref">Image</span></a><span></span><span class="p">,</span>
+    <span class="n">empty_and_non_empty</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1a053de8b73aacb892c13be2a21779d240">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_sophus_Image.html#doxid-classsophus-1-1-image"><span class="std std-ref">Image</span></a><span></span><span class="p">,</span>
+    <span class="n">shared_ownership</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-types-test-8cpp-1a5fc5000d0c2688b183022ff3c130c5ab">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a84ba571059139ad8de131bb9de2343d3"><span class="std std-ref">ImageBool</span></a><span></span><span class="p">,</span>
+    <span class="n">logic</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-types-test-8cpp-1a9fca4472abe0011016fefeca992a1342">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-image-types-8h-1affc52c41f1da39b9d6bdac80c943449f"><span class="std std-ref">SOPHUS_ASSERT_IMAGE_EQ</span></a><span></span><span class="p">,</span>
+    <span class="n">death_test</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-view-test-8cpp-1ae34b8f692eae9e7a6967c8ed4a347d28">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="p">,</span>
+    <span class="n">empty</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-view-test-8cpp-1a01225ed24c59192b4d435b73940a0683">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="p">,</span>
+    <span class="n">create_and_access</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-view-test-8cpp-1a5016156a4fdf5b7293df6e1c36e5de2e">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_sophus_MutImageView.html#doxid-classsophus-1-1-mut-image-view"><span class="std std-ref">MutImageView</span></a><span></span><span class="p">,</span>
+    <span class="n">empty</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-image-view-test-8cpp-1a0ef2334786a81b11abab4f6a5b692afd">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_sophus_MutImageView.html#doxid-classsophus-1-1-mut-image-view"><span class="std std-ref">MutImageView</span></a><span></span><span class="p">,</span>
+    <span class="n">create_and_access</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-interpolation-test-8cpp-1a5c1375709bbae172b7993d80fa383320">TEST</span><span></span><span class="p">(</span>
+    <span class="n">interpolation</span><span class="p">,</span>
+    <span class="n">unit</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1ab6cbc08fe602f3b8ed4412f04956fae4">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1adb6711a268fb760dee2a4edea510e179"><span class="std std-ref">AnyImage</span></a><span></span><span class="p">,</span>
+    <span class="n">create_access_and_extract</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1adbb2ad9bc8e286b0249c5409527fde7c">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a131561c9e39e2daf347947a106dcd071"><span class="std std-ref">IntensityImage</span></a><span></span><span class="p">,</span>
+    <span class="n">create_access_and_extract</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1af6e3c340d2155eb5cc56741078353b0e">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1adb6711a268fb760dee2a4edea510e179"><span class="std std-ref">AnyImage</span></a><span></span><span class="p">,</span>
+    <span class="n">runtime_type_info</span>
+    <span class="p">);</span>
+
+<span class="kt">float</span> <span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1ae087e9700a3d5f427dede7bd34cb454b">sum</span><span></span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">view</span><span class="p">);</span>
+<span class="kt">void</span> <span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a295ef1281203aad88e5949bd29fb351c">plusOne</span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_MutImageView.html#doxid-classsophus-1-1-mut-image-view"><span class="std std-ref">MutImageView</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">mut_view</span><span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a0460f7092bedf3357f153bbf64b93d5d">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a2988e27437c2b346ee6eeb2dac06de83"><span class="std std-ref">IntensityImageView</span></a><span></span><span class="p">,</span>
+    <span class="n">subview</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a0045a4dab7360f9b4f179210438b6124">TEST</span><span></span><span class="p">(</span>
+    <span class="n">ClassHierarchy</span><span class="p">,</span>
+    <span class="n">call_function</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a3a3e36769904c711488c51c1a91bc528">TEST</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a131561c9e39e2daf347947a106dcd071"><span class="std std-ref">IntensityImage</span></a><span></span><span class="p">,</span>
+    <span class="n">visitor</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-cartesian2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-cartesian3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-common-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4">main</span><span></span><span class="p">();</span>
+<a class="reference internal" href="class_sophus_CameraModel.html#doxid-classsophus-1-1-camera-model"><span class="std std-ref">CameraModel</span></a><span></span> <span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1a337f48efa1feb10176bc6c682350cbb5">openCvCameraModel</span><span></span><span class="p">();</span>
+
+<span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1ae60c2856c31f30e24a04021ae180bb7d">TEST</span><span></span><span class="p">(</span>
+    <span class="n">camera_model</span><span class="p">,</span>
+    <span class="n">projection_round_trip</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1a9a84f07f639f5b064bee88f468e46aeb">TEST</span><span></span><span class="p">(</span>
+    <span class="n">camera_model</span><span class="p">,</span>
+    <span class="n">scale_up_down_roundtrip</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1adbbee1a53cdf100d76d0e6c0d4ae62ad">TEST</span><span></span><span class="p">(</span>
+    <span class="n">camera_model</span><span class="p">,</span>
+    <span class="n">ortho_cam</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-camera-rig-test-8cpp-1af3fbe44ebfcae081d4d12b2ebb8c1718">TEST</span><span></span><span class="p">(</span>
+    <span class="n">camera_rig</span><span class="p">,</span>
+    <span class="n">smoke</span>
+    <span class="p">);</span>
+
+<span class="doxyrest-code-target target" id="doxid-imu-model-test-8cpp-1a8d64a46e5c782e5252e2432ad043b2a6">TEST</span><span></span><span class="p">(</span>
+    <span class="n">imu_model</span><span class="p">,</span>
+    <span class="n">smoke</span>
+    <span class="p">);</span>
+
+<span class="c1">// macros</span>
+
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a8f58b46a5623974748668dc8c53ad686">SOPHUS_ASSERT</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a92297bdb86ae55e64e7dc3b48d3190b5">SOPHUS_ASSERT_EQ</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a4458283091058e430ff56b37e5d90182">SOPHUS_ASSERT_GE</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a67e8d5781bb21fc85998e8b95a0aab10">SOPHUS_ASSERT_GT</span><span></span><span class="p">(...)</span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-image-types-8h-1affc52c41f1da39b9d6bdac80c943449f"><span class="std std-ref">SOPHUS_ASSERT_IMAGE_EQ</span></a><span></span><span class="p">(</span> \
+    <span class="n">left_image</span><span class="p">,</span> \
+    <span class="n">right_image</span><span class="p">,</span> \
+    <span class="p">...</span> \
+    <span class="p">)</span>
+
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a0d035483e474118423a361272800b293">SOPHUS_ASSERT_LE</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1aadc6d2ed0adcf9b174f4ad07349cdaaa">SOPHUS_ASSERT_LT</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1abc35935bbde1d290087671ff93cea3c0">SOPHUS_ASSERT_NE</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a72a75eb7f9bba13d95af868b8667a0a0">SOPHUS_ASSERT_NEAR</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1ac90e2b9dceea8b4969c81290d7b69c3f">SOPHUS_ASSERT_OR_ERROR</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-enum-8h-1a3da4835ed2aad55263ab99c6db51ab91">SOPHUS_ENUM</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a50fadb13da7af3ebb54f13fcf2d90455">SOPHUS_FORMAT</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28">SOPHUS_FUNC</span><span></span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1adc97d3e69cc46d5aff5132e1fa2d9688">SOPHUS_FUNCTION</span><span></span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a7e1e64911421a663cac1ca5fe4e66339">SOPHUS_INFO</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1af28e1f1a48df52cee7fb2775a054d921">SOPHUS_PANIC</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-test-macros-8h-1a9a763d03e0d8daa3c7cb92eb1db5220d">SOPHUS_STRINGIFY</span><span></span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1a094dfcb125cce443541e6614df9ff704"><span class="std std-ref">SOPHUS_TEST</span></a><span></span><span class="p">(</span> \
+    <span class="n">passed</span><span class="p">,</span> \
+    <span class="n">condition</span><span class="p">,</span> \
+    <span class="n">descr</span><span class="p">,</span> \
+    <span class="p">...</span> \
+    <span class="p">)</span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1adceb75d7f4ac8872a96560097b91f090"><span class="std std-ref">SOPHUS_TEST_APPROX</span></a><span></span><span class="p">(</span> \
+    <span class="n">passed</span><span class="p">,</span> \
+    <span class="n">left</span><span class="p">,</span> \
+    <span class="n">right</span><span class="p">,</span> \
+    <span class="n">thr</span><span class="p">,</span> \
+    <span class="n">descr</span><span class="p">,</span> \
+    <span class="p">...</span> \
+    <span class="p">)</span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1afa1fcfecdacca873ea54874272d05e90"><span class="std std-ref">SOPHUS_TEST_EQUAL</span></a><span></span><span class="p">(</span> \
+    <span class="n">passed</span><span class="p">,</span> \
+    <span class="n">left</span><span class="p">,</span> \
+    <span class="n">right</span><span class="p">,</span> \
+    <span class="n">descr</span><span class="p">,</span> \
+    <span class="p">...</span> \
+    <span class="p">)</span>
+
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a229e4238019191b909cf235cfa061bb9">SOPHUS_TEST_IMG_EQ</span><span></span><span class="p">(</span> \
+    <span class="n">lhs</span><span class="p">,</span> \
+    <span class="n">rhs</span> \
+    <span class="p">)</span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1a47cf0311fff8d84d7044a599dc452b6a"><span class="std std-ref">SOPHUS_TEST_NEQ</span></a><span></span><span class="p">(</span> \
+    <span class="n">passed</span><span class="p">,</span> \
+    <span class="n">left</span><span class="p">,</span> \
+    <span class="n">right</span><span class="p">,</span> \
+    <span class="n">descr</span><span class="p">,</span> \
+    <span class="p">...</span> \
+    <span class="p">)</span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1a2cf21393818b417fb877bd6198d1b140"><span class="std std-ref">SOPHUS_TEST_NOT_APPROX</span></a><span></span><span class="p">(</span> \
+    <span class="n">passed</span><span class="p">,</span> \
+    <span class="n">left</span><span class="p">,</span> \
+    <span class="n">right</span><span class="p">,</span> \
+    <span class="n">thr</span><span class="p">,</span> \
+    <span class="n">descr</span><span class="p">,</span> \
+    <span class="p">...</span> \
+    <span class="p">)</span>
+
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a71dfe4dd2df5e006549f2f48601520ad">SOPHUS_TRY</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1ae3d125b974f106017f2b47627b5c4ac1">SOPHUS_UNEXPECTED</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1ade3de0907bb0fd6f33cf2f644475f1fd">SOPHUS_UNIMPLEMENTED</span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a0f6f659ed8dc626650e01e987fcaf2e7">SOPHUS_UNWRAP</span><span></span><span class="p">(...)</span></pre>
+</section>
+<section id="detailed-documentation">
+<span id="details-global"></span><h2>Detailed Documentation<a class="headerlink" href="#detailed-documentation" title="Permalink to this headline">¶</a></h2>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this headline">¶</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-image-types-8h-1affc52c41f1da39b9d6bdac80c943449f"><span id="index-1"></span><span></span><span class="cp">#define SOPHUS_ASSERT_IMAGE_EQ(left_image, right_image, ...)</span></pre>
+<p>If it is false that <code class="docutils literal notranslate"><span class="pre">left_image</span></code> == <code class="docutils literal notranslate"><span class="pre">right_image</span></code>, print formatted error message and then panic.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1a094dfcb125cce443541e6614df9ff704"><span id="index-2"></span><span></span><span class="cp">#define SOPHUS_TEST(passed, condition, descr, ...)</span></pre>
+<p>Tests whether condition is true. The in-out parameter passed will be set to false if test fails.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1adceb75d7f4ac8872a96560097b91f090"><span id="index-3"></span><span></span><span class="cp">#define SOPHUS_TEST_APPROX(passed, left, right, thr, descr, ...)</span></pre>
+<p>Tests whether left is approximately equal to right given a threshold. The in-out parameter passed will be set to false if test fails.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1afa1fcfecdacca873ea54874272d05e90"><span id="index-4"></span><span></span><span class="cp">#define SOPHUS_TEST_EQUAL(passed, left, right, descr, ...)</span></pre>
+<p>Tests whether left is equal to right given a threshold. The in-out parameter passed will be set to false if test fails.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1a47cf0311fff8d84d7044a599dc452b6a"><span id="index-5"></span><span></span><span class="cp">#define SOPHUS_TEST_NEQ(passed, left, right, descr, ...)</span></pre>
+<p>Tests whether left is equal to right given a threshold. The in-out parameter passed will be set to false if test fails.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1a2cf21393818b417fb877bd6198d1b140"><span id="index-6"></span><span></span><span class="cp">#define SOPHUS_TEST_NOT_APPROX(passed, left, right, thr, descr, ...)</span></pre>
+<p>Tests whether left is NOT approximately equal to right given a threshold. The in-out parameter passed will be set to false if test fails.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pysophus.html" class="btn btn-neutral float-left" title="Sympy API - Symbolic Sophus In Python" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="namespace_Eigen.html" class="btn btn-neutral float-right" title="namespace Eigen" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

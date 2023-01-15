@@ -1,0 +1,46 @@
+.. index:: pair: class; sophus::Ray
+.. _doxid-classsophus_1_1_ray:
+
+template class sophus::Ray
+==========================
+
+.. toctree::
+	:hidden:
+
+	struct_sophus_Ray_IntersectionResult.rst
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ray.h>
+	
+	template <class TScalar, int kN>
+	class Ray {
+	public:
+		// structs
+	
+		struct :ref:`IntersectionResult<doxid-structsophus_1_1_ray_1_1_intersection_result>`;
+
+		// construction
+	
+		:target:`Ray<doxid-classsophus_1_1_ray_1a1b56ccd42592558c346defb8ed3f0893>`(
+			Eigen::Matrix<TScalar, kN, 1> const& origin,
+			:ref:`UnitVector<doxid-classsophus_1_1_unit_vector>`<TScalar, kN> const& direction
+			);
+	
+		:target:`Ray<doxid-classsophus_1_1_ray_1a23bb0de3b14aa83e384c594866186619>`(Ray const&);
+
+		// methods
+	
+		Ray& :target:`operator=<doxid-classsophus_1_1_ray_1aaaa0fa7ab4d4a107a2b47113e99b24a1>`(Ray const&);
+		Eigen::Matrix<TScalar, kN, 1> const& :target:`origin<doxid-classsophus_1_1_ray_1ad79b85cfef62b544aeb868448968b3d2>`() const;
+		Eigen::Matrix<TScalar, kN, 1>& :target:`origin<doxid-classsophus_1_1_ray_1a15fb12908fdcae20f0618e56073040a8>`();
+		:ref:`UnitVector<doxid-classsophus_1_1_unit_vector>`<TScalar, kN> const& :target:`direction<doxid-classsophus_1_1_ray_1ae3068dec52f318b6626d989b54d78983>`() const;
+		:ref:`UnitVector<doxid-classsophus_1_1_unit_vector>`<TScalar, kN>& :target:`direction<doxid-classsophus_1_1_ray_1aa508f138f4ecd118348aa312119e1327>`();
+		Eigen::Matrix<TScalar, kN, 1> :target:`pointAt<doxid-classsophus_1_1_ray_1abe937bedbd7b0ea4d8b7ac6f5dc7ff7a>`(TScalar lambda) const;
+		std::optional<:ref:`IntersectionResult<doxid-structsophus_1_1_ray_1_1_intersection_result>`> :target:`intersect<doxid-classsophus_1_1_ray_1ab0aab8b94bd54c9369266afa1dcd9c20>`(Eigen::Hyperplane<TScalar, kN> const& plane) const;
+		Eigen::Matrix<TScalar, kN, 1> :target:`projection<doxid-classsophus_1_1_ray_1a96a3629638674a0f463af8779c90d023>`(Eigen::Matrix<TScalar, kN, 1> const& point) const;
+	};

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Coding Style &mdash; Sophus  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sympy API - Symbolic Sophus In Python" href="pysophus.html" />
+    <link rel="prev" title="Sophus - Lie groups for 2d/3d Geometry" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Sophus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://github.com/strasdat/Sophus">GitHub Page</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">C++ Coding Style</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#coding-guidelines">Coding guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-formating">Code formating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#headers">Headers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#header-include-order">Header include order</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#naming-convention">Naming convention</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#snake-case"><code class="docutils literal notranslate"><span class="pre">snake_case</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#trailing-snake-case"><code class="docutils literal notranslate"><span class="pre">trailing_snake_case_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pascalcase"><code class="docutils literal notranslate"><span class="pre">PascalCase</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lowercamelcase"><code class="docutils literal notranslate"><span class="pre">lowerCamelCase</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#upper-case"><code class="docutils literal notranslate"><span class="pre">UPPER_CASE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#acronyms">Acronyms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#classes-and-structs">Classes and structs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enums">Enums</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants">Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#macros">Macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#namespaces">Namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#templates">Templates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#class-versus-typename-in-templates"><cite>class</cite> versus <cite>typename</cite> in templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transformations-points-velocities">Transformations, points, velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rigid-body-transform-and-points-convention">Rigid body transform and points convention</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#some-details">Some details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#some-geeky-notes-about-the-terms-poses-orientation-and-position">Some geeky notes about the terms poses, orientation and position</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pysophus.html">Sympy API - Symbolic Sophus In Python</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sophus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">C++ Coding Style</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/style.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-coding-style">
+<h1>C++ Coding Style<a class="headerlink" href="#c-coding-style" title="Permalink to this headline">¶</a></h1>
+<section id="coding-guidelines">
+<h2>Coding guidelines<a class="headerlink" href="#coding-guidelines" title="Permalink to this headline">¶</a></h2>
+<p>We aim for using modern c++. A general good resource for best practice are the
+<a class="reference external" href="https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md">https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md</a>.</p>
+</section>
+<section id="code-formating">
+<h2>Code formating<a class="headerlink" href="#code-formating" title="Permalink to this headline">¶</a></h2>
+<p>We use clang-format. See <code class="docutils literal notranslate"><span class="pre">.clang-format</span></code> file in the root directory for
+details.</p>
+</section>
+<section id="headers">
+<h2>Headers<a class="headerlink" href="#headers" title="Permalink to this headline">¶</a></h2>
+<p>Each header file shall start with a <code class="docutils literal notranslate"><span class="pre">#pragma</span> <span class="pre">once</span></code> statement (i.e. right after
+the copyright / licensing statement).</p>
+<section id="header-include-order">
+<h3>Header include order<a class="headerlink" href="#header-include-order" title="Permalink to this headline">¶</a></h3>
+<p>Header includes should be ordered in groups, proceeding from “local” to “global”.
+This <a class="reference external" href="https://stackoverflow.com/questions/2762568">helps ensure</a> that local
+headers are self-sufficient, without implicit dependencies. This convention is
+enforced by <cite>clang-format</cite>.</p>
+<p>When using C library header one shall prefer C++ library version, over the
+C-library version: <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&lt;cmath&gt;</span></code> instead of <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&lt;math.h&gt;</span></code>.</p>
+</section>
+</section>
+<section id="naming-convention">
+<h2>Naming convention<a class="headerlink" href="#naming-convention" title="Permalink to this headline">¶</a></h2>
+<p>Most naming conventions are enforced by clang-tidy. See <code class="docutils literal notranslate"><span class="pre">.clang-tidy</span></code> in the
+root for details.</p>
+<section id="snake-case">
+<h3><code class="docutils literal notranslate"><span class="pre">snake_case</span></code><a class="headerlink" href="#snake-case" title="Permalink to this headline">¶</a></h3>
+<p>Variable names are typically written in <code class="docutils literal notranslate"><span class="pre">snake_case</span></code>, e.g.:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">floating_point_numbers</span> <span class="o">=</span> <span class="p">{</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">};</span>
+<span class="kt">size_t</span> <span class="n">num_numbers</span> <span class="o">=</span> <span class="n">floating_point_numbers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">snake_case</span></code> is also used for namespaces, see below.</p>
+</section>
+<section id="trailing-snake-case">
+<h3><code class="docutils literal notranslate"><span class="pre">trailing_snake_case_</span></code><a class="headerlink" href="#trailing-snake-case" title="Permalink to this headline">¶</a></h3>
+<p>Private member variables of classes are written in <code class="docutils literal notranslate"><span class="pre">trailing_snake_case_</span></code>,
+e.g.:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="n">Foo</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="cm">/* details */</span>
+
+ <span class="k">private</span><span class="o">:</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">integers_</span><span class="p">;</span>
+  <span class="n">Bar</span> <span class="n">internal_state_</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="pascalcase">
+<h3><code class="docutils literal notranslate"><span class="pre">PascalCase</span></code><a class="headerlink" href="#pascalcase" title="Permalink to this headline">¶</a></h3>
+<p>Type names, including class names, struct names and typedefs, are written in
+<code class="docutils literal notranslate"><span class="pre">PascalCase</span></code>:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{};</span>
+
+<span class="k">class</span> <span class="n">Bar</span> <span class="p">{</span>
+  <span class="cm">/* details */</span>
+<span class="p">};</span>
+
+<span class="k">using</span> <span class="n">FooBarVariant</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="lowercamelcase">
+<h3><code class="docutils literal notranslate"><span class="pre">lowerCamelCase</span></code><a class="headerlink" href="#lowercamelcase" title="Permalink to this headline">¶</a></h3>
+<p>Function, including free functions and class methods are written in
+<code class="docutils literal notranslate"><span class="pre">lowerCamelCase</span></code>:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">solveSubProblem</span><span class="p">(</span><span class="k">const</span> <span class="n">Input</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">);</span>
+
+<span class="k">class</span> <span class="n">Bar</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="n">DebugOutput</span> <span class="n">getDebugOutput</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="n">Foo</span> <span class="nf">fooFromBar</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Note that lambda expressions names are considered variables and hence we use
+<code class="docutils literal notranslate"><span class="pre">snake_case</span></code>:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">solve_sub_problem</span> <span class="o">=</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">input</span><span class="p">]()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">solveSubProblem</span><span class="p">(</span><span class="n">input</span><span class="p">);</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">kLowerCamelCase</span></code> is used for global and static class constants, constexpr
+constants and value class templates see below.</p>
+</section>
+<section id="upper-case">
+<h3><code class="docutils literal notranslate"><span class="pre">UPPER_CASE</span></code><a class="headerlink" href="#upper-case" title="Permalink to this headline">¶</a></h3>
+<p>Macros only. See below.</p>
+</section>
+<section id="acronyms">
+<h3>Acronyms<a class="headerlink" href="#acronyms" title="Permalink to this headline">¶</a></h3>
+<p>Acronyms and contractions count as one word. That is we have <code class="docutils literal notranslate"><span class="pre">SlamResult</span></code>,
+<code class="docutils literal notranslate"><span class="pre">HttpRequest</span></code> and <code class="docutils literal notranslate"><span class="pre">Se3Group</span></code> (and not <code class="docutils literal notranslate"><span class="pre">SLAMResult</span></code>, <code class="docutils literal notranslate"><span class="pre">HTTPRequest</span></code>,
+<code class="docutils literal notranslate"><span class="pre">SE3Group</span></code>) in UpperCamelCase and <code class="docutils literal notranslate"><span class="pre">slam_result</span></code> and <code class="docutils literal notranslate"><span class="pre">http_request</span></code> in
+snake_case.</p>
+</section>
+<section id="classes-and-structs">
+<h3>Classes and structs<a class="headerlink" href="#classes-and-structs" title="Permalink to this headline">¶</a></h3>
+<p>While C++ allows for a great flexibility, we impose some guidelines when to use
+structs vs. classes.</p>
+<p>For POD-like collections we use the struct keyword:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Collection</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">integers</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">description</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Such structs must not have private members. They may or may not have have member
+functions, and constructors. For the public member variables we use
+<code class="docutils literal notranslate"><span class="pre">snake_case</span></code> naming.</p>
+<p>For entities with non-trivial type invariant, we use the class keyword:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="n">UnitVector3</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="c1">// Precondition: v must be of unit length.</span>
+  <span class="k">static</span> <span class="n">UnitVector3</span> <span class="n">fromUnitVector</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">;</span>
+    <span class="n">FARM_ASSERT_LE</span><span class="p">((</span><span class="n">v</span><span class="p">.</span><span class="n">squaredNorm</span><span class="p">()</span> <span class="o">-</span> <span class="n">T</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)),</span>
+                     <span class="n">Sophus</span><span class="o">::</span><span class="n">kEpsilon</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;</span><span class="p">);</span>
+    <span class="n">UnitVector3</span> <span class="n">unit_vector</span><span class="p">;</span>
+    <span class="n">unit_vector</span><span class="p">.</span><span class="n">vector_</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">unit_vector</span><span class="p">;</span>
+  <span class="p">}</span>
+
+
+  <span class="k">static</span> <span class="n">UnitVector3</span> <span class="n">fromVectorAndNormalize</span><span class="p">(</span>
+      <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">fromUnitVector</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">normalized</span><span class="p">());</span>
+  <span class="p">}</span>
+
+  <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;&amp;</span> <span class="n">vector</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">vector_</span><span class="p">;</span> <span class="p">}</span>
+
+ <span class="k">private</span><span class="o">:</span>
+  <span class="n">UnitVector3</span><span class="p">()</span> <span class="p">{}</span>
+
+  <span class="c1">// Class invariant: v_ is of unit length.</span>
+  <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;</span> <span class="n">vector_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Classes shall start with all public member (constructors, destructors, member
+functions etc.) then followed by private members (member functions then member
+variables). Classes shall not have any public member variables. Use public
+accessors/mutators instead:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="n">MyClass</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="cm">/* details */</span>
+
+  <span class="c1">// accessor</span>
+  <span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">rawValues</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">raw_values_</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// mutator</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">mutRawValues</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">raw_values_</span><span class="p">;</span>
+  <span class="p">}</span>
+
+
+<span class="k">private</span><span class="o">:</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">raw_values_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Notes about class/struct methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Do not prefix an accessor with <code class="docutils literal notranslate"><span class="pre">get</span></code>.</p></li>
+<li><p>It is good practice to annotate a constant ref accessor with
+<code class="docutils literal notranslate"><span class="pre">[[nodiscard]]</span></code>.</p></li>
+<li><p>It is recommended to prefix mutators and other non-const methods with
+<code class="docutils literal notranslate"><span class="pre">mut</span></code>. This is inspired by the <code class="docutils literal notranslate"><span class="pre">mut</span></code> postfix convention in rust (e.g.
+<a class="reference external" href="https://doc.rust-lang.org/std/vec/struct.Vec.html#method.last_mut">https://doc.rust-lang.org/std/vec/struct.Vec.html#method.last_mut</a>) and it is
+similar to the rational of the introduction of <code class="docutils literal notranslate"><span class="pre">cbegin/cend</span></code> to the c++
+standard (as motivated here
+<a class="reference external" href="https://stackoverflow.com/questions/12001410/what-is-the-reason-behind-cbegin-cend">https://stackoverflow.com/questions/12001410/what-is-the-reason-behind-cbegin-cend</a>).</p></li>
+</ul>
+</div></blockquote>
+<p>For implementation details, hence code not part of a public API, such as trait
+classes, ceres::Cost functors, Impl classes (e.g. when using the Pimpl
+idiom: http://bitboom.github.io/pimpl-idiom), it is fine to a have a
+class/struct with all public member variables.</p>
+</section>
+<section id="enums">
+<h3>Enums<a class="headerlink" href="#enums" title="Permalink to this headline">¶</a></h3>
+<p>Prefer use enum classes defined through the FARM_ENUM macro.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">FARM_ENUM</span><span class="p">(</span><span class="n">VizMaterialType</span><span class="p">,</span> <span class="p">(</span><span class="n">ambient</span><span class="p">,</span> <span class="n">diffuse</span><span class="p">,</span> <span class="n">phong</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>Note: we use <code class="docutils literal notranslate"><span class="pre">snake_case</span></code> for enum value names, such that the
+corresponding strings are more user-friendly, e.g. when passing
+in values through CLI11:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">example_input</span> <span class="o">=</span> <span class="s">&quot;ambient&quot;</span><span class="p">;</span>
+<span class="n">VizMatrialType</span> <span class="n">material</span><span class="p">;</span>
+<span class="n">FARM_ASSERT</span><span class="p">(</span><span class="n">trySetFromString</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="n">example_input</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+<section id="constants">
+<h3>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h3>
+<p>For global and static class constants, we use the <code class="docutils literal notranslate"><span class="pre">kLowerCamelCase</span></code> naming
+conventions. Examples:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">constexpr</span> <span class="kt">double</span> <span class="n">kPi</span> <span class="o">=</span> <span class="mf">3.14159265359</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="n">Variable5Dof</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">kNumDegreesOfFreedom</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+  <span class="cm">/* details */</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this headline">¶</a></h3>
+<p>Avoid using macros, especially if the same behaviors can be achieved through
+constants or C++ templates.</p>
+<p>For all marcos we use the <code class="docutils literal notranslate"><span class="pre">FARM_UPPER_CASE</span></code> naming style. In particular,
+all macro names shall be prefixed by <code class="docutils literal notranslate"><span class="pre">FARM_</span></code>. Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define FARM_FORMAT(cstr, ...)                             \</span>
+<span class="cp">    </span><span class="cm">/* FMT_STRING is defined in the &lt;fmt/format.h&gt; header */</span><span class="cp">  \</span>
+<span class="cp">    ::fmt::format(FMT_STRING(cstr), __VA_ARGS__)</span>
+</pre></div>
+</div>
+</section>
+<section id="namespaces">
+<h3>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this headline">¶</a></h3>
+<p>For namespace hierarchy, we believe more is less. That is most of the code shall
+be defined within the top-level namespace, e.g. <code class="docutils literal notranslate"><span class="pre">sophus</span></code> for the Sophus
+library.</p>
+<p>For implementation details (e.g. in header only libraries), we use the
+<code class="docutils literal notranslate"><span class="pre">sophus::details</span></code> namespace.</p>
+<p>All namespace names are in <code class="docutils literal notranslate"><span class="pre">snake_case</span></code>.</p>
+</section>
+<section id="templates">
+<h3>Templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h3>
+<p>Use reasonable. Compile time matters too.</p>
+</section>
+</section>
+<section id="class-versus-typename-in-templates">
+<h2><cite>class</cite> versus <cite>typename</cite> in templates<a class="headerlink" href="#class-versus-typename-in-templates" title="Permalink to this headline">¶</a></h2>
+<p>We use <cite>class</cite>.</p>
+<p>Both keywords are interchangeable here:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">template&lt;class</span> <span class="pre">T&gt;</span>
+<span class="pre">class</span> <span class="pre">Foo</span> <span class="pre">{</span>
+<span class="pre">};</span>
+<span class="pre">and</span>
+<span class="pre">`</span></code></p>
+<p>and</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">template&lt;typename</span> <span class="pre">T&gt;</span>
+<span class="pre">class</span> <span class="pre">Foo</span> <span class="pre">{</span>
+<span class="pre">};</span>
+<span class="pre">`</span></code>
+(<a class="reference external" href="https://stackoverflow.com/a/2024173">https://stackoverflow.com/a/2024173</a>).</p>
+<p>W use the <cite>class</cite> key name in (class, function, variable) templates
+always:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>to be consistent,</p></li>
+<li><p><cite>class</cite> is less letters to type than <cite>typename</cite>,</p></li>
+<li><p>possibly easier to parse in complex expressions
+(<cite>class</cite> looks less similar to <cite>template</cite> keyword).</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="transformations-points-velocities">
+<h2>Transformations, points, velocities<a class="headerlink" href="#transformations-points-velocities" title="Permalink to this headline">¶</a></h2>
+<section id="rigid-body-transform-and-points-convention">
+<h3>Rigid body transform and points convention<a class="headerlink" href="#rigid-body-transform-and-points-convention" title="Permalink to this headline">¶</a></h3>
+<p>Given a point in frame <code class="docutils literal notranslate"><span class="pre">foo</span></code>, <code class="docutils literal notranslate"><span class="pre">bar_from_foo</span></code> is the rigid body
+transform which maps the point to frame <code class="docutils literal notranslate"><span class="pre">bar</span></code>:</p>
+<blockquote>
+<div><p>point_in_bar = bar_from_foo * point_in_foo</p>
+</div></blockquote>
+<p>Note that the frame names line up: <code class="docutils literal notranslate"><span class="pre">bar</span></code> - <code class="docutils literal notranslate"><span class="pre">bar</span></code>, <code class="docutils literal notranslate"><span class="pre">foo</span></code> - <code class="docutils literal notranslate"><span class="pre">foo</span></code>.</p>
+<section id="some-details">
+<h4>Some details<a class="headerlink" href="#some-details" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul>
+<li><p>If necessary to resolved ambiguities, e.g. between rotations and rigid
+body transforms, we use a corresponding notation, e.g.
+<code class="docutils literal notranslate"><span class="pre">bar_form_foo_rotation</span></code>, <code class="docutils literal notranslate"><span class="pre">bar_form_foo_se3s</span></code> etc.</p></li>
+<li><p>If we have a list (or vector, or map) of transforms we write:, e.g.:</p>
+<blockquote>
+<div><p>bar_from_foo_rotations</p>
+</div></blockquote>
+</li>
+<li><p>Transforms with compound frame names, such as <code class="docutils literal notranslate"><span class="pre">robot_base</span></code> or
+<code class="docutils literal notranslate"><span class="pre">left_camera</span></code>, are written as follows:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">robot_base_from_left_camera</span>
+</pre></div>
+</div>
+</li>
+<li><p>For functions and methods we use <code class="docutils literal notranslate"><span class="pre">camelCase</span></code>. Examples:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="o">-&gt;</span><span class="n">calcRobotBaseFromLeftCamera</span><span class="p">();</span>
+
+<span class="n">other</span><span class="o">-&gt;</span><span class="n">setBarFromFoo</span><span class="p">(</span><span class="n">bar_from_foo</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>We use the <code class="docutils literal notranslate"><span class="pre">entity_in_frame</span></code> conventions for points and other entities
+which have one frame attached to it. Examples:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">point_in_camera</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">circle_in_image</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">camera_position_in_world</span></code> (or short <code class="docutils literal notranslate"><span class="pre">camera_in_world</span></code>)</p></li>
+<li><p>…</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><ul>
+<li><p>When storing transforms / using them in interfaces, prefer the
+<code class="docutils literal notranslate"><span class="pre">parent_from_child</span></code> convention.</p>
+<p>E.g. <code class="docutils literal notranslate"><span class="pre">world_from_sensor_rig</span></code>, <code class="docutils literal notranslate"><span class="pre">sensor_rig_from_camera</span></code>,
+<code class="docutils literal notranslate"><span class="pre">robot_from_imu</span></code> (and not <code class="docutils literal notranslate"><span class="pre">sensor_rig_from_world</span></code> etc.).</p>
+<p>It is easier to reason about the pose of camera in the world frame, then
+the pose of the world origin in the camera frame.</p>
+</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="some-geeky-notes-about-the-terms-poses-orientation-and-position">
+<h4>Some geeky notes about the terms poses, orientation and position<a class="headerlink" href="#some-geeky-notes-about-the-terms-poses-orientation-and-position" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>Note: This section can be safely skipped - and is merely targeting notation</p></li>
+</ul>
+<p>geeks.</p>
+<p>The notation and terms above (and in Sophus in general) is of a functional
+nature - describing motions/actions of rigid bodies in space.</p>
+<p>For instance, <code class="docutils literal notranslate"><span class="pre">world_from_camera_transform</span></code> describes the rotations followed
+by a translation to be applied to points in the camera reference frame in order
+to map them with the corresponding set of points in the world frame.</p>
+<p>This motion is mainly metaphorically as it merely a way to describe the
+structural relationship between the world reference frame and the camera frame.</p>
+<p>An alternative and equivalent terminology follows a <em>predicative</em> description,
+describing structural relationship directly.</p>
+<p>Instead of (rigid body) transformation, one would use the term (rigid body)
+pose. Similarly instead of rotation (transformations) and translation
+(transformations), one would use the terms orientation and position.</p>
+<p>The intro of this chapter would be written as such:</p>
+<blockquote>
+<div><p>bar_anchored_foo_pose is the rigid body transform which relates points in
+frame foo to points in frame bar such as:</p>
+<blockquote>
+<div><p>point_in_bar = bar_anchored_foo_pose * point_in_foo</p>
+</div></blockquote>
+<p>Note that the frame names line up: bar - bar, foo - foo.</p>
+</div></blockquote>
+<p>In Sophus, function, variable names etc. follow the <em>functional</em> convention
+using terms such as rotation and translation.</p>
+<dl>
+<dt>However, some concepts are easier understood using a <em>predicative</em> description</dt><dd><ul class="simple">
+<li><p>hence in comments and descriptions, predicative terms such as pose and</p></li>
+</ul>
+<p>position are used when it may facilitate explaining the underlying concept.</p>
+</dd>
+</dl>
+<p>For instance, depending on the context we may prefer</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">world_from_camera_rotation</span></code> describes the orientation of camera,
+with respect to the world reference frame.</p>
+</div></blockquote>
+<p>over</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">world_from_camera_rotation</span></code> is the rotation transformation, which
+maps a set of points in the camera camera, to corresponding point set
+in the world reference frame.</p>
+</div></blockquote>
+<p>[See Schwank: “Cognitive Structures and Cognitive Strategies in Algorithmic
+Thinking”, <a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-662-11334-9_22">https://link.springer.com/chapter/10.1007/978-3-662-11334-9_22</a> for
+background on functional vs. predicative thinking.]</p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Sophus - Lie groups for 2d/3d Geometry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pysophus.html" class="btn btn-neutral float-right" title="Sympy API - Symbolic Sophus In Python" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+.. index:: pair: struct; sophus::VariantImagePredicate
+.. _doxid-structsophus_1_1_variant_image_predicate:
+
+template struct sophus::VariantImagePredicate
+=============================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <runtime_image.h>
+	
+	template <class TPixelVariant>
+	struct VariantImagePredicate {
+		// typedefs
+	
+		using :target:`PixelVariant<doxid-structsophus_1_1_variant_image_predicate_1ae6e63f8dd415842f666d70ebad667126>` = TPixelVariant ;
+
+		// methods
+	
+		template <class TPixel>
+		static constexpr bool :target:`isTypeValid<doxid-structsophus_1_1_variant_image_predicate_1a6d46754e811994feac817020a47a7ae8>`();
+	};

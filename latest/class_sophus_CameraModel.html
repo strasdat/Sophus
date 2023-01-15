@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>class sophus::CameraModel &mdash; Sophus  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="template class sophus::CameraModelT" href="class_sophus_CameraModelT.html" />
+    <link rel="prev" title="class sophus::BrownConradyTransform" href="class_sophus_BrownConradyTransform.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Sophus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/strasdat/Sophus">GitHub Page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="style.html">C++ Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pysophus.html">Sympy API - Symbolic Sophus In Python</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="global.html">Global Namespace</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="namespace_Eigen.html">namespace Eigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="namespace_ceres.html">namespace ceres</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="namespace_sophus.html">namespace sophus</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus_detail.html">namespace sophus::detail</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus_jet_helpers.html">namespace sophus::jet_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enum_sophus_SegmentCase.html">enum sophus::SegmentCase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_AnyImagePredicate.html">struct sophus::AnyImagePredicate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_BasisSplineSegment.html">template struct sophus::BasisSplineSegment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_CameraInRig.html">struct sophus::CameraInRig</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ClippingPlanes.html">struct sophus::ClippingPlanes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ClosestApproachResult.html">template struct sophus::ClosestApproachResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_GetScalar.html">template struct sophus::GetScalar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_GetScalar-2.html">template struct sophus::GetScalar&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageSize.html">struct sophus::ImageSize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageTraits.html">template struct sophus::ImageTraits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageTraits-2.html">template struct sophus::ImageTraits&lt;Eigen::Matrix&lt;TT, kNumChannelsT, 1&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageView.html">template struct sophus::ImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IndexAndU.html">struct sophus::IndexAndU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFixedSizeVector.html">template struct sophus::IsFixedSizeVector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFloatingPoint.html">template struct sophus::IsFloatingPoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFloatingPoint-2.html">template struct sophus::IsFloatingPoint&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsUniformRandomBitGenerator.html">template struct sophus::IsUniformRandomBitGenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_LieGroupCeresTests.html">template struct sophus::LieGroupCeresTests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Mapper.html">template struct sophus::Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Mapper-2.html">template struct sophus::Mapper&lt;TScalar, typename std::enable_if&lt;kIsMappableV&lt;TScalar&gt;&gt;::type&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_MultiCameraRig.html">struct sophus::MultiCameraRig</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_PointTraits.html">template struct sophus::PointTraits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_PointTraits-2.html">template struct sophus::PointTraits&lt;TPoint&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ProjectionOrtho.html">struct sophus::ProjectionOrtho</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ProjectionZ1.html">struct sophus::ProjectionZ1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Random.html">template struct sophus::Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Random-2.html">template struct sophus::Random&lt;double&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_RuntimePixelType.html">struct sophus::RuntimePixelType</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityAcceleroModel.html">template struct sophus::ScalingNonOrthogonalityAcceleroModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityGyroModel.html">template struct sophus::ScalingNonOrthogonalityGyroModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_UninitTag.html">struct sophus::UninitTag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_VariantImagePredicate.html">template struct sophus::VariantImagePredicate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_AffineTransform.html">class sophus::AffineTransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSpline.html">template class sophus::BasisSpline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSplineFn.html">template class sophus::BasisSplineFn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSplineImpl.html">template class sophus::BasisSplineImpl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BrownConradyTransform.html">class sophus::BrownConradyTransform</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">class sophus::CameraModel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CameraModelT.html">template class sophus::CameraModelT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Cartesian.html">template class sophus::Cartesian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CartesianBase.html">template class sophus::CartesianBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Image.html">template class sophus::Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_ImageShape.html">class sophus::ImageShape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_ImuModel.html">class sophus::ImuModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_InverseDepthPoint3.html">template class sophus::InverseDepthPoint3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_KannalaBrandtK3Transform.html">class sophus::KannalaBrandtK3Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_LieGroupTests.html">template class sophus::LieGroupTests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Manifold.html">template class sophus::Manifold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_MutImage.html">template class sophus::MutImage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_MutImageView.html">template class sophus::MutImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_PointTransformer.html">template class sophus::PointTransformer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Ray.html">template class sophus::Ray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Region.html">template class sophus::Region</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RuntimeImage.html">template class sophus::RuntimeImage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RuntimeImageView.html">template class sophus::RuntimeImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo2.html">template class sophus::RxSo2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo2Base.html">template class sophus::RxSo2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo3.html">template class sophus::RxSo3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo3Base.html">template class sophus::RxSo3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se2.html">template class sophus::Se2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se2Base.html">template class sophus::Se2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se3.html">template class sophus::Se3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se3Base.html">template class sophus::Se3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim2.html">template class sophus::Sim2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim2Base.html">template class sophus::Sim2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim3.html">template class sophus::Sim3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim3Base.html">template class sophus::Sim3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So2.html">template class sophus::So2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So2Base.html">template class sophus::So2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So3.html">template class sophus::So3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So3Base.html">template class sophus::So3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_SplineBasisFunction.html">template class sophus::SplineBasisFunction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Tests.html">template class sophus::Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_UnitVector.html">template class sophus::UnitVector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart.html">template struct RotationalPart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-2.html">template struct RotationalPart&lt;sophus::Sim2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-3.html">template struct RotationalPart&lt;sophus::Sim3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-4.html">template struct RotationalPart&lt;sophus::SO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-5.html">template struct RotationalPart&lt;sophus::SE3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-6.html">template struct RotationalPart&lt;sophus::RxSO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-7.html">template struct RotationalPart&lt;sophus::Se2F64&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-8.html">template struct RotationalPart&lt;sophus::RxSO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-9.html">template struct RotationalPart&lt;sophus::SO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sophus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="global.html">Global Namespace</a></li>
+          <li class="breadcrumb-item"><a href="namespace_sophus.html">namespace sophus</a></li>
+      <li class="breadcrumb-item active">class sophus::CameraModel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/class_sophus_CameraModel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="class-sophus-cameramodel">
+<span id="doxid-classsophus-1-1-camera-model"></span><span id="index-0"></span><h1>class sophus::CameraModel<a class="headerlink" href="#class-sophus-cameramodel" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Concrete camera model class. <a class="reference internal" href="#details-classsophus-1-1-camera-model"><span class="std std-ref">More…</span></a></p>
+<pre class="highlight doxyrest-overview-code-block literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;camera_model.h&gt;</span><span class="cp"></span>
+
+<span class="k">class</span> <span class="n">CameraModel</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// construction</span>
+
+    <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-camera-model-1acea619975bc60ae93b298f406dd676c9">CameraModel</span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TTransformModelT</span><span class="o">&gt;</span>
+    <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a42050e96c9f0c5284aee0cf19728ef76"><span class="std std-ref">CameraModel</span></a><span></span><span class="p">(</span><span class="n">TTransformModelT</span> <span class="n">model</span><span class="p">);</span>
+
+    <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1aff340d880f9ad7e5ea7bd39daa3fc8df"><span class="std std-ref">CameraModel</span></a><span></span><span class="p">(</span>
+        <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="n">image_size</span><span class="p">,</span>
+        <span class="n">CameraDistortionType</span> <span class="n">projection_type</span><span class="p">,</span>
+        <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">params</span>
+        <span class="p">);</span>
+
+    <span class="c1">// methods</span>
+
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a3f44bfe3ef397e95f4008c1e4e484b5e"><span class="std std-ref">isEmpty</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1ab4858eb1665e80de3b44b7f3d4ce3cb5"><span class="std std-ref">distortionModelName</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a5878e77ddc7eb3e75ca7dfcb3f9f902e"><span class="std std-ref">CameraDistortionVariant</span></a><span></span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1ac920fe382afa86323365c041893d342e"><span class="std std-ref">modelVariant</span></a><span></span><span class="p">();</span>
+    <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a5878e77ddc7eb3e75ca7dfcb3f9f902e"><span class="std std-ref">CameraDistortionVariant</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1ad9590eda3f3116e6a770337d1e9aaf0f"><span class="std std-ref">modelVariant</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">CameraDistortionType</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a9ae6f5a2ed6e8cd2126070179918b2d3"><span class="std std-ref">distortionType</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-camera-model-1a979c62a79eaef7a5534462a6a3ae880f">focalLength</span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">void</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a8f2f942bcda0dca44312d2658538c0a3"><span class="std std-ref">setFocalLength</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">focal_length</span><span class="p">);</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-camera-model-1aac87d1c9688f4a1c66f4244545ba9580">principalPoint</span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">void</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a2f30d35a8fce73b5083b51fe3458a1cf"><span class="std std-ref">setPrincipalPoint</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">principal_point</span><span class="p">);</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a7770873d99fbb7aba0e472eec40ccba8"><span class="std std-ref">params</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">void</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a86408e646407cca32df79505f42c32be"><span class="std std-ref">setParams</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">params</span><span class="p">);</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a7f3ee6b92ed1bf8c1f7ca7d9a2834499"><span class="std std-ref">distortionParams</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a091cccc4327415811c2f58b0be99029a"><span class="std std-ref">camProj</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point_camera</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a62c0af0d183a975970a568c3687f7210"><span class="std std-ref">distort</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point2_in_camera_lifted</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix2d</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-camera-model-1a695bb01e6d69db1632d1774084b570a4">dxDistort</span><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point2_in_camera_lifted</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1ae7cda6c634ba9771828e72c9f5124906"><span class="std std-ref">undistort</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">pixel_image</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <a class="reference internal" href="class_sophus_MutImage.html#doxid-classsophus-1-1-mut-image"><span class="std std-ref">MutImage</span></a><span></span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2f</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-camera-model-1ab1d5547cfadea75b6674800fae34b98f">undistortTable</span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a375466a995fbcdc4b9b9b969b03d59b8"><span class="std std-ref">dxCamProjX</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point_in_camera</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="o">&gt;</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1af534428167b1b70a78bae16599a8b9f7"><span class="std std-ref">dxCamProjExpXPointAt0</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point_in_camera</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1ac778447adc73399bf83c3a425d1332bd"><span class="std std-ref">camUnproj</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">pixel_image</span><span class="p">,</span> <span class="kt">double</span> <span class="n">depth_z</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">CameraModel</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1af726b3e2046e2f46c64a467a2c633a59"><span class="std std-ref">subsampleDown</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">CameraModel</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a8b90615f4123efa82fc583ddbfcb766e"><span class="std std-ref">subsampleUp</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">CameraModel</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a09a17f01cd69a024cc1d849c046b041d"><span class="std std-ref">binDown</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">CameraModel</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a77f99d96a8b222b33be1cf1b0f7d0aae"><span class="std std-ref">binUp</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1ae6eca3082fc47a1ceacf0b5f218a72e9"><span class="std std-ref">imageSize</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">CameraModel</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a65510860e06a441349fdc25473f80858"><span class="std std-ref">roi</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">top_left</span><span class="p">,</span> <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="n">roi_size</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1ae40a2a06c3ee75af7a2aef9c5e542103"><span class="std std-ref">contains</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">obs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">border</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a6c401120dab88cc971794ef456152d9a"><span class="std std-ref">contains</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">obs</span><span class="p">,</span> <span class="kt">double</span> <span class="n">border</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">CameraModel</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-camera-model-1ac90462239413599cb957337d3fd0c1ce">scale</span><span></span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="n">image_size</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">CameraModel</span> <a class="reference internal" href="#doxid-classsophus-1-1-camera-model-1a7aa6d3673d9885945a09338fd73e3dbe"><span class="std std-ref">createDefaultPinholeModel</span></a><span></span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="n">image_size</span><span class="p">);</span>
+<span class="p">};</span></pre>
+</section>
+<section id="detailed-documentation">
+<span id="details-classsophus-1-1-camera-model"></span><h2>Detailed Documentation<a class="headerlink" href="#detailed-documentation" title="Permalink to this headline">¶</a></h2>
+<p>Concrete camera model class.</p>
+<section id="construction">
+<h3>Construction<a class="headerlink" href="#construction" title="Permalink to this headline">¶</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a42050e96c9f0c5284aee0cf19728ef76"><span id="index-1"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TTransformModelT</span><span class="o">&gt;</span>
+<span class="n">CameraModel</span><span class="p">(</span><span class="n">TTransformModelT</span> <span class="n">model</span><span class="p">)</span></pre>
+<p>Constructs camera model from <code class="docutils literal notranslate"><span class="pre">frame_name</span></code> and concrete projection model.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1aff340d880f9ad7e5ea7bd39daa3fc8df"><span id="index-2"></span><span></span><span class="n">CameraModel</span><span class="p">(</span>
+    <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="n">image_size</span><span class="p">,</span>
+    <span class="n">CameraDistortionType</span> <span class="n">projection_type</span><span class="p">,</span>
+    <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">params</span>
+    <span class="p">)</span></pre>
+<p>Constructs camera model from <code class="docutils literal notranslate"><span class="pre">frame_name</span></code>, <code class="docutils literal notranslate"><span class="pre">image_size</span></code>, <code class="docutils literal notranslate"><span class="pre">projection_type</span></code> flag and <code class="docutils literal notranslate"><span class="pre">params</span></code> vector.</p>
+<p>Precondition: <code class="docutils literal notranslate"><span class="pre">params.size()</span></code> must match the number of parameters of the specified <code class="docutils literal notranslate"><span class="pre">projection_type</span></code> (TransformModel::kNumParams).</p>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a3f44bfe3ef397e95f4008c1e4e484b5e"><span id="index-3"></span><span></span><span class="kt">bool</span> <span class="n">isEmpty</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns true if this camera remains default-initialized with zero image dimensions.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1ab4858eb1665e80de3b44b7f3d4ce3cb5"><span id="index-4"></span><span></span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">distortionModelName</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns name of the camera distortion model.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1ac920fe382afa86323365c041893d342e"><span id="index-5"></span><a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a5878e77ddc7eb3e75ca7dfcb3f9f902e"><span class="std std-ref">CameraDistortionVariant</span></a><span></span><span class="o">&amp;</span> <span class="n">modelVariant</span><span class="p">()</span></pre>
+<p>Distortion variant mutator.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1ad9590eda3f3116e6a770337d1e9aaf0f"><span id="index-6"></span><a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a5878e77ddc7eb3e75ca7dfcb3f9f902e"><span class="std std-ref">CameraDistortionVariant</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">modelVariant</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Distortion variant accessor.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a9ae6f5a2ed6e8cd2126070179918b2d3"><span id="index-7"></span><span></span><span class="n">CameraDistortionType</span> <span class="n">distortionType</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Camera transform flag.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a8f2f942bcda0dca44312d2658538c0a3"><span id="index-8"></span><span></span><span class="kt">void</span> <span class="n">setFocalLength</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">focal_length</span><span class="p">)</span></pre>
+<p>Focal length.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a2f30d35a8fce73b5083b51fe3458a1cf"><span id="index-9"></span><span></span><span class="kt">void</span> <span class="n">setPrincipalPoint</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">principal_point</span><span class="p">)</span></pre>
+<p>Focal length.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a7770873d99fbb7aba0e472eec40ccba8"><span id="index-10"></span><span></span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">params</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">params</span></code> vector by value.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a86408e646407cca32df79505f42c32be"><span id="index-11"></span><span></span><span class="kt">void</span> <span class="n">setParams</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">params</span><span class="p">)</span></pre>
+<p>Sets <code class="docutils literal notranslate"><span class="pre">params</span></code> vector.</p>
+<p>Precontion: <code class="docutils literal notranslate"><span class="pre">params.size()</span></code> must match the number of parameters of the specivied <code class="docutils literal notranslate"><span class="pre">projection_type</span></code> (TransformModel::kNumParams).</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a7f3ee6b92ed1bf8c1f7ca7d9a2834499"><span id="index-12"></span><span></span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">distortionParams</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns distortion parameters vector by value.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a091cccc4327415811c2f58b0be99029a"><span id="index-13"></span><span></span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="n">camProj</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point_camera</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Given a point in 3D space in the camera frame, compute the corresponding pixel coordinates in the image.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a62c0af0d183a975970a568c3687f7210"><span id="index-14"></span><span></span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="n">distort</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point2_in_camera_lifted</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Maps a 2-point in the z=1 plane of the camera to a (distorted) pixel in the image.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1ae7cda6c634ba9771828e72c9f5124906"><span id="index-15"></span><span></span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="n">undistort</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">pixel_image</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Maps a pixel in the image to a 2-point in the z=1 plane of the camera.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a375466a995fbcdc4b9b9b969b03d59b8"><span id="index-16"></span><span></span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="n">dxCamProjX</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point_in_camera</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Derivative of camProj(x) with respect to x=0.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1af534428167b1b70a78bae16599a8b9f7"><span id="index-17"></span><span></span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="o">&gt;</span> <span class="n">dxCamProjExpXPointAt0</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point_in_camera</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Derivative of camProj(exp(x) * point) with respect to x=0.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1ac778447adc73399bf83c3a425d1332bd"><span id="index-18"></span><span></span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">camUnproj</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">pixel_image</span><span class="p">,</span> <span class="kt">double</span> <span class="n">depth_z</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Given pixel coordinates in the distorted image, and a corresponding depth, reproject to a 3d point in the camera’s reference frame.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1af726b3e2046e2f46c64a467a2c633a59"><span id="index-19"></span><span></span><span class="n">CameraModel</span> <span class="n">subsampleDown</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Subsamples pixel down, factor of 0.5.</p>
+<p>See for details: <a class="reference external" href="https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc">https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc</a></p>
+<p>If the original width [height] is odd, the new width [height] will be: (width+1)/2 [height+1)/2].</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a8b90615f4123efa82fc583ddbfcb766e"><span id="index-20"></span><span></span><span class="n">CameraModel</span> <span class="n">subsampleUp</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Subsamples pixel up, factor of 2.0.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a09a17f01cd69a024cc1d849c046b041d"><span id="index-21"></span><span></span><span class="n">CameraModel</span> <span class="n">binDown</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Bins pixel down, factor of 0.5.</p>
+<p>See for details: <a class="reference external" href="https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj">https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj</a></p>
+<p>If the original width [height] is odd, the new width [height] will be: (width+1)/2 [height+1)/2].</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a77f99d96a8b222b33be1cf1b0f7d0aae"><span id="index-22"></span><span></span><span class="n">CameraModel</span> <span class="n">binUp</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Bins pixel up, factor of 2.0.</p>
+<p>See for details: <a class="reference external" href="https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj">https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj</a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1ae6eca3082fc47a1ceacf0b5f218a72e9"><span id="index-23"></span><a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">imageSize</span><span class="p">()</span> <span class="k">const</span></pre>
+<p><a class="reference internal" href="class_sophus_Image.html#doxid-classsophus-1-1-image"><span class="std std-ref">Image</span></a> size accessor.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a65510860e06a441349fdc25473f80858"><span id="index-24"></span><span></span><span class="n">CameraModel</span> <span class="n">roi</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">top_left</span><span class="p">,</span> <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="n">roi_size</span><span class="p">)</span> <span class="k">const</span></pre>
+<p><a class="reference internal" href="class_sophus_Region.html#doxid-classsophus-1-1-region"><span class="std std-ref">Region</span></a> of interest given <code class="docutils literal notranslate"><span class="pre">top_left</span></code> and ` <code class="docutils literal notranslate"><span class="pre">roi_size</span></code>.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1ae40a2a06c3ee75af7a2aef9c5e542103"><span id="index-25"></span><span></span><span class="kt">bool</span> <span class="n">contains</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">obs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">border</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns true if obs is within image.</p>
+<p>Note: Postiive border makes the image frame smaller.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a6c401120dab88cc971794ef456152d9a"><span id="index-26"></span><span></span><span class="kt">bool</span> <span class="n">contains</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">obs</span><span class="p">,</span> <span class="kt">double</span> <span class="n">border</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns true if obs is within image.</p>
+<p>Postiive border makes the image frame smaller.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-camera-model-1a7aa6d3673d9885945a09338fd73e3dbe"><span id="index-27"></span><span></span><span class="k">static</span> <span class="n">CameraModel</span> <span class="n">createDefaultPinholeModel</span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="n">image_size</span><span class="p">)</span></pre>
+<p>Creates default pinhole model from <code class="docutils literal notranslate"><span class="pre">image_size</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="class_sophus_BrownConradyTransform.html" class="btn btn-neutral float-left" title="class sophus::BrownConradyTransform" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="class_sophus_CameraModelT.html" class="btn btn-neutral float-right" title="template class sophus::CameraModelT" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
