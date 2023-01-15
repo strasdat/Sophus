@@ -1,0 +1,24 @@
+.. index:: pair: struct; sophus::IsFixedSizeVector
+.. _doxid-structsophus_1_1_is_fixed_size_vector:
+
+template struct sophus::IsFixedSizeVector
+=========================================
+
+.. toctree::
+	:hidden:
+
+If the Vector type is of fixed size, then IsFixedSizeVector::value will be true.
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <types.h>
+	
+	template <
+		typename TVectorT,
+		int kNumDimensions,
+		typename = typename std::enable_if<TVectorT::RowsAtCompileTime == kNumDimensions&&        TVectorT::ColsAtCompileTime == 1>::type
+		>
+	struct IsFixedSizeVector: public true_type {
+	};

@@ -1,0 +1,23 @@
+.. index:: pair: struct; sophus::ClippingPlanes
+.. _doxid-structsophus_1_1_clipping_planes:
+
+struct sophus::ClippingPlanes
+=============================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <clipping_planes.h>
+	
+	struct ClippingPlanes {
+		// fields
+	
+		float :target:`near<doxid-structsophus_1_1_clipping_planes_1a587067828454458323d2dd2e30d99554>` = 0.001;
+		float :target:`far<doxid-structsophus_1_1_clipping_planes_1abe003024c5378b5545858295e69bf6d7>` = 1000;
+	};

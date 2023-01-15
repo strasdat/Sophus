@@ -1,0 +1,365 @@
+.. index:: pair: class; sophus::MutImageView
+.. _doxid-classsophus_1_1_mut_image_view:
+
+template class sophus::MutImageView
+===================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+View of a mutable image, which does not own the data. :ref:`More...<details-classsophus_1_1_mut_image_view>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <image_view.h>
+	
+	template <class TPixel>
+	class MutImageView: public :ref:`sophus::ImageView<doxid-structsophus_1_1_image_view>` {
+	public:
+		// construction
+	
+		:ref:`MutImageView<doxid-classsophus_1_1_mut_image_view_1a677dac5a497c014e8dc1360296798d3e>`();
+		:ref:`MutImageView<doxid-classsophus_1_1_mut_image_view_1ac8b6bdef3e5c4f719c2b3b297b1cfda8>`(:ref:`ImageShape<doxid-classsophus_1_1_image_shape>` shape, TPixel* ptr);
+		:ref:`MutImageView<doxid-classsophus_1_1_mut_image_view_1a04f49a2d3e216b55fe2f8338a2d3cbfe>`(:ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` image_size, TPixel* ptr);
+
+		// methods
+	
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> :ref:`view<doxid-classsophus_1_1_mut_image_view_1a316a7ea4f0d30b51d554bed7c35bcc07>`() const;
+		void :ref:`copyDataFrom<doxid-classsophus_1_1_mut_image_view_1a037a905748d5f57f6ae8855f4d84bc1c>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> view) const;
+		TPixel* :ref:`rowPtrMut<doxid-classsophus_1_1_mut_image_view_1adb87eca7ec807d1fcc7d87d5b98d7856>`(int v) const;
+		TPixel& :ref:`checkedMut<doxid-classsophus_1_1_mut_image_view_1a6899630663025362ad8e58234c319c49>`(int u, int v) const;
+		TPixel& :target:`checkedMut<doxid-classsophus_1_1_mut_image_view_1aeb2474a80f3c402f8de8d6dd815ccb0b>`(Eigen::Vector2i uv) const;
+		TPixel& :ref:`uncheckedMut<doxid-classsophus_1_1_mut_image_view_1afce3cc068a09a13b7bcaccdaf56d273b>`(int u, int v) const;
+		TPixel& :target:`uncheckedMut<doxid-classsophus_1_1_mut_image_view_1ae127322c2435cc900792bd5d7f7d12fb>`(Eigen::Vector2i uv) const;
+	
+		template <class TUnaryOperation>
+		void :ref:`mutate<doxid-classsophus_1_1_mut_image_view_1a6aed03d8c1f782336b751e4580ee8e01>`(TUnaryOperation const& unary_op) const;
+	
+		template <class TUVOperation>
+		void :ref:`generate<doxid-classsophus_1_1_mut_image_view_1ad17676ebdfe00b688a81d674ecfa7fa3>`(TUVOperation const& uv_op) const;
+	
+		template <class TOtherPixel, class TUnaryOperation>
+		void :ref:`transformFrom<doxid-classsophus_1_1_mut_image_view_1aa2157348c35c25ed131eebab9e800df8>`(
+			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
+			TUnaryOperation const& unary_op
+			) const;
+	
+		template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
+		void :ref:`transformFrom<doxid-classsophus_1_1_mut_image_view_1ab8dbbd6d64e13d32c29a3f5e644cabbb>`(
+			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
+			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
+			TBinaryOperation const& binary_op
+			) const;
+	
+		void :ref:`fill<doxid-classsophus_1_1_mut_image_view_1a61d68c099905831da518a3c6eb02ead1>`(TPixel const& val) const;
+		TPixel* :ref:`ptrMut<doxid-classsophus_1_1_mut_image_view_1a6f5022a0a14867021e64690b3937918a>`() const;
+		MutImageView :ref:`mutSubview<doxid-classsophus_1_1_mut_image_view_1a3e0b90bda3a8448a30d16412c064b738>`(Eigen::Vector2i uv, :ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` size) const;
+		static MutImageView :ref:`unsafeConstCast<doxid-classsophus_1_1_mut_image_view_1a75758f23b087e537d59dfde22de0490e>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> view);
+	};
+
+	// direct descendants
+
+	template <
+		class TPixel,
+		template<class> class TAllocator = Eigen::aligned_allocator
+		>
+	class :ref:`MutImage<doxid-classsophus_1_1_mut_image>`;
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// typedefs
+	
+		using :ref:`PixelType<doxid-structsophus_1_1_image_view_1a824084f4aff167459313deffc016842b>` = TPixel ;
+
+		// methods
+	
+		bool :ref:`isEmpty<doxid-structsophus_1_1_image_view_1ae44579c06f0dc6c89c960b153c076ed9>`() const;
+		bool :ref:`isContiguous<doxid-structsophus_1_1_image_view_1a97bf64cfd7432518442b0f54262f56f7>`() const;
+		:ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` const& :ref:`imageSize<doxid-structsophus_1_1_image_view_1aad892d6f77fa63451e76624713b24908>`() const;
+		:ref:`ImageShape<doxid-classsophus_1_1_image_shape>` const& :ref:`shape<doxid-structsophus_1_1_image_view_1a46ebaa9fd38c3216576b8fae690b3b9b>`() const;
+		int :ref:`width<doxid-structsophus_1_1_image_view_1ac719f68b41c8af953d6ebc239192ceeb>`() const;
+		int :ref:`height<doxid-structsophus_1_1_image_view_1a4aa4a7d41508c32e464bce5e36260945>`() const;
+		size_t :ref:`pitchBytes<doxid-structsophus_1_1_image_view_1aa25fa2b48e9979f4e4854d46430a8695>`() const;
+		bool :ref:`colInBounds<doxid-structsophus_1_1_image_view_1a62b279caff31b08bfcff294e1518fd07>`(int u) const;
+		bool :ref:`rowInBounds<doxid-structsophus_1_1_image_view_1ab9be65c29efe027adc8669484dc1ef96>`(int v) const;
+		TPixel const* :ref:`rowPtr<doxid-structsophus_1_1_image_view_1ac2fd0caae912334d8cfba0152ea2eda0>`(int v) const;
+		TPixel const& :ref:`checked<doxid-structsophus_1_1_image_view_1acd29b4985412381df7385cd887f6d591>`(int u, int v) const;
+		TPixel const& :ref:`checked<doxid-structsophus_1_1_image_view_1a237f9159c75cb276635dbd45d9faebb9>`(Eigen::Vector2i uv) const;
+		TPixel const& :ref:`unchecked<doxid-structsophus_1_1_image_view_1a912b28894dfdb53310f8c5fe07d87fb9>`(int u, int v) const;
+		TPixel const& :ref:`unchecked<doxid-structsophus_1_1_image_view_1a615cbb9c94939364913c46d8348dbc15>`(Eigen::Vector2i uv) const;
+		TPixel const* :ref:`ptr<doxid-structsophus_1_1_image_view_1ab89ef317eebaf3a71f15d7a723ea01a3>`() const;
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>` :ref:`subview<doxid-structsophus_1_1_image_view_1a198df907fecd7103724f1ffd02f8310c>`(Eigen::Vector2i uv, :ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` size) const;
+	
+		template <class TFunc>
+		void :ref:`visit<doxid-structsophus_1_1_image_view_1a2355eb158506aafc762a7a057975c13b>`(TFunc const& user_function) const;
+	
+		template <class TReduceOp, class TVal>
+		TVal :ref:`reduce<doxid-structsophus_1_1_image_view_1ad6ee10edcbc6267d9d92eb66e77a291e>`(
+			TReduceOp const& reduce_op,
+			TVal val = TVal{}
+			) const;
+	
+		template <class TShortCircuitReduceOp, class TVal>
+		TVal :ref:`shortCircuitReduce<doxid-structsophus_1_1_image_view_1a8fc012bee1f58e9fd976125a216fc650>`(
+			TShortCircuitReduceOp const& short_circuit_reduce_op,
+			TVal val = TVal{}
+			) const;
+	
+		bool :ref:`operator==<doxid-structsophus_1_1_image_view_1a8d34fd6288b9faf9e5cf7457c2136809>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>` const& rhs) const;
+		bool :ref:`operator!=<doxid-structsophus_1_1_image_view_1a17ad6c4e80f27ebb8be855b1e8a602ca>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>` const& rhs) const;
+		bool :ref:`hasSameData<doxid-structsophus_1_1_image_view_1a2b9537ef883c762342bc956a4bbcad35>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>` const& rhs) const;
+
+	protected:
+		// fields
+	
+		:ref:`ImageShape<doxid-classsophus_1_1_image_shape>` :ref:`shape_<doxid-structsophus_1_1_image_view_1a5fdbe7864c510048142e9af82735d501>` = {};
+		TPixel const* :ref:`ptr_<doxid-structsophus_1_1_image_view_1a771ec00e4928adc63935e2f3d456ff2d>` = nullptr;
+
+		// methods
+	
+		void :ref:`setViewToEmpty<doxid-structsophus_1_1_image_view_1a528bbadf7c273703e3b2d3aac877152b>`();
+
+.. _details-classsophus_1_1_mut_image_view:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+View of a mutable image, which does not own the data.
+
+The API of :ref:`MutImageView <doxid-classsophus_1_1_mut_image_view>` allows for read and write access.
+
+:ref:`MutImageView <doxid-classsophus_1_1_mut_image_view>` is nullable. In that case ``this->:ref:`isEmpty() <doxid-structsophus_1_1_image_view_1ae44579c06f0dc6c89c960b153c076ed9>``` is true.
+
+Details on equality comparison, the state of the object, and const-correctness.
+
+:ref:`MutImageView <doxid-classsophus_1_1_mut_image_view>` is a "shallow-compare type" similar to std::span<Pixel> and std::unique_ptr<Pixel>. As :ref:`ImageView <doxid-structsophus_1_1_image_view>`, its state consists of the image shape as well as the pointer address, and comparing those entities establishes equality comparisons. Furthermore, giving mutable access to pixels is considered a const operation, as in
+
+``TPixel& :ref:`checkedMut(int u, int v) const <doxid-classsophus_1_1_mut_image_view_1a6899630663025362ad8e58234c319c49>```
+
+since this merely allows for changing a pixel value, but not its state (data location and layout).
+
+Construction
+------------
+
+.. index:: pair: function; MutImageView
+.. _doxid-classsophus_1_1_mut_image_view_1a677dac5a497c014e8dc1360296798d3e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	MutImageView()
+
+Default constructor creates an empty image.
+
+.. index:: pair: function; MutImageView
+.. _doxid-classsophus_1_1_mut_image_view_1ac8b6bdef3e5c4f719c2b3b297b1cfda8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	MutImageView(:ref:`ImageShape<doxid-classsophus_1_1_image_shape>` shape, TPixel* ptr)
+
+Creates view from shape and pointer to first pixel.
+
+.. index:: pair: function; MutImageView
+.. _doxid-classsophus_1_1_mut_image_view_1a04f49a2d3e216b55fe2f8338a2d3cbfe:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	MutImageView(:ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` image_size, TPixel* ptr)
+
+Creates view from image size and pointer to first pixel. The image is assumed to be contiguous and the pitch is set accordingly.
+
+Methods
+-------
+
+.. index:: pair: function; view
+.. _doxid-classsophus_1_1_mut_image_view_1a316a7ea4f0d30b51d554bed7c35bcc07:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> view() const
+
+Returns ImageView(\*this).
+
+Returns non-mut version of view.
+
+.. index:: pair: function; copyDataFrom
+.. _doxid-classsophus_1_1_mut_image_view_1a037a905748d5f57f6ae8855f4d84bc1c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void copyDataFrom(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> view) const
+
+Copies data from view into this.
+
+Preconditions:
+
+* this-> :ref:`isEmpty() <doxid-structsophus_1_1_image_view_1ae44579c06f0dc6c89c960b153c076ed9>` == view.isEmpty()
+
+* this->size() == view.size()
+
+No-op if view is empty.
+
+.. index:: pair: function; rowPtrMut
+.. _doxid-classsophus_1_1_mut_image_view_1adb87eca7ec807d1fcc7d87d5b98d7856:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TPixel* rowPtrMut(int v) const
+
+Returns v-th row pointer of mutable pixel.
+
+.. index:: pair: function; checkedMut
+.. _doxid-classsophus_1_1_mut_image_view_1a6899630663025362ad8e58234c319c49:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TPixel& checkedMut(int u, int v) const
+
+Mutable accessor to pixel u, v.
+
+Precondition: u must be in [0, width) and v must be in [0, height).
+
+Note:
+
+* panics if u,v is invalid.
+
+.. index:: pair: function; uncheckedMut
+.. _doxid-classsophus_1_1_mut_image_view_1afce3cc068a09a13b7bcaccdaf56d273b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TPixel& uncheckedMut(int u, int v) const
+
+Mutable accessor to pixel u, v.
+
+Precondition: u must be in [0, width) and v must be in [0, height). Silent UB on failure.
+
+.. index:: pair: function; mutate
+.. _doxid-classsophus_1_1_mut_image_view_1a6aed03d8c1f782336b751e4580ee8e01:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TUnaryOperation>
+	void mutate(TUnaryOperation const& unary_op) const
+
+Mutates each pixel of this with given unary operation.
+
+Preconditions: this must not be empty.
+
+.. index:: pair: function; generate
+.. _doxid-classsophus_1_1_mut_image_view_1ad17676ebdfe00b688a81d674ecfa7fa3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TUVOperation>
+	void generate(TUVOperation const& uv_op) const
+
+For each pixel in ``this`` with coordinates (u,v), populates with the user provided function, evaluated as ``uv_op(u,v)``, where u and v are integers such that u in [0, width), v in [0, height)
+
+Preconditions: this must not be empty.
+
+.. index:: pair: function; transformFrom
+.. _doxid-classsophus_1_1_mut_image_view_1aa2157348c35c25ed131eebab9e800df8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TOtherPixel, class TUnaryOperation>
+	void transformFrom(
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
+		TUnaryOperation const& unary_op
+		) const
+
+Transforms view using unary operation and assigns result to this.
+
+Preconditions:
+
+* this must not be empty.
+
+* this-> :ref:`imageSize() <doxid-structsophus_1_1_image_view_1aad892d6f77fa63451e76624713b24908>` == view.imageSize()
+
+.. index:: pair: function; transformFrom
+.. _doxid-classsophus_1_1_mut_image_view_1ab8dbbd6d64e13d32c29a3f5e644cabbb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
+	void transformFrom(
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
+		TBinaryOperation const& binary_op
+		) const
+
+Transforms two views using binary operation and assigns result to this.
+
+Preconditions:
+
+* this must not be empty.
+
+* this-> :ref:`imageSize() <doxid-structsophus_1_1_image_view_1aad892d6f77fa63451e76624713b24908>` == lhs.imageSize() == rhs.imageSize()
+
+.. index:: pair: function; fill
+.. _doxid-classsophus_1_1_mut_image_view_1a61d68c099905831da518a3c6eb02ead1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void fill(TPixel const& val) const
+
+Populates every pixel of this with val.
+
+Preconditions: this must not be empty.
+
+.. index:: pair: function; ptrMut
+.. _doxid-classsophus_1_1_mut_image_view_1a6f5022a0a14867021e64690b3937918a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TPixel* ptrMut() const
+
+Returns pointer of mutable data to first pixel.
+
+.. index:: pair: function; mutSubview
+.. _doxid-classsophus_1_1_mut_image_view_1a3e0b90bda3a8448a30d16412c064b738:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	MutImageView mutSubview(Eigen::Vector2i uv, :ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` size) const
+
+Returns mutable subview.
+
+.. index:: pair: function; unsafeConstCast
+.. _doxid-classsophus_1_1_mut_image_view_1a75758f23b087e537d59dfde22de0490e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static MutImageView unsafeConstCast(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> view)
+
+Creates mutable view from view.
+
+It is the user's responsibility to make sure that the data owned by the view can be modified safely.
+

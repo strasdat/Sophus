@@ -1,0 +1,30 @@
+.. index:: pair: namespace; sophus::jet_helpers
+.. _doxid-namespacesophus_1_1jet__helpers:
+
+namespace sophus::jet_helpers
+=============================
+
+.. toctree::
+	:hidden:
+
+	struct_sophus_jet_helpers_GetValue.rst
+	struct_sophus_jet_helpers_GetValue-2.rst
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	namespace jet_helpers {
+
+	// structs
+
+	template <class TScalar>
+	struct :ref:`GetValue<doxid-structsophus_1_1jet__helpers_1_1_get_value>`;
+
+	template <class TScalar, int kN>
+	struct :ref:`GetValue<ceres::Jet<TScalar, kN>><doxid-structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4>`;
+
+	} // namespace jet_helpers

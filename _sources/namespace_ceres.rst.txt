@@ -1,0 +1,26 @@
+.. index:: pair: namespace; ceres
+.. _doxid-namespaceceres:
+
+namespace ceres
+===============
+
+.. toctree::
+	:hidden:
+
+	struct_ceres_Jet.rst
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	namespace ceres {
+
+	// structs
+
+	template <class TScalar, int kN>
+	struct :ref:`Jet<doxid-structceres_1_1_jet>`;
+
+	} // namespace ceres

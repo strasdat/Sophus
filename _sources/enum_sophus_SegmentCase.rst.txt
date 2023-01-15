@@ -1,0 +1,19 @@
+.. index:: pair: enum; SegmentCase
+.. _doxid-namespacesophus_1afd307b8cdfbe9c85d3a252b5860aefaf:
+
+enum sophus::SegmentCase
+========================
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <spline.h>
+
+	enum SegmentCase {
+	    :target:`first<doxid-namespacesophus_1afd307b8cdfbe9c85d3a252b5860aefafa8b04d5e3775d298e78455efc5ca404d5>`,
+	    :target:`normal<doxid-namespacesophus_1afd307b8cdfbe9c85d3a252b5860aefafafea087517c26fadd409bd4b9dc642555>`,
+	    :target:`last<doxid-namespacesophus_1afd307b8cdfbe9c85d3a252b5860aefafa98bd1c45684cf587ac2347a92dd7bb51>`,
+	};
+

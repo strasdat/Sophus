@@ -1,0 +1,89 @@
+.. index:: pair: struct; sophus::LieGroupCeresTests
+.. _doxid-structsophus_1_1_lie_group_ceres_tests:
+
+template struct sophus::LieGroupCeresTests
+==========================================
+
+.. toctree::
+	:hidden:
+
+	struct_sophus_LieGroupCeresTests_TestGraphFunctor.rst
+	struct_sophus_LieGroupCeresTests_TestLieGroupCostFunctor.rst
+	struct_sophus_LieGroupCeresTests_TestPointCostFunctor.rst
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <test_impl.h>
+	
+	template <template<class, int=0> class TLieGroup>
+	struct LieGroupCeresTests {
+		// typedefs
+	
+		using :target:`LieGroup<doxid-structsophus_1_1_lie_group_ceres_tests_1a6e2425f2caf09f7ff8296f366c83f3dd>` = TLieGroup<TScalar> ;
+		using :target:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` = :ref:`LieGroup<doxid-structsophus_1_1_lie_group_ceres_tests_1a6e2425f2caf09f7ff8296f366c83f3dd>`<double> ;
+		using :target:`PointF64<doxid-structsophus_1_1_lie_group_ceres_tests_1aeaa486c51b7a6afb01c4f944d339d071>` = typename LieGroupF64::Point ;
+		using :target:`Tangentd<doxid-structsophus_1_1_lie_group_ceres_tests_1a217966eb62327ac547ca9c0690401b78>` = typename LieGroupF64::Tangent ;
+		using :target:`StdVector<doxid-structsophus_1_1_lie_group_ceres_tests_1a9f09916a1c4b016de72b918a0a74fef1>` = std::vector<TScalar, Eigen::aligned_allocator<TScalar>> ;
+
+		// structs
+	
+		struct :ref:`TestGraphFunctor<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor>`;
+		struct :ref:`TestLieGroupCostFunctor<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor>`;
+		struct :ref:`TestPointCostFunctor<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_point_cost_functor>`;
+
+		// fields
+	
+		static constexpr int :target:`kMatrixDim<doxid-structsophus_1_1_lie_group_ceres_tests_1a61df77e90899c449e854c2452ef5bd99>` = LieGroupF64::kMatrixDim;
+		static constexpr int :target:`kNumParameters<doxid-structsophus_1_1_lie_group_ceres_tests_1afccb0cc2666d34910d3d144581dff133>` = LieGroupF64::kNumParameters;
+		static constexpr int :target:`kDoF<doxid-structsophus_1_1_lie_group_ceres_tests_1a353b8c42785b8eab4e61ad1ca955d55a>` = LieGroupF64::kDoF;
+		:ref:`StdVector<doxid-structsophus_1_1_lie_group_ceres_tests_1a9f09916a1c4b016de72b918a0a74fef1>`<:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>`> :target:`group_vec<doxid-structsophus_1_1_lie_group_ceres_tests_1a35a97c29679ff6f574067f147e412335>`;
+		:ref:`StdVector<doxid-structsophus_1_1_lie_group_ceres_tests_1a9f09916a1c4b016de72b918a0a74fef1>`<:ref:`PointF64<doxid-structsophus_1_1_lie_group_ceres_tests_1aeaa486c51b7a6afb01c4f944d339d071>`> :target:`point_vec<doxid-structsophus_1_1_lie_group_ceres_tests_1a0e71f745ad692a64646243aea78a6c03>`;
+
+		// construction
+	
+		:target:`LieGroupCeresTests<doxid-structsophus_1_1_lie_group_ceres_tests_1a896e387ad7b6f73d81936bcb7dd26fa2>`(
+			:ref:`StdVector<doxid-structsophus_1_1_lie_group_ceres_tests_1a9f09916a1c4b016de72b918a0a74fef1>`<:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>`> const& group_vec,
+			:ref:`StdVector<doxid-structsophus_1_1_lie_group_ceres_tests_1a9f09916a1c4b016de72b918a0a74fef1>`<:ref:`PointF64<doxid-structsophus_1_1_lie_group_ceres_tests_1aeaa486c51b7a6afb01c4f944d339d071>`> const& point_vec
+			);
+
+		// methods
+	
+		bool :target:`testAll<doxid-structsophus_1_1_lie_group_ceres_tests_1ab082753be6b69b196f50d5f5d49098c9>`();
+	
+		bool :target:`testAveraging<doxid-structsophus_1_1_lie_group_ceres_tests_1a7c327921c6742147e76b44825ad3ecbe>`(
+			const size_t num_vertices,
+			double const sigma_init,
+			double const sigma_observation
+			);
+	
+		bool :target:`test<doxid-structsophus_1_1_lie_group_ceres_tests_1a8c7fcd1517593938e95796e96b1464e0>`(
+			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& t_w_targ,
+			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& t_w_init,
+			:ref:`PointF64<doxid-structsophus_1_1_lie_group_ceres_tests_1aeaa486c51b7a6afb01c4f944d339d071>` const& point_a_init,
+			:ref:`PointF64<doxid-structsophus_1_1_lie_group_ceres_tests_1aeaa486c51b7a6afb01c4f944d339d071>` const& point_b
+			);
+	
+		bool :target:`testManifold<doxid-structsophus_1_1_lie_group_ceres_tests_1af2453da828ca534f8374b08d003af7c5>`(
+			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x,
+			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& y
+			);
+	
+		bool :target:`xPlusZeroIsXAt<doxid-structsophus_1_1_lie_group_ceres_tests_1ade784bd01cef6db3697cfcedae16a5ea>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x);
+		bool :target:`xMinusXIsZeroAt<doxid-structsophus_1_1_lie_group_ceres_tests_1a3b5fc6cd18026600c95c5b82d3bb5f61>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x);
+	
+		bool :target:`minusPlusIsIdentityAt<doxid-structsophus_1_1_lie_group_ceres_tests_1aeae811faed4a1bad65ce7ee9da8df11b>`(
+			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x,
+			:ref:`Tangentd<doxid-structsophus_1_1_lie_group_ceres_tests_1a217966eb62327ac547ca9c0690401b78>` const& delta
+			);
+	
+		bool :target:`plusMinusIsIdentityAt<doxid-structsophus_1_1_lie_group_ceres_tests_1a3e97f6fa4ada2bdd6b5cc142991e03a4>`(
+			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x,
+			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& y
+			);
+	
+		bool :target:`minusPlusJacobianIsIdentityAt<doxid-structsophus_1_1_lie_group_ceres_tests_1a86e2c700691652f4077cafc7ad32e254>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x);
+	};

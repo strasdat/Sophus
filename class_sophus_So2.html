@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>template class sophus::So2 &mdash; Sophus  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="template class sophus::So2Base" href="class_sophus_So2Base.html" />
+    <link rel="prev" title="template class sophus::Sim3Base" href="class_sophus_Sim3Base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Sophus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/strasdat/Sophus">GitHub Page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="style.html">C++ Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="style.html#some-geeky-notes-about-the-terms-poses-orientation-and-position">Some geeky notes about the terms poses, orientation and position</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pysophus.html">Sympy API - Symbolic Sophus In Python</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="global.html">Global Namespace</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="namespace_Eigen.html">namespace Eigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="namespace_ceres.html">namespace ceres</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="namespace_sophus.html">namespace sophus</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus_detail.html">namespace sophus::detail</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus_jet_helpers.html">namespace sophus::jet_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enum_sophus_SegmentCase.html">enum sophus::SegmentCase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_AnyImagePredicate.html">struct sophus::AnyImagePredicate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_BasisSplineSegment.html">template struct sophus::BasisSplineSegment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_CameraInRig.html">struct sophus::CameraInRig</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ClippingPlanes.html">struct sophus::ClippingPlanes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ClosestApproachResult.html">template struct sophus::ClosestApproachResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_GetScalar.html">template struct sophus::GetScalar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_GetScalar-2.html">template struct sophus::GetScalar&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageSize.html">struct sophus::ImageSize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageTraits.html">template struct sophus::ImageTraits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageTraits-2.html">template struct sophus::ImageTraits&lt;Eigen::Matrix&lt;TT, kNumChannelsT, 1&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ImageView.html">template struct sophus::ImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IndexAndU.html">struct sophus::IndexAndU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFixedSizeVector.html">template struct sophus::IsFixedSizeVector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFloatingPoint.html">template struct sophus::IsFloatingPoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsFloatingPoint-2.html">template struct sophus::IsFloatingPoint&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_IsUniformRandomBitGenerator.html">template struct sophus::IsUniformRandomBitGenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_LieGroupCeresTests.html">template struct sophus::LieGroupCeresTests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Mapper.html">template struct sophus::Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Mapper-2.html">template struct sophus::Mapper&lt;TScalar, typename std::enable_if&lt;kIsMappableV&lt;TScalar&gt;&gt;::type&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_MultiCameraRig.html">struct sophus::MultiCameraRig</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_PointTraits.html">template struct sophus::PointTraits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_PointTraits-2.html">template struct sophus::PointTraits&lt;TPoint&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ProjectionOrtho.html">struct sophus::ProjectionOrtho</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ProjectionZ1.html">struct sophus::ProjectionZ1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Random.html">template struct sophus::Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_Random-2.html">template struct sophus::Random&lt;double&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_RuntimePixelType.html">struct sophus::RuntimePixelType</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityAcceleroModel.html">template struct sophus::ScalingNonOrthogonalityAcceleroModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityGyroModel.html">template struct sophus::ScalingNonOrthogonalityGyroModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_UninitTag.html">struct sophus::UninitTag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="struct_sophus_VariantImagePredicate.html">template struct sophus::VariantImagePredicate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_AffineTransform.html">class sophus::AffineTransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSpline.html">template class sophus::BasisSpline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSplineFn.html">template class sophus::BasisSplineFn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BasisSplineImpl.html">template class sophus::BasisSplineImpl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_BrownConradyTransform.html">class sophus::BrownConradyTransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CameraModel.html">class sophus::CameraModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CameraModelT.html">template class sophus::CameraModelT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Cartesian.html">template class sophus::Cartesian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_CartesianBase.html">template class sophus::CartesianBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Image.html">template class sophus::Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_ImageShape.html">class sophus::ImageShape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_ImuModel.html">class sophus::ImuModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_InverseDepthPoint3.html">template class sophus::InverseDepthPoint3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_KannalaBrandtK3Transform.html">class sophus::KannalaBrandtK3Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_LieGroupTests.html">template class sophus::LieGroupTests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Manifold.html">template class sophus::Manifold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_MutImage.html">template class sophus::MutImage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_MutImageView.html">template class sophus::MutImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_PointTransformer.html">template class sophus::PointTransformer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Ray.html">template class sophus::Ray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Region.html">template class sophus::Region</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RuntimeImage.html">template class sophus::RuntimeImage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RuntimeImageView.html">template class sophus::RuntimeImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo2.html">template class sophus::RxSo2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo2Base.html">template class sophus::RxSo2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo3.html">template class sophus::RxSo3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_RxSo3Base.html">template class sophus::RxSo3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se2.html">template class sophus::Se2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se2Base.html">template class sophus::Se2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se3.html">template class sophus::Se3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Se3Base.html">template class sophus::Se3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim2.html">template class sophus::Sim2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim2Base.html">template class sophus::Sim2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim3.html">template class sophus::Sim3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Sim3Base.html">template class sophus::Sim3Base</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">template class sophus::So2</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So2Base.html">template class sophus::So2Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So3.html">template class sophus::So3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_So3Base.html">template class sophus::So3Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_SplineBasisFunction.html">template class sophus::SplineBasisFunction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_Tests.html">template class sophus::Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_sophus_UnitVector.html">template class sophus::UnitVector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_sophus.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart.html">template struct RotationalPart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-2.html">template struct RotationalPart&lt;sophus::Sim2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-3.html">template struct RotationalPart&lt;sophus::Sim3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-4.html">template struct RotationalPart&lt;sophus::SO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-5.html">template struct RotationalPart&lt;sophus::SE3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-6.html">template struct RotationalPart&lt;sophus::RxSO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-7.html">template struct RotationalPart&lt;sophus::Se2F64&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-8.html">template struct RotationalPart&lt;sophus::RxSO2d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_RotationalPart-9.html">template struct RotationalPart&lt;sophus::SO3d&gt;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sophus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="global.html">Global Namespace</a></li>
+          <li class="breadcrumb-item"><a href="namespace_sophus.html">namespace sophus</a></li>
+      <li class="breadcrumb-item active">template class sophus::So2</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/class_sophus_So2.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="template-class-sophus-so2">
+<span id="doxid-classsophus-1-1-so2"></span><span id="index-0"></span><h1>template class sophus::So2<a class="headerlink" href="#template-class-sophus-so2" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#doxid-classsophus-1-1-so2"><span class="std std-ref">So2</span></a> using default storage; derived from <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a>. <a class="reference internal" href="#details-classsophus-1-1-so2"><span class="std std-ref">More…</span></a></p>
+<pre class="highlight doxyrest-overview-code-block literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;so2.h&gt;</span><span class="cp"></span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TScalar</span><span class="p">,</span> <span class="kt">int</span> <span class="n">kOptions</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="n">So2</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// typedefs</span>
+
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1a514ede232e062df06deb6e12252770ea">Base</span><span></span> <span class="o">=</span> <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a><span></span><span class="o">&lt;</span><span class="n">So2</span><span class="o">&lt;</span><span class="n">TScalar</span><span class="p">,</span> <span class="n">kOptions</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3">Scalar</span><span></span> <span class="o">=</span> <span class="n">TScalar</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03">Transformation</span><span></span> <span class="o">=</span> <span class="k">typename</span> <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base-1a495c192e4a8aaedce0db4767daed2a2d"><span class="std std-ref">Base::Transformation</span></a><span></span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1a307d16f09d886d8326f242a19b48ac05">Point</span><span></span> <span class="o">=</span> <span class="k">typename</span> <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base-1a4c04487968d947b32f008032feb02bf5"><span class="std std-ref">Base::Point</span></a><span></span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1a901b35875159b7ecd4296971530e5d38">HomogeneousPoint</span><span></span> <span class="o">=</span> <span class="k">typename</span> <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base-1a459474325b212daefd3cf7a318a7eeca"><span class="std std-ref">Base::HomogeneousPoint</span></a><span></span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f">Tangent</span><span></span> <span class="o">=</span> <span class="k">typename</span> <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base-1ab115de83a6cfdf04cf7f6cf57280e3e6"><span class="std std-ref">Base::Tangent</span></a><span></span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1a5cea2e5252c91720652467d20577b502">Adjoint</span><span></span> <span class="o">=</span> <span class="k">typename</span> <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base-1a03e191645a4eca0a6b08e8c8bafb3ff7"><span class="std std-ref">Base::Adjoint</span></a><span></span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1ad3c000516ec19f49438aa0ce2ef73662">ComplexMember</span><span></span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">kOptions</span><span class="o">&gt;</span> <span class="p">;</span>
+
+    <span class="c1">// fields</span>
+
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1af4baca422f40c3429edd68238fb4e3c1">kDoF</span><span></span> <span class="o">=</span> <span class="n">Base</span><span class="o">::</span><span class="n">kDoF</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1aae579945faa7fc56036631036729b7fc">kNumParameters</span><span></span> <span class="o">=</span> <span class="n">Base</span><span class="o">::</span><span class="n">kNumParameters</span><span class="p">;</span>
+
+    <span class="c1">// construction</span>
+
+    <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a0be5b476bbe25acd4d63728c1e8e4b67"><span class="std std-ref">So2</span></a><span></span><span class="p">();</span>
+    <a class="reference internal" href="#doxid-classsophus-1-1-so2-1aa9796a8ddb94dc51dacbb1dd14607d24"><span class="std std-ref">So2</span></a><span></span><span class="p">(</span><span class="n">So2</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TOtherDerived</span><span class="o">&gt;</span>
+    <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ac3059af32874fcf53992af2e7d5bffff"><span class="std std-ref">So2</span></a><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a><span></span><span class="o">&lt;</span><span class="n">TOtherDerived</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>
+
+    <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a9785ccbd80f0c487336c58173f28aba8"><span class="std std-ref">So2</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">mat_r</span><span class="p">);</span>
+    <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad61ae9c0d2fd159d92a476ca52e1a12f"><span class="std std-ref">So2</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">real</span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">imag</span><span class="p">);</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TD</span><span class="o">&gt;</span>
+    <a class="reference internal" href="#doxid-classsophus-1-1-so2-1af871f275ce02176c9dd2d41175ad33ad"><span class="std std-ref">So2</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixBase</span><span class="o">&lt;</span><span class="n">TD</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">complex</span><span class="p">);</span>
+
+    <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a4c733a3b0745ee37b25215023ffdc544"><span class="std std-ref">So2</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span> <span class="n">theta</span><span class="p">);</span>
+
+    <span class="c1">// methods</span>
+
+    <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">So2</span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1af78824cf264be08ef0d3f6270382325c"><span class="std std-ref">operator=</span></a><span></span><span class="p">(</span><span class="n">So2</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>
+    <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad3c000516ec19f49438aa0ce2ef73662"><span class="std std-ref">ComplexMember</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a7e8aa31f3b52bcf1cf0e4e592f7847ff"><span class="std std-ref">unitComplex</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TOtherDerived</span><span class="o">&gt;</span>
+    <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a><span></span><span class="o">&lt;</span><span class="n">TDerived</span><span class="o">&gt;&amp;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a3f596eeb4c3a1e5f5e1da0ee30bc9ef4"><span class="std std-ref">operator=</span></a><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a><span></span><span class="o">&lt;</span><span class="n">TOtherDerived</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>
+
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">So2</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a8d15d016834738107a2ddcc6a5d53013"><span class="std std-ref">exp</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">theta</span><span class="p">);</span>
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1aae579945faa7fc56036631036729b7fc"><span class="std std-ref">kNumParameters</span></a><span></span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1af4baca422f40c3429edd68238fb4e3c1"><span class="std std-ref">kDoF</span></a><span></span><span class="o">&gt;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a81f7d4dda4f650b5d8010f1c83a54db4"><span class="std std-ref">dxExpX</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">theta</span><span class="p">);</span>
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1aae579945faa7fc56036631036729b7fc"><span class="std std-ref">kNumParameters</span></a><span></span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1af4baca422f40c3429edd68238fb4e3c1"><span class="std std-ref">kDoF</span></a><span></span><span class="o">&gt;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a247b08aea3e4cd43877d59a9f09c5e93"><span class="std std-ref">dxExpXAt0</span></a><span></span><span class="p">();</span>
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1af4baca422f40c3429edd68238fb4e3c1"><span class="std std-ref">kDoF</span></a><span></span><span class="o">&gt;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a5aa7c3ec15719cf17c670cc879a83d0d"><span class="std std-ref">dxExpXTimesPointAt0</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a307d16f09d886d8326f242a19b48ac05"><span class="std std-ref">Point</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point</span><span class="p">);</span>
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a091569b8dbe3526bf12aaf6bb6fe3ba7"><span class="std std-ref">dxiExpmatXAt0</span></a><span></span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a63cb292789df4c99276dd8e46f57528e"><span class="std std-ref">generator</span></a><span></span><span class="p">();</span>
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a7752773dbc26a80c9750c14be59f54a0"><span class="std std-ref">hat</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">theta</span><span class="p">);</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">TS</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="n">So2</span><span class="o">&gt;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ab61907b19a54d7680849f2fde5f1f4b9"><span class="std std-ref">fitToSo2</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">r</span><span class="p">);</span>
+
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a8ae5bbc7eacbc6071dde1ae82eea541a"><span class="std std-ref">lieBracket</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span><span class="p">);</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TUniformRandomBitGenerator</span><span class="o">&gt;</span>
+    <span class="k">static</span> <span class="n">So2</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a0e24d389424df5d9a926c46faa675cc6"><span class="std std-ref">sampleUniform</span></a><span></span><span class="p">(</span><span class="n">TUniformRandomBitGenerator</span><span class="o">&amp;</span> <span class="n">generator</span><span class="p">);</span>
+
+    <span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae6f4fdd15a3c2856b0a903b1d859b81e"><span class="std std-ref">vee</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">omega</span><span class="p">);</span>
+
+<span class="k">protected</span><span class="o">:</span>
+    <span class="c1">// fields</span>
+
+    <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad3c000516ec19f49438aa0ce2ef73662"><span class="std std-ref">ComplexMember</span></a><span></span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-so2-1a21c94164ef6b101dfc041d717bc7ce7f">unit_complex_</span><span></span><span class="p">;</span>
+
+    <span class="c1">// methods</span>
+
+    <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad3c000516ec19f49438aa0ce2ef73662"><span class="std std-ref">ComplexMember</span></a><span></span><span class="o">&amp;</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae99f73041159915b11e98017d1500fa7"><span class="std std-ref">mutUnitComplex</span></a><span></span><span class="p">();</span>
+<span class="p">};</span></pre>
+</section>
+<section id="detailed-documentation">
+<span id="details-classsophus-1-1-so2"></span><h2>Detailed Documentation<a class="headerlink" href="#detailed-documentation" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#doxid-classsophus-1-1-so2"><span class="std std-ref">So2</span></a> using default storage; derived from <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a>.</p>
+<section id="construction">
+<h3>Construction<a class="headerlink" href="#construction" title="Permalink to this headline">¶</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a0be5b476bbe25acd4d63728c1e8e4b67"><span id="index-1"></span><span></span><span class="n">So2</span><span class="p">()</span></pre>
+<p>Default constructor initializes unit complex number to identity rotation.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1aa9796a8ddb94dc51dacbb1dd14607d24"><span id="index-2"></span><span></span><span class="n">So2</span><span class="p">(</span><span class="n">So2</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span></pre>
+<p>Copy constructor.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1ac3059af32874fcf53992af2e7d5bffff"><span id="index-3"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TOtherDerived</span><span class="o">&gt;</span>
+<span class="n">So2</span><span class="p">(</span><a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a><span></span><span class="o">&lt;</span><span class="n">TOtherDerived</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span></pre>
+<p>Copy-like constructor from OtherDerived.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a9785ccbd80f0c487336c58173f28aba8"><span id="index-4"></span><span></span><span class="n">So2</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">mat_r</span><span class="p">)</span></pre>
+<p>Constructor from rotation matrix.</p>
+<p>Precondition: rotation matrix need to be orthogonal with determinant of 1.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1ad61ae9c0d2fd159d92a476ca52e1a12f"><span id="index-5"></span><span></span><span class="n">So2</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">real</span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">imag</span><span class="p">)</span></pre>
+<p>Constructor from pair of real and imaginary number.</p>
+<p>Precondition: The pair must not be close to zero.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1af871f275ce02176c9dd2d41175ad33ad"><span id="index-6"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TD</span><span class="o">&gt;</span>
+<span class="n">So2</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixBase</span><span class="o">&lt;</span><span class="n">TD</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">complex</span><span class="p">)</span></pre>
+<p>Constructor from 2-vector.</p>
+<p>Precondition: The vector must not be close to zero.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a4c733a3b0745ee37b25215023ffdc544"><span id="index-7"></span><span></span><span class="n">So2</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span> <span class="n">theta</span><span class="p">)</span></pre>
+<p>Constructor from an rotation angle.</p>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1af78824cf264be08ef0d3f6270382325c"><span id="index-8"></span><a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">So2</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">So2</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span></pre>
+<p>Define copy-assignment operator explicitly. The definition of implicit copy assignment operator is deprecated in presence of a user-declared copy constructor (-Wdeprecated-copy in clang &gt;= 13).</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a7e8aa31f3b52bcf1cf0e4e592f7847ff"><span id="index-9"></span><a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad3c000516ec19f49438aa0ce2ef73662"><span class="std std-ref">ComplexMember</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">unitComplex</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Accessor of unit complex number.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a3f596eeb4c3a1e5f5e1da0ee30bc9ef4"><span id="index-10"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TOtherDerived</span><span class="o">&gt;</span>
+<a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a><span></span><span class="o">&lt;</span><span class="n">TDerived</span><span class="o">&gt;&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><a class="reference internal" href="class_sophus_So2Base.html#doxid-classsophus-1-1-so2-base"><span class="std std-ref">So2Base</span></a><span></span><span class="o">&lt;</span><span class="n">TOtherDerived</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span></pre>
+<p>Assignment-like operator from OtherDerived.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a8d15d016834738107a2ddcc6a5d53013"><span id="index-11"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">So2</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;</span> <span class="n">exp</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">theta</span><span class="p">)</span></pre>
+<p>Group exponential.</p>
+<p>This functions takes in an element of tangent space (= rotation angle <code class="docutils literal notranslate"><span class="pre">theta</span></code>) and returns the corresponding element of the group SO(2).</p>
+<p>To be more specific, this function computes <code class="docutils literal notranslate"><span class="pre">expmat(hat(omega))</span></code> with <code class="docutils literal notranslate"><span class="pre">expmat(.)</span></code> being the matrix exponential and <code class="docutils literal notranslate"><span class="pre">hat(.)</span></code> being the <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a7752773dbc26a80c9750c14be59f54a0"><span class="std std-ref">hat()</span></a> -operator of SO(2).</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a81f7d4dda4f650b5d8010f1c83a54db4"><span id="index-12"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1aae579945faa7fc56036631036729b7fc"><span class="std std-ref">kNumParameters</span></a><span></span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1af4baca422f40c3429edd68238fb4e3c1"><span class="std std-ref">kDoF</span></a><span></span><span class="o">&gt;</span> <span class="n">dxExpX</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">theta</span><span class="p">)</span></pre>
+<p>Returns derivative of exp(x) wrt. x.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a247b08aea3e4cd43877d59a9f09c5e93"><span id="index-13"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1aae579945faa7fc56036631036729b7fc"><span class="std std-ref">kNumParameters</span></a><span></span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1af4baca422f40c3429edd68238fb4e3c1"><span class="std std-ref">kDoF</span></a><span></span><span class="o">&gt;</span> <span class="n">dxExpXAt0</span><span class="p">()</span></pre>
+<p>Returns derivative of exp(x) wrt. x_i at x=0.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a5aa7c3ec15719cf17c670cc879a83d0d"><span id="index-14"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae4af2401220df430e8265d2c6456ddc3"><span class="std std-ref">Scalar</span></a><span></span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1af4baca422f40c3429edd68238fb4e3c1"><span class="std std-ref">kDoF</span></a><span></span><span class="o">&gt;</span> <span class="n">dxExpXTimesPointAt0</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a307d16f09d886d8326f242a19b48ac05"><span class="std std-ref">Point</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point</span><span class="p">)</span></pre>
+<p>Returns derivative of exp(x) * p wrt. x_i at x=0.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a091569b8dbe3526bf12aaf6bb6fe3ba7"><span id="index-15"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="n">dxiExpmatXAt0</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span></pre>
+<p>Returns derivative of <code class="docutils literal notranslate"><span class="pre">expmat(x)</span></code> wrt. <code class="docutils literal notranslate"><span class="pre">x_i</span> <span class="pre">at</span> <span class="pre">x=0</span></code>, with <code class="docutils literal notranslate"><span class="pre">expmat(.)</span></code> being the matrix exponential.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a63cb292789df4c99276dd8e46f57528e"><span id="index-16"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="n">generator</span><span class="p">()</span></pre>
+<p>Returns the infinitesimal generators of SO(2).</p>
+<p>The infinitesimal generators of SO(2) is:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">|</span>  <span class="mi">0</span> <span class="o">-</span><span class="mi">1</span> <span class="o">|</span>
+<span class="o">|</span>  <span class="mi">1</span>  <span class="mi">0</span> <span class="o">|</span>
+</pre></div>
+</div>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a7752773dbc26a80c9750c14be59f54a0"><span id="index-17"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="n">hat</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">theta</span><span class="p">)</span></pre>
+<p>hat-operator</p>
+<p>It takes in the scalar representation <code class="docutils literal notranslate"><span class="pre">theta</span></code> (= rotation angle) and returns the corresponding matrix representation of Lie algebra element.</p>
+<p>Formally, the <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a7752773dbc26a80c9750c14be59f54a0"><span class="std std-ref">hat()</span></a> -operator of SO(2) is defined as</p>
+<p><code class="docutils literal notranslate"><span class="pre">hat(.):</span> <span class="pre">R^2</span> <span class="pre">-&gt;</span> <span class="pre">R^{2x2},</span> <span class="pre">hat(theta)</span> <span class="pre">=</span> <span class="pre">theta</span> <span class="pre">*</span> <span class="pre">G</span></code></p>
+<p>with <code class="docutils literal notranslate"><span class="pre">G</span></code> being the infinitesimal generator of SO(2).</p>
+<p>The corresponding inverse is the <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ae6f4fdd15a3c2856b0a903b1d859b81e"><span class="std std-ref">vee()</span></a> -operator, see below.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1ab61907b19a54d7680849f2fde5f1f4b9"><span id="index-18"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+<span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">TS</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="n">So2</span><span class="o">&gt;</span> <span class="n">fitToSo2</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">r</span><span class="p">)</span></pre>
+<p>Returns closed <a class="reference internal" href="#doxid-classsophus-1-1-so2"><span class="std std-ref">So2</span></a> given arbitrary 2x2 matrix.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a8ae5bbc7eacbc6071dde1ae82eea541a"><span id="index-19"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="n">lieBracket</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span></pre>
+<p>Lie bracket.</p>
+<p>It returns the Lie bracket of SO(2). Since SO(2) is a commutative group, the Lie bracket is simple <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1a0e24d389424df5d9a926c46faa675cc6"><span id="index-20"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TUniformRandomBitGenerator</span><span class="o">&gt;</span>
+<span class="k">static</span> <span class="n">So2</span> <span class="n">sampleUniform</span><span class="p">(</span><span class="n">TUniformRandomBitGenerator</span><span class="o">&amp;</span> <span class="n">generator</span><span class="p">)</span></pre>
+<p>Draw uniform sample from SO(2) manifold.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1ae6f4fdd15a3c2856b0a903b1d859b81e"><span id="index-21"></span><span></span><span class="k">static</span> <a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a90d0ab11f8149511ac21cb94b809cf1f"><span class="std std-ref">Tangent</span></a><span></span> <span class="n">vee</span><span class="p">(</span><a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad9939b6759f74b49687bf46732b56f03"><span class="std std-ref">Transformation</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">omega</span><span class="p">)</span></pre>
+<p>vee-operator</p>
+<p>It takes the 2x2-matrix representation <code class="docutils literal notranslate"><span class="pre">Omega</span></code> and maps it to the corresponding scalar representation of Lie algebra.</p>
+<p>This is the inverse of the <a class="reference internal" href="#doxid-classsophus-1-1-so2-1a7752773dbc26a80c9750c14be59f54a0"><span class="std std-ref">hat()</span></a> -operator, see above.</p>
+<p>Precondition: <code class="docutils literal notranslate"><span class="pre">Omega</span></code> must have the following structure:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">|</span>  <span class="mi">0</span> <span class="o">-</span><span class="n">a</span> <span class="o">|</span>
+<span class="o">|</span>  <span class="n">a</span>  <span class="mi">0</span> <span class="o">|</span>
+</pre></div>
+</div>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-so2-1ae99f73041159915b11e98017d1500fa7"><span id="index-22"></span><a class="reference internal" href="global.html#doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span class="std std-ref">SOPHUS_FUNC</span></a><span></span> <a class="reference internal" href="#doxid-classsophus-1-1-so2-1ad3c000516ec19f49438aa0ce2ef73662"><span class="std std-ref">ComplexMember</span></a><span></span><span class="o">&amp;</span> <span class="n">mutUnitComplex</span><span class="p">()</span></pre>
+<p>Mutator of complex number is protected to ensure class invariant.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="class_sophus_Sim3Base.html" class="btn btn-neutral float-left" title="template class sophus::Sim3Base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="class_sophus_So2Base.html" class="btn btn-neutral float-right" title="template class sophus::So2Base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Hauke Strasdat.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
