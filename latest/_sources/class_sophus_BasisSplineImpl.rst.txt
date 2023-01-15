@@ -30,25 +30,13 @@ template class sophus::BasisSplineImpl
 		:target:`BasisSplineImpl<doxid-classsophus_1_1_basis_spline_impl_1a98a581fe08bdca4c71ac94ac40109bf0>`(
 			std::vector<:ref:`LieGroup<doxid-classsophus_1_1_basis_spline_impl_1ac86677edd492046079c2926f9c3a7458>`> const& parent_ts_control_point,
 			double delta_t
-			);
+		);
 
 		// methods
 	
-		:ref:`LieGroup<doxid-classsophus_1_1_basis_spline_impl_1ac86677edd492046079c2926f9c3a7458>` :target:`parentFromSpline<doxid-classsophus_1_1_basis_spline_impl_1a24bda44a4bb5e7a24afc213b0de6a122>`(
-			int i,
-			double u
-			) const;
-	
-		:ref:`Transformation<doxid-classsophus_1_1_basis_spline_impl_1aee100bd6df750a53b910e478ba3f7f59>` :target:`dtParentFromSpline<doxid-classsophus_1_1_basis_spline_impl_1a2a5ed7d11ec916d1715948560f160d22>`(
-			int i,
-			double u
-			) const;
-	
-		:ref:`Transformation<doxid-classsophus_1_1_basis_spline_impl_1aee100bd6df750a53b910e478ba3f7f59>` :target:`dt2ParentFromSpline<doxid-classsophus_1_1_basis_spline_impl_1acf35a96fde4cdb003e9ec26779e68fad>`(
-			int i,
-			double u
-			) const;
-	
+		:ref:`LieGroup<doxid-classsophus_1_1_basis_spline_impl_1ac86677edd492046079c2926f9c3a7458>` :target:`parentFromSpline<doxid-classsophus_1_1_basis_spline_impl_1a24bda44a4bb5e7a24afc213b0de6a122>`(int i, double u) const;
+		:ref:`Transformation<doxid-classsophus_1_1_basis_spline_impl_1aee100bd6df750a53b910e478ba3f7f59>` :target:`dtParentFromSpline<doxid-classsophus_1_1_basis_spline_impl_1a2a5ed7d11ec916d1715948560f160d22>`(int i, double u) const;
+		:ref:`Transformation<doxid-classsophus_1_1_basis_spline_impl_1aee100bd6df750a53b910e478ba3f7f59>` :target:`dt2ParentFromSpline<doxid-classsophus_1_1_basis_spline_impl_1acf35a96fde4cdb003e9ec26779e68fad>`(int i, double u) const;
 		std::vector<:ref:`LieGroup<doxid-classsophus_1_1_basis_spline_impl_1ac86677edd492046079c2926f9c3a7458>`> const& :target:`parentFromsControlPoint<doxid-classsophus_1_1_basis_spline_impl_1ac29fd8ef996de620760c301b828991cf>`() const;
 		std::vector<:ref:`LieGroup<doxid-classsophus_1_1_basis_spline_impl_1ac86677edd492046079c2926f9c3a7458>`>& :target:`parentFromsControlPoint<doxid-classsophus_1_1_basis_spline_impl_1a67e7aa6099b9dfc9be2440c3cb4e8185>`();
 		int :target:`getNumSegments<doxid-classsophus_1_1_basis_spline_impl_1a73ad22bd2fe7ebc5dca5de8495f98dbc>`() const;

@@ -100,13 +100,13 @@ Inherited Members
 		template <
 			typename TPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, 2>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_rx_so2_base_1a9ef42846f4edb15451e23a842edd44a5>`<TPointDerived> :ref:`operator*<doxid-classsophus_1_1_rx_so2_base_1a2a27d4efa7e9243ea4b81ddded475cfd>`(Eigen::MatrixBase<TPointDerived> const& p) const;
 	
 		template <
 			typename THPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, 3>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_rx_so2_base_1ae080c2fd946cbb9e8cbba9fce3922b27>`<THPointDerived> :ref:`operator*<doxid-classsophus_1_1_rx_so2_base_1a3c2109e1b44681cd0b69aa89aa191820>`(Eigen::MatrixBase<THPointDerived> const& p) const;
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Line<doxid-classsophus_1_1_rx_so2_base_1a00cb173488d88cfc7788bf342a07e828>` :ref:`operator*<doxid-classsophus_1_1_rx_so2_base_1a6c5c1fce64d005bc35c8bf62b0734aa6>`(:ref:`Line<doxid-classsophus_1_1_rx_so2_base_1a00cb173488d88cfc7788bf342a07e828>` const& l) const;
@@ -115,7 +115,7 @@ Inherited Members
 		template <
 			typename TOtherDerived,
 			typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`RxSo2Base<doxid-classsophus_1_1_rx_so2_base>`<TDerived>& :ref:`operator*=<doxid-classsophus_1_1_rx_so2_base_1ae0cd63b748b85232225f38e9041387ca>`(:ref:`RxSo2Base<doxid-classsophus_1_1_rx_so2_base>`<TOtherDerived> const& other);
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_rx_so2_base_1a6bc314219634cc88fc44abed8edb1b62>`, :ref:`kNumParameters<doxid-classsophus_1_1_rx_so2_base_1a76f9a2fdb63e47c39d11b2e5fdf8369d>`, :ref:`kDoF<doxid-classsophus_1_1_rx_so2_base_1a96ef5537aade76b8ccc3539b150ef5f4>`> :ref:`dxThisMulExpXAt0<doxid-classsophus_1_1_rx_so2_base_1a1badd8345a4ece009f9c1dfffe6f7394>`() const;

@@ -22,7 +22,7 @@ class sophus::ImuModel
 		:target:`ImuModel<doxid-classsophus_1_1_imu_model_1aa55f7b5b2915be98d5d4ff86ce1d36c3>`(
 			:ref:`GyroModelVariant<doxid-namespacesophus_1a3cc6250cc311b8a44c916d2e24681aba>` const& gyro_model,
 			:ref:`AcceleroModelVariant<doxid-namespacesophus_1a3be46970d64a41d4f827b2f9df544dfe>` const& accelero_model
-			);
+		);
 
 		// methods
 	

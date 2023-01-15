@@ -21,7 +21,7 @@ Overview
 	template <
 		class TPixel,
 		template<class> class TAllocator = Eigen::aligned_allocator
-		>
+	>
 	class Image {
 	public:
 		// construction
@@ -36,20 +36,23 @@ Overview
 		static Image :ref:`makeCopyFrom<doxid-classsophus_1_1_image_1a794d95352d8c9ac597b703e83333826d>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> const& view);
 	
 		template <class TUVOperation>
-		static Image :ref:`makeGenerative<doxid-classsophus_1_1_image_1afeadc62dffa8f33051b828984b8f1ec2>`(:ref:`ImageSize<doxid-structsophus_1_1_image_size>` size, TUVOperation const& uv_op);
+		static Image :ref:`makeGenerative<doxid-classsophus_1_1_image_1afeadc62dffa8f33051b828984b8f1ec2>`(
+			:ref:`ImageSize<doxid-structsophus_1_1_image_size>` size,
+			TUVOperation const& uv_op
+		);
 	
 		template <class TOtherPixel, class TUnaryOperation>
 		static Image :ref:`makeFromTransform<doxid-classsophus_1_1_image_1a0811b2f8b137e60560ddb9678cb47abd>`(
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
 			TUnaryOperation const& unary_op
-			);
+		);
 	
 		template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
 		static Image :ref:`makeFromTransform<doxid-classsophus_1_1_image_1af6cc043cc8a4cc4201952334012464a6>`(
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
 			TBinaryOperation const& binary_op
-			);
+		);
 	};
 .. _details-classsophus_1_1_image:
 
@@ -122,7 +125,7 @@ If view is not empty, memory allocation will happen.
 	static Image makeGenerative(
 		:ref:`ImageSize<doxid-structsophus_1_1_image_size>` size,
 		TUVOperation const& uv_op
-		)
+	)
 
 Allocated and generates image from provided function taking u,v indices.
 
@@ -138,7 +141,7 @@ Memory allocation will happen.
 	static Image makeFromTransform(
 		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
 		TUnaryOperation const& unary_op
-		)
+	)
 
 Creates new :ref:`Image <doxid-classsophus_1_1_image>` given view and unary transform function.
 
@@ -155,7 +158,7 @@ image(u, v) = unary_op(view(u, v));
 		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
 		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
 		TBinaryOperation const& binary_op
-		)
+	)
 
 Creates new :ref:`Image <doxid-classsophus_1_1_image>` given two views and binary transform function.
 

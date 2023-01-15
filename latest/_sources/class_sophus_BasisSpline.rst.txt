@@ -31,7 +31,7 @@ template class sophus::BasisSpline
 			std::vector<:ref:`LieGroup<doxid-classsophus_1_1_basis_spline_1a042f6338476c99e9e56104aca24f2c8b>`> parent_ts_control_point,
 			double t0,
 			double delta_t
-			);
+		);
 
 		// methods
 	

@@ -19,6 +19,6 @@ If the Vector type is of fixed size, then IsFixedSizeVector::value will be true.
 		typename TVectorT,
 		int kNumDimensions,
 		typename = typename std::enable_if<TVectorT::RowsAtCompileTime == kNumDimensions&&        TVectorT::ColsAtCompileTime == 1>::type
-		>
+	>
 	struct IsFixedSizeVector: public true_type {
 	};

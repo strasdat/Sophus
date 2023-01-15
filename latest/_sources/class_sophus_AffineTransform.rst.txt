@@ -36,17 +36,17 @@ class sophus::AffineTransform
 		static :ref:`PixelImage<doxid-classsophus_1_1_affine_transform_1a0ca84401f5e4affc2426e96a34209d7f>`<typename TPointTypeT::Scalar> :target:`distort<doxid-classsophus_1_1_affine_transform_1aa50cbc52087abcd518a379a79d827b06>`(
 			Eigen::MatrixBase<TParamsTypeT> const& params,
 			Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane
-			);
+		);
 	
 		template <class TScalar>
 		static :ref:`ProjInCameraZ1Plane<doxid-classsophus_1_1_affine_transform_1a5d46688af2074eff307748f2a58014a7>`<TScalar> :target:`undistort<doxid-classsophus_1_1_affine_transform_1a5df86bd2425a15e8f88218a02a2562b5>`(
 			:ref:`Params<doxid-classsophus_1_1_affine_transform_1a546ea4985d52865f8fff0568982cecf7>`<TScalar> const& params,
 			:ref:`PixelImage<doxid-classsophus_1_1_affine_transform_1a0ca84401f5e4affc2426e96a34209d7f>`<TScalar> const& pixel_image
-			);
+		);
 	
 		template <class TParamsTypeT, class TPointTypeT>
 		static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> :target:`dxDistort<doxid-classsophus_1_1_affine_transform_1a018a622aae9792e14311352ad8d12b88>`(
 			Eigen::MatrixBase<TParamsTypeT> const& params,
 			Eigen::MatrixBase<TPointTypeT> const&
-			);
+		);
 	};

@@ -31,7 +31,7 @@ Concrete camera model class. :ref:`More...<details-classsophus_1_1_camera_model>
 			:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size,
 			CameraDistortionType projection_type,
 			Eigen::VectorXd const& params
-			);
+		);
 
 		// methods
 	
@@ -97,7 +97,7 @@ Constructs camera model from ``frame_name`` and concrete projection model.
 		:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size,
 		CameraDistortionType projection_type,
 		Eigen::VectorXd const& params
-		)
+	)
 
 Constructs camera model from ``frame_name``, ``image_size``, ``projection_type`` flag and ``params`` vector.
 

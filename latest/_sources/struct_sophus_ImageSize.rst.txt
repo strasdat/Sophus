@@ -27,27 +27,14 @@ Overview
 		// construction
 	
 		:target:`ImageSize<doxid-structsophus_1_1_image_size_1a1d48394f6b42c651bb795697db2bae22>`();
-	
-		:target:`ImageSize<doxid-structsophus_1_1_image_size_1a1cb9fec0c9aa79afb2818dd382ac50ae>`(
-			int width,
-			int height
-			);
+		:target:`ImageSize<doxid-structsophus_1_1_image_size_1a1cb9fec0c9aa79afb2818dd382ac50ae>`(int width, int height);
 
 		// methods
 	
 		int :target:`area<doxid-structsophus_1_1_image_size_1a3bac6cdec374b8f28d3c515b14507d4b>`() const;
 		bool :ref:`contains<doxid-structsophus_1_1_image_size_1a7036d812803946f82a305af47796297c>`(Eigen::Vector2i const& obs, int border = 0) const;
-	
-		bool :target:`contains<doxid-structsophus_1_1_image_size_1a67403004f9c1f3b032bd3b6cc5dfcb57>`(
-			Eigen::Vector2f const& obs,
-			float border = 0.f
-			) const;
-	
-		bool :target:`contains<doxid-structsophus_1_1_image_size_1a5d3ebc6de9789646fa005691ead870f6>`(
-			Eigen::Vector2d const& obs,
-			double border = 0.0
-			) const;
-	
+		bool :target:`contains<doxid-structsophus_1_1_image_size_1a67403004f9c1f3b032bd3b6cc5dfcb57>`(Eigen::Vector2f const& obs, float border = 0.f) const;
+		bool :target:`contains<doxid-structsophus_1_1_image_size_1a5d3ebc6de9789646fa005691ead870f6>`(Eigen::Vector2d const& obs, double border = 0.0) const;
 		bool :target:`isEmpty<doxid-structsophus_1_1_image_size_1aa78f881bdd5918fce62740359fdf414a>`() const;
 		Eigen::Array2<int> :target:`array<doxid-structsophus_1_1_image_size_1a815ce9add060614987ab3d2527b65d51>`() const;
 		static ImageSize :target:`from<doxid-structsophus_1_1_image_size_1a3cccf270e2e0f76ad7f6fa93cfff7bc0>`(Eigen::Array2<int> const& arr);

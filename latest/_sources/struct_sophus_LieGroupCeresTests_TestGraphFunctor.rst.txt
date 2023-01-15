@@ -31,5 +31,5 @@ struct sophus::LieGroupCeresTests::TestGraphFunctor
 			TScalar const* raw_a,
 			TScalar const* raw_b,
 			TScalar* residuals
-			) const;
+		) const;
 	};

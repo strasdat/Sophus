@@ -68,12 +68,12 @@ Overview
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`, :ref:`kDoF<doxid-classsophus_1_1_so3_1a9018b85084d2f39eb6da02271b749476>`, :ref:`kDoF<doxid-classsophus_1_1_so3_1a9018b85084d2f39eb6da02271b749476>`> :ref:`leftJacobian<doxid-classsophus_1_1_so3_1a91fec7ed69d1b88106d004cb76a524f8>`(
 			:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega,
 			std::optional<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`> const& maybe_theta = std::nullopt
-			);
+		);
 	
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`, :ref:`kDoF<doxid-classsophus_1_1_so3_1a9018b85084d2f39eb6da02271b749476>`, :ref:`kDoF<doxid-classsophus_1_1_so3_1a9018b85084d2f39eb6da02271b749476>`> :target:`leftJacobianInverse<doxid-classsophus_1_1_so3_1a8d7e5b5f0616d316654140daa31d0f94>`(
 			:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega,
 			std::optional<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`> const& maybe_theta = std::nullopt
-			);
+		);
 	
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`, :ref:`kNumParameters<doxid-classsophus_1_1_so3_1a64278020fd3261d9df2332a32300d296>`, :ref:`kDoF<doxid-classsophus_1_1_so3_1a9018b85084d2f39eb6da02271b749476>`> :ref:`dxExpX<doxid-classsophus_1_1_so3_1a8394fe49742bf27a3e34e753127766a8>`(:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega);
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`, :ref:`kNumParameters<doxid-classsophus_1_1_so3_1a64278020fd3261d9df2332a32300d296>`, :ref:`kDoF<doxid-classsophus_1_1_so3_1a9018b85084d2f39eb6da02271b749476>`> :ref:`dxExpXAt0<doxid-classsophus_1_1_so3_1a4938d535bd2787a04864463beffd557b>`();
@@ -87,7 +87,12 @@ Overview
 	
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Transformation<doxid-classsophus_1_1_so3_1a1606dff117363cf1d202a6fdf8628234>` :ref:`generator<doxid-classsophus_1_1_so3_1ae1c519aac7e13d3c3b735c5c32912a1c>`(int i);
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Transformation<doxid-classsophus_1_1_so3_1a1606dff117363cf1d202a6fdf8628234>` :ref:`hat<doxid-classsophus_1_1_so3_1a7954dacd3cef395de084a4fabdebf4c8>`(:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega);
-		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` :ref:`lieBracket<doxid-classsophus_1_1_so3_1a3f2c99cf2159fafe52a7959dc2691c11>`(:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega1, :ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega2);
+	
+		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` :ref:`lieBracket<doxid-classsophus_1_1_so3_1a3f2c99cf2159fafe52a7959dc2691c11>`(
+			:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega1,
+			:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega2
+		);
+	
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` So3 :ref:`rotX<doxid-classsophus_1_1_so3_1af386937d782c02313593187c5dc03329>`(:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>` const& x);
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` So3 :ref:`rotY<doxid-classsophus_1_1_so3_1a5df90ddf2c3f84285adfa2f1ec149ab7>`(:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>` const& y);
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` So3 :ref:`rotZ<doxid-classsophus_1_1_so3_1a88776a2ca3bfce1ef46f3efeaddb4885>`(:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>` const& z);
@@ -225,7 +230,7 @@ Assignment-like operator from OtherDerived.
 	static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`, :ref:`kDoF<doxid-classsophus_1_1_so3_1a9018b85084d2f39eb6da02271b749476>`, :ref:`kDoF<doxid-classsophus_1_1_so3_1a9018b85084d2f39eb6da02271b749476>`> leftJacobian(
 		:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega,
 		std::optional<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`> const& maybe_theta = std::nullopt
-		)
+	)
 
 Returns the left Jacobian on lie group. See 1st entry in rightmost column in: `http://asrl.utias.utoronto.ca/~tdb/bib/barfoot_ser17_identities.pdf <http://asrl.utias.utoronto.ca/~tdb/bib/barfoot_ser17_identities.pdf>`__.
 
@@ -364,7 +369,10 @@ The corresponding inverse is the :ref:`vee() <doxid-classsophus_1_1_so3_1aa3f69e
 .. ref-code-block:: cpp
 	:class: doxyrest-title-code-block
 
-	static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` lieBracket(:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega1, :ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega2)
+	static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` lieBracket(
+		:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega1,
+		:ref:`Tangent<doxid-classsophus_1_1_so3_1a93061b458352026be2c4a9bf0cbd99de>` const& omega2
+	)
 
 Lie bracket.
 

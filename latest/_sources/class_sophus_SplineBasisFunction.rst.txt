@@ -26,10 +26,10 @@ template class sophus::SplineBasisFunction
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Vector3<TScalar> :target:`dtB<doxid-classsophus_1_1_spline_basis_function_1a285914fcf8f8524720ed3cfd95358934>`(
 			TScalar const& u,
 			TScalar const& delta_t
-			);
+		);
 	
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Vector3<TScalar> :target:`dt2B<doxid-classsophus_1_1_spline_basis_function_1a8710057fb345443e918e2a3192ea3b52>`(
 			TScalar const& u,
 			TScalar const& delta_t
-			);
+		);
 	};

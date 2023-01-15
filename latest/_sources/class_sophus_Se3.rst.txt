@@ -49,7 +49,7 @@ Overview
 		:ref:`Se3<doxid-classsophus_1_1_se3_1a496ea0b1e41ce4881de72fd5154e5556>`(
 			:ref:`So3Base<doxid-classsophus_1_1_so3_base>`<TOtherDerived> const& so3,
 			Eigen::MatrixBase<TD> const& translation
-			);
+		);
 	
 		:ref:`Se3<doxid-classsophus_1_1_se3_1a87e972f4fe4a2cecd5fdc425fa7329f9>`(Eigen::Matrix3<:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>`> const& rotation_matrix, :ref:`Point<doxid-classsophus_1_1_se3_1a8d3d5838c3bf4cfccad77980f0fa5e61>` const& translation);
 		:ref:`Se3<doxid-classsophus_1_1_se3_1a1fb8a1483be368b05356ed5227a0463d>`(Eigen::Quaternion<:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>`> const& quaternion, :ref:`Point<doxid-classsophus_1_1_se3_1a8d3d5838c3bf4cfccad77980f0fa5e61>` const& translation);
@@ -71,7 +71,7 @@ Overview
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix3<:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>`> :target:`jacobianUpperRightBlock<doxid-classsophus_1_1_se3_1a183e43bc960017337b1ec2d7e456c659>`(
 			Eigen::Vector3<:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>`> const& vec_upsilon,
 			Eigen::Vector3<:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>`> const& vec_omega
-			);
+		);
 	
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>`, :ref:`kDoF<doxid-classsophus_1_1_se3_1a87aba8239f70e9d3b03e045a07ffb54e>`, :ref:`kDoF<doxid-classsophus_1_1_se3_1a87aba8239f70e9d3b03e045a07ffb54e>`> :target:`leftJacobian<doxid-classsophus_1_1_se3_1af2f55bcf6bcde10ec7c0970de7f70021>`(:ref:`Tangent<doxid-classsophus_1_1_se3_1a8b07625a876f3513102ab1f78bc2ee2f>` const& vec_upsilon_omega);
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>`, :ref:`kDoF<doxid-classsophus_1_1_se3_1a87aba8239f70e9d3b03e045a07ffb54e>`, :ref:`kDoF<doxid-classsophus_1_1_se3_1a87aba8239f70e9d3b03e045a07ffb54e>`> :target:`leftJacobianInverse<doxid-classsophus_1_1_se3_1ae1b56f788cedcd6df28f2d844eb4533d>`(:ref:`Tangent<doxid-classsophus_1_1_se3_1a8b07625a876f3513102ab1f78bc2ee2f>` const& vec_upsilon_omega);
@@ -99,7 +99,7 @@ Overview
 			TX const& x,
 			TY const& y,
 			TZ const& z
-			);
+		);
 	
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Se3 :target:`trans<doxid-classsophus_1_1_se3_1a5a40e0c4eac1f65daee50354169b5d06>`(Eigen::Vector3<:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>`> const& xyz);
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Se3 :ref:`transX<doxid-classsophus_1_1_se3_1a5b77b7a46b3e9e750596b6f52bd83bdc>`(:ref:`Scalar<doxid-classsophus_1_1_se3_1a79f1b5409c59130a3f58d62babad0cf1>` const& x);
@@ -164,7 +164,7 @@ Copy-like constructor from OtherDerived.
 	Se3(
 		:ref:`So3Base<doxid-classsophus_1_1_so3_base>`<TOtherDerived> const& so3,
 		Eigen::MatrixBase<TD> const& translation
-		)
+	)
 
 Constructor from :ref:`So3 <doxid-classsophus_1_1_so3>` and translation vector.
 
@@ -489,7 +489,7 @@ Translations are drawn component-wise from the range [-1, 1].
 		TX const& x,
 		TY const& y,
 		TZ const& z
-		)
+	)
 
 Construct a translation only :ref:`Se3 <doxid-classsophus_1_1_se3>` instance.
 

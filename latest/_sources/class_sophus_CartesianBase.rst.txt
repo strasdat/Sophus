@@ -66,13 +66,13 @@ Overview
 		template <
 			typename TPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, kM>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_cartesian_base_1a29af8d4caaa2e7b53a077b19df6e5147>`<TPointDerived> :ref:`operator*<doxid-classsophus_1_1_cartesian_base_1a40153ee25481d4dd5fec87099db3c904>`(Eigen::MatrixBase<TPointDerived> const& p) const;
 	
 		template <
 			typename THPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, kMatrixDim>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_cartesian_base_1abbfbba1fe86e3830dffb511b5aa2d8fe>`<THPointDerived> :ref:`operator*<doxid-classsophus_1_1_cartesian_base_1ab7c78943670d6ecdb516ce36f855221c>`(Eigen::MatrixBase<THPointDerived> const& p) const;
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Line<doxid-classsophus_1_1_cartesian_base_1ac88d575c929aea5b6364f2fb74ea69c0>` :ref:`operator*<doxid-classsophus_1_1_cartesian_base_1a417b855fe2ad615c896f33f8d43f6fb4>`(:ref:`Line<doxid-classsophus_1_1_cartesian_base_1ac88d575c929aea5b6364f2fb74ea69c0>` const& l) const;
@@ -81,7 +81,7 @@ Overview
 		template <
 			typename TOtherDerived,
 			typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` CartesianBase<TDerived, kM>& :ref:`operator*=<doxid-classsophus_1_1_cartesian_base_1a9067ff3f93f86e8eae0e460c83225b87>`(CartesianBase<TOtherDerived, kM> const& other);
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`ParamsType<doxid-classsophus_1_1_cartesian_base_1aa3f6db75e5822855bd6bb7e2289b08f9>`& :ref:`params<doxid-classsophus_1_1_cartesian_base_1a3860ca9b7e88d0f46d893d8e59e6f0f3>`();
@@ -278,7 +278,7 @@ Group multiplication, are vector additions.
 	template <
 		typename TPointDerived,
 		typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, kM>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_cartesian_base_1a29af8d4caaa2e7b53a077b19df6e5147>`<TPointDerived> operator*(Eigen::MatrixBase<TPointDerived> const& p) const
 
 Group action on points, again just vector addition.
@@ -292,7 +292,7 @@ Group action on points, again just vector addition.
 	template <
 		typename THPointDerived,
 		typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, kMatrixDim>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_cartesian_base_1abbfbba1fe86e3830dffb511b5aa2d8fe>`<THPointDerived> operator*(Eigen::MatrixBase<THPointDerived> const& p) const
 
 Group action on homogeneous points. See above for more details.
@@ -326,7 +326,7 @@ Group action on planes.
 	template <
 		typename TOtherDerived,
 		typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` CartesianBase<TDerived, kM>& operator*=(CartesianBase<TOtherDerived, kM> const& other)
 
 In-place group multiplication. This method is only valid if the return type of the multiplication is compatible with this :ref:`Cartesian <doxid-classsophus_1_1_cartesian>` 's Scalar type.

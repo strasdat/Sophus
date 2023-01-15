@@ -48,7 +48,7 @@ template struct sophus::LieGroupCeresTests
 		:target:`LieGroupCeresTests<doxid-structsophus_1_1_lie_group_ceres_tests_1a896e387ad7b6f73d81936bcb7dd26fa2>`(
 			:ref:`StdVector<doxid-structsophus_1_1_lie_group_ceres_tests_1a9f09916a1c4b016de72b918a0a74fef1>`<:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>`> const& group_vec,
 			:ref:`StdVector<doxid-structsophus_1_1_lie_group_ceres_tests_1a9f09916a1c4b016de72b918a0a74fef1>`<:ref:`PointF64<doxid-structsophus_1_1_lie_group_ceres_tests_1aeaa486c51b7a6afb01c4f944d339d071>`> const& point_vec
-			);
+		);
 
 		// methods
 	
@@ -58,32 +58,19 @@ template struct sophus::LieGroupCeresTests
 			const size_t num_vertices,
 			double const sigma_init,
 			double const sigma_observation
-			);
+		);
 	
 		bool :target:`test<doxid-structsophus_1_1_lie_group_ceres_tests_1a8c7fcd1517593938e95796e96b1464e0>`(
 			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& t_w_targ,
 			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& t_w_init,
 			:ref:`PointF64<doxid-structsophus_1_1_lie_group_ceres_tests_1aeaa486c51b7a6afb01c4f944d339d071>` const& point_a_init,
 			:ref:`PointF64<doxid-structsophus_1_1_lie_group_ceres_tests_1aeaa486c51b7a6afb01c4f944d339d071>` const& point_b
-			);
+		);
 	
-		bool :target:`testManifold<doxid-structsophus_1_1_lie_group_ceres_tests_1af2453da828ca534f8374b08d003af7c5>`(
-			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x,
-			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& y
-			);
-	
+		bool :target:`testManifold<doxid-structsophus_1_1_lie_group_ceres_tests_1af2453da828ca534f8374b08d003af7c5>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x, :ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& y);
 		bool :target:`xPlusZeroIsXAt<doxid-structsophus_1_1_lie_group_ceres_tests_1ade784bd01cef6db3697cfcedae16a5ea>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x);
 		bool :target:`xMinusXIsZeroAt<doxid-structsophus_1_1_lie_group_ceres_tests_1a3b5fc6cd18026600c95c5b82d3bb5f61>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x);
-	
-		bool :target:`minusPlusIsIdentityAt<doxid-structsophus_1_1_lie_group_ceres_tests_1aeae811faed4a1bad65ce7ee9da8df11b>`(
-			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x,
-			:ref:`Tangentd<doxid-structsophus_1_1_lie_group_ceres_tests_1a217966eb62327ac547ca9c0690401b78>` const& delta
-			);
-	
-		bool :target:`plusMinusIsIdentityAt<doxid-structsophus_1_1_lie_group_ceres_tests_1a3e97f6fa4ada2bdd6b5cc142991e03a4>`(
-			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x,
-			:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& y
-			);
-	
+		bool :target:`minusPlusIsIdentityAt<doxid-structsophus_1_1_lie_group_ceres_tests_1aeae811faed4a1bad65ce7ee9da8df11b>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x, :ref:`Tangentd<doxid-structsophus_1_1_lie_group_ceres_tests_1a217966eb62327ac547ca9c0690401b78>` const& delta);
+		bool :target:`plusMinusIsIdentityAt<doxid-structsophus_1_1_lie_group_ceres_tests_1a3e97f6fa4ada2bdd6b5cc142991e03a4>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x, :ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& y);
 		bool :target:`minusPlusJacobianIsIdentityAt<doxid-structsophus_1_1_lie_group_ceres_tests_1a86e2c700691652f4077cafc7ad32e254>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& x);
 	};

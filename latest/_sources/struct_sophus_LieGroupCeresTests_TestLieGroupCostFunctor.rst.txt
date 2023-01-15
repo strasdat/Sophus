@@ -30,5 +30,5 @@ struct sophus::LieGroupCeresTests::TestLieGroupCostFunctor
 		bool :target:`operator()<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor_1a552864592f839eaad050aac3c3ee905c>`(
 			TScalar const*const s_t_wa,
 			TScalar* s_residuals
-			) const;
+		) const;
 	};

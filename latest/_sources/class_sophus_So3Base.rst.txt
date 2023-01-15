@@ -88,13 +88,13 @@ Overview
 		template <
 			typename TPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, 3>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_so3_base_1a27ef82cb7d7aa732193ced229f571dfc>`<TPointDerived> :ref:`operator*<doxid-classsophus_1_1_so3_base_1a9e414f593b33bb9bebb091018b3a557a>`(Eigen::MatrixBase<TPointDerived> const& p) const;
 	
 		template <
 			typename THPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, 4>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_so3_base_1ad0cbcf1ee4461e1e6eaebe27bffd507e>`<THPointDerived> :ref:`operator*<doxid-classsophus_1_1_so3_base_1a8584ae741c78c54d1918adc91a927375>`(Eigen::MatrixBase<THPointDerived> const& p) const;
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Line<doxid-classsophus_1_1_so3_base_1a06a33d9dce391db80eb96166336db066>` :ref:`operator*<doxid-classsophus_1_1_so3_base_1a369dfcfce8f00036fd5d88088726fe73>`(:ref:`Line<doxid-classsophus_1_1_so3_base_1a06a33d9dce391db80eb96166336db066>` const& l) const;
@@ -103,7 +103,7 @@ Overview
 		template <
 			typename TOtherDerived,
 			typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` So3Base<TDerived>& :ref:`operator*=<doxid-classsophus_1_1_so3_base_1a76c5ba80454dfe1a790eca6bacb18e33>`(So3Base<TOtherDerived> const& other);
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` void :ref:`setQuaternion<doxid-classsophus_1_1_so3_base_1ad77a3f5cafd111ae70549c7e80284bb4>`(Eigen::Quaternion<:ref:`Scalar<doxid-classsophus_1_1_so3_base_1a172a037d6b9be7845456725c5341eafc>`> const& quaternion);
@@ -113,11 +113,11 @@ Overview
 			typename TQuaternionProductType,
 			typename TQuaternionTypeA,
 			typename TQuaternionTypeB
-			>
+		>
 		static TQuaternionProductType :target:`quaternionProduct<doxid-classsophus_1_1_so3_base_1a7aca32ccc8517e2fb9105c8b8dfa9273>`(
 			TQuaternionTypeA const& a,
 			TQuaternionTypeB const& b
-			);
+		);
 	};
 
 	// direct descendants
@@ -400,7 +400,7 @@ Group multiplication, which is rotation concatenation.
 	template <
 		typename TPointDerived,
 		typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, 3>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_so3_base_1a27ef82cb7d7aa732193ced229f571dfc>`<TPointDerived> operator*(Eigen::MatrixBase<TPointDerived> const& p) const
 
 Group action on 3-points.
@@ -422,7 +422,7 @@ For ``vee`` -operator, see below.
 	template <
 		typename THPointDerived,
 		typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, 4>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_so3_base_1ad0cbcf1ee4461e1e6eaebe27bffd507e>`<THPointDerived> operator*(Eigen::MatrixBase<THPointDerived> const& p) const
 
 Group action on homogeneous 3-points. See above for more details.
@@ -464,7 +464,7 @@ Normal vector ``n`` is rotated Offset ``d`` is left unchanged
 	template <
 		typename TOtherDerived,
 		typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` So3Base<TDerived>& operator*=(So3Base<TOtherDerived> const& other)
 
 In-place group multiplication. This method is only valid if the return type of the multiplication is compatible with this :ref:`So3 <doxid-classsophus_1_1_so3>` 's Scalar type.

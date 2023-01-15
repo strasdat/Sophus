@@ -30,7 +30,7 @@ Overview
 			:ref:`ImageShape<doxid-classsophus_1_1_image_shape>` const& image_shape,
 			:ref:`RuntimePixelType<doxid-structsophus_1_1_runtime_pixel_type>` const& pixel_type,
 			void const* ptr
-			);
+		);
 
 		// methods
 	

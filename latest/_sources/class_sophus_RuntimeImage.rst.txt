@@ -21,7 +21,7 @@ Type-erased image with shared ownership, and read-only access to pixels. Type is
 	template <
 		class TPredicate = AnyImagePredicate,
 		template<class> class TAllocator = Eigen::aligned_allocator
-		>
+	>
 	class RuntimeImage {
 	public:
 		// construction

@@ -104,13 +104,13 @@ Inherited Members
 		template <
 			typename TPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, 2>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_se2_base_1a52034d89add647f2737078e77b86270f>`<TPointDerived> :ref:`operator*<doxid-classsophus_1_1_se2_base_1a038d5e10e05352d184b81fd73a34faa3>`(Eigen::MatrixBase<TPointDerived> const& p) const;
 	
 		template <
 			typename THPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, 3>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_se2_base_1a133774b3f1e972c8b5c4ee36577f575a>`<THPointDerived> :ref:`operator*<doxid-classsophus_1_1_se2_base_1a2582c950b2d29fde2cac9337f8d02d15>`(Eigen::MatrixBase<THPointDerived> const& p) const;
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Line<doxid-classsophus_1_1_se2_base_1a8634be68da3194f400f49f88d672329f>` :ref:`operator*<doxid-classsophus_1_1_se2_base_1a2b7501a101e9aea6debaa13a194050b8>`(:ref:`Line<doxid-classsophus_1_1_se2_base_1a8634be68da3194f400f49f88d672329f>` const& l) const;
@@ -119,7 +119,7 @@ Inherited Members
 		template <
 			typename TOtherDerived,
 			typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Se2Base<doxid-classsophus_1_1_se2_base>`<TDerived>& :ref:`operator*=<doxid-classsophus_1_1_se2_base_1a44660c142eacf580c361c3cd5418ae08>`(:ref:`Se2Base<doxid-classsophus_1_1_se2_base>`<TOtherDerived> const& other);
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Vector<:ref:`Scalar<doxid-classsophus_1_1_se2_base_1a97b6f7b563ebaf3be732ad50b3290492>`, :ref:`kNumParameters<doxid-classsophus_1_1_se2_base_1a39e9c7755c13166605ac999c9c311340>`> :ref:`params<doxid-classsophus_1_1_se2_base_1a9201c9b7bfd10569de550eac941196c0>`() const;

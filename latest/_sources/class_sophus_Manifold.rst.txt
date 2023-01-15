@@ -35,20 +35,15 @@ Templated local parameterization for LieGroup [with implemented LieGroup::Dx_thi
 
 		// methods
 	
-		bool :ref:`Plus<doxid-classsophus_1_1_manifold_1a887a0a9e6c74d11856aa5efe1eaf2e16>`(double const* t_raw, double const* delta_raw, double* t_plus_delta_raw) const;
+		bool :ref:`Plus<doxid-classsophus_1_1_manifold_1a887a0a9e6c74d11856aa5efe1eaf2e16>`(
+			double const* t_raw,
+			double const* delta_raw,
+			double* t_plus_delta_raw
+		) const;
+	
 		bool :ref:`PlusJacobian<doxid-classsophus_1_1_manifold_1a735c9c491e2cdf9d796652c0f13934a1>`(double const* t_raw, double* jacobian_raw) const;
-	
-		bool :target:`Minus<doxid-classsophus_1_1_manifold_1ad58e49099acc0b9dc0f058ba503428ab>`(
-			double const* y_raw,
-			double const* x_raw,
-			double* y_minus_x_raw
-			) const;
-	
-		bool :target:`MinusJacobian<doxid-classsophus_1_1_manifold_1a38c281caef07493a18cb6f665dab24ae>`(
-			double const* x_raw,
-			double* jacobian_raw
-			) const;
-	
+		bool :target:`Minus<doxid-classsophus_1_1_manifold_1ad58e49099acc0b9dc0f058ba503428ab>`(double const* y_raw, double const* x_raw, double* y_minus_x_raw) const;
+		bool :target:`MinusJacobian<doxid-classsophus_1_1_manifold_1a38c281caef07493a18cb6f665dab24ae>`(double const* x_raw, double* jacobian_raw) const;
 		int :target:`AmbientSize<doxid-classsophus_1_1_manifold_1a78b3b370f74f4126a071d6866dd8c623>`() const;
 		int :target:`TangentSize<doxid-classsophus_1_1_manifold_1adb205e38cbe940e72c9b3bad8cf1adf4>`() const;
 	};
@@ -72,7 +67,7 @@ Methods
 		double const* t_raw,
 		double const* delta_raw,
 		double* t_plus_delta_raw
-		) const
+	) const
 
 LieGroup plus operation for Ceres.
 

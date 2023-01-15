@@ -67,13 +67,13 @@ Overview
 		template <
 			typename TPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, 3>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_sim3_base_1a3ab12ba0728e612f5c87668bdbec2dca>`<TPointDerived> :ref:`operator*<doxid-classsophus_1_1_sim3_base_1ae65c510199958f055528d3fdbc599053>`(Eigen::MatrixBase<TPointDerived> const& p) const;
 	
 		template <
 			typename THPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, 4>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_sim3_base_1a94094af64de02f21bb53142fb328766d>`<THPointDerived> :ref:`operator*<doxid-classsophus_1_1_sim3_base_1a46e45122a77893f8cfd7dae632791bd9>`(Eigen::MatrixBase<THPointDerived> const& p) const;
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Line<doxid-classsophus_1_1_sim3_base_1a19d690c49af174756a522a1baeeae096>` :ref:`operator*<doxid-classsophus_1_1_sim3_base_1a851d98b31c04c43b16fb38db10db254b>`(:ref:`Line<doxid-classsophus_1_1_sim3_base_1a19d690c49af174756a522a1baeeae096>` const& l) const;
@@ -82,7 +82,7 @@ Overview
 		template <
 			typename TOtherDerived,
 			typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Sim3Base<TDerived>& :ref:`operator*=<doxid-classsophus_1_1_sim3_base_1a1b5fe264f49b9d58ca718a2312c6f025>`(Sim3Base<TOtherDerived> const& other);
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_sim3_base_1afa02b3f235c56f040e65dc230bd3ad14>`, :ref:`kNumParameters<doxid-classsophus_1_1_sim3_base_1a3a180dc88288e0444680e0fe3b77400f>`, :ref:`kDoF<doxid-classsophus_1_1_sim3_base_1a8f09fe2c31495ede2f84434b03f252ed>`> :ref:`dxThisMulExpXAt0<doxid-classsophus_1_1_sim3_base_1a01cb9605489714e6f722c307e920b788>`() const;
@@ -306,7 +306,7 @@ Note: That scaling is calculated with saturation. See :ref:`RxSo3 <doxid-classso
 	template <
 		typename TPointDerived,
 		typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, 3>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_sim3_base_1a3ab12ba0728e612f5c87668bdbec2dca>`<TPointDerived> operator*(Eigen::MatrixBase<TPointDerived> const& p) const
 
 Group action on 3-points.
@@ -324,7 +324,7 @@ This function rotates, scales and translates a three dimensional point ``p`` by 
 	template <
 		typename THPointDerived,
 		typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, 4>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_sim3_base_1a94094af64de02f21bb53142fb328766d>`<THPointDerived> operator*(Eigen::MatrixBase<THPointDerived> const& p) const
 
 Group action on homogeneous 3-points. See above for more details.
@@ -366,7 +366,7 @@ Normal vector ``n`` is rotated Offset ``d`` is adjusted for scale and translatio
 	template <
 		typename TOtherDerived,
 		typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-		>
+	>
 	:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Sim3Base<TDerived>& operator*=(Sim3Base<TOtherDerived> const& other)
 
 In-place group multiplication. This method is only valid if the return type of the multiplication is compatible with this :ref:`So3 <doxid-classsophus_1_1_so3>` 's Scalar type.

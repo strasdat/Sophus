@@ -20,17 +20,8 @@ Shape of image: width, height and pitch in bytes.
 		// construction
 	
 		:target:`ImageShape<doxid-classsophus_1_1_image_shape_1a6cdbc9454ace77093bd420f678ffdf59>`();
-	
-		:target:`ImageShape<doxid-classsophus_1_1_image_shape_1a4def0c198a7b390770f6a9c2b7d78983>`(
-			:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size,
-			size_t pitch_bytes
-			);
-	
-		:target:`ImageShape<doxid-classsophus_1_1_image_shape_1a4c014c38fe538a05ad2cea3f28cfba39>`(
-			int width,
-			int height,
-			size_t pitch_bytes
-			);
+		:target:`ImageShape<doxid-classsophus_1_1_image_shape_1a4def0c198a7b390770f6a9c2b7d78983>`(:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size, size_t pitch_bytes);
+		:target:`ImageShape<doxid-classsophus_1_1_image_shape_1a4c014c38fe538a05ad2cea3f28cfba39>`(int width, int height, size_t pitch_bytes);
 
 		// methods
 	
@@ -46,12 +37,12 @@ Shape of image: width, height and pitch in bytes.
 		static ImageShape :target:`makeFromSizeAndPitch<doxid-classsophus_1_1_image_shape_1ac3537e6497aa76881d568e52fd7f7799>`(
 			:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size,
 			size_t pitch_bytes
-			);
+		);
 	
 		static ImageShape :target:`makeFromSizeAndPitchUnchecked<doxid-classsophus_1_1_image_shape_1ac5fc211116ef1948ead1ab3d56e3effe>`(
 			:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size,
 			size_t pitch_bytes
-			);
+		);
 	
 		template <class TPixelTypeT>
 		static ImageShape :target:`makeFromSize<doxid-classsophus_1_1_image_shape_1acb00d49b051f8196dfed738f7acc0d4f>`(:ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` image_size);

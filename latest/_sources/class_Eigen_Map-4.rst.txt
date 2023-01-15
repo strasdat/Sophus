@@ -108,13 +108,13 @@ Inherited Members
 		template <
 			typename TPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, 3>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_se3_base_1ae19b68a40ad31c23e614e537cba9b0ba>`<TPointDerived> :ref:`operator*<doxid-classsophus_1_1_se3_base_1a4640a655d9efb1e5020f2526499bdd38>`(Eigen::MatrixBase<TPointDerived> const& p) const;
 	
 		template <
 			typename THPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, 4>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_se3_base_1a294093eb2770c66d39757cb4f35ec7ac>`<THPointDerived> :ref:`operator*<doxid-classsophus_1_1_se3_base_1aa58b82df35582b9ac675f0a528fed21e>`(Eigen::MatrixBase<THPointDerived> const& p) const;
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Line<doxid-classsophus_1_1_se3_base_1aaa8df099a101af1ec80c9b05e7c5013f>` :ref:`operator*<doxid-classsophus_1_1_se3_base_1ac3012504ca52af48c793679b25516150>`(:ref:`Line<doxid-classsophus_1_1_se3_base_1aaa8df099a101af1ec80c9b05e7c5013f>` const& l) const;
@@ -123,7 +123,7 @@ Inherited Members
 		template <
 			typename TOtherDerived,
 			typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Se3Base<doxid-classsophus_1_1_se3_base>`<TDerived>& :ref:`operator*=<doxid-classsophus_1_1_se3_base_1a143d4b570c67d18d3f0e28a5741c8314>`(:ref:`Se3Base<doxid-classsophus_1_1_se3_base>`<TOtherDerived> const& other);
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix3<:ref:`Scalar<doxid-classsophus_1_1_se3_base_1aa708e3dcbe826149d7337666d2a79538>`> :ref:`rotationMatrix<doxid-classsophus_1_1_se3_base_1a1e383177e2569092baaefbf9a89661ff>`() const;

@@ -100,13 +100,13 @@ Inherited Members
 		template <
 			typename TPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<TPointDerived, 2>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`PointProduct<doxid-classsophus_1_1_so2_base_1a2d1735ef5ab22c48223d16bb936233c9>`<TPointDerived> :ref:`operator*<doxid-classsophus_1_1_so2_base_1a31fa94ac3c73cd45431d89c370d41860>`(Eigen::MatrixBase<TPointDerived> const& p) const;
 	
 		template <
 			typename THPointDerived,
 			typename = typename std::enable_if<IsFixedSizeVector<THPointDerived, 3>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`HomogeneousPointProduct<doxid-classsophus_1_1_so2_base_1a576783fbe7e9e3e8f949cd3ff2546562>`<THPointDerived> :ref:`operator*<doxid-classsophus_1_1_so2_base_1ad8722c677915497158deac515b89d791>`(Eigen::MatrixBase<THPointDerived> const& p) const;
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Line<doxid-classsophus_1_1_so2_base_1aa79b00b53500f8b27e790ef5ea6c1b2d>` :ref:`operator*<doxid-classsophus_1_1_so2_base_1a967da761ada947e682b4d9201686caa6>`(:ref:`Line<doxid-classsophus_1_1_so2_base_1aa79b00b53500f8b27e790ef5ea6c1b2d>` const& l) const;
@@ -115,7 +115,7 @@ Inherited Members
 		template <
 			typename TOtherDerived,
 			typename = typename std::enable_if<std::is_same<Scalar, ReturnScalar<TOtherDerived>>::value>::type
-			>
+		>
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`So2Base<doxid-classsophus_1_1_so2_base>`<TDerived> :ref:`operator*=<doxid-classsophus_1_1_so2_base_1a2716eff606a795918a894855dda78e70>`(:ref:`So2Base<doxid-classsophus_1_1_so2_base>`<TOtherDerived> const& other);
 	
 		:ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_so2_base_1a63dba15248e81c29f64a99e3ff49e075>`, :ref:`kNumParameters<doxid-classsophus_1_1_so2_base_1ae0cea05e8cdce294818c5b5101d29e41>`, :ref:`kDoF<doxid-classsophus_1_1_so2_base_1a54e1d1ee13387e0d840917b99ab02b50>`> :ref:`dxThisMulExpXAt0<doxid-classsophus_1_1_so2_base_1ad5b5399f5f64c4bdc348e7ab94634c0a>`() const;

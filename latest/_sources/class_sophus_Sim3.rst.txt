@@ -50,20 +50,20 @@ Overview
 		:ref:`Sim3<doxid-classsophus_1_1_sim3_1a85ddb4814aa59ca40f730968f006a50b>`(
 			:ref:`RxSo3Base<doxid-classsophus_1_1_rx_so3_base>`<TOtherDerived> const& rxso3,
 			Eigen::MatrixBase<TD> const& translation
-			);
+		);
 	
 		template <class TD1T, class TD2T>
 		:ref:`Sim3<doxid-classsophus_1_1_sim3_1a5039196b58722c69c323260ed76b3b1d>`(
 			Eigen::QuaternionBase<TD1T> const& quaternion,
 			Eigen::MatrixBase<TD2T> const& translation
-			);
+		);
 	
 		template <class TD1T, class TD2T>
 		:ref:`Sim3<doxid-classsophus_1_1_sim3_1a413d75da26b6633731d8d7fd609b5711>`(
 			:ref:`Scalar<doxid-classsophus_1_1_sim3_1a68cb8b08d7e2891ba1a92082c1dda14f>` const& scale,
 			Eigen::QuaternionBase<TD1T> const& unit_quaternion,
 			Eigen::MatrixBase<TD2T> const& translation
-			);
+		);
 	
 		:ref:`Sim3<doxid-classsophus_1_1_sim3_1abde004d76a78f2dfda5c9b53210903d1>`(Eigen::Matrix<:ref:`Scalar<doxid-classsophus_1_1_sim3_1a68cb8b08d7e2891ba1a92082c1dda14f>`, 4, 4> const& t);
 
@@ -87,7 +87,11 @@ Overview
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` Sim3<:ref:`Scalar<doxid-classsophus_1_1_sim3_1a68cb8b08d7e2891ba1a92082c1dda14f>`> :ref:`exp<doxid-classsophus_1_1_sim3_1a59808c5d9c676cc5976a1e70b4dfe4d4>`(:ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_a);
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Transformation<doxid-classsophus_1_1_sim3_1af7680f205fe9f9bed8a7f2c18457b3e7>` :ref:`generator<doxid-classsophus_1_1_sim3_1afcf99aedd00f0e0a2a251679e2b17d5a>`(int i);
 		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Transformation<doxid-classsophus_1_1_sim3_1af7680f205fe9f9bed8a7f2c18457b3e7>` :ref:`hat<doxid-classsophus_1_1_sim3_1a7319c07177596ce12600ae71751d238c>`(:ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_a);
-		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` :ref:`lieBracket<doxid-classsophus_1_1_sim3_1afbc2039a3faedce902bf90a64ea8ffbc>`(:ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_a, :ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_b);
+	
+		static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` :ref:`lieBracket<doxid-classsophus_1_1_sim3_1afbc2039a3faedce902bf90a64ea8ffbc>`(
+			:ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_a,
+			:ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_b
+		);
 	
 		template <class TUniformRandomBitGenerator>
 		static Sim3 :ref:`sampleUniform<doxid-classsophus_1_1_sim3_1a639eb10a13ad40abbe7aed23ec02bae4>`(TUniformRandomBitGenerator& generator);
@@ -151,7 +155,7 @@ Copy-like constructor from OtherDerived.
 	Sim3(
 		:ref:`RxSo3Base<doxid-classsophus_1_1_rx_so3_base>`<TOtherDerived> const& rxso3,
 		Eigen::MatrixBase<TD> const& translation
-		)
+	)
 
 Constructor from :ref:`RxSo3 <doxid-classsophus_1_1_rx_so3>` and translation vector.
 
@@ -165,7 +169,7 @@ Constructor from :ref:`RxSo3 <doxid-classsophus_1_1_rx_so3>` and translation vec
 	Sim3(
 		Eigen::QuaternionBase<TD1T> const& quaternion,
 		Eigen::MatrixBase<TD2T> const& translation
-		)
+	)
 
 Constructor from quaternion and translation vector.
 
@@ -182,7 +186,7 @@ Precondition: quaternion must not be close to zero.
 		:ref:`Scalar<doxid-classsophus_1_1_sim3_1a68cb8b08d7e2891ba1a92082c1dda14f>` const& scale,
 		Eigen::QuaternionBase<TD1T> const& unit_quaternion,
 		Eigen::MatrixBase<TD2T> const& translation
-		)
+	)
 
 Constructor from scale factor, unit quaternion, and translation vector.
 
@@ -415,7 +419,10 @@ The corresponding inverse is the :ref:`vee() <doxid-classsophus_1_1_sim3_1adf7b6
 .. ref-code-block:: cpp
 	:class: doxyrest-title-code-block
 
-	static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` lieBracket(:ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_a, :ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_b)
+	static :ref:`SOPHUS_FUNC<doxid-common_8h_1a719070c34a48abcdf2f623e4160b4c28>` :ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` lieBracket(
+		:ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_a,
+		:ref:`Tangent<doxid-classsophus_1_1_sim3_1a9f9ef758593b2660500c21d38864c2c4>` const& vec_b
+	)
 
 Lie bracket.
 

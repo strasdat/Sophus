@@ -36,29 +36,29 @@ class sophus::BrownConradyTransform
 		static :ref:`PixelImage<doxid-classsophus_1_1_brown_conrady_transform_1a5fb41f5c028bf975acceac207a910311>`<typename Eigen::ScalarBinaryOpTraits<TParamScalarT, TPointScalarT>::ReturnType> :target:`projImpl<doxid-classsophus_1_1_brown_conrady_transform_1a22a2359e5dceca9a23b9052162107240>`(
 			:ref:`DistorationParams<doxid-classsophus_1_1_brown_conrady_transform_1ac85d2f870fd3965473ae92d4d8e98bef>`<TParamScalarT> const& distortion,
 			:ref:`PixelImage<doxid-classsophus_1_1_brown_conrady_transform_1a5fb41f5c028bf975acceac207a910311>`<TPointScalarT> const& point_normalized
-			);
+		);
 	
 		template <class TScalar>
 		static :ref:`PixelImage<doxid-classsophus_1_1_brown_conrady_transform_1a5fb41f5c028bf975acceac207a910311>`<TScalar> :target:`unprojImpl<doxid-classsophus_1_1_brown_conrady_transform_1af513db1924afa19e6345b6a20e2c6c8c>`(
 			:ref:`DistorationParams<doxid-classsophus_1_1_brown_conrady_transform_1ac85d2f870fd3965473ae92d4d8e98bef>`<TScalar> const& distortion,
 			:ref:`PixelImage<doxid-classsophus_1_1_brown_conrady_transform_1a5fb41f5c028bf975acceac207a910311>`<TScalar> const& uv_normalized
-			);
+		);
 	
 		template <class TParamsTypeT, class TPointTypeT>
 		static :ref:`PixelImage<doxid-classsophus_1_1_brown_conrady_transform_1a5fb41f5c028bf975acceac207a910311>`<typename TPointTypeT::Scalar> :target:`distort<doxid-classsophus_1_1_brown_conrady_transform_1ac139c8075a07a2211d6a4a61115ab525>`(
 			Eigen::MatrixBase<TParamsTypeT> const& params,
 			Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane
-			);
+		);
 	
 		template <class TScalar>
 		static :ref:`ProjInCameraZ1Plane<doxid-classsophus_1_1_brown_conrady_transform_1a00640c9d835bfb3ceba050deefd643bf>`<TScalar> :target:`undistort<doxid-classsophus_1_1_brown_conrady_transform_1a5a937211476ab891f99fc93efcf04b19>`(
 			:ref:`Params<doxid-classsophus_1_1_brown_conrady_transform_1af6688193ecd220aabc3402afecce386e>`<TScalar> const& params,
 			:ref:`PixelImage<doxid-classsophus_1_1_brown_conrady_transform_1a5fb41f5c028bf975acceac207a910311>`<TScalar> const& pixel_image
-			);
+		);
 	
 		template <class TParamsTypeT, class TPointTypeT>
 		static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> :target:`dxDistort<doxid-classsophus_1_1_brown_conrady_transform_1a35da59798e750d39a60c33e3c9bf8db3>`(
 			Eigen::MatrixBase<TParamsTypeT> const& params,
 			Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane
-			);
+		);
 	};

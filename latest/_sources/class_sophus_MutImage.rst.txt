@@ -24,7 +24,7 @@ A image with write access to pixels and exclusive ownership. There is no copy co
 	template <
 		class TPixel,
 		template<class> class TAllocator = Eigen::aligned_allocator
-		>
+	>
 	class MutImage: public :ref:`sophus::MutImageView<doxid-classsophus_1_1_mut_image_view>` {
 	public:
 		// structs
@@ -39,6 +39,7 @@ A image with write access to pixels and exclusive ownership. There is no copy co
 		:ref:`MutImage<doxid-classsophus_1_1_mut_image_1a26b47c4be42c8024ef299a7672b0312d>`(:ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` size);
 		:ref:`MutImage<doxid-classsophus_1_1_mut_image_1a89b00ee275e177be0794ca8940d1d3c9>`(MutImage<TPixel> const& other);
 		:ref:`MutImage<doxid-classsophus_1_1_mut_image_1a8b125aaa2b74ba918a8916dff6d9e74d>`(MutImage&& img);
+		:ref:`~MutImage<doxid-classsophus_1_1_mut_image_1ac6b12d1ab8419c76224d3bde01e50f33>`();
 
 		// methods
 	
@@ -53,14 +54,14 @@ A image with write access to pixels and exclusive ownership. There is no copy co
 		static MutImage :ref:`makeFromTransform<doxid-classsophus_1_1_mut_image_1a3f83eb3b54c431d620c67d05bb0eb79e>`(
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
 			TUnaryOperation const& unary_op
-			);
+		);
 	
 		template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
 		static MutImage :ref:`makeFromTransform<doxid-classsophus_1_1_mut_image_1a8af9f384c89f2ae849b9586fd5d6c51a>`(
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
 			TBinaryOperation const& binary_op
-			);
+		);
 
 	protected:
 		// fields
@@ -109,13 +110,13 @@ Inherited Members
 		TVal :ref:`reduce<doxid-structsophus_1_1_image_view_1ad6ee10edcbc6267d9d92eb66e77a291e>`(
 			TReduceOp const& reduce_op,
 			TVal val = TVal{}
-			) const;
+		) const;
 	
 		template <class TShortCircuitReduceOp, class TVal>
 		TVal :ref:`shortCircuitReduce<doxid-structsophus_1_1_image_view_1a8fc012bee1f58e9fd976125a216fc650>`(
 			TShortCircuitReduceOp const& short_circuit_reduce_op,
 			TVal val = TVal{}
-			) const;
+		) const;
 	
 		bool :ref:`operator==<doxid-structsophus_1_1_image_view_1a8d34fd6288b9faf9e5cf7457c2136809>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>` const& rhs) const;
 		bool :ref:`operator!=<doxid-structsophus_1_1_image_view_1a17ad6c4e80f27ebb8be855b1e8a602ca>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>` const& rhs) const;
@@ -138,14 +139,14 @@ Inherited Members
 		void :ref:`transformFrom<doxid-classsophus_1_1_mut_image_view_1aa2157348c35c25ed131eebab9e800df8>`(
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
 			TUnaryOperation const& unary_op
-			) const;
+		) const;
 	
 		template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
 		void :ref:`transformFrom<doxid-classsophus_1_1_mut_image_view_1ab8dbbd6d64e13d32c29a3f5e644cabbb>`(
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
 			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
 			TBinaryOperation const& binary_op
-			) const;
+		) const;
 	
 		void :ref:`fill<doxid-classsophus_1_1_mut_image_view_1a61d68c099905831da518a3c6eb02ead1>`(TPixel const& val) const;
 		TPixel* :ref:`ptrMut<doxid-classsophus_1_1_mut_image_view_1a6f5022a0a14867021e64690b3937918a>`() const;
@@ -245,6 +246,14 @@ Not copy constructable.
 
 Move constructor - is cheap - no memory allocations.
 
+.. _doxid-classsophus_1_1_mut_image_1ac6b12d1ab8419c76224d3bde01e50f33:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~MutImage()
+
+Destructor.
+
 Methods
 -------
 
@@ -312,7 +321,7 @@ If view is not empty, memory allocation will happen.
 	static MutImage makeFromTransform(
 		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
 		TUnaryOperation const& unary_op
-		)
+	)
 
 Creates new :ref:`MutImage <doxid-classsophus_1_1_mut_image>` given view and unary transform function.
 
@@ -329,7 +338,7 @@ mut_image(u, v) = unary_op(view(u, v));
 		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
 		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
 		TBinaryOperation const& binary_op
-		)
+	)
 
 Creates new :ref:`MutImage <doxid-classsophus_1_1_mut_image>` given two views and binary transform function.
 

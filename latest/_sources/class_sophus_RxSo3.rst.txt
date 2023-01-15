@@ -59,7 +59,10 @@ Overview
 		:ref:`RxSo3<doxid-classsophus_1_1_rx_so3_1a8242d900f61a8c68c18535e3b63b1312>`(Eigen::QuaternionBase<TD> const& quat);
 	
 		template <class TD>
-		:ref:`RxSo3<doxid-classsophus_1_1_rx_so3_1a3276fd6cfa828689c5329248dba0ad09>`(:ref:`Scalar<doxid-classsophus_1_1_rx_so3_1aba3922ff0001329c4770c0300ad3734d>` const& scale, Eigen::QuaternionBase<TD> const& unit_quat);
+		:ref:`RxSo3<doxid-classsophus_1_1_rx_so3_1a3276fd6cfa828689c5329248dba0ad09>`(
+			:ref:`Scalar<doxid-classsophus_1_1_rx_so3_1aba3922ff0001329c4770c0300ad3734d>` const& scale,
+			Eigen::QuaternionBase<TD> const& unit_quat
+		);
 
 		// methods
 	
@@ -193,7 +196,7 @@ Precondition: quaternion must not be close to either zero or infinity.
 	RxSo3(
 		:ref:`Scalar<doxid-classsophus_1_1_rx_so3_1aba3922ff0001329c4770c0300ad3734d>` const& scale,
 		Eigen::QuaternionBase<TD> const& unit_quat
-		)
+	)
 
 Constructor from scale factor and unit quaternion.
 

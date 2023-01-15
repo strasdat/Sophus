@@ -61,33 +61,12 @@ A region is a closed interval [a, b] with a being the lower bound (=min) and b b
 		template <class TScalar>
 		:target:`requires<doxid-classsophus_1_1_region_1abef1a730bb630cbf7a6a23ae58e0af9b>`(:ref:`kDim<doxid-classsophus_1_1_region_1a203364ebcace7fe64adb6565f588c47d>` = =4) const;
 	
-		:ref:`region<doxid-classsophus_1_1_region_1a7343f5440af9538aee9e38f9d61b4683>` :target:`setElem<doxid-classsophus_1_1_region_1a9a13d4c081e3c311b76a18cd8d8d747a>`(
-			segment_x,
-			0
-			);
-	
-		:ref:`region<doxid-classsophus_1_1_region_1a7343f5440af9538aee9e38f9d61b4683>` :target:`setElem<doxid-classsophus_1_1_region_1aaa5aadcd65a4768d42bd54f6410c4b69>`(
-			:ref:`segment_y<doxid-classsophus_1_1_region_1a29b5cf8fbf0e4037b907f8be54cd7323>`,
-			1
-			);
-	
-		:ref:`region<doxid-classsophus_1_1_region_1a7343f5440af9538aee9e38f9d61b4683>` :target:`setElem<doxid-classsophus_1_1_region_1a00f15a9f24c75491b61ac8e23bfb3fd3>`(
-			:ref:`segment_z<doxid-classsophus_1_1_region_1a6d15e804c454be1d6d3595a15e64226d>`,
-			2
-			);
-	
-		:ref:`region<doxid-classsophus_1_1_region_1a7343f5440af9538aee9e38f9d61b4683>` :target:`setElem<doxid-classsophus_1_1_region_1ae5695248a6df6f50e1a8bd56ac155808>`(
-			segment_w,
-			3
-			);
-	
+		:ref:`region<doxid-classsophus_1_1_region_1a7343f5440af9538aee9e38f9d61b4683>` :target:`setElem<doxid-classsophus_1_1_region_1a9a13d4c081e3c311b76a18cd8d8d747a>`(segment_x, 0);
+		:ref:`region<doxid-classsophus_1_1_region_1a7343f5440af9538aee9e38f9d61b4683>` :target:`setElem<doxid-classsophus_1_1_region_1aaa5aadcd65a4768d42bd54f6410c4b69>`(:ref:`segment_y<doxid-classsophus_1_1_region_1a29b5cf8fbf0e4037b907f8be54cd7323>`, 1);
+		:ref:`region<doxid-classsophus_1_1_region_1a7343f5440af9538aee9e38f9d61b4683>` :target:`setElem<doxid-classsophus_1_1_region_1a00f15a9f24c75491b61ac8e23bfb3fd3>`(:ref:`segment_z<doxid-classsophus_1_1_region_1a6d15e804c454be1d6d3595a15e64226d>`, 2);
+		:ref:`region<doxid-classsophus_1_1_region_1a7343f5440af9538aee9e38f9d61b4683>` :target:`setElem<doxid-classsophus_1_1_region_1ae5695248a6df6f50e1a8bd56ac155808>`(segment_w, 3);
 		Region<:ref:`Scalar<doxid-classsophus_1_1_region_1a43e4d6c11c1053318d987891d0d468a1>`> const& :target:`getElem<doxid-classsophus_1_1_region_1a05cceaa89df91b80061470445fb46c07>`(size_t row) const;
-	
-		void :target:`setElem<doxid-classsophus_1_1_region_1aba3907f7134ffcc1d70b0df6839c6120>`(
-			size_t row,
-			Region<:ref:`Scalar<doxid-classsophus_1_1_region_1a43e4d6c11c1053318d987891d0d468a1>`> const& s
-			);
-	
+		void :target:`setElem<doxid-classsophus_1_1_region_1aba3907f7134ffcc1d70b0df6839c6120>`(size_t row, Region<:ref:`Scalar<doxid-classsophus_1_1_region_1a43e4d6c11c1053318d987891d0d468a1>`> const& s);
 		TPoint const& :ref:`min<doxid-classsophus_1_1_region_1ac45408e162bc30bdcba2b12688113683>`() const;
 		TPoint const& :ref:`max<doxid-classsophus_1_1_region_1a10c046848ae5cfb4c4a8d529f6a37b24>`() const;
 		TPoint :ref:`clamp<doxid-classsophus_1_1_region_1ad29ab18df0ab709d403845382a93c6de>`(TPoint const& point) const;

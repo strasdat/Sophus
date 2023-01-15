@@ -44,7 +44,7 @@ template class sophus::LieGroupTests
 			std::vector<:ref:`LieGroup<doxid-classsophus_1_1_lie_group_tests_1a6ce63c05d6a840ef445d2e9bc8b5868d>`, Eigen::aligned_allocator<:ref:`LieGroup<doxid-classsophus_1_1_lie_group_tests_1a6ce63c05d6a840ef445d2e9bc8b5868d>`>> const& group_vec,
 			std::vector<:ref:`Tangent<doxid-classsophus_1_1_lie_group_tests_1a6d31f72ee94140feeb3bc065e0e877e1>`, Eigen::aligned_allocator<:ref:`Tangent<doxid-classsophus_1_1_lie_group_tests_1a6d31f72ee94140feeb3bc065e0e877e1>`>> const& tangent_vec,
 			std::vector<:ref:`Point<doxid-classsophus_1_1_lie_group_tests_1a9603aea8e33f14def1a747c984c31981>`, Eigen::aligned_allocator<:ref:`Point<doxid-classsophus_1_1_lie_group_tests_1a9603aea8e33f14def1a747c984c31981>`>> const& point_vec
-			);
+		);
 
 		// methods
 	

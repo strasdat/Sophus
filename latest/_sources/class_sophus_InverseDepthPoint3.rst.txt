@@ -28,13 +28,9 @@ Inverse depth point representation. :ref:`More...<details-classsophus_1_1_invers
 		:target:`InverseDepthPoint3<doxid-classsophus_1_1_inverse_depth_point3_1adb96c41d4c7c799ab636777b9026d436>`(
 			Eigen::Matrix<TT, 2, 1> const& proj_in_z1_plane,
 			TT const& one_by_z
-			);
+		);
 	
-		:target:`InverseDepthPoint3<doxid-classsophus_1_1_inverse_depth_point3_1a13760dba451034fe05267bf8b43247d8>`(
-			TT const& x_by_z,
-			TT const& y_by_z,
-			TT const& one_by_z
-			);
+		:target:`InverseDepthPoint3<doxid-classsophus_1_1_inverse_depth_point3_1a13760dba451034fe05267bf8b43247d8>`(TT const& x_by_z, TT const& y_by_z, TT const& one_by_z);
 
 		// methods
 	

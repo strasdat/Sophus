@@ -30,7 +30,7 @@ template struct sophus::BasisSplineSegment
 			:ref:`T<doxid-structsophus_1_1_basis_spline_segment_1a2ce9021daae709bebb922a08d72f8f6b>` const*const raw_ptr1,
 			:ref:`T<doxid-structsophus_1_1_basis_spline_segment_1a2ce9021daae709bebb922a08d72f8f6b>` const*const raw_ptr2,
 			:ref:`T<doxid-structsophus_1_1_basis_spline_segment_1a2ce9021daae709bebb922a08d72f8f6b>` const*const raw_ptr3
-			);
+		);
 
 		// methods
 	
@@ -39,14 +39,6 @@ template struct sophus::BasisSplineSegment
 		Eigen::Map<TLieGroup const> :target:`worldFromFoo1<doxid-structsophus_1_1_basis_spline_segment_1aa9ea17cdda529b171d51be066f015146>`() const;
 		Eigen::Map<TLieGroup const> :target:`worldFromFoo2<doxid-structsophus_1_1_basis_spline_segment_1a3d80bb083181d4798b138f3bd2bb7fbc>`() const;
 		TLieGroup :target:`parentFromSpline<doxid-structsophus_1_1_basis_spline_segment_1ace4fd29d67ce12e2a8ece33e30f09222>`(double u);
-	
-		:ref:`Transformation<doxid-structsophus_1_1_basis_spline_segment_1ab4e430dd674a4b66bfac354fcbb8cb1d>` :target:`dtParentFromSpline<doxid-structsophus_1_1_basis_spline_segment_1a8d0e1125f821a05a25d4ca1110fb3240>`(
-			double u,
-			double delta_t
-			);
-	
-		:ref:`Transformation<doxid-structsophus_1_1_basis_spline_segment_1ab4e430dd674a4b66bfac354fcbb8cb1d>` :target:`dt2ParentFromSpline<doxid-structsophus_1_1_basis_spline_segment_1ac1b138e6826354823d6fcf2aeafc9e43>`(
-			double u,
-			double delta_t
-			);
+		:ref:`Transformation<doxid-structsophus_1_1_basis_spline_segment_1ab4e430dd674a4b66bfac354fcbb8cb1d>` :target:`dtParentFromSpline<doxid-structsophus_1_1_basis_spline_segment_1a8d0e1125f821a05a25d4ca1110fb3240>`(double u, double delta_t);
+		:ref:`Transformation<doxid-structsophus_1_1_basis_spline_segment_1ab4e430dd674a4b66bfac354fcbb8cb1d>` :target:`dt2ParentFromSpline<doxid-structsophus_1_1_basis_spline_segment_1ac1b138e6826354823d6fcf2aeafc9e43>`(double u, double delta_t);
 	};

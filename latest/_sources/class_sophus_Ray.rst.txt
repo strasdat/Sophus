@@ -29,7 +29,7 @@ template class sophus::Ray
 		:target:`Ray<doxid-classsophus_1_1_ray_1a1b56ccd42592558c346defb8ed3f0893>`(
 			Eigen::Matrix<TScalar, kN, 1> const& origin,
 			:ref:`UnitVector<doxid-classsophus_1_1_unit_vector>`<TScalar, kN> const& direction
-			);
+		);
 	
 		:target:`Ray<doxid-classsophus_1_1_ray_1a23bb0de3b14aa83e384c594866186619>`(Ray const&);
 
