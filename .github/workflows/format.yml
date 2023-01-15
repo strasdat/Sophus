@@ -1,5 +1,3 @@
-name: format
-
 on:
   push:
     branches: [ master, 23.04-beta ]

@@ -1,7 +1,7 @@
-FRAME_DIR_LIST = { "doxyrest_b/doxyrest/frame/cfamily", "doxyrest_b/doxyrest/frame/common" }
+FRAME_DIR_LIST = {".doxyrest/doxyrest_b/doxyrest/frame/cfamily", ".doxyrest/doxyrest_b/doxyrest/frame/common" }
 FRAME_FILE = "index.rst.in"
 INPUT_FILE = "xml-dir/index.xml"
-OUTPUT_FILE = "rst-dir/index.rst"
+OUTPUT_FILE = "api_autogen/index.rst"
 INTRO_FILE = "page_index.rst"
 SORT_GROUPS_BY = "title"
 GLOBAL_AUX_COMPOUND_ID = "group_global"
