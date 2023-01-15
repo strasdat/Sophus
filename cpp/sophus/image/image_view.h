@@ -277,7 +277,7 @@ void pitchedCopy(
 /// Details on equality comparison, the state of the object, and
 /// const-correctness.
 ///
-/// MutImageView is a "shallow-compare type" similar to std::span<<Pixel> and
+/// MutImageView is a "shallow-compare type" similar to std::span<Pixel> and
 /// std::unique_ptr<Pixel>. As ImageView, its state consists of the image shape
 /// as well as the pointer address, and comparing those entities establishes
 /// equality comparisons. Furthermore, giving mutable access to pixels is
@@ -391,7 +391,7 @@ class MutImageView : public ImageView<TPixel> {
 
   /// For each pixel in `this` with coordinates (u,v), populates with the user
   /// provided function, evaluated as `uv_op(u,v)`, where u and v are integers
-  /// such that u \in [0, width), v \in [0, height)
+  /// such that u in [0, width), v in [0, height)
   ///
   /// Preconditions: this must not be empty.
   template <class TUVOperation>

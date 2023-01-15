@@ -323,7 +323,7 @@ transform which maps the point to frame ``bar``:
 Note that the frame names line up: ``bar`` - ``bar``, ``foo`` - ``foo``.
 
 Some details
-************
+++++++++++++
 
  - If necessary to resolved ambiguities, e.g. between rotations and rigid
    body transforms, we use a corresponding notation, e.g.
@@ -363,9 +363,9 @@ Some details
 
 
 Some geeky notes about the terms poses, orientation and position
-================================================================
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-* Note: This section can be safely skipped - and is merely targeting notation
+*Note*: This section can be safely skipped - and is merely targeting notation
 geeks.
 
 The notation and terms above (and in Sophus in general) is of a functional
@@ -399,7 +399,7 @@ In Sophus, function, variable names etc. follow the *functional* convention
 using terms such as rotation and translation.
 
 However, some concepts are easier understood using a *predicative* description
- - hence in comments and descriptions, predicative terms such as pose and
+ -- hence in comments and descriptions, predicative terms such as pose and
  position are used when it may facilitate explaining the underlying concept.
 
 For instance, depending on the context we may prefer
@@ -417,26 +417,3 @@ over
 [See Schwank: "Cognitive Structures and Cognitive Strategies in Algorithmic
 Thinking", https://link.springer.com/chapter/10.1007/978-3-662-11334-9_22 for
 background on functional vs. predicative thinking.]
-
-
-Angular and linear velocities
------------------------------
-
-While sometimes it is useful to express velocities with respect to to three
-frames (see http://paulfurgale.info/news/2014/6/9/representing-robot-pose-the-good-the-bad-and-the-ugly),
-most of the time two frames are sufficient.
-
-For example, for the linear velocity *of* the ``IMU`` module *as seen from* and
-*expressed in* the ``world`` frame, we use::
-
-    world_from_imu_velocity
-
-For the corresponding angular rate (or rotational velocity), we write::
-
-    world_from_imu_angular_rate
-
-
-If there is a use-case where three frames are involved, as in the angular
-rate *of* frame C *as seen from* frame B, *expressed in* frame A, we use::
-
-    a_from_b_of_c_angular_rate
