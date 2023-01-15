@@ -1,0 +1,23 @@
+.. index:: pair: struct; sophus::AnyImagePredicate
+.. _doxid-structsophus_1_1_any_image_predicate:
+
+struct sophus::AnyImagePredicate
+================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <runtime_image.h>
+	
+	struct AnyImagePredicate {
+		// methods
+	
+		template <class TPixel>
+		static constexpr bool :target:`isTypeValid<doxid-structsophus_1_1_any_image_predicate_1a0215178eff2ea5252d44edc8def79021>`();
+	};

@@ -1,0 +1,34 @@
+.. index:: pair: struct; sophus::RuntimePixelType
+.. _doxid-structsophus_1_1_runtime_pixel_type:
+
+struct sophus::RuntimePixelType
+===============================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <runtime_image.h>
+	
+	struct RuntimePixelType {
+		// fields
+	
+		NumberType :target:`number_type<doxid-structsophus_1_1_runtime_pixel_type_1aa1125958bbd71adbdec80c645b638e5e>`;
+		int :target:`num_channels<doxid-structsophus_1_1_runtime_pixel_type_1ac6144684e49dac401391e56a46935325>`;
+		int :target:`num_bytes_per_pixel_channel<doxid-structsophus_1_1_runtime_pixel_type_1a44d629b3163fcd3e7219e9daed6a50f1>`;
+
+		// methods
+	
+		template <class TPixel>
+		static RuntimePixelType :target:`fromTemplate<doxid-structsophus_1_1_runtime_pixel_type_1ad7c8d46cd9f650b0af929b07aee42692>`();
+	
+		int :target:`bytesPerPixel<doxid-structsophus_1_1_runtime_pixel_type_1abd4be6b75076e4519a3efb8193de4bd8>`() const;
+	
+		template <class TPixel>
+		bool :target:`is<doxid-structsophus_1_1_runtime_pixel_type_1a3632de636d54ed43b8bdecaffc6cf34e>`();
+	};

@@ -1,0 +1,11 @@
+.. index:: pair: struct; sophus::detail::VisitImpl
+.. _doxid-structsophus_1_1detail_1_1_visit_impl:
+
+template struct sophus::detail::VisitImpl
+=========================================
+
+.. toctree::
+	:hidden:
+
+
+

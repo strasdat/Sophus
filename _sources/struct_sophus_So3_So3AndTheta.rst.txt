@@ -1,0 +1,23 @@
+.. index:: pair: struct; sophus::So3::So3AndTheta
+.. _doxid-structsophus_1_1_so3_1_1_so3_and_theta:
+
+struct sophus::So3::So3AndTheta
+===============================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <so3.h>
+	
+	struct So3AndTheta {
+		// fields
+	
+		:ref:`So3<doxid-classsophus_1_1_so3>`<:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>`> :target:`so3<doxid-structsophus_1_1_so3_1_1_so3_and_theta_1a056833a620568e8aca923eecc0a7d402>`;
+		:ref:`Scalar<doxid-classsophus_1_1_so3_1a82ca18963a2b9a96f173a177bda297ef>` :target:`theta<doxid-structsophus_1_1_so3_1_1_so3_and_theta_1aab1434517a25972f2117842731d38c20>`;
+	};

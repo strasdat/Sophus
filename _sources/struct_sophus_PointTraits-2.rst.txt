@@ -1,0 +1,41 @@
+.. index:: pair: struct; sophus::PointTraits<TPoint>
+.. _doxid-structsophus_1_1_point_traits_3_01_t_point_01_4:
+
+template struct sophus::PointTraits<TPoint>
+===========================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <point_traits.h>
+	
+	template <ScalarType TPoint>
+	struct PointTraits<TPoint> {
+		// typedefs
+	
+		using :target:`Scalar<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1abbcee082d2bf203337250a2dd999aa87>` = TPoint ;
+		using :target:`Scalar<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1a0fe549e5171ce4b02b23b10c664d1a70>` = typename TPoint::Scalar ;
+
+		// fields
+	
+		static constexpr bool :target:`kIsFloatingPoint<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1aaa9a75b8d324366ed75ffbb17d997f45>` = std::is_floating_point_v<:ref:`Scalar<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1abbcee082d2bf203337250a2dd999aa87>`>;
+		static constexpr bool :target:`kIsInteger<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1ae88ea507dc3b453434149f109d3f54d5>` = std::is_integral_v<:ref:`Scalar<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1abbcee082d2bf203337250a2dd999aa87>`>;
+		static constexpr int :target:`kRows<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1aeaa1fde568917193543702ef05eeb3ba>` = 1;
+		static constexpr int :target:`kCols<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1a9041464744faec861bb9b7a3a1b16c9d>` = 1;
+		static constexpr bool :target:`kHasInfinity<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1a52cc3374da725ff70aa4c5927ed6ab65>` =       std::numeric_limits<:ref:`Scalar<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1abbcee082d2bf203337250a2dd999aa87>`>::has_infinity;
+		static constexpr bool :target:`kHasQuietNan<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1ad21f0cd2924f1177ad03236d180bed93>` =       std::numeric_limits<:ref:`Scalar<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1abbcee082d2bf203337250a2dd999aa87>`>::has_quiet_NaN;
+		static constexpr bool :target:`kHasSignalingNan<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1a6b65cc01e2a85e0d142f7759439d46a2>` =       std::numeric_limits<:ref:`Scalar<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1abbcee082d2bf203337250a2dd999aa87>`>::has_signaling_NaN;
+
+		// methods
+	
+		static TPoint :target:`lowest<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1a51e5d586fe2fa59f83fd46a74ab3d788>`();
+		static TPoint :target:`min<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1ac84750fa631cc01912259328bf59e4b5>`();
+		static TPoint :target:`max<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1a6d822100779451c0c0768dc5a9b3a7e9>`();
+		static TPoint :target:`epsilon<doxid-structsophus_1_1_point_traits_3_01_t_point_01_4_1a30f29a4b988c1b4419f9115feee51bce>`();
+	};

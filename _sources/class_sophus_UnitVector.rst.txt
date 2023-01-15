@@ -1,0 +1,32 @@
+.. index:: pair: class; sophus::UnitVector
+.. _doxid-classsophus_1_1_unit_vector:
+
+template class sophus::UnitVector
+=================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <unit_vector.h>
+	
+	template <class TScalar, int kN>
+	class UnitVector {
+	public:
+		// construction
+	
+		:target:`UnitVector<doxid-classsophus_1_1_unit_vector_1a4a6fd07b828c1719c402018198a43b74>`(UnitVector const&);
+
+		// methods
+	
+		static UnitVector :target:`fromUnitVector<doxid-classsophus_1_1_unit_vector_1a659620add3374b03d09a10e311b4073a>`(Eigen::Matrix<TScalar, kN, 1> const& v);
+		static Expected<UnitVector> :target:`tryFromUnitVector<doxid-classsophus_1_1_unit_vector_1a6f18649b338e5703cff9d26e22672b20>`(Eigen::Matrix<TScalar, kN, 1> const& v);
+		static UnitVector :target:`fromVectorAndNormalize<doxid-classsophus_1_1_unit_vector_1abff3dd59b3aab23fe7777b8b88494c08>`(Eigen::Matrix<TScalar, kN, 1> const& v);
+		Eigen::Matrix<TScalar, kN, 1> const& :target:`vector<doxid-classsophus_1_1_unit_vector_1a54264762ad3b689f57c95998173fbe26>`() const;
+		UnitVector& :target:`operator=<doxid-classsophus_1_1_unit_vector_1ad8afa9fd05f3b62ea5936ecc5591c8c3>`(UnitVector const&);
+	};

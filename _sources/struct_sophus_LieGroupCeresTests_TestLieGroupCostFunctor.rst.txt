@@ -1,0 +1,34 @@
+.. index:: pair: struct; sophus::LieGroupCeresTests::TestLieGroupCostFunctor
+.. _doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor:
+
+struct sophus::LieGroupCeresTests::TestLieGroupCostFunctor
+==========================================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <test_impl.h>
+	
+	struct TestLieGroupCostFunctor {
+		// fields
+	
+		:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` :target:`t_aw<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor_1a88382e647707077919376ed8b07274b5>`;
+
+		// construction
+	
+		:target:`TestLieGroupCostFunctor<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor_1ac826abd792d89010709acae666ec6926>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& t_aw);
+
+		// methods
+	
+		template <class TScalar>
+		bool :target:`operator()<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor_1a552864592f839eaad050aac3c3ee905c>`(
+			TScalar const*const s_t_wa,
+			TScalar* s_residuals
+			) const;
+	};
