@@ -5,7 +5,7 @@ sophus_linalg
 
 ]]
 farm_ng_add_library(sophus_linalg
-  NAMESPACE sophus
+  NAMESPACE Sophus
   INCLUDE_DIR ../../
   HEADERS
   rotation_matrix.h

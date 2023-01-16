@@ -6,7 +6,7 @@ sophus_lie
 ]]
 
 farm_ng_add_library(sophus_lie
-  NAMESPACE sophus
+  NAMESPACE Sophus
   INCLUDE_DIR ../../
   HEADERS
   cartesian.h

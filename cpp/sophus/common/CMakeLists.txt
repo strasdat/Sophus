@@ -5,7 +5,7 @@ sophus_common
 
 ]]
 farm_ng_add_library(sophus_common
-  NAMESPACE sophus
+  NAMESPACE Sophus
   INCLUDE_DIR ../../
   HEADERS
   cast.h

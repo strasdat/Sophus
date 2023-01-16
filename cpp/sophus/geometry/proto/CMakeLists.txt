@@ -1,5 +1,5 @@
 farm_ng_add_library(sophus_geometry_proto_conv
-  NAMESPACE sophus
+  NAMESPACE Sophus
   INCLUDE_DIR ../../..
   HEADERS
     conv.h
