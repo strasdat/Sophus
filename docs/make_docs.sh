@@ -25,4 +25,4 @@ pwd
 doxygen doxyfile
 .doxyrest/doxyrest_b/doxyrest/bin/Release/doxyrest -c doxyrest-config.lua
 
-sphinx-build -b html -c . api_autogen html-dir
+sphinx-build -b html . html-dir
