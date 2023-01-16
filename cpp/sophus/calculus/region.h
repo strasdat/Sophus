@@ -297,7 +297,7 @@ class Region {
   }
 
  private:
-  explicit Region(UninitTag) {}
+  explicit Region(UninitTag /*unused*/) {}
 
   // invariant: this->isEmpty() or min_max[0] <= min_max[1]
   std::array<TPoint, 2> min_max_;
