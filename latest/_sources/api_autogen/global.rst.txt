@@ -84,19 +84,19 @@ Overview
 
 	// global functions
 
-	sophus_calculus :target:`farm_ng_add_library<doxid-calculus_2_c_make_lists_8txt_1ac9767726d526853033499b7b1bb4ba8d>`(sophus_calculus NAMESPACE sophus INCLUDE_DIR ../../HEADERS num_diff.h region. h);
-	sophus_ceres :target:`farm_ng_add_library<doxid-ceres_2_c_make_lists_8txt_1ab087ddefa22800a657cec159cd5f6eb1>`(sophus_ceres NAMESPACE sophus INCLUDE_DIR ../../HEADERS jet_helpers.h manifold.h typetraits. h);
+	sophus_calculus :target:`farm_ng_add_library<doxid-calculus_2_c_make_lists_8txt_1a48ebb09b12498c55896717b9749457de>`(sophus_calculus NAMESPACE Sophus INCLUDE_DIR ../../HEADERS num_diff.h region. h);
+	sophus_ceres :target:`farm_ng_add_library<doxid-ceres_2_c_make_lists_8txt_1a00d6b193ea699323bd170277282875c9>`(sophus_ceres NAMESPACE Sophus INCLUDE_DIR ../../HEADERS jet_helpers.h manifold.h typetraits. h);
 	:target:`find_package<doxid-ceres_2_c_make_lists_8txt_1abce78632778f332bf7ebaa6bf9da3e20>`(Ceres 2.1.0 REQUIRED);
-	sophus_geometry :target:`farm_ng_add_library<doxid-geometry_2_c_make_lists_8txt_1ac5af3e3bd14427db1e0e5528ca46af05>`(sophus_geometry NAMESPACE sophus INCLUDE_DIR ../../HEADERS fit_plane.h inverse_depth.h plane_conv.h point_transform.h projection.h unit_vector.h ray. h);
+	sophus_geometry :target:`farm_ng_add_library<doxid-geometry_2_c_make_lists_8txt_1a50f3d825e632449a5049cb3e69c9ced2>`(sophus_geometry NAMESPACE Sophus INCLUDE_DIR ../../HEADERS fit_plane.h inverse_depth.h plane_conv.h point_transform.h projection.h unit_vector.h ray. h);
 	:target:`foreach<doxid-geometry_2_c_make_lists_8txt_1ac3bb42a77a2fca2ea1c4c749ce6442d4>`(test_basename fit_plane inverse_depth plane_conv point_transform projection unit_vector ray);
 	sophus_image :target:`set<doxid-image_2_c_make_lists_8txt_1aeb78c187ac17753aa548ec01c8d70c22>`(sophus_image_src_prefixes interpolation image image_size image_types image_view runtime_image);
 	:target:`list<doxid-image_2_c_make_lists_8txt_1af11fb813573ad109986ecf98ccb2adaf>`(APPEND sophus_image_cpp ${x}. cpp);
-	h :target:`endforeach<doxid-image_2_c_make_lists_8txt_1aa61ee307b2daf1e98f4271c7c8e73efe>`();
-	sophus_lie :target:`farm_ng_add_library<doxid-lie_2_c_make_lists_8txt_1a09adc7a00d35eff99eb25da51709e635>`(sophus_lie NAMESPACE sophus INCLUDE_DIR ../../HEADERS cartesian.h rxso2.h rxso3.h se2.h se3.h sim2.h sim3.h so2.h so3.h details/sim_impl. h);
+	h :target:`endforeach<doxid-image_2_c_make_lists_8txt_1aa6c0ba904cc8765de222ae7032b1ba17>`();
+	sophus_lie :target:`farm_ng_add_library<doxid-lie_2_c_make_lists_8txt_1a43a42fe4ec8c164e59d63671266e14e2>`(sophus_lie NAMESPACE Sophus INCLUDE_DIR ../../HEADERS cartesian.h rxso2.h rxso3.h se2.h se3.h sim2.h sim3.h so2.h so3.h details/sim_impl. h);
 	:target:`foreach<doxid-lie_2_c_make_lists_8txt_1a6d462f20eac9e012a799360c0e1707eb>`(test_basename cartesian2 cartesian3 common rxso2 rxso3 se2 se3 sim2 sim3 so2 so3);
 	sophus_sensor :target:`set<doxid-sensor_2_c_make_lists_8txt_1a4deefe3ef82322b8ef39e304f2461b34>`(sophus_sensor_src_prefixes camera_model clipping_planes imu_model camera_rig orthographic);
 	:target:`list<doxid-sensor_2_c_make_lists_8txt_1a80bbdb79c3ab98ebd3644f5ba8191b35>`(APPEND sophus_sensor_cpp ${x}. cpp);
-	h :target:`endforeach<doxid-sensor_2_c_make_lists_8txt_1aa159bf81ab9afde9078969044abdcdc8>`();
+	h :target:`endforeach<doxid-sensor_2_c_make_lists_8txt_1a8575e2808389477d7784a967fa2082df>`();
 	:target:`TEST<doxid-region__test_8cpp_1a94d929eadb462b65b863f3d4117c11c4>`(ScalarRegion, unit);
 	int :target:`main<doxid-ceres_2rxso2__test_8cpp_1a2c3f6775325c30275d11c6abee2db6a0>`(int, char**);
 	int :target:`main<doxid-lie_2rxso2__test_8cpp_1ae66f6b31b5ad750f1fe042a706a4e3d4>`();
