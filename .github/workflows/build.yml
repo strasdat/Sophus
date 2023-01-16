@@ -1,0 +1,108 @@
+on:
+  push:
+    branches: [master, 23.04-beta]
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            compiler: gcc
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            build_protos: On
+          - os: ubuntu-20.04
+            compiler: clang
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            build_protos: On
+          - os: ubuntu-20.04
+            compiler: gcc
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            build_protos: Off
+          - os: ubuntu-20.04
+            compiler: gcc
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            build_protos: On
+          - os: ubuntu-20.04
+            compiler: gcc
+            tests: unit_test
+            access: row_major
+            build_type: Release
+            build_protos: On
+          - os: ubuntu-20.04
+            compiler: clang
+            tests: clang_tidy
+            access: col_major
+            build_type: Release
+            build_protos: Off
+          - os: ubuntu-20.04
+            compiler: gcc
+            tests: coverage
+            access: col_major
+            build_type: Debug
+            build_protos: On
+          - os: macos-11
+            compiler: clang
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            build_protos: On
+      fail-fast: false
+    env:
+      BUILD_TYPE: ${{ matrix.build_type }}
+      BUILD_PROTOS: ${{ matrix.build_protos }}
+
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
+
+      - uses: hendrikmuhs/ccache-action@v1
+
+      - name: Install dependencies (Ubuntu)
+        run: ./scripts/install_deps_ubuntu.sh
+        if: matrix.os == 'ubuntu-20.04'
+
+      - name: Install dependencies (Mac)
+        run: |
+          ./scripts/install_ci_deps_mac.sh
+        if: matrix.os == 'macos-11'
+
+      - name: Compile (gcc) & tests
+        run:
+          ./scripts/compile_gcc.sh
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'unit_test' && matrix.compiler == 'gcc'
+
+      - name: Compile (clang) & tests
+        run:
+          ./scripts/compile_clang.sh
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'unit_test' && matrix.compiler == 'clang'
+
+      - name: Compile (clang) & tests coverage
+        run:
+          ./scripts/compile_gcc_coverage.sh
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'coverage'
+
+      - name: clang-tidy
+        run: |
+          ./run_clang_tidy.sh
+        if: matrix.tests == 'clang_tidy'

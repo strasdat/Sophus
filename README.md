@@ -22,10 +22,6 @@
 <img src="https://github.com/strasdat/Sophus/actions/workflows/sympy.yml/badge.svg"
        alt="Sympy CI Badge"/>
 </a>
-<a href="https://github.com/strasdat/Sophus/stargazers">
-  <img src="https://img.shields.io/github/stars/elangosundar/awesome-README-templates"
-       alt="Stars Badge"/>
-</a>
 <a href="https://github.com/strasdat/Sophus/graphs/contributors">
   <img src="https://img.shields.io/github/contributors/elangosundar/awesome-README-templates?color=2b9348"
        alt="Sophus contributors">
