@@ -1,0 +1,89 @@
+.. index:: pair: class; sophus::LieGroupTests
+.. _doxid-classsophus_1_1_lie_group_tests:
+
+template class sophus::LieGroupTests
+====================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <test_impl.h>
+	
+	template <class TLieGroup>
+	class LieGroupTests {
+	public:
+		// typedefs
+	
+		using :target:`LieGroup<doxid-classsophus_1_1_lie_group_tests_1a6ce63c05d6a840ef445d2e9bc8b5868d>` = TLieGroup ;
+		using :target:`Scalar<doxid-classsophus_1_1_lie_group_tests_1a9192b8555ab2d631cfa99993a5534cf4>` = typename LieGroup::Scalar ;
+		using :target:`Transformation<doxid-classsophus_1_1_lie_group_tests_1ab22e195f3e2aa2b76eb43b78a47780d8>` = typename LieGroup::Transformation ;
+		using :target:`Tangent<doxid-classsophus_1_1_lie_group_tests_1a6d31f72ee94140feeb3bc065e0e877e1>` = typename LieGroup::Tangent ;
+		using :target:`Point<doxid-classsophus_1_1_lie_group_tests_1a9603aea8e33f14def1a747c984c31981>` = typename LieGroup::Point ;
+		using :target:`HomogeneousPoint<doxid-classsophus_1_1_lie_group_tests_1a738f724d87299de6ace3d06668ea65e5>` = typename LieGroup::HomogeneousPoint ;
+		using :target:`ConstPointMap<doxid-classsophus_1_1_lie_group_tests_1ae783bd5e657a9a26876c017819d69ddb>` = Eigen::Map<const :ref:`Point<doxid-classsophus_1_1_lie_group_tests_1a9603aea8e33f14def1a747c984c31981>`> ;
+		using :target:`Line<doxid-classsophus_1_1_lie_group_tests_1a41f4939e782c96460992facc2fcd3f0f>` = typename LieGroup::Line ;
+		using :target:`Hyperplane<doxid-classsophus_1_1_lie_group_tests_1a74a94418f9e7cbd3e3ef256affe01e7c>` = typename LieGroup::Hyperplane ;
+		using :target:`Adjoint<doxid-classsophus_1_1_lie_group_tests_1af75c238f4fa6bf992e7b3ef409be7f4d>` = typename LieGroup::Adjoint ;
+
+		// fields
+	
+		static constexpr int :target:`kPointDim<doxid-classsophus_1_1_lie_group_tests_1a634da78451e248eb0269c392a68a7d8d>` = LieGroup::kPointDim;
+		static constexpr int :target:`kMatrixDim<doxid-classsophus_1_1_lie_group_tests_1a8fe84654850f8d36266b06d5d236ebfe>` = LieGroup::kMatrixDim;
+		static constexpr int :target:`kDoF<doxid-classsophus_1_1_lie_group_tests_1a59e17d546a97a12e02a211d8fb194ed1>` = LieGroup::kDoF;
+		static constexpr int :target:`kNumParameters<doxid-classsophus_1_1_lie_group_tests_1ab5e9ce99f331a099b06f07e4ad87c9d2>` = LieGroup::kNumParameters;
+
+		// construction
+	
+		:target:`LieGroupTests<doxid-classsophus_1_1_lie_group_tests_1a78e9a06bb0b486d0c7483fe8b1a4e735>`(
+			std::vector<:ref:`LieGroup<doxid-classsophus_1_1_lie_group_tests_1a6ce63c05d6a840ef445d2e9bc8b5868d>`, Eigen::aligned_allocator<:ref:`LieGroup<doxid-classsophus_1_1_lie_group_tests_1a6ce63c05d6a840ef445d2e9bc8b5868d>`>> const& group_vec,
+			std::vector<:ref:`Tangent<doxid-classsophus_1_1_lie_group_tests_1a6d31f72ee94140feeb3bc065e0e877e1>`, Eigen::aligned_allocator<:ref:`Tangent<doxid-classsophus_1_1_lie_group_tests_1a6d31f72ee94140feeb3bc065e0e877e1>`>> const& tangent_vec,
+			std::vector<:ref:`Point<doxid-classsophus_1_1_lie_group_tests_1a9603aea8e33f14def1a747c984c31981>`, Eigen::aligned_allocator<:ref:`Point<doxid-classsophus_1_1_lie_group_tests_1a9603aea8e33f14def1a747c984c31981>`>> const& point_vec
+		);
+
+		// methods
+	
+		bool :target:`adjointTest<doxid-classsophus_1_1_lie_group_tests_1a98ae94410d518e008bbd80bfc02553de>`();
+	
+		template <class TG = LieGroup>
+		std::enable_if_t<std::is_same<TG, :ref:`So3<doxid-classsophus_1_1_so3>`<:ref:`Scalar<doxid-classsophus_1_1_lie_group_tests_1a9192b8555ab2d631cfa99993a5534cf4>`>>::value||std::is_same<TG, :ref:`Se3<doxid-classsophus_1_1_se3>`<:ref:`Scalar<doxid-classsophus_1_1_lie_group_tests_1a9192b8555ab2d631cfa99993a5534cf4>`>>::value, bool> :target:`leftJacobianTest<doxid-classsophus_1_1_lie_group_tests_1a15e3e167fd275bbccfd546898ac4bbf0>`();
+	
+		template <class TG = LieGroup>
+		std::enable_if_t<!(std::is_same<TG, :ref:`So3<doxid-classsophus_1_1_so3>`<:ref:`Scalar<doxid-classsophus_1_1_lie_group_tests_1a9192b8555ab2d631cfa99993a5534cf4>`>>::value||std::is_same<TG, :ref:`Se3<doxid-classsophus_1_1_se3>`<:ref:`Scalar<doxid-classsophus_1_1_lie_group_tests_1a9192b8555ab2d631cfa99993a5534cf4>`>>::value), bool> :target:`leftJacobianTest<doxid-classsophus_1_1_lie_group_tests_1a311de8ad8d5e5cb4c075b25c5d04f052>`();
+	
+		bool :target:`moreJacobiansTest<doxid-classsophus_1_1_lie_group_tests_1a8e31beaa740936d85bba54a3f82750b3>`();
+		bool :target:`contructorAndAssignmentTest<doxid-classsophus_1_1_lie_group_tests_1a850f0839433730f93e36608eb3766d8c>`();
+		bool :target:`derivativeTest<doxid-classsophus_1_1_lie_group_tests_1a28d71a2f9a1b4f1678e64a7f5f5423eb>`();
+	
+		template <class TG = LieGroup>
+		bool :target:`additionalDerivativeTest<doxid-classsophus_1_1_lie_group_tests_1a130cfd7dc17a22efec7828ed5fd0a421>`();
+	
+		bool :target:`productTest<doxid-classsophus_1_1_lie_group_tests_1a8cc9b98c5a0f12ad1d5bcb41fa1ee134>`();
+		bool :target:`expLogTest<doxid-classsophus_1_1_lie_group_tests_1ad3f06fdd325041da01944c8c1b1b9398>`();
+		bool :target:`expMapTest<doxid-classsophus_1_1_lie_group_tests_1a8a6134db20da92794e5bac99de352039>`();
+		bool :target:`groupActionTest<doxid-classsophus_1_1_lie_group_tests_1af24ed28723a43fe405d8adba65411a7f>`();
+		bool :target:`lineActionTest<doxid-classsophus_1_1_lie_group_tests_1a9d8947a6056aa13cdfd3277efe42b412>`();
+		bool :target:`planeActionTest<doxid-classsophus_1_1_lie_group_tests_1a76fb8cbdda0b7072bacbcc8ad52eabd3>`();
+		bool :target:`lieBracketTest<doxid-classsophus_1_1_lie_group_tests_1a562335dd15cf0b8c82803fd014a91eab>`();
+		bool :target:`veeHatTest<doxid-classsophus_1_1_lie_group_tests_1a65eacae42f331e7ca16cd6c86e2bc349>`();
+		bool :target:`newDeleteSmokeTest<doxid-classsophus_1_1_lie_group_tests_1aa28b9649d2d71383bd4360ce5801eb34>`();
+		bool :target:`interpolateAndMeanTest<doxid-classsophus_1_1_lie_group_tests_1aefdb8b69038f6c4f0c245ce363ea9cf2>`();
+		bool :target:`testRandomSmoke<doxid-classsophus_1_1_lie_group_tests_1a099d332b69f515362fef71256c3f6c00>`();
+	
+		template <class TS = Scalar>
+		std::enable_if_t<std::is_same<TS, float>::value, bool> :target:`testSpline<doxid-classsophus_1_1_lie_group_tests_1abebc9445d05afe1c7f84787f868cea4b>`();
+	
+		template <class TS = Scalar>
+		std::enable_if_t<!std::is_same<TS, float>::value, bool> :target:`testSpline<doxid-classsophus_1_1_lie_group_tests_1ae5f7520a250ca27839cedc685cd334d0>`();
+	
+		template <class TS = Scalar>
+		std::enable_if_t<std::is_floating_point<TS>::value, bool> :target:`doAllTestsPass<doxid-classsophus_1_1_lie_group_tests_1a66c7addad1edc5d416e83e4a5e2b45a5>`();
+	
+		template <class TS = Scalar>
+		std::enable_if_t<!std::is_floating_point<TS>::value, bool> :target:`doAllTestsPass<doxid-classsophus_1_1_lie_group_tests_1a65f2d630f8716638df26c1c373856a27>`();
+	};

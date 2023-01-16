@@ -1,0 +1,819 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="namespace Eigen" href="namespace_Eigen.html" /><link rel="prev" title="Page Index" href="index.html" />
+
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>Global Namespace - Sophus documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Sophus  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Sophus  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Global Namespace</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="namespace_Eigen.html">namespace Eigen</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map.html">template class Eigen::Map&lt;sophus::Cartesian&lt;TScalar, kM&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-2.html">template class Eigen::Map&lt;sophus::Sim2&lt;TScalar&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-3.html">template class Eigen::Map&lt;sophus::Sim2&lt;TScalar&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-4.html">template class Eigen::Map&lt;sophus::Se3&lt;TScalar&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-5.html">template class Eigen::Map&lt;sophus::Sim3&lt;TScalar&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-6.html">template class Eigen::Map&lt;sophus::So2&lt;TScalar&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-7.html">template class Eigen::Map&lt;sophus::Sim3&lt;TScalar&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-8.html">template class Eigen::Map&lt;sophus::So2&lt;TScalar&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-9.html">template class Eigen::Map&lt;sophus::So3&lt;TScalar&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-10.html">template class Eigen::Map&lt;sophus::Se3&lt;TScalar&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-11.html">template class Eigen::Map&lt;sophus::Se2&lt;TScalar&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-12.html">template class Eigen::Map&lt;sophus::RxSo2&lt;TScalar&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-13.html">template class Eigen::Map&lt;sophus::Cartesian&lt;TScalar, kM&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-14.html">template class Eigen::Map&lt;sophus::Se2&lt;TScalar&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-15.html">template class Eigen::Map&lt;sophus::RxSo2&lt;TScalar&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-16.html">template class Eigen::Map&lt;sophus::RxSo3&lt;TScalar&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-17.html">template class Eigen::Map&lt;sophus::RxSo3&lt;TScalar&gt; const, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_Eigen_Map-18.html">template class Eigen::Map&lt;sophus::So3&lt;TScalar&gt;, kOptions&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="namespace_ceres.html">namespace ceres</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_ceres_Jet.html">template struct ceres::Jet</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="namespace_sophus.html">namespace sophus</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="namespace_sophus_detail.html">namespace sophus::detail</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_detail_VisitImpl.html">template struct sophus::detail::VisitImpl</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_detail_VisitImpl-2.html">template struct sophus::detail::VisitImpl&lt;TUserFunc, TRuntimeImage, std::variant&lt;TPixelType&gt;&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_detail_VisitImpl-3.html">template struct sophus::detail::VisitImpl&lt;TUserFunc, TRuntimeImage, std::variant&lt;TPixelType, TRest…&gt;&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="namespace_sophus_jet_helpers.html">namespace sophus::jet_helpers</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_jet_helpers_GetValue.html">template struct sophus::jet_helpers::GetValue</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_jet_helpers_GetValue-2.html">template struct sophus::jet_helpers::GetValue&lt;ceres::Jet&lt;TScalar, kN&gt;&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="enum_sophus_SegmentCase.html">enum sophus::SegmentCase</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_AnyImagePredicate.html">struct sophus::AnyImagePredicate</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_BasisSplineSegment.html">template struct sophus::BasisSplineSegment</a><input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_CameraInRig.html">struct sophus::CameraInRig</a><input class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ClippingPlanes.html">struct sophus::ClippingPlanes</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ClosestApproachResult.html">template struct sophus::ClosestApproachResult</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_GetScalar.html">template struct sophus::GetScalar</a><input class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_GetScalar-2.html">template struct sophus::GetScalar&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ImageSize.html">struct sophus::ImageSize</a><input class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ImageTraits.html">template struct sophus::ImageTraits</a><input class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ImageTraits-2.html">template struct sophus::ImageTraits&lt;Eigen::Matrix&lt;TT, kNumChannelsT, 1&gt;&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ImageView.html">template struct sophus::ImageView</a><input class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_IndexAndU.html">struct sophus::IndexAndU</a><input class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_IsFixedSizeVector.html">template struct sophus::IsFixedSizeVector</a><input class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_IsFloatingPoint.html">template struct sophus::IsFloatingPoint</a><input class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_IsFloatingPoint-2.html">template struct sophus::IsFloatingPoint&lt;Eigen::Matrix&lt;TScalar, kM, kMatrixDim&gt;&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_IsUniformRandomBitGenerator.html">template struct sophus::IsUniformRandomBitGenerator</a><input class="toctree-checkbox" id="toctree-checkbox-46" name="toctree-checkbox-46" role="switch" type="checkbox"/><label for="toctree-checkbox-46"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_LieGroupCeresTests.html">template struct sophus::LieGroupCeresTests</a><input class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_LieGroupCeresTests_TestGraphFunctor.html">struct sophus::LieGroupCeresTests::TestGraphFunctor</a><input class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" role="switch" type="checkbox"/><label for="toctree-checkbox-48"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_LieGroupCeresTests_TestLieGroupCostFunctor.html">struct sophus::LieGroupCeresTests::TestLieGroupCostFunctor</a><input class="toctree-checkbox" id="toctree-checkbox-49" name="toctree-checkbox-49" role="switch" type="checkbox"/><label for="toctree-checkbox-49"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_LieGroupCeresTests_TestPointCostFunctor.html">struct sophus::LieGroupCeresTests::TestPointCostFunctor</a><input class="toctree-checkbox" id="toctree-checkbox-50" name="toctree-checkbox-50" role="switch" type="checkbox"/><label for="toctree-checkbox-50"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_Mapper.html">template struct sophus::Mapper</a><input class="toctree-checkbox" id="toctree-checkbox-51" name="toctree-checkbox-51" role="switch" type="checkbox"/><label for="toctree-checkbox-51"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_Mapper-2.html">template struct sophus::Mapper&lt;TScalar, typename std::enable_if&lt;kIsMappableV&lt;TScalar&gt;&gt;::type&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-52" name="toctree-checkbox-52" role="switch" type="checkbox"/><label for="toctree-checkbox-52"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_MultiCameraRig.html">struct sophus::MultiCameraRig</a><input class="toctree-checkbox" id="toctree-checkbox-53" name="toctree-checkbox-53" role="switch" type="checkbox"/><label for="toctree-checkbox-53"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_PointTraits.html">template struct sophus::PointTraits</a><input class="toctree-checkbox" id="toctree-checkbox-54" name="toctree-checkbox-54" role="switch" type="checkbox"/><label for="toctree-checkbox-54"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_PointTraits-2.html">template struct sophus::PointTraits&lt;TPoint&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-55" name="toctree-checkbox-55" role="switch" type="checkbox"/><label for="toctree-checkbox-55"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ProjectionOrtho.html">struct sophus::ProjectionOrtho</a><input class="toctree-checkbox" id="toctree-checkbox-56" name="toctree-checkbox-56" role="switch" type="checkbox"/><label for="toctree-checkbox-56"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ProjectionZ1.html">struct sophus::ProjectionZ1</a><input class="toctree-checkbox" id="toctree-checkbox-57" name="toctree-checkbox-57" role="switch" type="checkbox"/><label for="toctree-checkbox-57"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_Random.html">template struct sophus::Random</a><input class="toctree-checkbox" id="toctree-checkbox-58" name="toctree-checkbox-58" role="switch" type="checkbox"/><label for="toctree-checkbox-58"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_Random-2.html">template struct sophus::Random&lt;double&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-59" name="toctree-checkbox-59" role="switch" type="checkbox"/><label for="toctree-checkbox-59"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_RuntimePixelType.html">struct sophus::RuntimePixelType</a><input class="toctree-checkbox" id="toctree-checkbox-60" name="toctree-checkbox-60" role="switch" type="checkbox"/><label for="toctree-checkbox-60"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityAcceleroModel.html">template struct sophus::ScalingNonOrthogonalityAcceleroModel</a><input class="toctree-checkbox" id="toctree-checkbox-61" name="toctree-checkbox-61" role="switch" type="checkbox"/><label for="toctree-checkbox-61"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_ScalingNonOrthogonalityGyroModel.html">template struct sophus::ScalingNonOrthogonalityGyroModel</a><input class="toctree-checkbox" id="toctree-checkbox-62" name="toctree-checkbox-62" role="switch" type="checkbox"/><label for="toctree-checkbox-62"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_UninitTag.html">struct sophus::UninitTag</a><input class="toctree-checkbox" id="toctree-checkbox-63" name="toctree-checkbox-63" role="switch" type="checkbox"/><label for="toctree-checkbox-63"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="struct_sophus_VariantImagePredicate.html">template struct sophus::VariantImagePredicate</a><input class="toctree-checkbox" id="toctree-checkbox-64" name="toctree-checkbox-64" role="switch" type="checkbox"/><label for="toctree-checkbox-64"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_AffineTransform.html">class sophus::AffineTransform</a><input class="toctree-checkbox" id="toctree-checkbox-65" name="toctree-checkbox-65" role="switch" type="checkbox"/><label for="toctree-checkbox-65"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_BasisSpline.html">template class sophus::BasisSpline</a><input class="toctree-checkbox" id="toctree-checkbox-66" name="toctree-checkbox-66" role="switch" type="checkbox"/><label for="toctree-checkbox-66"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_BasisSplineFn.html">template class sophus::BasisSplineFn</a><input class="toctree-checkbox" id="toctree-checkbox-67" name="toctree-checkbox-67" role="switch" type="checkbox"/><label for="toctree-checkbox-67"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_BasisSplineImpl.html">template class sophus::BasisSplineImpl</a><input class="toctree-checkbox" id="toctree-checkbox-68" name="toctree-checkbox-68" role="switch" type="checkbox"/><label for="toctree-checkbox-68"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_BrownConradyTransform.html">class sophus::BrownConradyTransform</a><input class="toctree-checkbox" id="toctree-checkbox-69" name="toctree-checkbox-69" role="switch" type="checkbox"/><label for="toctree-checkbox-69"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_CameraModel.html">class sophus::CameraModel</a><input class="toctree-checkbox" id="toctree-checkbox-70" name="toctree-checkbox-70" role="switch" type="checkbox"/><label for="toctree-checkbox-70"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_CameraModelT.html">template class sophus::CameraModelT</a><input class="toctree-checkbox" id="toctree-checkbox-71" name="toctree-checkbox-71" role="switch" type="checkbox"/><label for="toctree-checkbox-71"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Cartesian.html">template class sophus::Cartesian</a><input class="toctree-checkbox" id="toctree-checkbox-72" name="toctree-checkbox-72" role="switch" type="checkbox"/><label for="toctree-checkbox-72"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_CartesianBase.html">template class sophus::CartesianBase</a><input class="toctree-checkbox" id="toctree-checkbox-73" name="toctree-checkbox-73" role="switch" type="checkbox"/><label for="toctree-checkbox-73"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Image.html">template class sophus::Image</a><input class="toctree-checkbox" id="toctree-checkbox-74" name="toctree-checkbox-74" role="switch" type="checkbox"/><label for="toctree-checkbox-74"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_ImageShape.html">class sophus::ImageShape</a><input class="toctree-checkbox" id="toctree-checkbox-75" name="toctree-checkbox-75" role="switch" type="checkbox"/><label for="toctree-checkbox-75"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_ImuModel.html">class sophus::ImuModel</a><input class="toctree-checkbox" id="toctree-checkbox-76" name="toctree-checkbox-76" role="switch" type="checkbox"/><label for="toctree-checkbox-76"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_InverseDepthPoint3.html">template class sophus::InverseDepthPoint3</a><input class="toctree-checkbox" id="toctree-checkbox-77" name="toctree-checkbox-77" role="switch" type="checkbox"/><label for="toctree-checkbox-77"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_KannalaBrandtK3Transform.html">class sophus::KannalaBrandtK3Transform</a><input class="toctree-checkbox" id="toctree-checkbox-78" name="toctree-checkbox-78" role="switch" type="checkbox"/><label for="toctree-checkbox-78"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_LieGroupTests.html">template class sophus::LieGroupTests</a><input class="toctree-checkbox" id="toctree-checkbox-79" name="toctree-checkbox-79" role="switch" type="checkbox"/><label for="toctree-checkbox-79"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Manifold.html">template class sophus::Manifold</a><input class="toctree-checkbox" id="toctree-checkbox-80" name="toctree-checkbox-80" role="switch" type="checkbox"/><label for="toctree-checkbox-80"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_MutImage.html">template class sophus::MutImage</a><input class="toctree-checkbox" id="toctree-checkbox-81" name="toctree-checkbox-81" role="switch" type="checkbox"/><label for="toctree-checkbox-81"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_MutImage_Deleter.html">struct sophus::MutImage::Deleter</a><input class="toctree-checkbox" id="toctree-checkbox-82" name="toctree-checkbox-82" role="switch" type="checkbox"/><label for="toctree-checkbox-82"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_MutImage_TypedDeleterImpl.html">struct sophus::MutImage::TypedDeleterImpl</a><input class="toctree-checkbox" id="toctree-checkbox-83" name="toctree-checkbox-83" role="switch" type="checkbox"/><label for="toctree-checkbox-83"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_MutImageView.html">template class sophus::MutImageView</a><input class="toctree-checkbox" id="toctree-checkbox-84" name="toctree-checkbox-84" role="switch" type="checkbox"/><label for="toctree-checkbox-84"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_PointTransformer.html">template class sophus::PointTransformer</a><input class="toctree-checkbox" id="toctree-checkbox-85" name="toctree-checkbox-85" role="switch" type="checkbox"/><label for="toctree-checkbox-85"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Ray.html">template class sophus::Ray</a><input class="toctree-checkbox" id="toctree-checkbox-86" name="toctree-checkbox-86" role="switch" type="checkbox"/><label for="toctree-checkbox-86"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_Ray_IntersectionResult.html">struct sophus::Ray::IntersectionResult</a><input class="toctree-checkbox" id="toctree-checkbox-87" name="toctree-checkbox-87" role="switch" type="checkbox"/><label for="toctree-checkbox-87"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Region.html">template class sophus::Region</a><input class="toctree-checkbox" id="toctree-checkbox-88" name="toctree-checkbox-88" role="switch" type="checkbox"/><label for="toctree-checkbox-88"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_RuntimeImage.html">template class sophus::RuntimeImage</a><input class="toctree-checkbox" id="toctree-checkbox-89" name="toctree-checkbox-89" role="switch" type="checkbox"/><label for="toctree-checkbox-89"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_RuntimeImageView.html">template class sophus::RuntimeImageView</a><input class="toctree-checkbox" id="toctree-checkbox-90" name="toctree-checkbox-90" role="switch" type="checkbox"/><label for="toctree-checkbox-90"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_RxSo2.html">template class sophus::RxSo2</a><input class="toctree-checkbox" id="toctree-checkbox-91" name="toctree-checkbox-91" role="switch" type="checkbox"/><label for="toctree-checkbox-91"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_RxSo2Base.html">template class sophus::RxSo2Base</a><input class="toctree-checkbox" id="toctree-checkbox-92" name="toctree-checkbox-92" role="switch" type="checkbox"/><label for="toctree-checkbox-92"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_RxSo3.html">template class sophus::RxSo3</a><input class="toctree-checkbox" id="toctree-checkbox-93" name="toctree-checkbox-93" role="switch" type="checkbox"/><label for="toctree-checkbox-93"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_RxSo3_RxSo3AndTheta.html">struct sophus::RxSo3::RxSo3AndTheta</a><input class="toctree-checkbox" id="toctree-checkbox-94" name="toctree-checkbox-94" role="switch" type="checkbox"/><label for="toctree-checkbox-94"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_RxSo3Base.html">template class sophus::RxSo3Base</a><input class="toctree-checkbox" id="toctree-checkbox-95" name="toctree-checkbox-95" role="switch" type="checkbox"/><label for="toctree-checkbox-95"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_RxSo3Base_TangentAndTheta.html">struct sophus::RxSo3Base::TangentAndTheta</a><input class="toctree-checkbox" id="toctree-checkbox-96" name="toctree-checkbox-96" role="switch" type="checkbox"/><label for="toctree-checkbox-96"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Se2.html">template class sophus::Se2</a><input class="toctree-checkbox" id="toctree-checkbox-97" name="toctree-checkbox-97" role="switch" type="checkbox"/><label for="toctree-checkbox-97"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Se2Base.html">template class sophus::Se2Base</a><input class="toctree-checkbox" id="toctree-checkbox-98" name="toctree-checkbox-98" role="switch" type="checkbox"/><label for="toctree-checkbox-98"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Se3.html">template class sophus::Se3</a><input class="toctree-checkbox" id="toctree-checkbox-99" name="toctree-checkbox-99" role="switch" type="checkbox"/><label for="toctree-checkbox-99"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Se3Base.html">template class sophus::Se3Base</a><input class="toctree-checkbox" id="toctree-checkbox-100" name="toctree-checkbox-100" role="switch" type="checkbox"/><label for="toctree-checkbox-100"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Sim2.html">template class sophus::Sim2</a><input class="toctree-checkbox" id="toctree-checkbox-101" name="toctree-checkbox-101" role="switch" type="checkbox"/><label for="toctree-checkbox-101"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Sim2Base.html">template class sophus::Sim2Base</a><input class="toctree-checkbox" id="toctree-checkbox-102" name="toctree-checkbox-102" role="switch" type="checkbox"/><label for="toctree-checkbox-102"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Sim3.html">template class sophus::Sim3</a><input class="toctree-checkbox" id="toctree-checkbox-103" name="toctree-checkbox-103" role="switch" type="checkbox"/><label for="toctree-checkbox-103"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Sim3Base.html">template class sophus::Sim3Base</a><input class="toctree-checkbox" id="toctree-checkbox-104" name="toctree-checkbox-104" role="switch" type="checkbox"/><label for="toctree-checkbox-104"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_So2.html">template class sophus::So2</a><input class="toctree-checkbox" id="toctree-checkbox-105" name="toctree-checkbox-105" role="switch" type="checkbox"/><label for="toctree-checkbox-105"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_So2Base.html">template class sophus::So2Base</a><input class="toctree-checkbox" id="toctree-checkbox-106" name="toctree-checkbox-106" role="switch" type="checkbox"/><label for="toctree-checkbox-106"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_So3.html">template class sophus::So3</a><input class="toctree-checkbox" id="toctree-checkbox-107" name="toctree-checkbox-107" role="switch" type="checkbox"/><label for="toctree-checkbox-107"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_So3_So3AndTheta.html">struct sophus::So3::So3AndTheta</a><input class="toctree-checkbox" id="toctree-checkbox-108" name="toctree-checkbox-108" role="switch" type="checkbox"/><label for="toctree-checkbox-108"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_So3Base.html">template class sophus::So3Base</a><input class="toctree-checkbox" id="toctree-checkbox-109" name="toctree-checkbox-109" role="switch" type="checkbox"/><label for="toctree-checkbox-109"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="struct_sophus_So3Base_TangentAndTheta.html">struct sophus::So3Base::TangentAndTheta</a><input class="toctree-checkbox" id="toctree-checkbox-110" name="toctree-checkbox-110" role="switch" type="checkbox"/><label for="toctree-checkbox-110"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_SplineBasisFunction.html">template class sophus::SplineBasisFunction</a><input class="toctree-checkbox" id="toctree-checkbox-111" name="toctree-checkbox-111" role="switch" type="checkbox"/><label for="toctree-checkbox-111"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_Tests.html">template class sophus::Tests</a><input class="toctree-checkbox" id="toctree-checkbox-112" name="toctree-checkbox-112" role="switch" type="checkbox"/><label for="toctree-checkbox-112"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="class_sophus_UnitVector.html">template class sophus::UnitVector</a><input class="toctree-checkbox" id="toctree-checkbox-113" name="toctree-checkbox-113" role="switch" type="checkbox"/><label for="toctree-checkbox-113"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart.html">template struct RotationalPart</a><input class="toctree-checkbox" id="toctree-checkbox-114" name="toctree-checkbox-114" role="switch" type="checkbox"/><label for="toctree-checkbox-114"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart-2.html">template struct RotationalPart&lt;sophus::Sim2d&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-115" name="toctree-checkbox-115" role="switch" type="checkbox"/><label for="toctree-checkbox-115"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart-3.html">template struct RotationalPart&lt;sophus::Sim3d&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-116" name="toctree-checkbox-116" role="switch" type="checkbox"/><label for="toctree-checkbox-116"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart-4.html">template struct RotationalPart&lt;sophus::SO2d&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-117" name="toctree-checkbox-117" role="switch" type="checkbox"/><label for="toctree-checkbox-117"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart-5.html">template struct RotationalPart&lt;sophus::SE3d&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-118" name="toctree-checkbox-118" role="switch" type="checkbox"/><label for="toctree-checkbox-118"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart-6.html">template struct RotationalPart&lt;sophus::RxSO3d&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-119" name="toctree-checkbox-119" role="switch" type="checkbox"/><label for="toctree-checkbox-119"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart-7.html">template struct RotationalPart&lt;sophus::Se2F64&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-120" name="toctree-checkbox-120" role="switch" type="checkbox"/><label for="toctree-checkbox-120"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart-8.html">template struct RotationalPart&lt;sophus::RxSO2d&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-121" name="toctree-checkbox-121" role="switch" type="checkbox"/><label for="toctree-checkbox-121"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="struct_RotationalPart-9.html">template struct RotationalPart&lt;sophus::SO3d&gt;</a><input class="toctree-checkbox" id="toctree-checkbox-122" name="toctree-checkbox-122" role="switch" type="checkbox"/><label for="toctree-checkbox-122"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <span class="target" id="global"></span><section id="global-namespace">
+<span id="index-0"></span><h1>Global Namespace<a class="headerlink" href="#global-namespace" title="Permalink to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h2>
+<pre class="highlight doxyrest-overview-code-block literal-block"><span></span><span class="c1">// namespaces</span>
+
+<span class="k">namespace</span> <a class="reference internal" href="namespace_Eigen.html#doxid-namespace-eigen"><span class="std std-ref">Eigen</span></a><span></span><span class="p">;</span>
+<span class="k">namespace</span> <a class="reference internal" href="namespace_ceres.html#doxid-namespaceceres"><span class="std std-ref">ceres</span></a><span></span><span class="p">;</span>
+<span class="k">namespace</span> <a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus"><span class="std std-ref">sophus</span></a><span></span><span class="p">;</span>
+    <span class="k">namespace</span> <a class="reference internal" href="namespace_sophus_detail.html#doxid-namespacesophus-1-1detail"><span class="std std-ref">sophus::detail</span></a><span></span><span class="p">;</span>
+    <span class="k">namespace</span> <a class="reference internal" href="namespace_sophus_jet_helpers.html#doxid-namespacesophus-1-1jet-helpers"><span class="std std-ref">sophus::jet_helpers</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// typedefs</span>
+
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2rxso2-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642"><span></span><span class="n">StdVector</span></span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2rxso3-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642"><span></span><span class="n">StdVector</span></span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2se2-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642"><span></span><span class="n">StdVector</span></span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2se3-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642"><span></span><span class="n">StdVector</span></span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2sim2-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642"><span></span><span class="n">StdVector</span></span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2sim3-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642"><span></span><span class="n">StdVector</span></span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2so2-test-8cpp-1a37b05f138e42d01eb88dd6fe6fd04268"><span></span><span class="n">StdVector</span></span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TScalar</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TScalar</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-ceres-2so3-test-8cpp-1a9ad293cf315c33e96e60a5157b3f0642"><span></span><span class="n">StdVector</span></span><span></span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TT</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><span class="n">TT</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+
+<span class="c1">// structs</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TLieGroup</span><span class="o">&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart.html#doxid-struct-rotational-part"><span class="std std-ref">RotationalPart</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-2.html#doxid-struct-rotational-part-3-01sophus-1-1-sim2d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::Sim2d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-3.html#doxid-struct-rotational-part-3-01sophus-1-1-sim3d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::Sim3d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-4.html#doxid-struct-rotational-part-3-01sophus-1-1-s-o2d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::SO2d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-5.html#doxid-struct-rotational-part-3-01sophus-1-1-s-e3d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::SE3d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-6.html#doxid-struct-rotational-part-3-01sophus-1-1-rx-s-o3d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::RxSO3d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-7.html#doxid-struct-rotational-part-3-01sophus-1-1-se2-f64-01-4"><span class="std std-ref">RotationalPart&lt;sophus::Se2F64&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-8.html#doxid-struct-rotational-part-3-01sophus-1-1-rx-s-o2d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::RxSO2d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_RotationalPart-9.html#doxid-struct-rotational-part-3-01sophus-1-1-s-o3d-01-4"><span class="std std-ref">RotationalPart&lt;sophus::SO3d&gt;</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global variables</span>
+
+<span class="k">constexpr</span> <span class="kt">double</span> <span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1af76b1cbee6975410245bb3137a44df6a"><span></span><span class="n">kEps</span></span><span></span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<span class="n">sophus_calculus</span> <span class="doxyrest-code-target target" id="doxid-calculus-2-c-make-lists-8txt-1ac9767726d526853033499b7b1bb4ba8d"><span></span><span class="n">farm_ng_add_library</span></span><span></span><span class="p">(</span><span class="n">sophus_calculus</span> <span class="n">NAMESPACE</span> <span class="n">sophus</span> <span class="n">INCLUDE_DIR</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">HEADERS</span> <span class="n">num_diff</span><span class="p">.</span><span class="n">h</span> <span class="n">region</span><span class="p">.</span> <span class="n">h</span><span class="p">);</span>
+<span class="n">sophus_ceres</span> <span class="doxyrest-code-target target" id="doxid-ceres-2-c-make-lists-8txt-1ab087ddefa22800a657cec159cd5f6eb1"><span></span><span class="n">farm_ng_add_library</span></span><span></span><span class="p">(</span><span class="n">sophus_ceres</span> <span class="n">NAMESPACE</span> <span class="n">sophus</span> <span class="n">INCLUDE_DIR</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">HEADERS</span> <span class="n">jet_helpers</span><span class="p">.</span><span class="n">h</span> <span class="n">manifold</span><span class="p">.</span><span class="n">h</span> <span class="n">typetraits</span><span class="p">.</span> <span class="n">h</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-ceres-2-c-make-lists-8txt-1abce78632778f332bf7ebaa6bf9da3e20"><span></span><span class="n">find_package</span></span><span></span><span class="p">(</span><span class="n">Ceres</span> <span class="mf">2.1.0</span> <span class="n">REQUIRED</span><span class="p">);</span>
+<span class="n">sophus_geometry</span> <span class="doxyrest-code-target target" id="doxid-geometry-2-c-make-lists-8txt-1ac5af3e3bd14427db1e0e5528ca46af05"><span></span><span class="n">farm_ng_add_library</span></span><span></span><span class="p">(</span><span class="n">sophus_geometry</span> <span class="n">NAMESPACE</span> <span class="n">sophus</span> <span class="n">INCLUDE_DIR</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">HEADERS</span> <span class="n">fit_plane</span><span class="p">.</span><span class="n">h</span> <span class="n">inverse_depth</span><span class="p">.</span><span class="n">h</span> <span class="n">plane_conv</span><span class="p">.</span><span class="n">h</span> <span class="n">point_transform</span><span class="p">.</span><span class="n">h</span> <span class="n">projection</span><span class="p">.</span><span class="n">h</span> <span class="n">unit_vector</span><span class="p">.</span><span class="n">h</span> <span class="n">ray</span><span class="p">.</span> <span class="n">h</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-geometry-2-c-make-lists-8txt-1ac3bb42a77a2fca2ea1c4c749ce6442d4"><span></span><span class="n">foreach</span></span><span></span><span class="p">(</span><span class="n">test_basename</span> <span class="n">fit_plane</span> <span class="n">inverse_depth</span> <span class="n">plane_conv</span> <span class="n">point_transform</span> <span class="n">projection</span> <span class="n">unit_vector</span> <span class="n">ray</span><span class="p">);</span>
+<span class="n">sophus_image</span> <span class="doxyrest-code-target target" id="doxid-image-2-c-make-lists-8txt-1aeb78c187ac17753aa548ec01c8d70c22"><span></span><span class="n">set</span></span><span></span><span class="p">(</span><span class="n">sophus_image_src_prefixes</span> <span class="n">interpolation</span> <span class="n">image</span> <span class="n">image_size</span> <span class="n">image_types</span> <span class="n">image_view</span> <span class="n">runtime_image</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-2-c-make-lists-8txt-1af11fb813573ad109986ecf98ccb2adaf"><span></span><span class="n">list</span></span><span></span><span class="p">(</span><span class="n">APPEND</span> <span class="n">sophus_image_cpp</span> <span class="err">$</span><span class="p">{</span><span class="n">x</span><span class="p">}.</span> <span class="n">cpp</span><span class="p">);</span>
+<span class="n">h</span> <span class="doxyrest-code-target target" id="doxid-image-2-c-make-lists-8txt-1aa61ee307b2daf1e98f4271c7c8e73efe"><span></span><span class="n">endforeach</span></span><span></span><span class="p">();</span>
+<span class="n">sophus_lie</span> <span class="doxyrest-code-target target" id="doxid-lie-2-c-make-lists-8txt-1a09adc7a00d35eff99eb25da51709e635"><span></span><span class="n">farm_ng_add_library</span></span><span></span><span class="p">(</span><span class="n">sophus_lie</span> <span class="n">NAMESPACE</span> <span class="n">sophus</span> <span class="n">INCLUDE_DIR</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">HEADERS</span> <span class="n">cartesian</span><span class="p">.</span><span class="n">h</span> <span class="n">rxso2</span><span class="p">.</span><span class="n">h</span> <span class="n">rxso3</span><span class="p">.</span><span class="n">h</span> <span class="n">se2</span><span class="p">.</span><span class="n">h</span> <span class="n">se3</span><span class="p">.</span><span class="n">h</span> <span class="n">sim2</span><span class="p">.</span><span class="n">h</span> <span class="n">sim3</span><span class="p">.</span><span class="n">h</span> <span class="n">so2</span><span class="p">.</span><span class="n">h</span> <span class="n">so3</span><span class="p">.</span><span class="n">h</span> <span class="n">details</span><span class="o">/</span><span class="n">sim_impl</span><span class="p">.</span> <span class="n">h</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-lie-2-c-make-lists-8txt-1a6d462f20eac9e012a799360c0e1707eb"><span></span><span class="n">foreach</span></span><span></span><span class="p">(</span><span class="n">test_basename</span> <span class="n">cartesian2</span> <span class="n">cartesian3</span> <span class="n">common</span> <span class="n">rxso2</span> <span class="n">rxso3</span> <span class="n">se2</span> <span class="n">se3</span> <span class="n">sim2</span> <span class="n">sim3</span> <span class="n">so2</span> <span class="n">so3</span><span class="p">);</span>
+<span class="n">sophus_sensor</span> <span class="doxyrest-code-target target" id="doxid-sensor-2-c-make-lists-8txt-1a4deefe3ef82322b8ef39e304f2461b34"><span></span><span class="n">set</span></span><span></span><span class="p">(</span><span class="n">sophus_sensor_src_prefixes</span> <span class="n">camera_model</span> <span class="n">clipping_planes</span> <span class="n">imu_model</span> <span class="n">camera_rig</span> <span class="n">orthographic</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-sensor-2-c-make-lists-8txt-1a80bbdb79c3ab98ebd3644f5ba8191b35"><span></span><span class="n">list</span></span><span></span><span class="p">(</span><span class="n">APPEND</span> <span class="n">sophus_sensor_cpp</span> <span class="err">$</span><span class="p">{</span><span class="n">x</span><span class="p">}.</span> <span class="n">cpp</span><span class="p">);</span>
+<span class="n">h</span> <span class="doxyrest-code-target target" id="doxid-sensor-2-c-make-lists-8txt-1aa159bf81ab9afde9078969044abdcdc8"><span></span><span class="n">endforeach</span></span><span></span><span class="p">();</span>
+<span class="doxyrest-code-target target" id="doxid-region-test-8cpp-1a94d929eadb462b65b863f3d4117c11c4"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">ScalarRegion</span><span class="p">,</span> <span class="n">unit</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2rxso2-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0"><span></span><span class="n">main</span></span><span></span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2rxso2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2rxso3-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0"><span></span><span class="n">main</span></span><span></span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2rxso3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2se2-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0"><span></span><span class="n">main</span></span><span></span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2se2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2se3-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0"><span></span><span class="n">main</span></span><span></span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2se3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2sim2-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0"><span></span><span class="n">main</span></span><span></span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2sim2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2sim3-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0"><span></span><span class="n">main</span></span><span></span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2sim3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2so2-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0"><span></span><span class="n">main</span></span><span></span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2so2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-ceres-2so3-test-8cpp-1a2c3f6775325c30275d11c6abee2db6a0"><span></span><span class="n">main</span></span><span></span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-lie-2so3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="doxyrest-code-target target" id="doxid-fit-plane-test-8cpp-1ac8682f9164703b2e9327dc9a2c3128a9"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">fit_plane</span><span class="p">,</span> <span class="n">smoke</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-inverse-depth-test-8cpp-1a23a4dfe5f9538a1dce3d489759f957b7"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">inverse_depth</span><span class="p">,</span> <span class="n">integrations</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-plane-conv-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="doxyrest-code-target target" id="doxid-point-transform-test-8cpp-1a23a4dfe5f9538a1dce3d489759f957b7"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">inverse_depth</span><span class="p">,</span> <span class="n">integrations</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-point-transform-test-8cpp-1aa59b0667c46d8a2cfdb2141a4807cab7"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">point_transform</span><span class="p">,</span> <span class="n">integrations</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-ray-test-8cpp-1a2325a5fea618d7c767c3e418a4037a66"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">ray</span><span class="p">,</span> <span class="n">simple_ray3</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-unit-vector-test-8cpp-1ae52d2f370b2df52c00edfc8d58931a24"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">unitvec</span><span class="p">,</span> <span class="n">unit2</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-unit-vector-test-8cpp-1a28e0ecb93357fd288c72a9072f8c7dcc"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">unitvec</span><span class="p">,</span> <span class="n">unit3</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-unit-vector-test-8cpp-1a8051eff3b082e5018ae69eb21b8d64dd"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">unitvec</span><span class="p">,</span> <span class="n">copy3</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-unit-vector-test-8cpp-1aab680c85e9ef5f09e38c8ec2ea6f91a0"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">unitvec</span><span class="p">,</span> <span class="n">testRotThroughPoints</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-size-test-8cpp-1af15dff884104c3bc7dca72f9a126e62c"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">image_size</span><span class="p">,</span> <span class="n">smoke</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1ac4736237b4d942ed8245443f240bd607"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_MutImage.html#doxid-classsophus-1-1-mut-image"><span class="std std-ref">MutImage</span></a><span></span><span class="p">,</span> <span class="n">empty</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1a56ba0e1f798d3a82aae84c5be1f773c6"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_MutImage.html#doxid-classsophus-1-1-mut-image"><span class="std std-ref">MutImage</span></a><span></span><span class="p">,</span> <span class="n">create_copy_access</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1a059be5d4f232be4e2c6a388d8821d736"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_MutImage.html#doxid-classsophus-1-1-mut-image"><span class="std std-ref">MutImage</span></a><span></span><span class="p">,</span> <span class="n">makeFromTransform</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1a969d85cafd6e70bd9374655f6c1c6ad7"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_Image.html#doxid-classsophus-1-1-image"><span class="std std-ref">Image</span></a><span></span><span class="p">,</span> <span class="n">empty_and_non_empty</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-test-8cpp-1a053de8b73aacb892c13be2a21779d240"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_Image.html#doxid-classsophus-1-1-image"><span class="std std-ref">Image</span></a><span></span><span class="p">,</span> <span class="n">shared_ownership</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-types-test-8cpp-1a5fc5000d0c2688b183022ff3c130c5ab"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a84ba571059139ad8de131bb9de2343d3"><span class="std std-ref">ImageBool</span></a><span></span><span class="p">,</span> <span class="n">logic</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-types-test-8cpp-1a9fca4472abe0011016fefeca992a1342"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="#doxid-image-types-8h-1affc52c41f1da39b9d6bdac80c943449f"><span class="std std-ref">SOPHUS_ASSERT_IMAGE_EQ</span></a><span></span><span class="p">,</span> <span class="n">death_test</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-view-test-8cpp-1ae34b8f692eae9e7a6967c8ed4a347d28"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="p">,</span> <span class="n">empty</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-view-test-8cpp-1a01225ed24c59192b4d435b73940a0683"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="p">,</span> <span class="n">create_and_access</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-view-test-8cpp-1a5016156a4fdf5b7293df6e1c36e5de2e"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_MutImageView.html#doxid-classsophus-1-1-mut-image-view"><span class="std std-ref">MutImageView</span></a><span></span><span class="p">,</span> <span class="n">empty</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-image-view-test-8cpp-1a0ef2334786a81b11abab4f6a5b692afd"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_MutImageView.html#doxid-classsophus-1-1-mut-image-view"><span class="std std-ref">MutImageView</span></a><span></span><span class="p">,</span> <span class="n">create_and_access</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-interpolation-test-8cpp-1a5c1375709bbae172b7993d80fa383320"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">interpolation</span><span class="p">,</span> <span class="n">unit</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1ab6cbc08fe602f3b8ed4412f04956fae4"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1adb6711a268fb760dee2a4edea510e179"><span class="std std-ref">AnyImage</span></a><span></span><span class="p">,</span> <span class="n">create_access_and_extract</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1adbb2ad9bc8e286b0249c5409527fde7c"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a131561c9e39e2daf347947a106dcd071"><span class="std std-ref">IntensityImage</span></a><span></span><span class="p">,</span> <span class="n">create_access_and_extract</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1af6e3c340d2155eb5cc56741078353b0e"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1adb6711a268fb760dee2a4edea510e179"><span class="std std-ref">AnyImage</span></a><span></span><span class="p">,</span> <span class="n">runtime_type_info</span><span class="p">);</span>
+<span class="kt">float</span> <span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1ae087e9700a3d5f427dede7bd34cb454b"><span></span><span class="n">sum</span></span><span></span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">view</span><span class="p">);</span>
+<span class="kt">void</span> <span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a295ef1281203aad88e5949bd29fb351c"><span></span><span class="n">plusOne</span></span><span></span><span class="p">(</span><a class="reference internal" href="class_sophus_MutImageView.html#doxid-classsophus-1-1-mut-image-view"><span class="std std-ref">MutImageView</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">mut_view</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a0460f7092bedf3357f153bbf64b93d5d"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a2988e27437c2b346ee6eeb2dac06de83"><span class="std std-ref">IntensityImageView</span></a><span></span><span class="p">,</span> <span class="n">subview</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a0045a4dab7360f9b4f179210438b6124"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">ClassHierarchy</span><span class="p">,</span> <span class="n">call_function</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a3a3e36769904c711488c51c1a91bc528"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><a class="reference internal" href="namespace_sophus.html#doxid-namespacesophus-1a131561c9e39e2daf347947a106dcd071"><span class="std std-ref">IntensityImage</span></a><span></span><span class="p">,</span> <span class="n">visitor</span><span class="p">);</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-cartesian2-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-cartesian3-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-common-test-8cpp-1ae66f6b31b5ad750f1fe042a706a4e3d4"><span></span><span class="n">main</span></span><span></span><span class="p">();</span>
+<a class="reference internal" href="class_sophus_CameraModel.html#doxid-classsophus-1-1-camera-model"><span class="std std-ref">CameraModel</span></a><span></span> <span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1a337f48efa1feb10176bc6c682350cbb5"><span></span><span class="n">openCvCameraModel</span></span><span></span><span class="p">();</span>
+<span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1ae60c2856c31f30e24a04021ae180bb7d"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">camera_model</span><span class="p">,</span> <span class="n">projection_round_trip</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1a9a84f07f639f5b064bee88f468e46aeb"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">camera_model</span><span class="p">,</span> <span class="n">scale_up_down_roundtrip</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-camera-model-test-8cpp-1adbbee1a53cdf100d76d0e6c0d4ae62ad"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">camera_model</span><span class="p">,</span> <span class="n">ortho_cam</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-camera-rig-test-8cpp-1af3fbe44ebfcae081d4d12b2ebb8c1718"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">camera_rig</span><span class="p">,</span> <span class="n">smoke</span><span class="p">);</span>
+<span class="doxyrest-code-target target" id="doxid-imu-model-test-8cpp-1a8d64a46e5c782e5252e2432ad043b2a6"><span></span><span class="n">TEST</span></span><span></span><span class="p">(</span><span class="n">imu_model</span><span class="p">,</span> <span class="n">smoke</span><span class="p">);</span>
+
+<span class="c1">// macros</span>
+
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a8f58b46a5623974748668dc8c53ad686"><span></span><span class="n">SOPHUS_ASSERT</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a92297bdb86ae55e64e7dc3b48d3190b5"><span></span><span class="n">SOPHUS_ASSERT_EQ</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a4458283091058e430ff56b37e5d90182"><span></span><span class="n">SOPHUS_ASSERT_GE</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a67e8d5781bb21fc85998e8b95a0aab10"><span></span><span class="n">SOPHUS_ASSERT_GT</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-image-types-8h-1affc52c41f1da39b9d6bdac80c943449f"><span class="std std-ref">SOPHUS_ASSERT_IMAGE_EQ</span></a><span></span><span class="p">(</span><span class="n">left_image</span><span class="p">,</span> <span class="n">right_image</span><span class="p">,</span> <span class="p">...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a0d035483e474118423a361272800b293"><span></span><span class="n">SOPHUS_ASSERT_LE</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1aadc6d2ed0adcf9b174f4ad07349cdaaa"><span></span><span class="n">SOPHUS_ASSERT_LT</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1abc35935bbde1d290087671ff93cea3c0"><span></span><span class="n">SOPHUS_ASSERT_NE</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a72a75eb7f9bba13d95af868b8667a0a0"><span></span><span class="n">SOPHUS_ASSERT_NEAR</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1ac90e2b9dceea8b4969c81290d7b69c3f"><span></span><span class="n">SOPHUS_ASSERT_OR_ERROR</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-enum-8h-1a3da4835ed2aad55263ab99c6db51ab91"><span></span><span class="n">SOPHUS_ENUM</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a50fadb13da7af3ebb54f13fcf2d90455"><span></span><span class="n">SOPHUS_FORMAT</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a719070c34a48abcdf2f623e4160b4c28"><span></span><span class="n">SOPHUS_FUNC</span></span><span></span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1adc97d3e69cc46d5aff5132e1fa2d9688"><span></span><span class="n">SOPHUS_FUNCTION</span></span><span></span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a7e1e64911421a663cac1ca5fe4e66339"><span></span><span class="n">SOPHUS_INFO</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1af28e1f1a48df52cee7fb2775a054d921"><span></span><span class="n">SOPHUS_PANIC</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-test-macros-8h-1a9a763d03e0d8daa3c7cb92eb1db5220d"><span></span><span class="n">SOPHUS_STRINGIFY</span></span><span></span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1a094dfcb125cce443541e6614df9ff704"><span class="std std-ref">SOPHUS_TEST</span></a><span></span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">descr</span><span class="p">,</span> <span class="p">...)</span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1adceb75d7f4ac8872a96560097b91f090"><span class="std std-ref">SOPHUS_TEST_APPROX</span></a><span></span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">thr</span><span class="p">,</span> <span class="n">descr</span><span class="p">,</span> <span class="p">...)</span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1afa1fcfecdacca873ea54874272d05e90"><span class="std std-ref">SOPHUS_TEST_EQUAL</span></a><span></span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">descr</span><span class="p">,</span> <span class="p">...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-runtime-image-test-8cpp-1a229e4238019191b909cf235cfa061bb9"><span></span><span class="n">SOPHUS_TEST_IMG_EQ</span></span><span></span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1a47cf0311fff8d84d7044a599dc452b6a"><span class="std std-ref">SOPHUS_TEST_NEQ</span></a><span></span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">descr</span><span class="p">,</span> <span class="p">...)</span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-test-macros-8h-1a2cf21393818b417fb877bd6198d1b140"><span class="std std-ref">SOPHUS_TEST_NOT_APPROX</span></a><span></span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">thr</span><span class="p">,</span> <span class="n">descr</span><span class="p">,</span> <span class="p">...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a71dfe4dd2df5e006549f2f48601520ad"><span></span><span class="n">SOPHUS_TRY</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1ae3d125b974f106017f2b47627b5c4ac1"><span></span><span class="n">SOPHUS_UNEXPECTED</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1ade3de0907bb0fd6f33cf2f644475f1fd"><span></span><span class="n">SOPHUS_UNIMPLEMENTED</span></span><span></span><span class="p">(...)</span>
+<span class="cp">#define </span><span class="doxyrest-code-target target" id="doxid-common-8h-1a0f6f659ed8dc626650e01e987fcaf2e7"><span></span><span class="n">SOPHUS_UNWRAP</span></span><span></span><span class="p">(...)</span></pre>
+</section>
+<section id="detailed-documentation">
+<span id="details-global"></span><h2>Detailed Documentation<a class="headerlink" href="#detailed-documentation" title="Permalink to this heading">#</a></h2>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading">#</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-image-types-8h-1affc52c41f1da39b9d6bdac80c943449f"><span id="index-1"></span><span></span><span class="cp">#define SOPHUS_ASSERT_IMAGE_EQ(left_image, right_image, ...)</span></pre>
+<p>If it is false that <code class="docutils literal notranslate"><span class="pre">left_image</span></code> == <code class="docutils literal notranslate"><span class="pre">right_image</span></code>, print formatted error message and then panic.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1a094dfcb125cce443541e6614df9ff704"><span id="index-2"></span><span></span><span class="cp">#define SOPHUS_TEST(passed, condition, descr, ...)</span></pre>
+<p>Tests whether condition is true. The in-out parameter passed will be set to false if test fails.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1adceb75d7f4ac8872a96560097b91f090"><span id="index-3"></span><span></span><span class="cp">#define SOPHUS_TEST_APPROX(passed, left, right, thr, descr, ...)</span></pre>
+<p>Tests whether left is approximately equal to right given a threshold. The in-out parameter passed will be set to false if test fails.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1afa1fcfecdacca873ea54874272d05e90"><span id="index-4"></span><span></span><span class="cp">#define SOPHUS_TEST_EQUAL(passed, left, right, descr, ...)</span></pre>
+<p>Tests whether left is equal to right given a threshold. The in-out parameter passed will be set to false if test fails.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1a47cf0311fff8d84d7044a599dc452b6a"><span id="index-5"></span><span></span><span class="cp">#define SOPHUS_TEST_NEQ(passed, left, right, descr, ...)</span></pre>
+<p>Tests whether left is equal to right given a threshold. The in-out parameter passed will be set to false if test fails.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-test-macros-8h-1a2cf21393818b417fb877bd6198d1b140"><span id="index-6"></span><span></span><span class="cp">#define SOPHUS_TEST_NOT_APPROX(passed, left, right, thr, descr, ...)</span></pre>
+<p>Tests whether left is NOT approximately equal to right given a threshold. The in-out parameter passed will be set to false if test fails.</p>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="namespace_Eigen.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">namespace Eigen</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Global Namespace</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li><a class="reference internal" href="#macros">Macros</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    <script src="_static/target-highlight.js"></script>
+    </body>
+</html>

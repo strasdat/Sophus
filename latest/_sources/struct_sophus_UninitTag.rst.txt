@@ -1,0 +1,11 @@
+.. index:: pair: struct; sophus::UninitTag
+.. _doxid-structsophus_1_1_uninit_tag:
+
+struct sophus::UninitTag
+========================
+
+.. toctree::
+	:hidden:
+
+
+

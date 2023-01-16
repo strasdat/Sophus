@@ -1,0 +1,166 @@
+.. index:: pair: class; sophus::Image
+.. _doxid-classsophus_1_1_image:
+
+template class sophus::Image
+============================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+:ref:`Image <doxid-classsophus_1_1_image>` read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable. :ref:`More...<details-classsophus_1_1_image>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <image.h>
+	
+	template <
+		class TPixel,
+		template<class> class TAllocator = Eigen::aligned_allocator
+	>
+	class Image {
+	public:
+		// construction
+	
+		:ref:`Image<doxid-classsophus_1_1_image_1adbf39891ae54c71294480898616620d4>`();
+		:ref:`Image<doxid-classsophus_1_1_image_1adaa5a1f0fe6d6a54f993799222dc531a>`(:ref:`MutImage<doxid-classsophus_1_1_mut_image>`<TPixel, TAllocator>&& image);
+
+		// methods
+	
+		size_t :target:`useCount<doxid-classsophus_1_1_image_1a03184f6a42e8aa2b103c99666f1d13b5>`() const;
+		void :ref:`reset<doxid-classsophus_1_1_image_1a4d757013118bae8b79321fb5768b8822>`();
+		static Image :ref:`makeCopyFrom<doxid-classsophus_1_1_image_1a794d95352d8c9ac597b703e83333826d>`(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> const& view);
+	
+		template <class TUVOperation>
+		static Image :ref:`makeGenerative<doxid-classsophus_1_1_image_1afeadc62dffa8f33051b828984b8f1ec2>`(
+			:ref:`ImageSize<doxid-structsophus_1_1_image_size>` size,
+			TUVOperation const& uv_op
+		);
+	
+		template <class TOtherPixel, class TUnaryOperation>
+		static Image :ref:`makeFromTransform<doxid-classsophus_1_1_image_1a0811b2f8b137e60560ddb9678cb47abd>`(
+			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
+			TUnaryOperation const& unary_op
+		);
+	
+		template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
+		static Image :ref:`makeFromTransform<doxid-classsophus_1_1_image_1af6cc043cc8a4cc4201952334012464a6>`(
+			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
+			:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
+			TBinaryOperation const& binary_op
+		);
+	};
+.. _details-classsophus_1_1_image:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+:ref:`Image <doxid-classsophus_1_1_image>` read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.
+
+:ref:`Image <doxid-classsophus_1_1_image>` has close interop with :ref:`RuntimeImage <doxid-classsophus_1_1_runtime_image>` (see below).
+
+Construction
+------------
+
+.. index:: pair: function; Image
+.. _doxid-classsophus_1_1_image_1adbf39891ae54c71294480898616620d4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Image()
+
+Constructs empty image.
+
+.. index:: pair: function; Image
+.. _doxid-classsophus_1_1_image_1adaa5a1f0fe6d6a54f993799222dc531a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Image(:ref:`MutImage<doxid-classsophus_1_1_mut_image>`<TPixel, TAllocator>&& image)
+
+Moves :ref:`MutImage <doxid-classsophus_1_1_mut_image>` into this. By design not "explicit".
+
+Methods
+-------
+
+.. index:: pair: function; reset
+.. _doxid-classsophus_1_1_image_1a4d757013118bae8b79321fb5768b8822:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void reset()
+
+Sets :ref:`Image <doxid-classsophus_1_1_image>` instance to empty. Reduced use count by one.
+
+If use count goes to zero, deallocation happens.
+
+No-op if empty.
+
+.. index:: pair: function; makeCopyFrom
+.. _doxid-classsophus_1_1_image_1a794d95352d8c9ac597b703e83333826d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static Image makeCopyFrom(:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TPixel> const& view)
+
+Creates contiguous copy from view.
+
+If view is not empty, memory allocation will happen.
+
+.. index:: pair: function; makeGenerative
+.. _doxid-classsophus_1_1_image_1afeadc62dffa8f33051b828984b8f1ec2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TUVOperation>
+	static Image makeGenerative(
+		:ref:`ImageSize<doxid-structsophus_1_1_image_size>` size,
+		TUVOperation const& uv_op
+	)
+
+Allocated and generates image from provided function taking u,v indices.
+
+Memory allocation will happen.
+
+.. index:: pair: function; makeFromTransform
+.. _doxid-classsophus_1_1_image_1a0811b2f8b137e60560ddb9678cb47abd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TOtherPixel, class TUnaryOperation>
+	static Image makeFromTransform(
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TOtherPixel> view,
+		TUnaryOperation const& unary_op
+	)
+
+Creates new :ref:`Image <doxid-classsophus_1_1_image>` given view and unary transform function.
+
+image(u, v) = unary_op(view(u, v));
+
+.. index:: pair: function; makeFromTransform
+.. _doxid-classsophus_1_1_image_1af6cc043cc8a4cc4201952334012464a6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
+	static Image makeFromTransform(
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TLhsPixel> lhs,
+		:ref:`ImageView<doxid-structsophus_1_1_image_view>`<TRhsPixel> rhs,
+		TBinaryOperation const& binary_op
+	)
+
+Creates new :ref:`Image <doxid-classsophus_1_1_image>` given two views and binary transform function.
+
+image(u, v) = binary_op(lhs(u, v), rhs(u, v));
+

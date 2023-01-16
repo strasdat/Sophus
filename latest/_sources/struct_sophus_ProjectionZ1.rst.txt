@@ -1,0 +1,62 @@
+.. index:: pair: struct; sophus::ProjectionZ1
+.. _doxid-structsophus_1_1_projection_z1:
+
+struct sophus::ProjectionZ1
+===========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <projection_z1.h>
+	
+	struct ProjectionZ1 {
+		// typedefs
+	
+		using :target:`WithRows<doxid-structsophus_1_1_projection_z1_1ac1880905d5b66c2c0278cbd8e635a4fe>` = Eigen::Matrix<typename TPoints::Scalar, kRows, TPoints::ColsAtCompileTime> ;
+
+		// methods
+	
+		template <class TDerived>
+		static :ref:`WithRows<doxid-structsophus_1_1_projection_z1_1ac1880905d5b66c2c0278cbd8e635a4fe>`<Eigen::MatrixBase<TDerived>, 2> :target:`proj<doxid-structsophus_1_1_projection_z1_1a22f3e5b6d0efff4a8302de08ea6fbaac>`(Eigen::MatrixBase<TDerived> const& points_in_camera);
+	
+		template <class TDerived>
+		static :ref:`WithRows<doxid-structsophus_1_1_projection_z1_1ac1880905d5b66c2c0278cbd8e635a4fe>`<Eigen::MatrixBase<TDerived>, 3> :target:`unproj<doxid-structsophus_1_1_projection_z1_1a0e4baf2ded967a63eef83030920e1382>`(
+			Eigen::MatrixBase<TDerived> const& points_in_cam_canonical,
+			typename TDerived::Scalar extension = static_cast<typename TDerived::Scalar>(1.0)
+		);
+	
+		template <class TScalar>
+		static Eigen::Matrix<TScalar, 2, 3> :ref:`dxProjX<doxid-structsophus_1_1_projection_z1_1abbceeef98bf9e4ef72d8df3df3b45da5>`(Eigen::Matrix<TScalar, 3, 1> const& p);
+	};
+.. _details-structsophus_1_1_projection_z1:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Methods
+-------
+
+.. index:: pair: function; dxProjX
+.. _doxid-structsophus_1_1_projection_z1_1abbceeef98bf9e4ef72d8df3df3b45da5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class TScalar>
+	static Eigen::Matrix<TScalar, 2, 3> dxProjX(Eigen::Matrix<TScalar, 3, 1> const& p)
+
+Returns point derivative of inverse depth point projection:
+
+Dx proj(x) with x = (a,b,psi) being an inverse depth point.
+

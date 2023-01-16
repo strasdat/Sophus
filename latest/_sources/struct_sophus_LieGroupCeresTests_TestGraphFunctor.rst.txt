@@ -1,0 +1,35 @@
+.. index:: pair: struct; sophus::LieGroupCeresTests::TestGraphFunctor
+.. _doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor:
+
+struct sophus::LieGroupCeresTests::TestGraphFunctor
+===================================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <test_impl.h>
+	
+	struct TestGraphFunctor {
+		// fields
+	
+		const :ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` :target:`diff<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor_1af91e975b6aa62294e105fe3444a58023>`;
+
+		// construction
+	
+		:target:`TestGraphFunctor<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor_1a5c5a4c3249529d10de672fd87fd69290>`(:ref:`LieGroupF64<doxid-structsophus_1_1_lie_group_ceres_tests_1a9d7e71f705e5a88ee82ae9e187110bc0>` const& diff);
+
+		// methods
+	
+		template <class TScalar>
+		bool :target:`operator()<doxid-structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor_1a181ec7ccb3fbe159c2173f6e72bf63b8>`(
+			TScalar const* raw_a,
+			TScalar const* raw_b,
+			TScalar* residuals
+		) const;
+	};

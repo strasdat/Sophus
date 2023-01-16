@@ -1,0 +1,11 @@
+.. index:: pair: struct; ceres::Jet
+.. _doxid-structceres_1_1_jet:
+
+template struct ceres::Jet
+==========================
+
+.. toctree::
+	:hidden:
+
+
+

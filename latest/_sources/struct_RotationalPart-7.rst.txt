@@ -1,0 +1,22 @@
+.. index:: pair: struct; RotationalPart<sophus::Se2F64>
+.. _doxid-struct_rotational_part_3_01sophus_1_1_se2_f64_01_4:
+
+template struct RotationalPart<sophus::Se2F64>
+==============================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	template <>
+	struct RotationalPart<sophus::Se2F64> {
+		// methods
+	
+		static double :target:`norm<doxid-struct_rotational_part_3_01sophus_1_1_se2_f64_01_4_1af3d91abd1af7b8032d4391092c6309db>`(const typename :ref:`sophus::Se2F64::Tangent<doxid-classsophus_1_1_se2_1a7c86c551961e649fc7de7f6f19427048>`& t);
+	};

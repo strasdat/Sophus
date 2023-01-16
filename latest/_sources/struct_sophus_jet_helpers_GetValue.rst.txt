@@ -1,0 +1,23 @@
+.. index:: pair: struct; sophus::jet_helpers::GetValue
+.. _doxid-structsophus_1_1jet__helpers_1_1_get_value:
+
+template struct sophus::jet_helpers::GetValue
+=============================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <jet_helpers.h>
+	
+	template <class TScalar>
+	struct GetValue {
+		// methods
+	
+		static TScalar :target:`impl<doxid-structsophus_1_1jet__helpers_1_1_get_value_1a03eca7f967f9913f42c0fd4805ef5385>`(TScalar const& t);
+	};

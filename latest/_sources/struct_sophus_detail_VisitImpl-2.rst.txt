@@ -1,0 +1,23 @@
+.. index:: pair: struct; sophus::detail::VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType>>
+.. _doxid-structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variant_3_01_t_pixel_type_01_4_01_4:
+
+template struct sophus::detail::VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType>>
+=============================================================================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <runtime_image.h>
+	
+	template <class TUserFunc, typename TRuntimeImage, typename TPixelType>
+	struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType>> {
+		// methods
+	
+		static void :target:`visit<doxid-structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variant_3_01_t_pixel_type_01_4_01_4_1a54fe9c7aa604ecd536a0d07d722324bd>`(TUserFunc&& func, TRuntimeImage const& image);
+	};

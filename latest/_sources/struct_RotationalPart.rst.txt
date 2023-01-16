@@ -1,0 +1,11 @@
+.. index:: pair: struct; RotationalPart
+.. _doxid-struct_rotational_part:
+
+template struct RotationalPart
+==============================
+
+.. toctree::
+	:hidden:
+
+
+

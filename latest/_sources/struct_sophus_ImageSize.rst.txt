@@ -1,0 +1,86 @@
+.. index:: pair: struct; sophus::ImageSize
+.. _doxid-structsophus_1_1_image_size:
+
+struct sophus::ImageSize
+========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+:ref:`Image <doxid-classsophus_1_1_image>` size, hence its width and height. :ref:`More...<details-structsophus_1_1_image_size>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <image_size.h>
+	
+	struct ImageSize {
+		// fields
+	
+		int :ref:`width<doxid-structsophus_1_1_image_size_1a7ea479dfc195f980d6650ceadfda5c97>` = 0;
+		int :ref:`height<doxid-structsophus_1_1_image_size_1a6860fc9e6cb763fd0b8597d12f22f324>` = 0;
+
+		// construction
+	
+		:target:`ImageSize<doxid-structsophus_1_1_image_size_1a1d48394f6b42c651bb795697db2bae22>`();
+		:target:`ImageSize<doxid-structsophus_1_1_image_size_1a1cb9fec0c9aa79afb2818dd382ac50ae>`(int width, int height);
+
+		// methods
+	
+		int :target:`area<doxid-structsophus_1_1_image_size_1a3bac6cdec374b8f28d3c515b14507d4b>`() const;
+		bool :ref:`contains<doxid-structsophus_1_1_image_size_1a7036d812803946f82a305af47796297c>`(Eigen::Vector2i const& obs, int border = 0) const;
+		bool :target:`contains<doxid-structsophus_1_1_image_size_1a67403004f9c1f3b032bd3b6cc5dfcb57>`(Eigen::Vector2f const& obs, float border = 0.f) const;
+		bool :target:`contains<doxid-structsophus_1_1_image_size_1a5d3ebc6de9789646fa005691ead870f6>`(Eigen::Vector2d const& obs, double border = 0.0) const;
+		bool :target:`isEmpty<doxid-structsophus_1_1_image_size_1aa78f881bdd5918fce62740359fdf414a>`() const;
+		Eigen::Array2<int> :target:`array<doxid-structsophus_1_1_image_size_1a815ce9add060614987ab3d2527b65d51>`() const;
+		static ImageSize :target:`from<doxid-structsophus_1_1_image_size_1a3cccf270e2e0f76ad7f6fa93cfff7bc0>`(Eigen::Array2<int> const& arr);
+	};
+.. _details-structsophus_1_1_image_size:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+:ref:`Image <doxid-classsophus_1_1_image>` size, hence its width and height.
+
+Fields
+------
+
+.. index:: pair: variable; width
+.. _doxid-structsophus_1_1_image_size_1a7ea479dfc195f980d6650ceadfda5c97:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int width = 0
+
+Horizontal width of images, i.e. number of columns.
+
+.. index:: pair: variable; height
+.. _doxid-structsophus_1_1_image_size_1a6860fc9e6cb763fd0b8597d12f22f324:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int height = 0
+
+Vertical height of images, i.e. number of rows.
+
+Methods
+-------
+
+.. index:: pair: function; contains
+.. _doxid-structsophus_1_1_image_size_1a7036d812803946f82a305af47796297c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool contains(Eigen::Vector2i const& obs, int border = 0) const
+
+Returns true if obs is within image.
+
+Positive border makes the image frame smaller.
+

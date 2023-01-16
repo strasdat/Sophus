@@ -1,0 +1,313 @@
+.. index:: pair: class; sophus::CameraModelT
+.. _doxid-classsophus_1_1_camera_model_t:
+
+template class sophus::CameraModelT
+===================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Camera model class template for pinhole-like camera projections. :ref:`More...<details-classsophus_1_1_camera_model_t>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <camera_model.h>
+	
+	template <class TScalar, class TDistortion, class TProj = ProjectionZ1>
+	class CameraModelT {
+	public:
+		// typedefs
+	
+		using :target:`Distortion<doxid-classsophus_1_1_camera_model_t_1a3a351c712039d761e235771b75df4389>` = TDistortion ;
+		using :target:`Proj<doxid-classsophus_1_1_camera_model_t_1a8b97bdf4982c61b17a096b8d7e09c5ef>` = TProj ;
+		using :target:`PointCamera<doxid-classsophus_1_1_camera_model_t_1ab8e068ff84d5248e6b54280e652a3d46>` = Eigen::Matrix<TScalar, 3, 1> ;
+		using :target:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` = Eigen::Matrix<TScalar, 2, 1> ;
+		using :target:`ProjInCameraLifted<doxid-classsophus_1_1_camera_model_t_1ab04c7b0443ec00c5c1ea2d4a0417bd95>` = Eigen::Matrix<TScalar, 2, 1> ;
+		using :target:`Params<doxid-classsophus_1_1_camera_model_t_1a5201b39438f25dca3dd49cdf80aa0f05>` = Eigen::Matrix<TScalar, :ref:`kNumParams<doxid-classsophus_1_1_camera_model_t_1ac91eb5a8b381924b0dc314e3adef1be7>`, 1> ;
+		using :target:`DistorationParams<doxid-classsophus_1_1_camera_model_t_1a02f412fb036fd7f726cb648d98aead5c>` = Eigen::Matrix<TScalar, :ref:`kNumDistortionParams<doxid-classsophus_1_1_camera_model_t_1acd16954c3dfa0818e851d7ddf7b5a413>`, 1> ;
+
+		// fields
+	
+		static constexpr int :target:`kNumDistortionParams<doxid-classsophus_1_1_camera_model_t_1acd16954c3dfa0818e851d7ddf7b5a413>` = Distortion::kNumDistortionParams;
+		static constexpr int :target:`kNumParams<doxid-classsophus_1_1_camera_model_t_1ac91eb5a8b381924b0dc314e3adef1be7>` = Distortion::kNumParams;
+		static constexpr const std::string_view :target:`kProjectionModel<doxid-classsophus_1_1_camera_model_t_1a3926adb898163c0ed7861344e4d63d0b>` =       Distortion::kProjectionModel;
+
+		// construction
+	
+		:ref:`CameraModelT<doxid-classsophus_1_1_camera_model_t_1ab52e661613096f33d192eda20bddd787>`(:ref:`ImageSize<doxid-structsophus_1_1_image_size>` const& image_size, :ref:`Params<doxid-classsophus_1_1_camera_model_t_1a5201b39438f25dca3dd49cdf80aa0f05>` const& params);
+		:target:`CameraModelT<doxid-classsophus_1_1_camera_model_t_1aa89aa0d42e5ee86f13dd0538659b6b23>`();
+
+		// methods
+	
+		:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` :ref:`focalLength<doxid-classsophus_1_1_camera_model_t_1a5a5c6e5d84938eb1e26bbae80264e6f3>`() const;
+		void :ref:`setFocalLength<doxid-classsophus_1_1_camera_model_t_1ae6b946557f9f05b94d89ac9d94dfefa5>`(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& focal_length);
+		:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` :target:`principalPoint<doxid-classsophus_1_1_camera_model_t_1a0140829144c72b6e9e957a3cfc16e388>`() const;
+		void :ref:`setPrincipalPoint<doxid-classsophus_1_1_camera_model_t_1af1eda87b6149024ce8a17d0138475fd3>`(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& principal_point);
+		:ref:`DistorationParams<doxid-classsophus_1_1_camera_model_t_1a02f412fb036fd7f726cb648d98aead5c>` :ref:`distortionParams<doxid-classsophus_1_1_camera_model_t_1a612b3f74a8895a0027304b3faf359ab8>`() const;
+		Eigen::Matrix<TScalar, :ref:`kNumParams<doxid-classsophus_1_1_camera_model_t_1ac91eb5a8b381924b0dc314e3adef1be7>`, 1>& :ref:`params<doxid-classsophus_1_1_camera_model_t_1a97ecaf013e56da16caf07519ded2c9db>`();
+		Eigen::Matrix<TScalar, :ref:`kNumParams<doxid-classsophus_1_1_camera_model_t_1ac91eb5a8b381924b0dc314e3adef1be7>`, 1> const& :ref:`params<doxid-classsophus_1_1_camera_model_t_1a019ecbacc3ad8572620e8997b68fde24>`() const;
+		CameraModelT :ref:`subsampleDown<doxid-classsophus_1_1_camera_model_t_1ae6f7fee040fd028d74f5f61993a643fb>`() const;
+		CameraModelT :ref:`subsampleUp<doxid-classsophus_1_1_camera_model_t_1ac03f260ab1e2b09648f75244ea384f5f>`() const;
+		CameraModelT :ref:`binDown<doxid-classsophus_1_1_camera_model_t_1ab09e5ec5cf53819561ef04c9870d93c9>`() const;
+		CameraModelT :ref:`binUp<doxid-classsophus_1_1_camera_model_t_1a82066a921319c54b6384a149ee9319c4>`() const;
+		CameraModelT :target:`scale<doxid-classsophus_1_1_camera_model_t_1a422e6265bad0b6109889ee5662ead170>`(:ref:`ImageSize<doxid-structsophus_1_1_image_size>` const& image_size) const;
+		CameraModelT :ref:`roi<doxid-classsophus_1_1_camera_model_t_1a410fc6e83075c80e265d69731ea838da>`(Eigen::Vector2i const& top_left, :ref:`ImageSize<doxid-structsophus_1_1_image_size>` roi_size) const;
+		:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` :ref:`distort<doxid-classsophus_1_1_camera_model_t_1ab13f07b4d79b25718813bf36593a48e0>`(:ref:`ProjInCameraLifted<doxid-classsophus_1_1_camera_model_t_1ab04c7b0443ec00c5c1ea2d4a0417bd95>` const& point2_in_camera_lifted) const;
+		Eigen::Matrix<TScalar, 2, 2> :target:`dxDistort<doxid-classsophus_1_1_camera_model_t_1af0047efb9c951b97b10f9ba5cfa1be2a>`(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& pixel_in_image) const;
+		:ref:`ProjInCameraLifted<doxid-classsophus_1_1_camera_model_t_1ab04c7b0443ec00c5c1ea2d4a0417bd95>` :ref:`undistort<doxid-classsophus_1_1_camera_model_t_1a2902878c48c6c200389445c6b683e680>`(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& pixel_in_image) const;
+		:ref:`MutImage<doxid-classsophus_1_1_mut_image>`<Eigen::Vector2f> :target:`undistortTable<doxid-classsophus_1_1_camera_model_t_1a4b65817de050e6c243f5d36e59c39244>`() const;
+		:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` :ref:`camProj<doxid-classsophus_1_1_camera_model_t_1ae23e7abdb7cc433cf3d55102065d06b3>`(:ref:`PointCamera<doxid-classsophus_1_1_camera_model_t_1ab8e068ff84d5248e6b54280e652a3d46>` const& point_in_camera) const;
+		Eigen::Matrix<TScalar, 2, 3> :target:`dxCamProjX<doxid-classsophus_1_1_camera_model_t_1a9a6d2c812421f6e49fe0c1ae08141773>`(:ref:`PointCamera<doxid-classsophus_1_1_camera_model_t_1ab8e068ff84d5248e6b54280e652a3d46>` const& point_in_camera) const;
+		:ref:`PointCamera<doxid-classsophus_1_1_camera_model_t_1ab8e068ff84d5248e6b54280e652a3d46>` :ref:`camUnproj<doxid-classsophus_1_1_camera_model_t_1a23ce8cff8ea4b0eb46c84a0e060a5d57>`(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& pixel_in_image, double depth_z) const;
+		TScalar* :ref:`data<doxid-classsophus_1_1_camera_model_t_1a6141882e54a5c4e3336472fbaa1386c1>`();
+		:ref:`ImageSize<doxid-structsophus_1_1_image_size>` const& :ref:`imageSize<doxid-classsophus_1_1_camera_model_t_1a9dcfbdfce960a6c221fee60928c6f361>`() const;
+		bool :ref:`contains<doxid-classsophus_1_1_camera_model_t_1a1b92ee6dbcd21a44bf3d3aa93d8cfbf6>`(Eigen::Vector2i const& obs, int border = 0) const;
+		bool :ref:`contains<doxid-classsophus_1_1_camera_model_t_1ae35c65dc296319b75201b81188197062>`(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& obs, TScalar border = TScalar(0)) const;
+		static CameraModelT :ref:`fromData<doxid-classsophus_1_1_camera_model_t_1ac42d4756577f23ea2507889a4b45c9bf>`(TScalar const*const ptr);
+	};
+.. _details-classsophus_1_1_camera_model_t:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Camera model class template for pinhole-like camera projections.
+
+Construction
+------------
+
+.. index:: pair: function; CameraModelT
+.. _doxid-classsophus_1_1_camera_model_t_1ab52e661613096f33d192eda20bddd787:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CameraModelT(:ref:`ImageSize<doxid-structsophus_1_1_image_size>` const& image_size, :ref:`Params<doxid-classsophus_1_1_camera_model_t_1a5201b39438f25dca3dd49cdf80aa0f05>` const& params)
+
+Constructs camera model from image size and set up parameters.
+
+Methods
+-------
+
+.. index:: pair: function; focalLength
+.. _doxid-classsophus_1_1_camera_model_t_1a5a5c6e5d84938eb1e26bbae80264e6f3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` focalLength() const
+
+Focal length.
+
+.. index:: pair: function; setFocalLength
+.. _doxid-classsophus_1_1_camera_model_t_1ae6b946557f9f05b94d89ac9d94dfefa5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void setFocalLength(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& focal_length)
+
+Focal length.
+
+.. index:: pair: function; setPrincipalPoint
+.. _doxid-classsophus_1_1_camera_model_t_1af1eda87b6149024ce8a17d0138475fd3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void setPrincipalPoint(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& principal_point)
+
+Focal length.
+
+.. index:: pair: function; distortionParams
+.. _doxid-classsophus_1_1_camera_model_t_1a612b3f74a8895a0027304b3faf359ab8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`DistorationParams<doxid-classsophus_1_1_camera_model_t_1a02f412fb036fd7f726cb648d98aead5c>` distortionParams() const
+
+Returns distortion parameters by value.
+
+.. index:: pair: function; params
+.. _doxid-classsophus_1_1_camera_model_t_1a97ecaf013e56da16caf07519ded2c9db:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Eigen::Matrix<TScalar, :ref:`kNumParams<doxid-classsophus_1_1_camera_model_t_1ac91eb5a8b381924b0dc314e3adef1be7>`, 1>& params()
+
+Parameters mutator.
+
+.. index:: pair: function; params
+.. _doxid-classsophus_1_1_camera_model_t_1a019ecbacc3ad8572620e8997b68fde24:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Eigen::Matrix<TScalar, :ref:`kNumParams<doxid-classsophus_1_1_camera_model_t_1ac91eb5a8b381924b0dc314e3adef1be7>`, 1> const& params() const
+
+Parameters accessor.
+
+.. index:: pair: function; subsampleDown
+.. _doxid-classsophus_1_1_camera_model_t_1ae6f7fee040fd028d74f5f61993a643fb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CameraModelT subsampleDown() const
+
+Subsamples pixel down, factor of 0.5.
+
+See for details: `https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc <https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc>`__
+
+If the original width [height] is odd, the new width [height] will be: (width+1)/2 [height+1)/2].
+
+.. index:: pair: function; subsampleUp
+.. _doxid-classsophus_1_1_camera_model_t_1ac03f260ab1e2b09648f75244ea384f5f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CameraModelT subsampleUp() const
+
+Subsamples pixel up, factor of 2.0.
+
+See for details: `https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc <https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc>`__
+
+.. index:: pair: function; binDown
+.. _doxid-classsophus_1_1_camera_model_t_1ab09e5ec5cf53819561ef04c9870d93c9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CameraModelT binDown() const
+
+Bins pixel down, factor of 0.5.
+
+See for details: `https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj <https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj>`__
+
+If the original width [height] is odd, the new width [height] will be: (width+1)/2 [height+1)/2].
+
+.. index:: pair: function; binUp
+.. _doxid-classsophus_1_1_camera_model_t_1a82066a921319c54b6384a149ee9319c4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CameraModelT binUp() const
+
+Bins pixel up, factor of 2.0.
+
+See for details: `https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj <https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj>`__
+
+.. index:: pair: function; roi
+.. _doxid-classsophus_1_1_camera_model_t_1a410fc6e83075c80e265d69731ea838da:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CameraModelT roi(Eigen::Vector2i const& top_left, :ref:`ImageSize<doxid-structsophus_1_1_image_size>` roi_size) const
+
+:ref:`Region <doxid-classsophus_1_1_region>` of interest given ``top_left`` and ` ``roi_size``.
+
+.. index:: pair: function; distort
+.. _doxid-classsophus_1_1_camera_model_t_1ab13f07b4d79b25718813bf36593a48e0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` distort(:ref:`ProjInCameraLifted<doxid-classsophus_1_1_camera_model_t_1ab04c7b0443ec00c5c1ea2d4a0417bd95>` const& point2_in_camera_lifted) const
+
+Maps a 2-point in the z=1 plane of the camera to a pixel in the image.
+
+.. index:: pair: function; undistort
+.. _doxid-classsophus_1_1_camera_model_t_1a2902878c48c6c200389445c6b683e680:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ProjInCameraLifted<doxid-classsophus_1_1_camera_model_t_1ab04c7b0443ec00c5c1ea2d4a0417bd95>` undistort(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& pixel_in_image) const
+
+Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
+
+.. index:: pair: function; camProj
+.. _doxid-classsophus_1_1_camera_model_t_1ae23e7abdb7cc433cf3d55102065d06b3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` camProj(:ref:`PointCamera<doxid-classsophus_1_1_camera_model_t_1ab8e068ff84d5248e6b54280e652a3d46>` const& point_in_camera) const
+
+Projects 3-point in camera frame to a pixel in the image.
+
+.. index:: pair: function; camUnproj
+.. _doxid-classsophus_1_1_camera_model_t_1a23ce8cff8ea4b0eb46c84a0e060a5d57:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`PointCamera<doxid-classsophus_1_1_camera_model_t_1ab8e068ff84d5248e6b54280e652a3d46>` camUnproj(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& pixel_in_image, double depth_z) const
+
+Unprojects pixel in the image to point in camera frame.
+
+The point is projected onto the xy-plane at z = ``depth_z``.
+
+.. index:: pair: function; data
+.. _doxid-classsophus_1_1_camera_model_t_1a6141882e54a5c4e3336472fbaa1386c1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TScalar* data()
+
+Raw data access. To be used in ceres optimization only.
+
+.. index:: pair: function; imageSize
+.. _doxid-classsophus_1_1_camera_model_t_1a9dcfbdfce960a6c221fee60928c6f361:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ImageSize<doxid-structsophus_1_1_image_size>` const& imageSize() const
+
+Accessor of image size.
+
+.. index:: pair: function; contains
+.. _doxid-classsophus_1_1_camera_model_t_1a1b92ee6dbcd21a44bf3d3aa93d8cfbf6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool contains(Eigen::Vector2i const& obs, int border = 0) const
+
+Returns true if obs is within image.
+
+Note: Postiive border makes the image frame smaller.
+
+.. index:: pair: function; contains
+.. _doxid-classsophus_1_1_camera_model_t_1ae35c65dc296319b75201b81188197062:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool contains(:ref:`PixelImage<doxid-classsophus_1_1_camera_model_t_1a2ff890a156617e0b83d8cc35c879a32f>` const& obs, TScalar border = TScalar(0)) const
+
+Returns true if obs is within image.
+
+Note: Postiive border makes the image frame smaller.
+
+.. index:: pair: function; fromData
+.. _doxid-classsophus_1_1_camera_model_t_1ac42d4756577f23ea2507889a4b45c9bf:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static CameraModelT fromData(TScalar const*const ptr)
+
+Returns camera model from raw data pointer. To be used within ceres optimization only.
+

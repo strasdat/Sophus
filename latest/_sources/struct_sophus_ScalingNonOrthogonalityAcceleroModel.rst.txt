@@ -1,0 +1,39 @@
+.. index:: pair: struct; sophus::ScalingNonOrthogonalityAcceleroModel
+.. _doxid-structsophus_1_1_scaling_non_orthogonality_accelero_model:
+
+template struct sophus::ScalingNonOrthogonalityAcceleroModel
+============================================================
+
+.. toctree::
+	:hidden:
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <imu_model.h>
+	
+	template <class TT>
+	struct ScalingNonOrthogonalityAcceleroModel {
+		// fields
+	
+		Eigen::Matrix<TT, 3, 1> :target:`scale<doxid-structsophus_1_1_scaling_non_orthogonality_accelero_model_1a828d256aa098257a70f05d9836c05071>`;
+		Eigen::Matrix<TT, 3, 1> :target:`non_orthogonality<doxid-structsophus_1_1_scaling_non_orthogonality_accelero_model_1a4cbf6b19821b21f13a398c46dad756fd>`;
+		Eigen::Matrix<TT, 3, 1> :target:`accel_bias<doxid-structsophus_1_1_scaling_non_orthogonality_accelero_model_1ac8739389d62c39c7ddc42368daed3467>`;
+
+		// construction
+	
+		:target:`ScalingNonOrthogonalityAcceleroModel<doxid-structsophus_1_1_scaling_non_orthogonality_accelero_model_1a1c922d2e864b931bbb34b191508c744c>`(
+			Eigen::Matrix<TT, 3, 1> const& scale = Eigen::Matrix<TT, 3, 1>::Ones(),
+			Eigen::Matrix<TT, 3, 1> const& non_orthogonality = Eigen::Matrix<TT, 3, 1>::Zero(),
+			Eigen::Matrix<TT, 3, 1> const& accel_bias = Eigen::Matrix<TT, 3, 1>::Zero()
+		);
+
+		// methods
+	
+		Eigen::Matrix<TT, 3, 1> :target:`acceleroMeasurement<doxid-structsophus_1_1_scaling_non_orthogonality_accelero_model_1aa820a7687ba2e17373b940254c8efa55>`(Eigen::Matrix<TT, 3, 1> const& imu_acceleration_imu) const;
+		Eigen::Matrix<TT, 9, 1> :target:`params<doxid-structsophus_1_1_scaling_non_orthogonality_accelero_model_1af419c02505049fbe69f51fd3240e9bbe>`() const;
+		static ScalingNonOrthogonalityAcceleroModel<TT> :target:`fromParams<doxid-structsophus_1_1_scaling_non_orthogonality_accelero_model_1a2d918a8cfb85ab1b7cb74504808fb8bc>`(Eigen::Matrix<TT, 9, 1> const& params);
+	};

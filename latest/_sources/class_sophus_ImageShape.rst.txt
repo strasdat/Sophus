@@ -1,0 +1,49 @@
+.. index:: pair: class; sophus::ImageShape
+.. _doxid-classsophus_1_1_image_shape:
+
+class sophus::ImageShape
+========================
+
+.. toctree::
+	:hidden:
+
+Shape of image: width, height and pitch in bytes.
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <image_size.h>
+	
+	class ImageShape {
+	public:
+		// construction
+	
+		:target:`ImageShape<doxid-classsophus_1_1_image_shape_1a6cdbc9454ace77093bd420f678ffdf59>`();
+		:target:`ImageShape<doxid-classsophus_1_1_image_shape_1a4def0c198a7b390770f6a9c2b7d78983>`(:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size, size_t pitch_bytes);
+		:target:`ImageShape<doxid-classsophus_1_1_image_shape_1a4c014c38fe538a05ad2cea3f28cfba39>`(int width, int height, size_t pitch_bytes);
+
+		// methods
+	
+		:ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` const& :target:`imageSize<doxid-classsophus_1_1_image_shape_1a0a572ed4d53b172aa3a49ab916405f23>`() const;
+		int :target:`width<doxid-classsophus_1_1_image_shape_1af51ef4e2786a0c02e839e86000b6c0aa>`() const;
+		int :target:`height<doxid-classsophus_1_1_image_shape_1a6ae1c7d4dac73810a81f72d809ed910b>`() const;
+		size_t :target:`pitchBytes<doxid-classsophus_1_1_image_shape_1a50fa9eaaa71c0b219270ad7fdac4c09f>`() const;
+		int :target:`area<doxid-classsophus_1_1_image_shape_1a7e18a0a052cfa6ab325b376e680bc50d>`() const;
+		int :target:`sizeBytes<doxid-classsophus_1_1_image_shape_1a73258d5d6e89b354bf592bee5588c63a>`() const;
+		bool :target:`isEmpty<doxid-classsophus_1_1_image_shape_1af9212eccddf59a323d8f9f64ef317a30>`() const;
+	
+		template <class TPixelType>
+		static ImageShape :target:`makeFromSizeAndPitch<doxid-classsophus_1_1_image_shape_1ac3537e6497aa76881d568e52fd7f7799>`(
+			:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size,
+			size_t pitch_bytes
+		);
+	
+		static ImageShape :target:`makeFromSizeAndPitchUnchecked<doxid-classsophus_1_1_image_shape_1ac5fc211116ef1948ead1ab3d56e3effe>`(
+			:ref:`ImageSize<doxid-structsophus_1_1_image_size>` image_size,
+			size_t pitch_bytes
+		);
+	
+		template <class TPixelTypeT>
+		static ImageShape :target:`makeFromSize<doxid-classsophus_1_1_image_shape_1acb00d49b051f8196dfed738f7acc0d4f>`(:ref:`sophus::ImageSize<doxid-structsophus_1_1_image_size>` image_size);
+	};
