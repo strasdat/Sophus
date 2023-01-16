@@ -11,7 +11,7 @@ target_link_libraries(sophus INTERFACE
   sophus_lie_interp
   sophus_geometry
 )
-add_library (sophus::sophus ALIAS sophus)
+add_library (Sophus::sophus ALIAS sophus)
 # Associate target with include directory
 target_include_directories(sophus INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"

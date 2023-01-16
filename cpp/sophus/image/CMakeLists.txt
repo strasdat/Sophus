@@ -22,7 +22,7 @@ foreach(x ${sophus_image_src_prefixes} )
 endforeach()
 
 farm_ng_add_library(sophus_image
-  NAMESPACE sophus
+  NAMESPACE Sophus
   INCLUDE_DIR ../../
   HEADERS
   ${sophus_image_h}
