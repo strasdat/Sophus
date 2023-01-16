@@ -7,3 +7,4 @@ Page Index
 
    style
    pysophus
+   api_autogen/index
