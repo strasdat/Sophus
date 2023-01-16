@@ -15,7 +15,8 @@
 			"limits": "cpp",
 			"random": "cpp",
 			"algorithm": "cpp",
-			"fft": "cpp"
+			"fft": "cpp",
+			"ostream": "cpp"
 		},
 	}
 }

@@ -17,8 +17,8 @@ template <class TT>
 using StdVector = std::vector<TT, Eigen::aligned_allocator<TT>>;
 
 template <>
-struct RotationalPart<sophus::SO3d> {
-  static double norm(const typename sophus::SO3d::Tangent &t) {
+struct RotationalPart<sophus::So3F64> {
+  static double norm(const typename sophus::So3F64::Tangent &t) {
     return t.norm();
   }
 };
