@@ -1,12 +1,9 @@
-.. include:: page_index.rst
-
-.. rubric:: Reference and Index:
+Page Index
+=======================================
 
 .. toctree::
-	:hidden:
+   :maxdepth: 2
+   :caption: Contents:
 
-	global.rst
-
-|	:doc:`global`
-|	:ref:`genindex`
-
+   style
+   pysophus

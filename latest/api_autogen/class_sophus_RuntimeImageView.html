@@ -1,0 +1,344 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>template class sophus::RuntimeImageView - Sophus documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Sophus  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">Sophus  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../style.html">C++ Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pysophus.html">Sympy API - Symbolic Sophus In Python</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="template-class-sophus-runtimeimageview">
+<span id="doxid-classsophus-1-1-runtime-image-view"></span><span id="index-0"></span><h1>template class sophus::RuntimeImageView<a class="headerlink" href="#template-class-sophus-runtimeimageview" title="Permalink to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h2>
+<pre class="highlight doxyrest-overview-code-block literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;runtime_image.h&gt;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPredicate</span> <span class="o">=</span> <span class="n">AnyImagePredicate</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="n">RuntimeImageView</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// construction</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPixel</span><span class="o">&gt;</span>
+    <a class="reference internal" href="#doxid-classsophus-1-1-runtime-image-view-1af3f1352d79dae6e05d9410b29efa7c97"><span class="std std-ref">RuntimeImageView</span></a><span></span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="o">&lt;</span><span class="n">TPixel</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">image</span><span class="p">);</span>
+
+    <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1a644f384f6f7480d7e99f81c22cf13603"><span></span><span class="n">RuntimeImageView</span></span><span></span><span class="p">(</span>
+        <a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">image_shape</span><span class="p">,</span>
+        <a class="reference internal" href="struct_sophus_RuntimePixelType.html#doxid-structsophus-1-1-runtime-pixel-type"><span class="std std-ref">RuntimePixelType</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">pixel_type</span><span class="p">,</span>
+        <span class="kt">void</span> <span class="k">const</span><span class="o">*</span> <span class="n">ptr</span>
+    <span class="p">);</span>
+
+    <span class="c1">// methods</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPixel</span><span class="o">&gt;</span>
+    <span class="kt">bool</span> <a class="reference internal" href="#doxid-classsophus-1-1-runtime-image-view-1a350924ab9f5901f56936123a49f4537a"><span class="std std-ref">has</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="kt">uint8_t</span> <span class="k">const</span><span class="o">*</span> <a class="reference internal" href="#doxid-classsophus-1-1-runtime-image-view-1a1b1d9f2c2a6f9799a00b24336adb8ce2"><span class="std std-ref">rawRowPtr</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="k">const</span><span class="o">*</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1a650dbeb9b2a37d044273edae614ce557"><span></span><span class="n">rawPtr</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <a class="reference internal" href="#doxid-classsophus-1-1-runtime-image-view-1a8c32fc7a36d7c616dc155a85b8cd31e9"><span class="std std-ref">numBytesPerPixelChannel</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">NumberType</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1aecc09d61612e9aecc930cf97f09fc623"><span></span><span class="n">numberType</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1ae87c94fd7686b168f8c8b081d767729a"><span></span><span class="n">shape</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">ImageSize</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1a045d6801a35b210ac6ac3794f9f1dd93"><span></span><span class="n">imageSize</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1a4d7ccdf58eb3963134d93f5d20607b07"><span></span><span class="n">width</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1ab331ab3d0e8d2e0bd112b1841819d05f"><span></span><span class="n">height</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">size_t</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1aaaf6d5889a98d317648ce6a479d7cc18"><span></span><span class="n">pitchBytes</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">size_t</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1ac74dca327f936079213c0b7e23ceb665"><span></span><span class="n">sizeBytes</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1abb4f4b334474ee7885a862748ea95ac3"><span></span><span class="n">isEmpty</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <a class="reference internal" href="struct_sophus_RuntimePixelType.html#doxid-structsophus-1-1-runtime-pixel-type"><span class="std std-ref">RuntimePixelType</span></a><span></span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1ac7c126db1956c7d206b08962ccf6c7a2"><span></span><span class="n">pixelType</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1ab8e3f726a9a73855ea605f4271ebf330"><span></span><span class="n">numChannels</span></span><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">RuntimeImageView</span> <a class="reference internal" href="#doxid-classsophus-1-1-runtime-image-view-1af63a75c9a27d62b65144feece43bd6c4"><span class="std std-ref">subview</span></a><span></span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="n">uv</span><span class="p">,</span> <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">sophus::ImageSize</span></a><span></span> <span class="n">size</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPixel</span><span class="o">&gt;</span>
+    <a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="o">&lt;</span><span class="n">TPixel</span><span class="o">&gt;</span> <a class="reference internal" href="#doxid-classsophus-1-1-runtime-image-view-1aeb3fa5d5f1d0d6f68dfd656a3dda16a3"><span class="std std-ref">imageView</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+<span class="k">protected</span><span class="o">:</span>
+    <span class="c1">// fields</span>
+
+    <a class="reference internal" href="class_sophus_ImageShape.html#doxid-classsophus-1-1-image-shape"><span class="std std-ref">ImageShape</span></a><span></span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1ae1aed5aa6cd11d4373aee15148fe8175"><span></span><span class="n">shape_</span></span><span></span> <span class="o">=</span> <span class="p">{};</span>
+    <a class="reference internal" href="struct_sophus_RuntimePixelType.html#doxid-structsophus-1-1-runtime-pixel-type"><span class="std std-ref">RuntimePixelType</span></a><span></span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1a25639fd605871522d4d22fc29a014714"><span></span><span class="n">pixel_type_</span></span><span></span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="k">const</span><span class="o">*</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1a1c5e45b22a2ef42ddcc6a4e49888fb8e"><span></span><span class="n">ptr_</span></span><span></span><span class="p">;</span>
+
+    <span class="c1">// construction</span>
+
+    <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-runtime-image-view-1ab3bb0f2da5b3c39f0a0f6a03a32a32e9"><span></span><span class="n">RuntimeImageView</span></span><span></span><span class="p">();</span>
+<span class="p">};</span></pre>
+</section>
+<section id="detailed-documentation">
+<span id="details-classsophus-1-1-runtime-image-view"></span><h2>Detailed Documentation<a class="headerlink" href="#detailed-documentation" title="Permalink to this heading">#</a></h2>
+<section id="construction">
+<h3>Construction<a class="headerlink" href="#construction" title="Permalink to this heading">#</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-runtime-image-view-1af3f1352d79dae6e05d9410b29efa7c97"><span id="index-1"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPixel</span><span class="o">&gt;</span>
+<span class="n">RuntimeImageView</span><span class="p">(</span><a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="o">&lt;</span><span class="n">TPixel</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">image</span><span class="p">)</span></pre>
+<p>Create type-erased image view from <a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a>.</p>
+<p>By design not “explicit”.</p>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">#</a></h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-runtime-image-view-1a350924ab9f5901f56936123a49f4537a"><span id="index-2"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPixel</span><span class="o">&gt;</span>
+<span class="kt">bool</span> <span class="n">has</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Return true is this contains data of type TPixel.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-runtime-image-view-1a1b1d9f2c2a6f9799a00b24336adb8ce2"><span id="index-3"></span><span></span><span class="kt">uint8_t</span> <span class="k">const</span><span class="o">*</span> <span class="n">rawRowPtr</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns v-th row pointer.</p>
+<p>Precondition: v must be in [0, height).</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-runtime-image-view-1a8c32fc7a36d7c616dc155a85b8cd31e9"><span id="index-4"></span><span></span><span class="kt">int</span> <span class="n">numBytesPerPixelChannel</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Number of bytes per channel of a single pixel.</p>
+<p>E.g. a pixel of Eigen::Matrix&lt;uint8_t, 3, 1&gt; has 1 byte per channel.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-runtime-image-view-1af63a75c9a27d62b65144feece43bd6c4"><span id="index-5"></span><span></span><span class="n">RuntimeImageView</span> <span class="n">subview</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2i</span> <span class="n">uv</span><span class="p">,</span> <a class="reference internal" href="struct_sophus_ImageSize.html#doxid-structsophus-1-1-image-size"><span class="std std-ref">sophus::ImageSize</span></a><span></span> <span class="n">size</span><span class="p">)</span> <span class="k">const</span></pre>
+<p>Returns subview with shared ownership semantics of whole image.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-classsophus-1-1-runtime-image-view-1aeb3fa5d5f1d0d6f68dfd656a3dda16a3"><span id="index-6"></span><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TPixel</span><span class="o">&gt;</span>
+<a class="reference internal" href="struct_sophus_ImageView.html#doxid-structsophus-1-1-image-view"><span class="std std-ref">ImageView</span></a><span></span><span class="o">&lt;</span><span class="n">TPixel</span><span class="o">&gt;</span> <span class="n">imageView</span><span class="p">()</span> <span class="k">const</span></pre>
+<p>Returns typed image.</p>
+<p>Precondition: this-&gt; <a class="reference internal" href="#doxid-classsophus-1-1-runtime-image-view-1a350924ab9f5901f56936123a49f4537a"><span class="std std-ref">has&lt;TPixel&gt;()</span></a></p>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">template class sophus::RuntimeImageView</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li><a class="reference internal" href="#construction">Construction</a></li>
+<li><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/target-highlight.js"></script>
+    </body>
+</html>

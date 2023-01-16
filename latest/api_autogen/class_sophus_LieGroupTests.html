@@ -1,0 +1,313 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>template class sophus::LieGroupTests - Sophus documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Sophus  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">Sophus  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../style.html">C++ Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pysophus.html">Sympy API - Symbolic Sophus In Python</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="template-class-sophus-liegrouptests">
+<span id="doxid-classsophus-1-1-lie-group-tests"></span><span id="index-0"></span><h1>template class sophus::LieGroupTests<a class="headerlink" href="#template-class-sophus-liegrouptests" title="Permalink to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<pre class="highlight doxyrest-overview-code-block literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;test_impl.h&gt;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TLieGroup</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="n">LieGroupTests</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// typedefs</span>
+
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a6ce63c05d6a840ef445d2e9bc8b5868d"><span></span><span class="n">LieGroup</span></span><span></span> <span class="o">=</span> <span class="n">TLieGroup</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span></span><span class="n">Scalar</span></span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Scalar</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ab22e195f3e2aa2b76eb43b78a47780d8"><span></span><span class="n">Transformation</span></span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Transformation</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a6d31f72ee94140feeb3bc065e0e877e1"><span></span><span class="n">Tangent</span></span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Tangent</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a9603aea8e33f14def1a747c984c31981"><span></span><span class="n">Point</span></span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Point</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a738f724d87299de6ace3d06668ea65e5"><span></span><span class="n">HomogeneousPoint</span></span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">HomogeneousPoint</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ae783bd5e657a9a26876c017819d69ddb"><span></span><span class="n">ConstPointMap</span></span><span></span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Map</span><span class="o">&lt;</span><span class="k">const</span> <a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9603aea8e33f14def1a747c984c31981"><span class="std std-ref">Point</span></a><span></span><span class="o">&gt;</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a41f4939e782c96460992facc2fcd3f0f"><span></span><span class="n">Line</span></span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Line</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a74a94418f9e7cbd3e3ef256affe01e7c"><span></span><span class="n">Hyperplane</span></span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Hyperplane</span> <span class="p">;</span>
+    <span class="k">using</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1af75c238f4fa6bf992e7b3ef409be7f4d"><span></span><span class="n">Adjoint</span></span><span></span> <span class="o">=</span> <span class="k">typename</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">Adjoint</span> <span class="p">;</span>
+
+    <span class="c1">// fields</span>
+
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a634da78451e248eb0269c392a68a7d8d"><span></span><span class="n">kPointDim</span></span><span></span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">kPointDim</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a8fe84654850f8d36266b06d5d236ebfe"><span></span><span class="n">kMatrixDim</span></span><span></span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">kMatrixDim</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a59e17d546a97a12e02a211d8fb194ed1"><span></span><span class="n">kDoF</span></span><span></span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">kDoF</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ab5e9ce99f331a099b06f07e4ad87c9d2"><span></span><span class="n">kNumParameters</span></span><span></span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">::</span><span class="n">kNumParameters</span><span class="p">;</span>
+
+    <span class="c1">// construction</span>
+
+    <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a78e9a06bb0b486d0c7483fe8b1a4e735"><span></span><span class="n">LieGroupTests</span></span><span></span><span class="p">(</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a6ce63c05d6a840ef445d2e9bc8b5868d"><span class="std std-ref">LieGroup</span></a><span></span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a6ce63c05d6a840ef445d2e9bc8b5868d"><span class="std std-ref">LieGroup</span></a><span></span><span class="o">&gt;&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">group_vec</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a6d31f72ee94140feeb3bc065e0e877e1"><span class="std std-ref">Tangent</span></a><span></span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a6d31f72ee94140feeb3bc065e0e877e1"><span class="std std-ref">Tangent</span></a><span></span><span class="o">&gt;&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">tangent_vec</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9603aea8e33f14def1a747c984c31981"><span class="std std-ref">Point</span></a><span></span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">aligned_allocator</span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9603aea8e33f14def1a747c984c31981"><span class="std std-ref">Point</span></a><span></span><span class="o">&gt;&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">point_vec</span>
+    <span class="p">);</span>
+
+    <span class="c1">// methods</span>
+
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a98ae94410d518e008bbd80bfc02553de"><span></span><span class="n">adjointTest</span></span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TG</span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TG</span><span class="p">,</span> <a class="reference internal" href="class_sophus_So3.html#doxid-classsophus-1-1-so3"><span class="std std-ref">So3</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="o">||</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TG</span><span class="p">,</span> <a class="reference internal" href="class_sophus_Se3.html#doxid-classsophus-1-1-se3"><span class="std std-ref">Se3</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a15e3e167fd275bbccfd546898ac4bbf0"><span></span><span class="n">leftJacobianTest</span></span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TG</span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;!</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TG</span><span class="p">,</span> <a class="reference internal" href="class_sophus_So3.html#doxid-classsophus-1-1-so3"><span class="std std-ref">So3</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="o">||</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TG</span><span class="p">,</span> <a class="reference internal" href="class_sophus_Se3.html#doxid-classsophus-1-1-se3"><span class="std std-ref">Se3</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="#doxid-classsophus-1-1-lie-group-tests-1a9192b8555ab2d631cfa99993a5534cf4"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="p">),</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a311de8ad8d5e5cb4c075b25c5d04f052"><span></span><span class="n">leftJacobianTest</span></span><span></span><span class="p">();</span>
+
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a8e31beaa740936d85bba54a3f82750b3"><span></span><span class="n">moreJacobiansTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a850f0839433730f93e36608eb3766d8c"><span></span><span class="n">contructorAndAssignmentTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a28d71a2f9a1b4f1678e64a7f5f5423eb"><span></span><span class="n">derivativeTest</span></span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TG</span> <span class="o">=</span> <span class="n">LieGroup</span><span class="o">&gt;</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a130cfd7dc17a22efec7828ed5fd0a421"><span></span><span class="n">additionalDerivativeTest</span></span><span></span><span class="p">();</span>
+
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a8cc9b98c5a0f12ad1d5bcb41fa1ee134"><span></span><span class="n">productTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ad3f06fdd325041da01944c8c1b1b9398"><span></span><span class="n">expLogTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a8a6134db20da92794e5bac99de352039"><span></span><span class="n">expMapTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1af24ed28723a43fe405d8adba65411a7f"><span></span><span class="n">groupActionTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a9d8947a6056aa13cdfd3277efe42b412"><span></span><span class="n">lineActionTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a76fb8cbdda0b7072bacbcc8ad52eabd3"><span></span><span class="n">planeActionTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a562335dd15cf0b8c82803fd014a91eab"><span></span><span class="n">lieBracketTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a65eacae42f331e7ca16cd6c86e2bc349"><span></span><span class="n">veeHatTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1aa28b9649d2d71383bd4360ce5801eb34"><span></span><span class="n">newDeleteSmokeTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1aefdb8b69038f6c4f0c245ce363ea9cf2"><span></span><span class="n">interpolateAndMeanTest</span></span><span></span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a099d332b69f515362fef71256c3f6c00"><span></span><span class="n">testRandomSmoke</span></span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TS</span><span class="p">,</span> <span class="kt">float</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1abebc9445d05afe1c7f84787f868cea4b"><span></span><span class="n">testSpline</span></span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;!</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">TS</span><span class="p">,</span> <span class="kt">float</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1ae5f7520a250ca27839cedc685cd334d0"><span></span><span class="n">testSpline</span></span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">TS</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a66c7addad1edc5d416e83e4a5e2b45a5"><span></span><span class="n">doAllTestsPass</span></span><span></span><span class="p">();</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">TS</span> <span class="o">=</span> <span class="n">Scalar</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;!</span><span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">TS</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="doxyrest-code-target target" id="doxid-classsophus-1-1-lie-group-tests-1a65f2d630f8716638df26c1c373856a27"><span></span><span class="n">doAllTestsPass</span></span><span></span><span class="p">();</span>
+<span class="p">};</span></pre>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/target-highlight.js"></script>
+    </body>
+</html>
