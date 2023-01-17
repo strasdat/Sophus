@@ -41,7 +41,7 @@ especially in the domain of `robotics`, `computer vision` annd `graphics`.
 - [Lie groups / Manifold](#lie-groups) such as `SO(2)` and
   `SO(3)` to present rotations in 2d and 3,
 - [Other geometric conecpts](#other-geometric-concepts) such as unit vector, plane
-- fitting and inverse depth points,
+  fitting and inverse depth points,
 - [Image classes](#image-classes)
 - [Sensor models](#sensor-models) such `camera models` (as pinhole, orthographic
   and lens distortion model) and `IMU models`.
@@ -49,7 +49,7 @@ especially in the domain of `robotics`, `computer vision` annd `graphics`.
   instance o symbolically derive Jacobians and autogenerate c++ code.
 - [Serialization](#serialization) using proto (and soon json).
 
-## Getting Started
+## 👟Getting Started
 
 [Working in progress.]
 
@@ -57,7 +57,7 @@ Check out the docs for now: <https://strasdat.github.io/Sophus/latest/>
 
 (Which are also work in progress...)
 
-## Lie groups
+## 🌐Lie groups
 
 ### tldr: rotations, translations and scaling in 2d and 3d
 
@@ -121,7 +121,7 @@ SE(3).
   // (imag0, imag1, imag2, real)
   std::cout << std::endl;
 ```
-[cpp/examples/test_install_targets/hello_se3.cpp]
+[hello_so3.cpp](cpp/examples/test_install_targets/hello_so3.cpp)
 
 ### 3d rotation + translation example using the SE(3) type
 
@@ -148,7 +148,7 @@ SE(3).
             << world_anchored_camera_pose.matrix() << std::endl;
 ```
 
-[cpp/examples/test_install_targets/hello_se3.cpp]
+[hello_se3](cpp/examples/test_install_targets/hello_se3.cpp)
 
 ### Tabel of Lie Groups
 
@@ -172,28 +172,28 @@ on overview what type of transformations are supported.
 
 Supported advanced features on Lie groups:
 
-[x] (linear) interpolation
-[x] Spline interpolation
-[x] Averaging (of more than two elements)
+ - ✅ (linear) interpolation
+ - ✅ Spline interpolation
+ - ✅ Averaging (of more than two elements)
 
-## Other geometric concepts
+## 📐Other geometric concepts
 
-## Image classes
+## 🌁Image classes
 
-## Sensor Models
+## 📷Sensor Models
 
-## Sympy
+## 📜Sympy
 
-## Serialization
+## 🫙Serialization
 
-## Contribute
+## 🧑🏽‍🏭Contribute
 
 Contributions are welcome!
 
-## :pencil: License
+## 📝License
 
-This project is licensed under [MIT](https://opensource.org/licenses/MIT) license.
+This project is licensed under the [MIT](https://opensource.org/licenses/MIT) license.
 
-## :man_astronaut: Show your support
+## 👩‍🚀Show your support
 
 Give a ⭐️ if this project helped you!
