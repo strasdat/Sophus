@@ -1,0 +1,11 @@
+digraph "/home/runner/work/Sophus/Sophus/cpp/sophus/image/proto" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_0ecbeff14e6cb00e787f5838ffd0daf5 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="image" fontname="Helvetica", fontsize="10", URL="dir_0ecbeff14e6cb00e787f5838ffd0daf5.html"]
+  dir_fb4a9bcefaad733489adaaba99f56443 [shape=box, label="proto", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_fb4a9bcefaad733489adaaba99f56443.html"];
+  }
+  dir_246b32a499e23272b6f273a9e5862f57 [shape=box label="linalg" fillcolor="white" style="filled" color="red" URL="dir_246b32a499e23272b6f273a9e5862f57.html"];
+  dir_fb4a9bcefaad733489adaaba99f56443->dir_246b32a499e23272b6f273a9e5862f57 [headlabel="1", labeldistance=1.5 headhref="dir_000008_000012.html"];
+}

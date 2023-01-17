@@ -1,0 +1,17 @@
+digraph "/home/runner/work/Sophus/Sophus/cpp/sophus/geometry/unit_vector.h"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/geometry\l/unit_vector.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/geometry/ray.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$ray_8h.html",tooltip=" "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/geometry\l/proto/conv.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$geometry_2proto_2conv_8h.html",tooltip=" "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/geometry\l/proto/conv.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$geometry_2proto_2conv_8cpp.html",tooltip=" "];
+  Node2 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/geometry\l/ray_test.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$ray__test_8cpp.html",tooltip=" "];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/geometry\l/unit_vector_test.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unit__vector__test_8cpp.html",tooltip=" "];
+}

@@ -1,0 +1,8 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="sophus::So3Base\< TDerived\l \>::TangentAndTheta",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structsophus_1_1_so3_base_1_1_tangent_and_theta.html",tooltip=" "];
+}

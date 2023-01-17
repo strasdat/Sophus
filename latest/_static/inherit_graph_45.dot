@@ -1,0 +1,8 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="sophus::jet_helpers\l::GetValue\< ceres::Jet\l\< TScalar, kN \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4.html",tooltip=" "];
+}

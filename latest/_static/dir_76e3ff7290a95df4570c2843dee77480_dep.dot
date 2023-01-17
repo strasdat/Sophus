@@ -1,0 +1,16 @@
+digraph "/home/runner/work/Sophus/Sophus/cpp/sophus/lie/interp" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_e4d7764f299ff37161f14b275a37fe93 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="lie" fontname="Helvetica", fontsize="10", URL="dir_e4d7764f299ff37161f14b275a37fe93.html"]
+  subgraph clusterdir_76e3ff7290a95df4570c2843dee77480 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_76e3ff7290a95df4570c2843dee77480.html"];
+    dir_76e3ff7290a95df4570c2843dee77480 [shape=plaintext label="interp"];
+    dir_c8df73e35c6ecdc4dd096f44b4b2d48c [shape=box label="details" color="black" fillcolor="white" style="filled" URL="dir_c8df73e35c6ecdc4dd096f44b4b2d48c.html"];
+  }
+  }
+  dir_a7082e164d91aec3b9943421365f2e0b [shape=box label="common" URL="dir_a7082e164d91aec3b9943421365f2e0b.html"];
+  dir_76e3ff7290a95df4570c2843dee77480->dir_a7082e164d91aec3b9943421365f2e0b [headlabel="2", labeldistance=1.5 headhref="dir_000010_000004.html"];
+  dir_76e3ff7290a95df4570c2843dee77480->dir_c8df73e35c6ecdc4dd096f44b4b2d48c [headlabel="1", labeldistance=1.5 headhref="dir_000010_000018.html"];
+}

@@ -1,0 +1,9 @@
+digraph "sophus::Se2&lt; TScalar, kOptions &gt;"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="sophus::Se2\< TScalar,\l kOptions \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Se2 using default storage; derived from Se2Base."];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" so2_" ,fontname="Helvetica"];
+  Node2 [label="sophus::So2\< Scalar,\l kOptions \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_so2.html",tooltip=" "];
+}

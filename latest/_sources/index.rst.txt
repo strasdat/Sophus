@@ -9,4 +9,7 @@ The Sophus Book
    lie_group_table
    style
    pysophus
-   api_autogen/index
+
+
+
+`c++ api <_static/index.html>`_
