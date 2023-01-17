@@ -1,6 +1,6 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "Sophus"
-INPUT                  = ../cpp/sophus
+INPUT                  = ../../cpp/sophus
 RECURSIVE              = YES
 #EXTRACT_ALL            = NO
 ENABLE_PREPROCESSING   = YES
@@ -16,10 +16,11 @@ EXCLUDE_SYMBOLS        = Eigen::internal sophus::details sophus::interp_details
 GENERATE_LATEX         = NO
 STRIP_CODE_COMMENTS    = NO
 
-GENERATE_XML = YES
-GENERATE_HTML = NO
-XML_OUTPUT = xml-dir
-XML_PROGRAMLISTING = NO
+GENERATE_TREEVIEW      = YES # required!
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_EXTRA_STYLESHEET  = doxygen-awesome-css/doxygen-awesome.css \
+                         doxygen-awesome-css/doxygen-awesome-sidebar-only.css
 CASE_SENSE_NAMES = NO
 HIDE_UNDOC_RELATIONS = YES
 EXTRACT_ALL = YES

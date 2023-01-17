@@ -3,26 +3,15 @@
 set -x # echo on
 set -e # exit on error
 
-mkdir -p .doxyrest
-cd .doxyrest/
-pwd
-
-if [[ ! -e doxyrest_b ]]; then
-  git clone https://github.com/vovkos/doxyrest_b
-
-  cd doxyrest_b
-  git submodule update --init
-  pwd
-
-  cmake .
-  cmake --build .
+cd c++-api
+if [[ ! -e doxygen-awesome-css ]]; then
+  git submodule add https://github.com/jothepro/doxygen-awesome-css.git
+  cd doxygen-awesome-css
+  git checkout v2.1.0
   cd ..
-  pwd
 fi
-cd ..
 pwd
 
 doxygen doxyfile
-.doxyrest/doxyrest_b/doxyrest/bin/Release/doxyrest -c doxyrest-config.lua
-
+cd ..
 sphinx-build -b html . html-dir
