@@ -53,7 +53,7 @@ especially in the domain of `robotics`, `computer vision` annd `graphics`.
 
 [Working in progress.]
 
-Check out the docs for now: https://strasdat.github.io/Sophus/latest/
+Check out the docs for now: <https://strasdat.github.io/Sophus/latest/>
 
 (Which are also work in progress...)
 
@@ -64,8 +64,7 @@ Check out the docs for now: https://strasdat.github.io/Sophus/latest/
 `Lie groups` are generalizations of the Euclidean vector spaces R^N. A little
 more formally, a Manifold which is also an [abstract group](https://en.wikipedia.org/wiki/Group_theory#Abstract_groups).
 
-
-### Okay, and what is a Manifold?
+*Okay, and what is a Manifold?*
 
 `Manifold` are generalizations of the Euclidean vector spaces R^N. In
 particular, they behave locally like a Euclidean vector space, but globally
@@ -76,17 +75,88 @@ points West. If you turn it another 90 degrees it turns South. Now, if you turn
 it again 90 degrees is points East. And you turn it left again for 90 degrees it
 points North again. It wrapped around: `90 "+" 90 "+" 90 "+" 90 = 0`.
 
-### Do I need to understand the concept of Manifold, Group Theory and Lie Groups in order to use Sophus?
+*Do I need to understand the concept of Manifold, Group Theory and Lie Groups
+in order to use Sophus?*
 
-Not at all! If you aim to solve geometric problems in 2d and 3d, I'd suggest to
-study the table below, in particular the description column, to see what type
-of transformations is supported bie the ``lie`` component of Sophus. The most
-commonly used Lie group of Sophus is SE(3). Possibly you might want to start
-studying this one. If you are interested in 2d problems, such as 2d mapping,
-SE(2) might be a good entry point.
+Not at all! If you aim to solve geometric problems in 2d and 3d, it is best to
+directly into concrete examples. By far the most commonly used Lie groups of
+Sophus are the group of 3D rotations, also called Special Orthogonal Group,
+short SO(3), as well as the group of rotation and translation in 3D, short
+SE(3).
 
+### 3d rotation example using the SO(3) type
 
-| c++ type        | Lie group                                            | Description                                                                                                | minimal representation      | #DoF | Matrix representation | compact internal manifold representation    | #params |
+```c++
+  // The following demonstrates the group multiplication of rotation matrices
+
+  // Create rotation matrices from rotations around the x and y and z axes:
+  double const kPi = sophus::kPi<double>;
+  sophus::So3F64 R1 = sophus::So3F64::rotX(kPi / 4);
+  sophus::So3F64 R2 = sophus::So3F64::rotY(kPi / 6);
+  sophus::So3F64 R3 = sophus::So3F64::rotZ(-kPi / 3);
+
+  std::cout << "The rotation matrices are" << std::endl;
+  std::cout << "R1:\n" << R1.matrix() << std::endl;
+  std::cout << "R2:\n" << R2.matrix() << std::endl;
+  std::cout << "R3:\n" << R3.matrix() << std::endl;
+  std::cout << "Their product R1*R2*R3:\n"
+            << (R1 * R2 * R3).matrix() << std::endl;
+  std::cout << std::endl;
+
+  // Rotation matrices can act on vectors
+  Eigen::Vector3d x;
+  x << 0.0, 0.0, 1.0;
+  std::cout << "Rotation matrices can act on 3-vectors" << std::endl;
+  std::cout << "x\n" << x << std::endl;
+  std::cout << "R2*x\n" << R2 * x << std::endl;
+  std::cout << "R1*(R2*x)\n" << R1 * (R2 * x) << std::endl;
+  std::cout << "(R1*R2)*x\n" << (R1 * R2) * x << std::endl;
+  std::cout << std::endl;
+
+  // SO(3) are internally represented as unit quaternions.
+  std::cout << "R1 in matrix form:\n" << R1.matrix() << std::endl;
+  std::cout << "R1 in unit quaternion form:\n"
+            << R1.unitQuaternion().coeffs() << std::endl;
+  // Note that the order of coefficients of Eigen's quaternion class is
+  // (imag0, imag1, imag2, real)
+  std::cout << std::endl;
+```
+[cpp/examples/test_install_targets/hello_se3.cpp]
+
+### 3d rotation + translation example using the SE(3) type
+
+```c++
+  // Example of create a rigid transformation from an SO(3) = 3D rotation and a
+  // translation 3-vector:
+
+  // Let use assume there is a camera in the world. First we describe its
+  // orientation in the world reference frame.
+  sophus::So3F64 world_from_camera_rotation =
+      sophus::So3F64::rotX(sophus::kPi<double> / 4);
+  // Then the position of the camera in the world.
+  Eigen::Vector3d camera_in_world(0.0, 0.0, 1.0);
+
+  // The pose (position and orientation) of the camera in the world is
+  // constructed by its orientation ``world_from_camera_rotation`` as well as
+  // its position ``camera_in_world``.
+  sophus::Se3F64 world_anchored_camera_pose(
+      world_from_camera_rotation, camera_in_world);
+
+  // SE(3) naturally representation is a 4x4 matrix which can be accessed using
+  // the .matrix() method:
+  std::cout << "world_anchored_camera_pose:\n"
+            << world_anchored_camera_pose.matrix() << std::endl;
+```
+
+[cpp/examples/test_install_targets/hello_se3.cpp]
+
+### Tabel of Lie Groups
+
+The following table gives an overview of all Lie Groups in Sophus. New readers
+are encouraged to particularly focus on the the description column, to get
+on overview what type of transformations are supported.
+
+| c++ type        | Lie group name                                       | Description                                                                                                | minimal representation      | #DoF | Matrix representation | compact internal manifold representation    | #params |
 | ----------------|------------------------------------------------------| ---------------------------------------------------------------------------------------------------------- | ----------------------------| -----|---------------------- | ------------------------------------------- | ------- |
 | `So2<T>`        | Special Orthogonal Group in 2D, SO(2)                | rotations in 2d, also called Circle Group, or just "angle"                                                 | rotation angle              | 1    | 2x2 matrix            | unit complex number                         | 2       |
 | `So3<T>`        | Special Orthogonal Group in 3D, SO(3)                | rotations in 3d, 3D orientations                                                                           | rotation vector             | 3    | 3x3 matrix            | unit quaternion number                      | 4       |

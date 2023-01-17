@@ -26,7 +26,7 @@ find_package(Sophus 23.0.1 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(Eigen3 3.4.0 REQUIRED)
 
-set(example_source hello_so3)
+set(example_source hello_so3 hello_se3)
 
 foreach(example_src ${example_source})
   add_executable( ${example_src} ${example_src}.cpp)
