@@ -76,7 +76,7 @@ Overview
 	struct :ref:`RotationalPart<sophus::RxSO2d><doxid-struct_rotational_part_3_01sophus_1_1_rx_s_o2d_01_4>`;
 
 	template <>
-	struct :ref:`RotationalPart<sophus::SO3d><doxid-struct_rotational_part_3_01sophus_1_1_s_o3d_01_4>`;
+	struct :ref:`RotationalPart<sophus::So3F64><doxid-struct_rotational_part_3_01sophus_1_1_so3_f64_01_4>`;
 
 	// global variables
 

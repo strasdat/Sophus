@@ -229,10 +229,9 @@ Overview
 	using :target:`SO2<doxid-namespacesophus_1aba6cb21c9c9f4c4effd1dfef6951cfd5>` = :ref:`So2<doxid-classsophus_1_1_so2>`<TScalar, kOptions> ;
 	using :target:`SO2d<doxid-namespacesophus_1a89a9a283f16605eebf191a311fa76687>` = :ref:`So2F64<doxid-namespacesophus_1adb166c24bbf0a7ecc5b3e40eb0f3d8d9>` ;
 	using :target:`SO2f<doxid-namespacesophus_1a72ad6815075015dfbd45ebeaa5880983>` = :ref:`So2F32<doxid-namespacesophus_1a4b93b4312b43b1adb74a92e62afcf86c>` ;
-	using :target:`So3F64<doxid-namespacesophus_1ab9e176acaeabcc0111411ea6d4b2cd30>` = :ref:`So3<doxid-classsophus_1_1_so3>`<double> ;
+	using :target:`So3F64<doxid-namespacesophus_1aa23561a18c2761dbff34a975a8834445>` = :ref:`So3<doxid-classsophus_1_1_so3>`<double> ;
 	using :target:`So3F32<doxid-namespacesophus_1a2487da51544683d643cccc745be5c8ac>` = :ref:`So3<doxid-classsophus_1_1_so3>`<float> ;
 	using :target:`SO3<doxid-namespacesophus_1ae1908ba3d067e77cab2ab71e92fd53a7>` = :ref:`So3<doxid-classsophus_1_1_so3>`<TScalar, kOptions> ;
-	using :target:`SO3d<doxid-namespacesophus_1a7590155ec501fd89d7b1ce1da3549712>` = :ref:`So3F64<doxid-namespacesophus_1ab9e176acaeabcc0111411ea6d4b2cd30>` ;
 	using :target:`SO3f<doxid-namespacesophus_1a8c86d3317936fef9f05d0446a2dda57f>` = :ref:`So3F32<doxid-namespacesophus_1a2487da51544683d643cccc745be5c8ac>` ;
 	using :ref:`PinholeModel<doxid-namespacesophus_1a5b459c6209a0785c774aefa8f5b530ef>` = :ref:`CameraModelT<doxid-classsophus_1_1_camera_model_t>`<double, :ref:`AffineTransform<doxid-classsophus_1_1_affine_transform>`, :ref:`ProjectionZ1<doxid-structsophus_1_1_projection_z1>`> ;
 	using :ref:`BrownConradyModel<doxid-namespacesophus_1a5f1e243e0245c99be109ad17e0195026>` = :ref:`CameraModelT<doxid-classsophus_1_1_camera_model_t>`<double, :ref:`BrownConradyTransform<doxid-classsophus_1_1_brown_conrady_transform>`, :ref:`ProjectionZ1<doxid-structsophus_1_1_projection_z1>`> ;
@@ -1022,8 +1021,8 @@ Overview
 
 	Eigen::Quaterniond :target:`fromProto<doxid-namespacesophus_1a5736aac25922fd622ec6039e9e4a112b>`(proto::QuaternionF64 const& proto);
 	proto::QuaternionF64 :target:`toProto<doxid-namespacesophus_1ad8f5886425ee06fa56be7b856934acc5>`(Eigen::Quaterniond const& quat);
-	Expected<:ref:`So3F64<doxid-namespacesophus_1ab9e176acaeabcc0111411ea6d4b2cd30>`> :target:`fromProto<doxid-namespacesophus_1a04fd2830f5cd271230e604d8b46c5e7b>`(proto::So3F64 const& proto);
-	proto::So3F64 :target:`toProto<doxid-namespacesophus_1a41dcf5436628b35dae734f55c1fbd664>`(:ref:`sophus::So3F64<doxid-namespacesophus_1ab9e176acaeabcc0111411ea6d4b2cd30>` const& rotation);
+	Expected<:ref:`So3F64<doxid-namespacesophus_1aa23561a18c2761dbff34a975a8834445>`> :target:`fromProto<doxid-namespacesophus_1a04fd2830f5cd271230e604d8b46c5e7b>`(proto::So3F64 const& proto);
+	proto::So3F64 :target:`toProto<doxid-namespacesophus_1a41dcf5436628b35dae734f55c1fbd664>`(:ref:`sophus::So3F64<doxid-namespacesophus_1aa23561a18c2761dbff34a975a8834445>` const& rotation);
 	Expected<:ref:`sophus::Se3F64<doxid-namespacesophus_1a10c2ccdea99376188f7ca55b6faa9df6>`> :target:`fromProto<doxid-namespacesophus_1ab5183c6cb26599b3ad643b83ead7178c>`(proto::Se3F64 const& proto);
 	proto::Se3F64 :target:`toProto<doxid-namespacesophus_1a90a7827af954ec079a513a4ecbc56770>`(:ref:`Se3F64<doxid-namespacesophus_1a10c2ccdea99376188f7ca55b6faa9df6>` const& pose);
 	int :target:`testRxso2<doxid-namespacesophus_1a3d886c9a01eb5acf4b7a6a8403935a37>`();

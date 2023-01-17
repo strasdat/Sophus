@@ -123,9 +123,6 @@ Overview
 	// direct descendants
 
 	template <class TScalar, int kOptions>
-	class :ref:`Map<sophus::So3<TScalar> const, kOptions><doxid-class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_01const_00_01k_options_01_4>`;
-
-	template <class TScalar, int kOptions>
 	class :ref:`Map<sophus::So3<TScalar>, kOptions><doxid-class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4>`;
 .. _details-classsophus_1_1_so3_base:
 
