@@ -5,6 +5,8 @@ Page Index
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started
+   lie_group_table
    style
    pysophus
    api_autogen/index
