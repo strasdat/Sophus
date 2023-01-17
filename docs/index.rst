@@ -1,10 +1,15 @@
-Page Index
-=======================================
+The Sophus Book
+===============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
+   getting_started.md
+   lie_group_table
    style
    pysophus
-   api_autogen/index
+
+
+
+`c++ api <_static/index.html>`_

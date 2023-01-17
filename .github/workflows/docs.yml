@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo apt-get -qq update
           sudo apt-get install doxygen liblua5.3-dev ragel
-          pip3 install sphinx sympy furo
+          pip3 install sphinx sympy sphinx_book_theme
           cd docs
           ./make_docs.sh
           cd html-dir
