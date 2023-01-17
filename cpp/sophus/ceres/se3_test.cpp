@@ -26,27 +26,29 @@ struct RotationalPart<sophus::SE3d> {
 
 int main(int /*unused*/, char ** /*unused*/) {
   using SE3d = sophus::SE3d;
-  using SO3d = sophus::SO3d;
+  using So3F64 = sophus::So3F64;
   using Point = SE3d::Point;
   double const k_pi = sophus::kPi<double>;
 
   StdVector<SE3d> se3_vec;
-  se3_vec.push_back(SE3d(SO3d::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)));
-  se3_vec.push_back(SE3d(SO3d::exp(Point(0.2, 0.5, -1.0)), Point(10, 0, 0)));
-  se3_vec.push_back(SE3d(SO3d::exp(Point(0., 0., 0.)), Point(0, 100, 5)));
-  se3_vec.push_back(SE3d(SO3d::exp(Point(0., 0., 0.00001)), Point(0, 0, 0)));
+  se3_vec.push_back(SE3d(So3F64::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)));
+  se3_vec.push_back(SE3d(So3F64::exp(Point(0.2, 0.5, -1.0)), Point(10, 0, 0)));
+  se3_vec.push_back(SE3d(So3F64::exp(Point(0., 0., 0.)), Point(0, 100, 5)));
+  se3_vec.push_back(SE3d(So3F64::exp(Point(0., 0., 0.00001)), Point(0, 0, 0)));
   se3_vec.push_back(SE3d(
-      SO3d::exp(Point(0., 0., 0.00001)), Point(0, -0.00000001, 0.0000000001)));
-  se3_vec.push_back(SE3d(SO3d::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
-  se3_vec.push_back(SE3d(SO3d::exp(Point(k_pi, 0, 0)), Point(4, -5, 0)));
+      So3F64::exp(Point(0., 0., 0.00001)),
+      Point(0, -0.00000001, 0.0000000001)));
   se3_vec.push_back(
-      SE3d(SO3d::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
-      SE3d(SO3d::exp(Point(k_pi, 0, 0)), Point(0, 0, 0)) *
-      SE3d(SO3d::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
+      SE3d(So3F64::exp(Point(0., 0., 0.00001)), Point(0.01, 0, 0)));
+  se3_vec.push_back(SE3d(So3F64::exp(Point(k_pi, 0, 0)), Point(4, -5, 0)));
   se3_vec.push_back(
-      SE3d(SO3d::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
-      SE3d(SO3d::exp(Point(k_pi, 0, 0)), Point(0, 0, 0)) *
-      SE3d(SO3d::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
+      SE3d(So3F64::exp(Point(0.2, 0.5, 0.0)), Point(0, 0, 0)) *
+      SE3d(So3F64::exp(Point(k_pi, 0, 0)), Point(0, 0, 0)) *
+      SE3d(So3F64::exp(Point(-0.2, -0.5, -0.0)), Point(0, 0, 0)));
+  se3_vec.push_back(
+      SE3d(So3F64::exp(Point(0.3, 0.5, 0.1)), Point(2, 0, -7)) *
+      SE3d(So3F64::exp(Point(k_pi, 0, 0)), Point(0, 0, 0)) *
+      SE3d(So3F64::exp(Point(-0.3, -0.5, -0.1)), Point(0, 6, 0)));
 
   StdVector<Point> point_vec;
   point_vec.push_back(Point(1.012, 2.73, -1.4));

@@ -15,32 +15,32 @@ int main() {
 
   // Create rotation matrices from rotations around the x and y and z axes:
   double const kPi = sophus::kPi<double>;
-  sophus::SO3d R1 = sophus::SO3d::rotX(kPi / 4);
-  sophus::SO3d R2 = sophus::SO3d::rotY(kPi / 6);
-  sophus::SO3d R3 = sophus::SO3d::rotZ(-kPi / 3);
+  sophus::So3F64 rotation1 = sophus::So3F64::rotX(kPi / 4);
+  sophus::So3F64 rotation2 = sophus::So3F64::rotY(kPi / 6);
+  sophus::So3F64 rotation3 = sophus::So3F64::rotZ(-kPi / 3);
 
   std::cout << "The rotation matrices are" << std::endl;
-  std::cout << "R1:\n" << R1.matrix() << std::endl;
-  std::cout << "R2:\n" << R2.matrix() << std::endl;
-  std::cout << "R3:\n" << R3.matrix() << std::endl;
+  std::cout << "R1:\n" << rotation1.matrix() << std::endl;
+  std::cout << "R2:\n" << rotation2.matrix() << std::endl;
+  std::cout << "R3:\n" << rotation3.matrix() << std::endl;
   std::cout << "Their product R1*R2*R3:\n"
-            << (R1 * R2 * R3).matrix() << std::endl;
+            << (rotation1 * rotation2 * rotation3).matrix() << std::endl;
   std::cout << std::endl;
 
   // Rotation matrices can act on vectors
   Eigen::Vector3d x;
   x << 0.0, 0.0, 1.0;
-  std::cout << "Rotation matrices can act on vectors" << std::endl;
+  std::cout << "Rotation matrices can act on 3-vectors" << std::endl;
   std::cout << "x\n" << x << std::endl;
-  std::cout << "R2*x\n" << R2 * x << std::endl;
-  std::cout << "R1*(R2*x)\n" << R1 * (R2 * x) << std::endl;
-  std::cout << "(R1*R2)*x\n" << (R1 * R2) * x << std::endl;
+  std::cout << "R2*x\n" << rotation2 * x << std::endl;
+  std::cout << "R1*(R2*x)\n" << rotation1 * (rotation2 * x) << std::endl;
+  std::cout << "(R1*R2)*x\n" << (rotation1 * rotation2) * x << std::endl;
   std::cout << std::endl;
 
   // SO(3) are internally represented as unit quaternions.
-  std::cout << "R1 in matrix form:\n" << R1.matrix() << std::endl;
+  std::cout << "R1 in matrix form:\n" << rotation1.matrix() << std::endl;
   std::cout << "R1 in unit quaternion form:\n"
-            << R1.unitQuaternion().coeffs() << std::endl;
+            << rotation1.unitQuaternion().coeffs() << std::endl;
   // Note that the order of coefficients of Eigen's quaternion class is
   // (imag0, imag1, imag2, real)
   std::cout << std::endl;

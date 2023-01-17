@@ -31,7 +31,7 @@ using So3F32 = So3<float>;
 
 template <class TScalar, int kOptions = 0>
 /* [[deprecated]] */ using SO3 = So3<TScalar, kOptions>;
-/* [[deprecated]] */ using SO3d = So3F64;
+/* [[deprecated]] */ using So3F64 = So3F64;
 /* [[deprecated]] */ using SO3f = So3F32;
 }  // namespace sophus
 

@@ -36,7 +36,7 @@ Expected<So3F64> fromProto(proto::So3F64 const& proto) {
         quat.coeffs().transpose());
   }
 
-  return SO3d(quat);
+  return So3F64(quat);
 }
 
 proto::So3F64 toProto(sophus::So3F64 const& rotation) {
