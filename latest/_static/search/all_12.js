@@ -118,7 +118,7 @@ var searchData=
   ['so3base_3c_20map_3c_20sophus_3a_3aso3_3c_20tscalar_20_3e_20const_2c_20koptions_20_3e_20_3e_784',['So3Base&lt; Map&lt; sophus::So3&lt; TScalar &gt; const, kOptions &gt; &gt;',['../classsophus_1_1_so3_base.html',1,'sophus']]],
   ['so3base_3c_20map_3c_20sophus_3a_3aso3_3c_20tscalar_20_3e_2c_20koptions_20_3e_20_3e_785',['So3Base&lt; Map&lt; sophus::So3&lt; TScalar &gt;, kOptions &gt; &gt;',['../classsophus_1_1_so3_base.html',1,'sophus::So3Base&lt; Map&lt; sophus::So3&lt; TScalar &gt;, kOptions &gt; &gt;'],['../class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html#aed4f2d1fc78932cbef87e87488089588',1,'Eigen::Map&lt; sophus::So3&lt; TScalar &gt;, kOptions &gt;::So3Base&lt; Map&lt; sophus::So3&lt; TScalar &gt;, kOptions &gt; &gt;()']]],
   ['so3base_3c_20so3_3c_20scalar_2c_20koptions_20_3e_20_3e_786',['So3Base&lt; So3&lt; Scalar, kOptions &gt; &gt;',['../classsophus_1_1_so3.html#a5beb1c6b761fa21be1d6c9cc9b8aa821',1,'sophus::So3']]],
-  ['so3d_787',['So3d',['../namespacesophus.html#a4f653dab4d85c11734a0334c47162917',1,'sophus']]],
+  ['so3d_787',['SO3d',['../namespacesophus.html#a7590155ec501fd89d7b1ce1da3549712',1,'sophus']]],
   ['so3f_788',['SO3f',['../namespacesophus.html#a8c86d3317936fef9f05d0446a2dda57f',1,'sophus']]],
   ['so3f32_789',['So3F32',['../namespacesophus.html#a2487da51544683d643cccc745be5c8ac',1,'sophus']]],
   ['so3f64_790',['So3F64',['../namespacesophus.html#ab9e176acaeabcc0111411ea6d4b2cd30',1,'sophus']]],

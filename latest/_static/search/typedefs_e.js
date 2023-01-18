@@ -36,7 +36,7 @@ var searchData=
   ['so2product_1869',['So2Product',['../classsophus_1_1_so2_base.html#a94078ea830c23827dc0769e6bdd6e2c8',1,'sophus::So2Base']]],
   ['so2type_1870',['So2Type',['../classsophus_1_1_tests.html#aca49085efe7f6dc3757f8e5ef4f28e18',1,'sophus::Tests::So2Type()'],['../classsophus_1_1_se2_base.html#a52b4129a8c5ed737e0bac6234ae8a246',1,'sophus::Se2Base::So2Type()'],['../classsophus_1_1_tests.html#aca49085efe7f6dc3757f8e5ef4f28e18',1,'sophus::Tests::So2Type()'],['../classsophus_1_1_tests.html#aca49085efe7f6dc3757f8e5ef4f28e18',1,'sophus::Tests::So2Type()']]],
   ['so3_1871',['SO3',['../namespacesophus.html#ae1908ba3d067e77cab2ab71e92fd53a7',1,'sophus']]],
-  ['so3d_1872',['So3d',['../namespacesophus.html#a4f653dab4d85c11734a0334c47162917',1,'sophus']]],
+  ['so3d_1872',['SO3d',['../namespacesophus.html#a7590155ec501fd89d7b1ce1da3549712',1,'sophus']]],
   ['so3f_1873',['SO3f',['../namespacesophus.html#a8c86d3317936fef9f05d0446a2dda57f',1,'sophus']]],
   ['so3f32_1874',['So3F32',['../namespacesophus.html#a2487da51544683d643cccc745be5c8ac',1,'sophus']]],
   ['so3f64_1875',['So3F64',['../namespacesophus.html#ab9e176acaeabcc0111411ea6d4b2cd30',1,'sophus']]],
