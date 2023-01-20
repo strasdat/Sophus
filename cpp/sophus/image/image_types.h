@@ -212,8 +212,8 @@ std::optional<Eigen::Vector2i> firstFalsePixel(ImageViewBool mask);
           "First failed pixel: ({},{}).\nLeft:\n{}\nRigth:\n{}",              \
           u,                                                                  \
           v,                                                                  \
-          left_image.checked(u, v),                                           \
-          right_image.checked(u, v));                                         \
+          left_image(u, v),                                                   \
+          right_image(u, v));                                                 \
       FARM_IMPL_LOG_PRINTLN(__VA_ARGS__);                                     \
       FARM_IMPL_ABORT();                                                      \
     }                                                                         \

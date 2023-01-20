@@ -12,14 +12,14 @@
 
 using namespace sophus;
 
-#define SOPHUS_TEST_IMG_EQ(lhs, rhs) /* NOLINT*/                \
-  do {                                                          \
-    SOPHUS_ASSERT_EQ(lhs.imageSize(), rhs.imageSize());         \
-    for (int v = 0; v < lhs.imageSize().height; ++v) {          \
-      for (int u = 0; u < lhs.imageSize().width; ++u) {         \
-        SOPHUS_ASSERT_EQ(lhs.checked(u, v), rhs.checked(u, v)); \
-      }                                                         \
-    }                                                           \
+#define SOPHUS_TEST_IMG_EQ(lhs, rhs) /* NOLINT*/        \
+  do {                                                  \
+    SOPHUS_ASSERT_EQ(lhs.imageSize(), rhs.imageSize()); \
+    for (int v = 0; v < lhs.imageSize().height; ++v) {  \
+      for (int u = 0; u < lhs.imageSize().width; ++u) { \
+        SOPHUS_ASSERT_EQ(lhs(u, v), rhs(u, v));         \
+      }                                                 \
+    }                                                   \
   } while (false)
 
 TEST(AnyImage, create_access_and_extract) {
@@ -49,10 +49,10 @@ TEST(AnyImage, create_access_and_extract) {
   // the underlying data. Be careful!
   MutImageView<float> mut_view =
       MutImageView<float>::unsafeConstCast(image2);  // NOLINT
-  mut_view.checkedMut(0, 0) = 0.9f;
+  mut_view.mut(0, 0) = 0.9f;
 
-  SOPHUS_ASSERT_EQ(image.checked(0, 0), 0.9f);
-  SOPHUS_ASSERT_EQ(image2.checked(0, 0), 0.9f);
+  SOPHUS_ASSERT_EQ(image(0, 0), 0.9f);
+  SOPHUS_ASSERT_EQ(image2(0, 0), 0.9f);
 }
 
 TEST(IntensityImage, create_access_and_extract) {
@@ -149,7 +149,7 @@ TEST(IntensityImageView, subview) {
   MutImage<float> mut_image(ImageSize(4, 4));
   for (int y = 0; y < 4; ++y) {
     for (int x = 0; x < 4; ++x) {
-      mut_image.checkedMut(x, y) = 4 * y + x;
+      mut_image.mut(x, y) = 4 * y + x;
     }
   }
 
@@ -164,7 +164,7 @@ TEST(IntensityImageView, subview) {
 
     for (int y = 0; y < 2; ++y) {
       for (int x = 0; x < 2; ++x) {
-        SOPHUS_ASSERT_EQ(sub.checked(x, y), ref_image.checked(x + 1, y + 1));
+        SOPHUS_ASSERT_EQ(sub(x, y), ref_image(x + 1, y + 1));
       }
     }
   }
@@ -225,7 +225,7 @@ TEST(IntensityImage, visitor) {
     MutImage<float> mut_image(ImageSize(4, 4));
     for (int y = 0; y < 4; ++y) {
       for (int x = 0; x < 4; ++x) {
-        mut_image.uncheckedMut(x, y) = 4 * y + x;
+        mut_image.mut(x, y) = 4 * y + x;
       }
     }
 
@@ -248,7 +248,7 @@ TEST(IntensityImage, visitor) {
     MutImage<Pixel3U8> mut_image(ImageSize(4, 4));
     for (int y = 0; y < 4; ++y) {
       for (int x = 0; x < 4; ++x) {
-        mut_image.uncheckedMut(x, y) = Pixel3U8(x, y, 1);
+        mut_image.mut(x, y) = Pixel3U8(x, y, 1);
       }
     }
     Image<Pixel3U8> ref_image = std::move(mut_image);
@@ -269,7 +269,7 @@ TEST(IntensityImage, visitor) {
     MutImage<Pixel3U8> mut_image(ImageSize(4, 4));
     for (int y = 0; y < 4; ++y) {
       for (int x = 0; x < 4; ++x) {
-        mut_image.uncheckedMut(x, y) = Pixel3U8(x, y, 1);
+        mut_image.mut(x, y) = Pixel3U8(x, y, 1);
       }
     }
     Image<Pixel3U8> ref_image = std::move(mut_image);
@@ -299,7 +299,7 @@ TEST(IntensityImage, visitor) {
     MutImage<float> mut_image(ImageSize(4, 4));
     for (int y = 0; y < 4; ++y) {
       for (int x = 0; x < 4; ++x) {
-        mut_image.uncheckedMut(x, y) = 4 * y + x;
+        mut_image.mut(x, y) = 4 * y + x;
       }
     }
 
@@ -321,7 +321,7 @@ TEST(IntensityImage, visitor) {
     MutImage<float> mut_image(ImageSize(4, 4));
     for (int y = 0; y < 4; ++y) {
       for (int x = 0; x < 4; ++x) {
-        mut_image.uncheckedMut(x, y) = 4 * y + x;
+        mut_image.mut(x, y) = 4 * y + x;
       }
     }
 

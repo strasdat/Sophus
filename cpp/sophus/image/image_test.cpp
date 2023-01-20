@@ -75,7 +75,7 @@ TEST(MutImage, create_copy_access) {
   SOPHUS_ASSERT_EQ(mut_image2.imageSize(), mut_image.imageSize());
   for (int v = 0; v < mut_image.imageSize().height; ++v) {
     for (int u = 0; u < mut_image.imageSize().width; ++u) {
-      SOPHUS_ASSERT_EQ(mut_image2.checked(u, v), mut_image.checked(u, v));
+      SOPHUS_ASSERT_EQ(mut_image2(u, v), mut_image(u, v));
     }
   }
 
@@ -97,7 +97,7 @@ TEST(MutImage, makeFromTransform) {
 
   for (int v = 0; v < 3; ++v) {
     for (int u = 0; u < 2; ++u) {
-      SOPHUS_ASSERT_EQ(pattern.checked(u, v), Pixel3F32(1.f, 0.5f, 0.1f));
+      SOPHUS_ASSERT_EQ(pattern(u, v), Pixel3F32(1.f, 0.5f, 0.1f));
     }
   }
 }

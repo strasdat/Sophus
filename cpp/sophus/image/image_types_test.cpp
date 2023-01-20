@@ -29,7 +29,7 @@ TEST(ImageBool, logic) {
   SOPHUS_ASSERT(isAllTrue(equal_mask));
   SOPHUS_ASSERT(isAnyTrue(equal_mask));
 
-  equal_mask.checkedMut(1, 1) = false;
+  equal_mask.mut(1, 1) = false;
   SOPHUS_ASSERT_EQ(countTrue(equal_mask), 5);
   SOPHUS_ASSERT(!isAllTrue(equal_mask));
   SOPHUS_ASSERT(isAnyTrue(equal_mask));
@@ -49,7 +49,7 @@ TEST(SOPHUS_ASSERT_IMAGE_EQ, death_test) {
 
   SOPHUS_ASSERT_IMAGE_EQ(mut_image, mut_image2);
 
-  mut_image2.checkedMut(1, 2) = 0.f;
+  mut_image2.mut(1, 2) = 0.f;
 
   MutImageBool equal_mask = isEqualMask(mut_image, mut_image2);
   SOPHUS_ASSERT_EQ(countTrue(equal_mask), 5);

@@ -111,10 +111,10 @@ struct ImageView {
   /// Precondition: u must be in [0, width) and v must be in [0, height).
   ///
   /// Note:
-  ///  * panics if u.v is invalid,
+  ///  * No panic if u.v is invalid,
   ///
-  /// This is a costly function to call - e.g. when iterating over the whole
-  /// image. Use the following instead:
+  /// This is not the most necessarily the efficient function to call - e.g.
+  /// when iterating over the whole image. Use the following instead:
   ///
   /// for (int v=0; v<view.shape().height(); ++v) {
   ///   TPixel const* row = img.rowPtr(v);
@@ -122,26 +122,12 @@ struct ImageView {
   ///     PixetT p = row[u];
   ///   }
   /// }
-  [[nodiscard]] TPixel const& checked(int u, int v) const {
-    SOPHUS_ASSERT(colInBounds(u), "u,v: {},{}, w x h: {}", u, v, imageSize());
-    SOPHUS_ASSERT(rowInBounds(v), "u,v: {},{}, w x h: {}", u, v, imageSize());
+  [[nodiscard]] TPixel const& operator()(int u, int v) const {
     return rowPtr(v)[u];
   }
 
-  [[nodiscard]] TPixel const& checked(Eigen::Vector2i uv) const {
-    return checked(uv[0], uv[1]);
-  }
-
-  /// Returns pixel u, v.
-  ///
-  /// Precondition: u must be in [0, width) and v must be in [0, height).
-  /// Silent UB on failure.
-  [[nodiscard]] TPixel const& unchecked(int u, int v) const {
-    return rowPtr(v)[u];
-  }
-
-  [[nodiscard]] TPixel const& unchecked(Eigen::Vector2i uv) const {
-    return unchecked(uv[0], uv[1]);
+  [[nodiscard]] TPixel const& operator()(Eigen::Vector2i uv) const {
+    return this->operator()(uv[0], uv[1]);
   }
 
   /// Returns pointer to first pixel.
@@ -283,7 +269,7 @@ void pitchedCopy(
 /// equality comparisons. Furthermore, giving mutable access to pixels is
 /// considered a const operation, as in
 ///
-///  ```TPixel& checkedMut(int u, int v) const```
+///  ```TPixel& mut(int u, int v) const```
 ///
 /// since this merely allows for changing a pixel value, but not its state
 /// (data location and layout).
@@ -348,29 +334,11 @@ class MutImageView : public ImageView<TPixel> {
   /// Mutable accessor to pixel u, v.
   ///
   /// Precondition: u must be in [0, width) and v must be in [0, height).
-  ///
-  /// Note:
-  ///  * panics if u,v is invalid.
-  [[nodiscard]] TPixel& checkedMut(int u, int v) const {
-    SOPHUS_ASSERT(this->colInBounds(u));
-    SOPHUS_ASSERT(this->rowInBounds(v));
-    return rowPtrMut(v)[u];
-  }
-
-  [[nodiscard]] TPixel& checkedMut(Eigen::Vector2i uv) const {
-    return checkedMut(uv[0], uv[1]);
-  }
-
-  /// Mutable accessor to pixel u, v.
-  ///
-  /// Precondition: u must be in [0, width) and v must be in [0, height).
   /// Silent UB on failure.
-  [[nodiscard]] TPixel& uncheckedMut(int u, int v) const {
-    return rowPtrMut(v)[u];
-  }
+  [[nodiscard]] TPixel& mut(int u, int v) const { return rowPtrMut(v)[u]; }
 
-  [[nodiscard]] TPixel& uncheckedMut(Eigen::Vector2i uv) const {
-    return uncheckedMut(uv[0], uv[1]);
+  [[nodiscard]] TPixel& mut(Eigen::Vector2i uv) const {
+    return mut(uv[0], uv[1]);
   }
 
   /// Mutates each pixel of this with given unary operation
@@ -499,4 +467,62 @@ inline Region2I imageCoordsInterval(
   return imageCoordsInterval(image.imageSize(), border);
 }
 
+namespace details {
+template <class TPixel>
+[[nodiscard]] auto checkedPixelAccess(
+    ImageView<TPixel> const& view,
+    int u,
+    int v,
+    std::string const& file,
+    int line,
+    std::string const& str) -> TPixel const& {
+  if (!view.colInBounds(u) || !view.rowInBounds(v)) {
+    FARM_IMPL_LOG_PRINTLN("[SOPHUS_PIXEL in {}:{}]", file, line);
+    FARM_IMPL_LOG_PRINTLN(
+        "pixel `{},{}` not in image with size {} x {}",
+        u,
+        v,
+        view.imageSize().width,
+        view.imageSize().height);
+    if (!str.empty()) {
+      ::fmt::print(stderr, "{}", str);
+    }
+    FARM_IMPL_ABORT();
+  }
+  return view(u, v);
+}
+
+template <class TPixel>
+auto checkedPixelAccessMut(
+    MutImageView<TPixel> const& view,
+    int u,
+    int v,
+    std::string const& file,
+    int line,
+    std::string const& str) -> TPixel& {
+  if (!view.colInBounds(u) || !view.rowInBounds(v)) {
+    FARM_IMPL_LOG_PRINTLN("[SOPHUS_PIXEL_MUT in {}:{}]", file, line);
+    FARM_IMPL_LOG_PRINTLN(
+        "pixel `{},{}` not in image with size {} x {}",
+        u,
+        v,
+        view.imageSize().width,
+        view.imageSize().height);
+    if (!str.empty()) {
+      ::fmt::print(stderr, "{}", str);
+    }
+    FARM_IMPL_ABORT();
+  }
+  return view.mut(u, v);
+}
+}  // namespace details
+
 }  // namespace sophus
+
+#define SOPHUS_PIXEL(img, u, v, ...)     \
+  ::sophus::details::checkedPixelAccess( \
+      img, u, v, __FILE__, __LINE__, SOPHUS_FORMAT(__VA_ARGS__))
+
+#define SOPHUS_PIXEL_MUT(img, u, v, ...)    \
+  ::sophus::details::checkedPixelAccessMut( \
+      img, u, v, __FILE__, __LINE__, SOPHUS_FORMAT(__VA_ARGS__))

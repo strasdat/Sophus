@@ -28,7 +28,7 @@ TEST(interpolation, unit) {
 
   int u = 1;
   int v = 0;
-  img.uncheckedMut(u, v) = 0.5f;
+  img.mut(u, v) = 0.5f;
 
   float val = interpolate(img, Eigen::Vector2f(0, 0));
   SOPHUS_ASSERT_EQ(val, 0.f);
@@ -47,7 +47,7 @@ TEST(interpolation, unit) {
 
   u = 1;
   v = 1;
-  img.uncheckedMut(u, v) = 1.f;
+  img.mut(u, v) = 1.f;
 
   val = interpolate(img, Eigen::Vector2f(0, 0));
   SOPHUS_ASSERT_EQ(val, 0.f);
