@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"struct_rotational_part_3_01sophus_1_1_s_e3d_01_4.html":[1,0,7],
 "struct_rotational_part_3_01sophus_1_1_s_o2d_01_4.html":[1,0,10],
 "struct_rotational_part_3_01sophus_1_1_se2_f64_01_4.html":[1,0,6],
 "struct_rotational_part_3_01sophus_1_1_sim2d_01_4.html":[1,0,8],
