@@ -148,14 +148,14 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">  <span class="comment">/* NOLINT*/</span>                \</div>
-<div class="line">  do {                                                          \</div>
-<div class="line">    SOPHUS_ASSERT_EQ(lhs.imageSize(), rhs.imageSize());         \</div>
-<div class="line">    for (<span class="keywordtype">int</span> v = 0; v &lt; lhs.imageSize().height; ++v) {          \</div>
-<div class="line">      for (<span class="keywordtype">int</span> u = 0; u &lt; lhs.imageSize().width; ++u) {         \</div>
-<div class="line">        SOPHUS_ASSERT_EQ(lhs.checked(u, v), rhs.checked(u, v)); \</div>
-<div class="line">      }                                                         \</div>
-<div class="line">    }                                                           \</div>
+<b>Value:</b><div class="fragment"><div class="line">  <span class="comment">/* NOLINT*/</span>        \</div>
+<div class="line">  do {                                                  \</div>
+<div class="line">    SOPHUS_ASSERT_EQ(lhs.imageSize(), rhs.imageSize()); \</div>
+<div class="line">    for (<span class="keywordtype">int</span> v = 0; v &lt; lhs.imageSize().height; ++v) {  \</div>
+<div class="line">      for (<span class="keywordtype">int</span> u = 0; u &lt; lhs.imageSize().width; ++u) { \</div>
+<div class="line">        SOPHUS_ASSERT_EQ(lhs(u, v), rhs(u, v));         \</div>
+<div class="line">      }                                                 \</div>
+<div class="line">    }                                                   \</div>
 <div class="line">  } <span class="keywordflow">while</span> (<span class="keyword">false</span>)</div>
 </div><!-- fragment -->
 </div>

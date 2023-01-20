@@ -121,26 +121,24 @@ $(document).ready(function(){initNavTree('interpolation_8h_source.html',''); ini
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordtype">bool</span> u_corner_case = u == image_size.<a class="code" href="structsophus_1_1_image_size.html#a7ea479dfc195f980d6650ceadfda5c97">width</a> - 1;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keywordtype">bool</span> v_corner_case = v == image_size.<a class="code" href="structsophus_1_1_image_size.html#a6860fc9e6cb763fd0b8597d12f22f324">height</a> - 1;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  TT val00 = image.<a class="code" href="structsophus_1_1_image_view.html#a912b28894dfdb53310f8c5fe07d87fb9">unchecked</a>(u, v);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  TT val01 = v_corner_case ? val00 : image.<a class="code" href="structsophus_1_1_image_view.html#a912b28894dfdb53310f8c5fe07d87fb9">unchecked</a>(u, v + 1);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  TT val10 = u_corner_case ? val00 : image.<a class="code" href="structsophus_1_1_image_view.html#a912b28894dfdb53310f8c5fe07d87fb9">unchecked</a>(u + 1, v);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  TT val11 =</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      u_corner_case || v_corner_case ? val00 : image.<a class="code" href="structsophus_1_1_image_view.html#a912b28894dfdb53310f8c5fe07d87fb9">unchecked</a>(u + 1, v + 1);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  TT val = (1.f - frac_u) * (1.f - frac_v) * val00  <span class="comment">//</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;           + (1.f - frac_u) * frac_v * val01        <span class="comment">//</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;           + frac_u * (1.f - frac_v) * val10        <span class="comment">//</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;           + frac_u * frac_v * val11;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordflow">return</span> val;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;}  <span class="comment">// namespace sophus</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  TT val00 = image(u, v);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  TT val01 = v_corner_case ? val00 : image(u, v + 1);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  TT val10 = u_corner_case ? val00 : image(u + 1, v);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  TT val11 = u_corner_case || v_corner_case ? val00 : image(u + 1, v + 1);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  TT val = (1.f - frac_u) * (1.f - frac_v) * val00  <span class="comment">//</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;           + (1.f - frac_u) * frac_v * val01        <span class="comment">//</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;           + frac_u * (1.f - frac_v) * val10        <span class="comment">//</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;           + frac_u * frac_v * val11;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordflow">return</span> val;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;}</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}  <span class="comment">// namespace sophus</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="acommon_8h_html_a8f58b46a5623974748668dc8c53ad686"><div class="ttname"><a href="common_8h.html#a8f58b46a5623974748668dc8c53ad686">SOPHUS_ASSERT</a></div><div class="ttdeci">#define SOPHUS_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> common.h:47</div></div>
 <div class="ttc" id="anamespacesophus_html"><div class="ttname"><a href="namespacesophus.html">sophus</a></div><div class="ttdoc">Image MutImage, owning images types.</div><div class="ttdef"><b>Definition:</b> num_diff.h:20</div></div>
 <div class="ttc" id="astructsophus_1_1_image_view_html"><div class="ttname"><a href="structsophus_1_1_image_view.html">sophus::ImageView</a></div><div class="ttdoc">A view of an (immutable) image, which does not own the data.</div><div class="ttdef"><b>Definition:</b> image_view.h:55</div></div>
-<div class="ttc" id="astructsophus_1_1_image_view_html_a912b28894dfdb53310f8c5fe07d87fb9"><div class="ttname"><a href="structsophus_1_1_image_view.html#a912b28894dfdb53310f8c5fe07d87fb9">sophus::ImageView::unchecked</a></div><div class="ttdeci">TPixel const  &amp; unchecked(int u, int v) const</div><div class="ttdoc">Returns pixel u, v.</div><div class="ttdef"><b>Definition:</b> image_view.h:139</div></div>
 <div class="ttc" id="astructsophus_1_1_image_size_html_a7036d812803946f82a305af47796297c"><div class="ttname"><a href="structsophus_1_1_image_size.html#a7036d812803946f82a305af47796297c">sophus::ImageSize::contains</a></div><div class="ttdeci">bool contains(Eigen::Vector2i const &amp;obs, int border=0) const</div><div class="ttdoc">Returns true if obs is within image.</div><div class="ttdef"><b>Definition:</b> image_size.cpp:13</div></div>
 <div class="ttc" id="astructsophus_1_1_image_view_html_aad892d6f77fa63451e76624713b24908"><div class="ttname"><a href="structsophus_1_1_image_view.html#aad892d6f77fa63451e76624713b24908">sophus::ImageView::imageSize</a></div><div class="ttdeci">sophus::ImageSize const  &amp; imageSize() const</div><div class="ttdoc">Returns ImageSize. It is {0,0} if view is empty.</div><div class="ttdef"><b>Definition:</b> image_view.h:80</div></div>
 <div class="ttc" id="anamespacesophus_html_ae161412e3673964651d984b9c3ce8fda"><div class="ttname"><a href="namespacesophus.html#ae161412e3673964651d984b9c3ce8fda">sophus::interpolate</a></div><div class="ttdeci">TT interpolate(sophus::ImageView&lt; TT &gt; const &amp;image, Eigen::Vector2f uv)</div><div class="ttdef"><b>Definition:</b> interpolation.h:21</div></div>

@@ -235,10 +235,9 @@ var NAVTREEINDEX7 =
 "so2_8h.html#adb166c24bbf0a7ecc5b3e40eb0f3d8d9":[2,0,0,0,5,19,9],
 "so2_8h_source.html":[2,0,0,0,5,19],
 "so3_8h.html":[2,0,0,0,5,21],
-"so3_8h.html#a2487da51544683d643cccc745be5c8ac":[2,0,0,0,5,21,10],
-"so3_8h.html#a7590155ec501fd89d7b1ce1da3549712":[2,0,0,0,5,21,8],
-"so3_8h.html#a8c86d3317936fef9f05d0446a2dda57f":[2,0,0,0,5,21,9],
-"so3_8h.html#ab9e176acaeabcc0111411ea6d4b2cd30":[2,0,0,0,5,21,11],
+"so3_8h.html#a2487da51544683d643cccc745be5c8ac":[2,0,0,0,5,21,9],
+"so3_8h.html#a8c86d3317936fef9f05d0446a2dda57f":[2,0,0,0,5,21,8],
+"so3_8h.html#aa23561a18c2761dbff34a975a8834445":[2,0,0,0,5,21,10],
 "so3_8h.html#ae1908ba3d067e77cab2ab71e92fd53a7":[2,0,0,0,5,21,7],
 "so3_8h_source.html":[2,0,0,0,5,21],
 "spline_8h.html":[2,0,0,0,5,1,3],
@@ -249,5 +248,6 @@ var NAVTREEINDEX7 =
 "spline_8h_source.html":[2,0,0,0,5,1,3],
 "struct_rotational_part.html":[1,0,3],
 "struct_rotational_part_3_01sophus_1_1_rx_s_o2d_01_4.html":[1,0,4],
-"struct_rotational_part_3_01sophus_1_1_rx_s_o3d_01_4.html":[1,0,5]
+"struct_rotational_part_3_01sophus_1_1_rx_s_o3d_01_4.html":[1,0,5],
+"struct_rotational_part_3_01sophus_1_1_s_e3d_01_4.html":[1,0,7]
 };
