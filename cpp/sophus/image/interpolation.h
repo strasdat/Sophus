@@ -32,11 +32,10 @@ TT interpolate(sophus::ImageView<TT> const& image, Eigen::Vector2f uv) {
   bool u_corner_case = u == image_size.width - 1;
   bool v_corner_case = v == image_size.height - 1;
 
-  TT val00 = image.unchecked(u, v);
-  TT val01 = v_corner_case ? val00 : image.unchecked(u, v + 1);
-  TT val10 = u_corner_case ? val00 : image.unchecked(u + 1, v);
-  TT val11 =
-      u_corner_case || v_corner_case ? val00 : image.unchecked(u + 1, v + 1);
+  TT val00 = image(u, v);
+  TT val01 = v_corner_case ? val00 : image(u, v + 1);
+  TT val10 = u_corner_case ? val00 : image(u + 1, v);
+  TT val11 = u_corner_case || v_corner_case ? val00 : image(u + 1, v + 1);
 
   TT val = (1.f - frac_u) * (1.f - frac_v) * val00  //
            + (1.f - frac_u) * frac_v * val01        //

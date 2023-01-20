@@ -43,9 +43,9 @@ TEST(ImageView, create_and_access) {
     SOPHUS_ASSERT(view.rowInBounds(1));
     SOPHUS_ASSERT(!view.rowInBounds(2));
 
-    SOPHUS_ASSERT_EQ(view.checked(0, 0), 0);
-    SOPHUS_ASSERT_EQ(view.checked(0, 1), 10);
-    SOPHUS_ASSERT_EQ(view.checked(2, 0), 2);
+    SOPHUS_ASSERT_EQ(view(0, 0), 0);
+    SOPHUS_ASSERT_EQ(view(0, 1), 10);
+    SOPHUS_ASSERT_EQ(view(2, 0), 2);
 
     SOPHUS_ASSERT_EQ(size_t(view.ptr()), size_t(data_u16.data()));
 
@@ -53,8 +53,8 @@ TEST(ImageView, create_and_access) {
     ImageView<uint16_t> col1 = view.subview({1, 0}, col_view_size);
     SOPHUS_ASSERT_EQ(view.shape().pitchBytes(), col1.shape().pitchBytes());
 
-    SOPHUS_ASSERT_EQ(col1.checked(0, 0), 1);
-    SOPHUS_ASSERT_EQ(col1.checked(0, 1), 11);
+    SOPHUS_ASSERT_EQ(col1(0, 0), 1);
+    SOPHUS_ASSERT_EQ(col1(0, 1), 11);
     SOPHUS_ASSERT_EQ(col_view_size, col1.imageSize());
   }
 
@@ -68,8 +68,8 @@ TEST(ImageView, create_and_access) {
   SOPHUS_ASSERT_EQ(view.imageSize(), image_size);
   SOPHUS_ASSERT_EQ(view.shape().pitchBytes(), 6);
 
-  SOPHUS_ASSERT_EQ(view.checked(0, 0), Pixel2U16(0, 1));
-  SOPHUS_ASSERT_EQ(view.checked(0, 1), Pixel2U16(10, 11));
+  SOPHUS_ASSERT_EQ(view(0, 0), Pixel2U16(0, 1));
+  SOPHUS_ASSERT_EQ(view(0, 1), Pixel2U16(10, 11));
 }
 
 TEST(MutImageView, empty) {
@@ -109,7 +109,7 @@ TEST(MutImageView, create_and_access) {
   mut_view.fill(111);
   for (int v = 0; v < image_size.height; ++v) {
     for (int u = 0; u < image_size.width; ++u) {
-      SOPHUS_ASSERT_EQ(mut_view.checked(u, v), 111);
+      SOPHUS_ASSERT_EQ(mut_view(u, v), 111);
     }
   }
 
@@ -123,9 +123,9 @@ TEST(MutImageView, create_and_access) {
   for (int v = 0; v < image_size.height; ++v) {
     for (int u = 0; u < image_size.width; ++u) {
       if (u == 1) {
-        SOPHUS_ASSERT_EQ(mut_view.checked(u, v), 222);
+        SOPHUS_ASSERT_EQ(mut_view(u, v), 222);
       } else {
-        SOPHUS_ASSERT_EQ(mut_view.checked(u, v), 111);
+        SOPHUS_ASSERT_EQ(mut_view(u, v), 111);
       }
     }
   }
@@ -139,7 +139,7 @@ TEST(MutImageView, create_and_access) {
         (Pixel2U16*)data_u16.data());
     SOPHUS_ASSERT_EQ(mut_view.imageSize(), image_size);
     SOPHUS_ASSERT_EQ(mut_view.shape().pitchBytes(), 6);
-    SOPHUS_ASSERT_EQ(mut_view.checked(0, 0), Pixel2U16(0, 1));
-    SOPHUS_ASSERT_EQ(mut_view.checked(0, 1), Pixel2U16(10, 11));
+    SOPHUS_ASSERT_EQ(mut_view(0, 0), Pixel2U16(0, 1));
+    SOPHUS_ASSERT_EQ(mut_view(0, 1), Pixel2U16(10, 11));
   }
 }
