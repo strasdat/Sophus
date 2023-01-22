@@ -1,5 +1,9 @@
 var NAVTREEINDEX7 =
 {
+"manifold_8h_source.html":[2,0,0,0,1,2],
+"mut__image_8cpp.html":[2,0,0,0,4,19],
+"mut__image_8h.html":[2,0,0,0,4,20],
+"mut__image_8h_source.html":[2,0,0,0,4,20],
 "mut__image__test_8cpp.html":[2,0,0,0,4,21],
 "mut__image__test_8cpp.html#a059be5d4f232be4e2c6a388d8821d736":[2,0,0,0,4,21,2],
 "mut__image__test_8cpp.html#a56ba0e1f798d3a82aae84c5be1f773c6":[2,0,0,0,4,21,0],
@@ -21,12 +25,12 @@ var NAVTREEINDEX7 =
 "mut__runtime__image__view_8h_source.html":[2,0,0,0,4,29],
 "mut__runtime__image__view__test_8cpp.html":[2,0,0,0,4,30],
 "mut__runtime__image__view__test_8cpp.html#a229e4238019191b909cf235cfa061bb9":[2,0,0,0,4,30,0],
-"namespace_eigen.html":[0,0,1],
 "namespace_eigen.html":[1,0,1],
+"namespace_eigen.html":[0,0,1],
 "namespaceceres.html":[0,0,0],
 "namespaceceres.html":[1,0,0],
-"namespacemembers.html":[0,1,0,0],
 "namespacemembers.html":[0,1,0],
+"namespacemembers.html":[0,1,0,0],
 "namespacemembers_b.html":[0,1,0,1],
 "namespacemembers_c.html":[0,1,0,2],
 "namespacemembers_d.html":[0,1,0,3],
@@ -56,8 +60,8 @@ var NAVTREEINDEX7 =
 "namespacesophus.html":[0,0,2],
 "namespacesophus_1_1detail.html":[1,0,2,0],
 "namespacesophus_1_1detail.html":[0,0,2,0],
-"namespacesophus_1_1jet__helpers.html":[0,0,2,1],
 "namespacesophus_1_1jet__helpers.html":[1,0,2,1],
+"namespacesophus_1_1jet__helpers.html":[0,0,2,1],
 "num__diff_8h.html":[2,0,0,0,0,0],
 "num__diff_8h.html#a17d0190c95bf318589b914475c6a5976":[2,0,0,0,0,0,1],
 "num__diff_8h.html#afd074d27b49b9c7a5d2932f40c33e8c8":[2,0,0,0,0,0,0],
@@ -245,9 +249,5 @@ var NAVTREEINDEX7 =
 "se2_8h.html#a68da3d4d0fefd691454cb832b5632961":[2,0,0,0,5,11,8],
 "se2_8h.html#a7fcaac38d5929a8048bc01a8b0704547":[2,0,0,0,5,11,5],
 "se2_8h.html#ae5e5b7ccef3da857a0295ed3b302d186":[2,0,0,0,5,11,6],
-"se2_8h_source.html":[2,0,0,0,5,11],
-"se3_8h.html":[2,0,0,0,5,13],
-"se3_8h.html#a10c2ccdea99376188f7ca55b6faa9df6":[2,0,0,0,5,13,9],
-"se3_8h.html#a1a4059ccbd31740d03aef8ace01421cf":[2,0,0,0,5,13,6],
-"se3_8h.html#a523f9f16d1f565f5b9e575e77af86065":[2,0,0,0,5,13,8]
+"se2_8h_source.html":[2,0,0,0,5,11]
 };

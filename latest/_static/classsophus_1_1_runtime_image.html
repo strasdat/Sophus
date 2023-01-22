@@ -86,6 +86,8 @@ $(document).ready(function(){initNavTree('classsophus_1_1_runtime_image.html',''
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classsophus_1_1_runtime_image-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">sophus::RuntimeImage&lt; TPredicate, TAllocator &gt; Class Template Reference</div>  </div>
@@ -135,6 +137,16 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ab115fda1e952da134c80295e1c09a4b5"><td class="memTemplParams" colspan="2">template&lt;class TT &gt; </td></tr>
 <tr class="memitem:ab115fda1e952da134c80295e1c09a4b5"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_runtime_image.html#ab115fda1e952da134c80295e1c09a4b5">makeCopyFrom</a> (<a class="el" href="structsophus_1_1_image_view.html">ImageView</a>&lt; TT &gt; image_view)</td></tr>
 <tr class="separator:ab115fda1e952da134c80295e1c09a4b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:aada85f025325686a17ec042d399b69b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_runtime_image.html#aada85f025325686a17ec042d399b69b8">RuntimeImage</a> (<a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a> shape, <a class="el" href="structsophus_1_1_runtime_pixel_type.html">RuntimePixelType</a> pixel_type, std::shared_ptr&lt; uint8_t &gt; shared)</td></tr>
+<tr class="separator:aada85f025325686a17ec042d399b69b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:ae108be6c48ec41d640af553da310e1ca"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_runtime_image.html#ae108be6c48ec41d640af553da310e1ca">shared_</a></td></tr>
+<tr class="separator:ae108be6c48ec41d640af553da310e1ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class TPredicate = AnyImagePredicate, template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt;<br />
@@ -143,7 +155,7 @@ class sophus::RuntimeImage&lt; TPredicate, TAllocator &gt;</h3>
 <p>Type-erased image with shared ownership, and read-only access to pixels. Type is nullable. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab4b201feef2d8733d12742d1c471de11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4b201feef2d8733d12742d1c471de11">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[1/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4b201feef2d8733d12742d1c471de11">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,7 +184,7 @@ template&lt;class TPredicate  = AnyImagePredicate, template&lt; class &gt; class
 </div>
 </div>
 <a id="a4fe458e9de0a9fb4c649f47f1d363b51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fe458e9de0a9fb4c649f47f1d363b51">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[2/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fe458e9de0a9fb4c649f47f1d363b51">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -205,7 +217,7 @@ template&lt;class TPixel &gt; </div>
 </div>
 </div>
 <a id="ae2b34281b4980fd5ce0e04acd61e0d50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2b34281b4980fd5ce0e04acd61e0d50">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[3/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2b34281b4980fd5ce0e04acd61e0d50">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -237,7 +249,7 @@ template&lt;class TPixel &gt; </div>
 </div>
 </div>
 <a id="af8e323db179b01d69c712b4acb4046e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8e323db179b01d69c712b4acb4046e1">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[4/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af8e323db179b01d69c712b4acb4046e1">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -277,7 +289,7 @@ template&lt;class TPredicate  = AnyImagePredicate, template&lt; class &gt; class
 </div>
 </div>
 <a id="a71c4749f1d59ccfd98735f67275b208a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71c4749f1d59ccfd98735f67275b208a">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[5/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a71c4749f1d59ccfd98735f67275b208a">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -313,6 +325,50 @@ template&lt;class TPredicate  = AnyImagePredicate, template&lt; class &gt; class
 </div><div class="memdoc">
 
 <p>Create type-image image from provided size and pixel type. Pixel data is left uninitialized. </p>
+
+</div>
+</div>
+<a id="aada85f025325686a17ec042d399b69b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aada85f025325686a17ec042d399b69b8">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[6/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TPredicate  = AnyImagePredicate, template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classsophus_1_1_runtime_image.html">sophus::RuntimeImage</a>&lt; TPredicate, TAllocator &gt;::<a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a>&#160;</td>
+          <td class="paramname"><em>shape</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structsophus_1_1_runtime_pixel_type.html">RuntimePixelType</a>&#160;</td>
+          <td class="paramname"><em>pixel_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; uint8_t &gt;&#160;</td>
+          <td class="paramname"><em>shared</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -461,6 +517,31 @@ template&lt;class TPredicate  = AnyImagePredicate, template&lt; class &gt; class
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ae108be6c48ec41d640af553da310e1ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae108be6c48ec41d640af553da310e1ca">&#9670;&nbsp;</a></span>shared_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TPredicate  = AnyImagePredicate, template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;uint8_t&gt; <a class="el" href="classsophus_1_1_runtime_image.html">sophus::RuntimeImage</a>&lt; TPredicate, TAllocator &gt;::shared_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

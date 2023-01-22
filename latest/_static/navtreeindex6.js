@@ -1,5 +1,9 @@
 var NAVTREEINDEX6 =
 {
+"globals_func.html":[2,1,1],
+"globals_type.html":[2,1,3],
+"globals_vars.html":[2,1,2],
+"hierarchy.html":[1,2],
 "image_2proto_2conv_8cpp.html":[2,0,0,0,4,0,0],
 "image_2proto_2conv_8cpp.html#ac34861d90aed00acb6931d904a24f50f":[2,0,0,0,4,0,0,0],
 "image_2proto_2conv_8cpp.html#ad46629d7e7cab584e8433a562adfc929":[2,0,0,0,4,0,0,1],
@@ -245,9 +249,5 @@ var NAVTREEINDEX6 =
 "linalg_2proto_2conv_8h.html#aea3acb3c3188b02045fafde78079c9e3":[2,0,0,0,6,0,1,9],
 "linalg_2proto_2conv_8h_source.html":[2,0,0,0,6,0,1],
 "linalg_2proto_2conv__test_8cpp.html":[2,0,0,0,6,0,2],
-"manifold_8h.html":[2,0,0,0,1,2],
-"manifold_8h_source.html":[2,0,0,0,1,2],
-"mut__image_8cpp.html":[2,0,0,0,4,19],
-"mut__image_8h.html":[2,0,0,0,4,20],
-"mut__image_8h_source.html":[2,0,0,0,4,20]
+"manifold_8h.html":[2,0,0,0,1,2]
 };

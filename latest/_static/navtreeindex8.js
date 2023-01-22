@@ -1,5 +1,9 @@
 var NAVTREEINDEX8 =
 {
+"se3_8h.html":[2,0,0,0,5,13],
+"se3_8h.html#a10c2ccdea99376188f7ca55b6faa9df6":[2,0,0,0,5,13,9],
+"se3_8h.html#a1a4059ccbd31740d03aef8ace01421cf":[2,0,0,0,5,13,6],
+"se3_8h.html#a523f9f16d1f565f5b9e575e77af86065":[2,0,0,0,5,13,8],
 "se3_8h.html#aa2463da80dec9ed880d59cb7c8d10d48":[2,0,0,0,5,13,7],
 "se3_8h.html#aaae48d546ad3527d079c5d6fff6a4bd2":[2,0,0,0,5,13,5],
 "se3_8h_source.html":[2,0,0,0,5,13],
@@ -245,9 +249,5 @@ var NAVTREEINDEX8 =
 "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variant_3_01_t_pixel_type_01_4_01_4.html":[1,0,2,0,1],
 "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variantd1b0535b64a9f6bf4c89f566d1fd48eb.html":[1,0,2,0,2],
 "structsophus_1_1jet__helpers_1_1_get_value.html":[1,0,2,1,0],
-"structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4.html":[1,0,2,1,1],
-"test__macros_8h.html":[2,0,0,0,2,8],
-"test__macros_8h.html#a094dfcb125cce443541e6614df9ff704":[2,0,0,0,2,8,1],
-"test__macros_8h.html#a2cf21393818b417fb877bd6198d1b140":[2,0,0,0,2,8,5],
-"test__macros_8h.html#a47cf0311fff8d84d7044a599dc452b6a":[2,0,0,0,2,8,4]
+"structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4.html":[1,0,2,1,1]
 };
