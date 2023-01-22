@@ -62,14 +62,14 @@ var NAVTREEINDEX =
 [
 "affine_8h.html",
 "class_eigen_1_1_map_3_01sophus_1_1_sim2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html#a5239048ffdb6ea44e3ae5ca4fb0bebca",
-"classsophus_1_1_image_shape.html",
-"classsophus_1_1_rx_so2_base.html#a1c3d31783c8b6e9ce274569dcc230f28",
-"classsophus_1_1_sim2.html#a701982d455d30a2f5c530f541972611c",
-"classsophus_1_1_tests.html#a1ef9ca5529b5bb00216fad1e5cd96cc3",
-"image__shape_8h.html#a092607eb98985040b1e5c4f5da530fa1",
-"namespace_eigen.html",
-"sim3_8h.html#a1efe78e6bd4ea60902272912617b32bc",
-"unit__vector_8h.html#a48f93ea85df4a00f0122fe2ef303b6b6"
+"classsophus_1_1_image.html",
+"classsophus_1_1_rx_so2.html#aa4a4c9f4f1625b58e8b491206fd1d2e2",
+"classsophus_1_1_se3_base.html#adc22b890ce7d2e5e086a4b434a64b32d",
+"classsophus_1_1_so3_base.html#aa72cb303f75593c5503439499e86089e",
+"image_2proto_2conv_8cpp.html",
+"mut__image__test_8cpp.html",
+"se3_8h_source.html",
+"test__macros_8h.html#adceb75d7f4ac8872a96560097b91f090"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
