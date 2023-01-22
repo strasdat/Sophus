@@ -13,6 +13,7 @@ set(sophus_image_src_prefixes
   image_view
   mut_image
   mut_image_view
+  mut_runtime_image_view
   runtime_image
   runtime_image_view
   runtime_image_types
