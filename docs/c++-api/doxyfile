@@ -24,3 +24,4 @@ HTML_EXTRA_STYLESHEET  = doxygen-awesome-css/doxygen-awesome.css \
 CASE_SENSE_NAMES = NO
 HIDE_UNDOC_RELATIONS = YES
 EXTRACT_ALL = YES
+HAVE_DOT = YES

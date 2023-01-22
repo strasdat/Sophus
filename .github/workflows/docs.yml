@@ -22,7 +22,7 @@ jobs:
       - name: build docs
         run: |
           sudo apt-get -qq update
-          sudo apt-get install doxygen liblua5.3-dev ragel
+          sudo apt-get install doxygen liblua5.3-dev ragel graphviz
           pip3 install sphinx sympy sphinx_book_theme
           cd docs
           ./make_docs.sh
