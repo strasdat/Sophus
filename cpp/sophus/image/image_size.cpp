@@ -46,19 +46,4 @@ std::ostream& operator<<(std::ostream& os, ImageSize const& image_size) {
   return os;
 }
 
-bool operator==(ImageShape const& lhs, ImageShape const& rhs) {
-  return lhs.imageSize() == rhs.imageSize() &&
-         lhs.pitchBytes() == rhs.pitchBytes();
-}
-
-bool operator!=(ImageShape const& lhs, ImageShape const& rhs) {
-  return lhs.imageSize() != rhs.imageSize() ||
-         lhs.pitchBytes() != rhs.pitchBytes();
-}
-
-std::ostream& operator<<(std::ostream& os, ImageShape const& shape) {
-  os << "[" << shape.imageSize() << ", pitch: " << shape.pitchBytes() << "]";
-  return os;
-}
-
 }  // namespace sophus

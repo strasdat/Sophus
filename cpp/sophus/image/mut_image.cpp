@@ -6,6 +6,6 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/runtime_image.h"
+#include "sophus/image/mut_image.h"
 
 namespace sophus {}  // namespace sophus
