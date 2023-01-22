@@ -89,7 +89,7 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
     FARM_UNIMPLEMENTED();
   }
 
- private:
+ protected:
   // Private constructor mainly available for constructing sub-views
   MutRuntimeImage(
       ImageShape shape,

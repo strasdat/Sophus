@@ -9,6 +9,7 @@ set(sophus_image_src_prefixes
   interpolation
   image
   image_size
+  image_shape
   image_types
   image_view
   mut_image

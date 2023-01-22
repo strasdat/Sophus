@@ -6,7 +6,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/runtime_image_view.h"
+#include "sophus/image/runtime_image_types.h"
 
 #include <gtest/gtest.h>
 
@@ -21,6 +21,28 @@ using namespace sophus;
       }                                                 \
     }                                                   \
   } while (false)
+
+float sum(ImageView<float> view) {
+  float s = 0.0;
+  for (int v = 0; v < view.height(); ++v) {
+    float const* row = view.rowPtr(v);
+    for (int u = 0; u < view.width(); ++u) {
+      float p = row[u];
+      s += p;
+    }
+  }
+  return s;
+}
+
+void plusOne(MutImageView<float> mut_view) {
+  for (int v = 0; v < mut_view.height(); ++v) {
+    float* row = mut_view.rowPtrMut(v);
+    for (int u = 0; u < mut_view.width(); ++u) {
+      float& p = row[u];
+      p += 1.f;
+    }
+  }
+}
 
 TEST(IntensityImageView, subview) {
   MutImage<float> mut_image(ImageSize(4, 4));
