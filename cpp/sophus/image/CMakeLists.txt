@@ -11,7 +11,11 @@ set(sophus_image_src_prefixes
   image_size
   image_types
   image_view
+  mut_image
+  mut_image_view
   runtime_image
+  runtime_image_view
+  runtime_image_types
 )
 
 set(sophus_image_cpp)

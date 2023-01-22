@@ -6,6 +6,8 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/runtime_image.h"
+#include "sophus/image/runtime_imag_types.h"
 
-namespace sophus {}  // namespace sophus
+#include <gtest/gtest.h>
+
+using namespace sophus;
