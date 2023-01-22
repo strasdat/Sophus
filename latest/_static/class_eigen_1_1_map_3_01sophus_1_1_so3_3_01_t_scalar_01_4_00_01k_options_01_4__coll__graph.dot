@@ -5,5 +5,5 @@ digraph "Eigen::Map&lt; sophus::So3&lt; TScalar &gt;, kOptions &gt;"
   node [fontname="Helvetica",fontsize="10",shape=record];
   Node1 [label="Eigen::Map\< sophus\l::So3\< TScalar \>, kOptions \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Specialization of Eigen::Map for So3; derived from So3Base."];
   Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node2 [label="sophus::So3Base\< Map\l\< sophus::So3\< TScalar\l \>, kOptions \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_so3_base.html",tooltip="So3 base type - implements So3 class but is storage agnostic."];
+  Node2 [label="sophus::So3Base\< Map\l\< sophus::So3\< TScalar\l \>, kOptions \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_so3_base.html",tooltip=" "];
 }

@@ -40,6 +40,7 @@ var namespacesophus =
     [ "MultiCameraRig", "structsophus_1_1_multi_camera_rig.html", "structsophus_1_1_multi_camera_rig" ],
     [ "MutImage", "classsophus_1_1_mut_image.html", "classsophus_1_1_mut_image" ],
     [ "MutImageView", "classsophus_1_1_mut_image_view.html", "classsophus_1_1_mut_image_view" ],
+    [ "MutRuntimeImageView", "classsophus_1_1_mut_runtime_image_view.html", "classsophus_1_1_mut_runtime_image_view" ],
     [ "PointTraits", "structsophus_1_1_point_traits.html", null ],
     [ "PointTraits< TPoint >", "structsophus_1_1_point_traits_3_01_t_point_01_4.html", "structsophus_1_1_point_traits_3_01_t_point_01_4" ],
     [ "PointTransformer", "classsophus_1_1_point_transformer.html", "classsophus_1_1_point_transformer" ],

@@ -5,4 +5,6 @@ digraph "Graphical Class Hierarchy"
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
   Node0 [label="sophus::RuntimeImageView\l\< TPredicate \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_runtime_image_view.html",tooltip=" "];
+  Node0 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="sophus::MutRuntimeImageView\l\< TPredicate \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_mut_runtime_image_view.html",tooltip=" "];
 }

@@ -71,7 +71,9 @@ var hierarchy =
     [ "RotationalPart< sophus::SO2d >", "struct_rotational_part_3_01sophus_1_1_s_o2d_01_4.html", null ],
     [ "RotationalPart< sophus::So3F64 >", "struct_rotational_part_3_01sophus_1_1_so3_f64_01_4.html", null ],
     [ "sophus::RuntimeImage< TPredicate, TAllocator >", "classsophus_1_1_runtime_image.html", null ],
-    [ "sophus::RuntimeImageView< TPredicate >", "classsophus_1_1_runtime_image_view.html", null ],
+    [ "sophus::RuntimeImageView< TPredicate >", "classsophus_1_1_runtime_image_view.html", [
+      [ "sophus::MutRuntimeImageView< TPredicate >", "classsophus_1_1_mut_runtime_image_view.html", null ]
+    ] ],
     [ "sophus::RuntimePixelType", "structsophus_1_1_runtime_pixel_type.html", null ],
     [ "sophus::RxSo2< TScalar, kOptions >", "classsophus_1_1_rx_so2.html", null ],
     [ "sophus::RxSo2< Scalar, kOptions >", "classsophus_1_1_rx_so2.html", null ],
@@ -141,13 +143,13 @@ var hierarchy =
     [ "sophus::So3< Scalar >", "classsophus_1_1_so3.html", null ],
     [ "sophus::So3< Scalar, kOptions >", "classsophus_1_1_so3.html", null ],
     [ "sophus::So3< TScalar, kOptions >::So3AndTheta", "structsophus_1_1_so3_1_1_so3_and_theta.html", null ],
-    [ "sophus::So3Base< TDerived >", "classsophus_1_1_so3_base.html", [
-      [ "Eigen::Map< sophus::So3< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
-    ] ],
+    [ "sophus::So3Base< TDerived >", "classsophus_1_1_so3_base.html", null ],
     [ "sophus::So3Base< Map< sophus::So3< TScalar > const, kOptions > >", "classsophus_1_1_so3_base.html", [
       [ "Eigen::Map< sophus::So3< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
     ] ],
-    [ "sophus::So3Base< Map< sophus::So3< TScalar >, kOptions > >", "classsophus_1_1_so3_base.html", null ],
+    [ "sophus::So3Base< Map< sophus::So3< TScalar >, kOptions > >", "classsophus_1_1_so3_base.html", [
+      [ "Eigen::Map< sophus::So3< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    ] ],
     [ "sophus::SplineBasisFunction< TScalar >", "classsophus_1_1_spline_basis_function.html", null ],
     [ "sophus::RxSo3Base< TDerived >::TangentAndTheta", "structsophus_1_1_rx_so3_base_1_1_tangent_and_theta.html", null ],
     [ "sophus::So3Base< TDerived >::TangentAndTheta", "structsophus_1_1_so3_base_1_1_tangent_and_theta.html", null ],
