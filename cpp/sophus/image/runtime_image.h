@@ -118,7 +118,7 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
 
   [[nodiscard]] size_t useCount() const { return shared_.use_count(); }
 
- private:
+ protected:
   // Private constructor mainly available for constructing sub-views
   RuntimeImage(
       ImageShape shape,
