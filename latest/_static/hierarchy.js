@@ -26,15 +26,13 @@ var hierarchy =
     [ "sophus::GetScalar< Eigen::Matrix< TScalar, kM, kMatrixDim > >", "structsophus_1_1_get_scalar_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4.html", null ],
     [ "sophus::jet_helpers::GetValue< TScalar >", "structsophus_1_1jet__helpers_1_1_get_value.html", null ],
     [ "sophus::jet_helpers::GetValue< ceres::Jet< TScalar, kN > >", "structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4.html", null ],
-    [ "sophus::Image< TPixel, TAllocator >", "classsophus_1_1_image.html", null ],
     [ "sophus::ImageShape", "classsophus_1_1_image_shape.html", null ],
     [ "sophus::ImageSize", "structsophus_1_1_image_size.html", null ],
     [ "sophus::ImageTraits< TT >", "structsophus_1_1_image_traits.html", null ],
     [ "sophus::ImageTraits< Eigen::Matrix< TT, kNumChannelsT, 1 > >", "structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html", null ],
     [ "sophus::ImageView< TPixel >", "structsophus_1_1_image_view.html", [
-      [ "sophus::MutImageView< TPixel >", "classsophus_1_1_mut_image_view.html", [
-        [ "sophus::MutImage< TPixel, TAllocator >", "classsophus_1_1_mut_image.html", null ]
-      ] ]
+      [ "sophus::Image< TPixel, TAllocator >", "classsophus_1_1_image.html", null ],
+      [ "sophus::MutImageView< TPixel >", "classsophus_1_1_mut_image_view.html", null ]
     ] ],
     [ "sophus::ImuModel", "classsophus_1_1_imu_model.html", null ],
     [ "sophus::IndexAndU", "structsophus_1_1_index_and_u.html", null ],
@@ -53,6 +51,7 @@ var hierarchy =
     [ "sophus::Mapper< TScalar, TE >", "structsophus_1_1_mapper.html", null ],
     [ "sophus::Mapper< TScalar, typename std::enable_if< kIsMappableV< TScalar > >::type >", "structsophus_1_1_mapper_3_01_t_scalar_00_01typename_01std_1_1enable__if_3_01k_is_mappable_v_3_01cd5529748b13d40e64d4c3ee260777da.html", null ],
     [ "sophus::MultiCameraRig", "structsophus_1_1_multi_camera_rig.html", null ],
+    [ "sophus::MutImage< TPixel, TAllocator >", "classsophus_1_1_mut_image.html", null ],
     [ "sophus::PointTraits< TPoint >", "structsophus_1_1_point_traits.html", null ],
     [ "sophus::PointTraits< TPoint >", "structsophus_1_1_point_traits_3_01_t_point_01_4.html", null ],
     [ "sophus::PointTransformer< TT >", "classsophus_1_1_point_transformer.html", null ],
@@ -150,8 +149,8 @@ var hierarchy =
     ] ],
     [ "sophus::So3Base< Map< sophus::So3< TScalar >, kOptions > >", "classsophus_1_1_so3_base.html", null ],
     [ "sophus::SplineBasisFunction< TScalar >", "classsophus_1_1_spline_basis_function.html", null ],
-    [ "sophus::So3Base< TDerived >::TangentAndTheta", "structsophus_1_1_so3_base_1_1_tangent_and_theta.html", null ],
     [ "sophus::RxSo3Base< TDerived >::TangentAndTheta", "structsophus_1_1_rx_so3_base_1_1_tangent_and_theta.html", null ],
+    [ "sophus::So3Base< TDerived >::TangentAndTheta", "structsophus_1_1_so3_base_1_1_tangent_and_theta.html", null ],
     [ "sophus::LieGroupCeresTests< TLieGroup >::TestGraphFunctor", "structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor.html", null ],
     [ "sophus::LieGroupCeresTests< TLieGroup >::TestLieGroupCostFunctor", "structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor.html", null ],
     [ "sophus::LieGroupCeresTests< TLieGroup >::TestPointCostFunctor", "structsophus_1_1_lie_group_ceres_tests_1_1_test_point_cost_functor.html", null ],

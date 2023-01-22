@@ -4,5 +4,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node0 [label="sophus::ImageShape",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_image_shape.html",tooltip="Shape of image: width, height and pitch in bytes."];
+  Node0 [label="sophus::ImageSize",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structsophus_1_1_image_size.html",tooltip="Image size, hence its width and height."];
 }

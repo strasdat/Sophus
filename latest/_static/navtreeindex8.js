@@ -1,5 +1,18 @@
 var NAVTREEINDEX8 =
 {
+"so3_8h.html#a8c86d3317936fef9f05d0446a2dda57f":[2,0,0,0,5,21,9],
+"so3_8h.html#ab9e176acaeabcc0111411ea6d4b2cd30":[2,0,0,0,5,21,11],
+"so3_8h.html#ae1908ba3d067e77cab2ab71e92fd53a7":[2,0,0,0,5,21,7],
+"so3_8h_source.html":[2,0,0,0,5,21],
+"spline_8h.html":[2,0,0,0,5,1,3],
+"spline_8h.html#afd307b8cdfbe9c85d3a252b5860aefaf":[2,0,0,0,5,1,3,6],
+"spline_8h.html#afd307b8cdfbe9c85d3a252b5860aefafa8b04d5e3775d298e78455efc5ca404d5":[2,0,0,0,5,1,3,6,0],
+"spline_8h.html#afd307b8cdfbe9c85d3a252b5860aefafa98bd1c45684cf587ac2347a92dd7bb51":[2,0,0,0,5,1,3,6,2],
+"spline_8h.html#afd307b8cdfbe9c85d3a252b5860aefafafea087517c26fadd409bd4b9dc642555":[2,0,0,0,5,1,3,6,1],
+"spline_8h_source.html":[2,0,0,0,5,1,3],
+"struct_rotational_part.html":[1,0,3],
+"struct_rotational_part_3_01sophus_1_1_rx_s_o2d_01_4.html":[1,0,4],
+"struct_rotational_part_3_01sophus_1_1_rx_s_o3d_01_4.html":[1,0,5],
 "struct_rotational_part_3_01sophus_1_1_s_e3d_01_4.html":[1,0,7],
 "struct_rotational_part_3_01sophus_1_1_s_o2d_01_4.html":[1,0,10],
 "struct_rotational_part_3_01sophus_1_1_se2_f64_01_4.html":[1,0,6],

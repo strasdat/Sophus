@@ -93,7 +93,7 @@ $(document).ready(function(){initNavTree('image__view_8h.html',''); initResizabl
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="region_8h_source.html">sophus/calculus/region.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="image__size_8h_source.html">sophus/image/image_size.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="image__shape_8h_source.html">sophus/image/image_shape.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for image_view.h:</div>
 <div class="dyncontent">
@@ -118,9 +118,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView&lt; TPixel &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A view of an (immutable) image, which does not own the data.  <a href="structsophus_1_1_image_view.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image_view.html">sophus::MutImageView&lt; TPixel &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">View of a mutable image, which does not own the data.  <a href="classsophus_1_1_mut_image_view.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
@@ -130,8 +127,6 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a26578c0f4b7edb31d72b4b03099ade29"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__view_8h.html#a26578c0f4b7edb31d72b4b03099ade29">SOPHUS_PIXEL</a>(img,  u,  v, ...)</td></tr>
-<tr class="separator:a26578c0f4b7edb31d72b4b03099ade29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b4d7cb26d6368454be3073009553479"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__view_8h.html#a0b4d7cb26d6368454be3073009553479">SOPHUS_PIXEL_MUT</a>(img,  u,  v, ...)</td></tr>
 <tr class="separator:a0b4d7cb26d6368454be3073009553479"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -145,48 +140,6 @@ Functions</h2></td></tr>
 <tr class="separator:a0a30d3ba923f03837081ac8934e4040b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a26578c0f4b7edb31d72b4b03099ade29"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26578c0f4b7edb31d72b4b03099ade29">&#9670;&nbsp;</a></span>SOPHUS_PIXEL</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOPHUS_PIXEL</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">img, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">u, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">v, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>...</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">  ::sophus::details::checkedPixelAccess( \</div>
-<div class="line">      img, u, v, __FILE__, __LINE__, <a class="code" href="common_8h.html#a50fadb13da7af3ebb54f13fcf2d90455">SOPHUS_FORMAT</a>(__VA_ARGS__))</div>
-</div><!-- fragment -->
-</div>
-</div>
 <a id="a0b4d7cb26d6368454be3073009553479"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0b4d7cb26d6368454be3073009553479">&#9670;&nbsp;</a></span>SOPHUS_PIXEL_MUT</h2>
 

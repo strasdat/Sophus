@@ -4,7 +4,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node100 [label="Manifold",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
-  Node100 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node0 [label="sophus::Manifold\< TLieGroup \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_manifold.html",tooltip="Templated local parameterization for LieGroup [with implemented LieGroup::Dx_this_mul_exp_x_at_0() ]."];
+  Node0 [label="sophus::Mapper\< TScalar,\l TE \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structsophus_1_1_mapper.html",tooltip="Helper for mapping tangent vectors (scalars) over pointers to data."];
 }

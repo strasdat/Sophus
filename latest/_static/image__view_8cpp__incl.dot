@@ -100,10 +100,15 @@ digraph "/home/runner/work/Sophus/Sophus/cpp/sophus/image/image_view.cpp"
   Node37 -> Node38 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node38 [label="limits",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
   Node2 -> Node39 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node39 [label="sophus/image/image\l_size.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$image__size_8h.html",tooltip=" "];
-  Node39 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node39 [label="sophus/image/image\l_shape.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$image__shape_8h.html",tooltip=" "];
   Node39 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node39 -> Node26 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node39 -> Node40 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node40 [label="iostream",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node40 [label="sophus/image/image\l_size.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$image__size_8h.html",tooltip=" "];
+  Node40 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node40 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node40 -> Node26 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node40 -> Node41 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node41 [label="iostream",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node39 -> Node26 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node39 -> Node41 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }

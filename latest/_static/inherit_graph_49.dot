@@ -4,5 +4,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node0 [label="sophus::LieGroupCeresTests\l\< TLieGroup \>::TestGraphFunctor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor.html",tooltip=" "];
+  Node0 [label="sophus::LieGroupCeresTests\l\< TLieGroup \>::TestLieGroupCost\lFunctor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor.html",tooltip=" "];
 }

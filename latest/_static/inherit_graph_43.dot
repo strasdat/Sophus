@@ -4,5 +4,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node0 [label="sophus::IsFloatingPoint\l\< TScalar \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structsophus_1_1_is_floating_point.html",tooltip=" "];
+  Node0 [label="sophus::IsUniformRandomBit\lGenerator\< TGenerator \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structsophus_1_1_is_uniform_random_bit_generator.html",tooltip=" "];
 }

@@ -29,8 +29,8 @@ digraph "/home/runner/work/Sophus/Sophus/cpp/sophus" {
   dir_1d93d1ed5108c4d2071899c26be7717c->dir_a7082e164d91aec3b9943421365f2e0b [headlabel="4", labeldistance=1.5 headhref="dir_000002_000004.html"];
   dir_9357f5e81d5154233f425db7fc50f4a9->dir_a7082e164d91aec3b9943421365f2e0b [headlabel="2", labeldistance=1.5 headhref="dir_000003_000004.html"];
   dir_9357f5e81d5154233f425db7fc50f4a9->dir_e4d7764f299ff37161f14b275a37fe93 [headlabel="8", labeldistance=1.5 headhref="dir_000003_000009.html"];
-  dir_0ecbeff14e6cb00e787f5838ffd0daf5->dir_a7082e164d91aec3b9943421365f2e0b [headlabel="3", labeldistance=1.5 headhref="dir_000007_000004.html"];
-  dir_0ecbeff14e6cb00e787f5838ffd0daf5->dir_1d93d1ed5108c4d2071899c26be7717c [headlabel="2", labeldistance=1.5 headhref="dir_000007_000002.html"];
+  dir_0ecbeff14e6cb00e787f5838ffd0daf5->dir_a7082e164d91aec3b9943421365f2e0b [headlabel="5", labeldistance=1.5 headhref="dir_000007_000004.html"];
+  dir_0ecbeff14e6cb00e787f5838ffd0daf5->dir_1d93d1ed5108c4d2071899c26be7717c [headlabel="3", labeldistance=1.5 headhref="dir_000007_000002.html"];
   dir_0ecbeff14e6cb00e787f5838ffd0daf5->dir_246b32a499e23272b6f273a9e5862f57 [headlabel="1", labeldistance=1.5 headhref="dir_000007_000012.html"];
   dir_6c48d565312b55a82638228487a5053e->dir_ac36b4d59fa077a170b439c47c9c2b90 [headlabel="3", labeldistance=1.5 headhref="dir_000014_000005.html"];
   dir_6c48d565312b55a82638228487a5053e->dir_a7082e164d91aec3b9943421365f2e0b [headlabel="5", labeldistance=1.5 headhref="dir_000014_000004.html"];
