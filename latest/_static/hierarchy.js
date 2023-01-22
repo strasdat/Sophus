@@ -71,7 +71,8 @@ var hierarchy =
     [ "RotationalPart< sophus::SO2d >", "struct_rotational_part_3_01sophus_1_1_s_o2d_01_4.html", null ],
     [ "RotationalPart< sophus::So3F64 >", "struct_rotational_part_3_01sophus_1_1_so3_f64_01_4.html", null ],
     [ "sophus::RuntimeImage< TPredicate, TAllocator >", "classsophus_1_1_runtime_image.html", null ],
-    [ "sophus::RuntimeImageView< TPredicate >", "classsophus_1_1_runtime_image_view.html", [
+    [ "sophus::RuntimeImageView< TPredicate >", "classsophus_1_1_runtime_image_view.html", null ],
+    [ "sophus::RuntimeImageView< AnyImagePredicate >", "classsophus_1_1_runtime_image_view.html", [
       [ "sophus::MutRuntimeImageView< TPredicate >", "classsophus_1_1_mut_runtime_image_view.html", null ]
     ] ],
     [ "sophus::RuntimePixelType", "structsophus_1_1_runtime_pixel_type.html", null ],

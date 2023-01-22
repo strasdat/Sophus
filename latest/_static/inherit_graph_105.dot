@@ -4,5 +4,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node0 [label="sophus::So2\< TScalar,\l kOptions \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_so2.html",tooltip="So2 using default storage; derived from So2Base."];
+  Node0 [label="sophus::So2\< Scalar,\l kOptions \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_so2.html",tooltip=" "];
 }

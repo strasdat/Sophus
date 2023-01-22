@@ -4,5 +4,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node0 [label="sophus::Sim2\< TScalar,\l kOptions \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_sim2.html",tooltip="Sim2 using default storage; derived from Sim2Base."];
+  Node0 [label="sophus::Se3Base\< TDerived \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsophus_1_1_se3_base.html",tooltip="Se3 base type - implements Se3 class but is storage agnostic."];
 }
