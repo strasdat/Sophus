@@ -1,0 +1,4 @@
+<map id="sophus::MutImageView&lt; TPixel &gt;" name="sophus::MutImageView&lt; TPixel &gt;">
+<area shape="rect" id="node1" title="View of a mutable image, which does not own the data." alt="" coords="5,95,180,136"/>
+<area shape="rect" id="node2" href="$structsophus_1_1_image_view.html" title="A view of an (immutable) image, which does not own the data." alt="" coords="13,5,173,47"/>
+</map>

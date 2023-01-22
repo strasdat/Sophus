@@ -1,0 +1,4 @@
+<map id="sophus::Image&lt; TPixel, TAllocator &gt;" name="sophus::Image&lt; TPixel, TAllocator &gt;">
+<area shape="rect" id="node1" title="Image read&#45;only access to pixels and shared ownership, hence cheap to copy. Type is nullable." alt="" coords="5,95,180,136"/>
+<area shape="rect" id="node2" href="$structsophus_1_1_image_view.html" title="A view of an (immutable) image, which does not own the data." alt="" coords="13,5,173,47"/>
+</map>
