@@ -42,6 +42,6 @@ var searchData=
   ['subsampledown_1562',['subsampleDown',['../classsophus_1_1_camera_model_t.html#ae6f7fee040fd028d74f5f61993a643fb',1,'sophus::CameraModelT::subsampleDown()'],['../classsophus_1_1_camera_model.html#af726b3e2046e2f46c64a467a2c633a59',1,'sophus::CameraModel::subsampleDown()'],['../namespacesophus.html#ab1005589d1c71f288d743e84fdfa20ec',1,'sophus::subsampleDown()']]],
   ['subsampleup_1563',['subsampleUp',['../classsophus_1_1_camera_model_t.html#ac03f260ab1e2b09648f75244ea384f5f',1,'sophus::CameraModelT::subsampleUp()'],['../classsophus_1_1_camera_model.html#a8b90615f4123efa82fc583ddbfcb766e',1,'sophus::CameraModel::subsampleUp()'],['../namespacesophus.html#a28829b4a5c5e64ef4f678eb980c58493',1,'sophus::subsampleUp()']]],
   ['subview_1564',['subview',['../structsophus_1_1_image_view.html#a198df907fecd7103724f1ffd02f8310c',1,'sophus::ImageView::subview()'],['../classsophus_1_1_runtime_image_view.html#af63a75c9a27d62b65144feece43bd6c4',1,'sophus::RuntimeImageView::subview()']]],
-  ['sum_1565',['sum',['../runtime__image__test_8cpp.html#ae087e9700a3d5f427dede7bd34cb454b',1,'runtime_image_test.cpp']]],
+  ['sum_1565',['sum',['../runtime__image__test_8cpp.html#ae087e9700a3d5f427dede7bd34cb454b',1,'sum(ImageView&lt; float &gt; view):&#160;runtime_image_test.cpp'],['../runtime__image__view__test_8cpp.html#ae087e9700a3d5f427dede7bd34cb454b',1,'sum(ImageView&lt; float &gt; view):&#160;runtime_image_view_test.cpp']]],
   ['swap_1566',['swap',['../classsophus_1_1_mut_image.html#a9bc9d0909c691e31f9d3a0f7a91d92f9',1,'sophus::MutImage']]]
 ];

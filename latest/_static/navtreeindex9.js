@@ -1,5 +1,7 @@
 var NAVTREEINDEX9 =
 {
+"test__macros_8h.html#a8caaf729d1f9ba7039f77361dbcf1a6f":[2,0,0,0,2,8,6],
+"test__macros_8h.html#a9a763d03e0d8daa3c7cb92eb1db5220d":[2,0,0,0,2,8,0],
 "test__macros_8h.html#adceb75d7f4ac8872a96560097b91f090":[2,0,0,0,2,8,2],
 "test__macros_8h.html#afa1fcfecdacca873ea54874272d05e90":[2,0,0,0,2,8,3],
 "test__macros_8h_source.html":[2,0,0,0,2,8],
