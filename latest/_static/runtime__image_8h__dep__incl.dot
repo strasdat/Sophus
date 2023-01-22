@@ -8,4 +8,8 @@ digraph "/home/runner/work/Sophus/Sophus/cpp/sophus/image/runtime_image.h"
   Node2 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/image\l/runtime_image.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$runtime__image_8cpp.html",tooltip=" "];
   Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node3 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/image\l/runtime_image_test.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$runtime__image__test_8cpp.html",tooltip=" "];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/image\l/runtime_image_types.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$runtime__image__types_8h.html",tooltip=" "];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/image\l/runtime_image_types.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$runtime__image__types_8cpp.html",tooltip=" "];
 }

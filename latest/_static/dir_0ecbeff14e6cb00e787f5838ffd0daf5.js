@@ -33,7 +33,15 @@ var dir_0ecbeff14e6cb00e787f5838ffd0daf5 =
     [ "mut_image_view.cpp", "mut__image__view_8cpp.html", null ],
     [ "mut_image_view.h", "mut__image__view_8h.html", "mut__image__view_8h" ],
     [ "mut_image_view_test.cpp", "mut__image__view__test_8cpp.html", "mut__image__view__test_8cpp" ],
-    [ "runtime_image.cpp", "runtime__image_8cpp.html", "runtime__image_8cpp" ],
-    [ "runtime_image.h", "runtime__image_8h.html", "runtime__image_8h" ],
-    [ "runtime_image_test.cpp", "runtime__image__test_8cpp.html", "runtime__image__test_8cpp" ]
+    [ "runtime_image.cpp", "runtime__image_8cpp.html", null ],
+    [ "runtime_image.h", "runtime__image_8h.html", [
+      [ "RuntimeImage", "classsophus_1_1_runtime_image.html", "classsophus_1_1_runtime_image" ]
+    ] ],
+    [ "runtime_image_test.cpp", "runtime__image__test_8cpp.html", "runtime__image__test_8cpp" ],
+    [ "runtime_image_types.cpp", "runtime__image__types_8cpp.html", null ],
+    [ "runtime_image_types.h", "runtime__image__types_8h.html", "runtime__image__types_8h" ],
+    [ "runtime_image_types_test.cpp", "runtime__image__types__test_8cpp.html", null ],
+    [ "runtime_image_view.cpp", "runtime__image__view_8cpp.html", "runtime__image__view_8cpp" ],
+    [ "runtime_image_view.h", "runtime__image__view_8h.html", "runtime__image__view_8h" ],
+    [ "runtime_image_view_test.cpp", "runtime__image__view__test_8cpp.html", "runtime__image__view__test_8cpp" ]
 ];

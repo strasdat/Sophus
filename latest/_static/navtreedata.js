@@ -68,7 +68,8 @@ var NAVTREEINDEX =
 "classsophus_1_1_tests.html#a1ef9ca5529b5bb00216fad1e5cd96cc3",
 "image__shape_8h.html#a5f7a8161f4e7a8b42b8cba803f980b96",
 "namespacemembers_c.html",
-"so3_8h.html#a8c86d3317936fef9f05d0446a2dda57f"
+"so2_8h.html#a4b93b4312b43b1adb74a92e62afcf86c",
+"unit__vector_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

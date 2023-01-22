@@ -151,17 +151,17 @@ digraph "/home/runner/work/Sophus/Sophus/cpp/sophus/common/types.h"
   Node63 -> Node33 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node63 -> Node17 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node61 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node57 -> Node104 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node104 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/lie/se2.h",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$se2_8h.html",tooltip=" "];
-  Node104 -> Node22 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node104 -> Node28 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node104 -> Node46 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node104 -> Node47 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node104 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node57 -> Node109 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node109 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/lie/se2.h",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$se2_8h.html",tooltip=" "];
+  Node109 -> Node22 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node109 -> Node28 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node109 -> Node46 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node109 -> Node47 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node109 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node57 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node1 -> Node61 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node1 -> Node105 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node105 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/linalg\l/rotation_matrix.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$rotation__matrix_8h.html",tooltip=" "];
-  Node105 -> Node57 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node105 -> Node61 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node110 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node110 [label="/home/runner/work/Sophus\l/Sophus/cpp/sophus/linalg\l/rotation_matrix.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$rotation__matrix_8h.html",tooltip=" "];
+  Node110 -> Node57 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node110 -> Node61 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }

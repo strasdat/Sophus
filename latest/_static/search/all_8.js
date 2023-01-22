@@ -95,7 +95,7 @@ var searchData=
   ['isproper_313',['isProper',['../classsophus_1_1_region.html#a4abe582d749782671bbd76ae29484589',1,'sophus::Region']]],
   ['isscaledorthogonalandpositive_314',['isScaledOrthogonalAndPositive',['../namespacesophus.html#a117257dd900b470df922ee12a6668c39',1,'sophus']]],
   ['isspecialized_315',['IsSpecialized',['../namespacesophus.html#a79aa6765c06a3d2e473c129a98718735',1,'sophus']]],
-  ['istypevalid_316',['isTypeValid',['../structsophus_1_1_any_image_predicate.html#a0215178eff2ea5252d44edc8def79021',1,'sophus::AnyImagePredicate::isTypeValid()'],['../structsophus_1_1_variant_image_predicate.html#a6d46754e811994feac817020a47a7ae8',1,'sophus::VariantImagePredicate::isTypeValid()']]],
+  ['istypevalid_316',['isTypeValid',['../structsophus_1_1_variant_image_predicate.html#a6d46754e811994feac817020a47a7ae8',1,'sophus::VariantImagePredicate::isTypeValid()'],['../structsophus_1_1_any_image_predicate.html#a0215178eff2ea5252d44edc8def79021',1,'sophus::AnyImagePredicate::isTypeValid()']]],
   ['isunbounded_317',['isUnbounded',['../classsophus_1_1_region.html#a996bb6510fce3506bb6ab9acab19ef6b',1,'sophus::Region']]],
   ['isuniformrandombitgenerator_318',['IsUniformRandomBitGenerator',['../structsophus_1_1_is_uniform_random_bit_generator.html',1,'sophus']]],
   ['iterativemean_319',['iterativeMean',['../namespacesophus.html#a047fb59fbc639739f222b1e8f7fd3275',1,'sophus']]]
