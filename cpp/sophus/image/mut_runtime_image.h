@@ -14,8 +14,6 @@
 
 namespace sophus {
 
-/// Type-erased image with shared ownership, and read-only access to pixels.
-/// Type is nullable.
 template <
     class TPredicate = AnyImagePredicate,
     template <class> class TAllocator = Eigen::aligned_allocator>
@@ -32,7 +30,7 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
       : MutRuntimeImage(
             image.shape(),
             RuntimePixelType::fromTemplate<TPixel>(),
-            std::move(image.shared_)) {
+            std::move(image.unique_)) {
     static_assert(TPredicate::template isTypeValid<TPixel>());
   }
 
@@ -42,7 +40,7 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
       : MutRuntimeImage(
             shape,
             pixel_type,
-            std::shared_ptr<uint8_t>(TAllocator<uint8_t>().allocate(
+            std::unique_ptr<uint8_t>(TAllocator<uint8_t>().allocate(
                 shape.height() * shape.pitchBytes()))) {
     // TODO: Missing check on ImagePredicate against pixel_type
     //       has to be a runtime check, since we don't know at compile time.
@@ -92,13 +90,11 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
  protected:
   // Private constructor mainly available for constructing sub-views
   MutRuntimeImage(
-      ImageShape shape,
-      RuntimePixelType pixel_type,
-      std::shared_ptr<uint8_t> shared)
-      : RuntimeImageView<TPredicate>(shape, pixel_type, shared.get()),
-        shared_(shared) {}
+      ImageShape shape, RuntimePixelType pixel_type, UniqueDataArea unique)
+      : RuntimeImageView<TPredicate>(shape, pixel_type, unique.get()),
+        unique_(std::move(unique)) {}
 
-  std::shared_ptr<uint8_t> shared_;
+  UniqueDataArea unique_;
 };
 
 }  // namespace sophus

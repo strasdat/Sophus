@@ -25,6 +25,15 @@ namespace sophus {
 template <class TPixel, template <class> class TAllocator>
 class Image;
 
+struct UniqueDataAreaDeleter {
+  virtual ~UniqueDataAreaDeleter() {}
+
+  /// Leaking behaviour in base implementation
+  virtual void operator()(uint8_t* p) const {}
+};
+
+using UniqueDataArea = std::unique_ptr<uint8_t, UniqueDataAreaDeleter>;
+
 /// A image with write access to pixels and exclusive ownership. There is no
 /// copy constr / copy assignment, but move constr / assignment.
 ///
@@ -51,10 +60,11 @@ class MutImage : public MutImageView<TPixel> {
   };
 
   /// Deleter for MutImage.
-  struct Deleter {
+  struct Deleter : UniqueDataAreaDeleter {
+    Deleter() = default;
     Deleter(TypedDeleterImpl image_deleter) : image_deleter(image_deleter) {}
 
-    void operator()(uint8_t* p) const {
+    virtual void operator()(uint8_t* p) const final {
       if (image_deleter) {
         (*image_deleter)(reinterpret_cast<TPixel*>(p));
       }
@@ -67,20 +77,21 @@ class MutImage : public MutImageView<TPixel> {
   friend class Image;
 
   /// Constructs empty image.
-  MutImage() = default;
+  MutImage() : unique_(nullptr) {}
 
   /// Creates new image with given shape.
   ///
   /// If shape is not empty, memory allocation will happen.
-  explicit MutImage(ImageShape shape) : MutImageView<TPixel>(shape, nullptr) {
+  explicit MutImage(ImageShape shape)
+      : MutImageView<TPixel>(shape, nullptr), unique_(nullptr) {
     if (shape.sizeBytes() != 0u) {
       SOPHUS_ASSERT_EQ(shape.sizeBytes() % sizeof(TPixel), 0);
-      this->shared_.reset(
+      this->unique_ = UniqueDataArea(
           (uint8_t*)(TAllocator<TPixel>().allocate(
               shape.sizeBytes() / sizeof(TPixel))),
           Deleter(TypedDeleterImpl(shape.sizeBytes())));
     }
-    this->ptr_ = reinterpret_cast<TPixel*>(this->shared_.get());
+    this->ptr_ = reinterpret_cast<TPixel*>(this->unique_.get());
   }
 
   /// Creates new contiguous image with given size.
@@ -136,8 +147,8 @@ class MutImage : public MutImageView<TPixel> {
 
   /// Move constructor - is cheap - no memory allocations.
   MutImage(MutImage&& img) noexcept
-      : MutImageView<TPixel>(img.viewMut()), shared_(std::move(img.shared_)) {
-    this->ptr_ = reinterpret_cast<TPixel*>(shared_.get());
+      : MutImageView<TPixel>(img.viewMut()), unique_(std::move(img.unique_)) {
+    this->ptr_ = reinterpret_cast<TPixel*>(unique_.get());
     img.setViewToEmpty();
   }
 
@@ -145,8 +156,8 @@ class MutImage : public MutImageView<TPixel> {
   MutImage& operator=(MutImage&& img) noexcept {
     reset();
     this->shape_ = img.shape_;
-    this->shared_ = std::move(img.shared_);
-    this->ptr_ = reinterpret_cast<TPixel*>(shared_.get());
+    this->unique_ = std::move(img.unique_);
+    this->ptr_ = reinterpret_cast<TPixel*>(unique_.get());
     img.setViewToEmpty();
     return *this;
   }
@@ -160,14 +171,14 @@ class MutImage : public MutImageView<TPixel> {
   void swap(MutImage& img) {
     std::swap(img.shape_, this->shape_);
     std::swap(img.ptr_, this->ptr_);
-    std::swap(img.shared_, this->shared_);
+    std::swap(img.unique_, this->unique_);
   }
 
   /// Clears image.
   ///
   /// If image was not empty, memory deallocations will happen.
   void reset() {
-    shared_.reset();
+    unique_.reset();
     this->setViewToEmpty();
   }
 
@@ -175,17 +186,13 @@ class MutImage : public MutImageView<TPixel> {
   /// Leaks memory and returns deleter.
   Deleter leakAndReturnDeleter() {
     SOPHUS_ASSERT(!this->isEmpty());
-    Deleter& del = *std::get_deleter<Deleter>(shared_);
+    Deleter& del = *std::get_deleter<Deleter>(unique_);
     Deleter del_copy = del;
     del.image_deleter.reset();
     return del_copy;
   }
 
-  /// MutImage has unique ownership, and hence behaves like a unique_ptr. As an
-  /// implementation detail, we use a shared_ptr here, so it will be easy to
-  /// support moving a Image with unique ownership at runtime into a
-  /// MutImage.
-  /// Class invariant: shared_.use_count() == 0 || shared_.use_count() == 1.
-  std::shared_ptr<uint8_t> shared_;  // NOLINT
+  /// MutImage has unique ownership.
+  UniqueDataArea unique_;  // NOLINT
 };
 }  // namespace sophus
