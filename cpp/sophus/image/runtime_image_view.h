@@ -160,8 +160,8 @@ class RuntimeImageView {
  protected:
   RuntimeImageView() = default;
 
-  ImageShape shape_ = {};        // NOLINT
-  RuntimePixelType pixel_type_;  // NOLINT
-  uint8_t const* ptr_;           // NOLINT
+  ImageShape shape_ = {};
+  RuntimePixelType pixel_type_;
+  uint8_t const* ptr_;
 };
 }  // namespace sophus
