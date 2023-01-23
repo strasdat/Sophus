@@ -68,8 +68,8 @@ var NAVTREEINDEX =
 "classsophus_1_1_so3_base.html#a8584ae741c78c54d1918adc91a927375",
 "globals_func.html",
 "manifold_8h_source.html",
-"se3_8h.html",
-"test__macros_8h.html"
+"se2_8h_source.html",
+"structsophus_1_1detail_1_1_visit_impl.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

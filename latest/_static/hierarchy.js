@@ -21,7 +21,6 @@ var hierarchy =
     ] ],
     [ "sophus::ClippingPlanes", "structsophus_1_1_clipping_planes.html", null ],
     [ "sophus::ClosestApproachResult< TT >", "structsophus_1_1_closest_approach_result.html", null ],
-    [ "sophus::MutImage< TPixel, TAllocator >::Deleter", "structsophus_1_1_mut_image_1_1_deleter.html", null ],
     [ "sophus::GetScalar< TScalar >", "structsophus_1_1_get_scalar.html", null ],
     [ "sophus::GetScalar< Eigen::Matrix< TScalar, kM, kMatrixDim > >", "structsophus_1_1_get_scalar_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4.html", null ],
     [ "sophus::jet_helpers::GetValue< TScalar >", "structsophus_1_1jet__helpers_1_1_get_value.html", null ],
@@ -166,6 +165,9 @@ var hierarchy =
     ] ],
     [ "sophus::MutImage< TPixel, TAllocator >::TypedDeleterImpl", "structsophus_1_1_mut_image_1_1_typed_deleter_impl.html", null ],
     [ "sophus::UninitTag", "structsophus_1_1_uninit_tag.html", null ],
+    [ "sophus::UniqueDataAreaDeleter", "structsophus_1_1_unique_data_area_deleter.html", [
+      [ "sophus::MutImage< TPixel, TAllocator >::Deleter", "structsophus_1_1_mut_image_1_1_deleter.html", null ]
+    ] ],
     [ "sophus::UnitVector< TScalar, kN >", "classsophus_1_1_unit_vector.html", null ],
     [ "sophus::VariantImagePredicate< TPixelVariant >", "structsophus_1_1_variant_image_predicate.html", null ],
     [ "sophus::detail::VisitImpl< TUserFunc, TRuntimeImage, TPixelTypes >", "structsophus_1_1detail_1_1_visit_impl.html", null ],

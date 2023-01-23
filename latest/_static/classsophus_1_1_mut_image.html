@@ -111,9 +111,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5ebbb686d8cc26985b107cb75bdea443"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a5ebbb686d8cc26985b107cb75bdea443">MutImage</a> ()=default</td></tr>
-<tr class="memdesc:a5ebbb686d8cc26985b107cb75bdea443"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs empty image.  <a href="classsophus_1_1_mut_image.html#a5ebbb686d8cc26985b107cb75bdea443">More...</a><br /></td></tr>
-<tr class="separator:a5ebbb686d8cc26985b107cb75bdea443"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff11bde815c8bf95a68ab688ffbeeac7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#aff11bde815c8bf95a68ab688ffbeeac7">MutImage</a> ()</td></tr>
+<tr class="memdesc:aff11bde815c8bf95a68ab688ffbeeac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs empty image.  <a href="classsophus_1_1_mut_image.html#aff11bde815c8bf95a68ab688ffbeeac7">More...</a><br /></td></tr>
+<tr class="separator:aff11bde815c8bf95a68ab688ffbeeac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05b303ab1d7359883b7e2b16eadcb05d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a05b303ab1d7359883b7e2b16eadcb05d">MutImage</a> (<a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a> shape)</td></tr>
 <tr class="memdesc:a05b303ab1d7359883b7e2b16eadcb05d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates new image with given shape.  <a href="classsophus_1_1_mut_image.html#a05b303ab1d7359883b7e2b16eadcb05d">More...</a><br /></td></tr>
 <tr class="separator:a05b303ab1d7359883b7e2b16eadcb05d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,9 +166,9 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a5b4d579497eff3c6a20d83c35cc2d034"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a5b4d579497eff3c6a20d83c35cc2d034">shared_</a></td></tr>
-<tr class="memdesc:a5b4d579497eff3c6a20d83c35cc2d034"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a> has unique ownership, and hence behaves like a unique_ptr. As an implementation detail, we use a shared_ptr here, so it will be easy to support moving a <a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> with unique ownership at runtime into a <a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a>. Class invariant: shared_.use_count() == 0 || shared_.use_count() == 1.  <a href="classsophus_1_1_mut_image.html#a5b4d579497eff3c6a20d83c35cc2d034">More...</a><br /></td></tr>
-<tr class="separator:a5b4d579497eff3c6a20d83c35cc2d034"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b73e0b01df6a9fbf66f40825909c436"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacesophus.html#a374107cdaa5e2f5f5b1de25d107f176b">UniqueDataArea</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a6b73e0b01df6a9fbf66f40825909c436">unique_</a></td></tr>
+<tr class="memdesc:a6b73e0b01df6a9fbf66f40825909c436"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a> has unique ownership.  <a href="classsophus_1_1_mut_image.html#a6b73e0b01df6a9fbf66f40825909c436">More...</a><br /></td></tr>
+<tr class="separator:a6b73e0b01df6a9fbf66f40825909c436"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -185,8 +185,8 @@ class sophus::MutImage&lt; TPixel, TAllocator &gt;</h3>
 <p>Type is nullable. In that case <code>this-&gt;isEmpty()</code> is true.</p>
 <p>Similar to Pangolin::ManagedImage. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5ebbb686d8cc26985b107cb75bdea443"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ebbb686d8cc26985b107cb75bdea443">&#9670;&nbsp;</a></span>MutImage() <span class="overload">[1/5]</span></h2>
+<a id="aff11bde815c8bf95a68ab688ffbeeac7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff11bde815c8bf95a68ab688ffbeeac7">&#9670;&nbsp;</a></span>MutImage() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -205,7 +205,7 @@ template&lt;class TPixel , template&lt; class &gt; class TAllocator = Eigen::ali
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -693,8 +693,8 @@ template&lt;class TT , template&lt; class &gt; class TAllocator2T&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a5b4d579497eff3c6a20d83c35cc2d034"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b4d579497eff3c6a20d83c35cc2d034">&#9670;&nbsp;</a></span>shared_</h2>
+<a id="a6b73e0b01df6a9fbf66f40825909c436"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b73e0b01df6a9fbf66f40825909c436">&#9670;&nbsp;</a></span>unique_</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -705,7 +705,7 @@ template&lt;class TPixel , template&lt; class &gt; class TAllocator = Eigen::ali
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;uint8_t&gt; <a class="el" href="classsophus_1_1_mut_image.html">sophus::MutImage</a>&lt; TPixel, TAllocator &gt;::shared_</td>
+          <td class="memname"><a class="el" href="namespacesophus.html#a374107cdaa5e2f5f5b1de25d107f176b">UniqueDataArea</a> <a class="el" href="classsophus_1_1_mut_image.html">sophus::MutImage</a>&lt; TPixel, TAllocator &gt;::unique_</td>
         </tr>
       </table>
   </td>
@@ -715,7 +715,7 @@ template&lt;class TPixel , template&lt; class &gt; class TAllocator = Eigen::ali
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a> has unique ownership, and hence behaves like a unique_ptr. As an implementation detail, we use a shared_ptr here, so it will be easy to support moving a <a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> with unique ownership at runtime into a <a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a>. Class invariant: shared_.use_count() == 0 || shared_.use_count() == 1. </p>
+<p><a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a> has unique ownership. </p>
 
 </div>
 </div>

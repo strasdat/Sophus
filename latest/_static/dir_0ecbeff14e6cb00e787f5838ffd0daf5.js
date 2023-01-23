@@ -23,12 +23,7 @@ var dir_0ecbeff14e6cb00e787f5838ffd0daf5 =
     [ "interpolation.h", "interpolation_8h.html", "interpolation_8h" ],
     [ "interpolation_test.cpp", "interpolation__test_8cpp.html", "interpolation__test_8cpp" ],
     [ "mut_image.cpp", "mut__image_8cpp.html", null ],
-    [ "mut_image.h", "mut__image_8h.html", [
-      [ "Image", "classsophus_1_1_image.html", "classsophus_1_1_image" ],
-      [ "MutImage", "classsophus_1_1_mut_image.html", "classsophus_1_1_mut_image" ],
-      [ "TypedDeleterImpl", "structsophus_1_1_mut_image_1_1_typed_deleter_impl.html", "structsophus_1_1_mut_image_1_1_typed_deleter_impl" ],
-      [ "Deleter", "structsophus_1_1_mut_image_1_1_deleter.html", "structsophus_1_1_mut_image_1_1_deleter" ]
-    ] ],
+    [ "mut_image.h", "mut__image_8h.html", "mut__image_8h" ],
     [ "mut_image_test.cpp", "mut__image__test_8cpp.html", "mut__image__test_8cpp" ],
     [ "mut_image_view.cpp", "mut__image__view_8cpp.html", null ],
     [ "mut_image_view.h", "mut__image__view_8h.html", "mut__image__view_8h" ],

@@ -200,7 +200,6 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">View of a mutable image, which does not own the data.  <a href="classsophus_1_1_mut_image_view.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_runtime_image.html">MutRuntimeImage</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type-erased image with shared ownership, and read-only access to pixels. Type is nullable.  <a href="classsophus_1_1_mut_runtime_image.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_runtime_image_view.html">MutRuntimeImageView</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -288,6 +287,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_tests.html">Tests</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_uninit_tag.html">UninitTag</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_unique_data_area_deleter.html">UniqueDataAreaDeleter</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_unit_vector.html">UnitVector</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -480,6 +481,8 @@ Typedefs</h2></td></tr>
 <tr class="separator:a53ef6671657c0cce16b14f1dec536773"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e8d656010b09c9b69366637e4ce6335"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a2e8d656010b09c9b69366637e4ce6335">MutImage4F32</a> = <a class="el" href="namespacesophus.html#a905524c645eb98a46254b9cdfb1d4d24">MutImage4</a>&lt; float &gt;</td></tr>
 <tr class="separator:a2e8d656010b09c9b69366637e4ce6335"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a374107cdaa5e2f5f5b1de25d107f176b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a374107cdaa5e2f5f5b1de25d107f176b">UniqueDataArea</a> = std::unique_ptr&lt; uint8_t, <a class="el" href="structsophus_1_1_unique_data_area_deleter.html">UniqueDataAreaDeleter</a> &gt;</td></tr>
+<tr class="separator:a374107cdaa5e2f5f5b1de25d107f176b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb6711a268fb760dee2a4edea510e179"><td class="memTemplParams" colspan="2">template&lt;template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </td></tr>
 <tr class="memitem:adb6711a268fb760dee2a4edea510e179"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#adb6711a268fb760dee2a4edea510e179">AnyImage</a> = <a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a>&lt; <a class="el" href="structsophus_1_1_any_image_predicate.html">AnyImagePredicate</a>, TAllocator &gt;</td></tr>
 <tr class="memdesc:adb6711a268fb760dee2a4edea510e179"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> representing any number of channels (&gt;=1) and any floating and unsigned integral channel type.  <a href="namespacesophus.html#adb6711a268fb760dee2a4edea510e179">More...</a><br /></td></tr>
@@ -3205,6 +3208,20 @@ template&lt;class TScalar , int kOptions = 0&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="namespacesophus.html#ab9e176acaeabcc0111411ea6d4b2cd30">sophus::So3F64</a> = typedef <a class="el" href="classsophus_1_1_so3.html">So3</a>&lt;double&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a374107cdaa5e2f5f5b1de25d107f176b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a374107cdaa5e2f5f5b1de25d107f176b">&#9670;&nbsp;</a></span>UniqueDataArea</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacesophus.html#a374107cdaa5e2f5f5b1de25d107f176b">sophus::UniqueDataArea</a> = typedef std::unique_ptr&lt;uint8_t, <a class="el" href="structsophus_1_1_unique_data_area_deleter.html">UniqueDataAreaDeleter</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">

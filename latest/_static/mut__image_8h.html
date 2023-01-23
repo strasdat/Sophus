@@ -85,7 +85,8 @@ $(document).ready(function(){initNavTree('mut__image_8h.html',''); initResizable
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle">
 <div class="title">mut_image.h File Reference</div>  </div>
 </div><!--header-->
@@ -199,6 +200,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_image.html">sophus::Image&lt; TPixel, TAllocator &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.  <a href="classsophus_1_1_image.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_unique_data_area_deleter.html">sophus::UniqueDataAreaDeleter</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html">sophus::MutImage&lt; TPixel, TAllocator &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignment, but move constr / assignment.  <a href="classsophus_1_1_mut_image.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,6 +216,11 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacesophus"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html">sophus</a></td></tr>
 <tr class="memdesc:namespacesophus"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> <a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a>, owning images types. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a374107cdaa5e2f5f5b1de25d107f176b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a374107cdaa5e2f5f5b1de25d107f176b">sophus::UniqueDataArea</a> = std::unique_ptr&lt; uint8_t, UniqueDataAreaDeleter &gt;</td></tr>
+<tr class="separator:a374107cdaa5e2f5f5b1de25d107f176b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

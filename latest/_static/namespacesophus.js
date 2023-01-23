@@ -75,6 +75,7 @@ var namespacesophus =
     [ "SplineBasisFunction", "classsophus_1_1_spline_basis_function.html", null ],
     [ "Tests", "classsophus_1_1_tests.html", "classsophus_1_1_tests" ],
     [ "UninitTag", "structsophus_1_1_uninit_tag.html", null ],
+    [ "UniqueDataAreaDeleter", "structsophus_1_1_unique_data_area_deleter.html", "structsophus_1_1_unique_data_area_deleter" ],
     [ "UnitVector", "classsophus_1_1_unit_vector.html", "classsophus_1_1_unit_vector" ],
     [ "VariantImagePredicate", "structsophus_1_1_variant_image_predicate.html", "structsophus_1_1_variant_image_predicate" ]
 ];

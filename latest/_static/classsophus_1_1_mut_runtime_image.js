@@ -5,9 +5,9 @@ var classsophus_1_1_mut_runtime_image =
     [ "MutRuntimeImage", "classsophus_1_1_mut_runtime_image.html#a6529e58283412a67b7eb31ea0903c5f4", null ],
     [ "MutRuntimeImage", "classsophus_1_1_mut_runtime_image.html#a2aa9a9f6255f3f3930701743750e3a34", null ],
     [ "MutRuntimeImage", "classsophus_1_1_mut_runtime_image.html#a47c2f8662ade0aba67a16edcea5c4574", null ],
-    [ "MutRuntimeImage", "classsophus_1_1_mut_runtime_image.html#a60fbce43dc5bd08147b0bf1f27bbbace", null ],
+    [ "MutRuntimeImage", "classsophus_1_1_mut_runtime_image.html#a058c4930ec98fd883c43d1fbcaa25557", null ],
     [ "has", "classsophus_1_1_mut_runtime_image.html#a519c04fa4b30a777983ff6586444c86f", null ],
     [ "mutImage", "classsophus_1_1_mut_runtime_image.html#ae1d6c3aaa5aaf88ccd20d7855b6b624f", null ],
     [ "operator=", "classsophus_1_1_mut_runtime_image.html#aab1e7a2527935d9bd7efb46d4167e5b6", null ],
-    [ "shared_", "classsophus_1_1_mut_runtime_image.html#ad5559b3f2b0e541a23c01f77fe7318bc", null ]
+    [ "unique_", "classsophus_1_1_mut_runtime_image.html#a3476eb57e8c5bc7c202ecb86bebb22e0", null ]
 ];

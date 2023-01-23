@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"se2_8h_source.html":[2,0,0,0,5,11],
 "se3_8h.html":[2,0,0,0,5,13],
 "se3_8h.html#a10c2ccdea99376188f7ca55b6faa9df6":[2,0,0,0,5,13,9],
 "se3_8h.html#a1a4059ccbd31740d03aef8ace01421cf":[2,0,0,0,5,13,6],
@@ -189,9 +190,10 @@ var NAVTREEINDEX8 =
 "structsophus_1_1_multi_camera_rig.html#a69bbc5da89e70071937fc20f5f7bce9a":[1,0,2,37,2],
 "structsophus_1_1_multi_camera_rig.html#aacbe221283d6bcac2a918ba64420feb8":[1,0,2,37,0],
 "structsophus_1_1_mut_image_1_1_deleter.html":[1,0,2,38,0],
-"structsophus_1_1_mut_image_1_1_deleter.html#a1abc371d3f2cbf361724655c02a985e2":[1,0,2,38,0,2],
-"structsophus_1_1_mut_image_1_1_deleter.html#a1c4c9f43ec7b35e4bafc4fa21780ff79":[1,0,2,38,0,0],
-"structsophus_1_1_mut_image_1_1_deleter.html#aaa636ec07745fcfd695b0d65af9a546e":[1,0,2,38,0,1],
+"structsophus_1_1_mut_image_1_1_deleter.html#a081b0d05d4060d4e54d68c8135fd4eab":[1,0,2,38,0,2],
+"structsophus_1_1_mut_image_1_1_deleter.html#a1abc371d3f2cbf361724655c02a985e2":[1,0,2,38,0,3],
+"structsophus_1_1_mut_image_1_1_deleter.html#a1c4c9f43ec7b35e4bafc4fa21780ff79":[1,0,2,38,0,1],
+"structsophus_1_1_mut_image_1_1_deleter.html#a25a03a4763f27295c409f280f76ecb5d":[1,0,2,38,0,0],
 "structsophus_1_1_mut_image_1_1_typed_deleter_impl.html":[1,0,2,38,1],
 "structsophus_1_1_mut_image_1_1_typed_deleter_impl.html#a427155c9feaf2f289ed8ef4e8d01af36":[1,0,2,38,1,2],
 "structsophus_1_1_mut_image_1_1_typed_deleter_impl.html#a47b45ed92bffa458aae5a66f261fddc5":[1,0,2,38,1,1],
@@ -243,11 +245,9 @@ var NAVTREEINDEX8 =
 "structsophus_1_1_so3_base_1_1_tangent_and_theta.html#a8189c4e24775597d894dbb64b46a9bd8":[1,0,2,71,0,0],
 "structsophus_1_1_so3_base_1_1_tangent_and_theta.html#ace18acc06db4b3308b8b63d4b01e7c39":[1,0,2,71,0,1],
 "structsophus_1_1_uninit_tag.html":[1,0,2,74],
-"structsophus_1_1_variant_image_predicate.html":[1,0,2,76],
-"structsophus_1_1_variant_image_predicate.html#ae6e63f8dd415842f666d70ebad667126":[1,0,2,76,0],
-"structsophus_1_1detail_1_1_visit_impl.html":[1,0,2,0,0],
-"structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variant_3_01_t_pixel_type_01_4_01_4.html":[1,0,2,0,1],
-"structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variantd1b0535b64a9f6bf4c89f566d1fd48eb.html":[1,0,2,0,2],
-"structsophus_1_1jet__helpers_1_1_get_value.html":[1,0,2,1,0],
-"structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4.html":[1,0,2,1,1]
+"structsophus_1_1_unique_data_area_deleter.html":[1,0,2,75],
+"structsophus_1_1_unique_data_area_deleter.html#a441b669ba6cddd8ee6acb22fe9499163":[1,0,2,75,0],
+"structsophus_1_1_unique_data_area_deleter.html#a485c34595fd6bd374582b2e53569c2ee":[1,0,2,75,1],
+"structsophus_1_1_variant_image_predicate.html":[1,0,2,77],
+"structsophus_1_1_variant_image_predicate.html#ae6e63f8dd415842f666d70ebad667126":[1,0,2,77,0]
 };

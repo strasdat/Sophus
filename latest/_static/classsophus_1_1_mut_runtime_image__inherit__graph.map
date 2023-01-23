@@ -1,5 +1,5 @@
 <map id="sophus::MutRuntimeImage&lt; TPredicate, TAllocator &gt;" name="sophus::MutRuntimeImage&lt; TPredicate, TAllocator &gt;">
-<area shape="rect" id="node1" title="Type&#45;erased image with shared ownership, and read&#45;only access to pixels. Type is nullable." alt="" coords="21,184,219,225"/>
+<area shape="rect" id="node1" title=" " alt="" coords="21,184,219,225"/>
 <area shape="rect" id="node2" href="$classsophus_1_1_mut_runtime_image_view.html" title=" " alt="" coords="5,95,235,136"/>
 <area shape="rect" id="node3" href="$classsophus_1_1_runtime_image_view.html" title=" " alt="" coords="18,5,222,47"/>
 </map>
