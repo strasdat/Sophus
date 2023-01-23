@@ -40,8 +40,8 @@ class Image : public ImageView<TPixel> {
   Image(MutImage<TPixel, TAllocator>&& image) noexcept
       : ImageView<TPixel>(image.view()) {
     if (!image.isEmpty()) {
-      this->shared_ = std::move(image.shared_);
-      this->ptr_ = reinterpret_cast<TPixel*>(shared_.get());
+      this->shared_ = std::move(image.unique_);
+      this->ptr_ = reinterpret_cast<TPixel*>(this->shared_.get());
       image.setViewToEmpty();
     }
   }
