@@ -64,7 +64,7 @@ class MutImage : public MutImageView<TPixel> {
     Deleter() = default;
     Deleter(TypedDeleterImpl image_deleter) : image_deleter(image_deleter) {}
 
-    virtual void operator()(uint8_t* p) const final {
+    void operator()(uint8_t* p) const final {
       if (image_deleter) {
         (*image_deleter)(reinterpret_cast<TPixel*>(p));
       }
@@ -193,6 +193,6 @@ class MutImage : public MutImageView<TPixel> {
   }
 
   /// MutImage has unique ownership.
-  UniqueDataArea unique_;  // NOLINT
+  UniqueDataArea unique_;
 };
 }  // namespace sophus
