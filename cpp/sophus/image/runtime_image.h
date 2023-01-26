@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "sophus/image/mut_runtime_image.h"
 #include "sophus/image/runtime_image_view.h"
 
 #include <variant>
@@ -16,9 +17,11 @@ namespace sophus {
 
 /// Type-erased image with shared ownership, and read-only access to pixels.
 /// Type is nullable.
+///
+/// todo: Rename to DynImage
 template <
     class TPredicate = AnyImagePredicate,
-    template <class> class TAllocator = Eigen::aligned_allocator>
+    class TAllocator = Eigen::aligned_allocator<uint8_t>>
 class RuntimeImage : public RuntimeImageView<TPredicate> {
  public:
   /// Empty image.
@@ -46,37 +49,20 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
     static_assert(TPredicate::template isTypeValid<TPixel>());
   }
 
-  /// Create type-image image from provided shape and pixel type.
-  /// Pixel data is left uninitialized
-  RuntimeImage(ImageShape const& shape, RuntimePixelType const& pixel_type)
+  /// Create type-erased image from MutImage.
+  /// By design not "explicit".
+  RuntimeImage(MutRuntimeImage<TPredicate, TAllocator>&& image)
       : RuntimeImage(
-            shape,
-            pixel_type,
-            std::shared_ptr<uint8_t>(TAllocator<uint8_t>().allocate(
-                shape.height() * shape.pitchBytes()))) {
-    // TODO: Missing check on ImagePredicate against pixel_type
-    //       has to be a runtime check, since we don't know at runtime.
-
-    SOPHUS_ASSERT_LE(
-        shape.width() * pixel_type.num_channels *
-            pixel_type.num_bytes_per_pixel_channel,
-        (int)shape.pitchBytes());
+            image.shape(), image.pixel_type_, std::move(image.unique_)) {
+    image.unique_.reset();
+    image.setViewToEmpty();
   }
 
   /// Create type-image image from provided size and pixel type.
   /// Pixel data is left uninitialized
   RuntimeImage(ImageSize const& size, RuntimePixelType const& pixel_type)
       : RuntimeImage(
-            ImageShape::makeFromSizeAndPitch<uint8_t>(
-                size,
-                size.width * pixel_type.num_channels *
-                    pixel_type.num_bytes_per_pixel_channel),
-            pixel_type) {}
-
-  template <class TT>
-  static RuntimeImage makeCopyFrom(ImageView<TT> image_view) {
-    return Image<TT>::makeCopyFrom(image_view);
-  }
+            MutRuntimeImage<TPredicate, TAllocator>(size, pixel_type)) {}
 
   /// Return true is this contains data of type TPixel.
   template <class TPixel>

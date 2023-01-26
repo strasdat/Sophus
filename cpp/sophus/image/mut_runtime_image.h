@@ -14,13 +14,26 @@
 
 namespace sophus {
 
+template <class TPredicate, class TAllocator>
+class RuntimeImage;
+
 template <
     class TPredicate = AnyImagePredicate,
-    template <class> class TAllocator = Eigen::aligned_allocator>
+    class TAllocator = Eigen::aligned_allocator<uint8_t>>
 class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
  public:
   /// Empty image.
   MutRuntimeImage() = default;
+
+  /// Not copy constructable
+  MutRuntimeImage(MutRuntimeImage const& other) = delete;
+  /// Not copy assignable
+  MutRuntimeImage& operator=(MutRuntimeImage const&) = delete;
+
+  /// Move constructable
+  MutRuntimeImage(MutRuntimeImage&& other) = default;
+  /// Move assignable
+  MutRuntimeImage& operator=(MutRuntimeImage&&) = default;
 
   /// Create type-erased image from MutImage.
   ///
@@ -31,24 +44,8 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
             image.shape(),
             RuntimePixelType::fromTemplate<TPixel>(),
             std::move(image.unique_)) {
+    image.reset();
     static_assert(TPredicate::template isTypeValid<TPixel>());
-  }
-
-  /// Create type-image image from provided shape and pixel type.
-  /// Pixel data is left uninitialized
-  MutRuntimeImage(ImageShape const& shape, RuntimePixelType const& pixel_type)
-      : MutRuntimeImage(
-            shape,
-            pixel_type,
-            std::unique_ptr<uint8_t>(TAllocator<uint8_t>().allocate(
-                shape.height() * shape.pitchBytes()))) {
-    // TODO: Missing check on ImagePredicate against pixel_type
-    //       has to be a runtime check, since we don't know at compile time.
-
-    SOPHUS_ASSERT_LE(
-        shape.width() * pixel_type.num_channels *
-            pixel_type.num_bytes_per_pixel_channel,
-        (int)shape.pitchBytes());
   }
 
   /// Create type-image image from provided size and pixel type.
@@ -59,18 +56,26 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
                 size,
                 size.width * pixel_type.num_channels *
                     pixel_type.num_bytes_per_pixel_channel),
-            pixel_type) {}
+            pixel_type,
+            nullptr) {
+    if (this->shape_.sizeBytes() != 0u) {
+      this->unique_ = UniqueDataArea<TAllocator>(
+          TAllocator().allocate(this->shape_.sizeBytes()),
+          MaybeLeakingUniqueDataAreaDeleter<TAllocator>(
+              UniqueDataAreaDeleter<TAllocator>(this->shape_.sizeBytes())));
+    }
+    this->ptr_ = this->unique_.get();
+  }
 
   template <class TT>
   static MutRuntimeImage makeCopyFrom(ImageView<TT> image_view) {
     return MutImage<TT>::makeCopyFrom(image_view);
   }
 
-  /// Not copy constructable
-  MutRuntimeImage(MutRuntimeImage const& other) = delete;
-
-  /// Not copy assignable
-  MutRuntimeImage& operator=(MutRuntimeImage const&) = delete;
+  template <class TT>
+  static MutRuntimeImage makeCopyFrom(RuntimeImageView<TPredicate> image_view) {
+    return MutImage<TT>::makeCopyFrom(image_view);
+  }
 
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
@@ -79,22 +84,34 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
     return expected_type == this->pixel_type_;
   }
 
-  /// Returns typed image.
+  /// Returns typed MutImage.
   ///
   /// Precondition: this->has<TPixel>()
   template <class TPixel>
-  [[nodiscard]] MutImage<TPixel, TAllocator> mutImage() const noexcept {
-    FARM_UNIMPLEMENTED();
+  [[nodiscard]] MutImage<TPixel, TAllocator> moveOutAs() noexcept {
+    SOPHUS_ASSERT(this->has<TPixel>());
+    MutImage<TPixel, TAllocator> mut_image;
+    mut_image.shape_ = this->shape_;
+    mut_image.unique_ = std::move(unique_);
+    mut_image.ptr_ = (TPixel*)mut_image.unique_.get();
+    this->unique_.reset();
+    this->setViewToEmpty();
+    return mut_image;
   }
 
  protected:
+  template <class TPredicate2, class TAllocator2T>
+  friend class RuntimeImage;
+
   // Private constructor mainly available for constructing sub-views
   MutRuntimeImage(
-      ImageShape shape, RuntimePixelType pixel_type, UniqueDataArea unique)
-      : RuntimeImageView<TPredicate>(shape, pixel_type, unique.get()),
+      ImageShape shape,
+      RuntimePixelType pixel_type,
+      UniqueDataArea<TAllocator> unique)
+      : MutRuntimeImageView<TPredicate>(shape, pixel_type, unique.get()),
         unique_(std::move(unique)) {}
 
-  UniqueDataArea unique_;
+  UniqueDataArea<TAllocator> unique_;
 };
 
 }  // namespace sophus

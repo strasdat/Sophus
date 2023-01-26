@@ -22,11 +22,8 @@ struct AnyImagePredicate {
   }
 };
 
+// rename: DynPixelFormat
 struct RuntimePixelType {
-  NumberType number_type;
-  int num_channels;
-  int num_bytes_per_pixel_channel;
-
   template <class TPixel>
   static RuntimePixelType fromTemplate() {
     return RuntimePixelType{
@@ -47,6 +44,10 @@ struct RuntimePixelType {
   [[nodiscard]] bool is() {
     return fromTemplate<TPixel>() == *this;
   }
+
+  NumberType number_type;
+  int num_channels;
+  int num_bytes_per_pixel_channel;
 };
 
 bool operator==(RuntimePixelType const& lhs, RuntimePixelType const& rhs);
@@ -157,11 +158,16 @@ class RuntimeImageView {
         this->shape_, reinterpret_cast<TPixel const*>(ptr_));
   }
 
+  void setViewToEmpty() {
+    this->shape_ = {};
+    this->ptr_ = nullptr;
+  }
+
  protected:
   RuntimeImageView() = default;
 
   ImageShape shape_ = {};
   RuntimePixelType pixel_type_;
-  uint8_t const* ptr_;
+  uint8_t const* ptr_ = nullptr;
 };
 }  // namespace sophus

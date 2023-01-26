@@ -6,7 +6,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/mut_runtime_image.h"
+#include "sophus/image/runtime_image_types.h"
 
 #include <gtest/gtest.h>
 
@@ -21,3 +21,29 @@ using namespace sophus;
       }                                                 \
     }                                                   \
   } while (false)
+
+TEST(AnyImage, create_access_and_extract) {
+  const ImageSize size64{6, 4};
+  MutImage<float> mut_image(size64);
+  mut_image.fill(0.5f);
+  MutAnyImage<> mut_any_image(std::move(mut_image));
+  SOPHUS_ASSERT(mut_image.isEmpty());
+
+  SOPHUS_ASSERT_EQ(mut_any_image.imageSize(), size64);
+  SOPHUS_ASSERT_EQ(mut_any_image.numChannels(), 1);
+  SOPHUS_ASSERT_EQ(mut_any_image.numBytesPerPixelChannel(), sizeof(float));
+  SOPHUS_ASSERT_EQ(mut_any_image.numberType(), NumberType::floating_point);
+
+  SOPHUS_ASSERT(!mut_any_image.has<uint16_t>());
+  SOPHUS_ASSERT(!mut_any_image.has<double>());
+  SOPHUS_ASSERT(mut_any_image.has<float>());
+  SOPHUS_ASSERT(!(mut_any_image.has<Eigen::Vector3f>()));
+
+  MutImage<float> mut_image2 = mut_any_image.moveOutAs<float>();
+  SOPHUS_ASSERT(mut_any_image.isEmpty());
+  SOPHUS_ASSERT(!mut_image2.isEmpty());
+  SOPHUS_ASSERT_EQ(mut_image2.imageSize(), size64);
+
+  mut_image2.mut(0, 0) = 0.9f;
+  SOPHUS_ASSERT_EQ(mut_image2(0, 0), 0.9f);
+}

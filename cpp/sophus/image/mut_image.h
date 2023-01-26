@@ -22,17 +22,53 @@ namespace sophus {
 
 // Types are largely inspired / derived from Pangolin.
 
-template <class TPixel, template <class> class TAllocator>
+template <class TPixel, class TAllocator>
 class Image;
 
-struct UniqueDataAreaDeleter {
-  virtual ~UniqueDataAreaDeleter() {}
+template <class TPredicate, class TAllocator>
+class MutRuntimeImage;
 
-  /// Leaking behaviour in base implementation
-  virtual void operator()(uint8_t* p) const {}
+template <class TAllocator>
+struct UniqueDataAreaDeleter {
+  UniqueDataAreaDeleter() = default;
+
+  UniqueDataAreaDeleter(size_t num_bytes) : num_bytes(num_bytes) {}
+  void operator()(uint8_t* p) const {
+    if (p != nullptr) {
+      TAllocator().deallocate(p, num_bytes);
+    }
+  }
+
+  UniqueDataAreaDeleter(UniqueDataAreaDeleter const& other) = default;
+  UniqueDataAreaDeleter& operator=(UniqueDataAreaDeleter const&) = default;
+
+  size_t num_bytes = 0;
 };
 
-using UniqueDataArea = std::unique_ptr<uint8_t, UniqueDataAreaDeleter>;
+template <class TAllocator>
+struct MaybeLeakingUniqueDataAreaDeleter {
+  MaybeLeakingUniqueDataAreaDeleter() = default;
+  MaybeLeakingUniqueDataAreaDeleter(
+      UniqueDataAreaDeleter<TAllocator> image_deleter)
+      : image_deleter(image_deleter) {}
+
+  MaybeLeakingUniqueDataAreaDeleter(
+      MaybeLeakingUniqueDataAreaDeleter const& other) = default;
+  MaybeLeakingUniqueDataAreaDeleter& operator=(
+      MaybeLeakingUniqueDataAreaDeleter const&) = default;
+
+  void operator()(uint8_t* p) const {
+    if (image_deleter) {
+      (*image_deleter)(p);
+    }
+  }
+
+  std::optional<UniqueDataAreaDeleter<TAllocator>> image_deleter;
+};
+
+template <class TAllocator>
+using UniqueDataArea =
+    std::unique_ptr<uint8_t, MaybeLeakingUniqueDataAreaDeleter<TAllocator>>;
 
 /// A image with write access to pixels and exclusive ownership. There is no
 /// copy constr / copy assignment, but move constr / assignment.
@@ -41,40 +77,14 @@ using UniqueDataArea = std::unique_ptr<uint8_t, UniqueDataAreaDeleter>;
 ///
 /// Type is nullable. In that case `this->isEmpty()` is true.
 ///
-/// Similar to Pangolin::ManagedImage.
-template <
-    class TPixel,
-    template <class> class TAllocator = Eigen::aligned_allocator>
+template <class TPixel, class TAllocator = Eigen::aligned_allocator<uint8_t>>
 class MutImage : public MutImageView<TPixel> {
  public:
-  struct TypedDeleterImpl {
-    TypedDeleterImpl(size_t num_bytes) : num_bytes(num_bytes) {}
-
-    void operator()(TPixel* p) const {
-      if (p != nullptr) {
-        TAllocator<TPixel>().deallocate(p, num_bytes / sizeof(TPixel));
-      }
-    }
-
-    size_t num_bytes;
-  };
-
-  /// Deleter for MutImage.
-  struct Deleter : UniqueDataAreaDeleter {
-    Deleter() = default;
-    Deleter(TypedDeleterImpl image_deleter) : image_deleter(image_deleter) {}
-
-    void operator()(uint8_t* p) const final {
-      if (image_deleter) {
-        (*image_deleter)(reinterpret_cast<TPixel*>(p));
-      }
-    }
-
-    std::optional<TypedDeleterImpl> image_deleter;
-  };
-
-  template <class TT, template <class> class TAllocator2T>
+  template <class TT, class TAllocator2T>
   friend class Image;
+
+  template <class TPredicate, class TAllocator2T>
+  friend class MutRuntimeImage;
 
   /// Constructs empty image.
   MutImage() : unique_(nullptr) {}
@@ -86,10 +96,10 @@ class MutImage : public MutImageView<TPixel> {
       : MutImageView<TPixel>(shape, nullptr), unique_(nullptr) {
     if (shape.sizeBytes() != 0u) {
       SOPHUS_ASSERT_EQ(shape.sizeBytes() % sizeof(TPixel), 0);
-      this->unique_ = UniqueDataArea(
-          (uint8_t*)(TAllocator<TPixel>().allocate(
-              shape.sizeBytes() / sizeof(TPixel))),
-          Deleter(TypedDeleterImpl(shape.sizeBytes())));
+      this->unique_ = UniqueDataArea<TAllocator>(
+          TAllocator().allocate(shape.sizeBytes()),
+          MaybeLeakingUniqueDataAreaDeleter<TAllocator>(
+              UniqueDataAreaDeleter<TAllocator>(shape.sizeBytes())));
     }
     this->ptr_ = reinterpret_cast<TPixel*>(this->unique_.get());
   }
@@ -184,15 +194,17 @@ class MutImage : public MutImageView<TPixel> {
 
  protected:
   /// Leaks memory and returns deleter.
-  Deleter leakAndReturnDeleter() {
+  MaybeLeakingUniqueDataAreaDeleter<TAllocator> leakAndReturnDeleter() {
     SOPHUS_ASSERT(!this->isEmpty());
-    Deleter& del = *std::get_deleter<Deleter>(unique_);
-    Deleter del_copy = del;
+    MaybeLeakingUniqueDataAreaDeleter<TAllocator>& del =
+        *std::get_deleter<MaybeLeakingUniqueDataAreaDeleter<TAllocator>>(
+            unique_);
+    MaybeLeakingUniqueDataAreaDeleter<TAllocator> del_copy = del;
     del.image_deleter.reset();
     return del_copy;
   }
 
   /// MutImage has unique ownership.
-  UniqueDataArea unique_;
+  UniqueDataArea<TAllocator> unique_;
 };
 }  // namespace sophus

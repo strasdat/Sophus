@@ -46,10 +46,12 @@ class MutRuntimeImageView : public RuntimeImageView<TPredicate> {
   ///
   /// Precondition: v must be in [0, height).
   [[nodiscard]] uint8_t* rawMutRowPtr(int v) {
-    return ((uint8_t*)(rawMutPtr()) + v * this->shape_.pitchBytes());
+    return this->rawMutPtr() + v * this->shape_.pitchBytes();
   }
 
-  [[nodiscard]] uint8_t* rawMutPtr() { return this->ptr_; }
+  [[nodiscard]] uint8_t* rawMutPtr() {
+    return const_cast<uint8_t*>(this->rawPtr());
+  }
 
   /// Returns subview with shared ownership semantics of whole image.
   [[nodiscard]] MutRuntimeImageView mutSubview(
@@ -83,6 +85,30 @@ class MutRuntimeImageView : public RuntimeImageView<TPredicate> {
 
     return MutImageView<TPixel>(
         this->shape_, reinterpret_cast<TPixel const*>(this->ptr_));
+  }
+
+  /// Copies data from view into this.
+  ///
+  /// Preconditions:
+  ///  * this->isEmpty() == view.isEmpty()
+  ///  * this->size() == view.size()
+  ///
+  /// No-op if view is empty.
+  void copyDataFrom(RuntimeImageView<TPredicate> view) const {
+    SOPHUS_ASSERT_EQ(this->isEmpty(), view.isEmpty());
+
+    if (this->isEmpty()) {
+      return;
+    }
+    SOPHUS_ASSERT_EQ(this->imageSize(), view.imageSize());
+    SOPHUS_ASSERT_EQ(this->pixel_type_, view.pixelType());
+    details::pitchedCopy(
+        (uint8_t*)this->mutRawPtr(),
+        this->shape().pitchBytes(),
+        (uint8_t const*)view.rawPtr(),
+        view.shape().pitchBytes(),
+        this->imageSize(),
+        this->size.width * this->pixel_type_.bytesPerPixel());
   }
 
  protected:
