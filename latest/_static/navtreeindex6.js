@@ -1,5 +1,8 @@
 var NAVTREEINDEX6 =
 {
+"geometry_2proto_2conv__test_8cpp.html":[2,0,0,0,3,0,2],
+"globals.html":[2,1,0],
+"globals_defs.html":[2,1,4],
 "globals_func.html":[2,1,1],
 "globals_type.html":[2,1,3],
 "globals_vars.html":[2,1,2],
@@ -246,8 +249,5 @@ var NAVTREEINDEX6 =
 "linalg_2proto_2conv_8h.html#ab98163bdaf4902beb54fe7510ee78b8a":[2,0,0,0,6,0,1,0],
 "linalg_2proto_2conv_8h.html#ac720f9a392c6897fc1cd7fe92a6236f1":[2,0,0,0,6,0,1,6],
 "linalg_2proto_2conv_8h.html#ad4ab61bb3938691bb9746fca02c02307":[2,0,0,0,6,0,1,2],
-"linalg_2proto_2conv_8h.html#aea3acb3c3188b02045fafde78079c9e3":[2,0,0,0,6,0,1,9],
-"linalg_2proto_2conv_8h_source.html":[2,0,0,0,6,0,1],
-"linalg_2proto_2conv__test_8cpp.html":[2,0,0,0,6,0,2],
-"manifold_8h.html":[2,0,0,0,1,2]
+"linalg_2proto_2conv_8h.html#aea3acb3c3188b02045fafde78079c9e3":[2,0,0,0,6,0,1,9]
 };

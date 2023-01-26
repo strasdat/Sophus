@@ -1,5 +1,15 @@
 var NAVTREEINDEX9 =
 {
+"structsophus_1_1_uninit_tag.html":[1,0,2,75],
+"structsophus_1_1_unique_data_area_deleter.html":[1,0,2,76],
+"structsophus_1_1_unique_data_area_deleter.html#a1341885aa5aa20d65e8c539a93d9ea83":[1,0,2,76,0],
+"structsophus_1_1_unique_data_area_deleter.html#a7ddbc3110b74bf8cbf4703d81b24752b":[1,0,2,76,1],
+"structsophus_1_1_unique_data_area_deleter.html#aa1a6613d4df79a0c39b0751fda01aa93":[1,0,2,76,2],
+"structsophus_1_1_unique_data_area_deleter.html#aa94f6e425dddb70cdf7a4ce713cc542e":[1,0,2,76,3],
+"structsophus_1_1_unique_data_area_deleter.html#ab423757093d349ba93093fcef7257e22":[1,0,2,76,4],
+"structsophus_1_1_unique_data_area_deleter.html#abccc23a2a7a9371790f483da77fbc2d6":[1,0,2,76,5],
+"structsophus_1_1_variant_image_predicate.html":[1,0,2,78],
+"structsophus_1_1_variant_image_predicate.html#ae6e63f8dd415842f666d70ebad667126":[1,0,2,78,0],
 "structsophus_1_1detail_1_1_visit_impl.html":[1,0,2,0,0],
 "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variant_3_01_t_pixel_type_01_4_01_4.html":[1,0,2,0,1],
 "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variantd1b0535b64a9f6bf4c89f566d1fd48eb.html":[1,0,2,0,2],

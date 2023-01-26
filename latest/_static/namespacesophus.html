@@ -190,6 +190,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_mapper_3_01_t_scalar_00_01typename_01std_1_1enable__if_3_01k_is_mappable_v_3_01cd5529748b13d40e64d4c3ee260777da.html">Mapper&lt; TScalar, typename std::enable_if&lt; kIsMappableV&lt; TScalar &gt; &gt;::type &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_maybe_leaking_unique_data_area_deleter.html">MaybeLeakingUniqueDataAreaDeleter</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_multi_camera_rig.html">MultiCameraRig</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sensor rig with multiple cameras.  <a href="structsophus_1_1_multi_camera_rig.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -481,22 +483,33 @@ Typedefs</h2></td></tr>
 <tr class="separator:a53ef6671657c0cce16b14f1dec536773"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e8d656010b09c9b69366637e4ce6335"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a2e8d656010b09c9b69366637e4ce6335">MutImage4F32</a> = <a class="el" href="namespacesophus.html#a905524c645eb98a46254b9cdfb1d4d24">MutImage4</a>&lt; float &gt;</td></tr>
 <tr class="separator:a2e8d656010b09c9b69366637e4ce6335"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a374107cdaa5e2f5f5b1de25d107f176b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a374107cdaa5e2f5f5b1de25d107f176b">UniqueDataArea</a> = std::unique_ptr&lt; uint8_t, <a class="el" href="structsophus_1_1_unique_data_area_deleter.html">UniqueDataAreaDeleter</a> &gt;</td></tr>
-<tr class="separator:a374107cdaa5e2f5f5b1de25d107f176b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb6711a268fb760dee2a4edea510e179"><td class="memTemplParams" colspan="2">template&lt;template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </td></tr>
+<tr class="memitem:ae355552b5618046883eddff78464d1ce"><td class="memTemplParams" colspan="2">template&lt;class TAllocator &gt; </td></tr>
+<tr class="memitem:ae355552b5618046883eddff78464d1ce"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#ae355552b5618046883eddff78464d1ce">UniqueDataArea</a> = std::unique_ptr&lt; uint8_t, <a class="el" href="structsophus_1_1_maybe_leaking_unique_data_area_deleter.html">MaybeLeakingUniqueDataAreaDeleter</a>&lt; TAllocator &gt; &gt;</td></tr>
+<tr class="separator:ae355552b5618046883eddff78464d1ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb6711a268fb760dee2a4edea510e179"><td class="memTemplParams" colspan="2">template&lt;class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </td></tr>
 <tr class="memitem:adb6711a268fb760dee2a4edea510e179"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#adb6711a268fb760dee2a4edea510e179">AnyImage</a> = <a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a>&lt; <a class="el" href="structsophus_1_1_any_image_predicate.html">AnyImagePredicate</a>, TAllocator &gt;</td></tr>
 <tr class="memdesc:adb6711a268fb760dee2a4edea510e179"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> representing any number of channels (&gt;=1) and any floating and unsigned integral channel type.  <a href="namespacesophus.html#adb6711a268fb760dee2a4edea510e179">More...</a><br /></td></tr>
 <tr class="separator:adb6711a268fb760dee2a4edea510e179"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25cfa4bfaff0a7ec5c7deb1b75a3d405"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a25cfa4bfaff0a7ec5c7deb1b75a3d405">AnyImageView</a> = <a class="el" href="classsophus_1_1_runtime_image_view.html">RuntimeImageView</a>&lt; <a class="el" href="structsophus_1_1_any_image_predicate.html">AnyImagePredicate</a> &gt;</td></tr>
 <tr class="separator:a25cfa4bfaff0a7ec5c7deb1b75a3d405"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0544b9a11fc216f97a197d8a1f8850d9"><td class="memTemplParams" colspan="2">template&lt;class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </td></tr>
+<tr class="memitem:a0544b9a11fc216f97a197d8a1f8850d9"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a0544b9a11fc216f97a197d8a1f8850d9">MutAnyImage</a> = <a class="el" href="classsophus_1_1_mut_runtime_image.html">MutRuntimeImage</a>&lt; <a class="el" href="structsophus_1_1_any_image_predicate.html">AnyImagePredicate</a>, TAllocator &gt;</td></tr>
+<tr class="separator:a0544b9a11fc216f97a197d8a1f8850d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3827f04e19cba11fdd3f87b8c34dc142"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a3827f04e19cba11fdd3f87b8c34dc142">MutAnyImageView</a> = <a class="el" href="classsophus_1_1_mut_runtime_image_view.html">MutRuntimeImageView</a>&lt; <a class="el" href="structsophus_1_1_any_image_predicate.html">AnyImagePredicate</a> &gt;</td></tr>
+<tr class="separator:a3827f04e19cba11fdd3f87b8c34dc142"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a325ca574bf11f27338a96576f3d8e0cd"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a325ca574bf11f27338a96576f3d8e0cd">IntensityImagePredicate</a> = <a class="el" href="structsophus_1_1_variant_image_predicate.html">VariantImagePredicate</a>&lt; std::variant&lt; uint8_t, uint16_t, float, <a class="el" href="namespacesophus.html#a357f6dbcfeb324e41eedad7a1a139061">Pixel3U8</a>, <a class="el" href="namespacesophus.html#a80f7e3b6275b10d7ffd120c25b6aab02">Pixel3U16</a>, <a class="el" href="namespacesophus.html#a39e5641390bdcccc7eb95bc2abb1bc3f">Pixel3F32</a>, <a class="el" href="namespacesophus.html#a506f4368bab7ab088474682cd67d3a2d">Pixel4U8</a>, <a class="el" href="namespacesophus.html#ac4fb1bf2dd78421d797351b97cc1fd97">Pixel4U16</a>, <a class="el" href="namespacesophus.html#a9a69b0947f141409726829a02f7f93ac">Pixel4F32</a> &gt; &gt;</td></tr>
 <tr class="separator:a325ca574bf11f27338a96576f3d8e0cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a131561c9e39e2daf347947a106dcd071"><td class="memTemplParams" colspan="2">template&lt;template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </td></tr>
+<tr class="memitem:a131561c9e39e2daf347947a106dcd071"><td class="memTemplParams" colspan="2">template&lt;class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </td></tr>
 <tr class="memitem:a131561c9e39e2daf347947a106dcd071"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a131561c9e39e2daf347947a106dcd071">IntensityImage</a> = <a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a>&lt; <a class="el" href="namespacesophus.html#a325ca574bf11f27338a96576f3d8e0cd">IntensityImagePredicate</a>, TAllocator &gt;</td></tr>
 <tr class="memdesc:a131561c9e39e2daf347947a106dcd071"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> to represent intensity image / texture as grayscale (=1 channel), RGB (=3 channel ) and RGBA (=4 channel), either uint8_t [0-255], uint16 [0-65535] or float [0.0-1.0] channel type.  <a href="namespacesophus.html#a131561c9e39e2daf347947a106dcd071">More...</a><br /></td></tr>
 <tr class="separator:a131561c9e39e2daf347947a106dcd071"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2988e27437c2b346ee6eeb2dac06de83"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a2988e27437c2b346ee6eeb2dac06de83">IntensityImageView</a> = <a class="el" href="classsophus_1_1_runtime_image_view.html">RuntimeImageView</a>&lt; <a class="el" href="namespacesophus.html#a325ca574bf11f27338a96576f3d8e0cd">IntensityImagePredicate</a> &gt;</td></tr>
 <tr class="separator:a2988e27437c2b346ee6eeb2dac06de83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b334cd44feb627ef8bdb970cb1d450e"><td class="memTemplParams" colspan="2">template&lt;class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </td></tr>
+<tr class="memitem:a2b334cd44feb627ef8bdb970cb1d450e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a2b334cd44feb627ef8bdb970cb1d450e">MutIntensityImage</a> = <a class="el" href="classsophus_1_1_mut_runtime_image.html">MutRuntimeImage</a>&lt; <a class="el" href="namespacesophus.html#a325ca574bf11f27338a96576f3d8e0cd">IntensityImagePredicate</a>, TAllocator &gt;</td></tr>
+<tr class="separator:a2b334cd44feb627ef8bdb970cb1d450e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31b02e960b5dc5375da98fbcc8b13f0a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a31b02e960b5dc5375da98fbcc8b13f0a">MutIntensityImageView</a> = <a class="el" href="classsophus_1_1_mut_runtime_image_view.html">MutRuntimeImageView</a>&lt; <a class="el" href="namespacesophus.html#a325ca574bf11f27338a96576f3d8e0cd">IntensityImagePredicate</a> &gt;</td></tr>
+<tr class="separator:a31b02e960b5dc5375da98fbcc8b13f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad2df897f2714cfa9fc868d50af224e5"><td class="memTemplParams" colspan="2">template&lt;class TScalar &gt; </td></tr>
 <tr class="memitem:aad2df897f2714cfa9fc868d50af224e5"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#aad2df897f2714cfa9fc868d50af224e5">Cartesian2</a> = <a class="el" href="classsophus_1_1_cartesian.html">Cartesian</a>&lt; TScalar, 2 &gt;</td></tr>
 <tr class="separator:aad2df897f2714cfa9fc868d50af224e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -973,7 +986,7 @@ Functions</h2></td></tr>
 <tr class="separator:ac34861d90aed00acb6931d904a24f50f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad46629d7e7cab584e8433a562adfc929"><td class="memItemLeft" align="right" valign="top">proto::ImageSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html#ad46629d7e7cab584e8433a562adfc929">toProto</a> (<a class="el" href="structsophus_1_1_image_size.html">sophus::ImageSize</a> const &amp;image_size)</td></tr>
 <tr class="separator:ad46629d7e7cab584e8433a562adfc929"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2adfe35078e9e70b54b3214f909a4b70"><td class="memTemplParams" colspan="2">template&lt;typename TUserFunc , class TPredicate  = IntensityImagePredicate, template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </td></tr>
+<tr class="memitem:a2adfe35078e9e70b54b3214f909a4b70"><td class="memTemplParams" colspan="2">template&lt;typename TUserFunc , class TPredicate  = IntensityImagePredicate, class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </td></tr>
 <tr class="memitem:a2adfe35078e9e70b54b3214f909a4b70"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a2adfe35078e9e70b54b3214f909a4b70">visitImage</a> (TUserFunc &amp;&amp;func, <a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a>&lt; TPredicate, TAllocator &gt; const &amp;image)</td></tr>
 <tr class="separator:a2adfe35078e9e70b54b3214f909a4b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42e41f04fc0e80addcb062f6489f372f"><td class="memTemplParams" colspan="2">template&lt;class TUserFunc , class TPredicate  = IntensityImagePredicate&gt; </td></tr>
@@ -1268,7 +1281,7 @@ Variables</h2></td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </div>
+template&lt;class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="namespacesophus.html#adb6711a268fb760dee2a4edea510e179">sophus::AnyImage</a> = typedef <a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a>&lt;<a class="el" href="structsophus_1_1_any_image_predicate.html">AnyImagePredicate</a>, TAllocator&gt;</td>
@@ -1778,7 +1791,7 @@ template&lt;class TChannel &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </div>
+template&lt;class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="namespacesophus.html#a131561c9e39e2daf347947a106dcd071">sophus::IntensityImage</a> = typedef <a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a>&lt;<a class="el" href="namespacesophus.html#a325ca574bf11f27338a96576f3d8e0cd">IntensityImagePredicate</a>, TAllocator&gt;</td>
@@ -1885,6 +1898,36 @@ template&lt;class TScalar &gt; </div>
 </div><div class="memdoc">
 
 <p>KannalaBrandt camera model with k0, k1, k2, k3. </p>
+
+</div>
+</div>
+<a id="a0544b9a11fc216f97a197d8a1f8850d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0544b9a11fc216f97a197d8a1f8850d9">&#9670;&nbsp;</a></span>MutAnyImage</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacesophus.html#a0544b9a11fc216f97a197d8a1f8850d9">sophus::MutAnyImage</a> = typedef <a class="el" href="classsophus_1_1_mut_runtime_image.html">MutRuntimeImage</a>&lt;<a class="el" href="structsophus_1_1_any_image_predicate.html">AnyImagePredicate</a>, TAllocator&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3827f04e19cba11fdd3f87b8c34dc142"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3827f04e19cba11fdd3f87b8c34dc142">&#9670;&nbsp;</a></span>MutAnyImageView</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacesophus.html#a3827f04e19cba11fdd3f87b8c34dc142">sophus::MutAnyImageView</a> = typedef <a class="el" href="classsophus_1_1_mut_runtime_image_view.html">MutRuntimeImageView</a>&lt;<a class="el" href="structsophus_1_1_any_image_predicate.html">AnyImagePredicate</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -2226,6 +2269,36 @@ template&lt;class TChannel &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="namespacesophus.html#a5ba9e7b94412725b4060177ce5aae496">sophus::MutImageViewU8</a> = typedef <a class="el" href="classsophus_1_1_mut_image_view.html">MutImageView</a>&lt;uint8_t&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2b334cd44feb627ef8bdb970cb1d450e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b334cd44feb627ef8bdb970cb1d450e">&#9670;&nbsp;</a></span>MutIntensityImage</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacesophus.html#a2b334cd44feb627ef8bdb970cb1d450e">sophus::MutIntensityImage</a> = typedef <a class="el" href="classsophus_1_1_mut_runtime_image.html">MutRuntimeImage</a>&lt;<a class="el" href="namespacesophus.html#a325ca574bf11f27338a96576f3d8e0cd">IntensityImagePredicate</a>, TAllocator&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a31b02e960b5dc5375da98fbcc8b13f0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31b02e960b5dc5375da98fbcc8b13f0a">&#9670;&nbsp;</a></span>MutIntensityImageView</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacesophus.html#a31b02e960b5dc5375da98fbcc8b13f0a">sophus::MutIntensityImageView</a> = typedef <a class="el" href="classsophus_1_1_mut_runtime_image_view.html">MutRuntimeImageView</a>&lt;<a class="el" href="namespacesophus.html#a325ca574bf11f27338a96576f3d8e0cd">IntensityImagePredicate</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -3214,14 +3287,16 @@ template&lt;class TScalar , int kOptions = 0&gt; </div>
 
 </div>
 </div>
-<a id="a374107cdaa5e2f5f5b1de25d107f176b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a374107cdaa5e2f5f5b1de25d107f176b">&#9670;&nbsp;</a></span>UniqueDataArea</h2>
+<a id="ae355552b5618046883eddff78464d1ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae355552b5618046883eddff78464d1ce">&#9670;&nbsp;</a></span>UniqueDataArea</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;class TAllocator &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespacesophus.html#a374107cdaa5e2f5f5b1de25d107f176b">sophus::UniqueDataArea</a> = typedef std::unique_ptr&lt;uint8_t, <a class="el" href="structsophus_1_1_unique_data_area_deleter.html">UniqueDataAreaDeleter</a>&gt;</td>
+          <td class="memname">using <a class="el" href="namespacesophus.html#ae355552b5618046883eddff78464d1ce">sophus::UniqueDataArea</a> = typedef std::unique_ptr&lt;uint8_t, <a class="el" href="structsophus_1_1_maybe_leaking_unique_data_area_deleter.html">MaybeLeakingUniqueDataAreaDeleter</a>&lt;TAllocator&gt; &gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -7662,7 +7737,7 @@ template&lt;class TScalar , int kMatrixDim, int kM, class TScalarOrVector , clas
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TUserFunc , class TPredicate  = IntensityImagePredicate, template&lt; class &gt; class TAllocator = Eigen::aligned_allocator&gt; </div>
+template&lt;typename TUserFunc , class TPredicate  = IntensityImagePredicate, class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void sophus::visitImage </td>

@@ -63,13 +63,13 @@ var NAVTREEINDEX =
 "affine_8h.html",
 "class_eigen_1_1_map_3_01sophus_1_1_sim2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html#a5239048ffdb6ea44e3ae5ca4fb0bebca",
 "classsophus_1_1_image.html",
-"classsophus_1_1_rx_so2.html#a8fb6b0cdd1321fd12f9315dd8e2bec69",
-"classsophus_1_1_se3_base.html#aadec0cfdb98be56a57c8c1e340981c02",
-"classsophus_1_1_so3_base.html#a8584ae741c78c54d1918adc91a927375",
-"globals_func.html",
-"manifold_8h_source.html",
-"se2_8h_source.html",
-"structsophus_1_1detail_1_1_visit_impl.html"
+"classsophus_1_1_rx_so2.html#a626001f5fc6214e70f106a2dff7c83b3",
+"classsophus_1_1_se3_base.html#aa92674f2e39f234abfd497cdadf05f8e",
+"classsophus_1_1_so3_base.html#a7dec4ecdc70c5f8172265387290d832d",
+"geometry_2proto_2conv__test_8cpp.html",
+"linalg_2proto_2conv_8h_source.html",
+"rxso3_8h.html#abf39ed0d4521993f1cdfba9915e36dd5",
+"structsophus_1_1_uninit_tag.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
