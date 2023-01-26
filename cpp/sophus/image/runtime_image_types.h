@@ -8,15 +8,19 @@
 
 #pragma once
 
+#include "sophus/image/mut_runtime_image.h"
 #include "sophus/image/runtime_image.h"
 
 namespace sophus {
 
 /// Image representing any number of channels (>=1) and any floating and
 /// unsigned integral channel type.
-template <template <class> class TAllocator = Eigen::aligned_allocator>
+template <class TAllocator = Eigen::aligned_allocator<uint8_t>>
 using AnyImage = RuntimeImage<AnyImagePredicate, TAllocator>;
 using AnyImageView = RuntimeImageView<AnyImagePredicate>;
+template <class TAllocator = Eigen::aligned_allocator<uint8_t>>
+using MutAnyImage = MutRuntimeImage<AnyImagePredicate, TAllocator>;
+using MutAnyImageView = MutRuntimeImageView<AnyImagePredicate>;
 
 template <class TPixelVariant>
 struct VariantImagePredicate {
@@ -42,9 +46,12 @@ using IntensityImagePredicate = VariantImagePredicate<std::variant<
 /// Image to represent intensity image / texture as grayscale (=1 channel),
 /// RGB (=3 channel ) and RGBA (=4 channel), either uint8_t [0-255],
 /// uint16 [0-65535] or float [0.0-1.0] channel type.
-template <template <class> class TAllocator = Eigen::aligned_allocator>
+template <class TAllocator = Eigen::aligned_allocator<uint8_t>>
 using IntensityImage = RuntimeImage<IntensityImagePredicate, TAllocator>;
 using IntensityImageView = RuntimeImageView<IntensityImagePredicate>;
+template <class TAllocator = Eigen::aligned_allocator<uint8_t>>
+using MutIntensityImage = MutRuntimeImage<IntensityImagePredicate, TAllocator>;
+using MutIntensityImageView = MutRuntimeImageView<IntensityImagePredicate>;
 
 namespace detail {
 // Call UserFunc with TRuntimeImage cast to the appropriate concrete type
@@ -84,7 +91,7 @@ struct VisitImpl<TUserFunc, TRuntimeImage, std::variant<TPixelType, TRest...>> {
 template <
     typename TUserFunc,
     class TPredicate = IntensityImagePredicate,
-    template <class> class TAllocator = Eigen::aligned_allocator>
+    class TAllocator = Eigen::aligned_allocator<uint8_t>>
 void visitImage(
     TUserFunc&& func, RuntimeImage<TPredicate, TAllocator> const& image) {
   using TRuntimeImage = RuntimeImage<TPredicate, TAllocator>;

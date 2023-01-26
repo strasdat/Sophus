@@ -18,6 +18,8 @@
 namespace sophus {
 
 /// Shape of image: width, height and pitch in bytes.
+///
+/// todo: Rename to ImageLayout
 class ImageShape {
  public:
   ImageShape() = default;

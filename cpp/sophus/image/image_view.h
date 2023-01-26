@@ -28,10 +28,10 @@ namespace sophus {
 
 // Types are largely inspired / derived from Pangolin.
 
-template <class TPixel, template <class> class TAllocator>
+template <class TPixel, class TAllocator>
 class MutImage;
 
-template <class TPixel, template <class> class TAllocator>
+template <class TPixel, class TAllocator>
 class Image;
 
 /// A view of an (immutable) image, which does not own the data.
@@ -236,10 +236,10 @@ struct ImageView {
   TPixel const* ptr_ = nullptr;  // NOLINT
 
  private:
-  template <class TT, template <class> class TAllocator>
+  template <class TT, class TAllocator>
   friend class MutImage;
 
-  template <class TT, template <class> class TAllocator>
+  template <class TT, class TAllocator>
   friend class Image;
 };
 
