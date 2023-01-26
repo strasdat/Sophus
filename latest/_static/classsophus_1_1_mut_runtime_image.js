@@ -10,5 +10,6 @@ var classsophus_1_1_mut_runtime_image =
     [ "moveOutAs", "classsophus_1_1_mut_runtime_image.html#a8a29dcf7f3c8b07a86ad22c652d2335b", null ],
     [ "operator=", "classsophus_1_1_mut_runtime_image.html#a3abf3e9f8a3932248aac9f311d142bba", null ],
     [ "operator=", "classsophus_1_1_mut_runtime_image.html#aab1e7a2527935d9bd7efb46d4167e5b6", null ],
+    [ "RuntimeImage", "classsophus_1_1_mut_runtime_image.html#acf4a9eb31ba6e40ca3f5b5bfc621fe19", null ],
     [ "unique_", "classsophus_1_1_mut_runtime_image.html#a70a99d652db7844507b80dc3658cdfe2", null ]
 ];

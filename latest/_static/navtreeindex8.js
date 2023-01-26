@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"rxso3_8h.html#a8adfe2cb53cd3e346e003f813fbc4d49":[2,0,0,0,5,9,10],
 "rxso3_8h.html#abf39ed0d4521993f1cdfba9915e36dd5":[2,0,0,0,5,9,11],
 "rxso3_8h_source.html":[2,0,0,0,5,9],
 "se2_8h.html":[2,0,0,0,5,11],
@@ -248,6 +249,5 @@ var NAVTREEINDEX8 =
 "structsophus_1_1_so3_1_1_so3_and_theta.html#a056833a620568e8aca923eecc0a7d402":[1,0,2,71,0,0],
 "structsophus_1_1_so3_1_1_so3_and_theta.html#aab1434517a25972f2117842731d38c20":[1,0,2,71,0,1],
 "structsophus_1_1_so3_base_1_1_tangent_and_theta.html":[1,0,2,72,0],
-"structsophus_1_1_so3_base_1_1_tangent_and_theta.html#a8189c4e24775597d894dbb64b46a9bd8":[1,0,2,72,0,0],
-"structsophus_1_1_so3_base_1_1_tangent_and_theta.html#ace18acc06db4b3308b8b63d4b01e7c39":[1,0,2,72,0,1]
+"structsophus_1_1_so3_base_1_1_tangent_and_theta.html#a8189c4e24775597d894dbb64b46a9bd8":[1,0,2,72,0,0]
 };

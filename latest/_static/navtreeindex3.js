@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"classsophus_1_1_rx_so2.html#a340940b549a334e0be97701c986fd2c0":[1,0,2,55,11],
 "classsophus_1_1_rx_so2.html#a626001f5fc6214e70f106a2dff7c83b3":[1,0,2,55,14],
 "classsophus_1_1_rx_so2.html#a66686097c1ea790926f37faf5e294b7c":[1,0,2,55,17],
 "classsophus_1_1_rx_so2.html#a6a8632ada0b2c49ddbb4cd28f644542d":[1,0,2,55,19],
@@ -248,6 +249,5 @@ var NAVTREEINDEX3 =
 "classsophus_1_1_se3_base.html#a99c687bb940132c67aa6296a93a1b2b8":[1,0,2,64,18],
 "classsophus_1_1_se3_base.html#a9cf14294d1e9d85077f6c44b6f9ed76d":[1,0,2,64,14],
 "classsophus_1_1_se3_base.html#a9d9b47ff2a6d3a588d9fafb8458e2cbc":[1,0,2,64,42],
-"classsophus_1_1_se3_base.html#aa58b82df35582b9ac675f0a528fed21e":[1,0,2,64,27],
-"classsophus_1_1_se3_base.html#aa708e3dcbe826149d7337666d2a79538":[1,0,2,64,9]
+"classsophus_1_1_se3_base.html#aa58b82df35582b9ac675f0a528fed21e":[1,0,2,64,27]
 };

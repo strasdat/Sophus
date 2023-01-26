@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"structsophus_1_1_so3_base_1_1_tangent_and_theta.html#ace18acc06db4b3308b8b63d4b01e7c39":[1,0,2,72,0,1],
 "structsophus_1_1_uninit_tag.html":[1,0,2,75],
 "structsophus_1_1_unique_data_area_deleter.html":[1,0,2,76],
 "structsophus_1_1_unique_data_area_deleter.html#a1341885aa5aa20d65e8c539a93d9ea83":[1,0,2,76,0],
