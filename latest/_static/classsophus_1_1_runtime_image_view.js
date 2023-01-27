@@ -15,7 +15,6 @@ var classsophus_1_1_runtime_image_view =
     [ "pixelType", "classsophus_1_1_runtime_image_view.html#ac7c126db1956c7d206b08962ccf6c7a2", null ],
     [ "rawPtr", "classsophus_1_1_runtime_image_view.html#a650dbeb9b2a37d044273edae614ce557", null ],
     [ "rawRowPtr", "classsophus_1_1_runtime_image_view.html#a1b1d9f2c2a6f9799a00b24336adb8ce2", null ],
-    [ "setViewToEmpty", "classsophus_1_1_runtime_image_view.html#a28db5b4c4fbaae7a0d256bd26f691737", null ],
     [ "shape", "classsophus_1_1_runtime_image_view.html#ae87c94fd7686b168f8c8b081d767729a", null ],
     [ "sizeBytes", "classsophus_1_1_runtime_image_view.html#ac74dca327f936079213c0b7e23ceb665", null ],
     [ "subview", "classsophus_1_1_runtime_image_view.html#af63a75c9a27d62b65144feece43bd6c4", null ],
