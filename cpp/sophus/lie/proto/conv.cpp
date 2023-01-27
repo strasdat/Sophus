@@ -26,6 +26,25 @@ proto::QuaternionF64 toProto(Eigen::Quaterniond const& quat) {
   return proto;
 }
 
+So2F64 fromProto(proto::So2F64 const& proto) { return So2F64(proto.theta()); }
+
+proto::So2F64 toProto(sophus::So2F64 const& rotation) {
+  proto::So2F64 proto;
+  proto.set_theta(rotation.log());
+  return proto;
+}
+
+Se2F64 fromProto(proto::Se2F64 const& proto) {
+  return Se2F64(fromProto(proto.so2()), fromProto(proto.translation()));
+}
+
+proto::Se2F64 toProto(Se2F64 const& pose) {
+  proto::Se2F64 proto;
+  *proto.mutable_so2() = toProto(pose.so2());
+  *proto.mutable_translation() = toProto(pose.translation());
+  return proto;
+}
+
 Expected<So3F64> fromProto(proto::So3F64 const& proto) {
   Eigen::Quaterniond quat = fromProto(proto.unit_quaternion());
   static double constexpr kEps = 1e-6;
