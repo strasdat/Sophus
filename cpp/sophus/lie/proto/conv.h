@@ -9,12 +9,19 @@
 #pragma once
 
 #include "sophus/lie.pb.h"
+#include "sophus/lie/se2.h"
 #include "sophus/lie/se3.h"
 
 namespace sophus {
 
 Eigen::Quaterniond fromProto(proto::QuaternionF64 const& proto);
 proto::QuaternionF64 toProto(Eigen::Quaterniond const& quat);
+
+So2F64 fromProto(proto::So2F64 const& proto);
+proto::So2F64 toProto(sophus::So2F64 const& rotation);
+
+Se2F64 fromProto(proto::Se2F64 const& proto);
+proto::Se2F64 toProto(Se2F64 const& pose);
 
 Expected<So3F64> fromProto(proto::So3F64 const& proto);
 proto::So3F64 toProto(sophus::So3F64 const& rotation);
