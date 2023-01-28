@@ -30,6 +30,7 @@ var dir_0ecbeff14e6cb00e787f5838ffd0daf5 =
     [ "mut_image_view_test.cpp", "mut__image__view__test_8cpp.html", "mut__image__view__test_8cpp" ],
     [ "mut_runtime_image.cpp", "mut__runtime__image_8cpp.html", null ],
     [ "mut_runtime_image.h", "mut__runtime__image_8h.html", [
+      [ "RuntimeImage", "classsophus_1_1_runtime_image.html", "classsophus_1_1_runtime_image" ],
       [ "MutRuntimeImage", "classsophus_1_1_mut_runtime_image.html", "classsophus_1_1_mut_runtime_image" ]
     ] ],
     [ "mut_runtime_image_test.cpp", "mut__runtime__image__test_8cpp.html", "mut__runtime__image__test_8cpp" ],

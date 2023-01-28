@@ -313,41 +313,49 @@ $(document).ready(function(){initNavTree('mut__image__view_8h_source.html',''); 
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="keyword">namespace </span>details {</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> TPixel&gt;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="keyword">auto</span> checkedPixelAccessMut(</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    MutImageView&lt;TPixel&gt; <span class="keyword">const</span>&amp; view,</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordtype">int</span> u,</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordtype">int</span> v,</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    std::string <span class="keyword">const</span>&amp; file,</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordtype">int</span> line,</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    std::string <span class="keyword">const</span>&amp; str) -&gt; TPixel&amp; {</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  <span class="keywordflow">if</span> (!view.colInBounds(u) || !view.rowInBounds(v)) {</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    FARM_IMPL_LOG_PRINTLN(<span class="stringliteral">&quot;[SOPHUS_PIXEL_MUT in {}:{}]&quot;</span>, file, line);</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    FARM_IMPL_LOG_PRINTLN(</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        <span class="stringliteral">&quot;pixel `{},{}` not in image with size {} x {}&quot;</span>,</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        u,</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        v,</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        view.imageSize().width,</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        view.imageSize().height);</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordflow">if</span> (!str.empty()) {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;      ::fmt::print(stderr, <span class="stringliteral">&quot;{}&quot;</span>, str);</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    }</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    FARM_IMPL_ABORT();</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;  }</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  <span class="keywordflow">return</span> view.mut(u, v);</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;}</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;}  <span class="comment">// namespace details</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;}  <span class="comment">// namespace sophus</span></div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
-<div class="line"><a name="l00254"></a><span class="lineno"><a class="line" href="mut__image__view_8h.html#a0b4d7cb26d6368454be3073009553479">  254</a></span>&#160;<span class="preprocessor">#define SOPHUS_PIXEL_MUT(img, u, v, ...)    \</span></div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="preprocessor">  ::sophus::details::checkedPixelAccessMut( \</span></div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="preprocessor">      img, u, v, __FILE__, __LINE__, SOPHUS_FORMAT(__VA_ARGS__))</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="keywordtype">void</span> pitchedCopy(</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    uint8_t* dst,</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="keywordtype">size_t</span> dst_pitch_bytes,</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    uint8_t <span class="keyword">const</span>* src,</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordtype">size_t</span> src_pitch_bytes,</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <a class="code" href="structsophus_1_1_image_size.html">sophus::ImageSize</a> size,</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    uint8_t size_of_pixel);</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> TPixel&gt;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="keyword">auto</span> checkedPixelAccessMut(</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    MutImageView&lt;TPixel&gt; <span class="keyword">const</span>&amp; view,</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keywordtype">int</span> u,</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordtype">int</span> v,</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    std::string <span class="keyword">const</span>&amp; file,</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keywordtype">int</span> line,</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    std::string <span class="keyword">const</span>&amp; str) -&gt; TPixel&amp; {</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  <span class="keywordflow">if</span> (!view.colInBounds(u) || !view.rowInBounds(v)) {</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    FARM_IMPL_LOG_PRINTLN(<span class="stringliteral">&quot;[SOPHUS_PIXEL_MUT in {}:{}]&quot;</span>, file, line);</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    FARM_IMPL_LOG_PRINTLN(</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="stringliteral">&quot;pixel `{},{}` not in image with size {} x {}&quot;</span>,</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        u,</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        v,</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        view.imageSize().width,</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        view.imageSize().height);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="keywordflow">if</span> (!str.empty()) {</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;      ::fmt::print(stderr, <span class="stringliteral">&quot;{}&quot;</span>, str);</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    }</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    FARM_IMPL_ABORT();</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;  }</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  <span class="keywordflow">return</span> view.mut(u, v);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;}</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;}  <span class="comment">// namespace details</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;}  <span class="comment">// namespace sophus</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00262"></a><span class="lineno"><a class="line" href="mut__image__view_8h.html#a0b4d7cb26d6368454be3073009553479">  262</a></span>&#160;<span class="preprocessor">#define SOPHUS_PIXEL_MUT(img, u, v, ...)    \</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="preprocessor">  ::sophus::details::checkedPixelAccessMut( \</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="preprocessor">      img, u, v, __FILE__, __LINE__, SOPHUS_FORMAT(__VA_ARGS__))</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclasssophus_1_1_image_shape_html_af51ef4e2786a0c02e839e86000b6c0aa"><div class="ttname"><a href="classsophus_1_1_image_shape.html#af51ef4e2786a0c02e839e86000b6c0aa">sophus::ImageShape::width</a></div><div class="ttdeci">int width() const</div><div class="ttdef"><b>Definition:</b> image_shape.h:59</div></div>
+<div class="ttc" id="aclasssophus_1_1_image_shape_html_af51ef4e2786a0c02e839e86000b6c0aa"><div class="ttname"><a href="classsophus_1_1_image_shape.html#af51ef4e2786a0c02e839e86000b6c0aa">sophus::ImageShape::width</a></div><div class="ttdeci">int width() const</div><div class="ttdef"><b>Definition:</b> image_shape.h:61</div></div>
 <div class="ttc" id="acommon_8h_html_a8f58b46a5623974748668dc8c53ad686"><div class="ttname"><a href="common_8h.html#a8f58b46a5623974748668dc8c53ad686">SOPHUS_ASSERT</a></div><div class="ttdeci">#define SOPHUS_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> common.h:47</div></div>
-<div class="ttc" id="aclasssophus_1_1_image_shape_html_a50fa9eaaa71c0b219270ad7fdac4c09f"><div class="ttname"><a href="classsophus_1_1_image_shape.html#a50fa9eaaa71c0b219270ad7fdac4c09f">sophus::ImageShape::pitchBytes</a></div><div class="ttdeci">size_t pitchBytes() const</div><div class="ttdef"><b>Definition:</b> image_shape.h:61</div></div>
+<div class="ttc" id="aclasssophus_1_1_image_shape_html_a50fa9eaaa71c0b219270ad7fdac4c09f"><div class="ttname"><a href="classsophus_1_1_image_shape.html#a50fa9eaaa71c0b219270ad7fdac4c09f">sophus::ImageShape::pitchBytes</a></div><div class="ttdeci">size_t pitchBytes() const</div><div class="ttdef"><b>Definition:</b> image_shape.h:63</div></div>
 <div class="ttc" id="aclasssophus_1_1_mut_image_view_html_aa2157348c35c25ed131eebab9e800df8"><div class="ttname"><a href="classsophus_1_1_mut_image_view.html#aa2157348c35c25ed131eebab9e800df8">sophus::MutImageView::transformFrom</a></div><div class="ttdeci">void transformFrom(ImageView&lt; TOtherPixel &gt; view, TUnaryOperation const &amp;unary_op) const</div><div class="ttdoc">Transforms view using unary operation and assigns result to this.</div><div class="ttdef"><b>Definition:</b> mut_image_view.h:157</div></div>
 <div class="ttc" id="aclasssophus_1_1_mut_image_view_html_ad17676ebdfe00b688a81d674ecfa7fa3"><div class="ttname"><a href="classsophus_1_1_mut_image_view.html#ad17676ebdfe00b688a81d674ecfa7fa3">sophus::MutImageView::generate</a></div><div class="ttdeci">void generate(TUVOperation const &amp;uv_op) const</div><div class="ttdoc">For each pixel in this with coordinates (u,v), populates with the user provided function,...</div><div class="ttdef"><b>Definition:</b> mut_image_view.h:139</div></div>
 <div class="ttc" id="aclasssophus_1_1_mut_image_view_html_a6f5022a0a14867021e64690b3937918a"><div class="ttname"><a href="classsophus_1_1_mut_image_view.html#a6f5022a0a14867021e64690b3937918a">sophus::MutImageView::ptrMut</a></div><div class="ttdeci">TPixel * ptrMut() const</div><div class="ttdoc">Returns pointer of mutable data to first pixel.</div><div class="ttdef"><b>Definition:</b> mut_image_view.h:206</div></div>
@@ -377,8 +385,8 @@ $(document).ready(function(){initNavTree('mut__image__view_8h_source.html',''); 
 <div class="ttc" id="astructsophus_1_1_image_size_html_a7ea479dfc195f980d6650ceadfda5c97"><div class="ttname"><a href="structsophus_1_1_image_size.html#a7ea479dfc195f980d6650ceadfda5c97">sophus::ImageSize::width</a></div><div class="ttdeci">int width</div><div class="ttdoc">Horizontal width of images, i.e. number of columns.</div><div class="ttdef"><b>Definition:</b> image_size.h:46</div></div>
 <div class="ttc" id="aclasssophus_1_1_mut_image_view_html"><div class="ttname"><a href="classsophus_1_1_mut_image_view.html">sophus::MutImageView</a></div><div class="ttdoc">View of a mutable image, which does not own the data.</div><div class="ttdef"><b>Definition:</b> mut_image_view.h:50</div></div>
 <div class="ttc" id="aimage__view_8h_html"><div class="ttname"><a href="image__view_8h.html">image_view.h</a></div></div>
-<div class="ttc" id="aclasssophus_1_1_image_shape_html"><div class="ttname"><a href="classsophus_1_1_image_shape.html">sophus::ImageShape</a></div><div class="ttdoc">Shape of image: width, height and pitch in bytes.</div><div class="ttdef"><b>Definition:</b> image_shape.h:21</div></div>
-<div class="ttc" id="aclasssophus_1_1_image_shape_html_a6ae1c7d4dac73810a81f72d809ed910b"><div class="ttname"><a href="classsophus_1_1_image_shape.html#a6ae1c7d4dac73810a81f72d809ed910b">sophus::ImageShape::height</a></div><div class="ttdeci">int height() const</div><div class="ttdef"><b>Definition:</b> image_shape.h:60</div></div>
+<div class="ttc" id="aclasssophus_1_1_image_shape_html"><div class="ttname"><a href="classsophus_1_1_image_shape.html">sophus::ImageShape</a></div><div class="ttdoc">Shape of image: width, height and pitch in bytes.</div><div class="ttdef"><b>Definition:</b> image_shape.h:23</div></div>
+<div class="ttc" id="aclasssophus_1_1_image_shape_html_a6ae1c7d4dac73810a81f72d809ed910b"><div class="ttname"><a href="classsophus_1_1_image_shape.html#a6ae1c7d4dac73810a81f72d809ed910b">sophus::ImageShape::height</a></div><div class="ttdeci">int height() const</div><div class="ttdef"><b>Definition:</b> image_shape.h:62</div></div>
 <div class="ttc" id="aclasssophus_1_1_mut_image_view_html_a3a68ff433de39115a518cafc7efcc150"><div class="ttname"><a href="classsophus_1_1_mut_image_view.html#a3a68ff433de39115a518cafc7efcc150">sophus::MutImageView::mut</a></div><div class="ttdeci">TPixel &amp; mut(int u, int v) const</div><div class="ttdoc">Mutable accessor to pixel u, v.</div><div class="ttdef"><b>Definition:</b> mut_image_view.h:111</div></div>
 <div class="ttc" id="aclasssophus_1_1_mut_image_view_html_a677dac5a497c014e8dc1360296798d3e"><div class="ttname"><a href="classsophus_1_1_mut_image_view.html#a677dac5a497c014e8dc1360296798d3e">sophus::MutImageView::MutImageView</a></div><div class="ttdeci">MutImageView()=default</div><div class="ttdoc">Default constructor creates an empty image.</div></div>
 <div class="ttc" id="astructsophus_1_1_image_size_html"><div class="ttname"><a href="structsophus_1_1_image_size.html">sophus::ImageSize</a></div><div class="ttdoc">Image size, hence its width and height.</div><div class="ttdef"><b>Definition:</b> image_size.h:21</div></div>

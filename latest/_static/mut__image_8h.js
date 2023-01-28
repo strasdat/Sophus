@@ -1,9 +1,9 @@
 var mut__image_8h =
 [
     [ "Image", "classsophus_1_1_image.html", "classsophus_1_1_image" ],
+    [ "MutRuntimeImage", "classsophus_1_1_mut_runtime_image.html", "classsophus_1_1_mut_runtime_image" ],
     [ "UniqueDataAreaDeleter", "structsophus_1_1_unique_data_area_deleter.html", "structsophus_1_1_unique_data_area_deleter" ],
+    [ "MaybeLeakingUniqueDataAreaDeleter", "structsophus_1_1_maybe_leaking_unique_data_area_deleter.html", "structsophus_1_1_maybe_leaking_unique_data_area_deleter" ],
     [ "MutImage", "classsophus_1_1_mut_image.html", "classsophus_1_1_mut_image" ],
-    [ "TypedDeleterImpl", "structsophus_1_1_mut_image_1_1_typed_deleter_impl.html", "structsophus_1_1_mut_image_1_1_typed_deleter_impl" ],
-    [ "Deleter", "structsophus_1_1_mut_image_1_1_deleter.html", "structsophus_1_1_mut_image_1_1_deleter" ],
-    [ "UniqueDataArea", "mut__image_8h.html#a374107cdaa5e2f5f5b1de25d107f176b", null ]
+    [ "UniqueDataArea", "mut__image_8h.html#ae355552b5618046883eddff78464d1ce", null ]
 ];

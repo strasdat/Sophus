@@ -1,7 +1,0 @@
-<map id="sophus::MutRuntimeImage&lt; TPredicate, TAllocator &gt;" name="sophus::MutRuntimeImage&lt; TPredicate, TAllocator &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="101,276,299,317"/>
-<area shape="rect" id="node2" href="$classsophus_1_1_mut_runtime_image_view.html" title=" " alt="" coords="85,185,315,227"/>
-<area shape="rect" id="node3" href="$classsophus_1_1_runtime_image_view.html" title=" " alt="" coords="98,95,302,136"/>
-<area shape="rect" id="node4" href="$structsophus_1_1_runtime_pixel_type.html" title=" " alt="" coords="5,5,197,32"/>
-<area shape="rect" id="node5" href="$classsophus_1_1_image_shape.html" title="Shape of image: width, height and pitch in bytes." alt="" coords="221,5,379,32"/>
-</map>
