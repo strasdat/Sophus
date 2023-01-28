@@ -49,10 +49,8 @@ var hierarchy =
     ] ],
     [ "sophus::Mapper< TScalar, TE >", "structsophus_1_1_mapper.html", null ],
     [ "sophus::Mapper< TScalar, typename std::enable_if< kIsMappableV< TScalar > >::type >", "structsophus_1_1_mapper_3_01_t_scalar_00_01typename_01std_1_1enable__if_3_01k_is_mappable_v_3_01cd5529748b13d40e64d4c3ee260777da.html", null ],
-    [ "sophus::MaybeLeakingUniqueDataAreaDeleter< TAllocator >", "structsophus_1_1_maybe_leaking_unique_data_area_deleter.html", null ],
     [ "sophus::MultiCameraRig", "structsophus_1_1_multi_camera_rig.html", null ],
     [ "sophus::MutImage< TPixel, TAllocator >", "classsophus_1_1_mut_image.html", null ],
-    [ "sophus::MutRuntimeImage< TPredicate, TAllocator >", "classsophus_1_1_mut_runtime_image.html", null ],
     [ "sophus::PointTraits< TPoint >", "structsophus_1_1_point_traits.html", null ],
     [ "sophus::PointTraits< TPoint >", "structsophus_1_1_point_traits_3_01_t_point_01_4.html", null ],
     [ "sophus::PointTransformer< TT >", "classsophus_1_1_point_transformer.html", null ],
@@ -74,6 +72,9 @@ var hierarchy =
     [ "sophus::RuntimeImage< TPredicate, TAllocator >", "classsophus_1_1_runtime_image.html", null ],
     [ "sophus::RuntimeImageView< TPredicate >", "classsophus_1_1_runtime_image_view.html", null ],
     [ "sophus::RuntimeImageView< AnyImagePredicate >", "classsophus_1_1_runtime_image_view.html", [
+      [ "sophus::MutRuntimeImageView< AnyImagePredicate >", "classsophus_1_1_mut_runtime_image_view.html", [
+        [ "sophus::MutRuntimeImage< TPredicate, TAllocator >", "classsophus_1_1_mut_runtime_image.html", null ]
+      ] ],
       [ "sophus::MutRuntimeImageView< TPredicate >", "classsophus_1_1_mut_runtime_image_view.html", null ]
     ] ],
     [ "sophus::RuntimePixelType", "structsophus_1_1_runtime_pixel_type.html", null ],
@@ -162,8 +163,11 @@ var hierarchy =
     [ "true_type", null, [
       [ "sophus::IsFixedSizeVector< TVectorT, kNumDimensions, typename >", "structsophus_1_1_is_fixed_size_vector.html", null ]
     ] ],
+    [ "sophus::MutImage< TPixel, TAllocator >::TypedDeleterImpl", "structsophus_1_1_mut_image_1_1_typed_deleter_impl.html", null ],
     [ "sophus::UninitTag", "structsophus_1_1_uninit_tag.html", null ],
-    [ "sophus::UniqueDataAreaDeleter< TAllocator >", "structsophus_1_1_unique_data_area_deleter.html", null ],
+    [ "sophus::UniqueDataAreaDeleter", "structsophus_1_1_unique_data_area_deleter.html", [
+      [ "sophus::MutImage< TPixel, TAllocator >::Deleter", "structsophus_1_1_mut_image_1_1_deleter.html", null ]
+    ] ],
     [ "sophus::UnitVector< TScalar, kN >", "classsophus_1_1_unit_vector.html", null ],
     [ "sophus::VariantImagePredicate< TPixelVariant >", "structsophus_1_1_variant_image_predicate.html", null ],
     [ "sophus::detail::VisitImpl< TUserFunc, TRuntimeImage, TPixelTypes >", "structsophus_1_1detail_1_1_visit_impl.html", null ],

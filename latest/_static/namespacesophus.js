@@ -37,7 +37,6 @@ var namespacesophus =
     [ "Manifold", "classsophus_1_1_manifold.html", "classsophus_1_1_manifold" ],
     [ "Mapper", "structsophus_1_1_mapper.html", "structsophus_1_1_mapper" ],
     [ "Mapper< TScalar, typename std::enable_if< kIsMappableV< TScalar > >::type >", "structsophus_1_1_mapper_3_01_t_scalar_00_01typename_01std_1_1enable__if_3_01k_is_mappable_v_3_01cd5529748b13d40e64d4c3ee260777da.html", "structsophus_1_1_mapper_3_01_t_scalar_00_01typename_01std_1_1enable__if_3_01k_is_mappable_v_3_01cd5529748b13d40e64d4c3ee260777da" ],
-    [ "MaybeLeakingUniqueDataAreaDeleter", "structsophus_1_1_maybe_leaking_unique_data_area_deleter.html", "structsophus_1_1_maybe_leaking_unique_data_area_deleter" ],
     [ "MultiCameraRig", "structsophus_1_1_multi_camera_rig.html", "structsophus_1_1_multi_camera_rig" ],
     [ "MutImage", "classsophus_1_1_mut_image.html", "classsophus_1_1_mut_image" ],
     [ "MutImageView", "classsophus_1_1_mut_image_view.html", "classsophus_1_1_mut_image_view" ],

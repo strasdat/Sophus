@@ -9,10 +9,6 @@ var runtime__image__types_8h =
     [ "IntensityImage", "runtime__image__types_8h.html#a131561c9e39e2daf347947a106dcd071", null ],
     [ "IntensityImagePredicate", "runtime__image__types_8h.html#a325ca574bf11f27338a96576f3d8e0cd", null ],
     [ "IntensityImageView", "runtime__image__types_8h.html#a2988e27437c2b346ee6eeb2dac06de83", null ],
-    [ "MutAnyImage", "runtime__image__types_8h.html#a0544b9a11fc216f97a197d8a1f8850d9", null ],
-    [ "MutAnyImageView", "runtime__image__types_8h.html#a3827f04e19cba11fdd3f87b8c34dc142", null ],
-    [ "MutIntensityImage", "runtime__image__types_8h.html#a2b334cd44feb627ef8bdb970cb1d450e", null ],
-    [ "MutIntensityImageView", "runtime__image__types_8h.html#a31b02e960b5dc5375da98fbcc8b13f0a", null ],
     [ "visitImage", "runtime__image__types_8h.html#a2adfe35078e9e70b54b3214f909a4b70", null ],
     [ "visitImage", "runtime__image__types_8h.html#a42e41f04fc0e80addcb062f6489f372f", null ]
 ];
