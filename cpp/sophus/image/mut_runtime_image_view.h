@@ -45,11 +45,11 @@ class MutRuntimeImageView : public RuntimeImageView<TPredicate> {
   /// Returns v-th row pointer.
   ///
   /// Precondition: v must be in [0, height).
-  [[nodiscard]] uint8_t* rawMutRowPtr(int v) {
+  [[nodiscard]] uint8_t* rawMutRowPtr(int v) const {
     return this->rawMutPtr() + v * this->shape_.pitchBytes();
   }
 
-  [[nodiscard]] uint8_t* rawMutPtr() {
+  [[nodiscard]] uint8_t* rawMutPtr() const {
     return const_cast<uint8_t*>(this->rawPtr());
   }
 
@@ -103,12 +103,12 @@ class MutRuntimeImageView : public RuntimeImageView<TPredicate> {
     SOPHUS_ASSERT_EQ(this->imageSize(), view.imageSize());
     SOPHUS_ASSERT_EQ(this->pixel_type_, view.pixelType());
     details::pitchedCopy(
-        (uint8_t*)this->mutRawPtr(),
+        (uint8_t*)this->rawMutPtr(),
         this->shape().pitchBytes(),
         (uint8_t const*)view.rawPtr(),
         view.shape().pitchBytes(),
         this->imageSize(),
-        this->size.width * this->pixel_type_.bytesPerPixel());
+        this->imageSize().width * this->pixel_type_.bytesPerPixel());
   }
 
  protected:

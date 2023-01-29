@@ -53,11 +53,13 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
   MutRuntimeImage(ImageSize const& size, RuntimePixelType const& pixel_type)
       : MutRuntimeImage(
             ImageShape::makeFromSizeAndPitch<uint8_t>(
-                size,
-                size.width * pixel_type.num_channels *
-                    pixel_type.num_bytes_per_pixel_channel),
-            pixel_type,
-            nullptr) {
+                size, size.width * pixel_type.bytesPerPixel()),
+            pixel_type) {}
+
+  /// Create type-image image from provided size and pixel type.
+  /// Pixel data is left uninitialized
+  MutRuntimeImage(ImageShape const& shape, RuntimePixelType const& pixel_type)
+      : MutRuntimeImage(shape, pixel_type, nullptr) {
     if (this->shape_.sizeBytes() != 0u) {
       this->unique_ = UniqueDataArea<TAllocator>(
           TAllocator().allocate(this->shape_.sizeBytes()),
@@ -72,9 +74,10 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
     return MutImage<TT>::makeCopyFrom(image_view);
   }
 
-  template <class TT>
   static MutRuntimeImage makeCopyFrom(RuntimeImageView<TPredicate> image_view) {
-    return MutImage<TT>::makeCopyFrom(image_view);
+    MutRuntimeImage image(image_view.imageSize(), image_view.pixelType());
+    image.copyDataFrom(image_view);
+    return image;
   }
 
   /// Return true is this contains data of type TPixel.
