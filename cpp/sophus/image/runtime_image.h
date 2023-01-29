@@ -64,6 +64,12 @@ class RuntimeImage : public RuntimeImageView<TPredicate> {
       : RuntimeImage(
             MutRuntimeImage<TPredicate, TAllocator>(size, pixel_type)) {}
 
+  /// Create type-image image from provided shape and pixel type.
+  /// Pixel data is left uninitialized
+  RuntimeImage(ImageShape const& shape, RuntimePixelType const& pixel_type)
+      : RuntimeImage(
+            MutRuntimeImage<TPredicate, TAllocator>(shape, pixel_type)) {}
+
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
   [[nodiscard]] bool has() const noexcept {
