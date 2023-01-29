@@ -1,11 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#a8d0f8e250b5e3af2583dcf29e543110e":[1,0,2,60,0],
-"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#ad0572c53926d1a4f34dcc9297d927cb3":[1,0,2,60,3],
-"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#ae6a32ad75b7485970718b221bb790457":[1,0,2,60,1],
-"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#af4b3f6b6a387c59b3c8f5f59f4cf765a":[1,0,2,60,2],
-"structsophus_1_1_so3_1_1_so3_and_theta.html":[1,0,2,71,0],
-"structsophus_1_1_so3_1_1_so3_and_theta.html#a056833a620568e8aca923eecc0a7d402":[1,0,2,71,0,0],
 "structsophus_1_1_so3_1_1_so3_and_theta.html#aab1434517a25972f2117842731d38c20":[1,0,2,71,0,1],
 "structsophus_1_1_so3_base_1_1_tangent_and_theta.html":[1,0,2,72,0],
 "structsophus_1_1_so3_base_1_1_tangent_and_theta.html#a8189c4e24775597d894dbb64b46a9bd8":[1,0,2,72,0,0],

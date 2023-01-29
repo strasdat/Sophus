@@ -117,6 +117,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a71c4749f1d59ccfd98735f67275b208a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_runtime_image.html#a71c4749f1d59ccfd98735f67275b208a">RuntimeImage</a> (<a class="el" href="structsophus_1_1_image_size.html">ImageSize</a> const &amp;size, <a class="el" href="structsophus_1_1_runtime_pixel_type.html">RuntimePixelType</a> const &amp;pixel_type)</td></tr>
 <tr class="memdesc:a71c4749f1d59ccfd98735f67275b208a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create type-image image from provided size and pixel type. Pixel data is left uninitialized.  <a href="classsophus_1_1_runtime_image.html#a71c4749f1d59ccfd98735f67275b208a">More...</a><br /></td></tr>
 <tr class="separator:a71c4749f1d59ccfd98735f67275b208a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8e323db179b01d69c712b4acb4046e1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_runtime_image.html#af8e323db179b01d69c712b4acb4046e1">RuntimeImage</a> (<a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a> const &amp;shape, <a class="el" href="structsophus_1_1_runtime_pixel_type.html">RuntimePixelType</a> const &amp;pixel_type)</td></tr>
+<tr class="memdesc:af8e323db179b01d69c712b4acb4046e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create type-image image from provided shape and pixel type. Pixel data is left uninitialized.  <a href="classsophus_1_1_runtime_image.html#af8e323db179b01d69c712b4acb4046e1">More...</a><br /></td></tr>
+<tr class="separator:af8e323db179b01d69c712b4acb4046e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afae0cb6cebed210d0a8c15f21dcee58c"><td class="memTemplParams" colspan="2">template&lt;class TPixel &gt; </td></tr>
 <tr class="memitem:afae0cb6cebed210d0a8c15f21dcee58c"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_runtime_image.html#afae0cb6cebed210d0a8c15f21dcee58c">has</a> () const noexcept</td></tr>
 <tr class="memdesc:afae0cb6cebed210d0a8c15f21dcee58c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true is this contains data of type TPixel.  <a href="classsophus_1_1_runtime_image.html#afae0cb6cebed210d0a8c15f21dcee58c">More...</a><br /></td></tr>
@@ -149,7 +152,7 @@ class sophus::RuntimeImage&lt; TPredicate, TAllocator &gt;</h3>
 <p>todo: Rename to DynImage </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab4b201feef2d8733d12742d1c471de11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4b201feef2d8733d12742d1c471de11">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[1/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4b201feef2d8733d12742d1c471de11">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[1/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +181,7 @@ template&lt;class TPredicate  = AnyImagePredicate, class TAllocator  = Eigen::al
 </div>
 </div>
 <a id="a4fe458e9de0a9fb4c649f47f1d363b51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fe458e9de0a9fb4c649f47f1d363b51">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[2/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fe458e9de0a9fb4c649f47f1d363b51">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[2/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -211,7 +214,7 @@ template&lt;class TPixel &gt; </div>
 </div>
 </div>
 <a id="ae2b34281b4980fd5ce0e04acd61e0d50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2b34281b4980fd5ce0e04acd61e0d50">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[3/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2b34281b4980fd5ce0e04acd61e0d50">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[3/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,7 +246,7 @@ template&lt;class TPixel &gt; </div>
 </div>
 </div>
 <a id="a135559416b39be00d58a17a64f440903"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a135559416b39be00d58a17a64f440903">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[4/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a135559416b39be00d58a17a64f440903">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[4/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,7 +276,7 @@ template&lt;class TPredicate  = AnyImagePredicate, class TAllocator  = Eigen::al
 </div>
 </div>
 <a id="a71c4749f1d59ccfd98735f67275b208a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71c4749f1d59ccfd98735f67275b208a">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[5/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a71c4749f1d59ccfd98735f67275b208a">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[5/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -312,8 +315,48 @@ template&lt;class TPredicate  = AnyImagePredicate, class TAllocator  = Eigen::al
 
 </div>
 </div>
+<a id="af8e323db179b01d69c712b4acb4046e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8e323db179b01d69c712b4acb4046e1">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[6/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TPredicate  = AnyImagePredicate, class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classsophus_1_1_runtime_image.html">sophus::RuntimeImage</a>&lt; TPredicate, TAllocator &gt;::<a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a> const &amp;&#160;</td>
+          <td class="paramname"><em>shape</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structsophus_1_1_runtime_pixel_type.html">RuntimePixelType</a> const &amp;&#160;</td>
+          <td class="paramname"><em>pixel_type</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create type-image image from provided shape and pixel type. Pixel data is left uninitialized. </p>
+
+</div>
+</div>
 <a id="aada85f025325686a17ec042d399b69b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aada85f025325686a17ec042d399b69b8">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[6/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aada85f025325686a17ec042d399b69b8">&#9670;&nbsp;</a></span>RuntimeImage() <span class="overload">[7/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

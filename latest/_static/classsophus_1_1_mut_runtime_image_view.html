@@ -126,11 +126,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:afe070a842f74f101534b3600b35222bc"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_runtime_image_view.html#afe070a842f74f101534b3600b35222bc">has</a> () const noexcept</td></tr>
 <tr class="memdesc:afe070a842f74f101534b3600b35222bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true is this contains data of type TPixel.  <a href="classsophus_1_1_mut_runtime_image_view.html#afe070a842f74f101534b3600b35222bc">More...</a><br /></td></tr>
 <tr class="separator:afe070a842f74f101534b3600b35222bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5b9bb69ee0a205aaf2168c3bf5a4ae2"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_runtime_image_view.html#ab5b9bb69ee0a205aaf2168c3bf5a4ae2">rawMutRowPtr</a> (int v)</td></tr>
-<tr class="memdesc:ab5b9bb69ee0a205aaf2168c3bf5a4ae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns v-th row pointer.  <a href="classsophus_1_1_mut_runtime_image_view.html#ab5b9bb69ee0a205aaf2168c3bf5a4ae2">More...</a><br /></td></tr>
-<tr class="separator:ab5b9bb69ee0a205aaf2168c3bf5a4ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92256f4dff920f590cb9c9a073de580e"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_runtime_image_view.html#a92256f4dff920f590cb9c9a073de580e">rawMutPtr</a> ()</td></tr>
-<tr class="separator:a92256f4dff920f590cb9c9a073de580e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad39a7346bb90ae063ad5de21e3d90978"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_runtime_image_view.html#ad39a7346bb90ae063ad5de21e3d90978">rawMutRowPtr</a> (int v) const</td></tr>
+<tr class="memdesc:ad39a7346bb90ae063ad5de21e3d90978"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns v-th row pointer.  <a href="classsophus_1_1_mut_runtime_image_view.html#ad39a7346bb90ae063ad5de21e3d90978">More...</a><br /></td></tr>
+<tr class="separator:ad39a7346bb90ae063ad5de21e3d90978"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4cab0974ede43e3534b8cb087e1a88b"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_runtime_image_view.html#af4cab0974ede43e3534b8cb087e1a88b">rawMutPtr</a> () const</td></tr>
+<tr class="separator:af4cab0974ede43e3534b8cb087e1a88b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90f4e5ceaf9c420ced6e11111b3eb479"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsophus_1_1_mut_runtime_image_view.html">MutRuntimeImageView</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_runtime_image_view.html#a90f4e5ceaf9c420ced6e11111b3eb479">mutSubview</a> (Eigen::Vector2i uv, <a class="el" href="structsophus_1_1_image_size.html">sophus::ImageSize</a> size) const</td></tr>
 <tr class="memdesc:a90f4e5ceaf9c420ced6e11111b3eb479"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns subview with shared ownership semantics of whole image.  <a href="classsophus_1_1_mut_runtime_image_view.html#a90f4e5ceaf9c420ced6e11111b3eb479">More...</a><br /></td></tr>
 <tr class="separator:a90f4e5ceaf9c420ced6e11111b3eb479"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -449,8 +449,8 @@ template&lt;class TPredicate  = AnyImagePredicate&gt; </div>
 
 </div>
 </div>
-<a id="a92256f4dff920f590cb9c9a073de580e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92256f4dff920f590cb9c9a073de580e">&#9670;&nbsp;</a></span>rawMutPtr()</h2>
+<a id="af4cab0974ede43e3534b8cb087e1a88b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4cab0974ede43e3534b8cb087e1a88b">&#9670;&nbsp;</a></span>rawMutPtr()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -464,7 +464,7 @@ template&lt;class TPredicate  = AnyImagePredicate&gt; </div>
           <td class="memname">uint8_t* <a class="el" href="classsophus_1_1_mut_runtime_image_view.html">sophus::MutRuntimeImageView</a>&lt; TPredicate &gt;::rawMutPtr </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -476,8 +476,8 @@ template&lt;class TPredicate  = AnyImagePredicate&gt; </div>
 
 </div>
 </div>
-<a id="ab5b9bb69ee0a205aaf2168c3bf5a4ae2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5b9bb69ee0a205aaf2168c3bf5a4ae2">&#9670;&nbsp;</a></span>rawMutRowPtr()</h2>
+<a id="ad39a7346bb90ae063ad5de21e3d90978"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad39a7346bb90ae063ad5de21e3d90978">&#9670;&nbsp;</a></span>rawMutRowPtr()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -492,7 +492,7 @@ template&lt;class TPredicate  = AnyImagePredicate&gt; </div>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>

@@ -1,11 +1,5 @@
 var NAVTREEINDEX8 =
 {
-"rxso2_8h.html#a7c819b82a046fa258b197530124fbccd":[2,0,0,0,5,7,8],
-"rxso2_8h.html#a852297b22ee21786c0a7bf63a0e6dda7":[2,0,0,0,5,7,7],
-"rxso2_8h.html#ab8c656f1d956ecf8e76af96ba6ad4acf":[2,0,0,0,5,7,9],
-"rxso2_8h.html#af681da050001ea4a80013b9ca654f79f":[2,0,0,0,5,7,5],
-"rxso2_8h_source.html":[2,0,0,0,5,7],
-"rxso3_8h.html":[2,0,0,0,5,9],
 "rxso3_8h.html#a2c189e551a879d59291a6614b6a93cca":[2,0,0,0,5,9,8],
 "rxso3_8h.html#a54c64e0578b686e782ef01eecfe68d7f":[2,0,0,0,5,9,9],
 "rxso3_8h.html#a5b37e796922d4e5658365da16e434dae":[2,0,0,0,5,9,7],
@@ -249,5 +243,11 @@ var NAVTREEINDEX8 =
 "structsophus_1_1_scaling_non_orthogonality_accelero_model.html#af419c02505049fbe69f51fd3240e9bbe":[1,0,2,59,2],
 "structsophus_1_1_scaling_non_orthogonality_gyro_model.html":[1,0,2,60],
 "structsophus_1_1_scaling_non_orthogonality_gyro_model.html#a374057c0d5ffe842ac20d4135576b36f":[1,0,2,60,4],
-"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#a483062ff0802e2a0428c666b477c82d6":[1,0,2,60,5]
+"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#a483062ff0802e2a0428c666b477c82d6":[1,0,2,60,5],
+"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#a8d0f8e250b5e3af2583dcf29e543110e":[1,0,2,60,0],
+"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#ad0572c53926d1a4f34dcc9297d927cb3":[1,0,2,60,3],
+"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#ae6a32ad75b7485970718b221bb790457":[1,0,2,60,1],
+"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#af4b3f6b6a387c59b3c8f5f59f4cf765a":[1,0,2,60,2],
+"structsophus_1_1_so3_1_1_so3_and_theta.html":[1,0,2,71,0],
+"structsophus_1_1_so3_1_1_so3_and_theta.html#a056833a620568e8aca923eecc0a7d402":[1,0,2,71,0,0]
 };
