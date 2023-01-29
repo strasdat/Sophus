@@ -67,9 +67,9 @@ var NAVTREEINDEX =
 "classsophus_1_1_se3_base.html#a9cf14294d1e9d85077f6c44b6f9ed76d",
 "classsophus_1_1_so3_base.html#a6aff5d115c13f44957867b32eb508e7a",
 "geometry_2proto_2conv_8h.html#a772748663456abf8e3522a2d0d387363",
-"linalg_2proto_2conv_8h.html#ab98163bdaf4902beb54fe7510ee78b8a",
-"rxso3_8h.html#a2c189e551a879d59291a6614b6a93cca",
-"structsophus_1_1_so3_1_1_so3_and_theta.html#aab1434517a25972f2117842731d38c20"
+"linalg_2proto_2conv_8h.html#a183981f30591de0fff841f30454b91af",
+"rxso2_8h.html",
+"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#a374057c0d5ffe842ac20d4135576b36f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
