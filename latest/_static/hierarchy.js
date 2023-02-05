@@ -159,7 +159,6 @@ var hierarchy =
     [ "sophus::LieGroupCeresTests< TLieGroup >::TestLieGroupCostFunctor", "structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor.html", null ],
     [ "sophus::LieGroupCeresTests< TLieGroup >::TestPointCostFunctor", "structsophus_1_1_lie_group_ceres_tests_1_1_test_point_cost_functor.html", null ],
     [ "sophus::Tests< TScalar >", "classsophus_1_1_tests.html", null ],
-    [ "Tests< TScalar >", "class_tests.html", null ],
     [ "true_type", null, [
       [ "sophus::IsFixedSizeVector< TVectorT, kNumDimensions, typename >", "structsophus_1_1_is_fixed_size_vector.html", null ]
     ] ],

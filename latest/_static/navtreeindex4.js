@@ -1,14 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"classsophus_1_1_se3_base.html#a5ca2ab815cf2fe7f9ea0aea0b4b15e5e":[1,0,2,64,12],
-"classsophus_1_1_se3_base.html#a5d84d2bf81d8540d57c7071b76c38480":[1,0,2,64,21],
-"classsophus_1_1_se3_base.html#a673405b7f9b460d4a8e23a7c73b0384b":[1,0,2,64,24],
-"classsophus_1_1_se3_base.html#a6773ee8c94a36cd380c2049e32d1e366":[1,0,2,64,29],
-"classsophus_1_1_se3_base.html#a747ee5bc8b1e9ef4a3031ea303f00362":[1,0,2,64,17],
-"classsophus_1_1_se3_base.html#a7597566da2f67322beb61331b9030135":[1,0,2,64,31],
-"classsophus_1_1_se3_base.html#a7980933e61eab3984a541877909d24a3":[1,0,2,64,15],
-"classsophus_1_1_se3_base.html#a901a8d146237bef1543d0785b5471a24":[1,0,2,64,0],
-"classsophus_1_1_se3_base.html#a99c687bb940132c67aa6296a93a1b2b8":[1,0,2,64,18],
 "classsophus_1_1_se3_base.html#a9cf14294d1e9d85077f6c44b6f9ed76d":[1,0,2,64,14],
 "classsophus_1_1_se3_base.html#a9d9b47ff2a6d3a588d9fafb8458e2cbc":[1,0,2,64,42],
 "classsophus_1_1_se3_base.html#aa58b82df35582b9ac675f0a528fed21e":[1,0,2,64,27],
@@ -249,5 +240,14 @@ var NAVTREEINDEX4 =
 "classsophus_1_1_so3_base.html#a23baa34ecf362430c21e412416aad438":[1,0,2,72,20],
 "classsophus_1_1_so3_base.html#a27ef82cb7d7aa732193ced229f571dfc":[1,0,2,72,7],
 "classsophus_1_1_so3_base.html#a2be0374ded09b41c6b790119ebb97364":[1,0,2,72,23],
-"classsophus_1_1_so3_base.html#a30bca9a939343bf15c5f53bad7838901":[1,0,2,72,31]
+"classsophus_1_1_so3_base.html#a30bca9a939343bf15c5f53bad7838901":[1,0,2,72,31],
+"classsophus_1_1_so3_base.html#a3111dd13bce754067e7843e76c47d923":[1,0,2,72,9],
+"classsophus_1_1_so3_base.html#a34e9d49895a65502de3c0473e676b86d":[1,0,2,72,2],
+"classsophus_1_1_so3_base.html#a352feb9177306f7b77f3914e8e15f958":[1,0,2,72,16],
+"classsophus_1_1_so3_base.html#a369dfcfce8f00036fd5d88088726fe73":[1,0,2,72,32],
+"classsophus_1_1_so3_base.html#a371aa5bad96d6627927cd45086090e9f":[1,0,2,72,22],
+"classsophus_1_1_so3_base.html#a430722e27328faa888309c95a753032c":[1,0,2,72,8],
+"classsophus_1_1_so3_base.html#a55d7efd510daf32e4eddcdf54b06259c":[1,0,2,72,13],
+"classsophus_1_1_so3_base.html#a59135c83cd68d405cdacb4e4f6cc12e6":[1,0,2,72,35],
+"classsophus_1_1_so3_base.html#a5fbed9e40e2d94b0ff36bfb893412ecc":[1,0,2,72,12]
 };

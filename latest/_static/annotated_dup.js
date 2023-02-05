@@ -11,6 +11,5 @@ var annotated_dup =
     [ "RotationalPart< sophus::Sim2d >", "struct_rotational_part_3_01sophus_1_1_sim2d_01_4.html", null ],
     [ "RotationalPart< sophus::Sim3d >", "struct_rotational_part_3_01sophus_1_1_sim3d_01_4.html", null ],
     [ "RotationalPart< sophus::SO2d >", "struct_rotational_part_3_01sophus_1_1_s_o2d_01_4.html", null ],
-    [ "RotationalPart< sophus::So3F64 >", "struct_rotational_part_3_01sophus_1_1_so3_f64_01_4.html", null ],
-    [ "Tests", "class_tests.html", "class_tests" ]
+    [ "RotationalPart< sophus::So3F64 >", "struct_rotational_part_3_01sophus_1_1_so3_f64_01_4.html", null ]
 ];
