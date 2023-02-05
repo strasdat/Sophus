@@ -6,22 +6,22 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/image_shape.h"
+#include "sophus/image/layout.h"
 
 namespace sophus {
 
-bool operator==(ImageShape const& lhs, ImageShape const& rhs) {
+bool operator==(ImageLayout const& lhs, ImageLayout const& rhs) {
   return lhs.imageSize() == rhs.imageSize() &&
          lhs.pitchBytes() == rhs.pitchBytes();
 }
 
-bool operator!=(ImageShape const& lhs, ImageShape const& rhs) {
+bool operator!=(ImageLayout const& lhs, ImageLayout const& rhs) {
   return lhs.imageSize() != rhs.imageSize() ||
          lhs.pitchBytes() != rhs.pitchBytes();
 }
 
-std::ostream& operator<<(std::ostream& os, ImageShape const& shape) {
-  os << "[" << shape.imageSize() << ", pitch: " << shape.pitchBytes() << "]";
+std::ostream& operator<<(std::ostream& os, ImageLayout const& layout) {
+  os << "[" << layout.imageSize() << ", pitch: " << layout.pitchBytes() << "]";
   return os;
 }
 

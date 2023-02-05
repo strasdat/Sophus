@@ -27,7 +27,10 @@ class BrownConradyCamera:
     def normalized_pixel_from_z1_plane(self, point_in_camera_z1_plane):
         """TODO(docstring)"""
         assert isinstance(point_in_camera_z1_plane, sympy.Matrix)
-        assert point_in_camera_z1_plane.shape == (2, 1), point_in_camera_z1_plane.shape
+        assert point_in_camera_z1_plane.shape == (
+            2,
+            1,
+        ), point_in_camera_z1_plane.shape
         x = point_in_camera_z1_plane[0]
         y = point_in_camera_z1_plane[1]
         r2 = x * x + y * y
@@ -58,7 +61,10 @@ class BrownConradyCamera:
     def pixel_from_z1_plane(self, point_in_camera_z1_plane):
         """TODO(docstring)"""
         assert isinstance(point_in_camera_z1_plane, sympy.Matrix)
-        assert point_in_camera_z1_plane.shape == (2, 1), point_in_camera_z1_plane.shape
+        assert point_in_camera_z1_plane.shape == (
+            2,
+            1,
+        ), point_in_camera_z1_plane.shape
 
         normalized_pixel = self.normalized_pixel_from_z1_plane(point_in_camera_z1_plane)
         x_prime = normalized_pixel[0]
@@ -72,7 +78,10 @@ class BrownConradyCamera:
     def calc_dx_normalized_from_z1_plane_x(self, point_in_camera_z1_plane):
         """TODO(docstring)"""
         assert isinstance(point_in_camera_z1_plane, sympy.Matrix)
-        assert point_in_camera_z1_plane.shape == (2, 1), point_in_camera_z1_plane.shape
+        assert point_in_camera_z1_plane.shape == (
+            2,
+            1,
+        ), point_in_camera_z1_plane.shape
 
         return sympy.simplify(
             sympy.Matrix(
@@ -88,7 +97,10 @@ class BrownConradyCamera:
     def calc_dx_pixel_from_z1_plane_x(self, point_in_camera_z1_plane):
         """TODO(docstring)"""
         assert isinstance(point_in_camera_z1_plane, sympy.Matrix)
-        assert point_in_camera_z1_plane.shape == (2, 1), point_in_camera_z1_plane.shape
+        assert point_in_camera_z1_plane.shape == (
+            2,
+            1,
+        ), point_in_camera_z1_plane.shape
 
         return sympy.simplify(
             sympy.Matrix(

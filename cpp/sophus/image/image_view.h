@@ -22,7 +22,7 @@
 #pragma once
 
 #include "sophus/calculus/region.h"
-#include "sophus/image/image_shape.h"
+#include "sophus/image/layout.h"
 
 namespace sophus {
 
@@ -47,63 +47,63 @@ class Image;
 ///
 /// ImageView is a "shallow-compare type" similar to std::span<Pixel const> and
 /// std::unique_ptr<Pixel const>. In particular, we define that the state of an
-/// ImageView instance consists of the shape of the image ``shape_`` (see
-/// ImageShape) and the pointer address to the first pixel ``ptr_``. No
-/// public member method can change the pointer nor the shape, hence they are
+/// ImageView instance consists of the layout of the image ``layout_`` (see
+/// ImageLayout) and the pointer address to the first pixel ``ptr_``. No
+/// public member method can change the pointer nor the layout, hence they are
 /// all marked const.
 template <class TPixel>
 struct ImageView {
-  using PixelType = TPixel;
+  using pixelFormat = TPixel;
 
   /// Default constructor creates an empty image.
   ImageView() = default;
 
-  /// Creates view from shape and pointer to first pixel.
-  ImageView(ImageShape shape, TPixel const* ptr) noexcept
-      : shape_(shape), ptr_(ptr) {}
+  /// Creates view from layout and pointer to first pixel.
+  ImageView(ImageLayout layout, TPixel const* ptr) noexcept
+      : layout_(layout), ptr_(ptr) {}
 
   /// Creates view from image size and pointer to first pixel. The image is
   /// assumed to be contiguous and the pitch is set accordingly.
   ImageView(sophus::ImageSize image_size, TPixel const* ptr) noexcept
-      : ImageView(ImageShape::makeFromSize<TPixel>(image_size), ptr) {}
+      : ImageView(ImageLayout::makeFromSize<TPixel>(image_size), ptr) {}
 
   /// Returns true if view is empty.
   [[nodiscard]] bool isEmpty() const { return this->ptr_ == nullptr; }
 
   /// Returns true if view is contiguous.
   [[nodiscard]] bool isContiguous() const {
-    return imageSize().width * sizeof(TPixel) == shape().pitchBytes();
+    return imageSize().width * sizeof(TPixel) == layout().pitchBytes();
   }
 
   /// Returns ImageSize.
   /// It is {0,0} if view is empty.
   [[nodiscard]] sophus::ImageSize const& imageSize() const {
-    return shape_.imageSize();
+    return layout_.imageSize();
   }
 
-  /// Returns ImageShape.
+  /// Returns ImageLayout.
   /// It is {{0,0}, 0} is view is empty.
-  [[nodiscard]] ImageShape const& shape() const { return shape_; }
+  [[nodiscard]] ImageLayout const& layout() const { return layout_; }
 
-  [[nodiscard]] int width() const { return shape().width(); }
-  [[nodiscard]] int height() const { return shape().height(); }
-  [[nodiscard]] size_t pitchBytes() const { return shape().pitchBytes(); }
+  [[nodiscard]] int width() const { return layout().width(); }
+  [[nodiscard]] int height() const { return layout().height(); }
+  [[nodiscard]] size_t pitchBytes() const { return layout().pitchBytes(); }
 
   /// Returns true if u is in [0, width).
   [[nodiscard]] bool colInBounds(int u) const {
-    return u >= 0 && u < shape_.width();
+    return u >= 0 && u < layout_.width();
   }
 
   /// Returns true if v is in [0, height).
   [[nodiscard]] bool rowInBounds(int v) const {
-    return v >= 0 && v < shape_.height();
+    return v >= 0 && v < layout_.height();
   }
 
   /// Returns v-th row pointer.
   ///
   /// Precondition: v must be in [0, height).
   [[nodiscard]] TPixel const* rowPtr(int v) const {
-    return (TPixel*)((uint8_t*)(ptr_) + v * shape_.pitchBytes());
+    return (TPixel*)((uint8_t*)(ptr_) + v * layout_.pitchBytes());
   }
 
   /// Returns pixel u, v.
@@ -116,9 +116,9 @@ struct ImageView {
   /// This is not the most necessarily the efficient function to call - e.g.
   /// when iterating over the whole image. Use the following instead:
   ///
-  /// for (int v=0; v<view.shape().height(); ++v) {
+  /// for (int v=0; v<view.layout().height(); ++v) {
   ///   TPixel const* row = img.rowPtr(v);
-  ///   for (int u=0; u<view.shape().width(); ++u) {
+  ///   for (int u=0; u<view.layout().width(); ++u) {
   ///     PixetT p = row[u];
   ///   }
   /// }
@@ -138,10 +138,10 @@ struct ImageView {
       Eigen::Vector2i uv, sophus::ImageSize size) const {
     SOPHUS_ASSERT(colInBounds(uv[0]));
     SOPHUS_ASSERT(rowInBounds(uv[1]));
-    SOPHUS_ASSERT_LE(uv.x() + size.width, shape_.width());
-    SOPHUS_ASSERT_LE(uv.y() + size.height, shape_.height());
+    SOPHUS_ASSERT_LE(uv.x() + size.width, layout_.width());
+    SOPHUS_ASSERT_LE(uv.y() + size.height, layout_.height());
     return ImageView(
-        ImageShape::makeFromSizeAndPitch<TPixel>(size, shape_.pitchBytes()),
+        ImageLayout::makeFromSizeAndPitch<TPixel>(size, layout_.pitchBytes()),
         rowPtr(uv.y()) + uv.x());
   }
 
@@ -150,9 +150,9 @@ struct ImageView {
   void visit(TFunc const& user_function) const {
     SOPHUS_ASSERT(!this->isEmpty());
 
-    for (int v = 0; v < this->shape_.height(); ++v) {
+    for (int v = 0; v < this->layout_.height(); ++v) {
       TPixel const* p = this->rowPtr(v);
-      TPixel const* end_of_row = p + this->shape_.width();
+      TPixel const* end_of_row = p + this->layout_.width();
       for (; p != end_of_row; ++p) {
         user_function(*p);
       }
@@ -165,9 +165,9 @@ struct ImageView {
       TReduceOp const& reduce_op, TVal val = TVal{}) const {
     SOPHUS_ASSERT(!this->isEmpty());  // NOLINT
 
-    for (int v = 0; v < this->shape_.height(); ++v) {
+    for (int v = 0; v < this->layout_.height(); ++v) {
       TPixel const* p = this->rowPtr(v);
-      TPixel const* end_of_row = p + this->shape_.width();
+      TPixel const* end_of_row = p + this->layout_.width();
       for (; p != end_of_row; ++p) {
         reduce_op(*p, val);
       }
@@ -182,9 +182,9 @@ struct ImageView {
       TVal val = TVal{}) const {
     SOPHUS_ASSERT(!this->isEmpty());
 
-    for (int v = 0; v < this->shape_.height(); ++v) {
+    for (int v = 0; v < this->layout_.height(); ++v) {
       TPixel const* p = this->rowPtr(v);
-      TPixel const* end_of_row = p + this->shape_.width();
+      TPixel const* end_of_row = p + this->layout_.width();
       for (; p != end_of_row; ++p) {
         if (short_circuit_reduce_op(*p, val)) {
           return val;
@@ -198,7 +198,7 @@ struct ImageView {
   /// "shallow-copy" type, a consistently defined equality would check for
   /// equality of its (shallow) state:
   ///
-  ///    ```this->shape_ == rhs.shape() && this->ptr_ == rhs.ptr_````
+  ///    ```this->layout_ == rhs.layout() && this->ptr_ == rhs.ptr_````
   ///
   /// However, some users might expect that equality would check for pixel
   /// values equality and return true for identical copies of data blocks.
@@ -214,11 +214,11 @@ struct ImageView {
     if (!(this->imageSize() == rhs.imageSize())) {
       return false;
     }
-    for (int v = 0; v < this->shape_.height(); ++v) {
+    for (int v = 0; v < this->layout_.height(); ++v) {
       TPixel const* p = this->rowPtr(v);
       TPixel const* rhs_p = rhs.rowPtr(v);
 
-      TPixel const* end_of_row = p + this->shape_.width();
+      TPixel const* end_of_row = p + this->layout_.width();
       for (; p != end_of_row; ++p, ++rhs_p) {
         if (*p != *rhs_p) {
           return false;
@@ -232,7 +232,7 @@ struct ImageView {
   /// Resets view such that it is empty.
   void setViewToEmpty() { *this = {}; }
 
-  ImageShape shape_ = {};        // NOLINT
+  ImageLayout layout_ = {};      // NOLINT
   TPixel const* ptr_ = nullptr;  // NOLINT
 
  private:

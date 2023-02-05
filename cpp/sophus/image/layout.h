@@ -17,42 +17,41 @@
 
 namespace sophus {
 
-/// Shape of image: width, height and pitch in bytes.
+/// Layout of the image: width, height and pitch in bytes.
 ///
-/// todo: Rename to ImageLayout
-class ImageShape {
+class ImageLayout {
  public:
-  ImageShape() = default;
+  ImageLayout() = default;
 
-  ImageShape(ImageSize image_size, size_t pitch_bytes)
+  ImageLayout(ImageSize image_size, size_t pitch_bytes)
       : image_size_(image_size), pitch_bytes_(pitch_bytes) {}
 
-  ImageShape(int width, int height, size_t pitch_bytes)
+  ImageLayout(int width, int height, size_t pitch_bytes)
       : image_size_(width, height), pitch_bytes_(pitch_bytes) {}
 
-  template <class TPixelType>
-  [[nodiscard]] static ImageShape makeFromSizeAndPitch(
+  template <class TPixelFormat>
+  [[nodiscard]] static ImageLayout makeFromSizeAndPitch(
       ImageSize image_size, size_t pitch_bytes) {
-    SOPHUS_ASSERT_GE(pitch_bytes, image_size.width * sizeof(TPixelType));
-    ImageShape shape;
-    shape.image_size_ = image_size;
-    shape.pitch_bytes_ = pitch_bytes;
+    SOPHUS_ASSERT_GE(pitch_bytes, image_size.width * sizeof(TPixelFormat));
+    ImageLayout layout;
+    layout.image_size_ = image_size;
+    layout.pitch_bytes_ = pitch_bytes;
 
-    return shape;
+    return layout;
   }
 
-  [[nodiscard]] static ImageShape makeFromSizeAndPitchUnchecked(
+  [[nodiscard]] static ImageLayout makeFromSizeAndPitchUnchecked(
       ImageSize image_size, size_t pitch_bytes) {
-    ImageShape shape;
-    shape.image_size_ = image_size;
-    shape.pitch_bytes_ = pitch_bytes;
-    return shape;
+    ImageLayout layout;
+    layout.image_size_ = image_size;
+    layout.pitch_bytes_ = pitch_bytes;
+    return layout;
   }
 
-  template <class TPixelTypeT>
-  [[nodiscard]] static ImageShape makeFromSize(sophus::ImageSize image_size) {
-    return makeFromSizeAndPitch<TPixelTypeT>(
-        image_size, image_size.width * sizeof(TPixelTypeT));
+  template <class TpixelFormatT>
+  [[nodiscard]] static ImageLayout makeFromSize(sophus::ImageSize image_size) {
+    return makeFromSizeAndPitch<TpixelFormatT>(
+        image_size, image_size.width * sizeof(TpixelFormatT));
   }
 
   [[nodiscard]] sophus::ImageSize const& imageSize() const {
@@ -73,11 +72,11 @@ class ImageShape {
 };
 
 /// Equality operator.
-bool operator==(ImageShape const& lhs, ImageShape const& rhs);
+bool operator==(ImageLayout const& lhs, ImageLayout const& rhs);
 
-bool operator!=(ImageShape const& lhs, ImageShape const& rhs);
+bool operator!=(ImageLayout const& lhs, ImageLayout const& rhs);
 
 /// Ostream operator.
-std::ostream& operator<<(std::ostream& os, ImageShape const& shape);
+std::ostream& operator<<(std::ostream& os, ImageLayout const& layout);
 
 }  // namespace sophus

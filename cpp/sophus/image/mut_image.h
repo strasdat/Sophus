@@ -26,7 +26,7 @@ template <class TPixel, class TAllocator>
 class Image;
 
 template <class TPredicate, class TAllocator>
-class MutRuntimeImage;
+class MutDynImage;
 
 template <class TAllocator>
 struct UniqueDataAreaDeleter {
@@ -91,31 +91,31 @@ class MutImage : public MutImageView<TPixel> {
   friend class Image;
 
   template <class TPredicate, class TAllocator2T>
-  friend class MutRuntimeImage;
+  friend class MutDynImage;
 
   /// Constructs empty image.
   MutImage() : unique_(nullptr) {}
 
-  /// Creates new image with given shape.
+  /// Creates new image with given layout.
   ///
-  /// If shape is not empty, memory allocation will happen.
-  explicit MutImage(ImageShape shape)
-      : MutImageView<TPixel>(shape, nullptr), unique_(nullptr) {
-    if (shape.sizeBytes() != 0u) {
-      SOPHUS_ASSERT_EQ(shape.sizeBytes() % sizeof(TPixel), 0);
+  /// If layout is not empty, memory allocation will happen.
+  explicit MutImage(ImageLayout layout)
+      : MutImageView<TPixel>(layout, nullptr), unique_(nullptr) {
+    if (layout.sizeBytes() != 0u) {
+      SOPHUS_ASSERT_EQ(layout.sizeBytes() % sizeof(TPixel), 0);
       this->unique_ = UniqueDataArea<TAllocator>(
-          TAllocator().allocate(shape.sizeBytes()),
+          TAllocator().allocate(layout.sizeBytes()),
           MaybeLeakingUniqueDataAreaDeleter<TAllocator>(
-              UniqueDataAreaDeleter<TAllocator>(shape.sizeBytes())));
+              UniqueDataAreaDeleter<TAllocator>(layout.sizeBytes())));
     }
     this->ptr_ = reinterpret_cast<TPixel*>(this->unique_.get());
   }
 
   /// Creates new contiguous image with given size.
   ///
-  /// If shape is not empty, memory allocation will happen.
+  /// If layout is not empty, memory allocation will happen.
   explicit MutImage(sophus::ImageSize size)
-      : MutImage(ImageShape::makeFromSize<TPixel>(size)) {}
+      : MutImage(ImageLayout::makeFromSize<TPixel>(size)) {}
 
   /// Creates contiguous copy from view.
   ///
@@ -172,7 +172,7 @@ class MutImage : public MutImageView<TPixel> {
   /// Nothrow move assignment
   MutImage& operator=(MutImage&& img) noexcept {
     reset();
-    this->shape_ = img.shape_;
+    this->layout_ = img.layout_;
     this->unique_ = std::move(img.unique_);
     this->ptr_ = reinterpret_cast<TPixel*>(unique_.get());
     img.setViewToEmpty();
@@ -181,12 +181,12 @@ class MutImage : public MutImageView<TPixel> {
   // End (Rule of 5)
 
   [[nodiscard]] MutImageView<TPixel> viewMut() const {
-    return MutImageView<TPixel>(this->shape(), this->ptrMut());
+    return MutImageView<TPixel>(this->layout(), this->ptrMut());
   }
 
   /// Swaps img and this.
   void swap(MutImage& img) {
-    std::swap(img.shape_, this->shape_);
+    std::swap(img.layout_, this->layout_);
     std::swap(img.ptr_, this->ptr_);
     std::swap(img.unique_, this->unique_);
   }

@@ -6,10 +6,6 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/image_shape.h"
+#include "sophus/image/dyn_image_types.h"
 
-#include <gtest/gtest.h>
-
-using namespace sophus;
-
-TEST(image_size, smoke) {}
+namespace sophus {}  // namespace sophus
