@@ -26,6 +26,17 @@
 
 namespace sophus {
 
+namespace details {
+
+void pitchedCopy(
+    uint8_t* dst,
+    size_t dst_pitch_bytes,
+    uint8_t const* src,
+    size_t src_pitch_bytes,
+    sophus::ImageSize size,
+    uint8_t size_of_pixel);
+}
+
 /// View of a mutable image, which does not own the data.
 ///
 /// The API of MutImageView allows for read and write access.
@@ -223,14 +234,6 @@ class MutImageView : public ImageView<TPixel> {
 };
 
 namespace details {
-
-void pitchedCopy(
-    uint8_t* dst,
-    size_t dst_pitch_bytes,
-    uint8_t const* src,
-    size_t src_pitch_bytes,
-    sophus::ImageSize size,
-    uint8_t size_of_pixel);
 
 template <class TPixel>
 auto checkedPixelAccessMut(

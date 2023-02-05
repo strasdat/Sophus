@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+#ifdef SOPHUS_CODE_COVERAGE
 // Explicit instantiate all class templates so that all member methods
 // get compiled and for code coverage analysis.
 namespace Eigen {  // NOLINT
@@ -26,6 +27,9 @@ template class RxSo3<float, Eigen::DontAlign>;
 #if SOPHUS_CERES
 template class RxSo3<ceres::Jet<double, 3>>;
 #endif
+}  // namespace sophus
+#endif  // SOPHUS_CODE_COVERAGE
+namespace sophus {
 
 template <class TScalar>
 class Tests {

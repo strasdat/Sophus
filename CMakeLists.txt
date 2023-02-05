@@ -23,6 +23,7 @@ endif ()
 
 if (${COVERAGE})
   set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} --coverage")
+  add_definitions("-DSOPHUS_CODE_COVERAGE")
 endif()
 
 option(SOPHUS_INSTALL "Generate the install target." ${SOPHUS_MASTER_PROJECT})
@@ -39,6 +40,7 @@ endif()
 
 if (BUILD_FARM_NG_PROTOS)
   find_package(Protobuf REQUIRED)
+  include_directories(${Protobuf_INCLUDE_DIRS})
 endif()
 
 if(BUILD_FARM_NG_PROTOS)
