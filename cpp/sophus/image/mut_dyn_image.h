@@ -8,41 +8,41 @@
 
 #pragma once
 
-#include "sophus/image/mut_runtime_image_view.h"
+#include "sophus/image/mut_dyn_image_view.h"
 
 #include <variant>
 
 namespace sophus {
 
 template <class TPredicate, class TAllocator>
-class RuntimeImage;
+class DynImage;
 
 template <
     class TPredicate = AnyImagePredicate,
     class TAllocator = Eigen::aligned_allocator<uint8_t>>
-class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
+class MutDynImage : public MutDynImageView<TPredicate> {
  public:
   /// Empty image.
-  MutRuntimeImage() = default;
+  MutDynImage() = default;
 
   /// Not copy constructable
-  MutRuntimeImage(MutRuntimeImage const& other) = delete;
+  MutDynImage(MutDynImage const& other) = delete;
   /// Not copy assignable
-  MutRuntimeImage& operator=(MutRuntimeImage const&) = delete;
+  MutDynImage& operator=(MutDynImage const&) = delete;
 
   /// Nothrow move constructable
-  MutRuntimeImage(MutRuntimeImage&& other) noexcept = default;
+  MutDynImage(MutDynImage&& other) noexcept = default;
   /// Nothrow move assignable
-  MutRuntimeImage& operator=(MutRuntimeImage&&) noexcept = default;
+  MutDynImage& operator=(MutDynImage&&) noexcept = default;
 
   /// Create type-erased image from MutImage.
   ///
   /// By design not "explicit".
   template <class TPixel>
-  MutRuntimeImage(MutImage<TPixel, TAllocator>&& image)
-      : MutRuntimeImage(
-            image.shape(),
-            RuntimePixelType::fromTemplate<TPixel>(),
+  MutDynImage(MutImage<TPixel, TAllocator>&& image)
+      : MutDynImage(
+            image.layout(),
+            PixelFormat::fromTemplate<TPixel>(),
             std::move(image.unique_)) {
     image.reset();
     static_assert(TPredicate::template isTypeValid<TPixel>());
@@ -50,32 +50,32 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
 
   /// Create type-image image from provided size and pixel type.
   /// Pixel data is left uninitialized
-  MutRuntimeImage(ImageSize const& size, RuntimePixelType const& pixel_type)
-      : MutRuntimeImage(
-            ImageShape::makeFromSizeAndPitch<uint8_t>(
+  MutDynImage(ImageSize const& size, PixelFormat const& pixel_type)
+      : MutDynImage(
+            ImageLayout::makeFromSizeAndPitch<uint8_t>(
                 size, size.width * pixel_type.bytesPerPixel()),
             pixel_type) {}
 
   /// Create type-image image from provided size and pixel type.
   /// Pixel data is left uninitialized
-  MutRuntimeImage(ImageShape const& shape, RuntimePixelType const& pixel_type)
-      : MutRuntimeImage(shape, pixel_type, nullptr) {
-    if (this->shape_.sizeBytes() != 0u) {
+  MutDynImage(ImageLayout const& layout, PixelFormat const& pixel_type)
+      : MutDynImage(layout, pixel_type, nullptr) {
+    if (this->layout_.sizeBytes() != 0u) {
       this->unique_ = UniqueDataArea<TAllocator>(
-          TAllocator().allocate(this->shape_.sizeBytes()),
+          TAllocator().allocate(this->layout_.sizeBytes()),
           MaybeLeakingUniqueDataAreaDeleter<TAllocator>(
-              UniqueDataAreaDeleter<TAllocator>(this->shape_.sizeBytes())));
+              UniqueDataAreaDeleter<TAllocator>(this->layout_.sizeBytes())));
     }
     this->ptr_ = this->unique_.get();
   }
 
   template <class TT>
-  static MutRuntimeImage makeCopyFrom(ImageView<TT> image_view) {
+  static MutDynImage makeCopyFrom(ImageView<TT> image_view) {
     return MutImage<TT>::makeCopyFrom(image_view);
   }
 
-  static MutRuntimeImage makeCopyFrom(RuntimeImageView<TPredicate> image_view) {
-    MutRuntimeImage image(image_view.imageSize(), image_view.pixelType());
+  static MutDynImage makeCopyFrom(DynImageView<TPredicate> image_view) {
+    MutDynImage image(image_view.imageSize(), image_view.pixelFormat());
     image.copyDataFrom(image_view);
     return image;
   }
@@ -83,8 +83,8 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
   [[nodiscard]] bool has() const noexcept {
-    RuntimePixelType expected_type = RuntimePixelType::fromTemplate<TPixel>();
-    return expected_type == this->pixel_type_;
+    PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
+    return expected_type == this->pixel_format_;
   }
 
   /// Returns typed MutImage.
@@ -94,7 +94,7 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
   [[nodiscard]] MutImage<TPixel, TAllocator> moveOutAs() noexcept {
     SOPHUS_ASSERT(this->has<TPixel>());
     MutImage<TPixel, TAllocator> mut_image;
-    mut_image.shape_ = this->shape_;
+    mut_image.layout_ = this->layout_;
     mut_image.unique_ = std::move(unique_);
     mut_image.ptr_ = (TPixel*)mut_image.unique_.get();
     this->unique_.reset();
@@ -104,14 +104,14 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
 
  protected:
   template <class TPredicate2, class TAllocator2T>
-  friend class RuntimeImage;
+  friend class DynImage;
 
   // Private constructor mainly available for constructing sub-views
-  MutRuntimeImage(
-      ImageShape shape,
-      RuntimePixelType pixel_type,
+  MutDynImage(
+      ImageLayout layout,
+      PixelFormat pixel_type,
       UniqueDataArea<TAllocator> unique)
-      : MutRuntimeImageView<TPredicate>(shape, pixel_type, unique.get()),
+      : MutDynImageView<TPredicate>(layout, pixel_type, unique.get()),
         unique_(std::move(unique)) {}
 
   UniqueDataArea<TAllocator> unique_;

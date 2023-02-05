@@ -21,12 +21,12 @@
 namespace sophus {
 
 template <class TPredicate, class TAllocator>
-class RuntimeImage;
+class DynImage;
 
 /// Image read-only access to pixels and shared ownership, hence cheap to copy.
 /// Type is nullable.
 ///
-/// Image has close interop with RuntimeImage (see below).
+/// Image has close interop with DynImage (see below).
 template <class TPixel, class TAllocator = Eigen::aligned_allocator<uint8_t>>
 class Image : public ImageView<TPixel> {
  public:
@@ -99,7 +99,7 @@ class Image : public ImageView<TPixel> {
   friend class MutImage;
 
   template <class TPredicate, class TAllocator2T>
-  friend class RuntimeImage;
+  friend class DynImage;
 
   explicit Image(ImageView<TPixel> view) : ImageView<TPixel>(view) {}
 

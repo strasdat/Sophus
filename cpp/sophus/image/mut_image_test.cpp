@@ -32,12 +32,12 @@ TEST(MutImage, empty) {
 
 TEST(MutImage, create_copy_access) {
   // 1. create new mut image.
-  ImageShape shape = ImageShape::makeFromSizeAndPitch<float>(
+  ImageLayout layout = ImageLayout::makeFromSizeAndPitch<float>(
       {2, 3}, 2 * sizeof(float) + sizeof(float));
-  MutImage<float> mut_image(shape);
+  MutImage<float> mut_image(layout);
   mut_image.fill(0.25f);
   SOPHUS_ASSERT(!mut_image.isEmpty());
-  SOPHUS_ASSERT_EQ(mut_image.shape(), shape);
+  SOPHUS_ASSERT_EQ(mut_image.layout(), layout);
 
   // 2a. create a copy of it.
   MutImage<float> mut_image_copy = MutImage<float>::makeCopyFrom(mut_image);
@@ -87,9 +87,9 @@ TEST(MutImage, create_copy_access) {
 }
 
 TEST(MutImage, makeFromTransform) {
-  ImageShape shape = ImageShape::makeFromSizeAndPitch<float>(
+  ImageLayout layout = ImageLayout::makeFromSizeAndPitch<float>(
       {2, 3}, 2 * sizeof(float) + sizeof(float));
-  MutImage<float> one_image(shape);
+  MutImage<float> one_image(layout);
   one_image.fill(1.f);
 
   MutImage3F32 pattern = MutImage3F32::makeFromTransform(

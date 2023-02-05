@@ -24,7 +24,10 @@ class AffineCamera:
     def pixel_from_z1_plane(self, point_in_camera_z1_plane):
         """Map point from z1-plane to"""
         assert isinstance(point_in_camera_z1_plane, sympy.Matrix)
-        assert point_in_camera_z1_plane.shape == (2, 1), point_in_camera_z1_plane.shape
+        assert point_in_camera_z1_plane.shape == (
+            2,
+            1,
+        ), point_in_camera_z1_plane.shape
 
         return vector2(
             self.focal_length[0] * point_in_camera_z1_plane[0] + self.center[0],
@@ -34,7 +37,10 @@ class AffineCamera:
     def calc_dx_pixel_from_z1_plane_x(self, point_in_camera_z1_plane):
         """TODO(docstring)"""
         assert isinstance(point_in_camera_z1_plane, sympy.Matrix)
-        assert point_in_camera_z1_plane.shape == (2, 1), point_in_camera_z1_plane.shape
+        assert point_in_camera_z1_plane.shape == (
+            2,
+            1,
+        ), point_in_camera_z1_plane.shape
 
         return sympy.simplify(
             sympy.Matrix(

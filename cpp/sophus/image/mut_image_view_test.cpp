@@ -18,7 +18,7 @@ TEST(MutImageView, empty) {
   MutImageView<float> mut_view;
   SOPHUS_ASSERT(mut_view.isEmpty());
   SOPHUS_ASSERT_EQ(mut_view.imageSize(), ImageSize(0, 0));
-  SOPHUS_ASSERT_EQ(mut_view.shape().pitchBytes(), 0u);
+  SOPHUS_ASSERT_EQ(mut_view.layout().pitchBytes(), 0u);
   SOPHUS_ASSERT(mut_view.ptrMut() == nullptr);
 
   MutImageView<float> mut_view2;
@@ -58,7 +58,7 @@ TEST(MutImageView, create_and_access) {
   ImageSize col_view_size(1, 2);
   MutImageView<uint16_t> mut_col1 = mut_view.mutSubview({1, 0}, col_view_size);
   SOPHUS_ASSERT_EQ(
-      mut_view.shape().pitchBytes(), mut_col1.shape().pitchBytes());
+      mut_view.layout().pitchBytes(), mut_col1.layout().pitchBytes());
 
   mut_col1.fill(222);
 
@@ -75,12 +75,12 @@ TEST(MutImageView, create_and_access) {
     ImageSize image_size(1, 2);
     using Pixel2U16 = Eigen::Matrix<uint16_t, 2, 1>;
     MutImageView<Pixel2U16> mut_view(
-        ImageShape::makeFromSizeAndPitch<Pixel2U16>(
+        ImageLayout::makeFromSizeAndPitch<Pixel2U16>(
             image_size,
             image_size.width * sizeof(Pixel2U16) + sizeof(uint16_t)),
         (Pixel2U16*)data_u16.data());
     SOPHUS_ASSERT_EQ(mut_view.imageSize(), image_size);
-    SOPHUS_ASSERT_EQ(mut_view.shape().pitchBytes(), 6);
+    SOPHUS_ASSERT_EQ(mut_view.layout().pitchBytes(), 6);
     SOPHUS_ASSERT_EQ(mut_view(0, 0), Pixel2U16(0, 1));
     SOPHUS_ASSERT_EQ(mut_view(0, 1), Pixel2U16(10, 11));
   }

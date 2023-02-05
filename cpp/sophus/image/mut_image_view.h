@@ -48,7 +48,7 @@ void pitchedCopy(
 /// const-correctness.
 ///
 /// MutImageView is a "shallow-compare type" similar to std::span<Pixel> and
-/// std::unique_ptr<Pixel>. As ImageView, its state consists of the image shape
+/// std::unique_ptr<Pixel>. As ImageView, its state consists of the image layout
 /// as well as the pointer address, and comparing those entities establishes
 /// equality comparisons. Furthermore, giving mutable access to pixels is
 /// considered a const operation, as in
@@ -63,9 +63,9 @@ class MutImageView : public ImageView<TPixel> {
   /// Default constructor creates an empty image.
   MutImageView() = default;
 
-  /// Creates view from shape and pointer to first pixel.
-  MutImageView(ImageShape shape, TPixel* ptr) noexcept
-      : ImageView<TPixel>(shape, ptr) {}
+  /// Creates view from layout and pointer to first pixel.
+  MutImageView(ImageLayout layout, TPixel* ptr) noexcept
+      : ImageView<TPixel>(layout, ptr) {}
 
   /// Creates view from image size and pointer to first pixel. The image is
   /// assumed to be contiguous and the pitch is set accordingly.
@@ -77,14 +77,14 @@ class MutImageView : public ImageView<TPixel> {
   /// It is the user's responsibility to make sure that the data owned by
   /// the view can be modified safely.
   [[nodiscard]] static MutImageView unsafeConstCast(ImageView<TPixel> view) {
-    return MutImageView(view.shape(), const_cast<TPixel*>(view.ptr()));
+    return MutImageView(view.layout(), const_cast<TPixel*>(view.ptr()));
   }
 
   /// Returns ImageView(*this).
   ///
   /// Returns non-mut version of view.
   [[nodiscard]] ImageView<TPixel> view() const {
-    return ImageView<TPixel>(this->shape(), this->ptr());
+    return ImageView<TPixel>(this->layout(), this->ptr());
   }
 
   /// Copies data from view into this.
@@ -103,16 +103,16 @@ class MutImageView : public ImageView<TPixel> {
     SOPHUS_ASSERT_EQ(this->imageSize(), view.imageSize());
     details::pitchedCopy(
         (uint8_t*)this->ptr(),
-        this->shape().pitchBytes(),
+        this->layout().pitchBytes(),
         (uint8_t const*)view.ptr(),
-        view.shape().pitchBytes(),
+        view.layout().pitchBytes(),
         this->imageSize(),
         sizeof(TPixel));
   }
 
   /// Returns v-th row pointer of mutable pixel.
   [[nodiscard]] TPixel* rowPtrMut(int v) const {
-    return (TPixel*)((uint8_t*)(this->ptr()) + v * this->shape_.pitchBytes());
+    return (TPixel*)((uint8_t*)(this->ptr()) + v * this->layout_.pitchBytes());
   }
 
   /// Mutable accessor to pixel u, v.
@@ -132,9 +132,9 @@ class MutImageView : public ImageView<TPixel> {
   void mutate(TUnaryOperation const& unary_op) const {
     SOPHUS_ASSERT(!this->isEmpty());
 
-    for (int v = 0; v < this->shape_.height(); ++v) {
+    for (int v = 0; v < this->layout_.height(); ++v) {
       TPixel* p = this->rowPtrMut(v);
-      TPixel const* end_of_row = p + this->shape_.width();
+      TPixel const* end_of_row = p + this->layout_.width();
       for (; p != end_of_row; ++p) {
         *p = unary_op(*p);
       }
@@ -150,9 +150,9 @@ class MutImageView : public ImageView<TPixel> {
   void generate(TUVOperation const& uv_op) const {
     SOPHUS_ASSERT(!this->isEmpty());
 
-    for (int v = 0; v < this->shape_.height(); ++v) {
+    for (int v = 0; v < this->layout_.height(); ++v) {
       TPixel* p = this->rowPtrMut(v);
-      TPixel const* end_of_row = p + this->shape_.width();
+      TPixel const* end_of_row = p + this->layout_.width();
       for (int u = 0; p != end_of_row; ++p, ++u) {
         *p = uv_op(u, v);
       }
@@ -170,10 +170,10 @@ class MutImageView : public ImageView<TPixel> {
     SOPHUS_ASSERT(!this->isEmpty());
     SOPHUS_ASSERT_EQ(view.imageSize(), this->imageSize());
 
-    for (int v = 0; v < this->shape_.height(); ++v) {
+    for (int v = 0; v < this->layout_.height(); ++v) {
       TPixel* mut_p = this->rowPtrMut(v);
       TOtherPixel const* p = view.rowPtr(v);
-      TOtherPixel const* end_of_row = p + view.shape().width();
+      TOtherPixel const* end_of_row = p + view.layout().width();
 
       for (; p != end_of_row; ++p, ++mut_p) {
         *mut_p = unary_op(*p);
@@ -195,12 +195,12 @@ class MutImageView : public ImageView<TPixel> {
     SOPHUS_ASSERT_EQ(lhs.imageSize(), this->imageSize());
     SOPHUS_ASSERT_EQ(rhs.imageSize(), this->imageSize());
 
-    for (int v = 0; v < this->shape_.height(); ++v) {
+    for (int v = 0; v < this->layout_.height(); ++v) {
       TPixel* mut_p = this->rowPtrMut(v);
       TLhsPixel const* lhs_p = lhs.rowPtr(v);
       TRhsPixel const* rhs_p = rhs.rowPtr(v);
 
-      for (int u = 0; u < this->shape_.width(); ++u) {
+      for (int u = 0; u < this->layout_.width(); ++u) {
         mut_p[u] = binary_op(lhs_p[u], rhs_p[u]);
       }
     }
@@ -223,12 +223,12 @@ class MutImageView : public ImageView<TPixel> {
       Eigen::Vector2i uv, sophus::ImageSize size) const {
     SOPHUS_ASSERT(this->colInBounds(uv[0]));
     SOPHUS_ASSERT(this->rowInBounds(uv[1]));
-    SOPHUS_ASSERT_LE(uv.x() + size.width, this->shape().width());
-    SOPHUS_ASSERT_LE(uv.y() + size.height, this->shape().height());
+    SOPHUS_ASSERT_LE(uv.x() + size.width, this->layout().width());
+    SOPHUS_ASSERT_LE(uv.y() + size.height, this->layout().height());
 
     return MutImageView(
-        ImageShape::makeFromSizeAndPitch<TPixel>(
-            size, this->shape().pitchBytes()),
+        ImageLayout::makeFromSizeAndPitch<TPixel>(
+            size, this->layout().pitchBytes()),
         this->rowPtrMut(uv.y()) + uv.x());
   }
 };

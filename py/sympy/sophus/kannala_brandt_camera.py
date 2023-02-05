@@ -34,7 +34,10 @@ class KannalaBrandtTransformCamera:
         """TODO(docstring)"""
 
         assert isinstance(point_in_camera_z1_plane, sympy.Matrix)
-        assert point_in_camera_z1_plane.shape == (2, 1), point_in_camera_z1_plane.shape
+        assert point_in_camera_z1_plane.shape == (
+            2,
+            1,
+        ), point_in_camera_z1_plane.shape
 
         k0, k1, k2, k3 = self.distortion
         x = point_in_camera_z1_plane[0]
@@ -63,7 +66,10 @@ class KannalaBrandtTransformCamera:
         """TODO(docstring)"""
 
         assert isinstance(point_in_camera_z1_plane, sympy.Matrix)
-        assert point_in_camera_z1_plane.shape == (2, 1), point_in_camera_z1_plane.shape
+        assert point_in_camera_z1_plane.shape == (
+            2,
+            1,
+        ), point_in_camera_z1_plane.shape
 
         return sympy.simplify(
             sympy.Matrix(

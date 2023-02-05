@@ -6,17 +6,17 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/runtime_image_view.h"
+#include "sophus/image/pixel_format.h"
 
 namespace sophus {
 
-bool operator==(RuntimePixelType const& lhs, RuntimePixelType const& rhs) {
+bool operator==(PixelFormat const& lhs, PixelFormat const& rhs) {
   return lhs.number_type == rhs.number_type &&
          lhs.num_channels == rhs.num_channels &&
          lhs.num_bytes_per_pixel_channel == rhs.num_bytes_per_pixel_channel;
 }
 
-std::ostream& operator<<(std::ostream& os, RuntimePixelType const& type) {
+std::ostream& operator<<(std::ostream& os, PixelFormat const& type) {
   std::string type_char = "?";
   switch (type.number_type) {
     case NumberType::fixed_point: {

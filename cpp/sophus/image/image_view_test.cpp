@@ -18,7 +18,7 @@ TEST(ImageView, empty) {
   ImageView<float> view;
   SOPHUS_ASSERT(view.isEmpty());
   SOPHUS_ASSERT_EQ(view.imageSize(), ImageSize(0, 0));
-  SOPHUS_ASSERT_EQ(view.shape().pitchBytes(), 0u);
+  SOPHUS_ASSERT_EQ(view.layout().pitchBytes(), 0u);
   SOPHUS_ASSERT(view.ptr() == nullptr);
 }
 
@@ -36,7 +36,7 @@ TEST(ImageView, create_and_access) {
     ImageView<uint16_t> view(image_size, data_u16.data());
     SOPHUS_ASSERT_EQ(image_size, view.imageSize());
     SOPHUS_ASSERT_EQ(
-        image_size.width * sizeof(uint16_t), view.shape().pitchBytes());
+        image_size.width * sizeof(uint16_t), view.layout().pitchBytes());
 
     SOPHUS_ASSERT(!view.rowInBounds(-1));
     SOPHUS_ASSERT(view.rowInBounds(0));
@@ -51,7 +51,7 @@ TEST(ImageView, create_and_access) {
 
     ImageSize col_view_size(1, 2);
     ImageView<uint16_t> col1 = view.subview({1, 0}, col_view_size);
-    SOPHUS_ASSERT_EQ(view.shape().pitchBytes(), col1.shape().pitchBytes());
+    SOPHUS_ASSERT_EQ(view.layout().pitchBytes(), col1.layout().pitchBytes());
 
     SOPHUS_ASSERT_EQ(col1(0, 0), 1);
     SOPHUS_ASSERT_EQ(col1(0, 1), 11);
@@ -62,11 +62,11 @@ TEST(ImageView, create_and_access) {
   using Pixel2U16 = Eigen::Matrix<uint16_t, 2, 1>;
 
   ImageView<Pixel2U16> view(
-      ImageShape::makeFromSizeAndPitch<Pixel2U16>(
+      ImageLayout::makeFromSizeAndPitch<Pixel2U16>(
           image_size, image_size.width * sizeof(Pixel2U16) + sizeof(uint16_t)),
       (Pixel2U16*)data_u16.data());
   SOPHUS_ASSERT_EQ(view.imageSize(), image_size);
-  SOPHUS_ASSERT_EQ(view.shape().pitchBytes(), 6);
+  SOPHUS_ASSERT_EQ(view.layout().pitchBytes(), 6);
 
   SOPHUS_ASSERT_EQ(view(0, 0), Pixel2U16(0, 1));
   SOPHUS_ASSERT_EQ(view(0, 1), Pixel2U16(10, 11));

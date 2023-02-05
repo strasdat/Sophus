@@ -6,7 +6,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/runtime_image_types.h"
+#include "sophus/image/dyn_image_types.h"
 
 #include <gtest/gtest.h>
 
@@ -53,8 +53,8 @@ TEST(IntensityImageView, subview) {
   }
 
   Image<float> ref_image = std::move(mut_image);
-  IntensityImage<> runtime_image = ref_image;
-  IntensityImageView runtime_sub = runtime_image.subview({1, 1}, {2, 2});
+  IntensityImage<> dyn_image = ref_image;
+  IntensityImageView runtime_sub = dyn_image.subview({1, 1}, {2, 2});
   SOPHUS_ASSERT_EQ(runtime_sub.width(), 2);
   SOPHUS_ASSERT_EQ(runtime_sub.height(), 2);
 

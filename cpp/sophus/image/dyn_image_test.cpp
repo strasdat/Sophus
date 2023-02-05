@@ -6,7 +6,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/image/runtime_image_types.h"
+#include "sophus/image/dyn_image_types.h"
 
 #include <gtest/gtest.h>
 
@@ -155,18 +155,18 @@ TEST(IntensityImage, visitor) {
     }
 
     Image<float> ref_image = std::move(mut_image);
-    IntensityImage<> runtime_image = ref_image;
+    IntensityImage<> dyn_image = ref_image;
 
     visitImage(
         [&](auto const& image) {
           using Timg = typename std::remove_reference<decltype(image)>::type;
-          using TPixel = typename Timg::PixelType;
-          SOPHUS_ASSERT(runtime_image.template has<TPixel>());
+          using TPixel = typename Timg::pixelFormat;
+          SOPHUS_ASSERT(dyn_image.template has<TPixel>());
           if constexpr (std::is_same_v<TPixel, float>) {
             SOPHUS_ASSERT(image.hasSameData(ref_image));
           }
         },
-        runtime_image);
+        dyn_image);
   }
 
   {
@@ -177,18 +177,18 @@ TEST(IntensityImage, visitor) {
       }
     }
     Image<Pixel3U8> ref_image = std::move(mut_image);
-    IntensityImage<> runtime_image = ref_image;
+    IntensityImage<> dyn_image = ref_image;
 
     visitImage(
         [&](auto const& image) {
           using Timg = typename std::remove_reference<decltype(image)>::type;
-          using TPixel = typename Timg::PixelType;
-          SOPHUS_ASSERT(runtime_image.template has<TPixel>());
+          using TPixel = typename Timg::pixelFormat;
+          SOPHUS_ASSERT(dyn_image.template has<TPixel>());
           if constexpr (std::is_same_v<TPixel, Pixel3U8>) {
             SOPHUS_ASSERT(image.hasSameData(ref_image));
           }
         },
-        runtime_image);
+        dyn_image);
   }
   {
     MutImage<Pixel3U8> mut_image(ImageSize(4, 4));
@@ -198,7 +198,7 @@ TEST(IntensityImage, visitor) {
       }
     }
     Image<Pixel3U8> ref_image = std::move(mut_image);
-    IntensityImage<> runtime_image = ref_image;
+    IntensityImage<> dyn_image = ref_image;
     visitImage(
         Overload{
             [&](ImageView<float> const& /*unused*/) { SOPHUS_ASSERT(false); },
@@ -207,7 +207,7 @@ TEST(IntensityImage, visitor) {
             },
             [&](auto const& /*unused*/) { SOPHUS_ASSERT(false); },
         },
-        runtime_image);
+        dyn_image);
 
     visitImage(
         Overload{
@@ -217,7 +217,7 @@ TEST(IntensityImage, visitor) {
               // Should execute here
             },
         },
-        runtime_image);
+        dyn_image);
   }
 
   {
@@ -229,8 +229,8 @@ TEST(IntensityImage, visitor) {
     }
 
     Image<float> ref_image = std::move(mut_image);
-    IntensityImage<> runtime_image = ref_image;
-    IntensityImageView runtime_sub = runtime_image.subview({1, 1}, {2, 2});
+    IntensityImage<> dyn_image = ref_image;
+    IntensityImageView runtime_sub = dyn_image.subview({1, 1}, {2, 2});
 
     visitImage(
         Overload{

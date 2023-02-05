@@ -9,16 +9,17 @@ set(sophus_image_src_prefixes
   interpolation
   image
   image_size
-  image_shape
+  layout
   image_types
   image_view
   mut_image
   mut_image_view
-  mut_runtime_image
-  mut_runtime_image_view
-  runtime_image
-  runtime_image_view
-  runtime_image_types
+  mut_dyn_image
+  mut_dyn_image_view
+  dyn_image
+  dyn_image_view
+  dyn_image_types
+  pixel_format
 )
 
 set(sophus_image_cpp)
