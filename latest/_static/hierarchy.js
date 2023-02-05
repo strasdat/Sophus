@@ -21,11 +21,19 @@ var hierarchy =
     ] ],
     [ "sophus::ClippingPlanes", "structsophus_1_1_clipping_planes.html", null ],
     [ "sophus::ClosestApproachResult< TT >", "structsophus_1_1_closest_approach_result.html", null ],
+    [ "sophus::DynImageView< TPredicate >", "classsophus_1_1_dyn_image_view.html", null ],
+    [ "sophus::DynImageView< AnyImagePredicate >", "classsophus_1_1_dyn_image_view.html", [
+      [ "sophus::MutDynImageView< AnyImagePredicate >", "classsophus_1_1_mut_dyn_image_view.html", [
+        [ "sophus::MutDynImage< TPredicate, TAllocator >", "classsophus_1_1_mut_dyn_image.html", null ]
+      ] ],
+      [ "sophus::DynImage< TPredicate, TAllocator >", "classsophus_1_1_dyn_image.html", null ],
+      [ "sophus::MutDynImageView< TPredicate >", "classsophus_1_1_mut_dyn_image_view.html", null ]
+    ] ],
     [ "sophus::GetScalar< TScalar >", "structsophus_1_1_get_scalar.html", null ],
     [ "sophus::GetScalar< Eigen::Matrix< TScalar, kM, kMatrixDim > >", "structsophus_1_1_get_scalar_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4.html", null ],
     [ "sophus::jet_helpers::GetValue< TScalar >", "structsophus_1_1jet__helpers_1_1_get_value.html", null ],
     [ "sophus::jet_helpers::GetValue< ceres::Jet< TScalar, kN > >", "structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4.html", null ],
-    [ "sophus::ImageShape", "classsophus_1_1_image_shape.html", null ],
+    [ "sophus::ImageLayout", "classsophus_1_1_image_layout.html", null ],
     [ "sophus::ImageSize", "structsophus_1_1_image_size.html", null ],
     [ "sophus::ImageTraits< TT >", "structsophus_1_1_image_traits.html", null ],
     [ "sophus::ImageTraits< Eigen::Matrix< TT, kNumChannelsT, 1 > >", "structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html", null ],
@@ -52,7 +60,7 @@ var hierarchy =
     [ "sophus::MaybeLeakingUniqueDataAreaDeleter< TAllocator >", "structsophus_1_1_maybe_leaking_unique_data_area_deleter.html", null ],
     [ "sophus::MultiCameraRig", "structsophus_1_1_multi_camera_rig.html", null ],
     [ "sophus::MutImage< TPixel, TAllocator >", "classsophus_1_1_mut_image.html", null ],
-    [ "sophus::MutRuntimeImage< TPredicate, TAllocator >", "classsophus_1_1_mut_runtime_image.html", null ],
+    [ "sophus::PixelFormat", "structsophus_1_1_pixel_format.html", null ],
     [ "sophus::PointTraits< TPoint >", "structsophus_1_1_point_traits.html", null ],
     [ "sophus::PointTraits< TPoint >", "structsophus_1_1_point_traits_3_01_t_point_01_4.html", null ],
     [ "sophus::PointTransformer< TT >", "classsophus_1_1_point_transformer.html", null ],
@@ -71,12 +79,6 @@ var hierarchy =
     [ "RotationalPart< sophus::Sim3d >", "struct_rotational_part_3_01sophus_1_1_sim3d_01_4.html", null ],
     [ "RotationalPart< sophus::SO2d >", "struct_rotational_part_3_01sophus_1_1_s_o2d_01_4.html", null ],
     [ "RotationalPart< sophus::So3F64 >", "struct_rotational_part_3_01sophus_1_1_so3_f64_01_4.html", null ],
-    [ "sophus::RuntimeImage< TPredicate, TAllocator >", "classsophus_1_1_runtime_image.html", null ],
-    [ "sophus::RuntimeImageView< TPredicate >", "classsophus_1_1_runtime_image_view.html", null ],
-    [ "sophus::RuntimeImageView< AnyImagePredicate >", "classsophus_1_1_runtime_image_view.html", [
-      [ "sophus::MutRuntimeImageView< TPredicate >", "classsophus_1_1_mut_runtime_image_view.html", null ]
-    ] ],
-    [ "sophus::RuntimePixelType", "structsophus_1_1_runtime_pixel_type.html", null ],
     [ "sophus::RxSo2< TScalar, kOptions >", "classsophus_1_1_rx_so2.html", null ],
     [ "sophus::RxSo2< Scalar, kOptions >", "classsophus_1_1_rx_so2.html", null ],
     [ "sophus::RxSo2Base< TDerived >", "classsophus_1_1_rx_so2_base.html", null ],
@@ -134,24 +136,24 @@ var hierarchy =
     ] ],
     [ "sophus::So2< TScalar, kOptions >", "classsophus_1_1_so2.html", null ],
     [ "sophus::So2< Scalar, kOptions >", "classsophus_1_1_so2.html", null ],
-    [ "sophus::So2Base< TDerived >", "classsophus_1_1_so2_base.html", null ],
+    [ "sophus::So2Base< TDerived >", "classsophus_1_1_so2_base.html", [
+      [ "Eigen::Map< sophus::So2< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so2_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    ] ],
     [ "sophus::So2Base< Map< sophus::So2< TScalar > const, kOptions > >", "classsophus_1_1_so2_base.html", [
       [ "Eigen::Map< sophus::So2< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
     ] ],
-    [ "sophus::So2Base< Map< sophus::So2< TScalar >, kOptions > >", "classsophus_1_1_so2_base.html", [
-      [ "Eigen::Map< sophus::So2< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so2_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
-    ] ],
+    [ "sophus::So2Base< Map< sophus::So2< TScalar >, kOptions > >", "classsophus_1_1_so2_base.html", null ],
     [ "sophus::So3< TScalar, kOptions >", "classsophus_1_1_so3.html", null ],
     [ "sophus::So3< Scalar >", "classsophus_1_1_so3.html", null ],
     [ "sophus::So3< Scalar, kOptions >", "classsophus_1_1_so3.html", null ],
     [ "sophus::So3< TScalar, kOptions >::So3AndTheta", "structsophus_1_1_so3_1_1_so3_and_theta.html", null ],
-    [ "sophus::So3Base< TDerived >", "classsophus_1_1_so3_base.html", [
-      [ "Eigen::Map< sophus::So3< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
-    ] ],
+    [ "sophus::So3Base< TDerived >", "classsophus_1_1_so3_base.html", null ],
     [ "sophus::So3Base< Map< sophus::So3< TScalar > const, kOptions > >", "classsophus_1_1_so3_base.html", [
       [ "Eigen::Map< sophus::So3< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
     ] ],
-    [ "sophus::So3Base< Map< sophus::So3< TScalar >, kOptions > >", "classsophus_1_1_so3_base.html", null ],
+    [ "sophus::So3Base< Map< sophus::So3< TScalar >, kOptions > >", "classsophus_1_1_so3_base.html", [
+      [ "Eigen::Map< sophus::So3< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    ] ],
     [ "sophus::SplineBasisFunction< TScalar >", "classsophus_1_1_spline_basis_function.html", null ],
     [ "sophus::So3Base< TDerived >::TangentAndTheta", "structsophus_1_1_so3_base_1_1_tangent_and_theta.html", null ],
     [ "sophus::RxSo3Base< TDerived >::TangentAndTheta", "structsophus_1_1_rx_so3_base_1_1_tangent_and_theta.html", null ],
@@ -166,7 +168,7 @@ var hierarchy =
     [ "sophus::UniqueDataAreaDeleter< TAllocator >", "structsophus_1_1_unique_data_area_deleter.html", null ],
     [ "sophus::UnitVector< TScalar, kN >", "classsophus_1_1_unit_vector.html", null ],
     [ "sophus::VariantImagePredicate< TPixelVariant >", "structsophus_1_1_variant_image_predicate.html", null ],
-    [ "sophus::detail::VisitImpl< TUserFunc, TRuntimeImage, TPixelTypes >", "structsophus_1_1detail_1_1_visit_impl.html", null ],
-    [ "sophus::detail::VisitImpl< TUserFunc, TRuntimeImage, std::variant< TPixelType > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variant_3_01_t_pixel_type_01_4_01_4.html", null ],
-    [ "sophus::detail::VisitImpl< TUserFunc, TRuntimeImage, std::variant< TPixelType, TRest... > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variantd1b0535b64a9f6bf4c89f566d1fd48eb.html", null ]
+    [ "sophus::detail::VisitImpl< TUserFunc, TDynImage, TpixelFormats >", "structsophus_1_1detail_1_1_visit_impl.html", null ],
+    [ "sophus::detail::VisitImpl< TUserFunc, TDynImage, std::variant< TpixelFormat > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_01_tpixel_format_01_4_01_4.html", null ],
+    [ "sophus::detail::VisitImpl< TUserFunc, TDynImage, std::variant< TpixelFormat, TRest... > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_0d5143875fd06ec6a8b0d83cf19591a13.html", null ]
 ];

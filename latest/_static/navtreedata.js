@@ -62,14 +62,14 @@ var NAVTREEINDEX =
 [
 "affine_8h.html",
 "class_eigen_1_1_map_3_01sophus_1_1_sim2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html#a5239048ffdb6ea44e3ae5ca4fb0bebca",
-"classsophus_1_1_image.html",
+"classsophus_1_1_dyn_image.html",
 "classsophus_1_1_rx_so2.html#a0c0e721f9e77557e49f67b226ed808a0",
 "classsophus_1_1_se3_base.html#a9cf14294d1e9d85077f6c44b6f9ed76d",
 "classsophus_1_1_so3_base.html#a6aff5d115c13f44957867b32eb508e7a",
-"geometry_2proto_2conv_8h.html#a772748663456abf8e3522a2d0d387363",
-"linalg_2proto_2conv_8h.html#a4e0b67fee4d682d2aa0ae534fcb32f7e",
-"rxso2_8h.html#a7c819b82a046fa258b197530124fbccd",
-"structsophus_1_1_scaling_non_orthogonality_gyro_model.html#a8d0f8e250b5e3af2583dcf29e543110e"
+"functions_o.html",
+"lie_2rxso3__test_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4",
+"rotation__matrix_8h.html#afa9af89550f57a1aac66b281224ae257",
+"structsophus_1_1_scaling_non_orthogonality_accelero_model.html#af419c02505049fbe69f51fd3240e9bbe"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

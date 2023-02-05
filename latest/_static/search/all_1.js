@@ -14,5 +14,5 @@ var searchData=
   ['brown_5fconrady_2eh_38',['brown_conrady.h',['../brown__conrady_8h.html',1,'']]],
   ['brownconradymodel_39',['BrownConradyModel',['../namespacesophus.html#a5f1e243e0245c99be109ad17e0195026',1,'sophus']]],
   ['brownconradytransform_40',['BrownConradyTransform',['../classsophus_1_1_brown_conrady_transform.html',1,'sophus']]],
-  ['bytesperpixel_41',['bytesPerPixel',['../structsophus_1_1_runtime_pixel_type.html#abd4be6b75076e4519a3efb8193de4bd8',1,'sophus::RuntimePixelType']]]
+  ['bytesperpixel_41',['bytesPerPixel',['../structsophus_1_1_pixel_format.html#a104614fc72e96e6a01c1e5d06f1c04d0',1,'sophus::PixelFormat']]]
 ];
