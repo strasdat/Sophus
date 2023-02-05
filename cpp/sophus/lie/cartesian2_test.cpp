@@ -11,7 +11,6 @@
 
 #include <iostream>
 
-#ifdef SOPHUS_CODE_COVERAGE
 // Explicit instantiate all class templates so that all member methods
 // get compiled and for code coverage analysis.
 namespace Eigen {  // NOLINT
@@ -27,7 +26,6 @@ template class Cartesian<float, 2, Eigen::DontAlign>;
 template class Cartesian<ceres::Jet<double, 2>, 2>;
 #endif
 }  // namespace sophus
-#endif  // SOPHUS_CODE_COVERAGE
 
 namespace sophus {
 
