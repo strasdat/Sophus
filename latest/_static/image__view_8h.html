@@ -84,10 +84,7 @@ $(document).ready(function(){initNavTree('image__view_8h.html',''); initResizabl
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#define-members">Macros</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#define-members">Macros</a>  </div>
   <div class="headertitle">
 <div class="title">image_view.h File Reference</div>  </div>
 </div><!--header-->
@@ -195,37 +192,10 @@ This graph shows which files directly or indirectly include this file:</div>
 </div>
 <p><a href="image__view_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html">sophus::MutImage&lt; TPixel, TAllocator &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignment, but move constr / assignment.  <a href="classsophus_1_1_mut_image.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_image.html">sophus::Image&lt; TPixel, TAllocator &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.  <a href="classsophus_1_1_image.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView&lt; TPixel &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A view of an (immutable) image, which does not own the data.  <a href="structsophus_1_1_image_view.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
-Namespaces</h2></td></tr>
-<tr class="memitem:namespacesophus"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus.html">sophus</a></td></tr>
-<tr class="memdesc:namespacesophus"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> <a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a>, owning images types. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a0b4d7cb26d6368454be3073009553479"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__view_8h.html#a0b4d7cb26d6368454be3073009553479">SOPHUS_PIXEL_MUT</a>(img,  u,  v, ...)</td></tr>
 <tr class="separator:a0b4d7cb26d6368454be3073009553479"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a9278c0dada3edfc146ac4b4fd548a2df"><td class="memTemplParams" colspan="2">template&lt;class TPixel &gt; </td></tr>
-<tr class="memitem:a9278c0dada3edfc146ac4b4fd548a2df"><td class="memTemplItemLeft" align="right" valign="top">Region&lt; TPixel &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a9278c0dada3edfc146ac4b4fd548a2df">sophus::finiteInterval</a> (<a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView</a>&lt; TPixel &gt; const &amp;image)</td></tr>
-<tr class="separator:a9278c0dada3edfc146ac4b4fd548a2df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a30d3ba923f03837081ac8934e4040b"><td class="memTemplParams" colspan="2">template&lt;class TPixel &gt; </td></tr>
-<tr class="memitem:a0a30d3ba923f03837081ac8934e4040b"><td class="memTemplItemLeft" align="right" valign="top">Region2I&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a0a30d3ba923f03837081ac8934e4040b">sophus::imageCoordsInterval</a> (<a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView</a>&lt; TPixel &gt; const &amp;image, int border=0)</td></tr>
-<tr class="separator:a0a30d3ba923f03837081ac8934e4040b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a0b4d7cb26d6368454be3073009553479"></a>

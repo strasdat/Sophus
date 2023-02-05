@@ -29,9 +29,11 @@ var hierarchy =
     [ "sophus::ImageSize", "structsophus_1_1_image_size.html", null ],
     [ "sophus::ImageTraits< TT >", "structsophus_1_1_image_traits.html", null ],
     [ "sophus::ImageTraits< Eigen::Matrix< TT, kNumChannelsT, 1 > >", "structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html", null ],
-    [ "sophus::ImageView< TPixel >", "structsophus_1_1_image_view.html", [
+    [ "ImageView", null, [
       [ "sophus::Image< TPixel, TAllocator >", "classsophus_1_1_image.html", null ],
-      [ "sophus::MutImageView< TPixel >", "classsophus_1_1_mut_image_view.html", null ]
+      [ "sophus::MutImageView< TPixel >", "classsophus_1_1_mut_image_view.html", [
+        [ "sophus::MutImage< TPixel, TAllocator >", "classsophus_1_1_mut_image.html", null ]
+      ] ]
     ] ],
     [ "sophus::ImuModel", "classsophus_1_1_imu_model.html", null ],
     [ "sophus::IndexAndU", "structsophus_1_1_index_and_u.html", null ],
@@ -51,7 +53,6 @@ var hierarchy =
     [ "sophus::Mapper< TScalar, typename std::enable_if< kIsMappableV< TScalar > >::type >", "structsophus_1_1_mapper_3_01_t_scalar_00_01typename_01std_1_1enable__if_3_01k_is_mappable_v_3_01cd5529748b13d40e64d4c3ee260777da.html", null ],
     [ "sophus::MaybeLeakingUniqueDataAreaDeleter< TAllocator >", "structsophus_1_1_maybe_leaking_unique_data_area_deleter.html", null ],
     [ "sophus::MultiCameraRig", "structsophus_1_1_multi_camera_rig.html", null ],
-    [ "sophus::MutImage< TPixel, TAllocator >", "classsophus_1_1_mut_image.html", null ],
     [ "sophus::MutRuntimeImage< TPredicate, TAllocator >", "classsophus_1_1_mut_runtime_image.html", null ],
     [ "sophus::PointTraits< TPoint >", "structsophus_1_1_point_traits.html", null ],
     [ "sophus::PointTraits< TPoint >", "structsophus_1_1_point_traits_3_01_t_point_01_4.html", null ],

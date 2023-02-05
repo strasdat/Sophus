@@ -23,7 +23,6 @@ var namespacesophus =
     [ "ImageSize", "structsophus_1_1_image_size.html", "structsophus_1_1_image_size" ],
     [ "ImageTraits", "structsophus_1_1_image_traits.html", "structsophus_1_1_image_traits" ],
     [ "ImageTraits< Eigen::Matrix< TT, kNumChannelsT, 1 > >", "structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html", "structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4" ],
-    [ "ImageView", "structsophus_1_1_image_view.html", "structsophus_1_1_image_view" ],
     [ "ImuModel", "classsophus_1_1_imu_model.html", "classsophus_1_1_imu_model" ],
     [ "IndexAndU", "structsophus_1_1_index_and_u.html", "structsophus_1_1_index_and_u" ],
     [ "InverseDepthPoint3", "classsophus_1_1_inverse_depth_point3.html", "classsophus_1_1_inverse_depth_point3" ],
