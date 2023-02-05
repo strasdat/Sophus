@@ -2,8 +2,8 @@ var searchData=
 [
   ['variantimagepredicate_944',['VariantImagePredicate',['../structsophus_1_1_variant_image_predicate.html',1,'sophus']]],
   ['vector_945',['vector',['../classsophus_1_1_unit_vector.html#a54264762ad3b689f57c95998173fbe26',1,'sophus::UnitVector']]],
-  ['vector2type_946',['Vector2Type',['../class_tests.html#ab84c97e376dd2e0247ccaa393ff92400',1,'Tests']]],
-  ['vector4type_947',['Vector4Type',['../class_tests.html#ab534a7e5b88f33133939c7d9d8b44def',1,'Tests']]],
+  ['vector2type_946',['Vector2Type',['../classsophus_1_1_tests.html#ada9046847dea1808f5e6dbf59bd0d0b9',1,'sophus::Tests']]],
+  ['vector4type_947',['Vector4Type',['../classsophus_1_1_tests.html#a905725067b3e7fcd218720fc5a741dd9',1,'sophus::Tests']]],
   ['vectorfieldnumdiff_948',['vectorFieldNumDiff',['../namespacesophus.html#a17d0190c95bf318589b914475c6a5976',1,'sophus']]],
   ['vee_949',['vee',['../classsophus_1_1_cartesian.html#ac144ce68878c91125c33c365f99f7ad9',1,'sophus::Cartesian::vee()'],['../classsophus_1_1_rx_so2.html#a956dd847dc8b4d8759a70a3f10bcfee8',1,'sophus::RxSo2::vee()'],['../classsophus_1_1_rx_so3.html#ac383036917ed13cbbc9372b77c887728',1,'sophus::RxSo3::vee()'],['../classsophus_1_1_se2.html#a17048ba67c57c046c5fdeb8064e280a0',1,'sophus::Se2::vee()'],['../classsophus_1_1_se3.html#a2c653e64598384330ad56791e7c1b002',1,'sophus::Se3::vee()'],['../classsophus_1_1_sim2.html#a0589bc33a88a4e92d3d0b9a24f89c0f7',1,'sophus::Sim2::vee()'],['../classsophus_1_1_sim3.html#adf7b636c227c8695b461a3f4e9f4133d',1,'sophus::Sim3::vee()'],['../classsophus_1_1_so2.html#ae6f4fdd15a3c2856b0a903b1d859b81e',1,'sophus::So2::vee()'],['../classsophus_1_1_so3.html#aa3f69e069f2d8d27a85c79bbc68450c4',1,'sophus::So3::vee()']]],
   ['veehattest_950',['veeHatTest',['../classsophus_1_1_lie_group_tests.html#a65eacae42f331e7ca16cd6c86e2bc349',1,'sophus::LieGroupTests']]],

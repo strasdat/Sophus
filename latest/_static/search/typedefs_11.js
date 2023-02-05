@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['vector2type_1957',['Vector2Type',['../class_tests.html#ab84c97e376dd2e0247ccaa393ff92400',1,'Tests']]],
-  ['vector4type_1958',['Vector4Type',['../class_tests.html#ab534a7e5b88f33133939c7d9d8b44def',1,'Tests']]]
+  ['vector2type_1957',['Vector2Type',['../classsophus_1_1_tests.html#ada9046847dea1808f5e6dbf59bd0d0b9',1,'sophus::Tests']]],
+  ['vector4type_1958',['Vector4Type',['../classsophus_1_1_tests.html#a905725067b3e7fcd218720fc5a741dd9',1,'sophus::Tests']]]
 ];
