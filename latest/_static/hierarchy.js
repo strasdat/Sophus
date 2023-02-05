@@ -169,6 +169,6 @@ var hierarchy =
     [ "sophus::UnitVector< TScalar, kN >", "classsophus_1_1_unit_vector.html", null ],
     [ "sophus::VariantImagePredicate< TPixelVariant >", "structsophus_1_1_variant_image_predicate.html", null ],
     [ "sophus::detail::VisitImpl< TUserFunc, TDynImage, TpixelFormats >", "structsophus_1_1detail_1_1_visit_impl.html", null ],
-    [ "sophus::detail::VisitImpl< TUserFunc, TDynImage, std::variant< TpixelFormat > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_01_tpixel_format_01_4_01_4.html", null ],
-    [ "sophus::detail::VisitImpl< TUserFunc, TDynImage, std::variant< TpixelFormat, TRest... > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_0d5143875fd06ec6a8b0d83cf19591a13.html", null ]
+    [ "sophus::detail::VisitImpl< TUserFunc, TDynImage, std::variant< TPixelFormat > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_01_t_pixel_format_01_4_01_4.html", null ],
+    [ "sophus::detail::VisitImpl< TUserFunc, TDynImage, std::variant< TPixelFormat, TRest... > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_0d99d88b250f274dea348c380a7d77c77.html", null ]
 ];

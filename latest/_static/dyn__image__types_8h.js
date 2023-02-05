@@ -2,8 +2,8 @@ var dyn__image__types_8h =
 [
     [ "VariantImagePredicate", "structsophus_1_1_variant_image_predicate.html", "structsophus_1_1_variant_image_predicate" ],
     [ "VisitImpl", "structsophus_1_1detail_1_1_visit_impl.html", null ],
-    [ "VisitImpl< TUserFunc, TDynImage, std::variant< TpixelFormat > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_01_tpixel_format_01_4_01_4.html", null ],
-    [ "VisitImpl< TUserFunc, TDynImage, std::variant< TpixelFormat, TRest... > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_0d5143875fd06ec6a8b0d83cf19591a13.html", null ],
+    [ "VisitImpl< TUserFunc, TDynImage, std::variant< TPixelFormat > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_01_t_pixel_format_01_4_01_4.html", null ],
+    [ "VisitImpl< TUserFunc, TDynImage, std::variant< TPixelFormat, TRest... > >", "structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_0d99d88b250f274dea348c380a7d77c77.html", null ],
     [ "AnyImage", "dyn__image__types_8h.html#a19e166b6d93dec8fcf17a1b275f9a416", null ],
     [ "AnyImageView", "dyn__image__types_8h.html#a1b39df79c4a4fe8f4eaafc8d3722d66e", null ],
     [ "IntensityImage", "dyn__image__types_8h.html#a6b02d5f5c35c7de28f1b3faee0065c17", null ],
