@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(Sophus VERSION 23.0.1)
+project(Sophus VERSION 2.0.0)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
