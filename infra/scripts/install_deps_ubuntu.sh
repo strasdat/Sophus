@@ -12,9 +12,11 @@ sudo apt-get install \
   libc++-dev \
   libgtest-dev \
   libgoogle-glog-dev \
-  libatlas-base-dev \
-  libsuitesparse-dev \
   libprotobuf-dev \
-  protobuf-compiler
+  protobuf-compiler \
+  libsuitesparse-dev \
+  ninja-build
 
 pip install git+https://github.com/gcovr/gcovr.git
+
+./install_deps_common.sh

@@ -7,3 +7,24 @@
 [submodule "docs/c++-api/doxygen-awesome-css"]
 	path = docs/c++-api/doxygen-awesome-css
 	url = https://github.com/jothepro/doxygen-awesome-css.git
+[submodule "infra/ci-submodules/eigen"]
+	path = infra/ci-submodules/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "infra/ci-submodules/farm-ng-core"]
+	path = infra/ci-submodules/farm-ng-core
+	url = git@github.com:farm-ng/farm-ng-core.git
+[submodule "infra/ci-submodules/farm-ng-cmake"]
+	path = infra/ci-submodules/farm-ng-cmake
+	url = git@github.com:farm-ng/farm-ng-cmake.git
+[submodule "infra/ci-submodules/expected"]
+	path = infra/ci-submodules/expected
+	url = https://github.com/TartanLlama/expected.git
+[submodule "infra/ci-submodules/fmt"]
+	path = infra/ci-submodules/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "infra/ci-submodules/ceres-solver"]
+	path = infra/ci-submodules/ceres-solver
+	url = https://ceres-solver.googlesource.com/ceres-solver
+[submodule "infra/ci-submodules/grpc"]
+	path = infra/ci-submodules/grpc
+	url = https://github.com/grpc/grpc.git

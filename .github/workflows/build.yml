@@ -17,52 +17,68 @@ jobs:
             access: col_major
             build_type: Release
             build_protos: On
+            ceres: On
           - os: ubuntu-20.04
             compiler: clang
             tests: unit_test
             access: col_major
             build_type: Release
             build_protos: On
+            ceres: Off
           - os: ubuntu-20.04
             compiler: gcc
             tests: unit_test
             access: col_major
             build_type: Release
             build_protos: Off
+            ceres: Off
           - os: ubuntu-20.04
             compiler: gcc
             tests: unit_test
             access: col_major
             build_type: Release
             build_protos: On
+            ceres: Off
           - os: ubuntu-20.04
             compiler: gcc
             tests: unit_test
             access: row_major
             build_type: Release
             build_protos: On
+            ceres: Off
           - os: ubuntu-20.04
             compiler: clang
             tests: clang_tidy
             access: col_major
             build_type: Release
             build_protos: Off
+            ceres: Off
           - os: ubuntu-20.04
             compiler: gcc
             tests: coverage
             access: col_major
             build_type: Debug
             build_protos: On
+            ceres: Off
           - os: macos-11
             compiler: clang
             tests: unit_test
             access: col_major
             build_type: Release
             build_protos: On
+            ceres: Off
+          - os: macos-12
+            compiler: clang
+            tests: unit_test
+            access: col_major
+            build_type: Release
+            build_protos: On
+            ceres: Off
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
       BUILD_PROTOS: ${{ matrix.build_protos }}
+      SOPHUS_CERES: ${{ matrix.ceres }}
 
 
     steps:
@@ -73,31 +89,56 @@ jobs:
       - uses: hendrikmuhs/ccache-action@v1
 
       - name: Install dependencies (Ubuntu)
-        run: ./scripts/install_deps_ubuntu.sh
+        working-directory: ./infra/scripts
+        run: ./install_deps_ubuntu.sh
         if: matrix.os == 'ubuntu-20.04'
 
       - name: Install dependencies (Mac)
+        working-directory: ./infra/scripts
         run: |
-          ./scripts/install_ci_deps_mac.sh
-        if: matrix.os == 'macos-11'
+          ./install_deps_mac.sh
+        if: matrix.os == 'macos-11' || matrix.os == 'macos-12'
 
-      - name: Compile (gcc) & tests
+      - name: Compile (gcc)
+        working-directory: ./infra/scripts
         run:
-          ./scripts/compile_gcc.sh
+          ./compile_gcc.sh
         env:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.compiler == 'gcc'
 
-      - name: Compile (clang) & tests
+      - name: Compile (clang)
+        working-directory: ./infra/scripts
         run:
-          ./scripts/compile_clang.sh
+          ./compile_clang.sh
         env:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.compiler == 'clang'
 
-      - name: Compile (clang) & tests coverage
+      - name: Run unit tests
+        working-directory: ./infra/scripts/build
         run:
-          ./scripts/compile_gcc_coverage.sh
+          ninja test
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'unit_test'
+
+      - name: Run install tests
+        working-directory: ./infra/scripts/build
+        run:
+          ninja install
+          cd ..
+          mkdir example_build
+          cmake -G ../../../cpp/examples/test_install_targets
+          ninja
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'unit_test'
+
+      - name: Compile (clang) & tests coverage
+        working-directory: ./infra/scripts
+        run:
+          ./compile_gcc_coverage.sh
         env:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'coverage'
