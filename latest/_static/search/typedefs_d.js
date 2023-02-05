@@ -20,7 +20,7 @@ var searchData=
   ['regionf64_1878',['RegionF64',['../namespacesophus.html#a7e50b528367cd7b341d25ce225d736da',1,'sophus']]],
   ['regioni_1879',['RegionI',['../namespacesophus.html#a895cf293072ffa8dc1b724fae1fc998d',1,'sophus']]],
   ['returnscalar_1880',['ReturnScalar',['../classsophus_1_1_cartesian_base.html#a988e919b0b2fd33472d8ee541103649b',1,'sophus::CartesianBase::ReturnScalar()'],['../classsophus_1_1_rx_so2_base.html#a6d5049d4341efd98753ff7b5548b7bd7',1,'sophus::RxSo2Base::ReturnScalar()'],['../classsophus_1_1_rx_so3_base.html#ad7f3ab6a3cd51ebeb62eeaf8293e942c',1,'sophus::RxSo3Base::ReturnScalar()'],['../classsophus_1_1_se2_base.html#afbdaa5310a3416b15e4a85afd13d8a82',1,'sophus::Se2Base::ReturnScalar()'],['../classsophus_1_1_se3_base.html#a0d3cbfa12f7e12a1b230bcbca0d6b8e8',1,'sophus::Se3Base::ReturnScalar()'],['../classsophus_1_1_sim2_base.html#aa5d118951a33ac6051279f6bf98fa297',1,'sophus::Sim2Base::ReturnScalar()'],['../classsophus_1_1_sim3_base.html#a5f737ad9095566050088d4d3584a1556',1,'sophus::Sim3Base::ReturnScalar()'],['../classsophus_1_1_so2_base.html#a236206262c8edb45fc126149562bd1b2',1,'sophus::So2Base::ReturnScalar()'],['../classsophus_1_1_so3_base.html#ada0c54264468d2d602b0938b7c2bad89',1,'sophus::So3Base::ReturnScalar()']]],
-  ['rotationmatrixtype_1881',['RotationMatrixType',['../classsophus_1_1_tests.html#acb0ceb86f0394b6392c7ee0009b31c6b',1,'sophus::Tests::RotationMatrixType()'],['../classsophus_1_1_tests.html#ad384a99471b9999e971a958bc32ed919',1,'sophus::Tests::RotationMatrixType()']]],
+  ['rotationmatrixtype_1881',['RotationMatrixType',['../class_tests.html#a245785e75d63ddc56bcb473346bf9442',1,'Tests::RotationMatrixType()'],['../classsophus_1_1_tests.html#ad384a99471b9999e971a958bc32ed919',1,'sophus::Tests::RotationMatrixType()']]],
   ['rxso2_1882',['RxSO2',['../namespacesophus.html#af681da050001ea4a80013b9ca654f79f',1,'sophus']]],
   ['rxso2d_1883',['RxSO2d',['../namespacesophus.html#a64b15d595d1de523cfe636826dfc8ae4',1,'sophus']]],
   ['rxso2f_1884',['RxSO2f',['../namespacesophus.html#a852297b22ee21786c0a7bf63a0e6dda7',1,'sophus']]],
@@ -28,7 +28,7 @@ var searchData=
   ['rxso2f64_1886',['RxSo2F64',['../namespacesophus.html#ab8c656f1d956ecf8e76af96ba6ad4acf',1,'sophus']]],
   ['rxso2member_1887',['RxSo2Member',['../classsophus_1_1_sim2.html#a85d024bf69b35fe3b8168ffff0bd5a63',1,'sophus::Sim2']]],
   ['rxso2product_1888',['RxSo2Product',['../classsophus_1_1_rx_so2_base.html#a71ff0420ef5e23734041b491c43d5b4b',1,'sophus::RxSo2Base']]],
-  ['rxso2type_1889',['RxSo2Type',['../classsophus_1_1_tests.html#a6ea4b7539fde87a46f972b93631a76f7',1,'sophus::Tests::RxSo2Type()'],['../classsophus_1_1_sim2_base.html#a23be4e3d0436069bc8f72617e09db238',1,'sophus::Sim2Base::RxSo2Type()'],['../classsophus_1_1_tests.html#a6ea4b7539fde87a46f972b93631a76f7',1,'sophus::Tests::RxSo2Type()']]],
+  ['rxso2type_1889',['RxSo2Type',['../class_tests.html#a7767041a159e5ffc2be96fb311a89b28',1,'Tests::RxSo2Type()'],['../classsophus_1_1_sim2_base.html#a23be4e3d0436069bc8f72617e09db238',1,'sophus::Sim2Base::RxSo2Type()'],['../class_tests.html#a7767041a159e5ffc2be96fb311a89b28',1,'Tests::RxSo2Type()']]],
   ['rxso3_1890',['RxSO3',['../namespacesophus.html#a5b37e796922d4e5658365da16e434dae',1,'sophus']]],
   ['rxso3d_1891',['RxSO3d',['../namespacesophus.html#a2c189e551a879d59291a6614b6a93cca',1,'sophus']]],
   ['rxso3f_1892',['RxSO3f',['../namespacesophus.html#a54c64e0578b686e782ef01eecfe68d7f',1,'sophus']]],
@@ -36,5 +36,5 @@ var searchData=
   ['rxso3f64_1894',['RxSo3F64',['../namespacesophus.html#abf39ed0d4521993f1cdfba9915e36dd5',1,'sophus']]],
   ['rxso3member_1895',['RxSo3Member',['../classsophus_1_1_sim3.html#a9c08cff1fa549f7a190a7d997d6d3741',1,'sophus::Sim3']]],
   ['rxso3product_1896',['RxSo3Product',['../classsophus_1_1_rx_so3_base.html#ad45fc33eedf9ef9e2ed7e1b4b86ed43b',1,'sophus::RxSo3Base']]],
-  ['rxso3type_1897',['RxSo3Type',['../classsophus_1_1_tests.html#a5fd2fc3591b1c6836196d6c0a193f180',1,'sophus::Tests::RxSo3Type()'],['../classsophus_1_1_sim3_base.html#a61bf3a24a5a1736fc0c15367770c4969',1,'sophus::Sim3Base::RxSo3Type()'],['../classsophus_1_1_tests.html#a5fd2fc3591b1c6836196d6c0a193f180',1,'sophus::Tests::RxSo3Type()']]]
+  ['rxso3type_1897',['RxSo3Type',['../classsophus_1_1_tests.html#a5fd2fc3591b1c6836196d6c0a193f180',1,'sophus::Tests::RxSo3Type()'],['../classsophus_1_1_sim3_base.html#a61bf3a24a5a1736fc0c15367770c4969',1,'sophus::Sim3Base::RxSo3Type()'],['../class_tests.html#a653d67ca3ee8fe5c5be6663db10147f7',1,'Tests::RxSo3Type()']]]
 ];
