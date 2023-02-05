@@ -45,6 +45,9 @@ struct UniqueDataAreaDeleter {
   size_t num_bytes = 0;
 };
 
+static_assert(std::is_nothrow_move_constructible<
+              UniqueDataAreaDeleter<Eigen::aligned_allocator<uint8_t>>>());
+
 template <class TAllocator>
 struct MaybeLeakingUniqueDataAreaDeleter {
   MaybeLeakingUniqueDataAreaDeleter() = default;
@@ -65,6 +68,10 @@ struct MaybeLeakingUniqueDataAreaDeleter {
 
   std::optional<UniqueDataAreaDeleter<TAllocator>> image_deleter;
 };
+
+static_assert(
+    std::is_nothrow_move_constructible<MaybeLeakingUniqueDataAreaDeleter<
+        Eigen::aligned_allocator<uint8_t>>>());
 
 template <class TAllocator>
 using UniqueDataArea =
@@ -155,14 +162,14 @@ class MutImage : public MutImageView<TPixel> {
   /// Not copy assignable
   MutImage& operator=(MutImage const&) = delete;
 
-  /// Move constructor - is cheap - no memory allocations.
+  /// Nothrow move constructor.
   MutImage(MutImage&& img) noexcept
       : MutImageView<TPixel>(img.viewMut()), unique_(std::move(img.unique_)) {
     this->ptr_ = reinterpret_cast<TPixel*>(unique_.get());
     img.setViewToEmpty();
   }
 
-  /// Move assignment
+  /// Nothrow move assignment
   MutImage& operator=(MutImage&& img) noexcept {
     reset();
     this->shape_ = img.shape_;

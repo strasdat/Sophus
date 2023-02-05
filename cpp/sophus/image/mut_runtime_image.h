@@ -30,10 +30,10 @@ class MutRuntimeImage : public MutRuntimeImageView<TPredicate> {
   /// Not copy assignable
   MutRuntimeImage& operator=(MutRuntimeImage const&) = delete;
 
-  /// Move constructable
-  MutRuntimeImage(MutRuntimeImage&& other) = default;
-  /// Move assignable
-  MutRuntimeImage& operator=(MutRuntimeImage&&) = default;
+  /// Nothrow move constructable
+  MutRuntimeImage(MutRuntimeImage&& other) noexcept = default;
+  /// Nothrow move assignable
+  MutRuntimeImage& operator=(MutRuntimeImage&&) noexcept = default;
 
   /// Create type-erased image from MutImage.
   ///
