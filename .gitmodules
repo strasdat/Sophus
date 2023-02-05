@@ -22,3 +22,6 @@
 [submodule "infra/ci-submodules/fmt"]
 	path = infra/ci-submodules/fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "sophus-rs"]
+	path = sophus-rs
+	url = git@github.com:strasdat/sophus-rs.git

@@ -104,7 +104,7 @@ jobs:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.compiler == 'gcc' && matrix.optional_features == 'minimal'
 
-      - name: Compile (gcc, ceres+proto)
+      - name: Compile (gcc, ceres_proto)
         working-directory: ./infra/scripts
         run: |
           ls
@@ -122,7 +122,7 @@ jobs:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.compiler == 'clang'
 
-      - name: Compile (clang, ceres+proto)
+      - name: Compile (clang, ceres_proto)
         working-directory: ./infra/scripts
         run: |
           ls
@@ -135,16 +135,17 @@ jobs:
       - name: Run unit tests
         working-directory: ./infra/scripts/build
         run: |
-          ninja test
+          ctest
         env:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
 
       - name: Run unit tests (ceres_proto)
-        working-directory: ./infra/scripts/build
+        working-directory: ./infra/scripts
         run: |
           source ../venv/bin/activate
-          ninja test
+          cd build
+          ctest
         env:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.optional_features == 'ceres_proto'
@@ -152,17 +153,17 @@ jobs:
 
       # todo: re-enable this
 
-      # - name: Run install tests
-      #   working-directory: ./infra/scripts/build
-      #   run: |
-      #     sudo ninja install
+      - name: Run install tests
+        working-directory: ./infra/scripts/build
+        run: |
+          sudo cmake --install .
       #     cd ..
       #     mkdir example_build
       #     cmake -G ../../../cpp/examples/test_install_targets
       #     ninja
       #   env:
       #     ROW_ACCESS: matrix.access
-      #   if: matrix.tests == 'unit_test'
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
 
       - name: Compile (clang) & tests coverage
         working-directory: ./infra/scripts
@@ -176,3 +177,28 @@ jobs:
         run: |
           ./run_clang_tidy.sh
         if: matrix.tests == 'clang_tidy'
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
+      - uses: actions-rs/cargo@v1
+        with:
+          command: check
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
+      - uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -- -D warnings
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
