@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structsophus_1_1_image_traits.html" title=" " alt="" coords="5,5,157,47"/>
+<area shape="rect" id="node1" href="$structsophus_1_1_image_view.html" title="A view of an (immutable) image, which does not own the data." alt="" coords="5,39,165,80"/>
+<area shape="rect" id="node2" href="$classsophus_1_1_image.html" title="Image read&#45;only access to pixels and shared ownership, hence cheap to copy. Type is nullable." alt="" coords="213,5,388,47"/>
+<area shape="rect" id="node3" href="$classsophus_1_1_mut_image_view.html" title="View of a mutable image, which does not own the data." alt="" coords="213,71,388,112"/>
 </map>
