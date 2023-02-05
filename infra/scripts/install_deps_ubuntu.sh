@@ -18,5 +18,3 @@ sudo apt-get install \
   ninja-build
 
 pip install git+https://github.com/gcovr/gcovr.git
-
-./install_deps_common.sh

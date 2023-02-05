@@ -22,9 +22,3 @@
 [submodule "infra/ci-submodules/fmt"]
 	path = infra/ci-submodules/fmt
 	url = https://github.com/fmtlib/fmt.git
-[submodule "infra/ci-submodules/ceres-solver"]
-	path = infra/ci-submodules/ceres-solver
-	url = https://ceres-solver.googlesource.com/ceres-solver
-[submodule "infra/ci-submodules/grpc"]
-	path = infra/ci-submodules/grpc
-	url = https://github.com/grpc/grpc.git

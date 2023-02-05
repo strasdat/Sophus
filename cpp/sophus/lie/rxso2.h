@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "so2.h"
+#include "sophus/lie/so2.h"
 
 namespace sophus {
 template <class TScalar, int kOptions = 0>

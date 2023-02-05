@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+#ifdef SOPHUS_CODE_COVERAGE
 // Explicit instantiate all class templates so that all member methods
 // get compiled and for code coverage analysis.
 namespace Eigen {  // NOLINT
@@ -26,6 +27,10 @@ template class RxSo2<float, Eigen::DontAlign>;
 #if SOPHUS_CERES
 template class RxSo2<ceres::Jet<double, 3>>;
 #endif
+}  // namespace sophus
+#endif  // SOPHUS_CODE_COVERAGE
+
+namespace sophus {
 
 template <class TScalar>
 class Tests {
@@ -222,7 +227,7 @@ class Tests {
     // for non-const-map and compiles at all for const-map
     Eigen::Matrix<Scalar, 2, 1> raw3 = {Scalar(2), Scalar(0)};
     Eigen::Map<RxSo2Type> map_of_rxso2_3(raw3.data());
-    Eigen::Map<const RxSo2Type> const_map_of_rxso2_3(raw3.data());
+    Eigen::Map<RxSo2Type const> const_map_of_rxso2_3(raw3.data());
     RxSo2Type rxso2_copy3 = map_of_rxso2_3;
     const RotationMatrixType r_ref = map_of_rxso2_3.so2().matrix();
 

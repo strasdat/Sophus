@@ -5,13 +5,13 @@ set -e # exit on error
 
 cmake --version
 
-rm -rf ceres-build
+rm -rf ceres-solver-build
 
 cd ../ci-submodules
 
-mkdir ceres-build
-cd ceres-build
-cmake -G Ninja ../ceres
+mkdir ceres-solver-build
+cd ceres-solver-build
+cmake -G Ninja ../ceres-solver
 ninja
 sudo ninja install
 cd ..

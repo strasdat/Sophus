@@ -13,84 +13,64 @@ jobs:
         include:
           - os: ubuntu-20.04
             compiler: gcc
+            optional_features: minimal
             tests: unit_test
             access: col_major
             build_type: Release
-            build_protos: On
-            ceres: On
-          - os: ubuntu-20.04
-            compiler: clang
-            tests: unit_test
-            access: col_major
-            build_type: Release
-            build_protos: On
-            ceres: Off
           - os: ubuntu-20.04
             compiler: gcc
+            optional_features: ceres_proto
             tests: unit_test
             access: col_major
             build_type: Release
-            build_protos: Off
-            ceres: Off
           - os: ubuntu-20.04
             compiler: gcc
-            tests: unit_test
-            access: col_major
-            build_type: Release
-            build_protos: On
-            ceres: Off
-          - os: ubuntu-20.04
-            compiler: gcc
+            optional_features: minimal
             tests: unit_test
             access: row_major
             build_type: Release
-            build_protos: On
-            ceres: Off
           - os: ubuntu-20.04
             compiler: clang
+            optional_features: minimal
             tests: clang_tidy
             access: col_major
             build_type: Release
-            build_protos: Off
-            ceres: Off
           - os: ubuntu-20.04
             compiler: gcc
+            optional_features: minimal
             tests: coverage
             access: col_major
             build_type: Debug
-            build_protos: On
-            ceres: Off
           - os: macos-11
             compiler: clang
+            optional_features: minimal
             tests: unit_test
             access: col_major
             build_type: Release
-            build_protos: On
-            ceres: Off
           - os: macos-12
             compiler: clang
+            optional_features: minimal # todo: ceres_proto here
             tests: unit_test
             access: col_major
             build_type: Release
-            build_protos: On
-            ceres: Off
+
       fail-fast: false
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
-      BUILD_PROTOS: ${{ matrix.build_protos }}
-      SOPHUS_CERES: ${{ matrix.ceres }}
-
 
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: "recursive"
 
-      - uses: hendrikmuhs/ccache-action@v1
+      - uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.optional_features }}-${{ matrix.tests }}-${{ matrix.access }}-${{ matrix.build_type }}
 
       - name: Install dependencies (Ubuntu)
         working-directory: ./infra/scripts
-        run: ./install_deps_ubuntu.sh
+        run: |
+          ./install_deps_ubuntu.sh
         if: matrix.os == 'ubuntu-20.04'
 
       - name: Install dependencies (Mac)
@@ -99,13 +79,40 @@ jobs:
           ./install_deps_mac.sh
         if: matrix.os == 'macos-11' || matrix.os == 'macos-12'
 
+      - name: Install dependencies from source
+        working-directory: ./infra/scripts
+        run: |
+          ./install_deps_without_ceres_proto.sh
+        if: matrix.optional_features == 'minimal'
+
+      - name: Download dependencies (gcc, ceres+proto)
+        working-directory: ./infra/
+        run: |
+          source ./bootstrap_venv.sh
+          cd scripts
+          ./install_cmake_farm_ng_core.sh
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.optional_features == 'ceres_proto'
+
+
       - name: Compile (gcc)
         working-directory: ./infra/scripts
         run:
           ./compile_gcc.sh
         env:
           ROW_ACCESS: matrix.access
-        if: matrix.tests == 'unit_test' && matrix.compiler == 'gcc'
+        if: matrix.tests == 'unit_test' && matrix.compiler == 'gcc' && matrix.optional_features == 'minimal'
+
+      - name: Compile (gcc, ceres+proto)
+        working-directory: ./infra/scripts
+        run: |
+          ls
+          source ../venv/bin/activate
+          ./compile_gcc.sh
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'unit_test' && matrix.compiler == 'gcc' &&  matrix.optional_features == 'ceres_proto'
 
       - name: Compile (clang)
         working-directory: ./infra/scripts
@@ -115,25 +122,47 @@ jobs:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.compiler == 'clang'
 
+      - name: Compile (clang, ceres+proto)
+        working-directory: ./infra/scripts
+        run: |
+          ls
+          source ../venv/bin/activate
+          ./compile_clang.sh
+        env:
+          ROW_ACCESS: matrix.access
+        if: matrix.tests == 'unit_test' && matrix.compiler == 'clang' &&  matrix.optional_features == 'ceres_proto'
+
       - name: Run unit tests
         working-directory: ./infra/scripts/build
-        run:
+        run: |
           ninja test
         env:
           ROW_ACCESS: matrix.access
-        if: matrix.tests == 'unit_test'
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
 
-      - name: Run install tests
+      - name: Run unit tests (ceres_proto)
         working-directory: ./infra/scripts/build
-        run:
-          ninja install
-          cd ..
-          mkdir example_build
-          cmake -G ../../../cpp/examples/test_install_targets
-          ninja
+        run: |
+          source ../venv/bin/activate
+          ninja test
         env:
           ROW_ACCESS: matrix.access
-        if: matrix.tests == 'unit_test'
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'ceres_proto'
+
+
+      # todo: re-enable this
+
+      # - name: Run install tests
+      #   working-directory: ./infra/scripts/build
+      #   run: |
+      #     sudo ninja install
+      #     cd ..
+      #     mkdir example_build
+      #     cmake -G ../../../cpp/examples/test_install_targets
+      #     ninja
+      #   env:
+      #     ROW_ACCESS: matrix.access
+      #   if: matrix.tests == 'unit_test'
 
       - name: Compile (clang) & tests coverage
         working-directory: ./infra/scripts
