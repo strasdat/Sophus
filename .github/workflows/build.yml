@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [master, 23.04-beta]
+    branches: [main, sophus2]
   pull_request:
 
   workflow_dispatch:

@@ -22,7 +22,7 @@
 <img src="https://github.com/strasdat/Sophus/actions/workflows/sympy.yml/badge.svg"
        alt="Sympy CI Badge"/>
 </a>
-<a href="https://github.com/strasdat/Sophus//blob/23.04-beta/LICENSE">
+<a href="https://github.com/strasdat/Sophus/blob/sophus2/LICENSE.txt">
   <img src="https://img.shields.io/github/license/elangosundar/awesome-README-templates?color=2b9348"
        alt="License Badge"/>
 </a>
