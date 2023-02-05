@@ -1,12 +1,12 @@
 <map id="/home/runner/work/Sophus/Sophus/cpp/sophus/sensor/imu_model.cpp" name="/home/runner/work/Sophus/Sophus/cpp/sophus/sensor/imu_model.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="1771,5,1968,61"/>
-<area shape="rect" id="node2" href="$imu__model_8h.html" title=" " alt="" coords="1767,109,1971,136"/>
-<area shape="rect" id="node3" href="$enum_8h.html" title=" " alt="" coords="1294,184,1477,211"/>
-<area shape="rect" id="node17" href="$se3_8h.html" title=" " alt="" coords="1518,184,1645,211"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1895,5,2092,61"/>
+<area shape="rect" id="node2" href="$imu__model_8h.html" title=" " alt="" coords="1891,109,2095,136"/>
+<area shape="rect" id="node3" href="$enum_8h.html" title=" " alt="" coords="1269,184,1451,211"/>
+<area shape="rect" id="node17" href="$se3_8h.html" title=" " alt="" coords="1642,184,1769,211"/>
 <area shape="rect" id="node22" title=" " alt="" coords="1869,512,1971,539"/>
 <area shape="rect" id="node29" title=" " alt="" coords="2119,184,2187,211"/>
 <area shape="rect" id="node4" href="$common_8h.html" title=" " alt="" coords="976,587,1179,613"/>
-<area shape="rect" id="node16" title=" " alt="" coords="1284,259,1487,285"/>
+<area shape="rect" id="node16" title=" " alt="" coords="1259,259,1461,285"/>
 <area shape="rect" id="node5" title=" " alt="" coords="1319,669,1411,695"/>
 <area shape="rect" id="node6" title=" " alt="" coords="5,661,165,703"/>
 <area shape="rect" id="node7" title=" " alt="" coords="189,661,349,703"/>
@@ -18,7 +18,7 @@
 <area shape="rect" id="node13" title=" " alt="" coords="1133,669,1198,695"/>
 <area shape="rect" id="node14" title=" " alt="" coords="1223,669,1295,695"/>
 <area shape="rect" id="node15" title=" " alt="" coords="1435,669,1527,695"/>
-<area shape="rect" id="node18" href="$so3_8h.html" title=" " alt="" coords="1533,259,1590,285"/>
+<area shape="rect" id="node18" href="$so3_8h.html" title=" " alt="" coords="1498,259,1625,285"/>
 <area shape="rect" id="node19" href="$types_8h.html" title=" " alt="" coords="1200,512,1381,539"/>
 <area shape="rect" id="node20" href="$so2_8h.html" title=" " alt="" coords="1341,341,1467,367"/>
 <area shape="rect" id="node21" href="$rotation__matrix_8h.html" title=" " alt="" coords="1552,423,1715,464"/>

@@ -1,10 +1,10 @@
 <map id="/home/runner/work/Sophus/Sophus/cpp/sophus/lie/proto/conv_test.cpp" name="/home/runner/work/Sophus/Sophus/cpp/sophus/lie/proto/conv_test.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="303,5,499,61"/>
-<area shape="rect" id="node2" href="$lie_2proto_2conv_8h.html" title=" " alt="" coords="233,109,405,136"/>
-<area shape="rect" id="node29" title=" " alt="" coords="430,109,534,136"/>
-<area shape="rect" id="node3" title=" " alt="" coords="162,184,282,211"/>
-<area shape="rect" id="node4" href="$se2_8h.html" title=" " alt="" coords="224,259,351,285"/>
-<area shape="rect" id="node23" href="$se3_8h.html" title=" " alt="" coords="420,184,547,211"/>
+<area shape="rect" id="node1" title=" " alt="" coords="289,5,485,61"/>
+<area shape="rect" id="node2" href="$lie_2proto_2conv_8h.html" title=" " alt="" coords="220,109,392,136"/>
+<area shape="rect" id="node29" title=" " alt="" coords="417,109,521,136"/>
+<area shape="rect" id="node3" title=" " alt="" coords="149,184,269,211"/>
+<area shape="rect" id="node4" href="$se2_8h.html" title=" " alt="" coords="207,259,333,285"/>
+<area shape="rect" id="node23" href="$se3_8h.html" title=" " alt="" coords="415,184,541,211"/>
 <area shape="rect" id="node5" href="$so2_8h.html" title=" " alt="" coords="27,341,153,367"/>
 <area shape="rect" id="node6" title=" " alt="" coords="5,669,97,695"/>
 <area shape="rect" id="node7" href="$types_8h.html" title=" " alt="" coords="562,512,743,539"/>
@@ -23,7 +23,7 @@
 <area shape="rect" id="node18" title=" " alt="" coords="1455,669,1527,695"/>
 <area shape="rect" id="node20" title=" " alt="" coords="321,512,424,539"/>
 <area shape="rect" id="node21" title=" " alt="" coords="448,512,537,539"/>
-<area shape="rect" id="node24" href="$so3_8h.html" title=" " alt="" coords="485,259,543,285"/>
+<area shape="rect" id="node24" href="$so3_8h.html" title=" " alt="" coords="451,259,577,285"/>
 <area shape="rect" id="node25" title=" " alt="" coords="177,333,328,375"/>
 <area shape="rect" id="node26" title=" " alt="" coords="352,333,503,375"/>
 <area shape="rect" id="node27" title=" " alt="" coords="527,333,677,375"/>
