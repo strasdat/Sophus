@@ -33,7 +33,8 @@ namespace sophus {
 template <class TSequenceContainer>
 std::optional<typename TSequenceContainer::value_type> iterativeMean(
     TSequenceContainer const& foo_transforms_bar, int max_num_iterations) {
-  size_t k_matrix_dim = foo_transforms_bar.size();
+  size_t const k_matrix_dim = std::distance(
+      std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
 
   using Group = typename TSequenceContainer::value_type;
@@ -42,7 +43,7 @@ std::optional<typename TSequenceContainer::value_type> iterativeMean(
 
   // This implements the algorithm in the beginning of Sec. 4.2 in
   // ftp://ftp-sop.inria.fr/epidaure/Publications/Arsigny/arsigny_rr_biinvariant_average.pdf.
-  Group foo_transform_average = foo_transforms_bar.front();
+  Group foo_transform_average = *std::begin(foo_transforms_bar);
   Scalar w = Scalar(1. / k_matrix_dim);
   for (int i = 0; i < max_num_iterations; ++i) {
     Tangent average;
@@ -84,7 +85,7 @@ std::enable_if_t<
         Cartesian<TScalar, kPointDim> >::value,
     std::optional<typename TSequenceContainer::value_type> >
 average(TSequenceContainer const& foo_transforms_bar) {
-  size_t k_matrix_dim = std::distance(
+  size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
 
@@ -107,10 +108,10 @@ std::enable_if_t<
 average(TSequenceContainer const& foo_transforms_bar) {
   // This implements rotational part of Proposition 12 from Sec. 6.2 of
   // ftp://ftp-sop.inria.fr/epidaure/Publications/Arsigny/arsigny_rr_biinvariant_average.pdf.
-  size_t k_matrix_dim = std::distance(
+  size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
-  So2<TScalar> foo_transform_average = foo_transforms_bar.front();
+  So2<TScalar> foo_transform_average = *std::begin(foo_transforms_bar);
   TScalar w = TScalar(1. / k_matrix_dim);
 
   TScalar average(0);
@@ -129,10 +130,10 @@ std::enable_if_t<
         value,
     std::optional<typename TSequenceContainer::value_type> >
 average(TSequenceContainer const& foo_transforms_bar) {
-  size_t k_matrix_dim = std::distance(
+  size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
-  RxSo2<TScalar> foo_transform_average = foo_transforms_bar.front();
+  RxSo2<TScalar> foo_transform_average = *std::begin(foo_transforms_bar);
   TScalar w = TScalar(1. / k_matrix_dim);
 
   Eigen::Vector2<TScalar> average(TScalar(0), TScalar(0));
@@ -162,7 +163,7 @@ template <
 Eigen::Quaternion<TScalar> averageUnitQuaternion(
     TSequenceContainer const& foo_transforms_bar) {
   // This:  http://stackoverflow.com/a/27410865/1221742
-  size_t k_matrix_dim = std::distance(
+  size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
   Eigen::Matrix<TScalar, 4, Eigen::Dynamic> q(4, k_matrix_dim);
