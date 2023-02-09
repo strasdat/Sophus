@@ -12,10 +12,10 @@
 	url = https://gitlab.com/libeigen/eigen.git
 [submodule "infra/ci-submodules/farm-ng-core"]
 	path = infra/ci-submodules/farm-ng-core
-	url = git@github.com:farm-ng/farm-ng-core.git
+	url = https://github.com/farm-ng/farm-ng-core.git
 [submodule "infra/ci-submodules/farm-ng-cmake"]
 	path = infra/ci-submodules/farm-ng-cmake
-	url = git@github.com:farm-ng/farm-ng-cmake.git
+	url = https://github.com/farm-ng/farm-ng-cmake.git
 [submodule "infra/ci-submodules/expected"]
 	path = infra/ci-submodules/expected
 	url = https://github.com/TartanLlama/expected.git
@@ -24,4 +24,4 @@
 	url = https://github.com/fmtlib/fmt.git
 [submodule "sophus-rs"]
 	path = sophus-rs
-	url = git@github.com:strasdat/sophus-rs.git
+	url = https://github.com/strasdat/sophus-rs.git
