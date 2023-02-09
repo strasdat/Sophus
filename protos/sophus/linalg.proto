@@ -43,3 +43,25 @@ message Vec2I64 {
     double y = 2;
     double z = 3;
   }
+
+  message Mat2F32 {
+    Vec2F32 col_0 = 1;
+    Vec2F32 col_1 = 2;
+  }
+
+  message Mat2F64 {
+    Vec2F64 col_0 = 1;
+    Vec2F64 col_1 = 2;
+  }
+
+  message Mat3F32 {
+    Vec3F32 col_0 = 1;
+    Vec3F32 col_1 = 2;
+    Vec3F32 col_2 = 3;
+  }
+
+  message Mat3F64 {
+    Vec3F64 col_0 = 1;
+    Vec3F64 col_1 = 2;
+    Vec3F64 col_2 = 3;
+  }
