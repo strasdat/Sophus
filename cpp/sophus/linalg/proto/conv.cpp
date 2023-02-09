@@ -79,4 +79,60 @@ proto::Vec3F64 toProto(Eigen::Vector3d const& v) {
   return proto;
 }
 
+Eigen::Matrix2f fromProto(proto::Mat2F32 const& proto) {
+  Eigen::Matrix2f m;
+  m.col(0) = fromProto(proto.col_0());
+  m.col(1) = fromProto(proto.col_1());
+  return m;
+}
+proto::Mat2F32 toProto(Eigen::Matrix2f const& v) {
+  proto::Mat2F32 proto;
+  *proto.mutable_col_0() = toProto(v.col(0).eval());
+  *proto.mutable_col_1() = toProto(v.col(1).eval());
+  return proto;
+}
+
+Eigen::Matrix2d fromProto(proto::Mat2F64 const& proto) {
+  Eigen::Matrix2d m;
+  m.col(0) = fromProto(proto.col_0());
+  m.col(1) = fromProto(proto.col_1());
+  return m;
+}
+proto::Mat2F64 toProto(Eigen::Matrix2d const& v) {
+  proto::Mat2F64 proto;
+  *proto.mutable_col_0() = toProto(v.col(0).eval());
+  *proto.mutable_col_1() = toProto(v.col(1).eval());
+  return proto;
+}
+
+Eigen::Matrix3f fromProto(proto::Mat3F32 const& proto) {
+  Eigen::Matrix3f m;
+  m.col(0) = fromProto(proto.col_0());
+  m.col(1) = fromProto(proto.col_1());
+  m.col(2) = fromProto(proto.col_2());
+  return m;
+}
+proto::Mat3F32 toProto(Eigen::Matrix3f const& v) {
+  proto::Mat3F32 proto;
+  *proto.mutable_col_0() = toProto(v.col(0).eval());
+  *proto.mutable_col_1() = toProto(v.col(1).eval());
+  *proto.mutable_col_2() = toProto(v.col(2).eval());
+  return proto;
+}
+
+Eigen::Matrix3d fromProto(proto::Mat3F64 const& proto) {
+  Eigen::Matrix3d m;
+  m.col(0) = fromProto(proto.col_0());
+  m.col(1) = fromProto(proto.col_1());
+  m.col(2) = fromProto(proto.col_2());
+  return m;
+}
+proto::Mat3F64 toProto(Eigen::Matrix3d const& v) {
+  proto::Mat3F64 proto;
+  *proto.mutable_col_0() = toProto(v.col(0).eval());
+  *proto.mutable_col_1() = toProto(v.col(1).eval());
+  *proto.mutable_col_2() = toProto(v.col(2).eval());
+  return proto;
+}
+
 }  // namespace sophus

@@ -31,4 +31,16 @@ proto::Vec3F32 toProto(Eigen::Vector3f const& v);
 Eigen::Vector3d fromProto(proto::Vec3F64 const& proto);
 proto::Vec3F64 toProto(Eigen::Vector3d const& v);
 
+Eigen::Matrix2f fromProto(proto::Mat2F32 const& proto);
+proto::Mat2F32 toProto(Eigen::Matrix2f const& v);
+
+Eigen::Matrix2d fromProto(proto::Mat2F64 const& proto);
+proto::Mat2F64 toProto(Eigen::Matrix2d const& v);
+
+Eigen::Matrix3f fromProto(proto::Mat3F32 const& proto);
+proto::Mat3F32 toProto(Eigen::Matrix3f const& v);
+
+Eigen::Matrix3d fromProto(proto::Mat3F64 const& proto);
+proto::Mat3F64 toProto(Eigen::Matrix3d const& v);
+
 }  // namespace sophus
