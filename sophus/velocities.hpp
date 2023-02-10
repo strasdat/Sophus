@@ -36,7 +36,7 @@ Vector3<Scalar> transformVelocity(SE3<Scalar> const& foo_T_bar,
   return transformVelocity(foo_T_bar.so3(), vel_bar);
 }
 
-// finite difference approximation of instantanious velocity in frame foo
+// finite difference approximation of instantaneous velocity in frame foo
 //
 template <class Scalar>
 Vector3<Scalar> finiteDifferenceRotationalVelocity(
@@ -56,7 +56,7 @@ Vector3<Scalar> finiteDifferenceRotationalVelocity(
   return SO3<Scalar>::vee(W_in_frame_foo);
 }
 
-// finite difference approximation of instantanious velocity in frame foo
+// finite difference approximation of instantaneous velocity in frame foo
 //
 template <class Scalar>
 Vector3<Scalar> finiteDifferenceRotationalVelocity(

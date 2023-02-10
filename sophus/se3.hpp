@@ -271,11 +271,11 @@ class SE3Base {
   /// ``o`` a 3-column vector of zeros.
   ///
   SOPHUS_FUNC Transformation matrix() const {
-    Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<3, 4>() = matrix3x4();
-    homogenious_matrix.row(3) =
+    Transformation homogeneous_matrix;
+    homogeneous_matrix.template topLeftCorner<3, 4>() = matrix3x4();
+    homogeneous_matrix.row(3) =
         Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0), Scalar(0), Scalar(1));
-    return homogenious_matrix;
+    return homogeneous_matrix;
   }
 
   /// Returns the significant first three rows of the matrix above.

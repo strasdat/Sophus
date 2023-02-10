@@ -174,11 +174,11 @@ class Sim2Base {
   /// translation 2-vector and ``o`` a 2-column vector of zeros.
   ///
   SOPHUS_FUNC Transformation matrix() const {
-    Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<2, 3>() = matrix2x3();
-    homogenious_matrix.row(2) =
+    Transformation homogeneous_matrix;
+    homogeneous_matrix.template topLeftCorner<2, 3>() = matrix2x3();
+    homogeneous_matrix.row(2) =
         Matrix<Scalar, 3, 1>(Scalar(0), Scalar(0), Scalar(1));
-    return homogenious_matrix;
+    return homogeneous_matrix;
   }
 
   /// Returns the significant first two rows of the matrix above.
@@ -368,7 +368,7 @@ class Sim2Base {
   ///
   SOPHUS_FUNC void setScale(Scalar const& scale) { rxso2().setScale(scale); }
 
-  /// Setter of complexnumber using scaled rotation matrix ``sR``.
+  /// Setter of complex number using scaled rotation matrix ``sR``.
   ///
   /// Precondition: The 2x2 matrix must be "scaled orthogonal"
   ///               and have a positive determinant.
@@ -726,7 +726,7 @@ template <class Scalar, int Options>
 SOPHUS_FUNC Sim2<Scalar, Options>::Sim2()
     : translation_(TranslationMember::Zero()) {
   static_assert(std::is_standard_layout<Sim2>::value,
-                "Assume standard layout for the use of offsetof check below.");
+                "Assume standard layout for the use of offset of check below.");
   static_assert(
       offsetof(Sim2, rxso2_) + sizeof(Scalar) * RxSO2<Scalar>::num_parameters ==
           offsetof(Sim2, translation_),
