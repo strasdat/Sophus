@@ -212,11 +212,11 @@ class SE2Base {
   /// ``o`` a 2-column vector of zeros.
   ///
   SOPHUS_FUNC Transformation matrix() const {
-    Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<2, 3>() = matrix2x3();
-    homogenious_matrix.row(2) =
+    Transformation homogeneous_matrix;
+    homogeneous_matrix.template topLeftCorner<2, 3>() = matrix2x3();
+    homogeneous_matrix.row(2) =
         Matrix<Scalar, 1, 3>(Scalar(0), Scalar(0), Scalar(1));
-    return homogenious_matrix;
+    return homogeneous_matrix;
   }
 
   /// Returns the significant first two rows of the matrix above.
@@ -479,14 +479,14 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   /// normalized.
   ///
   SOPHUS_FUNC Scalar* data() {
-    // so2_ and translation_ are layed out sequentially with no padding
+    // so2_ and translation_ are lay out sequentially with no padding
     return so2_.data();
   }
 
   /// Const version of data() above.
   ///
   SOPHUS_FUNC Scalar const* data() const {
-    /// so2_ and translation_ are layed out sequentially with no padding
+    /// so2_ and translation_ are lay out sequentially with no padding
     return so2_.data();
   }
 
@@ -779,7 +779,7 @@ template <class Scalar, int Options>
 SOPHUS_FUNC SE2<Scalar, Options>::SE2()
     : translation_(TranslationMember::Zero()) {
   static_assert(std::is_standard_layout<SE2>::value,
-                "Assume standard layout for the use of offsetof check below.");
+                "Assume standard layout for the use of offset of check below.");
   static_assert(
       offsetof(SE2, so2_) + sizeof(Scalar) * SO2<Scalar>::num_parameters ==
           offsetof(SE2, translation_),

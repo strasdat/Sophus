@@ -113,7 +113,7 @@ class TestQuaternion(unittest.TestCase):
         self.a = Quaternion(x, u)
         self.b = Quaternion(y, v)
 
-    def test_muliplications(self):
+    def test_multiplications(self):
         product = self.a * self.a.inv()
         self.assertEqual(product.simplify(),
                          Quaternion.identity())

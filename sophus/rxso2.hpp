@@ -347,7 +347,7 @@ class RxSO2Base {
                   "Scale factor must be greater-equal epsilon.");
     SOPHUS_ENSURE(z.squaredNorm() < Scalar(1.) / (Constants<Scalar>::epsilon() *
                                                   Constants<Scalar>::epsilon()),
-                  "Inverse scale factor must be greate-equal epsilon.");
+                  "Inverse scale factor must be greater-equal epsilon.");
     static_cast<Derived*>(this)->complex_nonconst() = z;
   }
 
@@ -512,7 +512,7 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
 
   /// Constructor from complex number.
   ///
-  /// Precondition: complex number must not be close to either zero or inifnity.
+  /// Precondition: complex number must not be close to either zero or infinity.
   ///
   SOPHUS_FUNC explicit RxSO2(Scalar const& real, Scalar const& imag)
       : RxSO2(Vector2<Scalar>(real, imag)) {}

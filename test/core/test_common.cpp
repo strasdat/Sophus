@@ -16,7 +16,7 @@ bool testSmokeDetails() {
   std::cout << details::pretty(Vector2f(1, 2)) << std::endl;
   bool dummy = true;
   details::testFailed(dummy, "dummyFunc", "dummyFile", 99,
-                      "This is just a pratice alarm!");
+                      "This is just a practice alarm!");
   SOPHUS_TEST_EQUAL(passed, dummy, false, "");
 
   double val = transpose(42.0);

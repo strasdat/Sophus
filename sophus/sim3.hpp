@@ -176,11 +176,11 @@ class Sim3Base {
   /// translation 3-vector and ``o`` a 3-column vector of zeros.
   ///
   SOPHUS_FUNC Transformation matrix() const {
-    Transformation homogenious_matrix;
-    homogenious_matrix.template topLeftCorner<3, 4>() = matrix3x4();
-    homogenious_matrix.row(3) =
+    Transformation homogeneous_matrix;
+    homogeneous_matrix.template topLeftCorner<3, 4>() = matrix3x4();
+    homogeneous_matrix.row(3) =
         Matrix<Scalar, 4, 1>(Scalar(0), Scalar(0), Scalar(0), Scalar(1));
-    return homogenious_matrix;
+    return homogeneous_matrix;
   }
 
   /// Returns the significant first three rows of the matrix above.
@@ -769,7 +769,7 @@ template <class Scalar, int Options>
 SOPHUS_FUNC Sim3<Scalar, Options>::Sim3()
     : translation_(TranslationMember::Zero()) {
   static_assert(std::is_standard_layout<Sim3>::value,
-                "Assume standard layout for the use of offsetof check below.");
+                "Assume standard layout for the use of offset of check below.");
   static_assert(
       offsetof(Sim3, rxso3_) + sizeof(Scalar) * RxSO3<Scalar>::num_parameters ==
           offsetof(Sim3, translation_),

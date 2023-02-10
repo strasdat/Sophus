@@ -298,7 +298,7 @@ class RxSO3Base {
   /// Group action on lines.
   ///
   /// This function rotates a parametrized line ``l(t) = o + t * d`` by the SO3
-  /// element ans scales it by the scale factor:
+  /// element and scales it by the scale factor:
   ///
   /// Origin ``o`` is rotated and scaled
   /// Direction ``d`` is rotated (preserving it's norm)
@@ -643,7 +643,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
   /// plus logarithm of scale) and returns the corresponding element of the
   /// group RxSO3.
   ///
-  /// To be more specific, thixs function computes ``expmat(hat(omega))``
+  /// To be more specific, this function computes ``expmat(hat(omega))``
   /// with ``expmat(.)`` being the matrix exponential and ``hat(.)`` being the
   /// hat()-operator of RSO3.
   ///
@@ -667,7 +667,7 @@ class RxSO3 : public RxSO3Base<RxSO3<Scalar_, Options>> {
     Vector3<Scalar> const omega = a.template head<3>();
     Scalar sigma = a[3];
     Scalar scale = exp(sigma);
-    // Ensure that scale-factor contraint is always valid
+    // Ensure that scale-factor constraint is always valid
     scale = max(scale, Constants<Scalar>::epsilonPlus());
     scale = min(scale, Scalar(1.) / Constants<Scalar>::epsilonPlus());
     Scalar sqrt_scale = sqrt(scale);
