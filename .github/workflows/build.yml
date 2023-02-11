@@ -202,3 +202,12 @@ jobs:
           command: clippy
           args: -- -D warnings
         if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
+      - name: maturin
+        run: |
+            cd sophus-rs/pysophus/
+            python3 -m venv .env
+            source .env/bin/activate
+            pip3 install maturin
+            maturin develop
+            python3 -m test_pysophus
+        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
