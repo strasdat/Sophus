@@ -1,0 +1,6 @@
+<map id="sophus::DynImage&lt; TPredicate, TAllocator &gt;" name="sophus::DynImage&lt; TPredicate, TAllocator &gt;">
+<area shape="rect" id="node1" title="Type&#45;erased image with shared ownership, and read&#45;only access to pixels. Type is nullable." alt="" coords="57,185,288,227"/>
+<area shape="rect" id="node2" href="$classsophus_1_1_dyn_image_view.html" title=" " alt="" coords="83,95,262,136"/>
+<area shape="rect" id="node3" href="$structsophus_1_1_pixel_format.html" title=" " alt="" coords="5,5,159,32"/>
+<area shape="rect" id="node4" href="$classsophus_1_1_image_layout.html" title="Layout of the image: width, height and pitch in bytes." alt="" coords="183,5,344,32"/>
+</map>

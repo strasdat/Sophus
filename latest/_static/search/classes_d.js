@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['uninittag_1104',['UninitTag',['../structsophus_1_1_uninit_tag.html',1,'sophus']]],
-  ['uniquedataareadeleter_1105',['UniqueDataAreaDeleter',['../structsophus_1_1_unique_data_area_deleter.html',1,'sophus']]],
-  ['unitvector_1106',['UnitVector',['../classsophus_1_1_unit_vector.html',1,'sophus']]]
+  ['tangentandtheta_1103',['TangentAndTheta',['../structsophus_1_1_so3_base_1_1_tangent_and_theta.html',1,'sophus::So3Base&lt; TDerived &gt;::TangentAndTheta'],['../structsophus_1_1_rx_so3_base_1_1_tangent_and_theta.html',1,'sophus::RxSo3Base&lt; TDerived &gt;::TangentAndTheta']]],
+  ['testgraphfunctor_1104',['TestGraphFunctor',['../structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor.html',1,'sophus::LieGroupCeresTests']]],
+  ['testliegroupcostfunctor_1105',['TestLieGroupCostFunctor',['../structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor.html',1,'sophus::LieGroupCeresTests']]],
+  ['testpointcostfunctor_1106',['TestPointCostFunctor',['../structsophus_1_1_lie_group_ceres_tests_1_1_test_point_cost_functor.html',1,'sophus::LieGroupCeresTests']]],
+  ['tests_1107',['Tests',['../classsophus_1_1_tests.html',1,'sophus']]]
 ];

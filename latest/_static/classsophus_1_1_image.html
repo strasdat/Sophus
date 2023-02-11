@@ -113,7 +113,7 @@ Collaboration diagram for sophus::Image&lt; TPixel, TAllocator &gt;:</div>
 <map name="sophus_1_1_image_3_01_t_pixel_00_01_t_allocator_01_4_coll__map" id="sophus_1_1_image_3_01_t_pixel_00_01_t_allocator_01_4_coll__map">
 <area shape="rect" title="Image read&#45;only access to pixels and shared ownership, hence cheap to copy. Type is nullable." alt="" coords="5,185,180,227"/>
 <area shape="rect" href="structsophus_1_1_image_view.html" title="A view of an (immutable) image, which does not own the data." alt="" coords="13,95,173,136"/>
-<area shape="rect" href="classsophus_1_1_image_shape.html" title="Shape of image: width, height and pitch in bytes." alt="" coords="14,5,171,32"/>
+<area shape="rect" href="classsophus_1_1_image_layout.html" title="Layout of the image: width, height and pitch in bytes." alt="" coords="12,5,173,32"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -134,9 +134,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac2e2480739a582d0bdb0a5360c43d7d3 inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#ac2e2480739a582d0bdb0a5360c43d7d3">ImageView</a> ()=default</td></tr>
 <tr class="memdesc:ac2e2480739a582d0bdb0a5360c43d7d3 inherit pub_methods_structsophus_1_1_image_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor creates an empty image.  <a href="structsophus_1_1_image_view.html#ac2e2480739a582d0bdb0a5360c43d7d3">More...</a><br /></td></tr>
 <tr class="separator:ac2e2480739a582d0bdb0a5360c43d7d3 inherit pub_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19f110c25cb862f1d15f65fb7ff1f695 inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a19f110c25cb862f1d15f65fb7ff1f695">ImageView</a> (<a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a> <a class="el" href="structsophus_1_1_image_view.html#a46ebaa9fd38c3216576b8fae690b3b9b">shape</a>, TPixel const *<a class="el" href="structsophus_1_1_image_view.html#ab89ef317eebaf3a71f15d7a723ea01a3">ptr</a>) noexcept</td></tr>
-<tr class="memdesc:a19f110c25cb862f1d15f65fb7ff1f695 inherit pub_methods_structsophus_1_1_image_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates view from shape and pointer to first pixel.  <a href="structsophus_1_1_image_view.html#a19f110c25cb862f1d15f65fb7ff1f695">More...</a><br /></td></tr>
-<tr class="separator:a19f110c25cb862f1d15f65fb7ff1f695 inherit pub_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaee2c7c116f2e8c9880449b32b9ae876 inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#aaee2c7c116f2e8c9880449b32b9ae876">ImageView</a> (<a class="el" href="classsophus_1_1_image_layout.html">ImageLayout</a> <a class="el" href="structsophus_1_1_image_view.html#a84cec4ba5294c33051c139684d6aef2c">layout</a>, TPixel const *<a class="el" href="structsophus_1_1_image_view.html#ab89ef317eebaf3a71f15d7a723ea01a3">ptr</a>) noexcept</td></tr>
+<tr class="memdesc:aaee2c7c116f2e8c9880449b32b9ae876 inherit pub_methods_structsophus_1_1_image_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates view from layout and pointer to first pixel.  <a href="structsophus_1_1_image_view.html#aaee2c7c116f2e8c9880449b32b9ae876">More...</a><br /></td></tr>
+<tr class="separator:aaee2c7c116f2e8c9880449b32b9ae876 inherit pub_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a419a7e560d60fee8d436bc9a95069304 inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a419a7e560d60fee8d436bc9a95069304">ImageView</a> (<a class="el" href="structsophus_1_1_image_size.html">sophus::ImageSize</a> image_size, TPixel const *<a class="el" href="structsophus_1_1_image_view.html#ab89ef317eebaf3a71f15d7a723ea01a3">ptr</a>) noexcept</td></tr>
 <tr class="memdesc:a419a7e560d60fee8d436bc9a95069304 inherit pub_methods_structsophus_1_1_image_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates view from image size and pointer to first pixel. The image is assumed to be contiguous and the pitch is set accordingly.  <a href="structsophus_1_1_image_view.html#a419a7e560d60fee8d436bc9a95069304">More...</a><br /></td></tr>
 <tr class="separator:a419a7e560d60fee8d436bc9a95069304 inherit pub_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,9 +149,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aad892d6f77fa63451e76624713b24908 inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structsophus_1_1_image_size.html">sophus::ImageSize</a> const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#aad892d6f77fa63451e76624713b24908">imageSize</a> () const</td></tr>
 <tr class="memdesc:aad892d6f77fa63451e76624713b24908 inherit pub_methods_structsophus_1_1_image_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <a class="el" href="structsophus_1_1_image_size.html" title="Image size, hence its width and height.">ImageSize</a>. It is {0,0} if view is empty.  <a href="structsophus_1_1_image_view.html#aad892d6f77fa63451e76624713b24908">More...</a><br /></td></tr>
 <tr class="separator:aad892d6f77fa63451e76624713b24908 inherit pub_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46ebaa9fd38c3216576b8fae690b3b9b inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a> const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a46ebaa9fd38c3216576b8fae690b3b9b">shape</a> () const</td></tr>
-<tr class="memdesc:a46ebaa9fd38c3216576b8fae690b3b9b inherit pub_methods_structsophus_1_1_image_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <a class="el" href="classsophus_1_1_image_shape.html" title="Shape of image: width, height and pitch in bytes.">ImageShape</a>. It is {{0,0}, 0} is view is empty.  <a href="structsophus_1_1_image_view.html#a46ebaa9fd38c3216576b8fae690b3b9b">More...</a><br /></td></tr>
-<tr class="separator:a46ebaa9fd38c3216576b8fae690b3b9b inherit pub_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84cec4ba5294c33051c139684d6aef2c inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsophus_1_1_image_layout.html">ImageLayout</a> const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a84cec4ba5294c33051c139684d6aef2c">layout</a> () const</td></tr>
+<tr class="memdesc:a84cec4ba5294c33051c139684d6aef2c inherit pub_methods_structsophus_1_1_image_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <a class="el" href="classsophus_1_1_image_layout.html" title="Layout of the image: width, height and pitch in bytes.">ImageLayout</a>. It is {{0,0}, 0} is view is empty.  <a href="structsophus_1_1_image_view.html#a84cec4ba5294c33051c139684d6aef2c">More...</a><br /></td></tr>
+<tr class="separator:a84cec4ba5294c33051c139684d6aef2c inherit pub_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac719f68b41c8af953d6ebc239192ceeb inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#ac719f68b41c8af953d6ebc239192ceeb">width</a> () const</td></tr>
 <tr class="separator:ac719f68b41c8af953d6ebc239192ceeb inherit pub_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4aa4a7d41508c32e464bce5e36260945 inherit pub_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a4aa4a7d41508c32e464bce5e36260945">height</a> () const</td></tr>
@@ -223,22 +223,22 @@ Friends</h2></td></tr>
 <tr class="memitem:a4ce2ed4ae226bc4176a383dad39f4c65"><td class="memTemplParams" colspan="2">template&lt;class TT , class TAllocator2T &gt; </td></tr>
 <tr class="memitem:a4ce2ed4ae226bc4176a383dad39f4c65"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_image.html#a4ce2ed4ae226bc4176a383dad39f4c65">MutImage</a></td></tr>
 <tr class="separator:a4ce2ed4ae226bc4176a383dad39f4c65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf4a9eb31ba6e40ca3f5b5bfc621fe19"><td class="memTemplParams" colspan="2">template&lt;class TPredicate , class TAllocator2T &gt; </td></tr>
-<tr class="memitem:acf4a9eb31ba6e40ca3f5b5bfc621fe19"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_image.html#acf4a9eb31ba6e40ca3f5b5bfc621fe19">RuntimeImage</a></td></tr>
-<tr class="separator:acf4a9eb31ba6e40ca3f5b5bfc621fe19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b0da67e36b81011be2654f729e85fde"><td class="memTemplParams" colspan="2">template&lt;class TPredicate , class TAllocator2T &gt; </td></tr>
+<tr class="memitem:a8b0da67e36b81011be2654f729e85fde"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_image.html#a8b0da67e36b81011be2654f729e85fde">DynImage</a></td></tr>
+<tr class="separator:a8b0da67e36b81011be2654f729e85fde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_types_structsophus_1_1_image_view"><td colspan="2" onclick="javascript:toggleInherit('pub_types_structsophus_1_1_image_view')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView&lt; TPixel &gt;</a></td></tr>
-<tr class="memitem:a824084f4aff167459313deffc016842b inherit pub_types_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a824084f4aff167459313deffc016842b">PixelType</a> = TPixel</td></tr>
-<tr class="separator:a824084f4aff167459313deffc016842b inherit pub_types_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a796465b2b3cdeb4f7cfa811ad0aa7865 inherit pub_types_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a796465b2b3cdeb4f7cfa811ad0aa7865">pixelFormat</a> = TPixel</td></tr>
+<tr class="separator:a796465b2b3cdeb4f7cfa811ad0aa7865 inherit pub_types_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_structsophus_1_1_image_view"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_structsophus_1_1_image_view')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView&lt; TPixel &gt;</a></td></tr>
 <tr class="memitem:a528bbadf7c273703e3b2d3aac877152b inherit pro_methods_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a528bbadf7c273703e3b2d3aac877152b">setViewToEmpty</a> ()</td></tr>
 <tr class="memdesc:a528bbadf7c273703e3b2d3aac877152b inherit pro_methods_structsophus_1_1_image_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets view such that it is empty.  <a href="structsophus_1_1_image_view.html#a528bbadf7c273703e3b2d3aac877152b">More...</a><br /></td></tr>
 <tr class="separator:a528bbadf7c273703e3b2d3aac877152b inherit pro_methods_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_structsophus_1_1_image_view"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_structsophus_1_1_image_view')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView&lt; TPixel &gt;</a></td></tr>
-<tr class="memitem:a5fdbe7864c510048142e9af82735d501 inherit pro_attribs_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a5fdbe7864c510048142e9af82735d501">shape_</a> = {}</td></tr>
-<tr class="separator:a5fdbe7864c510048142e9af82735d501 inherit pro_attribs_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32d6fe59a260afeac795cd3fa42f7ea0 inherit pro_attribs_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsophus_1_1_image_layout.html">ImageLayout</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a32d6fe59a260afeac795cd3fa42f7ea0">layout_</a> = {}</td></tr>
+<tr class="separator:a32d6fe59a260afeac795cd3fa42f7ea0 inherit pro_attribs_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a771ec00e4928adc63935e2f3d456ff2d inherit pro_attribs_structsophus_1_1_image_view"><td class="memItemLeft" align="right" valign="top">TPixel const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a771ec00e4928adc63935e2f3d456ff2d">ptr_</a> = nullptr</td></tr>
 <tr class="separator:a771ec00e4928adc63935e2f3d456ff2d inherit pro_attribs_structsophus_1_1_image_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -247,7 +247,7 @@ Additional Inherited Members</h2></td></tr>
 class sophus::Image&lt; TPixel, TAllocator &gt;</h3>
 
 <p><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable. </p>
-<p><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> has close interop with <a class="el" href="classsophus_1_1_runtime_image.html" title="Type-erased image with shared ownership, and read-only access to pixels. Type is nullable.">RuntimeImage</a> (see below). </p>
+<p><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> has close interop with <a class="el" href="classsophus_1_1_dyn_image.html" title="Type-erased image with shared ownership, and read-only access to pixels. Type is nullable.">DynImage</a> (see below). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="adbf39891ae54c71294480898616620d4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adbf39891ae54c71294480898616620d4">&#9670;&nbsp;</a></span>Image() <span class="overload">[1/2]</span></h2>
@@ -534,6 +534,32 @@ template&lt;class TPixel , class TAllocator  = Eigen::aligned_allocator&lt;uint8
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a id="a8b0da67e36b81011be2654f729e85fde"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b0da67e36b81011be2654f729e85fde">&#9670;&nbsp;</a></span>DynImage</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TPixel , class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;class TPredicate , class TAllocator2T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class <a class="el" href="classsophus_1_1_dyn_image.html">DynImage</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a4ce2ed4ae226bc4176a383dad39f4c65"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4ce2ed4ae226bc4176a383dad39f4c65">&#9670;&nbsp;</a></span>MutImage</h2>
 
@@ -549,32 +575,6 @@ template&lt;class TT , class TAllocator2T &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">friend class <a class="el" href="classsophus_1_1_mut_image.html">MutImage</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acf4a9eb31ba6e40ca3f5b5bfc621fe19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf4a9eb31ba6e40ca3f5b5bfc621fe19">&#9670;&nbsp;</a></span>RuntimeImage</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class TPixel , class TAllocator  = Eigen::aligned_allocator&lt;uint8_t&gt;&gt; </div>
-<div class="memtemplate">
-template&lt;class TPredicate , class TAllocator2T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classsophus_1_1_runtime_image.html">RuntimeImage</a></td>
         </tr>
       </table>
   </td>

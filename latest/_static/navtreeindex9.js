@@ -1,5 +1,9 @@
 var NAVTREEINDEX9 =
 {
+"structsophus_1_1_random_3_01double_01_4.html#ac23bafe8cde842a5d77bd4cfa4c48319":[1,0,2,52,0],
+"structsophus_1_1_ray_1_1_intersection_result.html":[1,0,2,53,0],
+"structsophus_1_1_ray_1_1_intersection_result.html#a9ce0d1178f6fca7312f81bcdfaa81076":[1,0,2,53,0,1],
+"structsophus_1_1_ray_1_1_intersection_result.html#abae246c8beae35a7de3180fc69cdebae":[1,0,2,53,0,0],
 "structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html":[1,0,2,57,0],
 "structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html#a9cd51308087585edd31c71da7582d40f":[1,0,2,57,0,0],
 "structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html#ab1a6265b258f43d17fdf56edfe0d0805":[1,0,2,57,0,1],
@@ -37,8 +41,8 @@ var NAVTREEINDEX9 =
 "structsophus_1_1_variant_image_predicate.html":[1,0,2,78],
 "structsophus_1_1_variant_image_predicate.html#ae6e63f8dd415842f666d70ebad667126":[1,0,2,78,0],
 "structsophus_1_1detail_1_1_visit_impl.html":[1,0,2,0,0],
-"structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variant_3_01_t_pixel_type_01_4_01_4.html":[1,0,2,0,1],
-"structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_runtime_image_00_01std_1_1variantd1b0535b64a9f6bf4c89f566d1fd48eb.html":[1,0,2,0,2],
+"structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_01_t_pixel_format_01_4_01_4.html":[1,0,2,0,1],
+"structsophus_1_1detail_1_1_visit_impl_3_01_t_user_func_00_01_t_dyn_image_00_01std_1_1variant_3_0d99d88b250f274dea348c380a7d77c77.html":[1,0,2,0,2],
 "structsophus_1_1jet__helpers_1_1_get_value.html":[1,0,2,1,0],
 "structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4.html":[1,0,2,1,1],
 "test__macros_8h.html":[2,0,0,0,2,8],
