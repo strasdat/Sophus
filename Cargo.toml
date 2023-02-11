@@ -2,4 +2,5 @@
 
 members = [
     "sophus-rs",
+    "sophus-rs/pysophus",
 ]
