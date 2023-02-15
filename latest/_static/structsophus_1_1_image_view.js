@@ -1,8 +1,8 @@
 var structsophus_1_1_image_view =
 [
-    [ "pixelFormat", "structsophus_1_1_image_view.html#a796465b2b3cdeb4f7cfa811ad0aa7865", null ],
+    [ "PixelType", "structsophus_1_1_image_view.html#a824084f4aff167459313deffc016842b", null ],
     [ "ImageView", "structsophus_1_1_image_view.html#ac2e2480739a582d0bdb0a5360c43d7d3", null ],
-    [ "ImageView", "structsophus_1_1_image_view.html#aaee2c7c116f2e8c9880449b32b9ae876", null ],
+    [ "ImageView", "structsophus_1_1_image_view.html#a19f110c25cb862f1d15f65fb7ff1f695", null ],
     [ "ImageView", "structsophus_1_1_image_view.html#a419a7e560d60fee8d436bc9a95069304", null ],
     [ "colInBounds", "structsophus_1_1_image_view.html#a62b279caff31b08bfcff294e1518fd07", null ],
     [ "hasSameData", "structsophus_1_1_image_view.html#a2b9537ef883c762342bc956a4bbcad35", null ],
@@ -10,7 +10,6 @@ var structsophus_1_1_image_view =
     [ "imageSize", "structsophus_1_1_image_view.html#aad892d6f77fa63451e76624713b24908", null ],
     [ "isContiguous", "structsophus_1_1_image_view.html#a97bf64cfd7432518442b0f54262f56f7", null ],
     [ "isEmpty", "structsophus_1_1_image_view.html#ae44579c06f0dc6c89c960b153c076ed9", null ],
-    [ "layout", "structsophus_1_1_image_view.html#a84cec4ba5294c33051c139684d6aef2c", null ],
     [ "operator!=", "structsophus_1_1_image_view.html#a17ad6c4e80f27ebb8be855b1e8a602ca", null ],
     [ "operator()", "structsophus_1_1_image_view.html#ab3b810f571b1244b8f5d35f238988f2d", null ],
     [ "operator()", "structsophus_1_1_image_view.html#a3e116afdd86a62284215e1083cbb26c1", null ],
@@ -21,12 +20,13 @@ var structsophus_1_1_image_view =
     [ "rowInBounds", "structsophus_1_1_image_view.html#ab9be65c29efe027adc8669484dc1ef96", null ],
     [ "rowPtr", "structsophus_1_1_image_view.html#ac2fd0caae912334d8cfba0152ea2eda0", null ],
     [ "setViewToEmpty", "structsophus_1_1_image_view.html#a528bbadf7c273703e3b2d3aac877152b", null ],
+    [ "shape", "structsophus_1_1_image_view.html#a46ebaa9fd38c3216576b8fae690b3b9b", null ],
     [ "shortCircuitReduce", "structsophus_1_1_image_view.html#a8fc012bee1f58e9fd976125a216fc650", null ],
     [ "subview", "structsophus_1_1_image_view.html#a198df907fecd7103724f1ffd02f8310c", null ],
     [ "visit", "structsophus_1_1_image_view.html#a2355eb158506aafc762a7a057975c13b", null ],
     [ "width", "structsophus_1_1_image_view.html#ac719f68b41c8af953d6ebc239192ceeb", null ],
     [ "Image", "structsophus_1_1_image_view.html#aa23aef019ecf57e2829e8cca09a1e48a", null ],
     [ "MutImage", "structsophus_1_1_image_view.html#a4ce2ed4ae226bc4176a383dad39f4c65", null ],
-    [ "layout_", "structsophus_1_1_image_view.html#a32d6fe59a260afeac795cd3fa42f7ea0", null ],
-    [ "ptr_", "structsophus_1_1_image_view.html#a771ec00e4928adc63935e2f3d456ff2d", null ]
+    [ "ptr_", "structsophus_1_1_image_view.html#a771ec00e4928adc63935e2f3d456ff2d", null ],
+    [ "shape_", "structsophus_1_1_image_view.html#a5fdbe7864c510048142e9af82735d501", null ]
 ];

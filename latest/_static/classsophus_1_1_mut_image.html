@@ -105,9 +105,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aff11bde815c8bf95a68ab688ffbeeac7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#aff11bde815c8bf95a68ab688ffbeeac7">MutImage</a> ()</td></tr>
 <tr class="memdesc:aff11bde815c8bf95a68ab688ffbeeac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs empty image.  <a href="classsophus_1_1_mut_image.html#aff11bde815c8bf95a68ab688ffbeeac7">More...</a><br /></td></tr>
 <tr class="separator:aff11bde815c8bf95a68ab688ffbeeac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b88973369a4a718e496ec7db057fbd3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a5b88973369a4a718e496ec7db057fbd3">MutImage</a> (<a class="el" href="classsophus_1_1_image_layout.html">ImageLayout</a> layout)</td></tr>
-<tr class="memdesc:a5b88973369a4a718e496ec7db057fbd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates new image with given layout.  <a href="classsophus_1_1_mut_image.html#a5b88973369a4a718e496ec7db057fbd3">More...</a><br /></td></tr>
-<tr class="separator:a5b88973369a4a718e496ec7db057fbd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05b303ab1d7359883b7e2b16eadcb05d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a05b303ab1d7359883b7e2b16eadcb05d">MutImage</a> (<a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a> shape)</td></tr>
+<tr class="memdesc:a05b303ab1d7359883b7e2b16eadcb05d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates new image with given shape.  <a href="classsophus_1_1_mut_image.html#a05b303ab1d7359883b7e2b16eadcb05d">More...</a><br /></td></tr>
+<tr class="separator:a05b303ab1d7359883b7e2b16eadcb05d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26b47c4be42c8024ef299a7672b0312d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a26b47c4be42c8024ef299a7672b0312d">MutImage</a> (<a class="el" href="structsophus_1_1_image_size.html">sophus::ImageSize</a> size)</td></tr>
 <tr class="memdesc:a26b47c4be42c8024ef299a7672b0312d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates new contiguous image with given size.  <a href="classsophus_1_1_mut_image.html#a26b47c4be42c8024ef299a7672b0312d">More...</a><br /></td></tr>
 <tr class="separator:a26b47c4be42c8024ef299a7672b0312d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,9 +166,9 @@ Friends</h2></td></tr>
 <tr class="memitem:aa23aef019ecf57e2829e8cca09a1e48a"><td class="memTemplParams" colspan="2">template&lt;class TT , class TAllocator2T &gt; </td></tr>
 <tr class="memitem:aa23aef019ecf57e2829e8cca09a1e48a"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#aa23aef019ecf57e2829e8cca09a1e48a">Image</a></td></tr>
 <tr class="separator:aa23aef019ecf57e2829e8cca09a1e48a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55cd6024eb3f50eb0e2186b64b43ef3b"><td class="memTemplParams" colspan="2">template&lt;class TPredicate , class TAllocator2T &gt; </td></tr>
-<tr class="memitem:a55cd6024eb3f50eb0e2186b64b43ef3b"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a55cd6024eb3f50eb0e2186b64b43ef3b">MutDynImage</a></td></tr>
-<tr class="separator:a55cd6024eb3f50eb0e2186b64b43ef3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46d286b57975ee851ec6d09b802c2e2e"><td class="memTemplParams" colspan="2">template&lt;class TPredicate , class TAllocator2T &gt; </td></tr>
+<tr class="memitem:a46d286b57975ee851ec6d09b802c2e2e"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsophus_1_1_mut_image.html#a46d286b57975ee851ec6d09b802c2e2e">MutRuntimeImage</a></td></tr>
+<tr class="separator:a46d286b57975ee851ec6d09b802c2e2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class TPixel, class TAllocator = Eigen::aligned_allocator&lt;uint8_t&gt;&gt;<br />
@@ -207,8 +207,8 @@ template&lt;class TPixel , class TAllocator  = Eigen::aligned_allocator&lt;uint8
 
 </div>
 </div>
-<a id="a5b88973369a4a718e496ec7db057fbd3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b88973369a4a718e496ec7db057fbd3">&#9670;&nbsp;</a></span>MutImage() <span class="overload">[2/5]</span></h2>
+<a id="a05b303ab1d7359883b7e2b16eadcb05d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05b303ab1d7359883b7e2b16eadcb05d">&#9670;&nbsp;</a></span>MutImage() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -221,8 +221,8 @@ template&lt;class TPixel , class TAllocator  = Eigen::aligned_allocator&lt;uint8
         <tr>
           <td class="memname"><a class="el" href="classsophus_1_1_mut_image.html">sophus::MutImage</a>&lt; TPixel, TAllocator &gt;::<a class="el" href="classsophus_1_1_mut_image.html">MutImage</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classsophus_1_1_image_layout.html">ImageLayout</a>&#160;</td>
-          <td class="paramname"><em>layout</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classsophus_1_1_image_shape.html">ImageShape</a>&#160;</td>
+          <td class="paramname"><em>shape</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -233,8 +233,8 @@ template&lt;class TPixel , class TAllocator  = Eigen::aligned_allocator&lt;uint8
 </table>
 </div><div class="memdoc">
 
-<p>Creates new image with given layout. </p>
-<p>If layout is not empty, memory allocation will happen. </p>
+<p>Creates new image with given shape. </p>
+<p>If shape is not empty, memory allocation will happen. </p>
 
 </div>
 </div>
@@ -265,7 +265,7 @@ template&lt;class TPixel , class TAllocator  = Eigen::aligned_allocator&lt;uint8
 </div><div class="memdoc">
 
 <p>Creates new contiguous image with given size. </p>
-<p>If layout is not empty, memory allocation will happen. </p>
+<p>If shape is not empty, memory allocation will happen. </p>
 
 </div>
 </div>
@@ -685,8 +685,8 @@ template&lt;class TT , class TAllocator2T &gt; </div>
 
 </div>
 </div>
-<a id="a55cd6024eb3f50eb0e2186b64b43ef3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55cd6024eb3f50eb0e2186b64b43ef3b">&#9670;&nbsp;</a></span>MutDynImage</h2>
+<a id="a46d286b57975ee851ec6d09b802c2e2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46d286b57975ee851ec6d09b802c2e2e">&#9670;&nbsp;</a></span>MutRuntimeImage</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -699,7 +699,7 @@ template&lt;class TPredicate , class TAllocator2T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">friend class <a class="el" href="classsophus_1_1_mut_dyn_image.html">MutDynImage</a></td>
+          <td class="memname">friend class <a class="el" href="classsophus_1_1_mut_runtime_image.html">MutRuntimeImage</a></td>
         </tr>
       </table>
   </td>

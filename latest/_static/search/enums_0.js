@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['segmentcase_1965',['SegmentCase',['../namespacesophus.html#afd307b8cdfbe9c85d3a252b5860aefaf',1,'sophus']]]
+  ['segmentcase_1962',['SegmentCase',['../namespacesophus.html#afd307b8cdfbe9c85d3a252b5860aefaf',1,'sophus']]]
 ];

@@ -1,0 +1,4 @@
+<map id="sophus::So3Base&lt; TDerived &gt;" name="sophus::So3Base&lt; TDerived &gt;">
+<area shape="rect" id="node1" title="So3 base type &#45; implements So3 class but is storage agnostic." alt="" coords="5,5,227,32"/>
+<area shape="rect" id="node2" href="$class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html" title="Specialization of Eigen::Map for So3; derived from So3Base." alt="" coords="9,80,223,121"/>
+</map>

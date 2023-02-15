@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['kannalabrandtk3transform_1009',['KannalaBrandtK3Transform',['../classsophus_1_1_kannala_brandt_k3_transform.html',1,'sophus']]]
+  ['liegroupcerestests_1006',['LieGroupCeresTests',['../structsophus_1_1_lie_group_ceres_tests.html',1,'sophus']]],
+  ['liegrouptests_1007',['LieGroupTests',['../classsophus_1_1_lie_group_tests.html',1,'sophus']]]
 ];
