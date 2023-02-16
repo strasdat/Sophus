@@ -7,7 +7,7 @@ var classsophus_1_1_region =
     [ "clamp", "classsophus_1_1_region.html#ad29ab18df0ab709d403845382a93c6de", null ],
     [ "contains", "classsophus_1_1_region.html#a106e7c860e0b56fa6e98713851e1b291", null ],
     [ "encloseCast", "classsophus_1_1_region.html#a9e077d076a99091ad196d52c848f754a", null ],
-    [ "extend", "classsophus_1_1_region.html#af9cbcc2acd7700b53ac5d02b2b0d6917", null ],
+    [ "extend", "classsophus_1_1_region.html#a14faed4864af91d7475663aea71c06b5", null ],
     [ "extend", "classsophus_1_1_region.html#a08ff3553e83a04d7b30753a318fe3ac7", null ],
     [ "getElem", "classsophus_1_1_region.html#a05cceaa89df91b80061470445fb46c07", null ],
     [ "isDegenerated", "classsophus_1_1_region.html#abc6729dfc695b1e78450426b1957bad1", null ],

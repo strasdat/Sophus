@@ -20,5 +20,5 @@ var searchData=
   ['expandtheta_158',['expAndTheta',['../classsophus_1_1_rx_so3.html#a68b1b9c33fa9ca4c2128bb440fb13edc',1,'sophus::RxSo3::expAndTheta()'],['../classsophus_1_1_so3.html#af01edb65fc7e7a891b59248a0755989a',1,'sophus::So3::expAndTheta()']]],
   ['explogtest_159',['expLogTest',['../classsophus_1_1_lie_group_tests.html#ad3f06fdd325041da01944c8c1b1b9398',1,'sophus::LieGroupTests']]],
   ['expmaptest_160',['expMapTest',['../classsophus_1_1_lie_group_tests.html#a8a6134db20da92794e5bac99de352039',1,'sophus::LieGroupTests']]],
-  ['extend_161',['extend',['../classsophus_1_1_region.html#af9cbcc2acd7700b53ac5d02b2b0d6917',1,'sophus::Region::extend(Region const &amp;other) noexcept'],['../classsophus_1_1_region.html#a08ff3553e83a04d7b30753a318fe3ac7',1,'sophus::Region::extend(TPoint const &amp;point) noexcept']]]
+  ['extend_161',['extend',['../classsophus_1_1_region.html#a14faed4864af91d7475663aea71c06b5',1,'sophus::Region::extend(Region const &amp;other) noexcept'],['../classsophus_1_1_region.html#a08ff3553e83a04d7b30753a318fe3ac7',1,'sophus::Region::extend(TPoint const &amp;point) noexcept']]]
 ];
