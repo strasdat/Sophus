@@ -1,8 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"structsophus_1_1_runtime_pixel_type.html#aa1125958bbd71adbdec80c645b638e5e":[1,0,2,54,4],
-"structsophus_1_1_runtime_pixel_type.html#abd4be6b75076e4519a3efb8193de4bd8":[1,0,2,54,0],
-"structsophus_1_1_runtime_pixel_type.html#ac6144684e49dac401391e56a46935325":[1,0,2,54,3],
 "structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html":[1,0,2,57,0],
 "structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html#a9cd51308087585edd31c71da7582d40f":[1,0,2,57,0,0],
 "structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html#ab1a6265b258f43d17fdf56edfe0d0805":[1,0,2,57,0,1],
