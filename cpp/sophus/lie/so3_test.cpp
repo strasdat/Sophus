@@ -22,8 +22,7 @@ template class Map<sophus::So3<double> const>;
 
 namespace sophus {
 
-template class So3<double, Eigen::AutoAlign>;
-template class So3<float, Eigen::DontAlign>;
+template class So3<double>;
 #if SOPHUS_CERES
 template class So3<ceres::Jet<double, 3>>;
 #endif
