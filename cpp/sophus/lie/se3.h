@@ -14,13 +14,13 @@
 #include "sophus/lie/so3.h"
 
 namespace sophus {
-template <class TScalar, int kOptions = 0>
+template <class TScalar>
 class Se3;
 using Se3F64 = Se3<double>;
 using Se3F32 = Se3<float>;
 
-template <class TScalar, int kOptions = 0>
-/* [[deprecated]] */ using SE3 = Se3<TScalar, kOptions>;
+template <class TScalar>
+/* [[deprecated]] */ using SE3 = Se3<TScalar>;
 /* [[deprecated]] */ using SE3d = Se3F64;
 /* [[deprecated]] */ using SE3f = Se3F32;
 }  // namespace sophus
@@ -28,27 +28,26 @@ template <class TScalar, int kOptions = 0>
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class TScalar, int kOptions>
-struct traits<sophus::Se3<TScalar, kOptions>> {
+template <class TScalar>
+struct traits<sophus::Se3<TScalar>> {
   using Scalar = TScalar;
-  using TranslationType = Eigen::Matrix<Scalar, 3, 1, kOptions>;
-  using So3Type = sophus::So3<Scalar, kOptions>;
+  using TranslationType = Eigen::Matrix<Scalar, 3, 1>;
+  using So3Type = sophus::So3<Scalar>;
 };
 
-template <class TScalar, int kOptions>
-struct traits<Map<sophus::Se3<TScalar>, kOptions>>
-    : traits<sophus::Se3<TScalar, kOptions>> {
+template <class TScalar>
+struct traits<Map<sophus::Se3<TScalar>>> : traits<sophus::Se3<TScalar>> {
   using Scalar = TScalar;
-  using TranslationType = Map<Eigen::Vector3<Scalar>, kOptions>;
-  using So3Type = Map<sophus::So3<Scalar>, kOptions>;
+  using TranslationType = Map<Eigen::Vector3<Scalar>>;
+  using So3Type = Map<sophus::So3<Scalar>>;
 };
 
-template <class TScalar, int kOptions>
-struct traits<Map<sophus::Se3<TScalar> const, kOptions>>
-    : traits<sophus::Se3<TScalar, kOptions> const> {
+template <class TScalar>
+struct traits<Map<sophus::Se3<TScalar> const>>
+    : traits<sophus::Se3<TScalar> const> {
   using Scalar = TScalar;
-  using TranslationType = Map<Eigen::Vector3<Scalar> const, kOptions>;
-  using So3Type = Map<sophus::So3<Scalar> const, kOptions>;
+  using TranslationType = Map<Eigen::Vector3<Scalar> const>;
+  using So3Type = Map<sophus::So3<Scalar> const>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -485,9 +484,9 @@ class Se3Base {
 };
 
 /// Se3 using default storage; derived from Se3Base.
-template <class TScalar, int kOptions>
-class Se3 : public Se3Base<Se3<TScalar, kOptions>> {
-  using Base = Se3Base<Se3<TScalar, kOptions>>;
+template <class TScalar>
+class Se3 : public Se3Base<Se3<TScalar>> {
+  using Base = Se3Base<Se3<TScalar>>;
 
  public:
   static int constexpr kDoF = Base::kDoF;
@@ -499,8 +498,8 @@ class Se3 : public Se3Base<Se3<TScalar, kOptions>> {
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using SO3Member = So3<Scalar, kOptions>;
-  using TranslationMember = Eigen::Matrix<Scalar, 3, 1, kOptions>;
+  using SO3Member = So3<Scalar>;
+  using TranslationMember = Eigen::Matrix<Scalar, 3, 1>;
 
   using Base::operator=;
 
@@ -1114,9 +1113,8 @@ class Se3 : public Se3Base<Se3<TScalar, kOptions>> {
   TranslationMember translation_;  // NOLINT
 };
 
-template <class TScalar, int kOptions>
-SOPHUS_FUNC Se3<TScalar, kOptions>::Se3()
-    : translation_(TranslationMember::Zero()) {
+template <class TScalar>
+SOPHUS_FUNC Se3<TScalar>::Se3() : translation_(TranslationMember::Zero()) {
   static_assert(
       std::is_standard_layout<Se3>::value,
       "Assume standard layout for the use of offsetof check below.");
@@ -1135,11 +1133,11 @@ namespace Eigen {  // NOLINT
 /// Specialization of Eigen::Map for ``Se3``; derived from Se3Base.
 ///
 /// Allows us to wrap Se3 objects around POD array.
-template <class TScalar, int kOptions>
-class Map<sophus::Se3<TScalar>, kOptions>
-    : public sophus::Se3Base<Map<sophus::Se3<TScalar>, kOptions>> {
+template <class TScalar>
+class Map<sophus::Se3<TScalar>>
+    : public sophus::Se3Base<Map<sophus::Se3<TScalar>>> {
  public:
-  using Base = sophus::Se3Base<Map<sophus::Se3<TScalar>, kOptions>>;
+  using Base = sophus::Se3Base<Map<sophus::Se3<TScalar>>>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -1157,41 +1155,40 @@ class Map<sophus::Se3<TScalar>, kOptions>
 
   /// Mutator of So3
   ///
-  SOPHUS_FUNC Map<sophus::So3<Scalar>, kOptions>& so3() { return so3_; }
+  SOPHUS_FUNC Map<sophus::So3<Scalar>>& so3() { return so3_; }
 
   /// Accessor of So3
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<sophus::So3<Scalar>, kOptions> const& so3()
-      const {
+  SOPHUS_FUNC [[nodiscard]] Map<sophus::So3<Scalar>> const& so3() const {
     return so3_;
   }
 
   /// Mutator of translation vector
   ///
-  SOPHUS_FUNC Map<Eigen::Matrix<Scalar, 3, 1, kOptions>>& translation() {
+  SOPHUS_FUNC Map<Eigen::Matrix<Scalar, 3, 1>>& translation() {
     return translation_;
   }
 
   /// Accessor of translation vector
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Matrix<Scalar, 3, 1, kOptions>> const&
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Matrix<Scalar, 3, 1>> const&
   translation() const {
     return translation_;
   }
 
  protected:
-  Map<sophus::So3<Scalar>, kOptions> so3_;             // NOLINT
-  Map<Eigen::Vector3<Scalar>, kOptions> translation_;  // NOLINT
+  Map<sophus::So3<Scalar>> so3_;             // NOLINT
+  Map<Eigen::Vector3<Scalar>> translation_;  // NOLINT
 };
 
 /// Specialization of Eigen::Map for ``Se3 const``; derived from Se3Base.
 ///
 /// Allows us to wrap Se3 objects around POD array.
-template <class TScalar, int kOptions>
-class Map<sophus::Se3<TScalar> const, kOptions>
-    : public sophus::Se3Base<Map<sophus::Se3<TScalar> const, kOptions>> {
+template <class TScalar>
+class Map<sophus::Se3<TScalar> const>
+    : public sophus::Se3Base<Map<sophus::Se3<TScalar> const>> {
  public:
-  using Base = sophus::Se3Base<Map<sophus::Se3<TScalar> const, kOptions>>;
+  using Base = sophus::Se3Base<Map<sophus::Se3<TScalar> const>>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -1208,20 +1205,19 @@ class Map<sophus::Se3<TScalar> const, kOptions>
 
   /// Accessor of So3
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<sophus::So3<Scalar> const, kOptions> const&
-  so3() const {
+  SOPHUS_FUNC [[nodiscard]] Map<sophus::So3<Scalar> const> const& so3() const {
     return so3_;
   }
 
   /// Accessor of translation vector
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector3<Scalar> const, kOptions> const&
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector3<Scalar> const> const&
   translation() const {
     return translation_;
   }
 
  protected:
-  Map<sophus::So3<Scalar> const, kOptions> so3_;             // NOLINT
-  Map<Eigen::Vector3<Scalar> const, kOptions> translation_;  // NOLINT
+  Map<sophus::So3<Scalar> const> so3_;             // NOLINT
+  Map<Eigen::Vector3<Scalar> const> translation_;  // NOLINT
 };
 }  // namespace Eigen

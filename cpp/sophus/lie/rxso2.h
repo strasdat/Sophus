@@ -14,13 +14,13 @@
 #include "sophus/lie/so2.h"
 
 namespace sophus {
-template <class TScalar, int kOptions = 0>
+template <class TScalar>
 class RxSo2;
 using RxSo2F64 = RxSo2<double>;
 using RxSo2F32 = RxSo2<float>;
 
-template <class TScalar, int kOptions = 0>
-/* [[deprecated]] */ using RxSO2 = RxSo2<TScalar, kOptions>;
+template <class TScalar>
+/* [[deprecated]] */ using RxSO2 = RxSo2<TScalar>;
 /* [[deprecated]] */ using RxSO2d = RxSo2F64;
 /* [[deprecated]] */ using RxSO2f = RxSo2F32;
 }  // namespace sophus
@@ -28,27 +28,23 @@ template <class TScalar, int kOptions = 0>
 namespace Eigen {  // NOLINT
 namespace internal {
 
-template <class TScalar, int kOptionsT>
-struct traits<sophus::RxSo2<TScalar, kOptionsT>> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<sophus::RxSo2<TScalar>> {
   using Scalar = TScalar;
-  using ComplexType = Eigen::Matrix<Scalar, 2, 1, kOptions>;
+  using ComplexType = Eigen::Matrix<Scalar, 2, 1>;
 };
 
-template <class TScalar, int kOptionsT>
-struct traits<Map<sophus::RxSo2<TScalar>, kOptionsT>>
-    : traits<sophus::RxSo2<TScalar, kOptionsT>> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<Map<sophus::RxSo2<TScalar>>> : traits<sophus::RxSo2<TScalar>> {
   using Scalar = TScalar;
-  using ComplexType = Map<Eigen::Vector2<Scalar>, kOptions>;
+  using ComplexType = Map<Eigen::Vector2<Scalar>>;
 };
 
-template <class TScalar, int kOptionsT>
-struct traits<Map<sophus::RxSo2<TScalar> const, kOptionsT>>
-    : traits<sophus::RxSo2<TScalar, kOptionsT> const> {
-  static int constexpr kOptions = kOptionsT;
+template <class TScalar>
+struct traits<Map<sophus::RxSo2<TScalar> const>>
+    : traits<sophus::RxSo2<TScalar> const> {
   using Scalar = TScalar;
-  using ComplexType = Map<Eigen::Vector2<Scalar> const, kOptions>;
+  using ComplexType = Map<Eigen::Vector2<Scalar> const>;
 };
 }  // namespace internal
 }  // namespace Eigen
@@ -91,10 +87,9 @@ namespace sophus {
 template <class TDerived>
 class RxSo2Base {
  public:
-  static int constexpr kOptions = Eigen::internal::traits<TDerived>::kOptions;
   using Scalar = typename Eigen::internal::traits<TDerived>::Scalar;
   using ComplexType = typename Eigen::internal::traits<TDerived>::ComplexType;
-  using ComplexTemporaryType = Eigen::Matrix<Scalar, 2, 1, kOptions>;
+  using ComplexTemporaryType = Eigen::Matrix<Scalar, 2, 1>;
 
   /// Degrees of freedom of manifold, number of dimensions in tangent space
   /// (one for rotation and one for scaling).
@@ -453,20 +448,20 @@ class RxSo2Base {
 };
 
 /// RxSo2 using storage; derived from RxSo2Base.
-template <class TScalar, int kOptions>
-class RxSo2 : public RxSo2Base<RxSo2<TScalar, kOptions>> {
+template <class TScalar>
+class RxSo2 : public RxSo2Base<RxSo2<TScalar>> {
  public:
-  using Base = RxSo2Base<RxSo2<TScalar, kOptions>>;
+  using Base = RxSo2Base<RxSo2<TScalar>>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
   using Tangent = typename Base::Tangent;
   using Adjoint = typename Base::Adjoint;
-  using ComplexMember = Eigen::Matrix<Scalar, 2, 1, kOptions>;
+  using ComplexMember = Eigen::Matrix<Scalar, 2, 1>;
 
   /// ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
-  friend class RxSo2Base<RxSo2<TScalar, kOptions>>;
+  friend class RxSo2Base<RxSo2<TScalar>>;
 
   using Base::operator=;
 
@@ -729,10 +724,10 @@ namespace Eigen {  // NOLINT
 ///
 /// Allows us to wrap RxSo2 objects around POD array (e.g. external z style
 /// complex).
-template <class TScalar, int kOptions>
-class Map<sophus::RxSo2<TScalar>, kOptions>
-    : public sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>, kOptions>> {
-  using Base = sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>, kOptions>>;
+template <class TScalar>
+class Map<sophus::RxSo2<TScalar>>
+    : public sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>>> {
+  using Base = sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>>>;
 
  public:
   using Scalar = TScalar;
@@ -743,7 +738,7 @@ class Map<sophus::RxSo2<TScalar>, kOptions>
   using Adjoint = typename Base::Adjoint;
 
   /// ``Base`` is friend so complex_nonconst can be accessed from ``Base``.
-  friend class sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>, kOptions>>;
+  friend class sophus::RxSo2Base<Map<sophus::RxSo2<TScalar>>>;
 
   using Base::operator=;
   using Base::operator*=;
@@ -753,28 +748,25 @@ class Map<sophus::RxSo2<TScalar>, kOptions>
 
   /// Accessor of complex.
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector2<Scalar>, kOptions> const&
-  complex() const {
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector2<Scalar>> const& complex() const {
     return complex_;
   }
 
  protected:
-  SOPHUS_FUNC Map<Eigen::Vector2<Scalar>, kOptions>& mutComplex() {
-    return complex_;
-  }
+  SOPHUS_FUNC Map<Eigen::Vector2<Scalar>>& mutComplex() { return complex_; }
 
-  Map<Eigen::Vector2<Scalar>, kOptions> complex_;  // NOLINT
+  Map<Eigen::Vector2<Scalar>> complex_;  // NOLINT
 };
 
 /// Specialization of Eigen::Map for ``RxSo2 const``; derived from  RxSo2Base.
 ///
 /// Allows us to wrap RxSo2 objects around POD array (e.g. external z style
 /// complex).
-template <class TScalar, int kOptions>
-class Map<sophus::RxSo2<TScalar> const, kOptions>
-    : public sophus::RxSo2Base<Map<sophus::RxSo2<TScalar> const, kOptions>> {
+template <class TScalar>
+class Map<sophus::RxSo2<TScalar> const>
+    : public sophus::RxSo2Base<Map<sophus::RxSo2<TScalar> const>> {
  public:
-  using Base = sophus::RxSo2Base<Map<sophus::RxSo2<TScalar> const, kOptions>>;
+  using Base = sophus::RxSo2Base<Map<sophus::RxSo2<TScalar> const>>;
   using Scalar = TScalar;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -790,12 +782,12 @@ class Map<sophus::RxSo2<TScalar> const, kOptions>
 
   /// Accessor of complex.
   ///
-  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector2<Scalar> const, kOptions> const&
-  complex() const {
+  SOPHUS_FUNC [[nodiscard]] Map<Eigen::Vector2<Scalar> const> const& complex()
+      const {
     return complex_;
   }
 
  protected:
-  Map<Eigen::Vector2<Scalar> const, kOptions> complex_;  // NOLINT
+  Map<Eigen::Vector2<Scalar> const> complex_;  // NOLINT
 };
 }  // namespace Eigen

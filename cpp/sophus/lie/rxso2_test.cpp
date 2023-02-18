@@ -21,8 +21,7 @@ template class Map<sophus::RxSo2<double> const>;
 
 namespace sophus {
 
-template class RxSo2<double, Eigen::AutoAlign>;
-template class RxSo2<float, Eigen::DontAlign>;
+template class RxSo2<double>;
 #if SOPHUS_CERES
 template class RxSo2<ceres::Jet<double, 3>>;
 #endif

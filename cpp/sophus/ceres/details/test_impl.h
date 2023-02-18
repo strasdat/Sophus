@@ -86,7 +86,7 @@ struct Random<double> {
   }
 };
 
-template <template <class, int = 0> class TLieGroup>
+template <template <class> class TLieGroup>
 struct LieGroupCeresTests {
   template <class TScalar>
   using LieGroup = TLieGroup<TScalar>;
