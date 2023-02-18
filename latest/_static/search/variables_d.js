@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['quaternion_5f_1714',['quaternion_',['../classsophus_1_1_rx_so3.html#a81c0adb9a225138dcc1d687e84712428',1,'sophus::RxSo3::quaternion_()'],['../class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html#a8bb97205ee81b128d047245735659611',1,'Eigen::Map&lt; sophus::RxSo3&lt; TScalar &gt;, kOptions &gt;::quaternion_()'],['../class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html#abd35cfc2cb6744e830f00ef0eaea7035',1,'Eigen::Map&lt; sophus::RxSo3&lt; TScalar &gt; const, kOptions &gt;::quaternion_()']]]
+  ['quaternion_5f_1708',['quaternion_',['../classsophus_1_1_rx_so3.html#a4e7aa2253eb3ffde44c929073db5dbdb',1,'sophus::RxSo3::quaternion_()'],['../class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_01_4.html#a05d55b21b33fbe3b9cc9c96fbc3569e1',1,'Eigen::Map&lt; sophus::RxSo3&lt; TScalar &gt; &gt;::quaternion_()'],['../class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_01const_01_4.html#adde9130155db9b890525ab761c41e50d',1,'Eigen::Map&lt; sophus::RxSo3&lt; TScalar &gt; const &gt;::quaternion_()']]]
 ];

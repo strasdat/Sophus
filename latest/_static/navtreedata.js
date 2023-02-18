@@ -61,15 +61,15 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "affine_8h.html",
-"class_eigen_1_1_map_3_01sophus_1_1_sim2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html#a5239048ffdb6ea44e3ae5ca4fb0bebca",
-"classsophus_1_1_image.html",
-"classsophus_1_1_rx_so2.html#a0c0e721f9e77557e49f67b226ed808a0",
-"classsophus_1_1_se3_base.html#a9cf14294d1e9d85077f6c44b6f9ed76d",
-"classsophus_1_1_so3_base.html#a6aff5d115c13f44957867b32eb508e7a",
-"geometry_2proto_2conv_8h.html#a772748663456abf8e3522a2d0d387363",
-"linalg_2proto_2conv_8cpp.html#abee2c4e1d012091e909c071f4df830f1",
-"runtime__image__types__test_8cpp.html",
-"structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html"
+"class_eigen_1_1_map_3_01sophus_1_1_se3_3_01_t_scalar_01_4_01const_01_4.html#a97d8df551e8b8e44518c454e933f22d6",
+"classsophus_1_1_cartesian.html#a0a6862fdfbdc7c0fa64dbf7239883562",
+"classsophus_1_1_region.html#abef1a730bb630cbf7a6a23ae58e0af9b",
+"classsophus_1_1_se3.html#a37d8c4b16b618dd1b2148c80a9a4c70b",
+"classsophus_1_1_so2_base.html#abab9df782e9f19f5390a411c492a8035",
+"functions_func_v.html",
+"lie_2proto_2conv_8h.html#a90a7827af954ec079a513a4ecbc56770",
+"region_8h.html#a3f22b418fdfd8fb2c23805ace103dd43",
+"structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor.html#a552864592f839eaad050aac3c3ee905c"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

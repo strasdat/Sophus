@@ -104,8 +104,8 @@ Public Types</h2></td></tr>
 <tr class="separator:a63dba15248e81c29f64a99e3ff49e075"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c1286fb003b9c0722d1b0349bfa6b6b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so2_base.html#a1c1286fb003b9c0722d1b0349bfa6b6b">ComplexT</a> = typename Eigen::internal::traits&lt; TDerived &gt;::ComplexType</td></tr>
 <tr class="separator:a1c1286fb003b9c0722d1b0349bfa6b6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acad06d4ad161ac8cccf92ce91cebb87e"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so2_base.html#acad06d4ad161ac8cccf92ce91cebb87e">ComplexTemporaryType</a> = Eigen::Matrix&lt; <a class="el" href="classsophus_1_1_so2_base.html#a63dba15248e81c29f64a99e3ff49e075">Scalar</a>, 2, 1, <a class="el" href="classsophus_1_1_so2_base.html#aead9ccb77a2ac09d2ed7c72d0766f67a">kOptions</a> &gt;</td></tr>
-<tr class="separator:acad06d4ad161ac8cccf92ce91cebb87e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdcf3b368991ecba3f3d1c5777401191"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so2_base.html#abdcf3b368991ecba3f3d1c5777401191">ComplexTemporaryType</a> = Eigen::Matrix&lt; <a class="el" href="classsophus_1_1_so2_base.html#a63dba15248e81c29f64a99e3ff49e075">Scalar</a>, 2, 1 &gt;</td></tr>
+<tr class="separator:abdcf3b368991ecba3f3d1c5777401191"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a495c192e4a8aaedce0db4767daed2a2d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so2_base.html#a495c192e4a8aaedce0db4767daed2a2d">Transformation</a> = Eigen::Matrix&lt; <a class="el" href="classsophus_1_1_so2_base.html#a63dba15248e81c29f64a99e3ff49e075">Scalar</a>, <a class="el" href="classsophus_1_1_so2_base.html#aee3fc2389ca7d0f656315c08718af083">kMatrixDim</a>, <a class="el" href="classsophus_1_1_so2_base.html#aee3fc2389ca7d0f656315c08718af083">kMatrixDim</a> &gt;</td></tr>
 <tr class="separator:a495c192e4a8aaedce0db4767daed2a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c04487968d947b32f008032feb02bf5"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so2_base.html#a4c04487968d947b32f008032feb02bf5">Point</a> = Eigen::Vector2&lt; <a class="el" href="classsophus_1_1_so2_base.html#a63dba15248e81c29f64a99e3ff49e075">Scalar</a> &gt;</td></tr>
@@ -205,8 +205,6 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:aead9ccb77a2ac09d2ed7c72d0766f67a"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so2_base.html#aead9ccb77a2ac09d2ed7c72d0766f67a">kOptions</a> = Eigen::internal::traits&lt;TDerived&gt;::kOptions</td></tr>
-<tr class="separator:aead9ccb77a2ac09d2ed7c72d0766f67a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54e1d1ee13387e0d840917b99ab02b50"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so2_base.html#a54e1d1ee13387e0d840917b99ab02b50">kDoF</a> = 1</td></tr>
 <tr class="memdesc:a54e1d1ee13387e0d840917b99ab02b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Degrees of freedom of manifold, number of dimensions in tangent space (one since we only have in-plane rotations).  <a href="classsophus_1_1_so2_base.html#a54e1d1ee13387e0d840917b99ab02b50">More...</a><br /></td></tr>
 <tr class="separator:a54e1d1ee13387e0d840917b99ab02b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -264,8 +262,8 @@ template&lt;class TDerived &gt; </div>
 
 </div>
 </div>
-<a id="acad06d4ad161ac8cccf92ce91cebb87e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acad06d4ad161ac8cccf92ce91cebb87e">&#9670;&nbsp;</a></span>ComplexTemporaryType</h2>
+<a id="abdcf3b368991ecba3f3d1c5777401191"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abdcf3b368991ecba3f3d1c5777401191">&#9670;&nbsp;</a></span>ComplexTemporaryType</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,7 +271,7 @@ template&lt;class TDerived &gt; </div>
 template&lt;class TDerived &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classsophus_1_1_so2_base.html">sophus::So2Base</a>&lt; TDerived &gt;::<a class="el" href="classsophus_1_1_so2_base.html#acad06d4ad161ac8cccf92ce91cebb87e">ComplexTemporaryType</a> =  Eigen::Matrix&lt;<a class="el" href="classsophus_1_1_so2_base.html#a63dba15248e81c29f64a99e3ff49e075">Scalar</a>, 2, 1, <a class="el" href="classsophus_1_1_so2_base.html#aead9ccb77a2ac09d2ed7c72d0766f67a">kOptions</a>&gt;</td>
+          <td class="memname">using <a class="el" href="classsophus_1_1_so2_base.html">sophus::So2Base</a>&lt; TDerived &gt;::<a class="el" href="classsophus_1_1_so2_base.html#abdcf3b368991ecba3f3d1c5777401191">ComplexTemporaryType</a> =  Eigen::Matrix&lt;<a class="el" href="classsophus_1_1_so2_base.html#a63dba15248e81c29f64a99e3ff49e075">Scalar</a>, 2, 1&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1158,30 +1156,6 @@ template&lt;class TDerived &gt; </div>
 </div><div class="memdoc">
 
 <p>Number of internal parameters used (complex numbers are a tuples). </p>
-
-</div>
-</div>
-<a id="aead9ccb77a2ac09d2ed7c72d0766f67a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aead9ccb77a2ac09d2ed7c72d0766f67a">&#9670;&nbsp;</a></span>kOptions</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class TDerived &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr int <a class="el" href="classsophus_1_1_so2_base.html">sophus::So2Base</a>&lt; TDerived &gt;::kOptions = Eigen::internal::traits&lt;TDerived&gt;::kOptions</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
 
 </div>
 </div>

@@ -99,15 +99,6 @@ $(document).ready(function(){initNavTree('classsophus_1_1_so3_base.html',''); in
  <a href="classsophus_1_1_so3_base.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="so3_8h_source.html">so3.h</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for sophus::So3Base&lt; TDerived &gt;:</div>
-<div class="dyncontent">
-<div class="center"><img src="classsophus_1_1_so3_base__inherit__graph.png" border="0" usemap="#sophus_1_1_so3_base_3_01_t_derived_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="sophus_1_1_so3_base_3_01_t_derived_01_4_inherit__map" id="sophus_1_1_so3_base_3_01_t_derived_01_4_inherit__map">
-<area shape="rect" title="So3 base type &#45; implements So3 class but is storage agnostic." alt="" coords="5,5,227,32"/>
-<area shape="rect" href="class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html" title="Specialization of Eigen::Map for So3; derived from So3Base." alt="" coords="9,80,223,121"/>
-</map>
-<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -120,8 +111,8 @@ Public Types</h2></td></tr>
 <tr class="separator:a172a037d6b9be7845456725c5341eafc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3111dd13bce754067e7843e76c47d923"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so3_base.html#a3111dd13bce754067e7843e76c47d923">QuaternionType</a> = typename Eigen::internal::traits&lt; TDerived &gt;::<a class="el" href="classsophus_1_1_so3_base.html#a3111dd13bce754067e7843e76c47d923">QuaternionType</a></td></tr>
 <tr class="separator:a3111dd13bce754067e7843e76c47d923"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a430722e27328faa888309c95a753032c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so3_base.html#a430722e27328faa888309c95a753032c">QuaternionTemporaryType</a> = Eigen::Quaternion&lt; <a class="el" href="classsophus_1_1_so3_base.html#a172a037d6b9be7845456725c5341eafc">Scalar</a>, <a class="el" href="classsophus_1_1_so3_base.html#a73a49e5530d358ff97141c348de1ea30">kOptions</a> &gt;</td></tr>
-<tr class="separator:a430722e27328faa888309c95a753032c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a567c98ad1972082068cb874da2f9fecf"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so3_base.html#a567c98ad1972082068cb874da2f9fecf">QuaternionTemporaryType</a> = Eigen::Quaternion&lt; <a class="el" href="classsophus_1_1_so3_base.html#a172a037d6b9be7845456725c5341eafc">Scalar</a> &gt;</td></tr>
+<tr class="separator:a567c98ad1972082068cb874da2f9fecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6aff5d115c13f44957867b32eb508e7a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so3_base.html#a6aff5d115c13f44957867b32eb508e7a">Transformation</a> = Eigen::Matrix&lt; <a class="el" href="classsophus_1_1_so3_base.html#a172a037d6b9be7845456725c5341eafc">Scalar</a>, <a class="el" href="classsophus_1_1_so3_base.html#afb7025aa64a4c0bdc069b475c124a13c">kMatrixDim</a>, <a class="el" href="classsophus_1_1_so3_base.html#afb7025aa64a4c0bdc069b475c124a13c">kMatrixDim</a> &gt;</td></tr>
 <tr class="separator:a6aff5d115c13f44957867b32eb508e7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7dec4ecdc70c5f8172265387290d832d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so3_base.html#a7dec4ecdc70c5f8172265387290d832d">Point</a> = Eigen::Vector3&lt; <a class="el" href="classsophus_1_1_so3_base.html#a172a037d6b9be7845456725c5341eafc">Scalar</a> &gt;</td></tr>
@@ -242,8 +233,6 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a73a49e5530d358ff97141c348de1ea30"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so3_base.html#a73a49e5530d358ff97141c348de1ea30">kOptions</a> = Eigen::internal::traits&lt;TDerived&gt;::kOptions</td></tr>
-<tr class="separator:a73a49e5530d358ff97141c348de1ea30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd9969a7dab85529d25616eb665f51b3"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_so3_base.html#afd9969a7dab85529d25616eb665f51b3">kDoF</a> = 3</td></tr>
 <tr class="memdesc:afd9969a7dab85529d25616eb665f51b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Degrees of freedom of group, number of dimensions in tangent space.  <a href="classsophus_1_1_so3_base.html#afd9969a7dab85529d25616eb665f51b3">More...</a><br /></td></tr>
 <tr class="separator:afd9969a7dab85529d25616eb665f51b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -383,8 +372,8 @@ template&lt;class TPointDerived &gt; </div>
 
 </div>
 </div>
-<a id="a430722e27328faa888309c95a753032c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a430722e27328faa888309c95a753032c">&#9670;&nbsp;</a></span>QuaternionTemporaryType</h2>
+<a id="a567c98ad1972082068cb874da2f9fecf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a567c98ad1972082068cb874da2f9fecf">&#9670;&nbsp;</a></span>QuaternionTemporaryType</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -392,7 +381,7 @@ template&lt;class TPointDerived &gt; </div>
 template&lt;class TDerived &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classsophus_1_1_so3_base.html">sophus::So3Base</a>&lt; TDerived &gt;::<a class="el" href="classsophus_1_1_so3_base.html#a430722e27328faa888309c95a753032c">QuaternionTemporaryType</a> =  Eigen::Quaternion&lt;<a class="el" href="classsophus_1_1_so3_base.html#a172a037d6b9be7845456725c5341eafc">Scalar</a>, <a class="el" href="classsophus_1_1_so3_base.html#a73a49e5530d358ff97141c348de1ea30">kOptions</a>&gt;</td>
+          <td class="memname">using <a class="el" href="classsophus_1_1_so3_base.html">sophus::So3Base</a>&lt; TDerived &gt;::<a class="el" href="classsophus_1_1_so3_base.html#a567c98ad1972082068cb874da2f9fecf">QuaternionTemporaryType</a> =  Eigen::Quaternion&lt;<a class="el" href="classsophus_1_1_so3_base.html#a172a037d6b9be7845456725c5341eafc">Scalar</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1361,30 +1350,6 @@ template&lt;class TDerived &gt; </div>
 </div><div class="memdoc">
 
 <p>Number of internal parameters used (quaternion is a 4-tuple). </p>
-
-</div>
-</div>
-<a id="a73a49e5530d358ff97141c348de1ea30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a73a49e5530d358ff97141c348de1ea30">&#9670;&nbsp;</a></span>kOptions</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class TDerived &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr int <a class="el" href="classsophus_1_1_so3_base.html">sophus::So3Base</a>&lt; TDerived &gt;::kOptions = Eigen::internal::traits&lt;TDerived&gt;::kOptions</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
 
 </div>
 </div>

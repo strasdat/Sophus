@@ -1,7 +1,7 @@
 var hierarchy =
 [
     [ " CartesianBase", null, [
-      [ "Eigen::Map< sophus::Cartesian< TScalar, kM >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_cartesian_3_01_t_scalar_00_01k_m_01_4_00_01k_options_01_4.html", null ]
+      [ "Eigen::Map< sophus::Cartesian< TScalar, kM > const >", "class_eigen_1_1_map_3_01sophus_1_1_cartesian_3_01_t_scalar_00_01k_m_01_4_01const_01_4.html", null ]
     ] ],
     [ "sophus::AffineTransform", "classsophus_1_1_affine_transform.html", null ],
     [ "sophus::AnyImagePredicate", "structsophus_1_1_any_image_predicate.html", null ],
@@ -14,10 +14,10 @@ var hierarchy =
     [ "sophus::CameraInRig", "structsophus_1_1_camera_in_rig.html", null ],
     [ "sophus::CameraModel", "classsophus_1_1_camera_model.html", null ],
     [ "sophus::CameraModelT< TScalar, TDistortion, TProj >", "classsophus_1_1_camera_model_t.html", null ],
-    [ "sophus::Cartesian< TScalar, kM, kOptions >", "classsophus_1_1_cartesian.html", null ],
+    [ "sophus::Cartesian< TScalar, kM >", "classsophus_1_1_cartesian.html", null ],
     [ "sophus::CartesianBase< TDerived, kM >", "classsophus_1_1_cartesian_base.html", null ],
-    [ "sophus::CartesianBase< Map< sophus::Cartesian< TScalar, kM > const, kOptions >, kM >", "classsophus_1_1_cartesian_base.html", [
-      [ "Eigen::Map< sophus::Cartesian< TScalar, kM > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_cartesian_3_01_t_scalar_00_01k_m_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::CartesianBase< Map< sophus::Cartesian< TScalar, kM > >, kM >", "classsophus_1_1_cartesian_base.html", [
+      [ "Eigen::Map< sophus::Cartesian< TScalar, kM > >", "class_eigen_1_1_map_3_01sophus_1_1_cartesian_3_01_t_scalar_00_01k_m_01_4_01_4.html", null ]
     ] ],
     [ "sophus::ClippingPlanes", "structsophus_1_1_clipping_planes.html", null ],
     [ "sophus::ClosestApproachResult< TT >", "structsophus_1_1_closest_approach_result.html", null ],
@@ -77,81 +77,79 @@ var hierarchy =
       [ "sophus::MutRuntimeImageView< TPredicate >", "classsophus_1_1_mut_runtime_image_view.html", null ]
     ] ],
     [ "sophus::RuntimePixelType", "structsophus_1_1_runtime_pixel_type.html", null ],
-    [ "sophus::RxSo2< TScalar, kOptions >", "classsophus_1_1_rx_so2.html", null ],
-    [ "sophus::RxSo2< Scalar, kOptions >", "classsophus_1_1_rx_so2.html", null ],
+    [ "sophus::RxSo2< TScalar >", "classsophus_1_1_rx_so2.html", null ],
+    [ "sophus::RxSo2< Scalar >", "classsophus_1_1_rx_so2.html", null ],
     [ "sophus::RxSo2Base< TDerived >", "classsophus_1_1_rx_so2_base.html", null ],
-    [ "sophus::RxSo2Base< Map< sophus::RxSo2< TScalar > const, kOptions > >", "classsophus_1_1_rx_so2_base.html", [
-      [ "Eigen::Map< sophus::RxSo2< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::RxSo2Base< Map< sophus::RxSo2< TScalar > > >", "classsophus_1_1_rx_so2_base.html", [
+      [ "Eigen::Map< sophus::RxSo2< TScalar > >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so2_3_01_t_scalar_01_4_01_4.html", null ]
     ] ],
-    [ "sophus::RxSo2Base< Map< sophus::RxSo2< TScalar >, kOptions > >", "classsophus_1_1_rx_so2_base.html", [
-      [ "Eigen::Map< sophus::RxSo2< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so2_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    [ "sophus::RxSo2Base< Map< sophus::RxSo2< TScalar > const > >", "classsophus_1_1_rx_so2_base.html", [
+      [ "Eigen::Map< sophus::RxSo2< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so2_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
-    [ "sophus::RxSo3< TScalar, kOptions >", "classsophus_1_1_rx_so3.html", null ],
+    [ "sophus::RxSo3< TScalar >", "classsophus_1_1_rx_so3.html", null ],
     [ "sophus::RxSo3< Scalar >", "classsophus_1_1_rx_so3.html", null ],
-    [ "sophus::RxSo3< Scalar, kOptions >", "classsophus_1_1_rx_so3.html", null ],
-    [ "sophus::RxSo3< TScalar, kOptions >::RxSo3AndTheta", "structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html", null ],
-    [ "sophus::RxSo3Base< TDerived >", "classsophus_1_1_rx_so3_base.html", null ],
-    [ "sophus::RxSo3Base< Map< sophus::RxSo3< TScalar > const, kOptions > >", "classsophus_1_1_rx_so3_base.html", [
-      [ "Eigen::Map< sophus::RxSo3< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::RxSo3< TScalar >::RxSo3AndTheta", "structsophus_1_1_rx_so3_1_1_rx_so3_and_theta.html", null ],
+    [ "sophus::RxSo3Base< TDerived >", "classsophus_1_1_rx_so3_base.html", [
+      [ "Eigen::Map< sophus::RxSo3< TScalar > >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_01_4.html", null ]
     ] ],
-    [ "sophus::RxSo3Base< Map< sophus::RxSo3< TScalar >, kOptions > >", "classsophus_1_1_rx_so3_base.html", [
-      [ "Eigen::Map< sophus::RxSo3< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    [ "sophus::RxSo3Base< Map< sophus::RxSo3< TScalar > > >", "classsophus_1_1_rx_so3_base.html", null ],
+    [ "sophus::RxSo3Base< Map< sophus::RxSo3< TScalar > const > >", "classsophus_1_1_rx_so3_base.html", [
+      [ "Eigen::Map< sophus::RxSo3< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
     [ "sophus::ScalingNonOrthogonalityAcceleroModel< TT >", "structsophus_1_1_scaling_non_orthogonality_accelero_model.html", null ],
     [ "sophus::ScalingNonOrthogonalityGyroModel< TT >", "structsophus_1_1_scaling_non_orthogonality_gyro_model.html", null ],
-    [ "sophus::Se2< TScalar, kOptions >", "classsophus_1_1_se2.html", null ],
+    [ "sophus::Se2< TScalar >", "classsophus_1_1_se2.html", null ],
     [ "sophus::Se2Base< TDerived >", "classsophus_1_1_se2_base.html", null ],
-    [ "sophus::Se2Base< Map< sophus::Se2< TScalar > const, kOptions > >", "classsophus_1_1_se2_base.html", [
-      [ "Eigen::Map< sophus::Se2< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_se2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::Se2Base< Map< sophus::Se2< TScalar > > >", "classsophus_1_1_se2_base.html", [
+      [ "Eigen::Map< sophus::Se2< TScalar > >", "class_eigen_1_1_map_3_01sophus_1_1_se2_3_01_t_scalar_01_4_01_4.html", null ]
     ] ],
-    [ "sophus::Se2Base< Map< sophus::Se2< TScalar >, kOptions > >", "classsophus_1_1_se2_base.html", [
-      [ "Eigen::Map< sophus::Se2< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_se2_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    [ "sophus::Se2Base< Map< sophus::Se2< TScalar > const > >", "classsophus_1_1_se2_base.html", [
+      [ "Eigen::Map< sophus::Se2< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_se2_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
-    [ "sophus::Se3< TScalar, kOptions >", "classsophus_1_1_se3.html", null ],
+    [ "sophus::Se3< TScalar >", "classsophus_1_1_se3.html", null ],
     [ "sophus::Se3< TT >", "classsophus_1_1_se3.html", null ],
     [ "sophus::Se3Base< TDerived >", "classsophus_1_1_se3_base.html", null ],
-    [ "sophus::Se3Base< Map< sophus::Se3< TScalar > const, kOptions > >", "classsophus_1_1_se3_base.html", [
-      [ "Eigen::Map< sophus::Se3< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_se3_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::Se3Base< Map< sophus::Se3< TScalar > > >", "classsophus_1_1_se3_base.html", [
+      [ "Eigen::Map< sophus::Se3< TScalar > >", "class_eigen_1_1_map_3_01sophus_1_1_se3_3_01_t_scalar_01_4_01_4.html", null ]
     ] ],
-    [ "sophus::Se3Base< Map< sophus::Se3< TScalar >, kOptions > >", "classsophus_1_1_se3_base.html", [
-      [ "Eigen::Map< sophus::Se3< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_se3_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    [ "sophus::Se3Base< Map< sophus::Se3< TScalar > const > >", "classsophus_1_1_se3_base.html", [
+      [ "Eigen::Map< sophus::Se3< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_se3_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
-    [ "sophus::Sim2< TScalar, kOptions >", "classsophus_1_1_sim2.html", null ],
+    [ "sophus::Sim2< TScalar >", "classsophus_1_1_sim2.html", null ],
     [ "sophus::Sim2Base< TDerived >", "classsophus_1_1_sim2_base.html", null ],
-    [ "sophus::Sim2Base< Map< sophus::Sim2< TScalar > const, kOptions > >", "classsophus_1_1_sim2_base.html", [
-      [ "Eigen::Map< sophus::Sim2< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_sim2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::Sim2Base< Map< sophus::Sim2< TScalar > > >", "classsophus_1_1_sim2_base.html", [
+      [ "Eigen::Map< sophus::Sim2< TScalar > >", "class_eigen_1_1_map_3_01sophus_1_1_sim2_3_01_t_scalar_01_4_01_4.html", null ]
     ] ],
-    [ "sophus::Sim2Base< Map< sophus::Sim2< TScalar >, kOptions > >", "classsophus_1_1_sim2_base.html", [
-      [ "Eigen::Map< sophus::Sim2< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_sim2_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    [ "sophus::Sim2Base< Map< sophus::Sim2< TScalar > const > >", "classsophus_1_1_sim2_base.html", [
+      [ "Eigen::Map< sophus::Sim2< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_sim2_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
-    [ "sophus::Sim3< TScalar, kOptions >", "classsophus_1_1_sim3.html", null ],
+    [ "sophus::Sim3< TScalar >", "classsophus_1_1_sim3.html", null ],
     [ "sophus::Sim3Base< TDerived >", "classsophus_1_1_sim3_base.html", null ],
-    [ "sophus::Sim3Base< Map< sophus::Sim3< TScalar > const, kOptions > >", "classsophus_1_1_sim3_base.html", [
-      [ "Eigen::Map< sophus::Sim3< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_sim3_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::Sim3Base< Map< sophus::Sim3< TScalar > > >", "classsophus_1_1_sim3_base.html", [
+      [ "Eigen::Map< sophus::Sim3< TScalar > >", "class_eigen_1_1_map_3_01sophus_1_1_sim3_3_01_t_scalar_01_4_01_4.html", null ]
     ] ],
-    [ "sophus::Sim3Base< Map< sophus::Sim3< TScalar >, kOptions > >", "classsophus_1_1_sim3_base.html", [
-      [ "Eigen::Map< sophus::Sim3< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_sim3_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    [ "sophus::Sim3Base< Map< sophus::Sim3< TScalar > const > >", "classsophus_1_1_sim3_base.html", [
+      [ "Eigen::Map< sophus::Sim3< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_sim3_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
-    [ "sophus::So2< TScalar, kOptions >", "classsophus_1_1_so2.html", null ],
-    [ "sophus::So2< Scalar, kOptions >", "classsophus_1_1_so2.html", null ],
+    [ "sophus::So2< TScalar >", "classsophus_1_1_so2.html", null ],
+    [ "sophus::So2< Scalar >", "classsophus_1_1_so2.html", null ],
     [ "sophus::So2Base< TDerived >", "classsophus_1_1_so2_base.html", null ],
-    [ "sophus::So2Base< Map< sophus::So2< TScalar > const, kOptions > >", "classsophus_1_1_so2_base.html", [
-      [ "Eigen::Map< sophus::So2< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so2_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::So2Base< Map< sophus::So2< TScalar > > >", "classsophus_1_1_so2_base.html", [
+      [ "Eigen::Map< sophus::So2< TScalar > >", "class_eigen_1_1_map_3_01sophus_1_1_so2_3_01_t_scalar_01_4_01_4.html", null ]
     ] ],
-    [ "sophus::So2Base< Map< sophus::So2< TScalar >, kOptions > >", "classsophus_1_1_so2_base.html", [
-      [ "Eigen::Map< sophus::So2< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so2_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    [ "sophus::So2Base< Map< sophus::So2< TScalar > const > >", "classsophus_1_1_so2_base.html", [
+      [ "Eigen::Map< sophus::So2< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_so2_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
-    [ "sophus::So3< TScalar, kOptions >", "classsophus_1_1_so3.html", null ],
+    [ "sophus::So3< TScalar >", "classsophus_1_1_so3.html", null ],
     [ "sophus::So3< Scalar >", "classsophus_1_1_so3.html", null ],
-    [ "sophus::So3< Scalar, kOptions >", "classsophus_1_1_so3.html", null ],
-    [ "sophus::So3< TScalar, kOptions >::So3AndTheta", "structsophus_1_1_so3_1_1_so3_and_theta.html", null ],
-    [ "sophus::So3Base< TDerived >", "classsophus_1_1_so3_base.html", [
-      [ "Eigen::Map< sophus::So3< TScalar >, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_00_01k_options_01_4.html", null ]
+    [ "sophus::So3< TScalar >::So3AndTheta", "structsophus_1_1_so3_1_1_so3_and_theta.html", null ],
+    [ "sophus::So3Base< TDerived >", "classsophus_1_1_so3_base.html", null ],
+    [ "sophus::So3Base< Map< sophus::So3< TScalar > > >", "classsophus_1_1_so3_base.html", [
+      [ "Eigen::Map< sophus::So3< TScalar > >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_01_4.html", null ]
     ] ],
-    [ "sophus::So3Base< Map< sophus::So3< TScalar > const, kOptions > >", "classsophus_1_1_so3_base.html", [
-      [ "Eigen::Map< sophus::So3< TScalar > const, kOptions >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_01const_00_01k_options_01_4.html", null ]
+    [ "sophus::So3Base< Map< sophus::So3< TScalar > const > >", "classsophus_1_1_so3_base.html", [
+      [ "Eigen::Map< sophus::So3< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_so3_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
-    [ "sophus::So3Base< Map< sophus::So3< TScalar >, kOptions > >", "classsophus_1_1_so3_base.html", null ],
     [ "sophus::SplineBasisFunction< TScalar >", "classsophus_1_1_spline_basis_function.html", null ],
     [ "sophus::So3Base< TDerived >::TangentAndTheta", "structsophus_1_1_so3_base_1_1_tangent_and_theta.html", null ],
     [ "sophus::RxSo3Base< TDerived >::TangentAndTheta", "structsophus_1_1_rx_so3_base_1_1_tangent_and_theta.html", null ],

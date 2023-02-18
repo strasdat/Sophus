@@ -1,7 +1,7 @@
 var classsophus_1_1_rx_so2_base =
 [
     [ "Adjoint", "classsophus_1_1_rx_so2_base.html#ae279546cffcb978438b32d5069ff682f", null ],
-    [ "ComplexTemporaryType", "classsophus_1_1_rx_so2_base.html#aa1276ed62ed2eda7dff6666bf6348f10", null ],
+    [ "ComplexTemporaryType", "classsophus_1_1_rx_so2_base.html#a79343413e0e439d916603e41fed2dba8", null ],
     [ "ComplexType", "classsophus_1_1_rx_so2_base.html#addc7a0e343df4ef14a2c4f45991180b2", null ],
     [ "HomogeneousPoint", "classsophus_1_1_rx_so2_base.html#a88bfa5b830ba5db3245e32cc2e826f52", null ],
     [ "HomogeneousPointProduct", "classsophus_1_1_rx_so2_base.html#ae080c2fd946cbb9e8cbba9fce3922b27", null ],

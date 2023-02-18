@@ -8,7 +8,7 @@ var classsophus_1_1_so3_base =
     [ "Line", "classsophus_1_1_so3_base.html#a06a33d9dce391db80eb96166336db066", null ],
     [ "Point", "classsophus_1_1_so3_base.html#a7dec4ecdc70c5f8172265387290d832d", null ],
     [ "PointProduct", "classsophus_1_1_so3_base.html#a27ef82cb7d7aa732193ced229f571dfc", null ],
-    [ "QuaternionTemporaryType", "classsophus_1_1_so3_base.html#a430722e27328faa888309c95a753032c", null ],
+    [ "QuaternionTemporaryType", "classsophus_1_1_so3_base.html#a567c98ad1972082068cb874da2f9fecf", null ],
     [ "QuaternionType", "classsophus_1_1_so3_base.html#a3111dd13bce754067e7843e76c47d923", null ],
     [ "ReturnScalar", "classsophus_1_1_so3_base.html#ada0c54264468d2d602b0938b7c2bad89", null ],
     [ "Scalar", "classsophus_1_1_so3_base.html#a172a037d6b9be7845456725c5341eafc", null ],
