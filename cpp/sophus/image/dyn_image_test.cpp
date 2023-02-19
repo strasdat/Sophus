@@ -160,7 +160,7 @@ TEST(IntensityImage, visitor) {
     visitImage(
         [&](auto const& image) {
           using Timg = typename std::remove_reference<decltype(image)>::type;
-          using TPixel = typename Timg::pixelFormat;
+          using TPixel = typename Timg::Pixel;
           SOPHUS_ASSERT(dyn_image.template has<TPixel>());
           if constexpr (std::is_same_v<TPixel, float>) {
             SOPHUS_ASSERT(image.hasSameData(ref_image));
@@ -182,7 +182,7 @@ TEST(IntensityImage, visitor) {
     visitImage(
         [&](auto const& image) {
           using Timg = typename std::remove_reference<decltype(image)>::type;
-          using TPixel = typename Timg::pixelFormat;
+          using TPixel = typename Timg::Pixel;
           SOPHUS_ASSERT(dyn_image.template has<TPixel>());
           if constexpr (std::is_same_v<TPixel, Pixel3U8>) {
             SOPHUS_ASSERT(image.hasSameData(ref_image));

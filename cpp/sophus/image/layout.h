@@ -48,10 +48,10 @@ class ImageLayout {
     return layout;
   }
 
-  template <class TpixelFormatT>
+  template <class TPixelFormat>
   [[nodiscard]] static ImageLayout makeFromSize(sophus::ImageSize image_size) {
-    return makeFromSizeAndPitch<TpixelFormatT>(
-        image_size, image_size.width * sizeof(TpixelFormatT));
+    return makeFromSizeAndPitch<TPixelFormat>(
+        image_size, image_size.width * sizeof(TPixelFormat));
   }
 
   [[nodiscard]] sophus::ImageSize const& imageSize() const {
