@@ -53,7 +53,7 @@ class Image;
 /// all marked const.
 template <class TPixel>
 struct ImageView {
-  using pixelFormat = TPixel;
+  using Pixel = TPixel;
 
   /// Default constructor creates an empty image.
   ImageView() = default;

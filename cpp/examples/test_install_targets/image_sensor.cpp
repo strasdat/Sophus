@@ -6,7 +6,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include <sophus/image/runtime_image_types.h>
+#include <sophus/image/dyn_image_types.h>
 #include <sophus/sensor/camera_model.h>
 
 using namespace sophus;
