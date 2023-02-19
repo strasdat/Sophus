@@ -1,6 +1,6 @@
 var structsophus_1_1_image_view =
 [
-    [ "pixelFormat", "structsophus_1_1_image_view.html#a796465b2b3cdeb4f7cfa811ad0aa7865", null ],
+    [ "Pixel", "structsophus_1_1_image_view.html#a947ccec92a1f0c2d415adafa8363e86e", null ],
     [ "ImageView", "structsophus_1_1_image_view.html#ac2e2480739a582d0bdb0a5360c43d7d3", null ],
     [ "ImageView", "structsophus_1_1_image_view.html#aaee2c7c116f2e8c9880449b32b9ae876", null ],
     [ "ImageView", "structsophus_1_1_image_view.html#a419a7e560d60fee8d436bc9a95069304", null ],

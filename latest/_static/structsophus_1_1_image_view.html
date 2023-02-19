@@ -121,8 +121,8 @@ Collaboration diagram for sophus::ImageView&lt; TPixel &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a796465b2b3cdeb4f7cfa811ad0aa7865"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a796465b2b3cdeb4f7cfa811ad0aa7865">pixelFormat</a> = TPixel</td></tr>
-<tr class="separator:a796465b2b3cdeb4f7cfa811ad0aa7865"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a947ccec92a1f0c2d415adafa8363e86e"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_image_view.html#a947ccec92a1f0c2d415adafa8363e86e">Pixel</a> = TPixel</td></tr>
+<tr class="separator:a947ccec92a1f0c2d415adafa8363e86e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -227,8 +227,8 @@ struct sophus::ImageView&lt; TPixel &gt;</h3>
 <p>Details on equality comparison, the state of the object, and const-correctness.</p>
 <p><a class="el" href="structsophus_1_1_image_view.html" title="A view of an (immutable) image, which does not own the data.">ImageView</a> is a "shallow-compare type" similar to std::span&lt;Pixel const&gt; and std::unique_ptr&lt;Pixel const&gt;. In particular, we define that the state of an <a class="el" href="structsophus_1_1_image_view.html" title="A view of an (immutable) image, which does not own the data.">ImageView</a> instance consists of the layout of the image <code>layout_</code> (see <a class="el" href="classsophus_1_1_image_layout.html" title="Layout of the image: width, height and pitch in bytes.">ImageLayout</a>) and the pointer address to the first pixel <code>ptr_</code>. No public member method can change the pointer nor the layout, hence they are all marked const. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a796465b2b3cdeb4f7cfa811ad0aa7865"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a796465b2b3cdeb4f7cfa811ad0aa7865">&#9670;&nbsp;</a></span>pixelFormat</h2>
+<a id="a947ccec92a1f0c2d415adafa8363e86e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a947ccec92a1f0c2d415adafa8363e86e">&#9670;&nbsp;</a></span>Pixel</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -236,7 +236,7 @@ struct sophus::ImageView&lt; TPixel &gt;</h3>
 template&lt;class TPixel &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView</a>&lt; TPixel &gt;::<a class="el" href="structsophus_1_1_image_view.html#a796465b2b3cdeb4f7cfa811ad0aa7865">pixelFormat</a> =  TPixel</td>
+          <td class="memname">using <a class="el" href="structsophus_1_1_image_view.html">sophus::ImageView</a>&lt; TPixel &gt;::<a class="el" href="structsophus_1_1_image_view.html#a947ccec92a1f0c2d415adafa8363e86e">Pixel</a> =  TPixel</td>
         </tr>
       </table>
 </div><div class="memdoc">
