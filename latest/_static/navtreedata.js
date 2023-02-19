@@ -63,13 +63,13 @@ var NAVTREEINDEX =
 "affine_8h.html",
 "class_eigen_1_1_map_3_01sophus_1_1_se3_3_01_t_scalar_01_4_01const_01_4.html#a97d8df551e8b8e44518c454e933f22d6",
 "classsophus_1_1_cartesian.html#a0a6862fdfbdc7c0fa64dbf7239883562",
-"classsophus_1_1_region.html#abef1a730bb630cbf7a6a23ae58e0af9b",
+"classsophus_1_1_ray.html#ab0aab8b94bd54c9369266afa1dcd9c20",
 "classsophus_1_1_se3.html#a37d8c4b16b618dd1b2148c80a9a4c70b",
 "classsophus_1_1_so2_base.html#abab9df782e9f19f5390a411c492a8035",
-"functions_func_v.html",
-"lie_2proto_2conv_8h.html#a90a7827af954ec079a513a4ecbc56770",
-"region_8h.html#a3f22b418fdfd8fb2c23805ace103dd43",
-"structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor.html#a552864592f839eaad050aac3c3ee905c"
+"fit__plane_8h.html",
+"kannala__brandt_8h_source.html",
+"point__transform_8h.html",
+"structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor.html#a181ec7ccb3fbe159c2173f6e72bf63b8"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

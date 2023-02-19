@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['mutimage_1957',['MutImage',['../classsophus_1_1_image.html#a4ce2ed4ae226bc4176a383dad39f4c65',1,'sophus::Image::MutImage()'],['../structsophus_1_1_image_view.html#a4ce2ed4ae226bc4176a383dad39f4c65',1,'sophus::ImageView::MutImage()']]],
-  ['mutruntimeimage_1958',['MutRuntimeImage',['../classsophus_1_1_mut_image.html#a46d286b57975ee851ec6d09b802c2e2e',1,'sophus::MutImage']]]
+  ['image_1964',['Image',['../structsophus_1_1_image_view.html#aa23aef019ecf57e2829e8cca09a1e48a',1,'sophus::ImageView::Image()'],['../classsophus_1_1_mut_image.html#aa23aef019ecf57e2829e8cca09a1e48a',1,'sophus::MutImage::Image()']]]
 ];

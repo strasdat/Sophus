@@ -1,0 +1,52 @@
+<map id="/home/runner/work/Sophus/Sophus/cpp/sophus/image/mut_dyn_image_view.h" name="/home/runner/work/Sophus/Sophus/cpp/sophus/image/mut_dyn_image_view.h">
+<area shape="rect" id="node1" title=" " alt="" coords="2109,5,2305,61"/>
+<area shape="rect" id="node2" href="$dyn__image__view_8h.html" title=" " alt="" coords="2047,109,2236,151"/>
+<area shape="rect" id="node50" title=" " alt="" coords="2239,206,2307,233"/>
+<area shape="rect" id="node3" href="$image_8h.html" title=" " alt="" coords="1893,377,2064,404"/>
+<area shape="rect" id="node48" href="$image__types_8h.html" title=" " alt="" coords="2019,288,2178,329"/>
+<area shape="rect" id="node49" href="$pixel__format_8h.html" title=" " alt="" coords="2067,199,2215,240"/>
+<area shape="rect" id="node4" href="$enum_8h.html" title=" " alt="" coords="2014,534,2197,561"/>
+<area shape="rect" id="node18" href="$mut__image_8h.html" title=" " alt="" coords="1736,452,1939,479"/>
+<area shape="rect" id="node37" title=" " alt="" coords="1912,1309,1987,1335"/>
+<area shape="rect" id="node5" href="$common_8h.html" title=" " alt="" coords="1517,1555,1720,1581"/>
+<area shape="rect" id="node17" title=" " alt="" coords="2013,623,2216,650"/>
+<area shape="rect" id="node6" title=" " alt="" coords="434,1637,526,1663"/>
+<area shape="rect" id="node7" title=" " alt="" coords="1947,1629,2107,1671"/>
+<area shape="rect" id="node8" title=" " alt="" coords="2131,1629,2291,1671"/>
+<area shape="rect" id="node9" title=" " alt="" coords="1001,1629,1161,1671"/>
+<area shape="rect" id="node10" title=" " alt="" coords="1185,1629,1345,1671"/>
+<area shape="rect" id="node11" title=" " alt="" coords="1370,1629,1563,1671"/>
+<area shape="rect" id="node12" title=" " alt="" coords="1587,1637,1650,1663"/>
+<area shape="rect" id="node13" title=" " alt="" coords="1675,1637,1736,1663"/>
+<area shape="rect" id="node14" title=" " alt="" coords="1761,1637,1826,1663"/>
+<area shape="rect" id="node15" title=" " alt="" coords="1851,1637,1923,1663"/>
+<area shape="rect" id="node16" title=" " alt="" coords="885,1637,977,1663"/>
+<area shape="rect" id="node19" href="$mut__image__view_8h.html" title=" " alt="" coords="1594,527,1785,568"/>
+<area shape="rect" id="node20" href="$region_8h.html" title=" " alt="" coords="1397,869,1579,896"/>
+<area shape="rect" id="node44" href="$image__view_8h.html" title=" " alt="" coords="1610,616,1769,657"/>
+<area shape="rect" id="node21" href="$point__methods_8h.html" title=" " alt="" coords="221,944,387,985"/>
+<area shape="rect" id="node42" href="$point__traits_8h.html" title=" " alt="" coords="726,1033,893,1075"/>
+<area shape="rect" id="node22" href="$cast_8h.html" title=" " alt="" coords="409,1041,581,1067"/>
+<area shape="rect" id="node23" href="$point__concepts_8h.html" title=" " alt="" coords="405,1123,571,1164"/>
+<area shape="rect" id="node38" title=" " alt="" coords="295,1130,380,1157"/>
+<area shape="rect" id="node39" title=" " alt="" coords="71,1130,131,1157"/>
+<area shape="rect" id="node40" title=" " alt="" coords="207,1130,270,1157"/>
+<area shape="rect" id="node41" href="$reduce_8h.html" title=" " alt="" coords="144,1041,333,1067"/>
+<area shape="rect" id="node26" href="$se3_8h.html" title=" " alt="" coords="698,1130,825,1157"/>
+<area shape="rect" id="node24" href="$concept__utils_8h.html" title=" " alt="" coords="388,1212,572,1253"/>
+<area shape="rect" id="node25" title=" " alt="" coords="410,1309,521,1335"/>
+<area shape="rect" id="node27" href="$so3_8h.html" title=" " alt="" coords="1141,1219,1267,1246"/>
+<area shape="rect" id="node28" href="$types_8h.html" title=" " alt="" coords="1235,1480,1416,1507"/>
+<area shape="rect" id="node29" href="$so2_8h.html" title=" " alt="" coords="1222,1309,1349,1335"/>
+<area shape="rect" id="node30" href="$rotation__matrix_8h.html" title=" " alt="" coords="1368,1391,1531,1432"/>
+<area shape="rect" id="node34" title=" " alt="" coords="698,1301,849,1343"/>
+<area shape="rect" id="node35" title=" " alt="" coords="873,1301,1023,1343"/>
+<area shape="rect" id="node36" title=" " alt="" coords="1047,1301,1198,1343"/>
+<area shape="rect" id="node33" title=" " alt="" coords="1081,1398,1159,1425"/>
+<area shape="rect" id="node31" title=" " alt="" coords="1657,1480,1759,1507"/>
+<area shape="rect" id="node32" title=" " alt="" coords="1441,1480,1530,1507"/>
+<area shape="rect" id="node43" title=" " alt="" coords="849,1130,908,1157"/>
+<area shape="rect" id="node45" href="$layout_8h.html" title=" " alt="" coords="1688,705,1859,732"/>
+<area shape="rect" id="node46" href="$image__size_8h.html" title=" " alt="" coords="1577,780,1735,821"/>
+<area shape="rect" id="node47" title=" " alt="" coords="1707,869,1787,896"/>
+</map>
