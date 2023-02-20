@@ -130,8 +130,9 @@ $(document).ready(function(){initNavTree('functions_s.html',''); initResizable()
 , <a class="el" href="structsophus_1_1_get_scalar.html#a10f4494a1117f9345714dccbf185bdf0">sophus::GetScalar&lt; TScalar &gt;</a>
 , <a class="el" href="structsophus_1_1_get_scalar_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4.html#a41b8aca1d4d1aa6f979175d10bfc182f">sophus::GetScalar&lt; Eigen::Matrix&lt; TScalar, kM, kMatrixDim &gt; &gt;</a>
 , <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">sophus::lie::DirectProduct&lt; TScalar, TLeftGroup, TRightGroup &gt;</a>
-, <a class="el" href="classsophus_1_1lie_1_1_rotation2.html#afb9b63f589fcfea8a62fbb05c53a2fab">sophus::lie::Rotation2&lt; TScalar &gt;</a>
-, <a class="el" href="classsophus_1_1lie_1_1_scaling2.html#a0f8426d2a98465625eda3593f8fbc8fd">sophus::lie::Scaling2&lt; TScalar &gt;</a>
+, <a class="el" href="classsophus_1_1lie_1_1_group.html#ab0715c1abe3514926c62e1b48284a0e9">sophus::lie::Group&lt; TImpl &gt;</a>
+, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">sophus::lie::Rotation2Impl&lt; TScalar &gt;</a>
+, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a0ff9250855217d46924ee958451fdb7e">sophus::lie::Scaling2Impl&lt; TScalar &gt;</a>
 , <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a4e01c8b5d1247cf10ccf4f55c3b1e8eb">sophus::lie::SemiDirectProductWithTranslation&lt; TScalar, kTranslationDim, TLeftGroup &gt;</a>
 , <a class="el" href="classsophus_1_1_lie_group_tests.html#a9192b8555ab2d631cfa99993a5534cf4">sophus::LieGroupTests&lt; TLieGroup &gt;</a>
 , <a class="el" href="structsophus_1_1_mapper.html#a62d1d68cfd5a52f8eed9689bfe13a71c">sophus::Mapper&lt; TScalar, TE &gt;</a>
@@ -217,6 +218,7 @@ $(document).ready(function(){initNavTree('functions_s.html',''); initResizable()
 </li>
 <li>setParams()
 : <a class="el" href="classsophus_1_1_camera_model.html#a86408e646407cca32df79505f42c32be">sophus::CameraModel</a>
+, <a class="el" href="classsophus_1_1lie_1_1_group.html#a76a2e1dd30945706d69b8d483219a50f">sophus::lie::Group&lt; TImpl &gt;</a>
 </li>
 <li>setPrincipalPoint()
 : <a class="el" href="classsophus_1_1_camera_model.html#a2f30d35a8fce73b5083b51fe3458a1cf">sophus::CameraModel</a>
@@ -265,7 +267,7 @@ $(document).ready(function(){initNavTree('functions_s.html',''); initResizable()
 : <a class="el" href="structsophus_1_1_image_view.html#a8fc012bee1f58e9fd976125a216fc650">sophus::ImageView&lt; TPixel &gt;</a>
 </li>
 <li>Sim2()
-: <a class="el" href="classsophus_1_1_sim2.html#afc1cd9e6bb0fd57dc0641f9ef19a7c47">sophus::Sim2&lt; TScalar &gt;</a>
+: <a class="el" href="classsophus_1_1_sim2.html#afd2f0787e065000dbcee096d1617547d">sophus::Sim2&lt; TScalar &gt;</a>
 </li>
 <li>Sim2Product
 : <a class="el" href="classsophus_1_1_sim2_base.html#ab7570ea5fc69fe66cd56ae8210c8de84">sophus::Sim2Base&lt; TDerived &gt;</a>
@@ -274,7 +276,7 @@ $(document).ready(function(){initNavTree('functions_s.html',''); initResizable()
 : <a class="el" href="classsophus_1_1_tests.html#a49f3e77c8f31654d554df72ed1321bb3">sophus::Tests&lt; TScalar &gt;</a>
 </li>
 <li>Sim3()
-: <a class="el" href="classsophus_1_1_sim3.html#adc27940204efddc04e0eaa9fbf9d3c97">sophus::Sim3&lt; TScalar &gt;</a>
+: <a class="el" href="classsophus_1_1_sim3.html#a138ca623e6800bb78abe6af537d07b98">sophus::Sim3&lt; TScalar &gt;</a>
 </li>
 <li>Sim3Product
 : <a class="el" href="classsophus_1_1_sim3_base.html#a8452a7b461f72cce530f3315ce04a17a">sophus::Sim3Base&lt; TDerived &gt;</a>
@@ -287,14 +289,14 @@ $(document).ready(function(){initNavTree('functions_s.html',''); initResizable()
 , <a class="el" href="classsophus_1_1_image_layout.html#ad17e89a6902e9f9e6ce726fac53b8465">sophus::ImageLayout</a>
 </li>
 <li>so2()
-: <a class="el" href="class_eigen_1_1_map_3_01sophus_1_1_se2_3_01_t_scalar_01_4_01_4.html#ae98abc70c7e441f9bde0671d251c54fd">Eigen::Map&lt; sophus::Se2&lt; TScalar &gt; &gt;</a>
+: <a class="el" href="class_eigen_1_1_map_3_01sophus_1_1_se2_3_01_t_scalar_01_4_01_4.html#abc49e94fd48fac6b7a2e5f68e5a02786">Eigen::Map&lt; sophus::Se2&lt; TScalar &gt; &gt;</a>
 , <a class="el" href="class_eigen_1_1_map_3_01sophus_1_1_se2_3_01_t_scalar_01_4_01const_01_4.html#ada63c1a0995663b0fe741ec9c1f5cc67">Eigen::Map&lt; sophus::Se2&lt; TScalar &gt; const &gt;</a>
 , <a class="el" href="classsophus_1_1_rx_so2_base.html#a64900561eadf99ec6a5905fd0005e00c">sophus::RxSo2Base&lt; TDerived &gt;</a>
-, <a class="el" href="classsophus_1_1_se2.html#af066330f4ca55414b4c15aaab246f6e1">sophus::Se2&lt; TScalar &gt;</a>
-, <a class="el" href="classsophus_1_1_se2_base.html#a1a4b55aedea2845f94a22711add0de2b">sophus::Se2Base&lt; TDerived &gt;</a>
+, <a class="el" href="classsophus_1_1_se2.html#a7e6b6981e6fdd65f3d2cc2e76bd4315f">sophus::Se2&lt; TScalar &gt;</a>
+, <a class="el" href="classsophus_1_1_se2_base.html#a3897519110ad979f08a80edf1ea1e531">sophus::Se2Base&lt; TDerived &gt;</a>
 </li>
 <li>So2()
-: <a class="el" href="classsophus_1_1_so2.html#a62c3e0597a7440f7b5502e863ab8ed0e">sophus::So2&lt; TScalar &gt;</a>
+: <a class="el" href="classsophus_1_1_so2.html#a7171b92e91a0b44dd2b11264ef42c673">sophus::So2&lt; TScalar &gt;</a>
 </li>
 <li>so2_
 : <a class="el" href="class_eigen_1_1_map_3_01sophus_1_1_se2_3_01_t_scalar_01_4_01_4.html#ad3de718b1b94abe4387507770d9830c4">Eigen::Map&lt; sophus::Se2&lt; TScalar &gt; &gt;</a>
@@ -322,7 +324,7 @@ $(document).ready(function(){initNavTree('functions_s.html',''); initResizable()
 , <a class="el" href="classsophus_1_1_se3_base.html#a2b7baa7f5ab80c94167655ea766be44b">sophus::Se3Base&lt; TDerived &gt;</a>
 </li>
 <li>So3()
-: <a class="el" href="classsophus_1_1_so3.html#a5367a8c90c7271d84615064299850159">sophus::So3&lt; TScalar &gt;</a>
+: <a class="el" href="classsophus_1_1_so3.html#a419a0163fe4dba21d37284f61a2b8f56">sophus::So3&lt; TScalar &gt;</a>
 </li>
 <li>so3
 : <a class="el" href="structsophus_1_1_so3_1_1_so3_and_theta.html#a4bc6878a20aa45a30988181bf50b08ed">sophus::So3&lt; TScalar &gt;::So3AndTheta</a>

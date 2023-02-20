@@ -34,6 +34,7 @@ var hierarchy =
     [ "sophus::GetScalar< Eigen::Matrix< TScalar, kM, kMatrixDim > >", "structsophus_1_1_get_scalar_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4.html", null ],
     [ "sophus::jet_helpers::GetValue< TScalar >", "structsophus_1_1jet__helpers_1_1_get_value.html", null ],
     [ "sophus::jet_helpers::GetValue< ceres::Jet< TScalar, kN > >", "structsophus_1_1jet__helpers_1_1_get_value_3_01ceres_1_1_jet_3_01_t_scalar_00_01k_n_01_4_01_4.html", null ],
+    [ "sophus::lie::Group< TImpl >", "classsophus_1_1lie_1_1_group.html", null ],
     [ "sophus::ImageLayout", "classsophus_1_1_image_layout.html", null ],
     [ "sophus::ImageSize", "structsophus_1_1_image_size.html", null ],
     [ "sophus::ImageTraits< TT >", "structsophus_1_1_image_traits.html", null ],
@@ -71,7 +72,7 @@ var hierarchy =
     [ "sophus::Random< double >", "structsophus_1_1_random_3_01double_01_4.html", null ],
     [ "sophus::Ray< TScalar, kN >", "classsophus_1_1_ray.html", null ],
     [ "sophus::Region< TPoint >", "classsophus_1_1_region.html", null ],
-    [ "sophus::lie::Rotation2< TScalar >", "classsophus_1_1lie_1_1_rotation2.html", null ],
+    [ "sophus::lie::Rotation2Impl< TScalar >", "classsophus_1_1lie_1_1_rotation2_impl.html", null ],
     [ "RotationalPart< TLieGroup >", "struct_rotational_part.html", null ],
     [ "RotationalPart< sophus::RxSO2d >", "struct_rotational_part_3_01sophus_1_1_rx_s_o2d_01_4.html", null ],
     [ "RotationalPart< sophus::RxSO3d >", "struct_rotational_part_3_01sophus_1_1_rx_s_o3d_01_4.html", null ],
@@ -100,7 +101,7 @@ var hierarchy =
     [ "sophus::RxSo3Base< Map< sophus::RxSo3< TScalar > const > >", "classsophus_1_1_rx_so3_base.html", [
       [ "Eigen::Map< sophus::RxSo3< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
-    [ "sophus::lie::Scaling2< TScalar >", "classsophus_1_1lie_1_1_scaling2.html", null ],
+    [ "sophus::lie::Scaling2Impl< TScalar >", "classsophus_1_1lie_1_1_scaling2_impl.html", null ],
     [ "sophus::ScalingNonOrthogonalityAcceleroModel< TT >", "structsophus_1_1_scaling_non_orthogonality_accelero_model.html", null ],
     [ "sophus::ScalingNonOrthogonalityGyroModel< TT >", "structsophus_1_1_scaling_non_orthogonality_gyro_model.html", null ],
     [ "sophus::Se2< TScalar >", "classsophus_1_1_se2.html", null ],

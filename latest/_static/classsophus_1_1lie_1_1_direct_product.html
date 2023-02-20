@@ -106,6 +106,8 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:aea405cddf8aab9b78dc5916021b85676"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_direct_product.html#aea405cddf8aab9b78dc5916021b85676">identityParams</a> () -&gt; Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a52e203e45912154fbaa106fe9836f1f9">kNumParams</a> &gt;</td></tr>
+<tr class="separator:aea405cddf8aab9b78dc5916021b85676"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a474d0473953d639dacb23c48d24a084d"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a474d0473953d639dacb23c48d24a084d">exp</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a209d7edb3eb56c8d53d63352d36085f4">kDof</a> &gt; tangent) -&gt; Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a52e203e45912154fbaa106fe9836f1f9">kNumParams</a> &gt;</td></tr>
 <tr class="separator:a474d0473953d639dacb23c48d24a084d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e3bb8d4fcfbe32f2d56d4e1c7f80f78"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a7e3bb8d4fcfbe32f2d56d4e1c7f80f78">log</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a52e203e45912154fbaa106fe9836f1f9">kNumParams</a> &gt; const &amp;params) -&gt; Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a209d7edb3eb56c8d53d63352d36085f4">kDof</a> &gt;</td></tr>
@@ -128,6 +130,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a34c9e5ec909234d3396c7b36d7739c08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a470d0a2fea7480b6282d807665ad7f1c"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a470d0a2fea7480b6282d807665ad7f1c">exampleParams</a> () -&gt; std::vector&lt; Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a52e203e45912154fbaa106fe9836f1f9">kNumParams</a> &gt;&gt;</td></tr>
 <tr class="separator:a470d0a2fea7480b6282d807665ad7f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05adf65b690904addb6ed4a96e2c4bd1"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a05adf65b690904addb6ed4a96e2c4bd1">areParamsValid</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a52e203e45912154fbaa106fe9836f1f9">kNumParams</a> &gt; const &amp;params) -&gt; sophus::Expected&lt; void &gt;</td></tr>
+<tr class="separator:a05adf65b690904addb6ed4a96e2c4bd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -217,6 +221,34 @@ template&lt;class TScalar , template&lt; class &gt; class TLeftGroup, template&l
           <td></td>
           <td>)</td>
           <td></td><td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a16eae5c095a97d6aee821de9043e7348">kPointDim</a>&gt; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a05adf65b690904addb6ed4a96e2c4bd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05adf65b690904addb6ed4a96e2c4bd1">&#9670;&nbsp;</a></span>areParamsValid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TScalar , template&lt; class &gt; class TLeftGroup, template&lt; class &gt; class TRightGroup&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto <a class="el" href="classsophus_1_1lie_1_1_direct_product.html">sophus::lie::DirectProduct</a>&lt; TScalar, TLeftGroup, TRightGroup &gt;::areParamsValid </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a52e203e45912154fbaa106fe9836f1f9">kNumParams</a> &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>params</em></td><td>)</td>
+          <td> -&gt; sophus::Expected&lt;void&gt; </td>
         </tr>
       </table>
   </td>
@@ -327,6 +359,33 @@ template&lt;class TScalar , template&lt; class &gt; class TLeftGroup, template&l
           <td class="paramtype">Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a52e203e45912154fbaa106fe9836f1f9">kNumParams</a> &gt; const &amp;&#160;</td>
           <td class="paramname"><em>params</em></td><td>)</td>
           <td> -&gt; Eigen::Matrix&lt;<a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a16eae5c095a97d6aee821de9043e7348">kPointDim</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a16eae5c095a97d6aee821de9043e7348">kPointDim</a>&gt; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aea405cddf8aab9b78dc5916021b85676"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea405cddf8aab9b78dc5916021b85676">&#9670;&nbsp;</a></span>identityParams()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TScalar , template&lt; class &gt; class TLeftGroup, template&lt; class &gt; class TRightGroup&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto <a class="el" href="classsophus_1_1lie_1_1_direct_product.html">sophus::lie::DirectProduct</a>&lt; TScalar, TLeftGroup, TRightGroup &gt;::identityParams </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a38cc81e70e609c884f1c6f6b06ffb019">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_direct_product.html#a52e203e45912154fbaa106fe9836f1f9">kNumParams</a>&gt; </td>
         </tr>
       </table>
   </td>

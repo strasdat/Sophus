@@ -86,6 +86,7 @@ $(document).ready(function(){initNavTree('lie__group__concept_8h.html',''); init
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">lie_group_concept.h File Reference</div>  </div>
@@ -132,11 +133,13 @@ This graph shows which files directly or indirectly include this file:</div>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_direct_product.html">sophus::lie::DirectProduct&lt; TScalar, TLeftGroup, TRightGroup &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_rotation2.html">sophus::lie::Rotation2&lt; TScalar &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html">sophus::lie::Rotation2Impl&lt; TScalar &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_scaling2.html">sophus::lie::Scaling2&lt; TScalar &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html">sophus::lie::Scaling2Impl&lt; TScalar &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html">sophus::lie::SemiDirectProductWithTranslation&lt; TScalar, kTranslationDim, TLeftGroup &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_group.html">sophus::lie::Group&lt; TImpl &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -146,6 +149,24 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespacesophus_1_1lie"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesophus_1_1lie.html">sophus::lie</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:aaa5a846ee03ce385921be3c90d1407aa"><td class="memTemplParams" colspan="2">template&lt;class Scalar &gt; </td></tr>
+<tr class="memitem:aaa5a846ee03ce385921be3c90d1407aa"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#aaa5a846ee03ce385921be3c90d1407aa">sophus::Rotation2</a> = lie::Group&lt; lie::Rotation2Impl&lt; Scalar &gt; &gt;</td></tr>
+<tr class="separator:aaa5a846ee03ce385921be3c90d1407aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0943f4c4c623e5c05c84fd3d1c9b16b"><td class="memTemplParams" colspan="2">template&lt;class Scalar &gt; </td></tr>
+<tr class="memitem:ad0943f4c4c623e5c05c84fd3d1c9b16b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#ad0943f4c4c623e5c05c84fd3d1c9b16b">sophus::Scaling2</a> = lie::Group&lt; lie::Scaling2Impl&lt; Scalar &gt; &gt;</td></tr>
+<tr class="separator:ad0943f4c4c623e5c05c84fd3d1c9b16b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32d408a187977f9268f45ca783113ed9"><td class="memTemplParams" colspan="2">template&lt;class Scalar &gt; </td></tr>
+<tr class="memitem:a32d408a187977f9268f45ca783113ed9"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a32d408a187977f9268f45ca783113ed9">sophus::ScalingRotation2</a> = lie::Group&lt; lie::DirectProduct&lt; Scalar, lie::Scaling2Impl, lie::Rotation2Impl &gt; &gt;</td></tr>
+<tr class="separator:a32d408a187977f9268f45ca783113ed9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a743fa6d7931f8cc6fd26fd1c17902639"><td class="memTemplParams" colspan="2">template&lt;class Scalar &gt; </td></tr>
+<tr class="memitem:a743fa6d7931f8cc6fd26fd1c17902639"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a743fa6d7931f8cc6fd26fd1c17902639">sophus::Isometry2</a> = lie::Group&lt; lie::SemiDirectProductWithTranslation&lt; Scalar, 2, lie::Rotation2Impl &gt; &gt;</td></tr>
+<tr class="separator:a743fa6d7931f8cc6fd26fd1c17902639"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02f44ff416c266c6ac2dbf4a5be40ccb"><td class="memTemplParams" colspan="2">template&lt;class Scalar &gt; </td></tr>
+<tr class="memitem:a02f44ff416c266c6ac2dbf4a5be40ccb"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a02f44ff416c266c6ac2dbf4a5be40ccb">sophus::ScalingTranslation2</a> = lie::Group&lt; lie::SemiDirectProductWithTranslation&lt; Scalar, 2, lie::Scaling2Impl &gt; &gt;</td></tr>
+<tr class="separator:a02f44ff416c266c6ac2dbf4a5be40ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
