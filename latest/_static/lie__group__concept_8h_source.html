@@ -246,7 +246,7 @@ $(document).ready(function(){initNavTree('lie__group__concept_8h_source.html',''
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
 <div class="line"><a name="l00158"></a><span class="lineno"><a class="line" href="classsophus_1_1lie_1_1_direct_product.html#a9f79d6b5fb7e9353ececcab4f8ebe0f5">  158</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">auto</span> <a class="code" href="classsophus_1_1lie_1_1_direct_product.html#a9f79d6b5fb7e9353ececcab4f8ebe0f5">matrix</a>(Eigen::Vector&lt;Scalar, kNumParams&gt; <span class="keyword">const</span>&amp; params)</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      -&gt; Eigen::Matrix&lt;Scalar, kPointDim, kPointDim&gt; {</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordflow">return</span> LeftGroup::matrix(leftParams(params)) *</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordflow">return</span> LeftGroup::matrix(leftParams(params)) +</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;           RightGroup::matrix(rightParams(params));</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  }</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
@@ -270,7 +270,7 @@ $(document).ready(function(){initNavTree('lie__group__concept_8h_source.html',''
 <div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="classsophus_1_1lie_1_1_direct_product.html#a34c9e5ec909234d3396c7b36d7739c08">  181</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">auto</span> <a class="code" href="classsophus_1_1lie_1_1_direct_product.html#a34c9e5ec909234d3396c7b36d7739c08">exampleTangents</a>() -&gt; std::vector&lt;Eigen::Vector&lt;Scalar, kDof&gt;&gt; {</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    std::vector&lt;Eigen::Vector&lt;Scalar, kDof&gt;&gt; examples;</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span>&amp; left_tangent : LeftGroup::exampleTangents()) {</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span>&amp; right_tangents : LeftGroup::exampleTangents()) {</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span>&amp; right_tangents : RightGroup::exampleTangents()) {</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        examples.push_back(tagent(left_tangent, right_tangents));</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;      }</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    }</div>
@@ -281,7 +281,7 @@ $(document).ready(function(){initNavTree('lie__group__concept_8h_source.html',''
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      -&gt; std::vector&lt;Eigen::Vector&lt;Scalar, kNumParams&gt;&gt; {</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    std::vector&lt;Eigen::Vector&lt;Scalar, kNumParams&gt;&gt; examples;</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span>&amp; left_params : LeftGroup::exampleParams()) {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span>&amp; right_params : LeftGroup::exampleParams()) {</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span>&amp; right_params : RightGroup::exampleParams()) {</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        examples.push_back(params(left_params, right_params));</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;      }</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    }</div>
@@ -294,7 +294,7 @@ $(document).ready(function(){initNavTree('lie__group__concept_8h_source.html',''
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keyword">auto</span> are_left_params_valid = LeftGroup::areParamsValid(leftParams(params));</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keyword">auto</span> are_right_params_valid =</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        LeftGroup::areParamsValid(rightParams(params));</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        RightGroup::areParamsValid(rightParams(params));</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordflow">if</span> (!are_left_params_valid) {</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;      error.details.insert(</div>
