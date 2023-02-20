@@ -128,6 +128,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:ae412a5c49e1b36eb1df06ee4d7e57310"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaaed3f0b9528396a4c10b6aa3cc9fa61"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#aaaed3f0b9528396a4c10b6aa3cc9fa61">areParamsValid</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#a50d9ad4486801e24f1266270d24cd6d8">kNumParams</a> &gt; const &amp;unit_complex) -&gt; sophus::Expected&lt; Success &gt;</td></tr>
 <tr class="separator:aaaed3f0b9528396a4c10b6aa3cc9fa61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac82cfbfaa8c9fcbb506e50334526dfe6"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#ac82cfbfaa8c9fcbb506e50334526dfe6">toAmbient</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#a6885612406d347170496e344166a88af">kPointDim</a> &gt; const &amp;point) -&gt; Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#a9707b12cae22373957fcdb4047a98c30">kAmbientDim</a> &gt;</td></tr>
+<tr class="separator:ac82cfbfaa8c9fcbb506e50334526dfe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -184,12 +186,12 @@ template&lt;class TScalar &gt; </div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt;  Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#a6885612406d347170496e344166a88af">kPointDim</a> &gt;</td>
+          <td></td><td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#a6885612406d347170496e344166a88af">kPointDim</a>&gt; </td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -528,6 +530,34 @@ template&lt;class TScalar &gt; </div>
           <td></td>
           <td>)</td>
           <td></td><td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#a50d9ad4486801e24f1266270d24cd6d8">kNumParams</a>&gt; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac82cfbfaa8c9fcbb506e50334526dfe6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac82cfbfaa8c9fcbb506e50334526dfe6">&#9670;&nbsp;</a></span>toAmbient()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TScalar &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html">sophus::lie::Rotation2Impl</a>&lt; TScalar &gt;::toAmbient </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#a6885612406d347170496e344166a88af">kPointDim</a> &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>point</em></td><td>)</td>
+          <td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#abe5d338e64f0185f275929a398bc57ca">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_rotation2_impl.html#a9707b12cae22373957fcdb4047a98c30">kAmbientDim</a>&gt; </td>
         </tr>
       </table>
   </td>

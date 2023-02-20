@@ -126,6 +126,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a4a56c241ced3a3c344207e58d12066c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa85d8e9ac0f61d7250adbd3eca1a1880"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#aa85d8e9ac0f61d7250adbd3eca1a1880">areParamsValid</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a4e01c8b5d1247cf10ccf4f55c3b1e8eb">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a7106f3d7236fa80cca9c78c46bb77f45">kNumParams</a> &gt; const &amp;params) -&gt; sophus::Expected&lt; Success &gt;</td></tr>
 <tr class="separator:aa85d8e9ac0f61d7250adbd3eca1a1880"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7109eae1ec77b8dcc7a32eb7a6a4177b"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a7109eae1ec77b8dcc7a32eb7a6a4177b">toAmbient</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a4e01c8b5d1247cf10ccf4f55c3b1e8eb">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a9aa59764cffcdb27f139791d7d3c5056">kPointDim</a> &gt; const &amp;point) -&gt; Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a4e01c8b5d1247cf10ccf4f55c3b1e8eb">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a6873b91498a2496afd1a90b63f25719e">kAmbientDim</a> &gt;</td></tr>
+<tr class="separator:a7109eae1ec77b8dcc7a32eb7a6a4177b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -486,6 +488,34 @@ template&lt;class TScalar , int kTranslationDim, template&lt; class &gt; class T
           <td></td>
           <td>)</td>
           <td></td><td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a4e01c8b5d1247cf10ccf4f55c3b1e8eb">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a7106f3d7236fa80cca9c78c46bb77f45">kNumParams</a>&gt; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7109eae1ec77b8dcc7a32eb7a6a4177b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7109eae1ec77b8dcc7a32eb7a6a4177b">&#9670;&nbsp;</a></span>toAmbient()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TScalar , int kTranslationDim, template&lt; class &gt; class TLeftGroup&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html">sophus::lie::SemiDirectProductWithTranslation</a>&lt; TScalar, kTranslationDim, TLeftGroup &gt;::toAmbient </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a4e01c8b5d1247cf10ccf4f55c3b1e8eb">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a9aa59764cffcdb27f139791d7d3c5056">kPointDim</a> &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>point</em></td><td>)</td>
+          <td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a4e01c8b5d1247cf10ccf4f55c3b1e8eb">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html#a6873b91498a2496afd1a90b63f25719e">kAmbientDim</a>&gt; </td>
         </tr>
       </table>
   </td>

@@ -128,6 +128,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a4d44657f2fc822440e735ebc24f24473"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9be6c0430a7a65b1102aefef11dfb81"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#ae9be6c0430a7a65b1102aefef11dfb81">leftJacobianInverse</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a0ff9250855217d46924ee958451fdb7e">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a003c61e46f941c59cd7024eb3c529243">kNumParams</a> &gt; const &amp;) -&gt; Eigen::Matrix&lt; <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a0ff9250855217d46924ee958451fdb7e">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a9a72ab38779017ecc6d982d20121c30f">kPointDim</a>, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a9a72ab38779017ecc6d982d20121c30f">kPointDim</a> &gt;</td></tr>
 <tr class="separator:ae9be6c0430a7a65b1102aefef11dfb81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47b69521f1909f071e2f488327ed180b"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a47b69521f1909f071e2f488327ed180b">toAmbient</a> (Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a0ff9250855217d46924ee958451fdb7e">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a9a72ab38779017ecc6d982d20121c30f">kPointDim</a> &gt; const &amp;point) -&gt; Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a0ff9250855217d46924ee958451fdb7e">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a1f65f2fd1261fd9e80b43731197619d5">kAmbientDim</a> &gt;</td></tr>
+<tr class="separator:a47b69521f1909f071e2f488327ed180b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -528,6 +530,34 @@ template&lt;class TScalar &gt; </div>
           <td></td>
           <td>)</td>
           <td></td><td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a0ff9250855217d46924ee958451fdb7e">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a003c61e46f941c59cd7024eb3c529243">kNumParams</a>&gt; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a47b69521f1909f071e2f488327ed180b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47b69521f1909f071e2f488327ed180b">&#9670;&nbsp;</a></span>toAmbient()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TScalar &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html">sophus::lie::Scaling2Impl</a>&lt; TScalar &gt;::toAmbient </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Vector&lt; <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a0ff9250855217d46924ee958451fdb7e">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a9a72ab38779017ecc6d982d20121c30f">kPointDim</a> &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>point</em></td><td>)</td>
+          <td> -&gt; Eigen::Vector&lt;<a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a0ff9250855217d46924ee958451fdb7e">Scalar</a>, <a class="el" href="classsophus_1_1lie_1_1_scaling2_impl.html#a1f65f2fd1261fd9e80b43731197619d5">kAmbientDim</a>&gt; </td>
         </tr>
       </table>
   </td>

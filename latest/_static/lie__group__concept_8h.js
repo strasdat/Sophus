@@ -10,6 +10,7 @@ var lie__group__concept_8h =
     [ "Scaling2", "lie__group__concept_8h.html#ad0943f4c4c623e5c05c84fd3d1c9b16b", null ],
     [ "ScalingRotation2", "lie__group__concept_8h.html#a32d408a187977f9268f45ca783113ed9", null ],
     [ "ScalingTranslation2", "lie__group__concept_8h.html#a02f44ff416c266c6ac2dbf4a5be40ccb", null ],
+    [ "unproj", "lie__group__concept_8h.html#a46ae942905f1509f4baacf0f4c496419", null ],
     [ "LeftJacobianImplConcept", "lie__group__concept_8h.html#a0265e6fdbf0e4d9bd2c02ca0a4447983", null ],
     [ "LieGroupImplConcept", "lie__group__concept_8h.html#a5a29fcd9d264b6ac009b66cbc1e3ef68", null ]
 ];

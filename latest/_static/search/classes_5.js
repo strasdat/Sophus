@@ -1,17 +1,17 @@
 var searchData=
 [
-  ['image_1021',['Image',['../classsophus_1_1_image.html',1,'sophus']]],
-  ['imagelayout_1022',['ImageLayout',['../classsophus_1_1_image_layout.html',1,'sophus']]],
-  ['imagesize_1023',['ImageSize',['../structsophus_1_1_image_size.html',1,'sophus']]],
-  ['imagetraits_1024',['ImageTraits',['../structsophus_1_1_image_traits.html',1,'sophus']]],
-  ['imagetraits_3c_20eigen_3a_3amatrix_3c_20tt_2c_20knumchannelst_2c_201_20_3e_20_3e_1025',['ImageTraits&lt; Eigen::Matrix&lt; TT, kNumChannelsT, 1 &gt; &gt;',['../structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html',1,'sophus']]],
-  ['imageview_1026',['ImageView',['../structsophus_1_1_image_view.html',1,'sophus']]],
-  ['imumodel_1027',['ImuModel',['../classsophus_1_1_imu_model.html',1,'sophus']]],
-  ['indexandu_1028',['IndexAndU',['../structsophus_1_1_index_and_u.html',1,'sophus']]],
-  ['intersectionresult_1029',['IntersectionResult',['../structsophus_1_1_ray_1_1_intersection_result.html',1,'sophus::Ray']]],
-  ['inversedepthpoint3_1030',['InverseDepthPoint3',['../classsophus_1_1_inverse_depth_point3.html',1,'sophus']]],
-  ['isfixedsizevector_1031',['IsFixedSizeVector',['../structsophus_1_1_is_fixed_size_vector.html',1,'sophus']]],
-  ['isfloatingpoint_1032',['IsFloatingPoint',['../structsophus_1_1_is_floating_point.html',1,'sophus']]],
-  ['isfloatingpoint_3c_20eigen_3a_3amatrix_3c_20tscalar_2c_20km_2c_20kmatrixdim_20_3e_20_3e_1033',['IsFloatingPoint&lt; Eigen::Matrix&lt; TScalar, kM, kMatrixDim &gt; &gt;',['../structsophus_1_1_is_floating_point_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4.html',1,'sophus']]],
-  ['isuniformrandombitgenerator_1034',['IsUniformRandomBitGenerator',['../structsophus_1_1_is_uniform_random_bit_generator.html',1,'sophus']]]
+  ['image_1023',['Image',['../classsophus_1_1_image.html',1,'sophus']]],
+  ['imagelayout_1024',['ImageLayout',['../classsophus_1_1_image_layout.html',1,'sophus']]],
+  ['imagesize_1025',['ImageSize',['../structsophus_1_1_image_size.html',1,'sophus']]],
+  ['imagetraits_1026',['ImageTraits',['../structsophus_1_1_image_traits.html',1,'sophus']]],
+  ['imagetraits_3c_20eigen_3a_3amatrix_3c_20tt_2c_20knumchannelst_2c_201_20_3e_20_3e_1027',['ImageTraits&lt; Eigen::Matrix&lt; TT, kNumChannelsT, 1 &gt; &gt;',['../structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html',1,'sophus']]],
+  ['imageview_1028',['ImageView',['../structsophus_1_1_image_view.html',1,'sophus']]],
+  ['imumodel_1029',['ImuModel',['../classsophus_1_1_imu_model.html',1,'sophus']]],
+  ['indexandu_1030',['IndexAndU',['../structsophus_1_1_index_and_u.html',1,'sophus']]],
+  ['intersectionresult_1031',['IntersectionResult',['../structsophus_1_1_ray_1_1_intersection_result.html',1,'sophus::Ray']]],
+  ['inversedepthpoint3_1032',['InverseDepthPoint3',['../classsophus_1_1_inverse_depth_point3.html',1,'sophus']]],
+  ['isfixedsizevector_1033',['IsFixedSizeVector',['../structsophus_1_1_is_fixed_size_vector.html',1,'sophus']]],
+  ['isfloatingpoint_1034',['IsFloatingPoint',['../structsophus_1_1_is_floating_point.html',1,'sophus']]],
+  ['isfloatingpoint_3c_20eigen_3a_3amatrix_3c_20tscalar_2c_20km_2c_20kmatrixdim_20_3e_20_3e_1035',['IsFloatingPoint&lt; Eigen::Matrix&lt; TScalar, kM, kMatrixDim &gt; &gt;',['../structsophus_1_1_is_floating_point_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4.html',1,'sophus']]],
+  ['isuniformrandombitgenerator_1036',['IsUniformRandomBitGenerator',['../structsophus_1_1_is_uniform_random_bit_generator.html',1,'sophus']]]
 ];

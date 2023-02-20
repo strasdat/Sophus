@@ -85,6 +85,7 @@ $(document).ready(function(){initNavTree('namespacesophus_1_1lie.html',''); init
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">sophus::lie Namespace Reference</div>  </div>
@@ -104,6 +105,12 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1lie_1_1_semi_direct_product_with_translation.html">SemiDirectProductWithTranslation</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a46ae942905f1509f4baacf0f4c496419"><td class="memTemplParams" colspan="2">template&lt;class TPoint &gt; </td></tr>
+<tr class="memitem:a46ae942905f1509f4baacf0f4c496419"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus_1_1lie.html#a46ae942905f1509f4baacf0f4c496419">unproj</a> (Eigen::MatrixBase&lt; TPoint &gt; const &amp;p, const typename TPoint::Scalar &amp;z=1.0) -&gt; Eigen::Vector&lt; typename TPoint::Scalar, TPoint::RowsAtCompileTime+1 &gt;</td></tr>
+<tr class="separator:a46ae942905f1509f4baacf0f4c496419"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a5a29fcd9d264b6ac009b66cbc1e3ef68"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
@@ -113,6 +120,37 @@ Variables</h2></td></tr>
 <tr class="memitem:a0265e6fdbf0e4d9bd2c02ca0a4447983"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus_1_1lie.html#a0265e6fdbf0e4d9bd2c02ca0a4447983">LeftJacobianImplConcept</a></td></tr>
 <tr class="separator:a0265e6fdbf0e4d9bd2c02ca0a4447983"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a46ae942905f1509f4baacf0f4c496419"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46ae942905f1509f4baacf0f4c496419">&#9670;&nbsp;</a></span>unproj()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class TPoint &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto sophus::lie::unproj </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::MatrixBase&lt; TPoint &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>p</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename TPoint::Scalar &amp;&#160;</td>
+          <td class="paramname"><em>z</em> = <code>1.0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; Eigen::Vector&lt;typename TPoint::Scalar, TPoint::RowsAtCompileTime + 1&gt; </td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="a0265e6fdbf0e4d9bd2c02ca0a4447983"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0265e6fdbf0e4d9bd2c02ca0a4447983">&#9670;&nbsp;</a></span>LeftJacobianImplConcept</h2>
@@ -127,19 +165,18 @@ template&lt;class T &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">=</div>
-<div class="line">    LieGroupImplConcept&lt;T&gt; &amp;&amp;</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= LieGroupImplConcept&lt;T&gt; &amp;&amp;</div>
 <div class="line">    requires(T g, Eigen::Vector&lt;typename T::Scalar, T::kNumParams&gt; params) {</div>
-<div class="line">      {</div>
-<div class="line">        T::leftJacobian(params)</div>
-<div class="line">        } -&gt; <a class="code" href="namespacesophus.html#ad76354c9e144efbea0af694ede4ea46e">ConvertibleTo</a>&lt;</div>
-<div class="line">            Eigen::Matrix&lt;typename T::Scalar, T::kPointDim, T::kPointDim&gt;&gt;;</div>
+<div class="line">  {</div>
+<div class="line">    T::leftJacobian(params)</div>
+<div class="line">    } -&gt; <a class="code" href="namespacesophus.html#ad76354c9e144efbea0af694ede4ea46e">ConvertibleTo</a>&lt;</div>
+<div class="line">        Eigen::Matrix&lt;typename T::Scalar, T::kPointDim, T::kPointDim&gt;&gt;;</div>
 <div class="line"> </div>
-<div class="line">      {</div>
-<div class="line">        T::leftJacobianInverse(params)</div>
-<div class="line">        } -&gt; <a class="code" href="namespacesophus.html#ad76354c9e144efbea0af694ede4ea46e">ConvertibleTo</a>&lt;</div>
-<div class="line">            Eigen::Matrix&lt;typename T::Scalar, T::kPointDim, T::kPointDim&gt;&gt;;</div>
-<div class="line">    }</div>
+<div class="line">  {</div>
+<div class="line">    T::leftJacobianInverse(params)</div>
+<div class="line">    } -&gt; <a class="code" href="namespacesophus.html#ad76354c9e144efbea0af694ede4ea46e">ConvertibleTo</a>&lt;</div>
+<div class="line">        Eigen::Matrix&lt;typename T::Scalar, T::kPointDim, T::kPointDim&gt;&gt;;</div>
+<div class="line">}</div>
 </div><!-- fragment -->
 </div>
 </div>
