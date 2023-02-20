@@ -1,5 +1,8 @@
 var NAVTREEINDEX9 =
 {
+"structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html#ac87daed31facedf3f4af14f27ef7e2be":[1,0,2,25,1],
+"structsophus_1_1_image_view.html":[1,0,2,26],
+"structsophus_1_1_image_view.html#a17ad6c4e80f27ebb8be855b1e8a602ca":[1,0,2,26,11],
 "structsophus_1_1_image_view.html#a198df907fecd7103724f1ffd02f8310c":[1,0,2,26,22],
 "structsophus_1_1_image_view.html#a2355eb158506aafc762a7a057975c13b":[1,0,2,26,23],
 "structsophus_1_1_image_view.html#a2b9537ef883c762342bc956a4bbcad35":[1,0,2,26,5],

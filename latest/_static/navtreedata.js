@@ -68,8 +68,8 @@ var NAVTREEINDEX =
 "classsophus_1_1_so2_base.html#abab9df782e9f19f5390a411c492a8035",
 "dyn__image__types_8h.html#a19e166b6d93dec8fcf17a1b275f9a416",
 "image__view_8cpp.html",
-"plane__conv_8h.html#a0d45b1d1391f9495e6abc722e89f7a03",
-"structsophus_1_1_image_view.html#a198df907fecd7103724f1ffd02f8310c"
+"pixel__format_8h_source.html",
+"structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html#ac87daed31facedf3f4af14f27ef7e2be"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

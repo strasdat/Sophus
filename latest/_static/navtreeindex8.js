@@ -1,5 +1,8 @@
 var NAVTREEINDEX8 =
 {
+"pixel__format_8h_source.html":[2,0,0,0,4,41],
+"pixel__format__test_8cpp.html":[2,0,0,0,4,42],
+"plane__conv_8h.html":[2,0,0,0,3,5],
 "plane__conv_8h.html#a0d45b1d1391f9495e6abc722e89f7a03":[2,0,0,0,3,5,1],
 "plane__conv_8h.html#a1d5f47b49e2d37c298d6d005c833d766":[2,0,0,0,3,5,5],
 "plane__conv_8h.html#a3dccc4366cb9e920e7b6d6ab0d7039f9":[2,0,0,0,3,5,3],
@@ -246,8 +249,5 @@ var NAVTREEINDEX8 =
 "structsophus_1_1_image_traits.html#a4f785692cf6427cf6971e1f1e858008e":[1,0,2,24,0],
 "structsophus_1_1_image_traits.html#a8d4e978ac59c8e0f2d014756622258cd":[1,0,2,24,1],
 "structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html":[1,0,2,25],
-"structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html#a9717f0a0bc0b96a7c7a8af6152d4c2e4":[1,0,2,25,0],
-"structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html#ac87daed31facedf3f4af14f27ef7e2be":[1,0,2,25,1],
-"structsophus_1_1_image_view.html":[1,0,2,26],
-"structsophus_1_1_image_view.html#a17ad6c4e80f27ebb8be855b1e8a602ca":[1,0,2,26,11]
+"structsophus_1_1_image_traits_3_01_eigen_1_1_matrix_3_01_t_t_00_01k_num_channels_t_00_011_01_4_01_4.html#a9717f0a0bc0b96a7c7a8af6152d4c2e4":[1,0,2,25,0]
 };
