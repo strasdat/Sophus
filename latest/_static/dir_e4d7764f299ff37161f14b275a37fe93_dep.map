@@ -1,20 +1,22 @@
 <map id="/home/runner/work/Sophus/Sophus/cpp/sophus/lie" name="/home/runner/work/Sophus/Sophus/cpp/sophus/lie">
-<area shape="rect" id="node2" href="dir_4feb07b72c9e1e84258e3b87311b658b.html" title="details" alt="" coords="112,159,184,207"/>
-<area shape="rect" id="edge6-headlabel" href="dir_000009_000017.html" title="12" alt="" coords="116,132,134,146"/>
-<area shape="rect" id="node7" href="dir_246b32a499e23272b6f273a9e5862f57.html" title="linalg" alt="" coords="380,159,452,207"/>
-<area shape="rect" id="edge7-headlabel" href="dir_000009_000012.html" title="3" alt="" coords="361,144,370,158"/>
-<area shape="rect" id="node3" href="dir_76e3ff7290a95df4570c2843dee77480.html" title="interp" alt="" coords="91,255,163,303"/>
-<area shape="rect" id="edge4-headlabel" href="dir_000017_000010.html" title="3" alt="" coords="139,231,149,246"/>
-<area shape="rect" id="node5" href="dir_a7082e164d91aec3b9943421365f2e0b.html" title="common" alt="" coords="235,351,314,399"/>
-<area shape="rect" id="edge3-headlabel" href="dir_000017_000004.html" title="2" alt="" coords="238,324,247,339"/>
-<area shape="rect" id="node6" href="dir_1d93d1ed5108c4d2071899c26be7717c.html" title="calculus" alt="" coords="237,255,312,303"/>
-<area shape="rect" id="edge5-headlabel" href="dir_000017_000002.html" title="1" alt="" coords="229,230,239,244"/>
-<area shape="rect" id="edge2-headlabel" href="dir_000010_000004.html" title="2" alt="" coords="218,331,228,346"/>
-<area shape="rect" id="node4" href="dir_a02b2cb24bea1883233fe591b43e1ca7.html" title="proto" alt="" coords="133,63,205,111"/>
-<area shape="rect" id="edge9-headlabel" href="dir_000011_000012.html" title="1" alt="" coords="361,144,371,159"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000004_000009.html" title="1" alt="" coords="117,115,127,130"/>
-<area shape="rect" id="edge8-headlabel" href="dir_000002_000004.html" title="4" alt="" coords="278,325,288,340"/>
-<area shape="rect" id="edge10-headlabel" href="dir_000012_000004.html" title="1" alt="" coords="329,353,339,368"/>
-<area shape="rect" id="clust2" href="dir_e4d7764f299ff37161f14b275a37fe93.html" alt="" coords="27,52,216,313"/>
-<area shape="rect" id="clust1" href="dir_955fab3374a7652c82f8c2b63089d242.html" title="sophus" alt="" coords="16,16,227,324"/>
+<area shape="rect" id="node2" href="dir_4feb07b72c9e1e84258e3b87311b658b.html" title="details" alt="" coords="267,159,339,207"/>
+<area shape="rect" id="edge6-headlabel" href="dir_000009_000018.html" title="12" alt="" coords="244,147,261,161"/>
+<area shape="rect" id="node8" href="dir_246b32a499e23272b6f273a9e5862f57.html" title="linalg" alt="" coords="536,159,608,207"/>
+<area shape="rect" id="edge7-headlabel" href="dir_000009_000013.html" title="3" alt="" coords="516,143,526,158"/>
+<area shape="rect" id="node4" href="dir_76e3ff7290a95df4570c2843dee77480.html" title="interp" alt="" coords="267,255,339,303"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000018_000011.html" title="3" alt="" coords="306,229,316,244"/>
+<area shape="rect" id="node6" href="dir_a7082e164d91aec3b9943421365f2e0b.html" title="common" alt="" coords="469,351,547,399"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000018_000004.html" title="2" alt="" coords="502,323,512,338"/>
+<area shape="rect" id="node7" href="dir_1d93d1ed5108c4d2071899c26be7717c.html" title="calculus" alt="" coords="371,255,445,303"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000018_000002.html" title="1" alt="" coords="370,229,379,244"/>
+<area shape="rect" id="node3" href="dir_e4c949dbec4bd063fd255204a9a11c94.html" title="experimental" alt="" coords="229,63,339,111"/>
+<area shape="rect" id="edge10-headlabel" href="dir_000010_000004.html" title="1" alt="" coords="563,341,572,355"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000011_000004.html" title="2" alt="" coords="448,344,458,359"/>
+<area shape="rect" id="node5" href="dir_a02b2cb24bea1883233fe591b43e1ca7.html" title="proto" alt="" coords="133,63,205,111"/>
+<area shape="rect" id="edge9-headlabel" href="dir_000012_000013.html" title="1" alt="" coords="517,144,526,158"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000004_000009.html" title="1" alt="" coords="120,113,129,127"/>
+<area shape="rect" id="edge8-headlabel" href="dir_000002_000004.html" title="4" alt="" coords="471,325,481,339"/>
+<area shape="rect" id="edge11-headlabel" href="dir_000013_000004.html" title="1" alt="" coords="547,335,556,349"/>
+<area shape="rect" id="clust2" href="dir_e4d7764f299ff37161f14b275a37fe93.html" alt="" coords="27,52,349,313"/>
+<area shape="rect" id="clust1" href="dir_955fab3374a7652c82f8c2b63089d242.html" title="sophus" alt="" coords="16,16,360,324"/>
 </map>

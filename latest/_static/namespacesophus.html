@@ -232,6 +232,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_region.html">Region</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A region is a closed interval [a, b] with a being the lower bound (=min) and b being the upper bound (=max).  <a href="classsophus_1_1_region.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_rotation2.html">Rotation2</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_rx_so2.html">RxSo2</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_rx_so2.html" title="RxSo2 using storage; derived from RxSo2Base.">RxSo2</a> using storage; derived from <a class="el" href="classsophus_1_1_rx_so2_base.html" title="RxSo2 base type - implements RxSo2 class but is storage agnostic.">RxSo2Base</a>.  <a href="classsophus_1_1_rx_so2.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -285,6 +287,10 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsophus_1_1_so3.html" title="So3 using default storage; derived from So3Base.">So3</a> base type - implements <a class="el" href="classsophus_1_1_so3.html" title="So3 using default storage; derived from So3Base.">So3</a> class but is storage agnostic.  <a href="classsophus_1_1_so3_base.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_spline_basis_function.html">SplineBasisFunction</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_tangent_trait.html">TangentTrait</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsophus_1_1_tangent_trait_3_01_t_scalar_00_011_01_4.html">TangentTrait&lt; TScalar, 1 &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsophus_1_1_tests.html">Tests</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1271,6 +1277,9 @@ Variables</h2></td></tr>
 <tr class="memitem:a9c1394f235253ed78c83c7f6874a4eb6"><td class="memTemplParams" colspan="2">template&lt;class TT &gt; </td></tr>
 <tr class="memitem:a9c1394f235253ed78c83c7f6874a4eb6"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a9c1394f235253ed78c83c7f6874a4eb6">PointType</a> = <a class="el" href="namespacesophus.html#a67985821623a6dc6838a7b04382d2cdb">RealPointType</a>&lt;TT&gt; || <a class="el" href="namespacesophus.html#ab5ad579c7ef2fb1f7b9e1ce7fe8f5f14">IntegerPointType</a>&lt;TT&gt;</td></tr>
 <tr class="separator:a9c1394f235253ed78c83c7f6874a4eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a081038d4c642c73d4ca959ac7cbdddbf"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a081038d4c642c73d4ca959ac7cbdddbf"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacesophus.html#a081038d4c642c73d4ca959ac7cbdddbf">LieGroupImplConcept</a></td></tr>
+<tr class="separator:a081038d4c642c73d4ca959ac7cbdddbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classsophus_1_1_image.html" title="Image read-only access to pixels and shared ownership, hence cheap to copy. Type is nullable.">Image</a> <a class="el" href="classsophus_1_1_mut_image.html" title="A image with write access to pixels and exclusive ownership. There is no copy constr / copy assignmen...">MutImage</a>, owning images types. </p>
@@ -8475,6 +8484,35 @@ template&lt;class TScalar &gt; </div>
       </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<a id="a081038d4c642c73d4ca959ac7cbdddbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a081038d4c642c73d4ca959ac7cbdddbf">&#9670;&nbsp;</a></span>LieGroupImplConcept</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">concept sophus::LieGroupImplConcept</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= requires(</div>
+<div class="line">    T g,</div>
+<div class="line">    <span class="keyword">typename</span> TangentTrait&lt;typename T::Scalar, T::kDof&gt;::Type t,</div>
+<div class="line">    Eigen::Vector&lt;typename T::Scalar, T::kNumParams&gt; p) {</div>
+<div class="line">  {</div>
+<div class="line">    T::exp(t)</div>
+<div class="line">    } -&gt; std::convertible_to&lt;Eigen::Vector&lt;typename T::Scalar, T::kNumParams&gt;&gt;;</div>
+<div class="line"> </div>
+<div class="line">  {</div>
+<div class="line">    T::log(p)</div>
+<div class="line">    } -&gt; std::convertible_to&lt;</div>
+<div class="line">        <span class="keyword">typename</span> TangentTrait&lt;typename T::Scalar, T::kDof&gt;::Type&gt;;</div>
+<div class="line">}</div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a9c1394f235253ed78c83c7f6874a4eb6"></a>
