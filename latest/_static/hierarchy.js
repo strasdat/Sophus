@@ -21,6 +21,7 @@ var hierarchy =
     ] ],
     [ "sophus::ClippingPlanes", "structsophus_1_1_clipping_planes.html", null ],
     [ "sophus::ClosestApproachResult< TT >", "structsophus_1_1_closest_approach_result.html", null ],
+    [ "sophus::lie::DirectProduct< TScalar, TLeftGroup, TRightGroup >", "classsophus_1_1lie_1_1_direct_product.html", null ],
     [ "sophus::DynImageView< TPredicate >", "classsophus_1_1_dyn_image_view.html", null ],
     [ "sophus::DynImageView< AnyImagePredicate >", "classsophus_1_1_dyn_image_view.html", [
       [ "sophus::MutDynImageView< AnyImagePredicate >", "classsophus_1_1_mut_dyn_image_view.html", [
@@ -70,7 +71,7 @@ var hierarchy =
     [ "sophus::Random< double >", "structsophus_1_1_random_3_01double_01_4.html", null ],
     [ "sophus::Ray< TScalar, kN >", "classsophus_1_1_ray.html", null ],
     [ "sophus::Region< TPoint >", "classsophus_1_1_region.html", null ],
-    [ "sophus::Rotation2", "classsophus_1_1_rotation2.html", null ],
+    [ "sophus::lie::Rotation2< TScalar >", "classsophus_1_1lie_1_1_rotation2.html", null ],
     [ "RotationalPart< TLieGroup >", "struct_rotational_part.html", null ],
     [ "RotationalPart< sophus::RxSO2d >", "struct_rotational_part_3_01sophus_1_1_rx_s_o2d_01_4.html", null ],
     [ "RotationalPart< sophus::RxSO3d >", "struct_rotational_part_3_01sophus_1_1_rx_s_o3d_01_4.html", null ],
@@ -99,6 +100,7 @@ var hierarchy =
     [ "sophus::RxSo3Base< Map< sophus::RxSo3< TScalar > const > >", "classsophus_1_1_rx_so3_base.html", [
       [ "Eigen::Map< sophus::RxSo3< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_rx_so3_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
+    [ "sophus::lie::Scaling2< TScalar >", "classsophus_1_1lie_1_1_scaling2.html", null ],
     [ "sophus::ScalingNonOrthogonalityAcceleroModel< TT >", "structsophus_1_1_scaling_non_orthogonality_accelero_model.html", null ],
     [ "sophus::ScalingNonOrthogonalityGyroModel< TT >", "structsophus_1_1_scaling_non_orthogonality_gyro_model.html", null ],
     [ "sophus::Se2< TScalar >", "classsophus_1_1_se2.html", null ],
@@ -118,6 +120,7 @@ var hierarchy =
     [ "sophus::Se3Base< Map< sophus::Se3< TScalar > const > >", "classsophus_1_1_se3_base.html", [
       [ "Eigen::Map< sophus::Se3< TScalar > const >", "class_eigen_1_1_map_3_01sophus_1_1_se3_3_01_t_scalar_01_4_01const_01_4.html", null ]
     ] ],
+    [ "sophus::lie::SemiDirectProductWithTranslation< TScalar, kTranslationDim, TLeftGroup >", "classsophus_1_1lie_1_1_semi_direct_product_with_translation.html", null ],
     [ "sophus::Sim2< TScalar >", "classsophus_1_1_sim2.html", null ],
     [ "sophus::Sim2Base< TDerived >", "classsophus_1_1_sim2_base.html", null ],
     [ "sophus::Sim2Base< Map< sophus::Sim2< TScalar > > >", "classsophus_1_1_sim2_base.html", [
@@ -156,8 +159,6 @@ var hierarchy =
     [ "sophus::SplineBasisFunction< TScalar >", "classsophus_1_1_spline_basis_function.html", null ],
     [ "sophus::So3Base< TDerived >::TangentAndTheta", "structsophus_1_1_so3_base_1_1_tangent_and_theta.html", null ],
     [ "sophus::RxSo3Base< TDerived >::TangentAndTheta", "structsophus_1_1_rx_so3_base_1_1_tangent_and_theta.html", null ],
-    [ "sophus::TangentTrait< TScalar, kDof >", "structsophus_1_1_tangent_trait.html", null ],
-    [ "sophus::TangentTrait< TScalar, 1 >", "structsophus_1_1_tangent_trait_3_01_t_scalar_00_011_01_4.html", null ],
     [ "sophus::LieGroupCeresTests< TLieGroup >::TestGraphFunctor", "structsophus_1_1_lie_group_ceres_tests_1_1_test_graph_functor.html", null ],
     [ "sophus::LieGroupCeresTests< TLieGroup >::TestLieGroupCostFunctor", "structsophus_1_1_lie_group_ceres_tests_1_1_test_lie_group_cost_functor.html", null ],
     [ "sophus::LieGroupCeresTests< TLieGroup >::TestPointCostFunctor", "structsophus_1_1_lie_group_ceres_tests_1_1_test_point_cost_functor.html", null ],
