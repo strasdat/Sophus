@@ -127,18 +127,19 @@ template&lt;class T &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= LieGroupImplConcept&lt;T&gt; &amp;&amp;</div>
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">    LieGroupImplConcept&lt;T&gt; &amp;&amp;</div>
 <div class="line">    requires(T g, Eigen::Vector&lt;typename T::Scalar, T::kNumParams&gt; params) {</div>
-<div class="line">  {</div>
-<div class="line">    T::leftJacobian(params)</div>
-<div class="line">    } -&gt; <a class="code" href="namespacesophus.html#ad76354c9e144efbea0af694ede4ea46e">ConvertibleTo</a>&lt;</div>
-<div class="line">        Eigen::Matrix&lt;typename T::Scalar, T::kPointDim, T::kPointDim&gt;&gt;;</div>
+<div class="line">      {</div>
+<div class="line">        T::leftJacobian(params)</div>
+<div class="line">        } -&gt; <a class="code" href="namespacesophus.html#ad76354c9e144efbea0af694ede4ea46e">ConvertibleTo</a>&lt;</div>
+<div class="line">            Eigen::Matrix&lt;typename T::Scalar, T::kPointDim, T::kPointDim&gt;&gt;;</div>
 <div class="line"> </div>
-<div class="line">  {</div>
-<div class="line">    T::leftJacobianInverse(params)</div>
-<div class="line">    } -&gt; <a class="code" href="namespacesophus.html#ad76354c9e144efbea0af694ede4ea46e">ConvertibleTo</a>&lt;</div>
-<div class="line">        Eigen::Matrix&lt;typename T::Scalar, T::kPointDim, T::kPointDim&gt;&gt;;</div>
-<div class="line">}</div>
+<div class="line">      {</div>
+<div class="line">        T::leftJacobianInverse(params)</div>
+<div class="line">        } -&gt; <a class="code" href="namespacesophus.html#ad76354c9e144efbea0af694ede4ea46e">ConvertibleTo</a>&lt;</div>
+<div class="line">            Eigen::Matrix&lt;typename T::Scalar, T::kPointDim, T::kPointDim&gt;&gt;;</div>
+<div class="line">    }</div>
 </div><!-- fragment -->
 </div>
 </div>
