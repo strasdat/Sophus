@@ -1,4 +1,0 @@
-<map id="sophus::IsFixedSizeVector&lt; TVectorT, kNumDimensions, typename &gt;" name="sophus::IsFixedSizeVector&lt; TVectorT, kNumDimensions, typename &gt;">
-<area shape="rect" id="node1" title="If the Vector type is of fixed size, then IsFixedSizeVector::value will be true." alt="" coords="5,80,228,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="61,5,173,32"/>
-</map>
