@@ -1,0 +1,8 @@
+{
+  "label": "User Guide",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Introduces the features included in farm-ng-core."
+  }
+}

@@ -1,7 +1,6 @@
 on:
   push:
-    branches: [ main, sophus2 ]
-  pull_request:
+    branches: [ main, sophus2-docs, sophus2 ]
 
   workflow_dispatch:
 
@@ -19,20 +18,17 @@ jobs:
         with:
           submodules: "recursive"
 
-      - name: build docs
-        run: |
-          sudo apt-get -qq update
-          sudo apt-get install doxygen liblua5.3-dev ragel graphviz
-          pip3 install sphinx sympy sphinx_book_theme
-          cd docs
-          ./make_docs.sh
-          cd html-dir
-          touch .nojekyll
+      - name: Install docusaurus dependencies
+        working-directory: docs
+        run: yarn install --frozen-lockfile
+      - name: Test build website
+        working-directory: docs
+        run: yarn build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/html-dir
+          publish_dir: docs/build
           publish_branch: docs
           destination_dir: latest
