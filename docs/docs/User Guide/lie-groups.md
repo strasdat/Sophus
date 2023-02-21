@@ -1,3 +1,9 @@
+---
+sidebar_position: 2
+---
+
+# 🌐Lie Groups
+
 # Lie Gropus
 
 | c++ type        | Lie group name                                       | Description                                                                                                | minimal representation      | #DoF | Matrix representation | compact internal manifold representation    | #params |
@@ -12,4 +18,3 @@
 | `Sim3<T>`       | Similarity Group in 3D, Sim(3)                       | scaling, rotations and translation in 3D                                                                   | tangent vector of Sim(3)    | 4    | 4x4 matrix            | non-zero complex number+ translation vector | 4+3 = 7 |
 | `Cartesian2<T>` | 2D Euclidean Vector Space, R^2                       | all vector spaces are trivial Lie groups, also called 2d translation group, the translation part of SE(2)  | 2-vector                    | 2    | 3x3 matrix            | 2-vector                                    | 2       |
 | `Cartesian3<T>` | 3D Euclidean Vector Space, R^3                       | all vector spaces are trivial Lie groups, also called 3d translation group, the translation part of SE(2)  | 3-vector                    | 3    | 4x4 matrix            | 3-vector                                    | 3       |
-| ----------------|------------------------------------------------------| ---------------------------------------------------------------------------------------------------------- | ----------------------------| -----|---------------------- | ------------------------------------------- | ------- |

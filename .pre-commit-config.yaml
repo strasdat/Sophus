@@ -11,6 +11,7 @@ repos:
         exclude: thirdparty/.*$
       - id: check-yaml
       - id: check-json
+        exclude: docs/
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.1.13
     hooks:

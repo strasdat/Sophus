@@ -175,7 +175,7 @@ Supported advanced features on Lie groups:
 - ✅ Spline interpolation
 - ✅ Averaging (of more than two elements)
 
-## 📐Other geometric concepts
+## 📐More Geometry
 
 ## 🌁Image classes
 
