@@ -14,10 +14,8 @@ const FeatureList: FeatureItem[] = [
     //Svg: require('@site/static/img/Farm-ng_Logo_Black.svg').default,
     description: (
       <>
-        Foundational core layer for new c++ projects.
-        farm-ng-core only has a small set of dependencies: libfmt, expected
-        (both being targeted for c++ standardization) and Protocol Buffers /
-        GRPC.
+        Collections of Lie Groups / Manifolds commonly used for 2d / 3D
+        geometric problems.
       </>
     ),
   },
@@ -26,10 +24,7 @@ const FeatureList: FeatureItem[] = [
     //Svg: require('@site/static/img/Farm-ng_Logo_Black.svg').default,
     description: (
       <>
-        FARM_ENUM enables to/from string conversions. FARM_ASSERT_* for
-        documenting and enforcing preconditions. FARM_INFO_* log macros with
-        run-time and compile time log levels. Convenient macros around Expected
-        and more.
+        Image, MutImage, DynImage, MutDynImage.
       </>
     ),
   },
@@ -38,8 +33,8 @@ const FeatureList: FeatureItem[] = [
     //Svg: require('@site/static/img/Farm-ng_Logo_Black.svg').default,
     description: (
       <>
-        EventLogReader and EventLogWriter to create and playback Protocol
-        Buffer-based datasets and some more general purpose c++ utilities.
+        Collection of camera models (pinhole, brown-conrady aka opencv,
+        kannala-brandt and orthographic), IMU mode and more.
       </>
     ),
   },
