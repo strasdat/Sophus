@@ -1,0 +1,6 @@
+<map id="sophus::CameraInRig" name="sophus::CameraInRig">
+<area shape="rect" id="node1" title="Camera as part of a sensor rig." alt="" coords="113,184,273,211"/>
+<area shape="rect" id="node2" href="$classsophus_1_1_se3.html" title="Se3 using default storage; derived from Se3Base." alt="" coords="5,95,184,121"/>
+<area shape="rect" id="node3" href="$classsophus_1_1_so3.html" title=" " alt="" coords="9,5,180,32"/>
+<area shape="rect" id="node4" href="$classsophus_1_1_camera_model.html" title="Concrete camera model class." alt="" coords="209,95,375,121"/>
+</map>

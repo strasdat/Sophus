@@ -1,0 +1,28 @@
+var namespacefarm__ng =
+[
+    [ "details", "namespacefarm__ng_1_1details.html", "namespacefarm__ng_1_1details" ],
+    [ "A", "structfarm__ng_1_1_a.html", "structfarm__ng_1_1_a" ],
+    [ "Ab", "structfarm__ng_1_1_ab.html", "structfarm__ng_1_1_ab" ],
+    [ "Abc", "structfarm__ng_1_1_abc.html", "structfarm__ng_1_1_abc" ],
+    [ "Error", "structfarm__ng_1_1_error.html", "structfarm__ng_1_1_error" ],
+    [ "ErrorDetail", "structfarm__ng_1_1_error_detail.html", "structfarm__ng_1_1_error_detail" ],
+    [ "EventLogEof", "classfarm__ng_1_1_event_log_eof.html", "classfarm__ng_1_1_event_log_eof" ],
+    [ "EventLogExist", "classfarm__ng_1_1_event_log_exist.html", "classfarm__ng_1_1_event_log_exist" ],
+    [ "EventLogPos", "classfarm__ng_1_1_event_log_pos.html", "classfarm__ng_1_1_event_log_pos" ],
+    [ "EventLogReader", "classfarm__ng_1_1_event_log_reader.html", "classfarm__ng_1_1_event_log_reader" ],
+    [ "EventLogReaderBinaryImpl", "classfarm__ng_1_1_event_log_reader_binary_impl.html", "classfarm__ng_1_1_event_log_reader_binary_impl" ],
+    [ "EventLogReaderImpl", "classfarm__ng_1_1_event_log_reader_impl.html", "classfarm__ng_1_1_event_log_reader_impl" ],
+    [ "EventLogWriter", "classfarm__ng_1_1_event_log_writer.html", "classfarm__ng_1_1_event_log_writer" ],
+    [ "EventLogWriterBinaryImpl", "classfarm__ng_1_1_event_log_writer_binary_impl.html", "classfarm__ng_1_1_event_log_writer_binary_impl" ],
+    [ "EventLogWriterImpl", "classfarm__ng_1_1_event_log_writer_impl.html", "classfarm__ng_1_1_event_log_writer_impl" ],
+    [ "EventTimeCompareClockAndSemantics", "structfarm__ng_1_1_event_time_compare_clock_and_semantics.html", "structfarm__ng_1_1_event_time_compare_clock_and_semantics" ],
+    [ "HasType", "structfarm__ng_1_1_has_type.html", null ],
+    [ "HasType< T, std::variant< Us... > >", "structfarm__ng_1_1_has_type_3_01_t_00_01std_1_1variant_3_01_us_8_8_8_01_4_01_4.html", null ],
+    [ "Overload", "structfarm__ng_1_1_overload.html", null ],
+    [ "ScopedTimer", "structfarm__ng_1_1_scoped_timer.html", "structfarm__ng_1_1_scoped_timer" ],
+    [ "Shared", "classfarm__ng_1_1_shared.html", "classfarm__ng_1_1_shared" ],
+    [ "StopwatchSingleton", "classfarm__ng_1_1_stopwatch_singleton.html", "classfarm__ng_1_1_stopwatch_singleton" ],
+    [ "Success", "structfarm__ng_1_1_success.html", null ],
+    [ "Uri", "structfarm__ng_1_1_uri.html", "structfarm__ng_1_1_uri" ],
+    [ "Void", "structfarm__ng_1_1_void.html", null ]
+];

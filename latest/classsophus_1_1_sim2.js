@@ -1,0 +1,28 @@
+var classsophus_1_1_sim2 =
+[
+    [ "Adjoint", "classsophus_1_1_sim2.html#af9f3dc1de6a50c8ef6ce2ccfae542069", null ],
+    [ "Base", "classsophus_1_1_sim2.html#a935877f58964aea09f40878bd6430e4e", null ],
+    [ "HomogeneousPoint", "classsophus_1_1_sim2.html#a40aa38e55ab46330f45baf7ba2f0cf60", null ],
+    [ "Point", "classsophus_1_1_sim2.html#a82552a1a0ac308f64d8000c987850489", null ],
+    [ "RxSo2Member", "classsophus_1_1_sim2.html#a8e8eb0ab82fdc5fda290a5e77fdb5212", null ],
+    [ "Scalar", "classsophus_1_1_sim2.html#a8f7e10e9f1248fe70d4f0f935ffd6761", null ],
+    [ "Tangent", "classsophus_1_1_sim2.html#abeaab08879ff9473e7d3791c9500d005", null ],
+    [ "Transformation", "classsophus_1_1_sim2.html#aaea5ec3510b396f7ca58bcbc2e7a98f1", null ],
+    [ "TranslationMember", "classsophus_1_1_sim2.html#a7a9f62d28e8b7eecaf9871a068d667fa", null ],
+    [ "Sim2", "classsophus_1_1_sim2.html#a5b1ea6c7e063265020a593dcb97732c8", null ],
+    [ "Sim2", "classsophus_1_1_sim2.html#afd2f0787e065000dbcee096d1617547d", null ],
+    [ "Sim2", "classsophus_1_1_sim2.html#afc1cd9e6bb0fd57dc0641f9ef19a7c47", null ],
+    [ "Sim2", "classsophus_1_1_sim2.html#a3dc4b3616eaa75a1678c8586532a1c20", null ],
+    [ "Sim2", "classsophus_1_1_sim2.html#aa2f77af718ced82b48f5824c60b5c145", null ],
+    [ "Sim2", "classsophus_1_1_sim2.html#a36d82c72b6bfb6b0bce069d32651cc8a", null ],
+    [ "data", "classsophus_1_1_sim2.html#a7bc6421de618f7005d78f788d62d5c3c", null ],
+    [ "data", "classsophus_1_1_sim2.html#aa6adb607e54cc8540dc862dde9fdd920", null ],
+    [ "operator=", "classsophus_1_1_sim2.html#af308e7d46d0b1f9093c61cebb3f38d89", null ],
+    [ "operator=", "classsophus_1_1_sim2.html#a12ca9ee323d7fa57c7f2213d1b7fb5da", null ],
+    [ "rxso2", "classsophus_1_1_sim2.html#aa5008b3782eedfaef024be8367c8d7de", null ],
+    [ "rxso2", "classsophus_1_1_sim2.html#a4c120a57ef490b501227749444be1932", null ],
+    [ "translation", "classsophus_1_1_sim2.html#afb99c4a29ee510dec6d0a560d8b9fbb6", null ],
+    [ "translation", "classsophus_1_1_sim2.html#adf9ba069ef2daa03041922d64dc81eb9", null ],
+    [ "rxso2_", "classsophus_1_1_sim2.html#adb71affff0b7a56b19cbc9edc09afcd4", null ],
+    [ "translation_", "classsophus_1_1_sim2.html#af31d48f920c2a31c60497528ba7182f7", null ]
+];

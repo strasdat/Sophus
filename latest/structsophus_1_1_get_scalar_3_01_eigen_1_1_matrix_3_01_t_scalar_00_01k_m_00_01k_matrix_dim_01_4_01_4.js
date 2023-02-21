@@ -1,0 +1,4 @@
+var structsophus_1_1_get_scalar_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4 =
+[
+    [ "Scalar", "structsophus_1_1_get_scalar_3_01_eigen_1_1_matrix_3_01_t_scalar_00_01k_m_00_01k_matrix_dim_01_4_01_4.html#a41b8aca1d4d1aa6f979175d10bfc182f", null ]
+];

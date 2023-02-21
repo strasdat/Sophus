@@ -1,0 +1,4 @@
+<map id="sophus::ImageView&lt; TPixel &gt;" name="sophus::ImageView&lt; TPixel &gt;">
+<area shape="rect" id="node1" title="A view of an (immutable) image, which does not own the data." alt="" coords="6,95,166,136"/>
+<area shape="rect" id="node2" href="$classsophus_1_1_image_layout.html" title="Layout of the image: width, height and pitch in bytes." alt="" coords="5,5,167,32"/>
+</map>
