@@ -241,6 +241,15 @@ class RxSo3Base {
     return *this;
   }
 
+  /// Assignment-like operator from subgroup SO3 OtherDerived.
+  ///
+  template <class TOtherDerived>
+  SOPHUS_FUNC RxSo3Base<TDerived>& operator=(
+      So3Base<TOtherDerived> const& other) {
+    quaternionNonconst() = other.unitQuaternion();
+    return *this;
+  }
+
   /// Group multiplication, which is rotation concatenation and scale
   /// multiplication.
   ///

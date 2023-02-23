@@ -13,6 +13,7 @@
 
 #include "sophus/lie/details/sim_impl.h"
 #include "sophus/lie/rxso3.h"
+#include "sophus/lie/se3.h"
 
 namespace sophus {
 template <class TScalar>
@@ -231,6 +232,16 @@ class Sim3Base {
   SOPHUS_FUNC Sim3Base<TDerived>& operator=(
       Sim3Base<TOtherDerived> const& other) {
     rxso3() = other.rxso3();
+    translation() = other.translation();
+    return *this;
+  }
+
+  /// Assignment-like operator from subgroup SE3 OtherDerived.
+  ///
+  template <class TOtherDerived>
+  SOPHUS_FUNC Sim3Base<TDerived>& operator=(
+      Se3Base<TOtherDerived> const& other) {
+    rxso3() = other.so3();
     translation() = other.translation();
     return *this;
   }
