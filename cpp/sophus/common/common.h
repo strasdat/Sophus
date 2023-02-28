@@ -76,29 +76,32 @@ using ::farm_ng::Success;
 struct UninitTag {};
 
 template <class TScalar>
-TScalar const kEpsilon = TScalar(1e-10);
+TScalar constexpr kEpsilon = TScalar(1e-10);
 
 template <>
-inline float const kEpsilon<float> = float(1e-5);
+inline float constexpr kEpsilon<float> = float(1e-5);
 
-float const kEpsilonF32 = kEpsilon<float>;
-float const kEpsilonF64 = kEpsilon<double>;
+float constexpr kEpsilonF32 = kEpsilon<float>;
+float constexpr kEpsilonF64 = kEpsilon<double>;
 
 template <class TScalar>
-TScalar const kEpsilonPlus =
+TScalar constexpr kEpsilonPlus =
     kEpsilon<TScalar>*(TScalar(1.) + kEpsilon<TScalar>);
 
 using std::sqrt;
 template <class TScalar>
-TScalar const kEpsilonSqrt = sqrt(kEpsilon<TScalar>);
+TScalar constexpr kEpsilonSqrt = 1e-5;  // sqrt(kEpsilon<TScalar>);
 
-float const kEpsilonSqrtF32 = kEpsilonSqrt<float>;
-float const kEpsilonSqrtF64 = kEpsilonSqrt<double>;
+template <>
+inline float constexpr kEpsilonSqrt<float> = float(3.16227766e-3);
+
+float constexpr kEpsilonSqrtF32 = kEpsilonSqrt<float>;
+float constexpr kEpsilonSqrtF64 = kEpsilonSqrt<double>;
 
 template <class TScalar>
-TScalar const kPi = TScalar(3.141592653589793238462643383279502884);
-float const kPiF32 = kPi<float>;
-double const kPiF64 = kPi<double>;
+TScalar constexpr kPi = TScalar(3.141592653589793238462643383279502884);
+float constexpr kPiF32 = kPi<float>;
+double constexpr kPiF64 = kPi<double>;
 
 template <class TGenerator>
 struct IsUniformRandomBitGenerator {
