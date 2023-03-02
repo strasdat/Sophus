@@ -1,4 +1,5 @@
 add_subdirectory(common)
+add_subdirectory(concepts)
 add_subdirectory(linalg)
 add_subdirectory(calculus)
 add_subdirectory(lie)

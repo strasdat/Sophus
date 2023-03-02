@@ -51,7 +51,8 @@ TEST(inverse_depth, integrations) {
     zero.setZero();
     Eigen::Matrix<double, 2, 6> const num_dx = vectorFieldNumDiff<double, 2, 6>(
         [point](Eigen::Vector<double, 6> const& vec_a) {
-          return proj(sophus::Se3F64::exp(vec_a) * point.toEuclideanPoint3());
+          return proj(
+              Isometry3<double>::exp(vec_a) * point.toEuclideanPoint3());
         },
         zero);
     SOPHUS_ASSERT_NEAR(dx, num_dx, kEpsilonSqrtF64);
@@ -59,7 +60,7 @@ TEST(inverse_depth, integrations) {
     Eigen::Matrix<double, 2, 6> const num_dx2 =
         vectorFieldNumDiff<double, 2, 6>(
             [point](Eigen::Vector<double, 6> const& vec_a) {
-              return projTransform(sophus::Se3F64::exp(vec_a), point);
+              return projTransform(Isometry3<double>::exp(vec_a), point);
             },
             zero);
     SOPHUS_ASSERT_NEAR(num_dx2, num_dx, kEpsilonF64);
@@ -93,34 +94,34 @@ TEST(point_transform, integrations) {
   double const eps = sophus::kEpsilon<double>;
 
   for (Eigen::Vector<double, 6> const& t : tangent_vec) {
-    sophus::SE3d foo_from_bar = sophus::SE3d::exp(t);
-    PointTransformer<double> foo_transform_bar(foo_from_bar);
+    sophus::SE3d foo_from_bar_isometry = sophus::SE3d::exp(t);
+    PointTransformer<double> foo_from_bar(foo_from_bar_isometry);
 
     // For points not at infinity
     for (auto const& point_in_bar : point_vec) {
       InverseDepthPoint3F64 inverse_depth_in_bar =
           InverseDepthPoint3F64::fromEuclideanPoint3(point_in_bar);
 
-      Eigen::Vector3d point_in_foo = foo_from_bar * point_in_bar;
-      Eigen::Vector3d point_in_foo2 = foo_transform_bar.transform(point_in_bar);
+      Eigen::Vector3d point_in_foo = foo_from_bar_isometry * point_in_bar;
+      Eigen::Vector3d point_in_foo2 = foo_from_bar.transform(point_in_bar);
 
       SOPHUS_ASSERT_NEAR(point_in_foo, point_in_foo2, eps);
 
       Eigen::Vector2d xy1_by_z_in_foo =
-          proj(foo_transform_bar.transform(point_in_bar));
+          proj(foo_from_bar.transform(point_in_bar));
       Eigen::Vector2d xy1_by_z_in_foo2 =
-          foo_transform_bar.projTransform(point_in_bar);
+          foo_from_bar.projTransform(point_in_bar);
       Eigen::Vector2d xy1_by_z_in_foo3 =
-          projTransform(foo_from_bar, inverse_depth_in_bar);
+          projTransform(foo_from_bar_isometry, inverse_depth_in_bar);
       Eigen::Vector2d xy1_by_z_in_foo4 =
-          foo_transform_bar.projTransform(inverse_depth_in_bar);
+          foo_from_bar.projTransform(inverse_depth_in_bar);
 
       SOPHUS_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo2, eps);
       SOPHUS_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo3, eps);
       SOPHUS_ASSERT_NEAR(xy1_by_z_in_foo, xy1_by_z_in_foo4, eps);
 
       Eigen::Matrix<double, 2, 6> dx =
-          foo_transform_bar.dxProjExpXTransformPointAt0(inverse_depth_in_bar);
+          foo_from_bar.dxProjExpXTransformPointAt0(inverse_depth_in_bar);
 
       Eigen::Vector<double, 6> zero;
       zero.setZero();
@@ -128,17 +129,17 @@ TEST(point_transform, integrations) {
           vectorFieldNumDiff<double, 2, 6>(
               [&](Eigen::Vector<double, 6> const& vec_a) {
                 return proj(
-                    sophus::Se3F64::exp(vec_a) *
-                    foo_transform_bar.transform(point_in_bar));
+                    sophus::Isometry3F64::exp(vec_a) *
+                    foo_from_bar.transform(point_in_bar));
               },
               zero);
       Eigen::Matrix<double, 2, 6> const num_dx2 =
           vectorFieldNumDiff<double, 2, 6>(
               [&](Eigen::Vector<double, 6> const& vec_a) {
-                sophus::Se3F64 exp_a = sophus::Se3F64::exp(vec_a);
+                sophus::Isometry3F64 exp_a = sophus::Isometry3F64::exp(vec_a);
                 return proj(
-                    exp_a.so3().matrix() * foo_transform_bar.scaledTransform(
-                                               inverse_depth_in_bar) +
+                    exp_a.so3().matrix() *
+                        foo_from_bar.scaledTransform(inverse_depth_in_bar) +
                     inverse_depth_in_bar.psi() * exp_a.translation());
               },
               zero);
@@ -146,12 +147,12 @@ TEST(point_transform, integrations) {
       SOPHUS_ASSERT_NEAR(num_dx, num_dx2, kEpsilonSqrtF64);
       {
         Eigen::Matrix<double, 2, 3> dx =
-            foo_transform_bar.dxProjTransformX(inverse_depth_in_bar);
+            foo_from_bar.dxProjTransformX(inverse_depth_in_bar);
 
         Eigen::Matrix<double, 2, 3> const num_dx =
             vectorFieldNumDiff<double, 2, 3>(
                 [&](Eigen::Vector<double, 3> const& ab_psi) {
-                  return proj(foo_transform_bar.scaledTransform(
+                  return proj(foo_from_bar.scaledTransform(
                       InverseDepthPoint3F64::fromAbAndPsi(ab_psi)));
                 },
                 inverse_depth_in_bar.params());
@@ -166,26 +167,26 @@ TEST(point_transform, integrations) {
       inverse_depth_in_bar.psi() = 0.0;  // set z to infinity
 
       Eigen::Vector2d xy1_by_inf_in_foo =
-          projTransform(foo_from_bar, inverse_depth_in_bar);
+          projTransform(foo_from_bar_isometry, inverse_depth_in_bar);
       Eigen::Vector2d xy1_by_inf_in_foo1 =
-          foo_transform_bar.projTransform(inverse_depth_in_bar);
+          foo_from_bar.projTransform(inverse_depth_in_bar);
       Eigen::Vector2d xy1_by_inf_in_foo2 =
-          proj(foo_from_bar.so3() * point_in_bar.normalized());
+          proj(foo_from_bar_isometry.so3() * point_in_bar.normalized());
 
       SOPHUS_ASSERT_NEAR(xy1_by_inf_in_foo, xy1_by_inf_in_foo1, eps);
       SOPHUS_ASSERT_NEAR(xy1_by_inf_in_foo, xy1_by_inf_in_foo2, eps);
 
       Eigen::Matrix<double, 2, 6> dx =
-          foo_transform_bar.dxProjExpXTransformPointAt0(inverse_depth_in_bar);
+          foo_from_bar.dxProjExpXTransformPointAt0(inverse_depth_in_bar);
       Eigen::Vector<double, 6> zero;
       zero.setZero();
       Eigen::Matrix<double, 2, 6> const num_dx2 =
           vectorFieldNumDiff<double, 2, 6>(
               [&](Eigen::Vector<double, 6> const& vec_a) {
-                sophus::Se3F64 exp_a = sophus::Se3F64::exp(vec_a);
+                sophus::Isometry3F64 exp_a = sophus::Isometry3F64::exp(vec_a);
                 return proj(
-                    exp_a.so3().matrix() * foo_transform_bar.scaledTransform(
-                                               inverse_depth_in_bar) +
+                    exp_a.so3().matrix() *
+                        foo_from_bar.scaledTransform(inverse_depth_in_bar) +
                     inverse_depth_in_bar.psi() * exp_a.translation());
               },
               zero);

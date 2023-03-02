@@ -31,6 +31,8 @@ option(SOPHUS_USE_BASIC_LOGGING "Use basic logging (in ensure and test macros)" 
 
 option(SOPHUS_CERES "Enable sophus ceres" ON)
 
+option(BUILD_FARM_NG_PROTOS "Build tests." Off)
+
 
 option(BUILD_SOPHUS_TESTS "Build tests." ON)
 if(${BUILD_SOPHUS_TESTS})
@@ -38,12 +40,12 @@ if(${BUILD_SOPHUS_TESTS})
 endif()
 
 
-if (BUILD_FARM_NG_PROTOS)
+if(${BUILD_FARM_NG_PROTOS})
   find_package(Protobuf REQUIRED)
   include_directories(${Protobuf_INCLUDE_DIRS})
 endif()
 
-if(BUILD_FARM_NG_PROTOS)
+if(${BUILD_FARM_NG_PROTOS})
   add_subdirectory(protos)
 endif()
 

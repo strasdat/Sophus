@@ -19,14 +19,8 @@ if(${BUILD_SOPHUS_TESTS})
   if(${SOPHUS_CERES})
     find_package(Ceres 2.1.0 REQUIRED)
     foreach(test_basename
-      rxso2
-      rxso3
-      se2
-      se3
-      sim2
-      sim3
-      so2
-      so3)
+      ceres
+    )
     farm_ng_add_test(${test_basename}
                           PARENT_LIBRARY sophus_ceres
                           LINK_LIBRARIES

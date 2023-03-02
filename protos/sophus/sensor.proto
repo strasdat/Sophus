@@ -37,7 +37,7 @@ message ClippingPlanes {
 message CameraInRig {
   CameraModel camera_model = 1;
 
-  Se3F64 rig_from_camera = 2;
+  Isometry3F64 rig_from_camera = 2;
 }
 
 message MultiCameraRig {

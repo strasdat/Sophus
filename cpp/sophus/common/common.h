@@ -12,6 +12,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 #include <farm_ng/core/logging/eigen.h>
 #include <farm_ng/core/logging/expected.h>
 #include <farm_ng/core/logging/format.h>
@@ -32,14 +33,6 @@
 #define SOPHUS_FUNCTION "unknown"
 #endif
 
-// Make sure this compiles with older versions of Eigen which do not have
-// EIGEN_DEVICE_FUNC defined.
-#ifndef EIGEN_DEVICE_FUNC
-#define EIGEN_DEVICE_FUNC
-#endif
-
-#define SOPHUS_FUNC EIGEN_DEVICE_FUNC
-
 // from <farm_ng/core/logging/format.h>cd
 #define SOPHUS_FORMAT(...) FARM_FORMAT(__VA_ARGS__)
 
@@ -53,6 +46,7 @@
 #define SOPHUS_ASSERT_NE(...) FARM_ASSERT_NE(__VA_ARGS__)
 #define SOPHUS_ASSERT_NEAR(...) FARM_ASSERT_NEAR(__VA_ARGS__)
 #define SOPHUS_ASSERT_OR_ERROR(...) FARM_ASSERT_OR_ERROR(__VA_ARGS__)
+#define SOPHUS_AT(...) FARM_AT(__VA_ARGS__)
 #define SOPHUS_INFO(...) FARM_INFO(__VA_ARGS__)
 #define SOPHUS_PANIC(...) FARM_PANIC(__VA_ARGS__)
 #define SOPHUS_UNIMPLEMENTED(...) FARM_UNIMPLEMENTED(__VA_ARGS__)
@@ -76,27 +70,27 @@ using ::farm_ng::Success;
 struct UninitTag {};
 
 template <class TScalar>
-TScalar constexpr kEpsilon = TScalar(1e-10);
+TScalar const kEpsilon = TScalar(1e-10);
 
 template <>
-inline float constexpr kEpsilon<float> = float(1e-5);
+inline float const kEpsilon<float> = float(1e-5);
 
-float constexpr kEpsilonF32 = kEpsilon<float>;
-float constexpr kEpsilonF64 = kEpsilon<double>;
+static float const kEpsilonF32 = kEpsilon<float>;
+static float const kEpsilonF64 = kEpsilon<double>;
 
 template <class TScalar>
-TScalar constexpr kEpsilonPlus =
+TScalar const kEpsilonPlus =
     kEpsilon<TScalar>*(TScalar(1.) + kEpsilon<TScalar>);
 
 using std::sqrt;
 template <class TScalar>
-TScalar constexpr kEpsilonSqrt = 1e-5;  // sqrt(kEpsilon<TScalar>);
+TScalar const kEpsilonSqrt = TScalar(1e-5);
 
 template <>
-inline float constexpr kEpsilonSqrt<float> = float(3.16227766e-3);
+inline float const kEpsilonSqrt<float> = float(3.16227766e-3);
 
-float constexpr kEpsilonSqrtF32 = kEpsilonSqrt<float>;
-float constexpr kEpsilonSqrtF64 = kEpsilonSqrt<double>;
+static float const kEpsilonSqrtF32 = kEpsilonSqrt<float>;
+static float const kEpsilonSqrtF64 = kEpsilonSqrt<double>;
 
 template <class TScalar>
 TScalar constexpr kPi = TScalar(3.141592653589793238462643383279502884);

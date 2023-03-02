@@ -28,12 +28,12 @@ class MutDynImage : public MutDynImageView<TPredicate> {
   /// Not copy constructable
   MutDynImage(MutDynImage const& other) = delete;
   /// Not copy assignable
-  MutDynImage& operator=(MutDynImage const&) = delete;
+  auto operator=(MutDynImage const&) -> MutDynImage& = delete;
 
   /// Nothrow move constructable
   MutDynImage(MutDynImage&& other) noexcept = default;
   /// Nothrow move assignable
-  MutDynImage& operator=(MutDynImage&&) noexcept = default;
+  auto operator=(MutDynImage&&) noexcept -> MutDynImage& = default;
 
   /// Create type-erased image from MutImage.
   ///
@@ -70,11 +70,11 @@ class MutDynImage : public MutDynImageView<TPredicate> {
   }
 
   template <class TT>
-  static MutDynImage makeCopyFrom(ImageView<TT> image_view) {
+  static auto makeCopyFrom(ImageView<TT> image_view) -> MutDynImage {
     return MutImage<TT>::makeCopyFrom(image_view);
   }
 
-  static MutDynImage makeCopyFrom(DynImageView<TPredicate> image_view) {
+  static auto makeCopyFrom(DynImageView<TPredicate> image_view) -> MutDynImage {
     MutDynImage image(image_view.imageSize(), image_view.pixelFormat());
     image.copyDataFrom(image_view);
     return image;
@@ -82,7 +82,7 @@ class MutDynImage : public MutDynImageView<TPredicate> {
 
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
-  [[nodiscard]] bool has() const noexcept {
+  [[nodiscard]] auto has() const noexcept -> bool {
     PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
     return expected_type == this->pixel_format_;
   }
@@ -91,7 +91,7 @@ class MutDynImage : public MutDynImageView<TPredicate> {
   ///
   /// Precondition: this->has<TPixel>()
   template <class TPixel>
-  [[nodiscard]] MutImage<TPixel, TAllocator> moveOutAs() noexcept {
+  [[nodiscard]] auto moveOutAs() noexcept -> MutImage<TPixel, TAllocator> {
     SOPHUS_ASSERT(this->has<TPixel>());
     MutImage<TPixel, TAllocator> mut_image;
     mut_image.layout_ = this->layout_;

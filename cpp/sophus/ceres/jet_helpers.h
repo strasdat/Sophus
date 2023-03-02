@@ -21,12 +21,12 @@ namespace jet_helpers {
 
 template <class TScalar>
 struct GetValue {
-  static TScalar impl(TScalar const& t) { return t; }
+  static auto impl(TScalar const& t) -> TScalar { return t; }
 };
 
 template <class TScalar, int kN>
 struct GetValue<ceres::Jet<TScalar, kN>> {
-  static TScalar impl(TScalar const& t) { return t.a; }
+  static auto impl(TScalar const& t) -> TScalar { return t.a; }
 };
 
 }  // namespace jet_helpers

@@ -11,16 +11,16 @@
 
 #pragma once
 
-#include "sophus/common/common.h"
-#include "sophus/lie/cartesian.h"
-#include "sophus/lie/rxso2.h"
-#include "sophus/lie/rxso3.h"
-#include "sophus/lie/se2.h"
-#include "sophus/lie/se3.h"
-#include "sophus/lie/sim2.h"
-#include "sophus/lie/sim3.h"
-#include "sophus/lie/so2.h"
-#include "sophus/lie/so3.h"
+#include "sophus/lie/isometry2.h"
+#include "sophus/lie/isometry3.h"
+#include "sophus/lie/rotation2.h"
+#include "sophus/lie/rotation3.h"
+#include "sophus/lie/scaling.h"
+#include "sophus/lie/similarity2.h"
+#include "sophus/lie/similarity3.h"
+#include "sophus/lie/spiral_similarity2.h"
+#include "sophus/lie/spiral_similarity3.h"
+#include "sophus/lie/translation.h"
 
 #include <complex>
 
@@ -31,36 +31,34 @@ namespace sophus {
 /// Returns ``nullopt`` if it does not converge.
 ///
 template <class TSequenceContainer>
-std::optional<typename TSequenceContainer::value_type> iterativeMean(
-    TSequenceContainer const& foo_transforms_bar, int max_num_iterations) {
+auto iterativeMean(
+    TSequenceContainer const& foo_transforms_bar, int max_num_iterations)
+    -> std::optional<typename TSequenceContainer::value_type> {
   size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
 
   using Group = typename TSequenceContainer::value_type;
   using Scalar = typename Group::Scalar;
-  using Tangent = typename Group::Tangent;
+  using Tangent = Eigen::Vector<Scalar, Group::kDof>;
 
   // This implements the algorithm in the beginning of Sec. 4.2 in
   // ftp://ftp-sop.inria.fr/epidaure/Publications/Arsigny/arsigny_rr_biinvariant_average.pdf.
-  Group foo_transform_average = *std::begin(foo_transforms_bar);
+  Group foo_from_average = *std::begin(foo_transforms_bar);
   Scalar w = Scalar(1. / k_matrix_dim);
   for (int i = 0; i < max_num_iterations; ++i) {
     Tangent average;
-    setToZero<Tangent>(average);
-    for (Group const& foo_transform_bar : foo_transforms_bar) {
-      average +=
-          w * (foo_transform_average.inverse() * foo_transform_bar).log();
+    average.setZero();
+    for (Group const& foo_from_bar : foo_transforms_bar) {
+      average += w * (foo_from_average.inverse() * foo_from_bar).log();
     }
-    Group foo_transform_newaverage =
-        foo_transform_average * Group::exp(average);
-    if (squaredNorm<Tangent>(
-            (foo_transform_newaverage.inverse() * foo_transform_average)
-                .log()) < kEpsilon<Scalar>) {
-      return foo_transform_newaverage;
+    Group foo_from_newaverage = foo_from_average * Group::exp(average);
+    if (((foo_from_newaverage.inverse() * foo_from_average).log())
+            .squaredNorm() < kEpsilon<Scalar>) {
+      return foo_from_newaverage;
     }
 
-    foo_transform_average = foo_transform_newaverage;
+    foo_from_average = foo_from_newaverage;
   }
   // LCOV_EXCL_START
   return std::nullopt;
@@ -74,73 +72,74 @@ optional<typename SequenceContainer::value_type> average(
     SequenceContainer const& foo_Ts_bar);
 #else
 
-// Mean implementation for Cartesian.
+// Mean implementation for Translation.
 template <
     class TSequenceContainer,
-    int kPointDim = TSequenceContainer::value_type::kDoF,
+    int kPointDim = TSequenceContainer::value_type::kDof,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
+auto average(TSequenceContainer const& foo_transforms_bar) -> std::enable_if_t<
     std::is_same<
         typename TSequenceContainer::value_type,
-        Cartesian<TScalar, kPointDim> >::value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(TSequenceContainer const& foo_transforms_bar) {
+        Translation<TScalar, kPointDim> >::value,
+    std::optional<typename TSequenceContainer::value_type> > {
   size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
 
   Eigen::Vector<TScalar, kPointDim> average;
   average.setZero();
-  for (Cartesian<TScalar, kPointDim> const& foo_transform_bar :
+  for (Translation<TScalar, kPointDim> const& foo_from_bar :
        foo_transforms_bar) {
-    average += foo_transform_bar.params();
+    average += foo_from_bar.params();
   }
-  return Cartesian<TScalar, kPointDim>(average / TScalar(k_matrix_dim));
+  return Translation<TScalar, kPointDim>::fromParams(
+      average / TScalar(k_matrix_dim));
 }
 
 // Mean implementation for SO(2).
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
-    std::is_same<typename TSequenceContainer::value_type, So2<TScalar> >::value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(TSequenceContainer const& foo_transforms_bar) {
+auto average(TSequenceContainer const& foo_transforms_bar) -> std::enable_if_t<
+    std::is_same<typename TSequenceContainer::value_type, Rotation2<TScalar> >::
+        value,
+    std::optional<typename TSequenceContainer::value_type> > {
   // This implements rotational part of Proposition 12 from Sec. 6.2 of
   // ftp://ftp-sop.inria.fr/epidaure/Publications/Arsigny/arsigny_rr_biinvariant_average.pdf.
   size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
-  So2<TScalar> foo_transform_average = *std::begin(foo_transforms_bar);
+  Rotation2<TScalar> foo_from_average = *std::begin(foo_transforms_bar);
   TScalar w = TScalar(1. / k_matrix_dim);
 
-  TScalar average(0);
-  for (So2<TScalar> const& foo_transform_bar : foo_transforms_bar) {
-    average += w * (foo_transform_average.inverse() * foo_transform_bar).log();
+  Eigen::Vector<TScalar, 1> average;
+  average.setZero();
+  for (Rotation2<TScalar> const& foo_from_bar : foo_transforms_bar) {
+    average += w * (foo_from_average.inverse() * foo_from_bar).log();
   }
-  return foo_transform_average * So2<TScalar>::exp(average);
+  return foo_from_average * Rotation2<TScalar>::exp(average);
 }
 
 // Mean implementation for RxSO(2).
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
-    std::is_same<typename TSequenceContainer::value_type, RxSo2<TScalar> >::
-        value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(TSequenceContainer const& foo_transforms_bar) {
+auto average(TSequenceContainer const& foo_transforms_bar) -> std::enable_if_t<
+    std::is_same<
+        typename TSequenceContainer::value_type,
+        SpiralSimilarity2<TScalar> >::value,
+    std::optional<typename TSequenceContainer::value_type> > {
   size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
   SOPHUS_ASSERT(k_matrix_dim >= 1, "kMatrixDim must be >= 1.");
-  RxSo2<TScalar> foo_transform_average = *std::begin(foo_transforms_bar);
+  SpiralSimilarity2<TScalar> foo_from_average = *std::begin(foo_transforms_bar);
   TScalar w = TScalar(1. / k_matrix_dim);
 
   Eigen::Vector2<TScalar> average(TScalar(0), TScalar(0));
-  for (RxSo2<TScalar> const& foo_transform_bar : foo_transforms_bar) {
-    average += w * (foo_transform_average.inverse() * foo_transform_bar).log();
+  for (SpiralSimilarity2<TScalar> const& foo_from_bar : foo_transforms_bar) {
+    average += w * (foo_from_average.inverse() * foo_from_bar).log();
   }
-  return foo_transform_average * RxSo2<TScalar>::exp(average);
+  return foo_from_average * SpiralSimilarity2<TScalar>::exp(average);
 }
 
 namespace details {
@@ -148,20 +147,22 @@ template <class TScalar>
 void getQuaternion(TScalar const&);
 
 template <class TScalar>
-Eigen::Quaternion<TScalar> getUnitQuaternion(So3<TScalar> const& r) {
-  return r.unitQuaternion();
+auto getUnitQuaternion(Rotation3<TScalar> const& r)
+    -> Eigen::Vector<TScalar, 4> {
+  return r.params().template head<4>();
 }
 
 template <class TScalar>
-Eigen::Quaternion<TScalar> getUnitQuaternion(RxSo3<TScalar> const& s_r) {
-  return s_r.so3().unitQuaternion();
+auto getUnitQuaternion(SpiralSimilarity3<TScalar> const& s_r)
+    -> Eigen::Vector<TScalar, 4> {
+  return s_r.params().template head<4>().normalized();
 }
 
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-Eigen::Quaternion<TScalar> averageUnitQuaternion(
-    TSequenceContainer const& foo_transforms_bar) {
+auto averageUnitQuaternion(TSequenceContainer const& foo_transforms_bar)
+    -> Eigen::Vector<TScalar, 4> {
   // This:  http://stackoverflow.com/a/27410865/1221742
   size_t const k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
@@ -169,8 +170,8 @@ Eigen::Quaternion<TScalar> averageUnitQuaternion(
   Eigen::Matrix<TScalar, 4, Eigen::Dynamic> q(4, k_matrix_dim);
   int i = 0;
   TScalar w = TScalar(1. / k_matrix_dim);
-  for (auto const& foo_transform_bar : foo_transforms_bar) {
-    q.col(i) = w * details::getUnitQuaternion(foo_transform_bar).coeffs();
+  for (auto const& foo_from_bar : foo_transforms_bar) {
+    q.col(i) = w * details::getUnitQuaternion(foo_from_bar);
     ++i;
   }
 
@@ -188,8 +189,8 @@ Eigen::Quaternion<TScalar> averageUnitQuaternion(
       max_eigenvector = es.eigenvectors().col(i);
     }
   }
-  Eigen::Quaternion<TScalar> quat;
-  quat.coeffs() <<                //
+  Eigen::Vector<TScalar, 4> quat;
+  quat <<                         //
       max_eigenvector[0].real(),  //
       max_eigenvector[1].real(),  //
       max_eigenvector[2].real(),  //
@@ -204,22 +205,23 @@ Eigen::Quaternion<TScalar> averageUnitQuaternion(
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
-    std::is_same<typename TSequenceContainer::value_type, So3<TScalar> >::value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(TSequenceContainer const& foo_transforms_bar) {
-  return So3<TScalar>(details::averageUnitQuaternion(foo_transforms_bar));
+auto average(TSequenceContainer const& foo_transforms_bar) -> std::enable_if_t<
+    std::is_same<typename TSequenceContainer::value_type, Rotation3<TScalar> >::
+        value,
+    std::optional<typename TSequenceContainer::value_type> > {
+  return Rotation3<TScalar>::fromParams(
+      details::averageUnitQuaternion(foo_transforms_bar));
 }
 
 // Mean implementation for R x SO(3).
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
-    std::is_same<typename TSequenceContainer::value_type, RxSo3<TScalar> >::
-        value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(TSequenceContainer const& foo_transforms_bar) {
+auto average(TSequenceContainer const& foo_transforms_bar) -> std::enable_if_t<
+    std::is_same<
+        typename TSequenceContainer::value_type,
+        SpiralSimilarity3<TScalar> >::value,
+    std::optional<typename TSequenceContainer::value_type> > {
   size_t k_matrix_dim = std::distance(
       std::begin(foo_transforms_bar), std::end(foo_transforms_bar));
 
@@ -227,22 +229,25 @@ average(TSequenceContainer const& foo_transforms_bar) {
   TScalar scale_sum = TScalar(0);
   using std::exp;
   using std::log;
-  for (RxSo3<TScalar> const& foo_transform_bar : foo_transforms_bar) {
-    scale_sum += log(foo_transform_bar.scale());
+  for (SpiralSimilarity3<TScalar> const& foo_from_bar : foo_transforms_bar) {
+    scale_sum += log(foo_from_bar.scale());
   }
-  return RxSo3<TScalar>(
+  return SpiralSimilarity3<TScalar>::fromScaleAndRotation(
       exp(scale_sum / TScalar(k_matrix_dim)),
-      So3<TScalar>(details::averageUnitQuaternion(foo_transforms_bar)));
+      Rotation3<TScalar>::fromParams(
+          details::averageUnitQuaternion(foo_transforms_bar)));
 }
 
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
-    std::is_same<typename TSequenceContainer::value_type, Se2<TScalar> >::value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(
-    TSequenceContainer const& foo_transforms_bar, int max_num_iterations = 20) {
+auto average(
+    TSequenceContainer const& foo_transforms_bar, int max_num_iterations = 20)
+    -> std::enable_if_t<
+        std::is_same<
+            typename TSequenceContainer::value_type,
+            Isometry2<TScalar> >::value,
+        std::optional<typename TSequenceContainer::value_type> > {
   // TODO: Implement Proposition 12 from Sec. 6.2 of
   // ftp://ftp-sop.inria.fr/epidaure/Publications/Arsigny/arsigny_rr_biinvariant_average.pdf.
   return iterativeMean(foo_transforms_bar, max_num_iterations);
@@ -251,35 +256,39 @@ average(
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
-    std::is_same<typename TSequenceContainer::value_type, Sim2<TScalar> >::
-        value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(
-    TSequenceContainer const& foo_transforms_bar, int max_num_iterations = 20) {
+auto average(
+    TSequenceContainer const& foo_transforms_bar, int max_num_iterations = 20)
+    -> std::enable_if_t<
+        std::is_same<
+            typename TSequenceContainer::value_type,
+            Similarity2<TScalar> >::value,
+        std::optional<typename TSequenceContainer::value_type> > {
   return iterativeMean(foo_transforms_bar, max_num_iterations);
 }
 
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
-    std::is_same<typename TSequenceContainer::value_type, Se3<TScalar> >::value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(
-    TSequenceContainer const& foo_transforms_bar, int max_num_iterations = 20) {
+auto average(
+    TSequenceContainer const& foo_transforms_bar, int max_num_iterations = 20)
+    -> std::enable_if_t<
+        std::is_same<
+            typename TSequenceContainer::value_type,
+            Isometry3<TScalar> >::value,
+        std::optional<typename TSequenceContainer::value_type> > {
   return iterativeMean(foo_transforms_bar, max_num_iterations);
 }
 
 template <
     class TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
-std::enable_if_t<
-    std::is_same<typename TSequenceContainer::value_type, Sim3<TScalar> >::
-        value,
-    std::optional<typename TSequenceContainer::value_type> >
-average(
-    TSequenceContainer const& foo_transforms_bar, int max_num_iterations = 20) {
+auto average(
+    TSequenceContainer const& foo_transforms_bar, int max_num_iterations = 20)
+    -> std::enable_if_t<
+        std::is_same<
+            typename TSequenceContainer::value_type,
+            Similarity3<TScalar> >::value,
+        std::optional<typename TSequenceContainer::value_type> > {
   return iterativeMean(foo_transforms_bar, max_num_iterations);
 }
 

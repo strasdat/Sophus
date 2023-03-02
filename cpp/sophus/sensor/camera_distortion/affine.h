@@ -29,9 +29,10 @@ class AffineTransform {
   using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
   template <class TParamsTypeT, class TPointTypeT>
-  static PixelImage<typename TPointTypeT::Scalar> distort(
+  static auto distort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
-      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane)
+      -> PixelImage<typename TPointTypeT::Scalar> {
     static_assert(
         TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
@@ -50,8 +51,9 @@ class AffineTransform {
   }
 
   template <class TScalar>
-  static ProjInCameraZ1Plane<TScalar> undistort(
-      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
+  static auto undistort(
+      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image)
+      -> ProjInCameraZ1Plane<TScalar> {
     TScalar proj_x_in_camera_z1_plane =
         (pixel_image.x() - TScalar(params[2])) / TScalar(params[0]);
     TScalar proj_y_in_camera_z1_plane =
@@ -61,9 +63,10 @@ class AffineTransform {
   }
 
   template <class TParamsTypeT, class TPointTypeT>
-  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxDistort(
+  static auto dxDistort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
-      Eigen::MatrixBase<TPointTypeT> const& /*proj_point_in_camera_z1_plane*/) {
+      Eigen::MatrixBase<TPointTypeT> const& /*proj_point_in_camera_z1_plane*/)
+      -> Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> {
     static_assert(
         TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(

@@ -10,38 +10,41 @@
 
 namespace sophus {
 
-bool ImageSize::contains(Eigen::Vector2i const& obs, int border) const {
+auto ImageSize::contains(Eigen::Vector2i const& obs, int border) const -> bool {
   return obs.x() >= border && obs.x() < this->width - border &&
          obs.y() >= border && obs.y() < this->height - border;
 }
 
-bool ImageSize::contains(Eigen::Vector2d const& obs, double border) const {
+auto ImageSize::contains(Eigen::Vector2d const& obs, double border) const
+    -> bool {
   return obs.x() >= -0.5 + border && obs.x() <= this->width - 0.5 - border &&
          obs.y() >= -0.5 + border && obs.y() <= this->height - 0.5 - border;
 }
 
-bool ImageSize::contains(Eigen::Vector2f const& obs, float border) const {
+auto ImageSize::contains(Eigen::Vector2f const& obs, float border) const
+    -> bool {
   return obs.x() >= -0.5f + border && obs.x() <= this->width - 0.5f - border &&
          obs.y() >= -0.5f + border && obs.y() <= this->height - 0.5f - border;
 }
-ImageSize half(ImageSize image_size) {
+auto half(ImageSize image_size) -> ImageSize {
   return ImageSize((image_size.width + 1) / 2, (image_size.height + 1) / 2);
 }
 
-bool operator==(ImageSize const& lhs, ImageSize const& rhs) {
+auto operator==(ImageSize const& lhs, ImageSize const& rhs) -> bool {
   return lhs.width == rhs.width && lhs.height == rhs.height;
 }
 
-bool operator!=(ImageSize const& lhs, ImageSize const& rhs) {
+auto operator!=(ImageSize const& lhs, ImageSize const& rhs) -> bool {
   return lhs.width != rhs.width || lhs.height != rhs.height;
 }
 
-bool operator<(ImageSize const& lhs, ImageSize const& rhs) {
+auto operator<(ImageSize const& lhs, ImageSize const& rhs) -> bool {
   return std::make_pair(lhs.width, lhs.height) <
          std::make_pair(rhs.width, rhs.height);
 }
 
-std::ostream& operator<<(std::ostream& os, ImageSize const& image_size) {
+auto operator<<(std::ostream& os, ImageSize const& image_size)
+    -> std::ostream& {
   os << "[" << image_size.width << " x " << image_size.height << "]";
   return os;
 }

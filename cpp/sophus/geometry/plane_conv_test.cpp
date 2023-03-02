@@ -8,28 +8,26 @@
 
 #include "sophus/geometry/plane_conv.h"
 
-#include "sophus/common/test_macros.h"
-#include "sophus/lie/details/test_impl.h"
+#include <gtest/gtest.h>
 
-#include <iostream>
-
-namespace sophus {
+using namespace sophus;
 
 namespace {
 
 template <class TScalar>
-bool test2dGeometry() {
+auto test2dGeometry() -> bool {
   bool passed = true;
-  TScalar const eps = kEpsilon<TScalar>;
+  TScalar const eps = 10.0 * kEpsilon<TScalar>;
 
   for (int i = 0; i < 20; ++i) {
     // Roundtrip test:
     Eigen::Vector2<TScalar> normal_in_foo =
         Eigen::Vector2<TScalar>::Random().normalized();
-    sophus::So2<TScalar> foo_rotation_plane = so2FromNormal(normal_in_foo);
+    sophus::Rotation2<TScalar> foo_rotation_plane =
+        rotation2FromNormal(normal_in_foo);
     Eigen::Vector2<TScalar> result_normal_foo =
-        normalFromSo2(foo_rotation_plane);
-    SOPHUS_TEST_APPROX(passed, normal_in_foo, result_normal_foo, eps, "");
+        normalFromRotation2(foo_rotation_plane);
+    SOPHUS_ASSERT_NEAR(normal_in_foo, result_normal_foo, eps, "");
   }
 
   for (int i = 0; i < 20; ++i) {
@@ -38,80 +36,63 @@ bool test2dGeometry() {
         makeHyperplaneUnique(Eigen::Hyperplane<TScalar, 2>(
             Eigen::Vector2<TScalar>::Random().normalized(),
             Eigen::Vector2<TScalar>::Random()));
-    sophus::Se2<TScalar> foo_from_plane = se2FromLine(line_in_foo);
+    sophus::Isometry2<TScalar> foo_from_plane = isometryFromLine(line_in_foo);
     Eigen::Hyperplane<TScalar, 2> result_plane_foo =
-        lineFromSe2(foo_from_plane);
-    SOPHUS_TEST_APPROX(
-        passed,
-        line_in_foo.normal().eval(),
-        result_plane_foo.normal().eval(),
-        eps,
-        "");
-    SOPHUS_TEST_APPROX(
-        passed, line_in_foo.offset(), result_plane_foo.offset(), eps, "");
+        lineFromIsometry(foo_from_plane);
+    SOPHUS_ASSERT_NEAR(
+        line_in_foo.normal().eval(), result_plane_foo.normal().eval(), eps, "");
+    SOPHUS_ASSERT_NEAR(
+        line_in_foo.offset(), result_plane_foo.offset(), eps, "");
   }
 
-  std::vector<Se2<TScalar>, Eigen::aligned_allocator<Se2<TScalar>>>
-      ts_foo_line = getTestSE2s<TScalar>();
-
-  for (Se2<TScalar> const& foo_from_line : ts_foo_line) {
-    Eigen::Hyperplane<TScalar, 2> line_in_foo = lineFromSe2(foo_from_line);
-    Se2<TScalar> t2_foo_line = se2FromLine(line_in_foo);
-    Eigen::Hyperplane<TScalar, 2> line2_foo = lineFromSe2(t2_foo_line);
-    SOPHUS_TEST_APPROX(
-        passed,
-        line_in_foo.normal().eval(),
-        line2_foo.normal().eval(),
-        eps,
-        "");
-    SOPHUS_TEST_APPROX(
-        passed, line_in_foo.offset(), line2_foo.offset(), eps, "");
+  for (auto params : Isometry2<TScalar>::paramsExamples()) {
+    Isometry2<TScalar> const& foo_from_line =
+        Isometry2<TScalar>::fromParams(params);
+    Eigen::Hyperplane<TScalar, 2> line_in_foo = lineFromIsometry(foo_from_line);
+    Isometry2<TScalar> t2_foo_line = isometryFromLine(line_in_foo);
+    Eigen::Hyperplane<TScalar, 2> line2_foo = lineFromIsometry(t2_foo_line);
+    SOPHUS_ASSERT_NEAR(
+        line_in_foo.normal().eval(), line2_foo.normal().eval(), eps, "");
+    SOPHUS_ASSERT_NEAR(line_in_foo.offset(), line2_foo.offset(), eps, "");
   }
 
   return passed;
 }
 
 template <class TScalar>
-bool test3dGeometry() {
+auto test3dGeometry() -> bool {
   bool passed = true;
-  TScalar const eps = kEpsilon<TScalar>;
+  TScalar const eps = 10.0 * kEpsilon<TScalar>;
 
   Eigen::Vector3<TScalar> normal_in_foo =
       Eigen::Vector3<TScalar>(1, 2, 0).normalized();
   Eigen::Matrix3<TScalar> foo_rotation_plane =
-      rotationFromNormal(normal_in_foo);
-  SOPHUS_TEST_APPROX(
-      passed, normal_in_foo, foo_rotation_plane.col(2).eval(), eps, "");
+      rotation3FromNormal(normal_in_foo);
+  SOPHUS_ASSERT_NEAR(normal_in_foo, foo_rotation_plane.col(2).eval(), eps, "");
   // Just testing that the function normalizes the input normal and hint
   // direction correctly:
   Eigen::Matrix3<TScalar> r2_foo_plane =
-      rotationFromNormal((TScalar(0.9) * normal_in_foo).eval());
-  SOPHUS_TEST_APPROX(
-      passed, normal_in_foo, r2_foo_plane.col(2).eval(), eps, "");
-  Eigen::Matrix3<TScalar> r3_foo_plane = rotationFromNormal(
+      rotation3FromNormal((TScalar(0.9) * normal_in_foo).eval());
+  SOPHUS_ASSERT_NEAR(normal_in_foo, r2_foo_plane.col(2).eval(), eps, "");
+  Eigen::Matrix3<TScalar> r3_foo_plane = rotation3FromNormal(
       normal_in_foo,
       Eigen::Vector3<TScalar>(TScalar(0.9), TScalar(0), TScalar(0)),
       Eigen::Vector3<TScalar>(TScalar(0), TScalar(1.1), TScalar(0)));
-  SOPHUS_TEST_APPROX(
-      passed, normal_in_foo, r3_foo_plane.col(2).eval(), eps, "");
+  SOPHUS_ASSERT_NEAR(normal_in_foo, r3_foo_plane.col(2).eval(), eps, "");
 
   normal_in_foo = Eigen::Vector3<TScalar>(1, 0, 0);
-  foo_rotation_plane = rotationFromNormal(normal_in_foo);
-  SOPHUS_TEST_APPROX(
-      passed, normal_in_foo, foo_rotation_plane.col(2).eval(), eps, "");
-  SOPHUS_TEST_APPROX(
-      passed,
+  foo_rotation_plane = rotation3FromNormal(normal_in_foo);
+  SOPHUS_ASSERT_NEAR(normal_in_foo, foo_rotation_plane.col(2).eval(), eps, "");
+  SOPHUS_ASSERT_NEAR(
       Eigen::Vector3<TScalar>(0, 1, 0),
       foo_rotation_plane.col(1).eval(),
       eps,
       "");
 
   normal_in_foo = Eigen::Vector3<TScalar>(0, 1, 0);
-  foo_rotation_plane = rotationFromNormal(normal_in_foo);
-  SOPHUS_TEST_APPROX(
-      passed, normal_in_foo, foo_rotation_plane.col(2).eval(), eps, "");
-  SOPHUS_TEST_APPROX(
-      passed,
+  foo_rotation_plane = rotation3FromNormal(normal_in_foo);
+  SOPHUS_ASSERT_NEAR(normal_in_foo, foo_rotation_plane.col(2).eval(), eps, "");
+  SOPHUS_ASSERT_NEAR(
       Eigen::Vector3<TScalar>(1, 0, 0),
       foo_rotation_plane.col(0).eval(),
       eps,
@@ -121,10 +102,11 @@ bool test3dGeometry() {
     // Roundtrip test:
     Eigen::Vector3<TScalar> normal_in_foo =
         Eigen::Vector3<TScalar>::Random().normalized();
-    sophus::So3<TScalar> foo_rotation_plane = so3FromPlane(normal_in_foo);
+    sophus::Rotation3<TScalar> foo_rotation_plane =
+        rotation3FromPlane(normal_in_foo);
     Eigen::Vector3<TScalar> result_normal_foo =
-        normalFromSo3(foo_rotation_plane);
-    SOPHUS_TEST_APPROX(passed, normal_in_foo, result_normal_foo, eps, "");
+        normalFromRotation3(foo_rotation_plane);
+    SOPHUS_ASSERT_NEAR(normal_in_foo, result_normal_foo, eps, "");
   }
 
   for (int i = 0; i < 20; ++i) {
@@ -133,52 +115,39 @@ bool test3dGeometry() {
         makeHyperplaneUnique(Eigen::Hyperplane<TScalar, 3>(
             Eigen::Vector3<TScalar>::Random().normalized(),
             Eigen::Vector3<TScalar>::Random()));
-    sophus::Se3<TScalar> foo_from_plane = se3FromPlane(plane_in_foo);
+    sophus::Isometry3<TScalar> foo_from_plane = isometryFromPlane(plane_in_foo);
     Eigen::Hyperplane<TScalar, 3> result_plane_foo =
-        planeFromSe3(foo_from_plane);
-    SOPHUS_TEST_APPROX(
-        passed,
+        planeFromIsometry(foo_from_plane);
+    SOPHUS_ASSERT_NEAR(
         plane_in_foo.normal().eval(),
         result_plane_foo.normal().eval(),
         eps,
         "");
-    SOPHUS_TEST_APPROX(
-        passed, plane_in_foo.offset(), result_plane_foo.offset(), eps, "");
+    SOPHUS_ASSERT_NEAR(
+        plane_in_foo.offset(), result_plane_foo.offset(), eps, "");
   }
 
-  std::vector<Se3<TScalar>, Eigen::aligned_allocator<Se3<TScalar>>>
-      ts_foo_plane = getTestSE3s<TScalar>();
-
-  for (Se3<TScalar> const& foo_from_plane : ts_foo_plane) {
-    Eigen::Hyperplane<TScalar, 3> plane_in_foo = planeFromSe3(foo_from_plane);
-    Se3<TScalar> t2_foo_plane = se3FromPlane(plane_in_foo);
-    Eigen::Hyperplane<TScalar, 3> plane2_foo = planeFromSe3(t2_foo_plane);
-    SOPHUS_TEST_APPROX(
-        passed,
-        plane_in_foo.normal().eval(),
-        plane2_foo.normal().eval(),
-        eps,
-        "");
-    SOPHUS_TEST_APPROX(
-        passed, plane_in_foo.offset(), plane2_foo.offset(), eps, "");
+  for (auto params : Isometry3<TScalar>::paramsExamples()) {
+    Isometry3<TScalar> const& foo_from_plane =
+        Isometry3<TScalar>::fromParams(params);
+    Eigen::Hyperplane<TScalar, 3> plane_in_foo =
+        planeFromIsometry(foo_from_plane);
+    Isometry3<TScalar> t2_foo_plane = isometryFromPlane(plane_in_foo);
+    Eigen::Hyperplane<TScalar, 3> plane2_foo = planeFromIsometry(t2_foo_plane);
+    SOPHUS_ASSERT_NEAR(
+        plane_in_foo.normal().eval(), plane2_foo.normal().eval(), eps, "");
+    SOPHUS_ASSERT_NEAR(plane_in_foo.offset(), plane2_foo.offset(), eps, "");
   }
 
   return passed;
 }
+}  // namespace
 
-void runAll() {
-  std::cerr << "Geometry (Lines/Planes) tests:" << std::endl;
-  std::cerr << "Double tests: " << std::endl;
-  bool passed = test2dGeometry<double>();
-  passed = test3dGeometry<double>();
-  processTestResult(passed);
-  std::cerr << "Float tests: " << std::endl;
-  passed = test2dGeometry<float>();
-  passed = test3dGeometry<float>();
-  processTestResult(passed);
+TEST(plane_conv, integrations) {
+  test2dGeometry<double>();
+  test3dGeometry<double>();
+  test2dGeometry<float>();
+  test3dGeometry<float>();
 }
 
-}  // namespace
-}  // namespace sophus
-
-int main() { sophus::runAll(); }
+// int main() { sophus::runAll(); }

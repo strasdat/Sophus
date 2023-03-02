@@ -27,7 +27,7 @@ struct VariantImagePredicate {
   using PixelVariant = TPixelVariant;
 
   template <class TPixel>
-  static bool constexpr isTypeValid() {
+  static auto constexpr isTypeValid() -> bool {
     return has_type_v<TPixel, TPixelVariant>;
   }
 };
@@ -56,7 +56,7 @@ using MutIntensityImageView = MutDynImageView<IntensityImagePredicate>;
 namespace detail {
 // Call UserFunc with TDynImage cast to the appropriate concrete type
 // from the options in pixelFormats...
-template <class TUserFunc, typename TDynImage, typename... TpixelFormats>
+template <class TUserFunc, typename TDynImage, typename... TTpixelFormats>
 struct VisitImpl;
 
 // base case

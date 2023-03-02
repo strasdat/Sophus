@@ -69,7 +69,7 @@ class DynImage : public DynImageView<TPredicate> {
 
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
-  [[nodiscard]] bool has() const noexcept {
+  [[nodiscard]] auto has() const noexcept -> bool {
     PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
     return expected_type == this->pixel_format_;
   }
@@ -78,7 +78,7 @@ class DynImage : public DynImageView<TPredicate> {
   ///
   /// Precondition: this->has<TPixel>()
   template <class TPixel>
-  [[nodiscard]] Image<TPixel, TAllocator> image() const noexcept {
+  [[nodiscard]] auto image() const noexcept -> Image<TPixel, TAllocator> {
     if (!this->has<TPixel>()) {
       PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
 
@@ -96,8 +96,8 @@ class DynImage : public DynImageView<TPredicate> {
   }
 
   template <class TPixel>
-  Image<TPixel, TAllocator> reinterpretAs(
-      ImageSize reinterpreted_size) const noexcept {
+  auto reinterpretAs(ImageSize reinterpreted_size) const noexcept
+      -> Image<TPixel, TAllocator> {
     SOPHUS_ASSERT_LE(
         reinterpreted_size.width * sizeof(TPixel), this->layout().pitch_bytes_);
     SOPHUS_ASSERT_LE(reinterpreted_size.height, this->height());
@@ -105,7 +105,7 @@ class DynImage : public DynImageView<TPredicate> {
     SOPHUS_UNIMPLEMENTED();
   }
 
-  [[nodiscard]] size_t useCount() const { return shared_.use_count(); }
+  [[nodiscard]] auto useCount() const -> size_t { return shared_.use_count(); }
 
  protected:
   // Private constructor mainly available for constructing sub-views

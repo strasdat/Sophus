@@ -11,7 +11,7 @@ from sophus.matrix import vector2
 from sophus.matrix import zero_vector2
 
 
-class So2:
+class Rotation2:
     """2 dimensional group of orthogonal matrices with determinant 1"""
 
     def __init__(self, z):
@@ -21,7 +21,7 @@ class So2:
     @staticmethod
     def exp(theta):
         """exponential map"""
-        return So2(Complex(sympy.cos(theta), sympy.sin(theta)))
+        return Rotation2(Complex(sympy.cos(theta), sympy.sin(theta)))
 
     def log(self):
         """logarithmic map"""
@@ -33,10 +33,10 @@ class So2:
 
     def calc_dx_log_exp_x_times_this_at_0(self, x):
         """TODO(docstring)"""
-        return sympy.diff((So2.exp(x) * self).log(), x).limit(x, 0)
+        return sympy.diff((Rotation2.exp(x) * self).log(), x).limit(x, 0)
 
     def __repr__(self):
-        return "So2:" + repr(self.z)
+        return "Rotation2:" + repr(self.z)
 
     @staticmethod
     def hat(theta):
@@ -53,8 +53,8 @@ class So2:
         if isinstance(right, sympy.Matrix):
             assert right.shape == (2, 1), right.shape
             return self.matrix() * right
-        if isinstance(right, So2):
-            return So2(self.z * right.z)
+        if isinstance(right, Rotation2):
+            return Rotation2(self.z * right.z)
         assert False, f"unsupported type: {type(right)}"
 
     def __getitem__(self, key):
@@ -63,7 +63,7 @@ class So2:
     @staticmethod
     def calc_dx_exp_x(x):
         """TODO(docstring)"""
-        return sympy.Matrix(2, 1, lambda r, c: sympy.diff(So2.exp(x)[r], x))
+        return sympy.Matrix(2, 1, lambda r, c: sympy.diff(Rotation2.exp(x)[r], x))
 
     @staticmethod
     def dx_exp_x_at_0():
@@ -73,12 +73,12 @@ class So2:
     @staticmethod
     def calc_dx_exp_x_at_0(x):
         """TODO(docstring)"""
-        return So2.calc_dx_exp_x(x).limit(x, 0)
+        return Rotation2.calc_dx_exp_x(x).limit(x, 0)
 
     def calc_dx_this_mul_exp_x_at_0(self, x):
         """TODO(docstring)"""
         return sympy.Matrix(
-            2, 1, lambda r, c: sympy.diff((self * So2.exp(x))[r], x)
+            2, 1, lambda r, c: sympy.diff((self * Rotation2.exp(x))[r], x)
         ).limit(x, 0)
 
     @staticmethod
@@ -98,26 +98,28 @@ class So2:
     @staticmethod
     def dx_exp_x_matrix(x):
         """TODO(docstring)"""
-        mat_r = So2.exp(x)
-        dx_exp_x = So2.calc_dx_exp_x(x)
-        l = [dx_exp_x[j] * So2.dxi_x_matrix(mat_r, j) for j in [0, 1]]
+        mat_r = Rotation2.exp(x)
+        dx_exp_x = Rotation2.calc_dx_exp_x(x)
+        l = [dx_exp_x[j] * Rotation2.dxi_x_matrix(mat_r, j) for j in [0, 1]]
         return functools.reduce((lambda a, b: a + b), l)
 
     @staticmethod
     def calc_dx_exp_x_matrix(x):
         """TODO(docstring)"""
-        return sympy.Matrix(2, 2, lambda r, c: sympy.diff(So2.exp(x).matrix()[r, c], x))
+        return sympy.Matrix(
+            2, 2, lambda r, c: sympy.diff(Rotation2.exp(x).matrix()[r, c], x)
+        )
 
     @staticmethod
     def dx_exp_x_matrix_at_0():
         """TODO(docstring)"""
-        return So2.hat(1)
+        return Rotation2.hat(1)
 
     @staticmethod
     def calc_dx_exp_x_matrix_at_0(x):
         """TODO(docstring)"""
         return sympy.Matrix(
-            2, 2, lambda r, c: sympy.diff(So2.exp(x).matrix()[r, c], x)
+            2, 2, lambda r, c: sympy.diff(Rotation2.exp(x).matrix()[r, c], x)
         ).limit(x, 0)
 
 
@@ -128,18 +130,18 @@ class TestSo2(unittest.TestCase):
         self.theta = sympy.symbols("theta", real=True)
         x, y = sympy.symbols("c[0] c[1]", real=True)
         p0, p1 = sympy.symbols("p0 p1", real=True)
-        self.a = So2(Complex(x, y))
+        self.a = Rotation2(Complex(x, y))
         self.p = vector2(p0, p1)
 
     def test_exp_log(self):
         """TODO(docstring)"""
         for theta in [0.0, 0.5, 0.1]:
-            w = So2.exp(theta).log()
+            w = Rotation2.exp(theta).log()
             self.assertAlmostEqual(theta, w)
 
     def test_matrix(self):
         """TODO(docstring)"""
-        foo_rotation_bar = So2.exp(self.theta)
+        foo_rotation_bar = Rotation2.exp(self.theta)
         foo_transform_bar = foo_rotation_bar.matrix()
         point_bar = self.p
         p1_foo = foo_rotation_bar * point_bar
@@ -149,26 +151,31 @@ class TestSo2(unittest.TestCase):
     def test_derivatives(self):
         """TODO(docstring)"""
         self.assertEqual(
-            sympy.simplify(So2.calc_dx_exp_x_at_0(self.theta) - So2.dx_exp_x_at_0()),
+            sympy.simplify(
+                Rotation2.calc_dx_exp_x_at_0(self.theta) - Rotation2.dx_exp_x_at_0()
+            ),
             sympy.Matrix.zeros(2, 1),
         )
         for i in [0, 1]:
             self.assertEqual(
                 sympy.simplify(
-                    So2.calc_dxi_x_matrix(self.a, i) - So2.dxi_x_matrix(self.a, i)
+                    Rotation2.calc_dxi_x_matrix(self.a, i)
+                    - Rotation2.dxi_x_matrix(self.a, i)
                 ),
                 sympy.Matrix.zeros(2, 2),
             )
 
         self.assertEqual(
             sympy.simplify(
-                So2.dx_exp_x_matrix(self.theta) - So2.calc_dx_exp_x_matrix(self.theta)
+                Rotation2.dx_exp_x_matrix(self.theta)
+                - Rotation2.calc_dx_exp_x_matrix(self.theta)
             ),
             sympy.Matrix.zeros(2, 2),
         )
         self.assertEqual(
             sympy.simplify(
-                So2.dx_exp_x_matrix_at_0() - So2.calc_dx_exp_x_matrix_at_0(self.theta)
+                Rotation2.dx_exp_x_matrix_at_0()
+                - Rotation2.calc_dx_exp_x_matrix_at_0(self.theta)
             ),
             sympy.Matrix.zeros(2, 2),
         )
@@ -176,7 +183,7 @@ class TestSo2(unittest.TestCase):
     # pylint: disable=too-many-branches
     def test_codegen(self):
         """TODO(docstring)"""
-        stream = cse_codegen(So2.calc_dx_exp_x(self.theta))
+        stream = cse_codegen(Rotation2.calc_dx_exp_x(self.theta))
         filename = "cpp_gencode/So2_Dx_exp_x.cpp"
         # set to true to generate codegen files
         # pylint: disable=using-constant-test

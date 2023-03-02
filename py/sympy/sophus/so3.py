@@ -11,7 +11,7 @@ from sophus.matrix import squared_norm
 from sophus.quaternion import Quaternion
 
 
-class So3:
+class Rotation3:
     """3 dimensional group of orthogonal matrices with determinant 1"""
 
     def __init__(self, q):
@@ -23,7 +23,7 @@ class So3:
         """exponential map"""
         theta_sq = squared_norm(v)
         theta = sympy.sqrt(theta_sq)
-        return So3(
+        return Rotation3(
             Quaternion(sympy.cos(0.5 * theta), sympy.sin(0.5 * theta) / theta * v)
         )
 
@@ -40,7 +40,7 @@ class So3:
         """TODO(docstring)"""
         return (
             sympy.Matrix(
-                3, 3, lambda r, c: sympy.diff((So3.exp(x) * self).log()[r], x[c])
+                3, 3, lambda r, c: sympy.diff((Rotation3.exp(x) * self).log()[r], x[c])
             )
             .subs(x[0], 0)
             .subs(x[1], 0)
@@ -48,11 +48,11 @@ class So3:
         )
 
     def __repr__(self):
-        return "So3:" + repr(self.q)
+        return "Rotation3:" + repr(self.q)
 
     def inverse(self):
         """TODO(docstring)"""
-        return So3(self.q.conj())
+        return Rotation3(self.q.conj())
 
     @staticmethod
     def hat(o):
@@ -106,8 +106,8 @@ class So3:
         if isinstance(right, sympy.Matrix):
             assert right.shape == (3, 1), right.shape
             return (self.q * Quaternion(0, right) * self.q.conj()).vec
-        if isinstance(right, So3):
-            return So3(self.q * right.q)
+        if isinstance(right, Rotation3):
+            return Rotation3(self.q * right.q)
         assert False, f"unsupported type: {type(right)}"
 
     def __getitem__(self, key):
@@ -116,7 +116,7 @@ class So3:
     @staticmethod
     def calc_dx_exp_x(x):
         """TODO(docstring)"""
-        return sympy.Matrix(4, 3, lambda r, c: sympy.diff(So3.exp(x)[r], x[c]))
+        return sympy.Matrix(4, 3, lambda r, c: sympy.diff(Rotation3.exp(x)[r], x[c]))
 
     @staticmethod
     def dx_exp_x_at_0():
@@ -128,12 +128,14 @@ class So3:
     @staticmethod
     def calc_dx_exp_x_at_0(x):
         """TODO(docstring)"""
-        return So3.calc_dx_exp_x(x).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
+        return Rotation3.calc_dx_exp_x(x).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
     def calc_dx_this_mul_exp_x_at_0(self, x):
         """TODO(docstring)"""
         return (
-            sympy.Matrix(4, 3, lambda r, c: sympy.diff((self * So3.exp(x))[r], x[c]))
+            sympy.Matrix(
+                4, 3, lambda r, c: sympy.diff((self * Rotation3.exp(x))[r], x[c])
+            )
             .subs(x[0], 0)
             .subs(x[1], 0)
             .limit(x[2], 0)
@@ -142,7 +144,9 @@ class So3:
     def calc_dx_exp_x_mul_this_at_0(self, x):
         """TODO(docstring)"""
         return (
-            sympy.Matrix(3, 4, lambda r, c: sympy.diff((self * So3.exp(x))[c], x[r, 0]))
+            sympy.Matrix(
+                3, 4, lambda r, c: sympy.diff((self * Rotation3.exp(x))[c], x[r, 0])
+            )
             .subs(x[0], 0)
             .subs(x[1], 0)
             .limit(x[2], 0)
@@ -193,16 +197,16 @@ class So3:
     @staticmethod
     def dxi_exp_x_matrix(x, i):
         """TODO(docstring)"""
-        mat_r = So3.exp(x)
-        dx_exp_x = So3.calc_dx_exp_x(x)
-        l = [dx_exp_x[j, i] * So3.dxi_x_matrix(mat_r, j) for j in [0, 1, 2, 3]]
+        mat_r = Rotation3.exp(x)
+        dx_exp_x = Rotation3.calc_dx_exp_x(x)
+        l = [dx_exp_x[j, i] * Rotation3.dxi_x_matrix(mat_r, j) for j in [0, 1, 2, 3]]
         return functools.reduce((lambda a, b: a + b), l)
 
     @staticmethod
     def calc_dxi_exp_x_matrix(x, i):
         """TODO(docstring)"""
         return sympy.Matrix(
-            3, 3, lambda r, c: sympy.diff(So3.exp(x).matrix()[r, c], x[i])
+            3, 3, lambda r, c: sympy.diff(Rotation3.exp(x).matrix()[r, c], x[i])
         )
 
     @staticmethod
@@ -210,13 +214,15 @@ class So3:
         """TODO(docstring)"""
         v = zero_vector3()
         v[i] = 1
-        return So3.hat(v)
+        return Rotation3.hat(v)
 
     @staticmethod
     def calc_dxi_exp_x_matrix_at_0(x, i):
         """TODO(docstring)"""
         return (
-            sympy.Matrix(3, 3, lambda r, c: sympy.diff(So3.exp(x).matrix()[r, c], x[i]))
+            sympy.Matrix(
+                3, 3, lambda r, c: sympy.diff(Rotation3.exp(x).matrix()[r, c], x[i])
+            )
             .subs(x[0], 0)
             .subs(x[1], 0)
             .limit(x[2], 0)
@@ -234,7 +240,7 @@ class TestSo3(unittest.TestCase):
         p0, p1, p2 = sympy.symbols("p0 p1 p2", real=True)
         v = vector3(v0, v1, v2)
         self.omega = vector3(omega0, omega1, omega2)
-        self.a = So3(Quaternion(x, v))
+        self.a = Rotation3(Quaternion(x, v))
         self.p = vector3(p0, p1, p2)
 
     def test_exp_log(self):
@@ -244,13 +250,13 @@ class TestSo3(unittest.TestCase):
             vector3(0.1, 0.1, 0.1),
             vector3(0.01, 0.2, 0.03),
         ]:
-            w = So3.exp(o).log()
+            w = Rotation3.exp(o).log()
             for i in range(0, 3):
                 self.assertAlmostEqual(o[i], w[i])
 
     def test_matrix(self):
         """TODO(docstring)"""
-        foo_rotation_bar = So3.exp(self.omega)
+        foo_rotation_bar = Rotation3.exp(self.omega)
         foo_transform_bar = foo_rotation_bar.matrix()
         point_bar = self.p
         p1_foo = foo_rotation_bar * point_bar
@@ -260,29 +266,32 @@ class TestSo3(unittest.TestCase):
     def test_derivatives(self):
         """TODO(docstring)"""
         self.assertEqual(
-            sympy.simplify(So3.calc_dx_exp_x_at_0(self.omega) - So3.dx_exp_x_at_0()),
+            sympy.simplify(
+                Rotation3.calc_dx_exp_x_at_0(self.omega) - Rotation3.dx_exp_x_at_0()
+            ),
             sympy.Matrix.zeros(4, 3),
         )
 
         for i in [0, 1, 2, 3]:
             self.assertEqual(
                 sympy.simplify(
-                    So3.calc_dxi_x_matrix(self.a, i) - So3.dxi_x_matrix(self.a, i)
+                    Rotation3.calc_dxi_x_matrix(self.a, i)
+                    - Rotation3.dxi_x_matrix(self.a, i)
                 ),
                 sympy.Matrix.zeros(3, 3),
             )
         for i in [0, 1, 2]:
             self.assertEqual(
                 sympy.simplify(
-                    So3.dxi_exp_x_matrix(self.omega, i)
-                    - So3.calc_dxi_exp_x_matrix(self.omega, i)
+                    Rotation3.dxi_exp_x_matrix(self.omega, i)
+                    - Rotation3.calc_dxi_exp_x_matrix(self.omega, i)
                 ),
                 sympy.Matrix.zeros(3, 3),
             )
             self.assertEqual(
                 sympy.simplify(
-                    So3.dxi_exp_x_matrix_at_0(i)
-                    - So3.calc_dxi_exp_x_matrix_at_0(self.omega, i)
+                    Rotation3.dxi_exp_x_matrix_at_0(i)
+                    - Rotation3.calc_dxi_exp_x_matrix_at_0(self.omega, i)
                 ),
                 sympy.Matrix.zeros(3, 3),
             )
@@ -290,7 +299,7 @@ class TestSo3(unittest.TestCase):
     # pylint: disable=too-many-branches
     def test_codegen(self):
         """TODO(docstring)"""
-        stream = cse_codegen(So3.calc_dx_exp_x(self.omega))
+        stream = cse_codegen(Rotation3.calc_dx_exp_x(self.omega))
         filename = "cpp_gencode/So3_Dx_exp_x.cpp"
         # set to true to generate codegen files
         # pylint: disable=using-constant-test

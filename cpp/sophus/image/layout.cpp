@@ -10,17 +10,17 @@
 
 namespace sophus {
 
-bool operator==(ImageLayout const& lhs, ImageLayout const& rhs) {
+auto operator==(ImageLayout const& lhs, ImageLayout const& rhs) -> bool {
   return lhs.imageSize() == rhs.imageSize() &&
          lhs.pitchBytes() == rhs.pitchBytes();
 }
 
-bool operator!=(ImageLayout const& lhs, ImageLayout const& rhs) {
+auto operator!=(ImageLayout const& lhs, ImageLayout const& rhs) -> bool {
   return lhs.imageSize() != rhs.imageSize() ||
          lhs.pitchBytes() != rhs.pitchBytes();
 }
 
-std::ostream& operator<<(std::ostream& os, ImageLayout const& layout) {
+auto operator<<(std::ostream& os, ImageLayout const& layout) -> std::ostream& {
   os << "[" << layout.imageSize() << ", pitch: " << layout.pitchBytes() << "]";
   return os;
 }

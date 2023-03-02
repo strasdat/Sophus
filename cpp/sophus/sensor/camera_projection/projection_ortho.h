@@ -23,17 +23,18 @@ struct ProjectionOrtho {
   // a 2xN matrix. N may be dynamically sized, but the input columns must be
   // statically determined as 3 at compile time.
   template <class TDerived>
-  static WithRows<Eigen::DenseBase<TDerived>, 2> proj(
-      Eigen::DenseBase<TDerived> const& points_in_camera) {
+  static auto proj(Eigen::DenseBase<TDerived> const& points_in_camera)
+      -> WithRows<Eigen::DenseBase<TDerived>, 2> {
     static_assert(TDerived::RowsAtCompileTime == 3);
     return points_in_camera.template topRows<2>();
   }
 
   template <class TDerived>
-  static WithRows<Eigen::DenseBase<TDerived>, 3> unproj(
+  static auto unproj(
       Eigen::DenseBase<TDerived> const& points_in_cam_canonical,
       typename TDerived::Scalar extension =
-          static_cast<typename TDerived::Scalar>(0.0)) {
+          static_cast<typename TDerived::Scalar>(0.0))
+      -> WithRows<Eigen::DenseBase<TDerived>, 3> {
     static_assert(TDerived::RowsAtCompileTime == 2);
     WithRows<Eigen::DenseBase<TDerived>, 3> unprojected;
     unprojected.template topRows<2>() = points_in_cam_canonical;
@@ -47,8 +48,8 @@ struct ProjectionOrtho {
   ///
   ///   Dx proj(x) with x = (a,b,psi) being an inverse depth point.
   template <class TScalar>
-  static Eigen::Matrix<TScalar, 2, 3> dxProjX(
-      Eigen::Matrix<TScalar, 3, 1> const& /*unused*/) {
+  static auto dxProjX(Eigen::Matrix<TScalar, 3, 1> const& /*unused*/)
+      -> Eigen::Matrix<TScalar, 2, 3> {
     SOPHUS_UNIMPLEMENTED();
   }
 };

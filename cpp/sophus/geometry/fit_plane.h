@@ -13,8 +13,8 @@
 
 namespace sophus {
 
-inline Eigen::Hyperplane<double, 3> fitPlaneToPoints(
-    Eigen::Matrix3Xd const& points) {
+inline auto fitPlaneToPoints(Eigen::Matrix3Xd const& points)
+    -> Eigen::Hyperplane<double, 3> {
   Eigen::Vector3d mean = points.rowwise().mean();
   Eigen::Matrix3Xd points_centered = points.colwise() - mean;
   Eigen::JacobiSVD<Eigen::Matrix3Xd> svd(
@@ -24,15 +24,15 @@ inline Eigen::Hyperplane<double, 3> fitPlaneToPoints(
 }
 
 // convenience overloads
-Eigen::Hyperplane<double, 3> fitPlaneToPoints(
-    std::vector<Eigen::Vector3d> const& points) {
+auto fitPlaneToPoints(std::vector<Eigen::Vector3d> const& points)
+    -> Eigen::Hyperplane<double, 3> {
   Eigen::Map<const Eigen::Matrix3Xd> map(
       points.data()->data(), 3, points.size());
   return fitPlaneToPoints(map.eval());
 }
 
-Eigen::Hyperplane<double, 3> fitPlaneToPoints(
-    std::vector<Eigen::Vector3f> const& points) {
+auto fitPlaneToPoints(std::vector<Eigen::Vector3f> const& points)
+    -> Eigen::Hyperplane<double, 3> {
   Eigen::Map<const Eigen::Matrix3Xf> map(
       points.data()->data(), 3, points.size());
   return fitPlaneToPoints(map.cast<double>().eval());

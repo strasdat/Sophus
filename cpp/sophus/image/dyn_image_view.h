@@ -18,7 +18,7 @@ namespace sophus {
 
 struct AnyImagePredicate {
   template <class TPixel>
-  static bool constexpr isTypeValid() {
+  static auto constexpr isTypeValid() -> bool {
     return true;
   }
 };
@@ -44,7 +44,7 @@ class DynImageView {
 
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
-  [[nodiscard]] bool has() const noexcept {
+  [[nodiscard]] auto has() const noexcept -> bool {
     PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
     return expected_type == pixel_format_;
   }
@@ -52,42 +52,50 @@ class DynImageView {
   /// Returns v-th row pointer.
   ///
   /// Precondition: v must be in [0, height).
-  [[nodiscard]] uint8_t const* rawRowPtr(int v) const {
+  [[nodiscard]] auto rawRowPtr(int v) const -> uint8_t const* {
     return ((uint8_t*)(rawPtr()) + v * layout_.pitchBytes());
   }
 
-  [[nodiscard]] uint8_t const* rawPtr() const { return ptr_; }
+  [[nodiscard]] auto rawPtr() const -> uint8_t const* { return ptr_; }
 
   /// Number of bytes per channel of a single pixel.
   ///
   /// E.g. a pixel of Eigen::Matrix<uint8_t, 3, 1> has 1 byte per channel.
-  [[nodiscard]] int numBytesPerPixelChannel() const {
+  [[nodiscard]] auto numBytesPerPixelChannel() const -> int {
     return pixel_format_.num_bytes_per_pixel_channel;
   }
-  [[nodiscard]] NumberType numberType() const {
+  [[nodiscard]] auto numberType() const -> NumberType {
     return pixel_format_.number_type;
   }
 
-  [[nodiscard]] ImageLayout const& layout() const { return layout_; }
+  [[nodiscard]] auto layout() const -> ImageLayout const& { return layout_; }
 
-  [[nodiscard]] ImageSize const& imageSize() const {
+  [[nodiscard]] auto imageSize() const -> ImageSize const& {
     return layout_.imageSize();
   }
 
-  [[nodiscard]] int width() const { return layout().width(); }
-  [[nodiscard]] int height() const { return layout().height(); }
-  [[nodiscard]] size_t pitchBytes() const { return layout().pitchBytes(); }
-  [[nodiscard]] size_t sizeBytes() const { return height() * pitchBytes(); }
-  [[nodiscard]] bool isEmpty() const { return this->rawPtr() == nullptr; }
+  [[nodiscard]] auto width() const -> int { return layout().width(); }
+  [[nodiscard]] auto height() const -> int { return layout().height(); }
+  [[nodiscard]] auto pitchBytes() const -> size_t {
+    return layout().pitchBytes();
+  }
+  [[nodiscard]] auto sizeBytes() const -> size_t {
+    return height() * pitchBytes();
+  }
+  [[nodiscard]] auto isEmpty() const -> bool {
+    return this->rawPtr() == nullptr;
+  }
 
-  [[nodiscard]] PixelFormat pixelFormat() const { return pixel_format_; }
-  [[nodiscard]] int numChannels() const {
+  [[nodiscard]] auto pixelFormat() const -> PixelFormat {
+    return pixel_format_;
+  }
+  [[nodiscard]] auto numChannels() const -> int {
     return this->pixel_format_.num_channels;
   }
 
   /// Returns subview with shared ownership semantics of whole image.
-  [[nodiscard]] DynImageView subview(
-      Eigen::Vector2i uv, sophus::ImageSize size) const {
+  [[nodiscard]] auto subview(Eigen::Vector2i uv, sophus::ImageSize size) const
+      -> DynImageView {
     SOPHUS_ASSERT(imageSize().contains(uv));
     SOPHUS_ASSERT_LE(uv.x() + size.width, this->layout_.width());
     SOPHUS_ASSERT_LE(uv.y() + size.height, this->layout_.height());
@@ -104,7 +112,7 @@ class DynImageView {
   ///
   /// Precondition: this->has<TPixel>()
   template <class TPixel>
-  [[nodiscard]] ImageView<TPixel> imageView() const noexcept {
+  [[nodiscard]] auto imageView() const noexcept -> ImageView<TPixel> {
     if (!this->has<TPixel>()) {
       PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
 

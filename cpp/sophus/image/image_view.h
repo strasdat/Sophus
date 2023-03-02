@@ -68,41 +68,43 @@ struct ImageView {
       : ImageView(ImageLayout::makeFromSize<TPixel>(image_size), ptr) {}
 
   /// Returns true if view is empty.
-  [[nodiscard]] bool isEmpty() const { return this->ptr_ == nullptr; }
+  [[nodiscard]] auto isEmpty() const -> bool { return this->ptr_ == nullptr; }
 
   /// Returns true if view is contiguous.
-  [[nodiscard]] bool isContiguous() const {
+  [[nodiscard]] auto isContiguous() const -> bool {
     return imageSize().width * sizeof(TPixel) == layout().pitchBytes();
   }
 
   /// Returns ImageSize.
   /// It is {0,0} if view is empty.
-  [[nodiscard]] sophus::ImageSize const& imageSize() const {
+  [[nodiscard]] auto imageSize() const -> sophus::ImageSize const& {
     return layout_.imageSize();
   }
 
   /// Returns ImageLayout.
   /// It is {{0,0}, 0} is view is empty.
-  [[nodiscard]] ImageLayout const& layout() const { return layout_; }
+  [[nodiscard]] auto layout() const -> ImageLayout const& { return layout_; }
 
-  [[nodiscard]] int width() const { return layout().width(); }
-  [[nodiscard]] int height() const { return layout().height(); }
-  [[nodiscard]] size_t pitchBytes() const { return layout().pitchBytes(); }
+  [[nodiscard]] auto width() const -> int { return layout().width(); }
+  [[nodiscard]] auto height() const -> int { return layout().height(); }
+  [[nodiscard]] auto pitchBytes() const -> size_t {
+    return layout().pitchBytes();
+  }
 
   /// Returns true if u is in [0, width).
-  [[nodiscard]] bool colInBounds(int u) const {
+  [[nodiscard]] auto colInBounds(int u) const -> bool {
     return u >= 0 && u < layout_.width();
   }
 
   /// Returns true if v is in [0, height).
-  [[nodiscard]] bool rowInBounds(int v) const {
+  [[nodiscard]] auto rowInBounds(int v) const -> bool {
     return v >= 0 && v < layout_.height();
   }
 
   /// Returns v-th row pointer.
   ///
   /// Precondition: v must be in [0, height).
-  [[nodiscard]] TPixel const* rowPtr(int v) const {
+  [[nodiscard]] auto rowPtr(int v) const -> TPixel const* {
     return (TPixel*)((uint8_t*)(ptr_) + v * layout_.pitchBytes());
   }
 
@@ -122,20 +124,20 @@ struct ImageView {
   ///     PixetT p = row[u];
   ///   }
   /// }
-  [[nodiscard]] TPixel const& operator()(int u, int v) const {
+  [[nodiscard]] auto operator()(int u, int v) const -> TPixel const& {
     return rowPtr(v)[u];
   }
 
-  [[nodiscard]] TPixel const& operator()(Eigen::Vector2i uv) const {
+  [[nodiscard]] auto operator()(Eigen::Vector2i uv) const -> TPixel const& {
     return this->operator()(uv[0], uv[1]);
   }
 
   /// Returns pointer to first pixel.
-  [[nodiscard]] TPixel const* ptr() const { return ptr_; }
+  [[nodiscard]] auto ptr() const -> TPixel const* { return ptr_; }
 
   /// Returns subview.
-  [[nodiscard]] ImageView subview(
-      Eigen::Vector2i uv, sophus::ImageSize size) const {
+  [[nodiscard]] auto subview(Eigen::Vector2i uv, sophus::ImageSize size) const
+      -> ImageView {
     SOPHUS_ASSERT(colInBounds(uv[0]));
     SOPHUS_ASSERT(rowInBounds(uv[1]));
     SOPHUS_ASSERT_LE(uv.x() + size.width, layout_.width());
@@ -161,8 +163,8 @@ struct ImageView {
 
   /// Performs reduction / fold on image view.
   template <class TReduceOp, class TVal>
-  [[nodiscard]] TVal reduce(
-      TReduceOp const& reduce_op, TVal val = TVal{}) const {
+  [[nodiscard]] auto reduce(TReduceOp const& reduce_op, TVal val = TVal{}) const
+      -> TVal {
     SOPHUS_ASSERT(!this->isEmpty());  // NOLINT
 
     for (int v = 0; v < this->layout_.height(); ++v) {
@@ -177,9 +179,9 @@ struct ImageView {
 
   /// Performs reduction / fold on image view with short circuit condition.
   template <class TShortCircuitReduceOp, class TVal>
-  [[nodiscard]] TVal shortCircuitReduce(
+  [[nodiscard]] auto shortCircuitReduce(
       TShortCircuitReduceOp const& short_circuit_reduce_op,
-      TVal val = TVal{}) const {
+      TVal val = TVal{}) const -> TVal {
     SOPHUS_ASSERT(!this->isEmpty());
 
     for (int v = 0; v < this->layout_.height(); ++v) {
@@ -204,13 +206,13 @@ struct ImageView {
   /// values equality and return true for identical copies of data blocks.
   ///
   /// Here we follow std::span which also does not offer equality comparions.
-  bool operator==(ImageView const& rhs) const = delete;
+  auto operator==(ImageView const& rhs) const -> bool = delete;
 
   /// The in-equality operator is deleted to avoid confusion.
-  bool operator!=(ImageView const& rhs) const = delete;
+  auto operator!=(ImageView const& rhs) const -> bool = delete;
 
   /// Returns true both views have the same size and contain the same data.
-  [[nodiscard]] bool hasSameData(ImageView const& rhs) const {
+  [[nodiscard]] auto hasSameData(ImageView const& rhs) const -> bool {
     if (!(this->imageSize() == rhs.imageSize())) {
       return false;
     }
@@ -246,7 +248,7 @@ struct ImageView {
 namespace details {
 
 template <class TPixel>
-Region<TPixel> finiteInterval(sophus::ImageView<TPixel> const& image) {
+auto finiteInterval(sophus::ImageView<TPixel> const& image) -> Region<TPixel> {
   return image.reduce(
       [](TPixel v, auto& min_max) {
         if (isFinite(v)) {
@@ -258,8 +260,8 @@ Region<TPixel> finiteInterval(sophus::ImageView<TPixel> const& image) {
 
 // TODO: make member function?
 template <class TPixel>
-inline Region2I imageCoordsInterval(
-    sophus::ImageView<TPixel> const& image, int border = 0) {
+inline auto imageCoordsInterval(
+    sophus::ImageView<TPixel> const& image, int border = 0) -> Region2I {
   return imageCoordsInterval(image.imageSize(), border);
 }
 

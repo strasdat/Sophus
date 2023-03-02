@@ -1,0 +1,356 @@
+// Copyright (c) 2011, Hauke Strasdat
+// Copyright (c) 2012, Steven Lovegrove
+// Copyright (c) 2021, farm-ng, inc.
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file or at
+// https://opensource.org/licenses/MIT.
+
+#pragma once
+#include "sophus/concepts/lie_group.h"
+#include "sophus/lie/impl/rotation3.h"
+#include "sophus/lie/impl/sim_mat_w.h"
+#include "sophus/linalg/quaternion.h"
+#include "sophus/linalg/unit_vector.h"
+
+namespace sophus {
+namespace lie {
+
+template <class TScalar, int kDim = 3>
+class SpiralSimilarity3Impl {
+ public:
+  static_assert(kDim == 3);
+  using Scalar = TScalar;
+  using Quaternion = QuaternionImpl<TScalar>;
+
+  static bool constexpr kIsOriginPreserving = true;
+  static bool constexpr kIsAxisDirectionPreserving = false;
+  static bool constexpr kIsDirectionVectorPreserving = false;
+  static bool constexpr kIsShapePreserving = false;
+  static bool constexpr kIisSizePreserving = true;
+  static bool constexpr kIisParallelLinePreserving = true;
+
+  static int const kDof = 4;
+  static int const kNumParams = 4;
+  static int const kPointDim = 3;
+  static int const kAmbientDim = 3;
+
+  // constructors and factories
+
+  static auto identityParams() -> Eigen::Vector<Scalar, kNumParams> {
+    return Eigen::Vector<Scalar, 4>(0.0, 0.0, 0.0, 1.0);
+  }
+
+  static auto areParamsValid(
+      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+      -> sophus::Expected<Success> {
+    static const Scalar kThr = kEpsilon<Scalar> * kEpsilon<Scalar>;
+    const Scalar squared_norm = non_zero_quat.squaredNorm();
+    using std::abs;
+    if (!(squared_norm > kThr || squared_norm < 1.0 / kThr)) {
+      return SOPHUS_UNEXPECTED(
+          "complex number ({}, {}) is too large or too small.\n"
+          "Squared norm: {}, thr: {}",
+          non_zero_quat[0],
+          non_zero_quat[1],
+          squared_norm,
+          kThr);
+    }
+    return sophus::Expected<Success>{};
+  }
+
+  // Manifold / Lie Group concepts
+
+  static auto exp(Eigen::Vector<Scalar, kDof> const& omega_logscale)
+      -> Eigen::Vector<Scalar, kNumParams> {
+    using std::exp;
+    using std::max;
+    using std::min;
+    using std::sqrt;
+
+    Eigen::Vector3<Scalar> const vec_omega = omega_logscale.template head<3>();
+    Scalar scale = exp(omega_logscale[3]);
+    // Ensure that scale-factor contraint is always valid
+    scale = max(scale, kEpsilonPlus<Scalar>);
+    scale = min(scale, Scalar(1.) / kEpsilonPlus<Scalar>);
+    Scalar sqrt_scale = sqrt(scale);
+    Eigen::Vector<Scalar, kNumParams> quat =
+        Rotation3Impl<Scalar>::exp(vec_omega);
+    quat *= sqrt_scale;
+    return quat;
+  }
+
+  static auto log(Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+      -> Eigen::Vector<Scalar, kDof> {
+    using std::log;
+
+    Scalar scale = non_zero_quat.squaredNorm();
+    Eigen::Vector<Scalar, kDof> omega_and_logscale;
+    omega_and_logscale.template head<3>() =
+        Rotation3Impl<Scalar>::log(non_zero_quat.normalized());
+    omega_and_logscale[3] = log(scale);
+    return omega_and_logscale;
+  }
+
+  static auto hat(Eigen::Vector<Scalar, kDof> const& omega_logscale)
+      -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
+    return Eigen::Matrix<Scalar, 3, 3>{
+        {+omega_logscale(3), -omega_logscale(2), +omega_logscale(1)},
+        {+omega_logscale(2), +omega_logscale(3), -omega_logscale(0)},
+        {-omega_logscale(1), +omega_logscale(0), +omega_logscale(3)}};
+  }
+
+  static auto vee(Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> const& mat)
+      -> Eigen::Matrix<Scalar, kDof, 1> {
+    return Eigen::Matrix<Scalar, kDof, 1>{
+        mat(2, 1), mat(0, 2), mat(1, 0), mat(0, 0)};
+  }
+
+  static auto adj(Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    Eigen::Matrix<Scalar, kDof, kDof> mat;
+    mat.setIdentity();
+    mat.template topLeftCorner<3, 3>() =
+        Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized());
+    return mat;
+  }
+
+  // group operations
+
+  static auto inverse(Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+      -> Eigen::Vector<Scalar, kNumParams> {
+    Scalar squared_scale = non_zero_quat.norm();
+    return (1.0 / squared_scale) *
+           QuaternionImpl<Scalar>::conjugate(non_zero_quat.normalized());
+  }
+
+  static auto multiplication(
+      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
+      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
+      -> Eigen::Vector<Scalar, kNumParams> {
+    auto result =
+        QuaternionImpl<Scalar>::multiplication(lhs_params, rhs_params);
+    Scalar const squared_scale = result.squaredNorm();
+
+    if (squared_scale < kEpsilon<Scalar> * kEpsilon<Scalar>) {
+      /// Saturation to ensure class invariant.
+      result.normalize();
+      result *= kEpsilonPlus<Scalar>;
+    }
+    if (squared_scale > Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>)) {
+      /// Saturation to ensure class invariant.
+      result.normalize();
+      result /= kEpsilonPlus<Scalar>;
+    }
+    return result;
+  }
+
+  // Point actions
+  static auto action(
+      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat,
+      Eigen::Vector<Scalar, kPointDim> const& point)
+      -> Eigen::Vector<Scalar, kPointDim> {
+    return matrix(non_zero_quat) * point;
+  }
+
+  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point)
+      -> Eigen::Vector<Scalar, kAmbientDim> {
+    return point;
+  }
+
+  static auto action(
+      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat,
+      UnitVector<Scalar, kPointDim> const& direction_vector)
+      -> UnitVector<Scalar, kPointDim> {
+    return UnitVector<Scalar, kPointDim>::fromParams(
+        Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized()) *
+        direction_vector.vector());
+  }
+
+  // matrices
+
+  static auto compactMatrix(
+      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+      -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
+    Eigen::Matrix<Scalar, kPointDim, kPointDim> s_r;
+
+    Scalar const vx_sq = non_zero_quat.x() * non_zero_quat.x();
+    Scalar const vy_sq = non_zero_quat.y() * non_zero_quat.y();
+    Scalar const vz_sq = non_zero_quat.z() * non_zero_quat.z();
+    Scalar const w_sq = non_zero_quat.w() * non_zero_quat.w();
+    Scalar const two_vx = Scalar(2) * non_zero_quat.x();
+    Scalar const two_vy = Scalar(2) * non_zero_quat.y();
+    Scalar const two_vz = Scalar(2) * non_zero_quat.z();
+    Scalar const two_vx_vy = two_vx * non_zero_quat.y();
+    Scalar const two_vx_vz = two_vx * non_zero_quat.z();
+    Scalar const two_vx_w = two_vx * non_zero_quat.w();
+    Scalar const two_vy_vz = two_vy * non_zero_quat.z();
+    Scalar const two_vy_w = two_vy * non_zero_quat.w();
+    Scalar const two_vz_w = two_vz * non_zero_quat.w();
+
+    s_r(0, 0) = vx_sq - vy_sq - vz_sq + w_sq;
+    s_r(1, 0) = two_vx_vy + two_vz_w;
+    s_r(2, 0) = two_vx_vz - two_vy_w;
+
+    s_r(0, 1) = two_vx_vy - two_vz_w;
+    s_r(1, 1) = -vx_sq + vy_sq - vz_sq + w_sq;
+    s_r(2, 1) = two_vx_w + two_vy_vz;
+
+    s_r(0, 2) = two_vx_vz + two_vy_w;
+    s_r(1, 2) = -two_vx_w + two_vy_vz;
+    s_r(2, 2) = -vx_sq - vy_sq + vz_sq + w_sq;
+    return s_r;
+  }
+
+  static auto matrix(Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+      -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
+    return compactMatrix(non_zero_quat);
+  }
+
+  // Sub-group concepts
+  static auto matV(
+      Eigen::Vector<Scalar, kNumParams> const& /*unused*/,
+      Eigen::Vector<Scalar, kDof> const& angle_logscale)
+      -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
+    Eigen::Matrix<Scalar, 3, 1> omega = angle_logscale.template head<3>();
+    Eigen::Matrix<Scalar, 3, 3> mat_omega = Rotation3Impl<Scalar>::hat(omega);
+    Scalar theta = omega.norm();
+    Eigen::Matrix3<Scalar> const w =
+        details::calcW<Scalar, 3>(mat_omega, theta, angle_logscale[3]);
+    return w;
+  }
+
+  static auto matVInverse(
+      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat,
+      Eigen::Vector<Scalar, kDof> const& angle_logscale)
+      -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
+    Eigen::Matrix<Scalar, 3, 1> omega = angle_logscale.template head<3>();
+    Eigen::Matrix<Scalar, 3, 3> mat_omega = Rotation3Impl<Scalar>::hat(omega);
+    Scalar theta = omega.norm();
+    return details::calcWInv<Scalar, 3>(
+        mat_omega, theta, angle_logscale[3], non_zero_quat.squaredNorm());
+  }
+
+  static auto topRightAdj(
+      Eigen::Vector<Scalar, kNumParams> const& quat,
+      Eigen::Vector<Scalar, kPointDim> const& point)
+      -> Eigen::Matrix<Scalar, kPointDim, kDof> {
+    Eigen::Matrix<Scalar, 3, 4> tr_adj;
+    tr_adj.template topLeftCorner<3, 3>() =
+        Rotation3Impl<Scalar>::hat(point) *
+        Rotation3Impl<Scalar>::matrix(quat.normalized());
+    tr_adj.template topRightCorner<3, 1>() = -point;
+    return tr_adj;
+  }
+
+  // derivatives
+
+  static auto dxExpX(Eigen::Vector<Scalar, kDof> const& a)
+      -> Eigen::Matrix<Scalar, kNumParams, kDof> {
+    using std::exp;
+    using std::sqrt;
+    Eigen::Matrix<Scalar, 4, 4> j;
+    Eigen::Vector3<Scalar> const omega = a.template head<3>();
+    Scalar const sigma = a[3];
+    Eigen::Vector<Scalar, kNumParams> quat = Rotation3Impl<Scalar>::exp(omega);
+    Scalar const scale = sqrt(exp(sigma));
+    Scalar const scale_half = scale * Scalar(0.5);
+
+    j.template block<4, 3>(0, 0) = Rotation3Impl<Scalar>::dxExpX(omega) * scale;
+    j.col(3) = a * scale_half;
+    return j;
+  }
+
+  static auto dxExpXAt0() -> Eigen::Matrix<Scalar, kNumParams, kDof> {
+    static Scalar const kH(0.5);
+    return kH * Eigen::Matrix<Scalar, 4, 4>::Identity();
+  }
+
+  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+      -> Eigen::Matrix<Scalar, kPointDim, kDof> {
+    Eigen::Matrix<Scalar, 3, 4> j;
+    j << Rotation3Impl<Scalar>::hat(-point), point;
+    return j;
+  }
+
+  static auto dxThisMulExpXAt0(
+      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+      -> Eigen::Matrix<Scalar, kNumParams, kDof> {
+    Eigen::Matrix<Scalar, 4, 4> j;
+    j.col(3) = non_zero_quat * Scalar(0.5);
+    Scalar const c0 = Scalar(0.5) * non_zero_quat.w();
+    Scalar const c1 = Scalar(0.5) * non_zero_quat.z();
+    Scalar const c2 = -c1;
+    Scalar const c3 = Scalar(0.5) * non_zero_quat.y();
+    Scalar const c4 = Scalar(0.5) * non_zero_quat.x();
+    Scalar const c5 = -c4;
+    Scalar const c6 = -c3;
+    j(0, 0) = c0;
+    j(0, 1) = c2;
+    j(0, 2) = c3;
+    j(1, 0) = c1;
+    j(1, 1) = c0;
+    j(1, 2) = c5;
+    j(2, 0) = c6;
+    j(2, 1) = c4;
+    j(2, 2) = c0;
+    j(3, 0) = c5;
+    j(3, 1) = c6;
+    j(3, 2) = c2;
+    return j;
+  }
+
+  static auto dxLogThisInvTimesXAtThis(
+      Eigen::Vector<Scalar, kNumParams> const& q)
+      -> Eigen::Matrix<Scalar, kDof, kNumParams> {
+    Eigen::Matrix<Scalar, 4, 4> j;
+    // clang-format off
+    j << q.w(),  q.z(), -q.y(), -q.x(),
+        -q.z(),  q.w(),  q.x(), -q.y(),
+         q.y(), -q.x(),  q.w(), -q.z(),
+         q.x(),  q.y(),  q.z(),  q.w();
+    // clang-format on
+    const Scalar scaler = Scalar(2.) / q.squaredNorm();
+    return j * scaler;
+  }
+
+  // for tests
+
+  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
+    return std::vector<Eigen::Vector<Scalar, kDof>>({
+        Eigen::Vector<Scalar, kDof>{0.0, 0.0, 0.0, 0.0},
+        Eigen::Vector<Scalar, kDof>{1.0, 0.0, 0.0, 0.0},
+        Eigen::Vector<Scalar, kDof>{1.0, 0.0, 0.0, 0.1},
+        Eigen::Vector<Scalar, kDof>{0.0, 1.0, 0.0, 0.1},
+        Eigen::Vector<Scalar, kDof>{0.00001, 0.00001, 0.0, 0.3},
+        Eigen::Vector<Scalar, kDof>{0.5 * kPi<Scalar>, 0.9, 0.0, 0.0},
+        Eigen::Vector<Scalar, kDof>{0.0, 0.0, 0.5 * kPi<Scalar> + 0.00001, 0.2},
+    });
+  }
+
+  static auto paramsExamples()
+      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
+    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
+        SpiralSimilarity3Impl::exp({0.2, 0.5, 0.0, 1.0}),
+        SpiralSimilarity3Impl::exp({0.2, 0.5, -1.0, 1.1}),
+        SpiralSimilarity3Impl::exp({0.0, 0.0, 0.0, 1.1}),
+        SpiralSimilarity3Impl::exp({0.0, 0.0, 0.00001, 0}),
+        SpiralSimilarity3Impl::exp({0.0, 0.0, 0.00001, 0.00001}),
+        SpiralSimilarity3Impl::exp({0.5 * kPi<Scalar>, 0.9, 0.0, 0.0}),
+        SpiralSimilarity3Impl::exp(
+            {0.5 * kPi<Scalar> + 0.00001, 0.0, 0.0, 0.9}),
+    });
+  }
+
+  static auto invalidParamsExamples()
+      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
+    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
+        Eigen::Vector<Scalar, kNumParams>::Zero(),
+        -Eigen::Vector<Scalar, kNumParams>::Ones(),
+        -Eigen::Vector<Scalar, kNumParams>::UnitX(),
+    });
+  }
+};
+
+}  // namespace lie
+}  // namespace sophus

@@ -91,9 +91,9 @@ SE(3).
 
   // Create rotation matrices from rotations around the x and y and z axes:
   double const kPi = sophus::kPi<double>;
-  sophus::So3F64 R1 = sophus::So3F64::rotX(kPi / 4);
-  sophus::So3F64 R2 = sophus::So3F64::rotY(kPi / 6);
-  sophus::So3F64 R3 = sophus::So3F64::rotZ(-kPi / 3);
+  sophus::So3F64 R1 = sophus::So3F64::fromRx(kPi / 4);
+  sophus::So3F64 R2 = sophus::So3F64::fromRy(kPi / 6);
+  sophus::So3F64 R3 = sophus::So3F64::fromRz(-kPi / 3);
 
   std::cout << "The rotation matrices are" << std::endl;
   std::cout << "R1:\n" << R1.matrix() << std::endl;
@@ -133,14 +133,14 @@ SE(3).
   // Let use assume there is a camera in the world. First we describe its
   // orientation in the world reference frame.
   sophus::So3F64 world_from_camera_rotation =
-      sophus::So3F64::rotX(sophus::kPi<double> / 4);
+      sophus::So3F64::fromRx(sophus::kPi<double> / 4);
   // Then the position of the camera in the world.
   Eigen::Vector3d camera_in_world(0.0, 0.0, 1.0);
 
   // The pose (position and orientation) of the camera in the world is
   // constructed by its orientation ``world_from_camera_rotation`` as well as
   // its position ``camera_in_world``.
-  sophus::Se3F64 world_anchored_camera_pose(
+  sophus::Isometry3F64 world_anchored_camera_pose(
       world_from_camera_rotation, camera_in_world);
 
   // SE(3) naturally representation is a 4x4 matrix which can be accessed using
@@ -157,13 +157,13 @@ The following table gives an overview of all Lie Groups in Sophus.
 
 | c++ type                                      | Lie group name                                       | Description                                                                                                |
 | ----------------------------------------------|------------------------------------------------------| ---------------------------------------------------------------------------------------------------------- |
-| [`So2<T>`](cpp/sophus/lie/so2.h)              | Special Orthogonal Group in 2D, SO(2)                | rotations in 2d, also called Circle Group, or just "angle"                                                 |
-| [`So3<T>`](cpp/sophus/lie/so3.h)              | Special Orthogonal Group in 3D, SO(3)                | rotations in 3d, 3D orientations                                                                           |
-| [`Se2<T>`](cpp/sophus/lie/se2.h)              | Special Euclidean Group in 2D, SE(3)                 | rotations and translations in 2D, also called 2D rigid body transformations, 2d poses, plane isometries    |
-| [`Se3<T>`](cpp/sophus/lie/se3.h)              | Special Euclidean Group in 3D, SE(3)                 | rotations and translations in 3D, also called rigid body transformations,6 DoF poses, Euclidean isometries |
+| [`Rotation2<T>`](cpp/sophus/lie/so2.h)              | Special Orthogonal Group in 2D, SO(2)                | rotations in 2d, also called Circle Group, or just "angle"                                                 |
+| [`Rotation3<T>`](cpp/sophus/lie/so3.h)              | Special Orthogonal Group in 3D, SO(3)                | rotations in 3d, 3D orientations                                                                           |
+| [`Isometry2<T>`](cpp/sophus/lie/se2.h)              | Special Euclidean Group in 2D, SE(3)                 | rotations and translations in 2D, also called 2D rigid body transformations, 2d poses, plane isometries    |
+| [`Isometry3<T>`](cpp/sophus/lie/se3.h)              | Special Euclidean Group in 3D, SE(3)                 | rotations and translations in 3D, also called rigid body transformations,6 DoF poses, Euclidean isometries |
 | [`RxSo2<T>`](cpp/sophus/lie/rxso2.h)          | Direct product of SO(3) and scalar matrix, R x SO(2) | scaling and rotations in 2D                                                                                |
 | [`RxSo3<T>`](cpp/sophus/lie/rxso3.h)          | Direct product of SO(3) and scalar matrix  R x SO(3) | scaling and rotations in 3D                                                                                |
-| [`Sim2<T>`](cpp/sophus/lie/sim2.h)            | Similarity Group in 2D, Sim(2)                       | scaling, rotations and translation in 2D                                                                   |
+| [`Similarity2<T>`](cpp/sophus/lie/sim2.h)            | Similarity Group in 2D, Sim(2)                       | scaling, rotations and translation in 2D                                                                   |
 | [`Sim3<T>`](cpp/sophus/lie/sim3.h)            | Similarity Group in 3D, Sim(3)                       | scaling, rotations and translation in 3D                                                                   |
 | [`Cartesian2<T>`](cpp/sophus/lie/cartesian.h) | 2D Euclidean Vector Space, R^2                       | all vector spaces are trivial Lie groups, also called 2d translation group, the translation part of SE(2)  |
 | [`Cartesian3<T>`](cpp/sophus/lie/cartesian.h) | 3D Euclidean Vector Space, R^3                       | all vector spaces are trivial Lie groups, also called 3d translation group, the translation part of SE(2)  |

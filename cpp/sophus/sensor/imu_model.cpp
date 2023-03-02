@@ -10,8 +10,8 @@
 
 namespace sophus {
 
-GyroModelVariant getModelFromType(
-    GyroModelType model_type, Eigen::VectorXd const& params) {
+auto getModelFromType(GyroModelType model_type, Eigen::VectorXd const& params)
+    -> GyroModelVariant {
   switch (model_type) {
     case GyroModelType::scaling_non_orthogonality: {
       return ScalingNonOrthogonalityGyroModel<double>::fromParams(params);
@@ -21,8 +21,9 @@ GyroModelVariant getModelFromType(
   SOPHUS_PANIC("logic error");
 }
 
-AcceleroModelVariant getModelFromType(
-    AcceleroModelType model_type, Eigen::VectorXd const& params) {
+auto getModelFromType(
+    AcceleroModelType model_type, Eigen::VectorXd const& params)
+    -> AcceleroModelVariant {
   switch (model_type) {
     case AcceleroModelType::scaling_non_orthogonality: {
       return ScalingNonOrthogonalityAcceleroModel<double>::fromParams(params);
@@ -32,8 +33,8 @@ AcceleroModelVariant getModelFromType(
   SOPHUS_PANIC("logic error");
 }
 
-Eigen::Vector3d ImuModel::gyroMeasurement(
-    Eigen::Vector3d const& world_velocity_imu) {
+auto ImuModel::gyroMeasurement(Eigen::Vector3d const& world_velocity_imu)
+    -> Eigen::Vector3d {
   return std::visit(
       [&world_velocity_imu](auto&& arg) -> Eigen::Vector3d {
         return arg.gyroMeasurement(world_velocity_imu);
@@ -41,8 +42,8 @@ Eigen::Vector3d ImuModel::gyroMeasurement(
       this->gyro_model_);
 }
 
-Eigen::Vector3d ImuModel::acceleroMeasurement(
-    Eigen::Vector3d const& world_acceleration_imu) {
+auto ImuModel::acceleroMeasurement(
+    Eigen::Vector3d const& world_acceleration_imu) -> Eigen::Vector3d {
   return std::visit(
       [&world_acceleration_imu](auto&& arg) -> Eigen::Vector3d {
         return arg.acceleroMeasurement(world_acceleration_imu);
@@ -50,7 +51,7 @@ Eigen::Vector3d ImuModel::acceleroMeasurement(
       this->accelero_model_);
 }
 
-GyroModelType ImuModel::gyroModelType() const {
+auto ImuModel::gyroModelType() const -> GyroModelType {
   return std::visit(
       [](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
@@ -65,16 +66,16 @@ GyroModelType ImuModel::gyroModelType() const {
       this->gyroModel());
 }
 
-Eigen::VectorXd ImuModel::gyroParams() const {
+auto ImuModel::gyroParams() const -> Eigen::VectorXd {
   return std::visit([](auto&& arg) { return arg.params(); }, this->gyroModel());
 }
 
-Eigen::VectorXd ImuModel::acceleroParams() const {
+auto ImuModel::acceleroParams() const -> Eigen::VectorXd {
   return std::visit(
       [](auto&& arg) { return arg.params(); }, this->acceleroModel());
 }
 
-AcceleroModelType ImuModel::acceleroModelType() const {
+auto ImuModel::acceleroModelType() const -> AcceleroModelType {
   return std::visit(
       [](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;

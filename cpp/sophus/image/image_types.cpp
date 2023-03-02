@@ -10,7 +10,7 @@
 
 namespace sophus {
 
-int count(ImageViewBool mask, bool truth_value) {
+auto count(ImageViewBool mask, bool truth_value) -> int {
   return mask.reduce(
       [truth_value](bool pixel, int& true_count) {
         true_count += int(pixel == truth_value);
@@ -18,11 +18,11 @@ int count(ImageViewBool mask, bool truth_value) {
       0);
 }
 
-int countTrue(ImageViewBool mask) { return count(mask, true); }
+auto countTrue(ImageViewBool mask) -> int { return count(mask, true); }
 
-int countFalse(ImageViewBool mask) { return count(mask, false); }
+auto countFalse(ImageViewBool mask) -> int { return count(mask, false); }
 
-bool isAllTrue(ImageViewBool mask) {
+auto isAllTrue(ImageViewBool mask) -> bool {
   return mask.shortCircuitReduce(
       [](bool pixel, bool& is_all_true) {
         if (!pixel) {
@@ -34,7 +34,7 @@ bool isAllTrue(ImageViewBool mask) {
       true);
 }
 
-bool isAnyTrue(ImageViewBool mask) {
+auto isAnyTrue(ImageViewBool mask) -> bool {
   return mask.shortCircuitReduce(
       [](bool pixel, bool& is_any_true) {
         if (pixel) {
@@ -46,12 +46,12 @@ bool isAnyTrue(ImageViewBool mask) {
       false);
 }
 
-MutImageBool neg(ImageViewBool mask) {
+auto neg(ImageViewBool mask) -> MutImageBool {
   return MutImageBool::makeFromTransform(mask, [](bool val) { return !val; });
 }
 
-std::optional<Eigen::Vector2i> firstPixel(
-    ImageViewBool mask, bool truth_value) {
+auto firstPixel(ImageViewBool mask, bool truth_value)
+    -> std::optional<Eigen::Vector2i> {
   for (int v = 0; v < mask.height(); ++v) {
     bool const* p = mask.rowPtr(v);
     for (int u = 0; u < mask.width(); ++u) {
@@ -63,11 +63,11 @@ std::optional<Eigen::Vector2i> firstPixel(
   return std::nullopt;
 }
 
-std::optional<Eigen::Vector2i> firstTruePixel(ImageViewBool mask) {
+auto firstTruePixel(ImageViewBool mask) -> std::optional<Eigen::Vector2i> {
   return firstPixel(mask, true);
 }
 
-std::optional<Eigen::Vector2i> firstFalsePixel(ImageViewBool mask) {
+auto firstFalsePixel(ImageViewBool mask) -> std::optional<Eigen::Vector2i> {
   return firstPixel(mask, false);
 }
 
