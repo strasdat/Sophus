@@ -11,11 +11,9 @@
 
 #pragma once
 
-#include "sophus/common/types.h"
-#include "sophus/lie/se2.h"
-#include "sophus/lie/se3.h"
-#include "sophus/lie/so2.h"
-#include "sophus/lie/so3.h"
+#include "sophus/common/common.h"
+#include "sophus/lie/isometry2.h"
+#include "sophus/lie/isometry3.h"
 
 namespace sophus {
 
@@ -23,7 +21,8 @@ namespace sophus {
 /// line normal along the y-axis (in reference frame ``foo``).
 ///
 template <class TScalar>
-Eigen::Vector2<TScalar> normalFromSo2(So2<TScalar> const& foo_rotation_line) {
+auto normalFromRotation2(Rotation2<TScalar> const& foo_rotation_line)
+    -> Eigen::Vector2<TScalar> {
   return foo_rotation_line.matrix().col(1);
 }
 
@@ -33,20 +32,23 @@ Eigen::Vector2<TScalar> normalFromSo2(So2<TScalar> const& foo_rotation_line) {
 /// Precondition: ``normal_in_foo`` must not be close to zero.
 ///
 template <class TScalar>
-So2<TScalar> so2FromNormal(Eigen::Vector2<TScalar> normal_in_foo) {
+auto rotation2FromNormal(Eigen::Vector2<TScalar> normal_in_foo)
+    -> Rotation2<TScalar> {
   SOPHUS_ASSERT(
       normal_in_foo.squaredNorm() > kEpsilon<TScalar>,
       "{}",
       normal_in_foo.transpose().eval());
   normal_in_foo.normalize();
-  return So2<TScalar>(normal_in_foo.y(), -normal_in_foo.x());
+  return Rotation2<TScalar>::fromParams(
+      {normal_in_foo.y(), -normal_in_foo.x()});
 }
 
 /// Takes in a rotation ``foo_rotation_plane`` and returns the corresponding
 /// plane normal along the z-axis (in reference frame ``foo``).
 ///
 template <class TScalar>
-Eigen::Vector3<TScalar> normalFromSo3(So3<TScalar> const& foo_rotation_plane) {
+auto normalFromRotation3(Rotation3<TScalar> const& foo_rotation_plane)
+    -> Eigen::Vector3<TScalar> {
   return foo_rotation_plane.matrix().col(2);
 }
 
@@ -63,12 +65,12 @@ Eigen::Vector3<TScalar> normalFromSo3(So3<TScalar> const& foo_rotation_plane) {
 /// - ``xDirHint_foo`` and ``yDirHint_foo`` must be approx. perpendicular.
 ///
 template <class TScalar>
-Eigen::Matrix3<TScalar> rotationFromNormal(
+auto rotation3FromNormal(
     Eigen::Vector3<TScalar> const& normal_in_foo,
     Eigen::Vector3<TScalar> x_dir_hint_foo =
         Eigen::Vector3<TScalar>(TScalar(1), TScalar(0), TScalar(0)),
-    Eigen::Vector3<TScalar> y_dir_hint_foo =
-        Eigen::Vector3<TScalar>(TScalar(0), TScalar(1), TScalar(0))) {
+    Eigen::Vector3<TScalar> y_dir_hint_foo = Eigen::Vector3<TScalar>(
+        TScalar(0), TScalar(1), TScalar(0))) -> Eigen::Matrix3<TScalar> {
   SOPHUS_ASSERT(
       x_dir_hint_foo.dot(y_dir_hint_foo) < kEpsilon<TScalar>,
       "xDirHint ({}) and yDirHint ({}) must be perpendicular.",
@@ -118,8 +120,10 @@ Eigen::Matrix3<TScalar> rotationFromNormal(
   }
   TScalar det = basis_foo.determinant();
   // sanity check
-  SOPHUS_ASSERT(
-      abs(det - TScalar(1)) < kEpsilon<TScalar>,
+  SOPHUS_ASSERT_NEAR(
+      det,
+      TScalar(1),
+      kEpsilon<TScalar>,
       "Determinant of basis is not 1, but {}. Basis is \n{}\n",
       det,
       basis_foo);
@@ -132,8 +136,10 @@ Eigen::Matrix3<TScalar> rotationFromNormal(
 /// See ``rotationFromNormal`` for details.
 ///
 template <class TScalar>
-So3<TScalar> so3FromPlane(Eigen::Vector3<TScalar> const& normal_in_foo) {
-  return So3<TScalar>(rotationFromNormal(normal_in_foo));
+auto rotation3FromPlane(Eigen::Vector3<TScalar> const& normal_in_foo)
+    -> Rotation3<TScalar> {
+  return Rotation3<TScalar>::fromRotationMatrix(
+      rotation3FromNormal(normal_in_foo));
 }
 
 /// Returns a line (wrt. to frame ``foo``), given a pose of the ``line`` in
@@ -142,9 +148,11 @@ So3<TScalar> so3FromPlane(Eigen::Vector3<TScalar> const& normal_in_foo) {
 /// Note: The plane is defined by X-axis of the ``line`` frame.
 ///
 template <class TScalar>
-Eigen::Hyperplane<TScalar, 2> lineFromSe2(Se2<TScalar> const& foo_from_line) {
+auto lineFromIsometry(Isometry2<TScalar> const& foo_from_line)
+    -> Eigen::Hyperplane<TScalar, 2> {
   return Eigen::Hyperplane<TScalar, 2>(
-      normalFromSo2(foo_from_line.so2()), foo_from_line.translation());
+      normalFromRotation2(foo_from_line.rotation()),
+      foo_from_line.translation());
 }
 
 /// Returns the pose ``T_foo_line``, given a line in reference frame ``foo``.
@@ -152,11 +160,12 @@ Eigen::Hyperplane<TScalar, 2> lineFromSe2(Se2<TScalar> const& foo_from_line) {
 /// Note: The line is defined by X-axis of the frame ``line``.
 ///
 template <class TScalar>
-Se2<TScalar> se2FromLine(Eigen::Hyperplane<TScalar, 2> const& line_in_foo) {
+auto isometryFromLine(Eigen::Hyperplane<TScalar, 2> const& line_in_foo)
+    -> Isometry2<TScalar> {
   TScalar const d = line_in_foo.offset();
   Eigen::Vector2<TScalar> const n = line_in_foo.normal();
-  So2<TScalar> const foo_rotation_plane = so2FromNormal(n);
-  return Se2<TScalar>(foo_rotation_plane, -d * n);
+  Rotation2<TScalar> const foo_rotation_plane = rotation2FromNormal(n);
+  return Isometry2<TScalar>(-d * n, foo_rotation_plane);
 }
 
 /// Returns a plane (wrt. to frame ``foo``), given a pose of the ``plane`` in
@@ -165,9 +174,10 @@ Se2<TScalar> se2FromLine(Eigen::Hyperplane<TScalar, 2> const& line_in_foo) {
 /// Note: The plane is defined by XY-plane of the frame ``plane``.
 ///
 template <class TScalar>
-Eigen::Hyperplane<TScalar, 3> planeFromSe3(Se3<TScalar> const& foo_from_plane) {
+auto planeFromIsometry(Isometry3<TScalar> const& foo_from_plane)
+    -> Eigen::Hyperplane<TScalar, 3> {
   return Eigen::Hyperplane<TScalar, 3>(
-      normalFromSo3(foo_from_plane.so3()), foo_from_plane.translation());
+      normalFromRotation3(foo_from_plane.so3()), foo_from_plane.translation());
 }
 
 /// Returns the pose ``foo_from_plane``, given a plane in reference frame
@@ -176,19 +186,20 @@ Eigen::Hyperplane<TScalar, 3> planeFromSe3(Se3<TScalar> const& foo_from_plane) {
 /// Note: The plane is defined by XY-plane of the frame ``plane``.
 ///
 template <class TScalar>
-Se3<TScalar> se3FromPlane(Eigen::Hyperplane<TScalar, 3> const& plane_in_foo) {
+auto isometryFromPlane(Eigen::Hyperplane<TScalar, 3> const& plane_in_foo)
+    -> Isometry3<TScalar> {
   TScalar const d = plane_in_foo.offset();
   Eigen::Vector3<TScalar> const n = plane_in_foo.normal();
-  So3<TScalar> const foo_rotation_plane = so3FromPlane(n);
-  return Se3<TScalar>(foo_rotation_plane, -d * n);
+  Rotation3<TScalar> const foo_rotation_plane = rotation3FromPlane(n);
+  return Isometry3<TScalar>(foo_rotation_plane, -d * n);
 }
 
 /// Takes in a hyperplane and returns unique representation by ensuring that the
 /// ``offset`` is not negative.
 ///
 template <class TScalar, int kMatrixDim>
-Eigen::Hyperplane<TScalar, kMatrixDim> makeHyperplaneUnique(
-    Eigen::Hyperplane<TScalar, kMatrixDim> const& plane) {
+auto makeHyperplaneUnique(Eigen::Hyperplane<TScalar, kMatrixDim> const& plane)
+    -> Eigen::Hyperplane<TScalar, kMatrixDim> {
   if (plane.offset() >= 0) {
     return plane;
   }

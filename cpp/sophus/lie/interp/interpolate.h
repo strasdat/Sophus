@@ -18,34 +18,33 @@
 namespace sophus {
 
 /// This function interpolates between two Lie group elements
-/// ``foo_transform_bar`` and ``foo_transform_daz`` with an interpolation factor
+/// ``foo_from_bar`` and ``foo_from_daz`` with an interpolation factor
 /// of ``alpha`` in [0, 1].
 ///
 /// It returns a pose ``foo_T_quiz`` with ``quiz`` being a frame between ``bar``
-/// and ``baz``. If ``alpha=0`` it returns ``foo_transform_bar``. If it is 1, it
-/// returns ``foo_transform_daz``.
+/// and ``baz``. If ``alpha=0`` it returns ``foo_from_bar``. If it is 1, it
+/// returns ``foo_from_daz``.
 ///
 /// (Since interpolation on Lie groups is inverse-invariant, we can equivalently
-/// think of the input arguments as being ``bar_transform_foo``,
-/// ``baz_transform_foo`` and the return value being ``quiz_T_foo``.)
+/// think of the input arguments as being ``bar_from_foo``,
+/// ``baz_from_foo`` and the return value being ``quiz_T_foo``.)
 ///
 /// Precondition: ``p`` must be in [0, 1].
 ///
 template <class TGroup, class TScalar2 = typename TGroup::Scalar>
-std::enable_if_t<interp_details::Traits<TGroup>::kSupported, TGroup>
-interpolate(
-    TGroup const& foo_transform_bar,
-    TGroup const& foo_transform_daz,
-    TScalar2 p = TScalar2(0.5f)) {
+auto interpolate(
+    TGroup const& foo_from_bar,
+    TGroup const& foo_from_daz,
+    TScalar2 p = TScalar2(0.5f))
+    -> std::enable_if_t<interp_details::Traits<TGroup>::kSupported, TGroup> {
   using Scalar = typename TGroup::Scalar;
   Scalar inter_p(p);
   SOPHUS_ASSERT(
       inter_p >= Scalar(0) && inter_p <= Scalar(1),
       "p ({}) must in [0, 1].",
       inter_p);
-  return foo_transform_bar *
-         TGroup::exp(
-             inter_p * (foo_transform_bar.inverse() * foo_transform_daz).log());
+  return foo_from_bar *
+         TGroup::exp(inter_p * (foo_from_bar.inverse() * foo_from_daz).log());
 }
 
 }  // namespace sophus

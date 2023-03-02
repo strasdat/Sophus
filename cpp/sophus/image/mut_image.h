@@ -40,7 +40,8 @@ struct UniqueDataAreaDeleter {
   }
 
   UniqueDataAreaDeleter(UniqueDataAreaDeleter const& other) = default;
-  UniqueDataAreaDeleter& operator=(UniqueDataAreaDeleter const&) = default;
+  auto operator=(UniqueDataAreaDeleter const&)
+      -> UniqueDataAreaDeleter& = default;
 
   size_t num_bytes = 0;
 };
@@ -57,8 +58,8 @@ struct MaybeLeakingUniqueDataAreaDeleter {
 
   MaybeLeakingUniqueDataAreaDeleter(
       MaybeLeakingUniqueDataAreaDeleter const& other) = default;
-  MaybeLeakingUniqueDataAreaDeleter& operator=(
-      MaybeLeakingUniqueDataAreaDeleter const&) = default;
+  auto operator=(MaybeLeakingUniqueDataAreaDeleter const&)
+      -> MaybeLeakingUniqueDataAreaDeleter& = default;
 
   void operator()(uint8_t* p) const {
     if (image_deleter) {
@@ -120,7 +121,8 @@ class MutImage : public MutImageView<TPixel> {
   /// Creates contiguous copy from view.
   ///
   /// If view is not empty, memory allocation will happen.
-  [[nodiscard]] static MutImage makeCopyFrom(ImageView<TPixel> const& view) {
+  [[nodiscard]] static auto makeCopyFrom(ImageView<TPixel> const& view)
+      -> MutImage {
     MutImage image(view.imageSize());
     image.copyDataFrom(view);
     return image;
@@ -130,8 +132,9 @@ class MutImage : public MutImageView<TPixel> {
   ///
   /// mut_image(u, v) = unary_op(view(u, v));
   template <class TOtherPixel, class TUnaryOperation>
-  static MutImage makeFromTransform(
-      ImageView<TOtherPixel> view, TUnaryOperation const& unary_op) {
+  static auto makeFromTransform(
+      ImageView<TOtherPixel> view, TUnaryOperation const& unary_op)
+      -> MutImage {
     MutImage mut_image(view.imageSize());
     mut_image.transformFrom(view, unary_op);
     return mut_image;
@@ -141,10 +144,10 @@ class MutImage : public MutImageView<TPixel> {
   ///
   /// mut_image(u, v) = binary_op(lhs(u, v), rhs(u, v));
   template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
-  static MutImage makeFromTransform(
+  static auto makeFromTransform(
       ImageView<TLhsPixel> lhs,
       ImageView<TRhsPixel> rhs,
-      TBinaryOperation const& binary_op) {
+      TBinaryOperation const& binary_op) -> MutImage {
     MutImage mut_image(lhs.imageSize());
     mut_image.transformFrom(lhs, rhs, binary_op);
     return mut_image;
@@ -160,7 +163,7 @@ class MutImage : public MutImageView<TPixel> {
   MutImage(MutImage<TPixel> const& other) = delete;
 
   /// Not copy assignable
-  MutImage& operator=(MutImage const&) = delete;
+  auto operator=(MutImage const&) -> MutImage& = delete;
 
   /// Nothrow move constructor.
   MutImage(MutImage&& img) noexcept
@@ -170,7 +173,7 @@ class MutImage : public MutImageView<TPixel> {
   }
 
   /// Nothrow move assignment
-  MutImage& operator=(MutImage&& img) noexcept {
+  auto operator=(MutImage&& img) noexcept -> MutImage& {
     reset();
     this->layout_ = img.layout_;
     this->unique_ = std::move(img.unique_);
@@ -180,7 +183,7 @@ class MutImage : public MutImageView<TPixel> {
   }
   // End (Rule of 5)
 
-  [[nodiscard]] MutImageView<TPixel> viewMut() const {
+  [[nodiscard]] auto viewMut() const -> MutImageView<TPixel> {
     return MutImageView<TPixel>(this->layout(), this->ptrMut());
   }
 
@@ -201,7 +204,7 @@ class MutImage : public MutImageView<TPixel> {
 
  protected:
   /// Leaks memory and returns deleter.
-  MaybeLeakingUniqueDataAreaDeleter<TAllocator> leakAndReturnDeleter() {
+  auto leakAndReturnDeleter() -> MaybeLeakingUniqueDataAreaDeleter<TAllocator> {
     SOPHUS_ASSERT(!this->isEmpty());
     MaybeLeakingUniqueDataAreaDeleter<TAllocator>& del =
         *std::get_deleter<MaybeLeakingUniqueDataAreaDeleter<TAllocator>>(

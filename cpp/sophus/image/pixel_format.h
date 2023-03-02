@@ -14,7 +14,7 @@ namespace sophus {
 
 struct PixelFormat {
   template <class TPixel>
-  static PixelFormat fromTemplate() {
+  static auto fromTemplate() -> PixelFormat {
     return PixelFormat{
         .number_type =
             std::is_floating_point_v<typename ImageTraits<TPixel>::ChannelT>
@@ -25,12 +25,12 @@ struct PixelFormat {
             sizeof(typename ImageTraits<TPixel>::ChannelT)};
   }
 
-  [[nodiscard]] inline int bytesPerPixel() const {
+  [[nodiscard]] inline auto bytesPerPixel() const -> int {
     return num_channels * num_bytes_per_pixel_channel;
   }
 
   template <class TPixel>
-  [[nodiscard]] bool is() {
+  [[nodiscard]] auto is() -> bool {
     return fromTemplate<TPixel>() == *this;
   }
 
@@ -39,11 +39,11 @@ struct PixelFormat {
   int num_bytes_per_pixel_channel;
 };
 
-bool operator==(PixelFormat const& lhs, PixelFormat const& rhs);
+auto operator==(PixelFormat const& lhs, PixelFormat const& rhs) -> bool;
 
 /// Example:
 /// PixelFormat::fromTemplate<float>() outputs: "1F32";
 /// PixelFormat::fromTemplate<Eigen::Matrix<uint8_t,4,1>>() outputs:
 /// "4U8";
-std::ostream& operator<<(std::ostream& os, PixelFormat const& type);
+auto operator<<(std::ostream& os, PixelFormat const& type) -> std::ostream&;
 }  // namespace sophus

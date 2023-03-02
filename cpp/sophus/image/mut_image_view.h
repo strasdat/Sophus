@@ -76,14 +76,15 @@ class MutImageView : public ImageView<TPixel> {
   ///
   /// It is the user's responsibility to make sure that the data owned by
   /// the view can be modified safely.
-  [[nodiscard]] static MutImageView unsafeConstCast(ImageView<TPixel> view) {
+  [[nodiscard]] static auto unsafeConstCast(ImageView<TPixel> view)
+      -> MutImageView {
     return MutImageView(view.layout(), const_cast<TPixel*>(view.ptr()));
   }
 
   /// Returns ImageView(*this).
   ///
   /// Returns non-mut version of view.
-  [[nodiscard]] ImageView<TPixel> view() const {
+  [[nodiscard]] auto view() const -> ImageView<TPixel> {
     return ImageView<TPixel>(this->layout(), this->ptr());
   }
 
@@ -111,7 +112,7 @@ class MutImageView : public ImageView<TPixel> {
   }
 
   /// Returns v-th row pointer of mutable pixel.
-  [[nodiscard]] TPixel* rowPtrMut(int v) const {
+  [[nodiscard]] auto rowPtrMut(int v) const -> TPixel* {
     return (TPixel*)((uint8_t*)(this->ptr()) + v * this->layout_.pitchBytes());
   }
 
@@ -119,9 +120,11 @@ class MutImageView : public ImageView<TPixel> {
   ///
   /// Precondition: u must be in [0, width) and v must be in [0, height).
   /// Silent UB on failure.
-  [[nodiscard]] TPixel& mut(int u, int v) const { return rowPtrMut(v)[u]; }
+  [[nodiscard]] auto mut(int u, int v) const -> TPixel& {
+    return rowPtrMut(v)[u];
+  }
 
-  [[nodiscard]] TPixel& mut(Eigen::Vector2i uv) const {
+  [[nodiscard]] auto mut(Eigen::Vector2i uv) const -> TPixel& {
     return mut(uv[0], uv[1]);
   }
 
@@ -214,13 +217,13 @@ class MutImageView : public ImageView<TPixel> {
   }
 
   /// Returns pointer of mutable data to first pixel.
-  [[nodiscard]] TPixel* ptrMut() const {
+  [[nodiscard]] auto ptrMut() const -> TPixel* {
     return const_cast<TPixel*>(ImageView<TPixel>::ptr());
   }
 
   /// Returns mutable subview.
-  [[nodiscard]] MutImageView mutSubview(
-      Eigen::Vector2i uv, sophus::ImageSize size) const {
+  [[nodiscard]] auto mutSubview(
+      Eigen::Vector2i uv, sophus::ImageSize size) const -> MutImageView {
     SOPHUS_ASSERT(this->colInBounds(uv[0]));
     SOPHUS_ASSERT(this->rowInBounds(uv[1]));
     SOPHUS_ASSERT_LE(uv.x() + size.width, this->layout().width());

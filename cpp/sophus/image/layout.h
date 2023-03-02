@@ -30,8 +30,8 @@ class ImageLayout {
       : image_size_(width, height), pitch_bytes_(pitch_bytes) {}
 
   template <class TPixelFormat>
-  [[nodiscard]] static ImageLayout makeFromSizeAndPitch(
-      ImageSize image_size, size_t pitch_bytes) {
+  [[nodiscard]] static auto makeFromSizeAndPitch(
+      ImageSize image_size, size_t pitch_bytes) -> ImageLayout {
     SOPHUS_ASSERT_GE(pitch_bytes, image_size.width * sizeof(TPixelFormat));
     ImageLayout layout;
     layout.image_size_ = image_size;
@@ -40,8 +40,8 @@ class ImageLayout {
     return layout;
   }
 
-  [[nodiscard]] static ImageLayout makeFromSizeAndPitchUnchecked(
-      ImageSize image_size, size_t pitch_bytes) {
+  [[nodiscard]] static auto makeFromSizeAndPitchUnchecked(
+      ImageSize image_size, size_t pitch_bytes) -> ImageLayout {
     ImageLayout layout;
     layout.image_size_ = image_size;
     layout.pitch_bytes_ = pitch_bytes;
@@ -49,22 +49,27 @@ class ImageLayout {
   }
 
   template <class TPixelFormat>
-  [[nodiscard]] static ImageLayout makeFromSize(sophus::ImageSize image_size) {
+  [[nodiscard]] static auto makeFromSize(sophus::ImageSize image_size)
+      -> ImageLayout {
     return makeFromSizeAndPitch<TPixelFormat>(
         image_size, image_size.width * sizeof(TPixelFormat));
   }
 
-  [[nodiscard]] sophus::ImageSize const& imageSize() const {
+  [[nodiscard]] auto imageSize() const -> sophus::ImageSize const& {
     return image_size_;
   }
-  [[nodiscard]] int width() const { return image_size_.width; }
-  [[nodiscard]] int height() const { return image_size_.height; }
-  [[nodiscard]] size_t pitchBytes() const { return pitch_bytes_; }
+  [[nodiscard]] auto width() const -> int { return image_size_.width; }
+  [[nodiscard]] auto height() const -> int { return image_size_.height; }
+  [[nodiscard]] auto pitchBytes() const -> size_t { return pitch_bytes_; }
 
-  [[nodiscard]] int area() const { return this->width() * this->height(); }
-  [[nodiscard]] int sizeBytes() const { return pitch_bytes_ * height(); }
+  [[nodiscard]] auto area() const -> int {
+    return this->width() * this->height();
+  }
+  [[nodiscard]] auto sizeBytes() const -> int {
+    return pitch_bytes_ * height();
+  }
 
-  [[nodiscard]] bool isEmpty() const { return sizeBytes() == 0; }
+  [[nodiscard]] auto isEmpty() const -> bool { return sizeBytes() == 0; }
 
  private:
   sophus::ImageSize image_size_ = {0, 0};
@@ -72,11 +77,11 @@ class ImageLayout {
 };
 
 /// Equality operator.
-bool operator==(ImageLayout const& lhs, ImageLayout const& rhs);
+auto operator==(ImageLayout const& lhs, ImageLayout const& rhs) -> bool;
 
-bool operator!=(ImageLayout const& lhs, ImageLayout const& rhs);
+auto operator!=(ImageLayout const& lhs, ImageLayout const& rhs) -> bool;
 
 /// Ostream operator.
-std::ostream& operator<<(std::ostream& os, ImageLayout const& layout);
+auto operator<<(std::ostream& os, ImageLayout const& layout) -> std::ostream&;
 
 }  // namespace sophus

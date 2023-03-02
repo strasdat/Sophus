@@ -21,24 +21,27 @@ namespace sophus {
 struct ImageSize {
   ImageSize() = default;
   ImageSize(int width, int height) : width(width), height(height) {}
-  static ImageSize from(Eigen::Array2<int> const& arr) {
+  static auto from(Eigen::Array2<int> const& arr) -> ImageSize {
     return {arr[0], arr[1]};
   }
 
-  [[nodiscard]] int area() const { return width * height; }
+  [[nodiscard]] auto area() const -> int { return width * height; }
 
   /// Returns true if obs is within image.
   ///
   /// Positive border makes the image frame smaller.
-  [[nodiscard]] bool contains(Eigen::Vector2i const& obs, int border = 0) const;
-  [[nodiscard]] bool contains(
-      Eigen::Vector2f const& obs, float border = 0.f) const;
-  [[nodiscard]] bool contains(
-      Eigen::Vector2d const& obs, double border = 0.0) const;
+  [[nodiscard]] auto contains(Eigen::Vector2i const& obs, int border = 0) const
+      -> bool;
+  [[nodiscard]] auto contains(
+      Eigen::Vector2f const& obs, float border = 0.f) const -> bool;
+  [[nodiscard]] auto contains(
+      Eigen::Vector2d const& obs, double border = 0.0) const -> bool;
 
-  [[nodiscard]] bool isEmpty() const { return width == 0 && height == 0; }
+  [[nodiscard]] auto isEmpty() const -> bool {
+    return width == 0 && height == 0;
+  }
 
-  [[nodiscard]] Eigen::Array2<int> array() const {
+  [[nodiscard]] auto array() const -> Eigen::Array2<int> {
     return Eigen::Array2<int>(width, height);
   }
 
@@ -51,7 +54,8 @@ struct ImageSize {
 
 // TODO: make member function?
 template <class TPixel>
-inline Region2I imageCoordsInterval(ImageSize image_size, int border = 0) {
+inline auto imageCoordsInterval(ImageSize image_size, int border = 0)
+    -> Region2I {
   // e.g. 10x10 image has valid values [0, ..., 9] in both dimensions
   // a border of 2 would make valid range [2, ..., 7]
   return Region2I::fromMinMax(
@@ -61,18 +65,18 @@ inline Region2I imageCoordsInterval(ImageSize image_size, int border = 0) {
 }
 
 /// Equality operator.
-bool operator==(ImageSize const& lhs, ImageSize const& rhs);
+auto operator==(ImageSize const& lhs, ImageSize const& rhs) -> bool;
 
-bool operator!=(ImageSize const& lhs, ImageSize const& rhs);
+auto operator!=(ImageSize const& lhs, ImageSize const& rhs) -> bool;
 
 /// If the original width [height] is odd, the new width [height] will be:
 /// (width+1)/2 [height+1)/2].
-ImageSize half(ImageSize size);
+auto half(ImageSize size) -> ImageSize;
 
 /// Ordering operator, for keys in sets and maps
-bool operator<(ImageSize const& lhs, ImageSize const& rhs);
+auto operator<(ImageSize const& lhs, ImageSize const& rhs) -> bool;
 
 /// Ostream operator.
-std::ostream& operator<<(std::ostream& os, ImageSize const& image_size);
+auto operator<<(std::ostream& os, ImageSize const& image_size) -> std::ostream&;
 
 }  // namespace sophus

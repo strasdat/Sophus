@@ -23,18 +23,19 @@ struct ProjectionZ1 {
   // be a 2xN matrix. N may be dynamically sized, but the input columns must be
   // statically determined as 3 at compile time.
   template <class TDerived>
-  static WithRows<Eigen::MatrixBase<TDerived>, 2> proj(
-      Eigen::MatrixBase<TDerived> const& points_in_camera) {
+  static auto proj(Eigen::MatrixBase<TDerived> const& points_in_camera)
+      -> WithRows<Eigen::MatrixBase<TDerived>, 2> {
     static_assert(TDerived::RowsAtCompileTime == 3);
     return points_in_camera.template topRows<2>() *
            points_in_camera.template bottomRows<1>().asDiagonal().inverse();
   }
 
   template <class TDerived>
-  static WithRows<Eigen::MatrixBase<TDerived>, 3> unproj(
+  static auto unproj(
       Eigen::MatrixBase<TDerived> const& points_in_cam_canonical,
       typename TDerived::Scalar extension =
-          static_cast<typename TDerived::Scalar>(1.0)) {
+          static_cast<typename TDerived::Scalar>(1.0))
+      -> WithRows<Eigen::MatrixBase<TDerived>, 3> {
     static_assert(TDerived::RowsAtCompileTime == 2);
     WithRows<Eigen::MatrixBase<TDerived>, 3> unprojected;
     unprojected.template topRows<2>() = points_in_cam_canonical * extension;
@@ -48,8 +49,8 @@ struct ProjectionZ1 {
   ///
   ///   Dx proj(x) with x = (a,b,psi) being an inverse depth point.
   template <class TScalar>
-  static Eigen::Matrix<TScalar, 2, 3> dxProjX(
-      Eigen::Matrix<TScalar, 3, 1> const& p) {
+  static auto dxProjX(Eigen::Matrix<TScalar, 3, 1> const& p)
+      -> Eigen::Matrix<TScalar, 2, 3> {
     Eigen::Matrix<TScalar, 2, 3> dx;
 
     TScalar z_inv = 1 / p.z();

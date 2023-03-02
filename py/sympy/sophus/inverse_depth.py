@@ -9,7 +9,7 @@ from sophus.matrix import unproj
 from sophus.matrix import vector2
 from sophus.matrix import vector3
 from sophus.matrix import vector6
-from sophus.se3 import Se3
+from sophus.se3 import Isometry3
 
 
 def rotation_matrix():
@@ -84,7 +84,7 @@ class InverseDepth:
             real=True,
         )
         x = vector6(upsilon0, upsilon1, upsilon2, omega0, omega1, omega2)
-        se3 = Se3.exp(x)
+        se3 = Isometry3.exp(x)
         mat_r = se3.so3.matrix()
         vec_t = se3.t
 
@@ -114,7 +114,7 @@ class InverseDepth:
             real=True,
         )
         x = vector6(upsilon0, upsilon1, upsilon2, omega0, omega1, omega2)
-        se3 = Se3.exp(x)
+        se3 = Isometry3.exp(x)
         mat_r = se3.so3.matrix()
         vec_t = se3.t
 

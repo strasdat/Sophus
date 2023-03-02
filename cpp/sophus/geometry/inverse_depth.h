@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "sophus/geometry/projection.h"
+#include "sophus/linalg/homogeneous.h"
 
 namespace sophus {
 
@@ -57,15 +57,15 @@ class InverseDepthPoint3 {
  public:
   InverseDepthPoint3() {}
 
-  static InverseDepthPoint3 fromEuclideanPoint3(
-      Eigen::Matrix<TT, 3, 1> const& p) {
+  static auto fromEuclideanPoint3(Eigen::Matrix<TT, 3, 1> const& p)
+      -> InverseDepthPoint3 {
     using std::abs;
     SOPHUS_ASSERT_GE(abs(p.z()), sophus::kEpsilon<TT>);
     return InverseDepthPoint3(p.x() / p.z(), p.y() / p.z(), 1.0 / p.z());
   }
 
-  static InverseDepthPoint3 fromAbAndPsi(
-      Eigen::Matrix<TT, 3, 1> const& ab_and_psi) {
+  static auto fromAbAndPsi(Eigen::Matrix<TT, 3, 1> const& ab_and_psi)
+      -> InverseDepthPoint3 {
     InverseDepthPoint3 p;
     p.ab_and_psi_ = ab_and_psi;
     return p;
@@ -82,25 +82,25 @@ class InverseDepthPoint3 {
 
   // Returns the projection of the point (x,y,z) onto the plane z=1.
   // Hence (a, b) = ("x / z", "y / z").
-  [[nodiscard]] Eigen::Matrix<TT, 2, 1> projInZ1Plane() const {
+  [[nodiscard]] auto projInZ1Plane() const -> Eigen::Matrix<TT, 2, 1> {
     return ab_and_psi_.template head<2>();
   }
 
   /// Returns inverse depth psi, hence "1 / z".
-  [[nodiscard]] TT const& psi() const { return ab_and_psi_[2]; }
-  TT& psi() { return ab_and_psi_[2]; }
+  [[nodiscard]] auto psi() const -> TT const& { return ab_and_psi_[2]; }
+  auto psi() -> TT& { return ab_and_psi_[2]; }
 
-  [[nodiscard]] TT const* data() const { return ab_and_psi_.data(); }
+  [[nodiscard]] auto data() const -> TT const* { return ab_and_psi_.data(); }
 
-  TT* data() { return ab_and_psi_.data(); }
+  auto data() -> TT* { return ab_and_psi_.data(); }
 
-  [[nodiscard]] Eigen::Matrix<TT, 3, 1> const& params() const {
+  [[nodiscard]] auto params() const -> Eigen::Matrix<TT, 3, 1> const& {
     return ab_and_psi_;
   }
 
   /// Precondition: psi must not be close to 0, hence z must not be near
   /// infinity.
-  [[nodiscard]] Eigen::Matrix<TT, 3, 1> toEuclideanPoint3() const {
+  [[nodiscard]] auto toEuclideanPoint3() const -> Eigen::Matrix<TT, 3, 1> {
     using std::abs;
     SOPHUS_ASSERT_GE(abs(psi()), sophus::kEpsilon<TT>);
 

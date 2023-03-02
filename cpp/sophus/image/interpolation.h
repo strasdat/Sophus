@@ -18,7 +18,7 @@ namespace sophus {
 // Preconditions:
 //  - uv must be inside the image boundary
 template <class TT>
-TT interpolate(sophus::ImageView<TT> const& image, Eigen::Vector2f uv) {
+auto interpolate(sophus::ImageView<TT> const& image, Eigen::Vector2f uv) -> TT {
   sophus::ImageSize image_size = image.imageSize();
   SOPHUS_ASSERT(
       image_size.contains(uv), "{} vs {}", image_size, uv.transpose());

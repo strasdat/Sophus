@@ -15,9 +15,9 @@ int main() {
 
   // Create rotation matrices from rotations around the x and y and z axes:
   double const kPi = sophus::kPi<double>;
-  sophus::So3F64 rotation1 = sophus::So3F64::rotX(kPi / 4);
-  sophus::So3F64 rotation2 = sophus::So3F64::rotY(kPi / 6);
-  sophus::So3F64 rotation3 = sophus::So3F64::rotZ(-kPi / 3);
+  sophus::So3F64 rotation1 = sophus::So3F64::fromRx(kPi / 4);
+  sophus::So3F64 rotation2 = sophus::So3F64::fromRy(kPi / 6);
+  sophus::So3F64 rotation3 = sophus::So3F64::fromRz(-kPi / 3);
 
   std::cout << "The rotation matrices are" << std::endl;
   std::cout << "R1:\n" << rotation1.matrix() << std::endl;

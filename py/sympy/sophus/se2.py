@@ -13,10 +13,10 @@ from sophus.matrix import zero_vector2
 from sophus.matrix import zero_vector3
 from sophus.matrix import proj
 from sophus.matrix import unproj
-from sophus.so2 import So2
+from sophus.so2 import Rotation2
 
 
-class Se2:
+class Isometry2:
     """2 dimensional group of rigid body transformations"""
 
     def __init__(self, so2, t):
@@ -29,13 +29,13 @@ class Se2:
     def exp(v):
         """exponential map"""
         theta = v[2]
-        so2 = So2.exp(theta)
+        so2 = Rotation2.exp(theta)
 
         a = so2.z.imag / theta
         b = (1 - so2.z.real) / theta
 
         t = vector2(a * v[0] - b * v[1], b * v[0] + a * v[1])
-        return Se2(so2, t)
+        return Isometry2(so2, t)
 
     def log(self):
         """TODO(docstring)"""
@@ -52,14 +52,14 @@ class Se2:
         return sympy.Matrix(3, 4, lambda r, c: sympy.diff(self.log()[r], self[c]))
 
     def __repr__(self):
-        return "Se2: [" + repr(self.so2) + " " + repr(self.t)
+        return "Isometry2: [" + repr(self.so2) + " " + repr(self.t)
 
     @staticmethod
     def hat(v):
         """TODO(docstring)"""
         upsilon = vector2(v[0], v[1])
         theta = v[2]
-        return So2.hat(theta).row_join(upsilon).col_join(sympy.Matrix.zeros(1, 3))
+        return Rotation2.hat(theta).row_join(upsilon).col_join(sympy.Matrix.zeros(1, 3))
 
     def matrix(self):
         """returns matrix representation"""
@@ -72,8 +72,8 @@ class Se2:
         if isinstance(right, sympy.Matrix):
             assert right.shape == (2, 1), right.shape
             return self.so2 * right + self.t
-        if isinstance(right, Se2):
-            return Se2(self.so2 * right.so2, self.t + self.so2 * right.t)
+        if isinstance(right, Isometry2):
+            return Isometry2(self.so2 * right.so2, self.t + self.so2 * right.t)
         assert False, f"unsupported type: {type(right)}"
 
     def __getitem__(self, key):
@@ -86,7 +86,7 @@ class Se2:
     @staticmethod
     def calc_dx_exp_x(x):
         """TODO(docstring)"""
-        return sympy.Matrix(4, 3, lambda r, c: sympy.diff(Se2.exp(x)[r], x[c]))
+        return sympy.Matrix(4, 3, lambda r, c: sympy.diff(Isometry2.exp(x)[r], x[c]))
 
     @staticmethod
     def dx_exp_x_at_0():
@@ -96,7 +96,9 @@ class Se2:
     def calc_dx_this_mul_exp_x_at_0(self, x):
         """TODO(docstring)"""
         return (
-            sympy.Matrix(4, 3, lambda r, c: sympy.diff((self * Se2.exp(x))[r], x[c]))
+            sympy.Matrix(
+                4, 3, lambda r, c: sympy.diff((self * Isometry2.exp(x))[r], x[c])
+            )
             .subs(x[0], 0)
             .subs(x[1], 0)
             .limit(x[2], 0)
@@ -105,14 +107,14 @@ class Se2:
     @staticmethod
     def calc_dx_exp_x_at_0(x):
         """TODO(docstring)"""
-        return Se2.calc_dx_exp_x(x).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
+        return Isometry2.calc_dx_exp_x(x).subs(x[0], 0).subs(x[1], 0).limit(x[2], 0)
 
     @staticmethod
     def dxi_x_matrix(x, i):
         """TODO(docstring)"""
         if i < 2:
             return (
-                So2.dxi_x_matrix(x, i)
+                Rotation2.dxi_x_matrix(x, i)
                 .row_join(sympy.Matrix.zeros(2, 1))
                 .col_join(sympy.Matrix.zeros(1, 3))
             )
@@ -128,16 +130,16 @@ class Se2:
     @staticmethod
     def dxi_exp_x_matrix(x, i):
         """TODO(docstring)"""
-        mat_t = Se2.exp(x)
-        dx_exp_x = Se2.calc_dx_exp_x(x)
-        l = [dx_exp_x[j, i] * Se2.dxi_x_matrix(mat_t, j) for j in range(0, 4)]
+        mat_t = Isometry2.exp(x)
+        dx_exp_x = Isometry2.calc_dx_exp_x(x)
+        l = [dx_exp_x[j, i] * Isometry2.dxi_x_matrix(mat_t, j) for j in range(0, 4)]
         return functools.reduce((lambda a, b: a + b), l)
 
     @staticmethod
     def calc_dxi_exp_x_matrix(x, i):
         """TODO(docstring)"""
         return sympy.Matrix(
-            3, 3, lambda r, c: sympy.diff(Se2.exp(x).matrix()[r, c], x[i])
+            3, 3, lambda r, c: sympy.diff(Isometry2.exp(x).matrix()[r, c], x[i])
         )
 
     @staticmethod
@@ -145,13 +147,15 @@ class Se2:
         """TODO(docstring)"""
         v = zero_vector3()
         v[i] = 1
-        return Se2.hat(v)
+        return Isometry2.hat(v)
 
     @staticmethod
     def calc_dxi_exp_x_matrix_at_0(x, i):
         """TODO(docstring)"""
         return (
-            sympy.Matrix(3, 3, lambda r, c: sympy.diff(Se2.exp(x).matrix()[r, c], x[i]))
+            sympy.Matrix(
+                3, 3, lambda r, c: sympy.diff(Isometry2.exp(x).matrix()[r, c], x[i])
+            )
             .subs(x[0], 0)
             .subs(x[1], 0)
             .limit(x[2], 0)
@@ -171,7 +175,7 @@ class TestSe2(unittest.TestCase):
         t0, t1 = sympy.symbols("t[0] t[1]", real=True)
         self.upsilon_theta = vector3(upsilon0, upsilon1, theta)
         self.t = vector2(t0, t1)
-        self.a = Se2(So2(Complex(x, y)), self.t)
+        self.a = Isometry2(Rotation2(Complex(x, y)), self.t)
         self.p = vector2(p0, p1)
 
     def test_exp_log(self):
@@ -181,13 +185,13 @@ class TestSe2(unittest.TestCase):
             vector3(0.1, 0.1, 0.1),
             vector3(0.01, 0.2, 0.03),
         ]:
-            w = Se2.exp(v).log()
+            w = Isometry2.exp(v).log()
             for i in range(0, 3):
                 self.assertAlmostEqual(v[i], w[i])
 
     def test_matrix(self):
         """TODO(docstring)"""
-        foo_from_bar = Se2.exp(self.upsilon_theta)
+        foo_from_bar = Isometry2.exp(self.upsilon_theta)
         foo_transform_bar = foo_from_bar.matrix()
         point_bar = self.p
         p1_foo = foo_from_bar * point_bar
@@ -198,36 +202,38 @@ class TestSe2(unittest.TestCase):
         """TODO(docstring)"""
         self.assertEqual(
             sympy.simplify(
-                Se2.calc_dx_exp_x_at_0(self.upsilon_theta) - Se2.dx_exp_x_at_0()
+                Isometry2.calc_dx_exp_x_at_0(self.upsilon_theta)
+                - Isometry2.dx_exp_x_at_0()
             ),
             sympy.Matrix.zeros(4, 3),
         )
         for i in range(0, 4):
             self.assertEqual(
                 sympy.simplify(
-                    Se2.calc_dxi_x_matrix(self.a, i) - Se2.dxi_x_matrix(self.a, i)
+                    Isometry2.calc_dxi_x_matrix(self.a, i)
+                    - Isometry2.dxi_x_matrix(self.a, i)
                 ),
                 sympy.Matrix.zeros(3, 3),
             )
         for i in range(0, 3):
             self.assertEqual(
                 sympy.simplify(
-                    Se2.dxi_exp_x_matrix(self.upsilon_theta, i)
-                    - Se2.calc_dxi_exp_x_matrix(self.upsilon_theta, i)
+                    Isometry2.dxi_exp_x_matrix(self.upsilon_theta, i)
+                    - Isometry2.calc_dxi_exp_x_matrix(self.upsilon_theta, i)
                 ),
                 sympy.Matrix.zeros(3, 3),
             )
             self.assertEqual(
                 sympy.simplify(
-                    Se2.dxi_exp_x_matrix_at_0(i)
-                    - Se2.calc_dxi_exp_x_matrix_at_0(self.upsilon_theta, i)
+                    Isometry2.dxi_exp_x_matrix_at_0(i)
+                    - Isometry2.calc_dxi_exp_x_matrix_at_0(self.upsilon_theta, i)
                 ),
                 sympy.Matrix.zeros(3, 3),
             )
 
     def test_codegen(self):
         """TODO(docstring)"""
-        stream = cse_codegen(Se2.calc_dx_exp_x(self.upsilon_theta))
+        stream = cse_codegen(Isometry2.calc_dx_exp_x(self.upsilon_theta))
         filename = "cpp_gencode/Se2_Dx_exp_x.cpp"
 
         # set to true to generate codegen files

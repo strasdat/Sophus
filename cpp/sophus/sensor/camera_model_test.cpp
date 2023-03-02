@@ -19,7 +19,7 @@ using namespace sophus;
 
 double constexpr kEps = 1e-5;
 
-CameraModel openCvCameraModel() {
+auto openCvCameraModel() -> CameraModel {
   int w = 848;
   int h = 800;
   double fx = 286;
@@ -185,7 +185,7 @@ TEST(camera_model, projection_round_trip) {
               vectorFieldNumDiff<double, 2, 6>(
                   [&](Eigen::Vector<double, 6> const& vec_a) {
                     return camera_model.distort(proj(
-                        sophus::Se3F64::exp(vec_a) * foo_from_bar *
+                        sophus::Isometry3F64::exp(vec_a) * foo_from_bar *
                         point_in_bar_camera));
                   },
                   zero);

@@ -11,10 +11,10 @@
 #include "sophus/common/common.h"
 #include "sophus/common/enum.h"
 #include "sophus/geometry/point_transform.h"
-#include "sophus/geometry/projection.h"
 #include "sophus/image/image.h"
 #include "sophus/image/image_size.h"
 #include "sophus/lie/se3.h"
+#include "sophus/linalg/homogeneous.h"
 #include "sophus/sensor/camera_distortion/affine.h"
 #include "sophus/sensor/camera_distortion/brown_conrady.h"
 #include "sophus/sensor/camera_distortion/kannala_brandt.h"
@@ -33,8 +33,8 @@ namespace sophus {
 /// See for details:
 /// https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc
 template <class TScalar>
-Eigen::Matrix<TScalar, 2, 1> subsampleDown(
-    Eigen::Matrix<TScalar, 2, 1> const& in) {
+auto subsampleDown(Eigen::Matrix<TScalar, 2, 1> const& in)
+    -> Eigen::Matrix<TScalar, 2, 1> {
   return TScalar(0.5) * in;
 }
 
@@ -43,8 +43,8 @@ Eigen::Matrix<TScalar, 2, 1> subsampleDown(
 /// See for details:
 /// https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc
 template <class TScalar>
-Eigen::Matrix<TScalar, 2, 1> subsampleUp(
-    Eigen::Matrix<TScalar, 2, 1> const& in) {
+auto subsampleUp(Eigen::Matrix<TScalar, 2, 1> const& in)
+    -> Eigen::Matrix<TScalar, 2, 1> {
   return TScalar(2.0) * in;
 }
 
@@ -53,7 +53,8 @@ Eigen::Matrix<TScalar, 2, 1> subsampleUp(
 /// See for details:
 /// https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj
 template <class TScalar>
-Eigen::Matrix<TScalar, 2, 1> binDown(Eigen::Matrix<TScalar, 2, 1> const& in) {
+auto binDown(Eigen::Matrix<TScalar, 2, 1> const& in)
+    -> Eigen::Matrix<TScalar, 2, 1> {
   Eigen::Matrix<TScalar, 2, 1> out;
   // Map left image border from -0.5 to 0.0, then scale down, then
   // map the left image border from 0.0 back to -0.5
@@ -67,7 +68,8 @@ Eigen::Matrix<TScalar, 2, 1> binDown(Eigen::Matrix<TScalar, 2, 1> const& in) {
 /// See for details:
 /// https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj
 template <class TScalar>
-Eigen::Matrix<TScalar, 2, 1> binUp(Eigen::Matrix<TScalar, 2, 1> const& in) {
+auto binUp(Eigen::Matrix<TScalar, 2, 1> const& in)
+    -> Eigen::Matrix<TScalar, 2, 1> {
   Eigen::Matrix<TScalar, 2, 1> out;
   // Map left image border from -0.5 to 0.0, then scale up, then
   // map the left image border from 0.0 back to -0.5
@@ -104,7 +106,7 @@ class CameraModelT {
 
   /// Returns camera model from raw data pointer. To be used within ceres
   /// optimization only.
-  static CameraModelT fromData(TScalar const* const ptr) {
+  static auto fromData(TScalar const* const ptr) -> CameraModelT {
     CameraModelT out;
     Eigen::Map<Eigen::Matrix<TScalar, kNumParams, 1> const> map(
         ptr, kNumParams, 1);
@@ -113,7 +115,7 @@ class CameraModelT {
   }
 
   /// Focal length.
-  [[nodiscard]] PixelImage focalLength() const {
+  [[nodiscard]] auto focalLength() const -> PixelImage {
     return params_.template head<2>();
   }
 
@@ -122,7 +124,7 @@ class CameraModelT {
     params_.template head<2>() = focal_length;
   }
 
-  [[nodiscard]] PixelImage principalPoint() const {
+  [[nodiscard]] auto principalPoint() const -> PixelImage {
     return params_.template segment<2>(2);
   }
 
@@ -132,15 +134,16 @@ class CameraModelT {
   }
 
   /// Returns distortion parameters by value.
-  [[nodiscard]] DistorationParams distortionParams() const {
+  [[nodiscard]] auto distortionParams() const -> DistorationParams {
     return params_.template tail<kNumDistortionParams>();
   }
 
   /// Parameters mutator
-  Eigen::Matrix<TScalar, kNumParams, 1>& params() { return params_; }
+  auto params() -> Eigen::Matrix<TScalar, kNumParams, 1>& { return params_; }
 
   /// Parameters accessor
-  [[nodiscard]] Eigen::Matrix<TScalar, kNumParams, 1> const& params() const {
+  [[nodiscard]] auto params() const
+      -> Eigen::Matrix<TScalar, kNumParams, 1> const& {
     return params_;
   }
 
@@ -151,7 +154,7 @@ class CameraModelT {
   ///
   /// If the original width [height] is odd, the new width [height] will be:
   /// (width+1)/2 [height+1)/2].
-  [[nodiscard]] CameraModelT subsampleDown() const {
+  [[nodiscard]] auto subsampleDown() const -> CameraModelT {
     Params params = this->params_;
     params[0] = TScalar(0.5) * params[0];  // fx
     params[1] = TScalar(0.5) * params[1];  // fy
@@ -164,7 +167,7 @@ class CameraModelT {
   ///
   /// See for details:
   /// https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.97r8rr8owwpc
-  [[nodiscard]] CameraModelT subsampleUp() const {
+  [[nodiscard]] auto subsampleUp() const -> CameraModelT {
     Params params = this->params_;
     params[0] = TScalar(2.0) * params[0];  // fx
     params[1] = TScalar(2.0) * params[1];  // fy
@@ -181,7 +184,7 @@ class CameraModelT {
   ///
   /// If the original width [height] is odd, the new width [height] will be:
   /// (width+1)/2 [height+1)/2].
-  [[nodiscard]] CameraModelT binDown() const {
+  [[nodiscard]] auto binDown() const -> CameraModelT {
     Params params = this->params_;
     params[0] = TScalar(0.5) * params[0];  // fx
     params[1] = TScalar(0.5) * params[1];  // fy
@@ -194,7 +197,7 @@ class CameraModelT {
   ///
   /// See for details:
   /// https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj
-  [[nodiscard]] CameraModelT binUp() const {
+  [[nodiscard]] auto binUp() const -> CameraModelT {
     Params params = this->params_;
     params[0] = TScalar(2.0) * params[0];  // fx
     params[1] = TScalar(2.0) * params[1];  // fy
@@ -204,7 +207,7 @@ class CameraModelT {
         {image_size_.width * 2, image_size_.height * 2}, params);
   }
 
-  [[nodiscard]] CameraModelT scale(ImageSize const& image_size) const {
+  [[nodiscard]] auto scale(ImageSize const& image_size) const -> CameraModelT {
     Params params = this->params_;
     params[0] = TScalar(image_size.width) / TScalar(image_size_.width) *
                 params[0];  // fx
@@ -218,8 +221,8 @@ class CameraModelT {
   }
 
   /// Region of interest given `top_left` and ``roi_size`.
-  [[nodiscard]] CameraModelT roi(
-      Eigen::Vector2i const& top_left, ImageSize roi_size) const {
+  [[nodiscard]] auto roi(Eigen::Vector2i const& top_left, ImageSize roi_size)
+      const -> CameraModelT {
     Params params = this->params_;
     params[2] = params[2] - top_left.x();  // cx
     params[3] = params[3] - top_left.y();  // cy
@@ -227,23 +230,23 @@ class CameraModelT {
   }
 
   /// Maps a 2-point in the z=1 plane of the camera to a pixel in the image.
-  [[nodiscard]] PixelImage distort(
-      ProjInCameraLifted const& point2_in_camera_lifted) const {
+  [[nodiscard]] auto distort(
+      ProjInCameraLifted const& point2_in_camera_lifted) const -> PixelImage {
     return Distortion::template distort(params_, point2_in_camera_lifted);
   }
 
-  [[nodiscard]] Eigen::Matrix<TScalar, 2, 2> dxDistort(
-      PixelImage const& pixel_in_image) const {
+  [[nodiscard]] auto dxDistort(PixelImage const& pixel_in_image) const
+      -> Eigen::Matrix<TScalar, 2, 2> {
     return Distortion::template dxDistort(params_, pixel_in_image);
   }
 
   /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
-  [[nodiscard]] ProjInCameraLifted undistort(
-      PixelImage const& pixel_in_image) const {
+  [[nodiscard]] auto undistort(PixelImage const& pixel_in_image) const
+      -> ProjInCameraLifted {
     return Distortion::template undistort(params_, pixel_in_image);
   }
 
-  [[nodiscard]] MutImage<Eigen::Vector2f> undistortTable() const {
+  [[nodiscard]] auto undistortTable() const -> MutImage<Eigen::Vector2f> {
     MutImage<Eigen::Vector2f> table(image_size_);
     for (int v = 0; v < table.height(); ++v) {
       Eigen::Vector2f* row_ptr = table.rowPtrMut(v);
@@ -255,12 +258,13 @@ class CameraModelT {
   }
 
   /// Projects 3-point in camera frame to a pixel in the image.
-  [[nodiscard]] PixelImage camProj(PointCamera const& point_in_camera) const {
+  [[nodiscard]] auto camProj(PointCamera const& point_in_camera) const
+      -> PixelImage {
     return Distortion::template distort(params_, Proj::proj(point_in_camera));
   }
 
-  [[nodiscard]] Eigen::Matrix<TScalar, 2, 3> dxCamProjX(
-      PointCamera const& point_in_camera) const {
+  [[nodiscard]] auto dxCamProjX(PointCamera const& point_in_camera) const
+      -> Eigen::Matrix<TScalar, 2, 3> {
     ProjInCameraLifted point_in_lifted = Proj::proj(point_in_camera);
     return dxDistort(point_in_lifted) * Proj::dxProjX(point_in_camera);
   }
@@ -268,31 +272,33 @@ class CameraModelT {
   /// Unprojects pixel in the image to point in camera frame.
   ///
   /// The point is projected onto the xy-plane at z = `depth_z`.
-  [[nodiscard]] PointCamera camUnproj(
-      PixelImage const& pixel_in_image, double depth_z) const {
+  [[nodiscard]] auto camUnproj(
+      PixelImage const& pixel_in_image, double depth_z) const -> PointCamera {
     return Proj::unproj(
         Distortion::template undistort(params_, pixel_in_image), depth_z);
   }
 
   /// Raw data access. To be used in ceres optimization only.
-  TScalar* data() { return params_.data(); }
+  auto data() -> TScalar* { return params_.data(); }
 
   /// Accessor of image size.
-  [[nodiscard]] ImageSize const& imageSize() const { return image_size_; }
+  [[nodiscard]] auto imageSize() const -> ImageSize const& {
+    return image_size_;
+  }
 
   /// Returns true if obs is within image.
   ///
   /// Note: Postiive border makes the image frame smaller.
-  [[nodiscard]] bool contains(
-      Eigen::Vector2i const& obs, int border = 0) const {
+  [[nodiscard]] auto contains(Eigen::Vector2i const& obs, int border = 0) const
+      -> bool {
     return this->image_size_.contains(obs, border);
   }
 
   /// Returns true if obs is within image.
   ///
   /// Note: Postiive border makes the image frame smaller.
-  [[nodiscard]] bool contains(
-      PixelImage const& obs, TScalar border = TScalar(0)) const {
+  [[nodiscard]] auto contains(
+      PixelImage const& obs, TScalar border = TScalar(0)) const -> bool {
     return this->image_size_.contains(obs, border);
   }
 
@@ -354,38 +360,40 @@ class CameraModel {
       Eigen::VectorXd const& params);
 
   /// Creates default pinhole model from `image_size`.
-  static CameraModel createDefaultPinholeModel(ImageSize image_size);
+  static auto createDefaultPinholeModel(ImageSize image_size) -> CameraModel;
 
   /// Returns true if this camera remains default-initialized with zero image
   /// dimensions.
-  [[nodiscard]] bool isEmpty() const { return imageSize() == ImageSize(0, 0); }
+  [[nodiscard]] auto isEmpty() const -> bool {
+    return imageSize() == ImageSize(0, 0);
+  }
 
   /// Returns name of the camera distortion model.
-  [[nodiscard]] std::string_view distortionModelName() const;
+  [[nodiscard]] auto distortionModelName() const -> std::string_view;
 
   /// Distortion variant mutator.
-  CameraDistortionVariant& modelVariant() { return model_; }
+  auto modelVariant() -> CameraDistortionVariant& { return model_; }
 
   /// Distortion variant accessor.
-  [[nodiscard]] CameraDistortionVariant const& modelVariant() const {
+  [[nodiscard]] auto modelVariant() const -> CameraDistortionVariant const& {
     return model_;
   }
 
   /// Camera transform flag
-  [[nodiscard]] CameraDistortionType distortionType() const;
+  [[nodiscard]] auto distortionType() const -> CameraDistortionType;
 
-  [[nodiscard]] Eigen::Vector2d focalLength() const;
+  [[nodiscard]] auto focalLength() const -> Eigen::Vector2d;
 
   /// Focal length.
   void setFocalLength(Eigen::Vector2d const& focal_length);
 
-  [[nodiscard]] Eigen::Vector2d principalPoint() const;
+  [[nodiscard]] auto principalPoint() const -> Eigen::Vector2d;
 
   /// Focal length.
   void setPrincipalPoint(Eigen::Vector2d const& principal_point);
 
   /// Returns `params` vector by value.
-  [[nodiscard]] Eigen::VectorXd params() const;
+  [[nodiscard]] auto params() const -> Eigen::VectorXd;
 
   /// Sets `params` vector.
   ///
@@ -394,39 +402,41 @@ class CameraModel {
   void setParams(Eigen::VectorXd const& params);
 
   /// Returns distortion parameters vector by value.
-  [[nodiscard]] Eigen::VectorXd distortionParams() const;
+  [[nodiscard]] auto distortionParams() const -> Eigen::VectorXd;
 
   /// Given a point in 3D space in the camera frame, compute the corresponding
   /// pixel coordinates in the image.
-  [[nodiscard]] Eigen::Vector2d camProj(
-      Eigen::Vector3d const& point_camera) const;
+  [[nodiscard]] auto camProj(Eigen::Vector3d const& point_camera) const
+      -> Eigen::Vector2d;
 
   /// Maps a 2-point in the z=1 plane of the camera to a (distorted) pixel in
   /// the image.
-  [[nodiscard]] Eigen::Vector2d distort(
-      Eigen::Vector2d const& point2_in_camera_lifted) const;
+  [[nodiscard]] auto distort(
+      Eigen::Vector2d const& point2_in_camera_lifted) const -> Eigen::Vector2d;
 
-  [[nodiscard]] Eigen::Matrix2d dxDistort(
-      Eigen::Vector2d const& point2_in_camera_lifted) const;
+  [[nodiscard]] auto dxDistort(
+      Eigen::Vector2d const& point2_in_camera_lifted) const -> Eigen::Matrix2d;
 
   /// Maps a pixel in the image to a 2-point in the z=1 plane of the camera.
-  [[nodiscard]] Eigen::Vector2d undistort(
-      Eigen::Vector2d const& pixel_image) const;
+  [[nodiscard]] auto undistort(Eigen::Vector2d const& pixel_image) const
+      -> Eigen::Vector2d;
 
-  [[nodiscard]] MutImage<Eigen::Vector2f> undistortTable() const;
+  [[nodiscard]] auto undistortTable() const -> MutImage<Eigen::Vector2f>;
 
   /// Derivative of camProj(x) with respect to x=0.
-  [[nodiscard]] Eigen::Matrix<double, 2, 3> dxCamProjX(
-      Eigen::Vector3d const& point_in_camera) const;
+  [[nodiscard]] auto dxCamProjX(Eigen::Vector3d const& point_in_camera) const
+      -> Eigen::Matrix<double, 2, 3>;
 
   /// Derivative of camProj(exp(x) * point) with respect to x=0.
-  [[nodiscard]] Eigen::Matrix<double, 2, 6> dxCamProjExpXPointAt0(
-      Eigen::Vector3d const& point_in_camera) const;
+  [[nodiscard]] auto dxCamProjExpXPointAt0(
+      Eigen::Vector3d const& point_in_camera) const
+      -> Eigen::Matrix<double, 2, 6>;
 
   /// Given pixel coordinates in the distorted image, and a corresponding
   /// depth, reproject to a 3d point in the camera's reference frame.
-  [[nodiscard]] Eigen::Vector3d camUnproj(
-      Eigen::Vector2d const& pixel_image, double depth_z) const;
+  [[nodiscard]] auto camUnproj(
+      Eigen::Vector2d const& pixel_image, double depth_z) const
+      -> Eigen::Vector3d;
 
   /// Subsamples pixel down, factor of 0.5.
   ///
@@ -435,10 +445,10 @@ class CameraModel {
   ///
   /// If the original width [height] is odd, the new width [height] will be:
   /// (width+1)/2 [height+1)/2].
-  [[nodiscard]] CameraModel subsampleDown() const;
+  [[nodiscard]] auto subsampleDown() const -> CameraModel;
 
   /// Subsamples pixel up, factor of 2.0.
-  [[nodiscard]] CameraModel subsampleUp() const;
+  [[nodiscard]] auto subsampleUp() const -> CameraModel;
 
   /// Bins pixel down, factor of 0.5.
   ///
@@ -447,42 +457,43 @@ class CameraModel {
   ///
   /// If the original width [height] is odd, the new width [height] will be:
   /// (width+1)/2 [height+1)/2].
-  [[nodiscard]] CameraModel binDown() const;
+  [[nodiscard]] auto binDown() const -> CameraModel;
 
   /// Bins pixel up, factor of 2.0.
   ///
   /// See for details:
   /// https://docs.google.com/document/d/1xmhCMWklP2UoQMGaMqFnsoPWoeMvBfXN7S8-ie9k0UA/edit#heading=h.elfm6123mecj
-  [[nodiscard]] CameraModel binUp() const;
+  [[nodiscard]] auto binUp() const -> CameraModel;
 
   /// Image size accessor
-  [[nodiscard]] ImageSize const& imageSize() const;
+  [[nodiscard]] auto imageSize() const -> ImageSize const&;
 
   /// Region of interest given `top_left` and ``roi_size`.
-  [[nodiscard]] CameraModel roi(
-      Eigen::Vector2i const& top_left, ImageSize roi_size) const;
+  [[nodiscard]] auto roi(
+      Eigen::Vector2i const& top_left, ImageSize roi_size) const -> CameraModel;
 
   /// Returns true if obs is within image.
   ///
   /// Note: Postiive border makes the image frame smaller.
-  [[nodiscard]] bool contains(Eigen::Vector2i const& obs, int border = 0) const;
+  [[nodiscard]] auto contains(Eigen::Vector2i const& obs, int border = 0) const
+      -> bool;
 
   /// Returns true if obs is within image.
   ///
   /// Postiive border makes the image frame smaller.
-  [[nodiscard]] bool contains(
-      Eigen::Vector2d const& obs, double border = 0) const;
+  [[nodiscard]] auto contains(
+      Eigen::Vector2d const& obs, double border = 0) const -> bool;
 
-  [[nodiscard]] CameraModel scale(ImageSize image_size) const;
+  [[nodiscard]] auto scale(ImageSize image_size) const -> CameraModel;
 
  private:
   CameraDistortionVariant model_;
 };
 
 /// Creates default pinhole model from `image_size`.
-PinholeModel createDefaultPinholeModel(ImageSize image_size);
+auto createDefaultPinholeModel(ImageSize image_size) -> PinholeModel;
 
 /// Creates default orthographic model from `image_size`.
-OrthographicModel createDefaultOrthoModel(ImageSize image_size);
+auto createDefaultOrthoModel(ImageSize image_size) -> OrthographicModel;
 
 }  // namespace sophus

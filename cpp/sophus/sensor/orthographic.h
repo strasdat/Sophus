@@ -20,8 +20,9 @@ using OrthographicModelT =
 
 /// Returns orthographic camera model given bounding box and image size.
 template <class TScalar>
-OrthographicModelT<TScalar> orthoCamFromBoundingBox(
-    Region2<TScalar> const& bounding_box, ImageSize image_size) {
+auto orthoCamFromBoundingBox(
+    Region2<TScalar> const& bounding_box, ImageSize image_size)
+    -> OrthographicModelT<TScalar> {
   // (-0.5, -0.5)   -> (min.x, min.y)
   // (-0.5, h-0.5)  -> (min.x, max.y)
   // (w-0.5, -0.5)  -> (max.x, min.y)
@@ -52,8 +53,8 @@ OrthographicModelT<TScalar> orthoCamFromBoundingBox(
 /// Returns 2d bounding box corresponding the the given orthographic camera
 /// model.
 template <class TScalar>
-Region2<TScalar> boundingBoxFromOrthoCam(
-    OrthographicModelT<TScalar> const& ortho_cam) {
+auto boundingBoxFromOrthoCam(OrthographicModelT<TScalar> const& ortho_cam)
+    -> Region2<TScalar> {
   Eigen::Vector<TScalar, 2> min = (-ortho_cam.principalPoint().array() - 0.5) /
                                   ortho_cam.focalLength().array();
   return Region2<TScalar>::fromMinMax(

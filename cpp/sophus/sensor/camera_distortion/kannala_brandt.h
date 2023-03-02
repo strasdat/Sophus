@@ -10,7 +10,7 @@
 
 #include "sophus/ceres/jet_helpers.h"
 #include "sophus/common/common.h"
-#include "sophus/geometry/projection.h"
+#include "sophus/geometry/point_transform.h"
 #include "sophus/sensor/camera_distortion/affine.h"
 
 #include <Eigen/Dense>
@@ -37,9 +37,10 @@ class KannalaBrandtK3Transform {
   using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
   template <class TParamsTypeT, class TPointTypeT>
-  static PixelImage<typename TPointTypeT::Scalar> distort(
+  static auto distort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
-      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane)
+      -> PixelImage<typename TPointTypeT::Scalar> {
     static_assert(
         TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(
@@ -86,8 +87,9 @@ class KannalaBrandtK3Transform {
   }
 
   template <class TScalar>
-  static ProjInCameraZ1Plane<TScalar> undistort(
-      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
+  static auto undistort(
+      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image)
+      -> ProjInCameraZ1Plane<TScalar> {
     using std::abs;
     using std::sqrt;
     using std::tan;
@@ -148,9 +150,10 @@ class KannalaBrandtK3Transform {
   }
 
   template <class TParamsTypeT, class TPointTypeT>
-  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxDistort(
+  static auto dxDistort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
-      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane)
+      -> Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> {
     static_assert(
         TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(

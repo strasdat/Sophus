@@ -17,14 +17,14 @@ int main() {
   // Let use assume there is a camera in the world. First we describe its
   // orientation in the world reference frame.
   sophus::So3F64 world_from_camera_rotation =
-      sophus::So3F64::rotX(sophus::kPi<double> / 4);
+      sophus::So3F64::fromRx(sophus::kPi<double> / 4);
   // Then the position of the camera in the world.
   Eigen::Vector3d camera_in_world(0.0, 0.0, 1.0);
 
   // The pose (position and orientation) of the camera in the world is
   // constructed by its orientation ``world_from_camera_rotation`` as well as
   // its position ``camera_in_world``.
-  sophus::Se3F64 world_anchored_camera_pose(
+  sophus::Isometry3F64 world_anchored_camera_pose(
       world_from_camera_rotation, camera_in_world);
 
   // SE(3) naturally representation is a 4x4 matrix which can be accessed using

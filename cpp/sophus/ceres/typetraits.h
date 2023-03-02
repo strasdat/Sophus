@@ -28,7 +28,8 @@ using IsSpecialized = decltype(complete(std::declval<TScalar*>()));
 /// Scalar types in LieGroup<TScalar>::Tangent
 ///
 /// Primary use is mapping LieGroup::Tangent over raw data, with 2 options:
-///  - LieGroup::Tangent is "scalar" (for So2), then we just dereference pointer
+///  - LieGroup::Tangent is "scalar" (for Rotation2), then we just dereference
+///  pointer
 ///  - LieGroup::Tangent is Eigen::Vector<...>, then we need to use Eigen::Map
 ///
 /// Specialization of Eigen::internal::traits<TScalar> for TScalar is crucial

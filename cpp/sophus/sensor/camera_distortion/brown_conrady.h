@@ -32,12 +32,12 @@ class BrownConradyTransform {
   using DistorationParams = Eigen::Matrix<TScalar, kNumDistortionParams, 1>;
 
   template <class TParamScalarT, class TPointScalarT>
-  static PixelImage<typename Eigen::ScalarBinaryOpTraits<
-      TParamScalarT,
-      TPointScalarT>::ReturnType>
-  projImpl(
+  static auto projImpl(
       DistorationParams<TParamScalarT> const& distortion,
-      PixelImage<TPointScalarT> const& point_normalized) {
+      PixelImage<TPointScalarT> const& point_normalized)
+      -> PixelImage<typename Eigen::ScalarBinaryOpTraits<
+          TParamScalarT,
+          TPointScalarT>::ReturnType> {
     using ReturnScalar = typename Eigen::
         ScalarBinaryOpTraits<TParamScalarT, TPointScalarT>::ReturnType;
 
@@ -64,9 +64,9 @@ class BrownConradyTransform {
   }
 
   template <class TScalar>
-  static PixelImage<TScalar> unprojImpl(
+  static auto unprojImpl(
       DistorationParams<TScalar> const& distortion,
-      PixelImage<TScalar> const& uv_normalized) {
+      PixelImage<TScalar> const& uv_normalized) -> PixelImage<TScalar> {
     // We had no luck with OpenCV's undistort. It seems not to be accurate if
     // "icdist" is close to 0.
     // https://github.com/opencv/opencv/blob/63bb2abadab875fc648a572faccafee134f06fc8/modules/calib3d/src/undistort.dispatch.cpp#L365
@@ -171,9 +171,10 @@ class BrownConradyTransform {
   }
 
   template <class TParamsTypeT, class TPointTypeT>
-  static PixelImage<typename TPointTypeT::Scalar> distort(
+  static auto distort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
-      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane)
+      -> PixelImage<typename TPointTypeT::Scalar> {
     using ParamScalar = typename TParamsTypeT::Scalar;
 
     static_assert(
@@ -200,8 +201,9 @@ class BrownConradyTransform {
   }
 
   template <class TScalar>
-  static ProjInCameraZ1Plane<TScalar> undistort(
-      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image) {
+  static auto undistort(
+      Params<TScalar> const& params, PixelImage<TScalar> const& pixel_image)
+      -> ProjInCameraZ1Plane<TScalar> {
     PixelImage<TScalar> proj_point_in_camera_z1_plane = unprojImpl(
         params.template tail<kNumDistortionParams>().eval(),
         AffineTransform::undistort(
@@ -212,9 +214,10 @@ class BrownConradyTransform {
   }
 
   template <class TParamsTypeT, class TPointTypeT>
-  static Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> dxDistort(
+  static auto dxDistort(
       Eigen::MatrixBase<TParamsTypeT> const& params,
-      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane) {
+      Eigen::MatrixBase<TPointTypeT> const& proj_point_in_camera_z1_plane)
+      -> Eigen::Matrix<typename TPointTypeT::Scalar, 2, 2> {
     static_assert(
         TParamsTypeT::ColsAtCompileTime == 1, "params must be a column-vector");
     static_assert(

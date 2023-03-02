@@ -123,7 +123,7 @@ struct ImageTraits<Eigen::Matrix<TT, kNumChannelsT, 1>> {
 ///
 /// mask(..) = lhs(..) == rhs (..)
 template <class TPixel>
-MutImageBool isEqualMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
+auto isEqualMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) -> MutImageBool {
   return MutImageBool::makeFromTransform(
       lhs, rhs, [](TPixel lhs, TPixel rhs) { return lhs == rhs; });
 }
@@ -132,7 +132,7 @@ MutImageBool isEqualMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
 ///
 /// mask(..) = lhs(..) < rhs (..)
 template <class TPixel>
-MutImageBool isLessMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
+auto isLessMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) -> MutImageBool {
   return MutImageBool::makeFromTransform(
       lhs, rhs, [](TPixel lhs, TPixel rhs) { return lhs < rhs; });
 }
@@ -141,7 +141,8 @@ MutImageBool isLessMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
 ///
 /// mask(..) = lhs(..) > rhs (..)
 template <class TPixel>
-MutImageBool isGreaterMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
+auto isGreaterMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs)
+    -> MutImageBool {
   return MutImageBool::makeFromTransform(
       lhs, rhs, [](TPixel lhs, TPixel rhs) { return lhs > rhs; });
 }
@@ -150,10 +151,10 @@ MutImageBool isGreaterMask(ImageView<TPixel> lhs, ImageView<TPixel> rhs) {
 ///
 /// mask(..) = ||lhs(..), rhs (..)|| <= thr
 template <class TPixel>
-MutImageBool isNearMask(
+auto isNearMask(
     ImageView<TPixel> lhs,
     ImageView<TPixel> rhs,
-    typename ImageTraits<TPixel>::ChannelT thr) {
+    typename ImageTraits<TPixel>::ChannelT thr) -> MutImageBool {
   return MutImageBool::makeFromTransform(
       lhs, rhs, [thr](TPixel lhs, TPixel rhs) {
         return MaxMetric(lhs, rhs) <= thr;
@@ -161,33 +162,34 @@ MutImageBool isNearMask(
 }
 
 /// Returns number of pixels equal `truth_value` in mask.
-int count(ImageViewBool mask, bool truth_value);
+auto count(ImageViewBool mask, bool truth_value) -> int;
 
 /// Returns number of true pixels in mask.
-int countTrue(ImageViewBool mask);
+auto countTrue(ImageViewBool mask) -> int;
 
 /// Returns number of false pixels in mask.
-int countFalse(ImageViewBool mask);
+auto countFalse(ImageViewBool mask) -> int;
 
 /// Returns true if all pixels are true.
-bool isAllTrue(ImageViewBool mask);
+auto isAllTrue(ImageViewBool mask) -> bool;
 
 /// Returns true if at least one pixel is true.
-bool isAnyTrue(ImageViewBool mask);
+auto isAnyTrue(ImageViewBool mask) -> bool;
 
 /// Returns boolean image with the result per pixel:
 ///
 /// out_mask(..) = !mask(..)
-[[nodiscard]] MutImageBool neg(ImageViewBool mask);
+[[nodiscard]] auto neg(ImageViewBool mask) -> MutImageBool;
 
 /// Returns first pixel of mask which equals `truth_value`, nullopt otherwise.
-std::optional<Eigen::Vector2i> firstPixel(ImageViewBool mask, bool truth_value);
+auto firstPixel(ImageViewBool mask, bool truth_value)
+    -> std::optional<Eigen::Vector2i>;
 
 /// Returns first true pixel, nullopt otherwise.
-std::optional<Eigen::Vector2i> firstTruePixel(ImageViewBool mask);
+auto firstTruePixel(ImageViewBool mask) -> std::optional<Eigen::Vector2i>;
 
 /// Returns first false pixel, nullopt otherwise.
-std::optional<Eigen::Vector2i> firstFalsePixel(ImageViewBool mask);
+auto firstFalsePixel(ImageViewBool mask) -> std::optional<Eigen::Vector2i>;
 
 /// If it is false that `left_image` == `right_image`, print formatted error
 /// message and then panic.

@@ -123,7 +123,7 @@ TEST(AnyImage, runtime_type_info) {
   }
 }
 
-float sum(ImageView<float> view) {
+auto sum(ImageView<float> view) -> float {
   float s = 0.0;
   for (int v = 0; v < view.height(); ++v) {
     float const* row = view.rowPtr(v);

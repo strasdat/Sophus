@@ -10,19 +10,19 @@
 
 #include "sophus/ceres/typetraits.h"
 
-namespace sophus {
+namespace sophus::ceres {
 
 /// Templated local parameterization for LieGroup [with implemented
 /// LieGroup::Dx_this_mul_exp_x_at_0() ]
 template <template <class> class TLieGroup>
-class Manifold : public ceres::Manifold {
+class Manifold : public ::ceres::Manifold {
  public:
   using LieGroupF64 = TLieGroup<double>;
-  using Tangent = typename LieGroupF64::Tangent;
-  using TangentMap = typename sophus::Mapper<Tangent>::Map;
-  using TangentConstMap = typename sophus::Mapper<Tangent>::ConstMap;
-  static int constexpr kDoF = LieGroupF64::kDoF;
-  static int constexpr kNumParameters = LieGroupF64::kNumParameters;
+  static int constexpr kDof = LieGroupF64::kDof;
+  static int constexpr kNumParams = LieGroupF64::kNumParams;
+
+  using Tangent = Eigen::Vector<double, kDof>;
+  using Params = Eigen::Vector<double, kNumParams>;
 
   /// LieGroup plus operation for Ceres
   ///
@@ -32,10 +32,11 @@ class Manifold : public ceres::Manifold {
       double const* t_raw,
       double const* delta_raw,
       double* t_plus_delta_raw) const override {
-    Eigen::Map<LieGroupF64 const> const t(t_raw);
-    TangentConstMap delta = sophus::Mapper<Tangent>::map(delta_raw);
-    Eigen::Map<LieGroupF64> t_plus_delta(t_plus_delta_raw);
-    t_plus_delta = t * LieGroupF64::exp(delta);
+    LieGroupF64 t = LieGroupF64::fromParams(Eigen::Map<Params const>(t_raw));
+    Eigen::Map<Tangent const> delta(delta_raw);
+    Eigen::Map<Params> out_params(t_plus_delta_raw);
+    LieGroupF64 t_plus_delta = t * LieGroupF64::exp(delta);
+    out_params = t_plus_delta.params();
     return true;
   }
 
@@ -44,12 +45,12 @@ class Manifold : public ceres::Manifold {
   /// Dx T * exp(x)  with  x=0
   ///
   bool PlusJacobian(double const* t_raw, double* jacobian_raw) const override {
-    Eigen::Map<LieGroupF64 const> t(t_raw);
+    LieGroupF64 t = LieGroupF64::fromParams(Eigen::Map<Params const>(t_raw));
     Eigen::Map<Eigen::Matrix<
         double,
-        kNumParameters,
-        kDoF,
-        kDoF == 1 ? Eigen::ColMajor : Eigen::RowMajor>>
+        kNumParams,
+        kDof,
+        kDof == 1 ? Eigen::ColMajor : Eigen::RowMajor>>
         jacobian(jacobian_raw);
     jacobian = t.dxThisMulExpXAt0();
     return true;
@@ -57,28 +58,26 @@ class Manifold : public ceres::Manifold {
 
   bool Minus(double const* y_raw, double const* x_raw, double* y_minus_x_raw)
       const override {
-    Eigen::Map<LieGroupF64 const> y(y_raw);
-
-    Eigen::Map<LieGroupF64 const> x(x_raw);
-    TangentMap y_minus_x = sophus::Mapper<Tangent>::map(y_minus_x_raw);
-
-    y_minus_x = (x.inverse() * y).log();
+    LieGroupF64 y = LieGroupF64::fromParams(Eigen::Map<Params const>(y_raw));
+    LieGroupF64 x = LieGroupF64::fromParams(Eigen::Map<Params const>(x_raw));
+    Eigen::Map<Tangent> out_params(y_minus_x_raw);
+    out_params = (x.inverse() * y).log();
     return true;
   }
 
   bool MinusJacobian(double const* x_raw, double* jacobian_raw) const override {
-    Eigen::Map<LieGroupF64 const> x(x_raw);
-    Eigen::Map<Eigen::Matrix<double, kDoF, kNumParameters, Eigen::RowMajor>>
+    LieGroupF64 x = LieGroupF64::fromParams(Eigen::Map<Params const>(x_raw));
+    Eigen::Map<Eigen::Matrix<double, kDof, kNumParams, Eigen::RowMajor>>
         jacobian(jacobian_raw);
     jacobian = x.dxLogThisInvTimesXAtThis();
     return true;
   }
 
   [[nodiscard]] int AmbientSize() const override {
-    return LieGroupF64::kNumParameters;
+    return LieGroupF64::kNumParams;
   }
 
-  [[nodiscard]] int TangentSize() const override { return LieGroupF64::kDoF; }
+  [[nodiscard]] int TangentSize() const override { return LieGroupF64::kDof; }
 };
 
-}  // namespace sophus
+}  // namespace sophus::ceres

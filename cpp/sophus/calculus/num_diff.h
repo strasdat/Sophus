@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "sophus/common/types.h"
+#include "sophus/common/common.h"
 
 #include <functional>
 #include <type_traits>
@@ -25,14 +25,9 @@ class Curve {
  public:
   template <class TFn>
   static auto numDiff(TFn curve, TScalar t, TScalar h) -> decltype(curve(t)) {
-    using ReturnType = decltype(curve(t));
     static_assert(
         std::is_floating_point<TScalar>::value,
         "Scalar must be a floating point type.");
-    static_assert(
-        IsFloatingPoint<ReturnType>::kValue,
-        "ReturnType must be either a floating point scalar, "
-        "vector or matrix.");
 
     return (curve(t + h) - curve(t - h)) / (TScalar(2) * h);
   }
@@ -41,11 +36,11 @@ class Curve {
 template <class TScalar, int kMatrixDim, int kM>
 class VectorField {
  public:
-  static Eigen::Matrix<TScalar, kMatrixDim, kM> numDiff(
+  static auto numDiff(
       std::function<Eigen::Vector<TScalar, kMatrixDim>(
           Eigen::Vector<TScalar, kM>)> vector_field,
       Eigen::Vector<TScalar, kM> const& a,
-      TScalar eps) {
+      TScalar eps) -> Eigen::Matrix<TScalar, kMatrixDim, kM> {
     static_assert(
         std::is_floating_point<TScalar>::value,
         "Scalar must be a floating point type.");
@@ -63,16 +58,6 @@ class VectorField {
   }
 };
 
-template <class TScalar, int kMatrixDim>
-class VectorField<TScalar, kMatrixDim, 1> {
- public:
-  static Eigen::Matrix<TScalar, kMatrixDim, 1> numDiff(
-      std::function<Eigen::Vector<TScalar, kMatrixDim>(TScalar)> vector_field,
-      TScalar const& a,
-      TScalar eps) {
-    return details::Curve<TScalar>::numDiff(std::move(vector_field), a, eps);
-  }
-};
 }  // namespace details
 
 /// Calculates the derivative of a curve at a point ``t``.
@@ -97,10 +82,11 @@ template <
     int kM,
     class TScalarOrVector,
     class TFn>
-Eigen::Matrix<TScalar, kMatrixDim, kM> vectorFieldNumDiff(
+auto vectorFieldNumDiff(
     TFn vector_field,
     TScalarOrVector const& a,
-    TScalar eps = kEpsilonSqrt<TScalar>) {
+    TScalar eps = kEpsilonSqrt<TScalar>)
+    -> Eigen::Matrix<TScalar, kMatrixDim, kM> {
   return details::VectorField<TScalar, kMatrixDim, kM>::numDiff(
       std::move(vector_field), a, eps);
 }

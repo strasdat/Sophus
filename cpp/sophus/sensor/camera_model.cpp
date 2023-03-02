@@ -11,10 +11,10 @@
 namespace sophus {
 
 namespace {
-CameraDistortionVariant getModelFromType(
+auto getModelFromType(
     CameraDistortionType projection_type,
     ImageSize image_size,
-    Eigen::VectorXd const& params) {
+    Eigen::VectorXd const& params) -> CameraDistortionVariant {
   switch (projection_type) {
     case CameraDistortionType::pinhole: {
       return PinholeModel(image_size, params);
@@ -43,7 +43,7 @@ CameraModel::CameraModel(
     Eigen::VectorXd const& params)
     : model_(getModelFromType(projection_type, image_size, params)) {}
 
-std::string_view CameraModel::distortionModelName() const {
+auto CameraModel::distortionModelName() const -> std::string_view {
   return std::visit(
       [](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
@@ -52,12 +52,12 @@ std::string_view CameraModel::distortionModelName() const {
       model_);
 }
 
-Eigen::VectorXd CameraModel::params() const {
+auto CameraModel::params() const -> Eigen::VectorXd {
   return std::visit(
       [](auto&& arg) -> Eigen::VectorXd { return arg.params(); }, model_);
 }
 
-Eigen::Vector2d CameraModel::focalLength() const {
+auto CameraModel::focalLength() const -> Eigen::Vector2d {
   return std::visit(
       [](auto&& arg) -> Eigen::Vector2d { return arg.focalLength(); }, model_);
 }
@@ -68,7 +68,7 @@ void CameraModel::setFocalLength(Eigen::Vector2d const& focal_length) {
       model_);
 }
 
-Eigen::Vector2d CameraModel::principalPoint() const {
+auto CameraModel::principalPoint() const -> Eigen::Vector2d {
   return std::visit(
       [](auto&& arg) -> Eigen::Vector2d { return arg.principalPoint(); },
       model_);
@@ -82,7 +82,7 @@ void CameraModel::setPrincipalPoint(Eigen::Vector2d const& principal_point) {
       model_);
 }
 
-Eigen::VectorXd CameraModel::distortionParams() const {
+auto CameraModel::distortionParams() const -> Eigen::VectorXd {
   return std::visit(
       [](auto&& arg) -> Eigen::VectorXd { return arg.distortionParams(); },
       model_);
@@ -92,15 +92,15 @@ void CameraModel::setParams(Eigen::VectorXd const& params) {
   std::visit([&params](auto&& arg) { arg.params() = params; }, model_);
 }
 
-Eigen::Vector2d CameraModel::camProj(
-    Eigen::Vector3d const& point_camera) const {
+auto CameraModel::camProj(Eigen::Vector3d const& point_camera) const
+    -> Eigen::Vector2d {
   return std::visit(
       [&](auto&& arg) -> Eigen::Vector2d { return arg.camProj(point_camera); },
       model_);
 }
 
-Eigen::Vector3d CameraModel::camUnproj(
-    Eigen::Vector2d const& pixel_image, double depth_z) const {
+auto CameraModel::camUnproj(Eigen::Vector2d const& pixel_image, double depth_z)
+    const -> Eigen::Vector3d {
   return std::visit(
       [&](auto&& arg) -> Eigen::Vector3d {
         return arg.camUnproj(pixel_image, depth_z);
@@ -108,8 +108,8 @@ Eigen::Vector3d CameraModel::camUnproj(
       model_);
 }
 
-Eigen::Vector2d CameraModel::distort(
-    Eigen::Vector2d const& point2_in_camera_lifted) const {
+auto CameraModel::distort(Eigen::Vector2d const& point2_in_camera_lifted) const
+    -> Eigen::Vector2d {
   return std::visit(
       [&](auto&& arg) -> Eigen::Vector2d {
         return arg.distort(point2_in_camera_lifted);
@@ -117,8 +117,8 @@ Eigen::Vector2d CameraModel::distort(
       model_);
 }
 
-Eigen::Matrix2d CameraModel::dxDistort(
-    Eigen::Vector2d const& point2_in_camera_lifted) const {
+auto CameraModel::dxDistort(
+    Eigen::Vector2d const& point2_in_camera_lifted) const -> Eigen::Matrix2d {
   return std::visit(
       [&](auto&& arg) -> Eigen::Matrix2d {
         return arg.dxDistort(point2_in_camera_lifted);
@@ -126,14 +126,15 @@ Eigen::Matrix2d CameraModel::dxDistort(
       model_);
 }
 
-Eigen::Vector2d CameraModel::undistort(
-    Eigen::Vector2d const& pixel_image) const {
+auto CameraModel::undistort(Eigen::Vector2d const& pixel_image) const
+    -> Eigen::Vector2d {
   return std::visit(
       [&](auto&& arg) -> Eigen::Vector2d { return arg.undistort(pixel_image); },
       model_);
 }
 
-[[nodiscard]] MutImage<Eigen::Vector2f> CameraModel::undistortTable() const {
+[[nodiscard]] auto CameraModel::undistortTable() const
+    -> MutImage<Eigen::Vector2f> {
   return std::visit(
       [](auto&& arg) -> MutImage<Eigen::Vector2f> {
         return arg.undistortTable();
@@ -141,8 +142,8 @@ Eigen::Vector2d CameraModel::undistort(
       model_);
 }
 
-Eigen::Matrix<double, 2, 3> CameraModel::dxCamProjX(
-    Eigen::Vector3d const& point_in_camera) const {
+auto CameraModel::dxCamProjX(Eigen::Vector3d const& point_in_camera) const
+    -> Eigen::Matrix<double, 2, 3> {
   return std::visit(
       [&](auto&& arg) -> Eigen::Matrix<double, 2, 3> {
         return arg.dxCamProjX(point_in_camera);
@@ -150,43 +151,43 @@ Eigen::Matrix<double, 2, 3> CameraModel::dxCamProjX(
       model_);
 }
 
-Eigen::Matrix<double, 2, 6> CameraModel::dxCamProjExpXPointAt0(
-    Eigen::Vector3d const& point_in_camera) const {
+auto CameraModel::dxCamProjExpXPointAt0(Eigen::Vector3d const& point_in_camera)
+    const -> Eigen::Matrix<double, 2, 6> {
   return std::visit(
       [&](auto&& arg) -> Eigen::Matrix<double, 2, 6> {
-        auto dx2 = Se3F64::dxExpXTimesPointAt0(point_in_camera);
+        auto dx2 = Isometry3F64::dxExpXTimesPointAt0(point_in_camera);
 
         return arg.dxCamProjX(point_in_camera) * dx2;
       },
       model_);
 }
 
-CameraModel CameraModel::subsampleDown() const {
+auto CameraModel::subsampleDown() const -> CameraModel {
   return CameraModel(std::visit(
       [](auto&& arg) -> CameraDistortionVariant { return arg.subsampleDown(); },
       this->model_));
 }
 
-CameraModel CameraModel::subsampleUp() const {
+auto CameraModel::subsampleUp() const -> CameraModel {
   return CameraModel(std::visit(
       [](auto&& arg) -> CameraDistortionVariant { return arg.subsampleUp(); },
       this->model_));
 }
 
-CameraModel CameraModel::binDown() const {
+auto CameraModel::binDown() const -> CameraModel {
   return CameraModel(std::visit(
       [](auto&& arg) -> CameraDistortionVariant { return arg.binDown(); },
       this->model_));
 }
 
-CameraModel CameraModel::binUp() const {
+auto CameraModel::binUp() const -> CameraModel {
   return CameraModel(std::visit(
       [](auto&& arg) -> CameraDistortionVariant { return arg.binUp(); },
       this->model_));
 }
 
-CameraModel CameraModel::roi(
-    Eigen::Vector2i const& top_left, ImageSize roi_size) const {
+auto CameraModel::roi(Eigen::Vector2i const& top_left, ImageSize roi_size) const
+    -> CameraModel {
   SOPHUS_ASSERT_LE(top_left.x() + roi_size.width, imageSize().width);
   SOPHUS_ASSERT_LE(top_left.y() + roi_size.height, imageSize().height);
   return CameraModel(std::visit(
@@ -196,25 +197,27 @@ CameraModel CameraModel::roi(
       this->model_));
 }
 
-bool CameraModel::contains(Eigen::Vector2i const& obs, int border) const {
+auto CameraModel::contains(Eigen::Vector2i const& obs, int border) const
+    -> bool {
   return std::visit(
       [&](auto&& arg) -> bool { return arg.contains(obs, border); },
       this->model_);
 }
 
-ImageSize const& CameraModel::imageSize() const {
+auto CameraModel::imageSize() const -> ImageSize const& {
   return std::visit(
       [](auto&& arg) -> ImageSize const& { return arg.imageSize(); },
       this->model_);
 }
 
-bool CameraModel::contains(Eigen::Vector2d const& obs, double border) const {
+auto CameraModel::contains(Eigen::Vector2d const& obs, double border) const
+    -> bool {
   return std::visit(
       [&](auto&& arg) -> bool { return arg.contains(obs, border); },
       this->model_);
 }
 
-CameraDistortionType CameraModel::distortionType() const {
+auto CameraModel::distortionType() const -> CameraDistortionType {
   return std::visit(
       [](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
@@ -233,11 +236,12 @@ CameraDistortionType CameraModel::distortionType() const {
       this->modelVariant());
 }
 
-CameraModel CameraModel::createDefaultPinholeModel(ImageSize image_size) {
+auto CameraModel::createDefaultPinholeModel(ImageSize image_size)
+    -> CameraModel {
   return CameraModel(::sophus::createDefaultPinholeModel(image_size));
 }
 
-CameraModel CameraModel::scale(ImageSize image_size) const {
+auto CameraModel::scale(ImageSize image_size) const -> CameraModel {
   return CameraModel(std::visit(
       [&image_size](auto&& arg) -> CameraDistortionVariant {
         return arg.scale(image_size);
@@ -245,7 +249,7 @@ CameraModel CameraModel::scale(ImageSize image_size) const {
       this->model_));
 }
 
-PinholeModel createDefaultPinholeModel(ImageSize image_size) {
+auto createDefaultPinholeModel(ImageSize image_size) -> PinholeModel {
   double const fx = image_size.width * 0.5;
   double const fy = fx;
   double const cx = (image_size.width - 1.0) * 0.5;
@@ -254,7 +258,7 @@ PinholeModel createDefaultPinholeModel(ImageSize image_size) {
   return PinholeModel(image_size, {fx, fy, cx, cy});
 }
 
-OrthographicModel createDefaultOrthoModel(ImageSize image_size) {
+auto createDefaultOrthoModel(ImageSize image_size) -> OrthographicModel {
   double const sx = 1.0;
   double const sy = 1.0;
   double const cx = 0.0;

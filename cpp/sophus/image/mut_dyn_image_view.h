@@ -33,7 +33,7 @@ class MutDynImageView : public DynImageView<TPredicate> {
 
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
-  [[nodiscard]] bool has() const noexcept {
+  [[nodiscard]] auto has() const noexcept -> bool {
     PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
     return expected_type == this->pixel_format_;
   }
@@ -41,17 +41,17 @@ class MutDynImageView : public DynImageView<TPredicate> {
   /// Returns v-th row pointer.
   ///
   /// Precondition: v must be in [0, height).
-  [[nodiscard]] uint8_t* rawMutRowPtr(int v) const {
+  [[nodiscard]] auto rawMutRowPtr(int v) const -> uint8_t* {
     return this->rawMutPtr() + v * this->layout_.pitchBytes();
   }
 
-  [[nodiscard]] uint8_t* rawMutPtr() const {
+  [[nodiscard]] auto rawMutPtr() const -> uint8_t* {
     return const_cast<uint8_t*>(this->rawPtr());
   }
 
   /// Returns subview with shared ownership semantics of whole image.
-  [[nodiscard]] MutDynImageView mutSubview(
-      Eigen::Vector2i uv, sophus::ImageSize size) const {
+  [[nodiscard]] auto mutSubview(
+      Eigen::Vector2i uv, sophus::ImageSize size) const -> MutDynImageView {
     SOPHUS_ASSERT(this->imageSize().contains(uv));
     SOPHUS_ASSERT_LE(uv.x() + size.width, this->layout_.width());
     SOPHUS_ASSERT_LE(uv.y() + size.height, this->layout_.height());
@@ -68,7 +68,7 @@ class MutDynImageView : public DynImageView<TPredicate> {
   ///
   /// Precondition: this->has<TPixel>()
   template <class TPixel>
-  [[nodiscard]] MutImageView<TPixel> mutImageView() const noexcept {
+  [[nodiscard]] auto mutImageView() const noexcept -> MutImageView<TPixel> {
     if (!this->has<TPixel>()) {
       PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
 

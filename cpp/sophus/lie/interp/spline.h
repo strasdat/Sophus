@@ -22,7 +22,7 @@ namespace sophus {
 template <class TScalar>
 class SplineBasisFunction {
  public:
-  static SOPHUS_FUNC Eigen::Matrix<TScalar, 3, 4> c() {
+  static Eigen::Matrix<TScalar, 3, 4> c() {
     Eigen::Matrix<TScalar, 3, 4> c;
     TScalar const o(0);
 
@@ -34,15 +34,14 @@ class SplineBasisFunction {
     return c;
   }
 
-  static SOPHUS_FUNC Eigen::Vector3<TScalar> b(TScalar const& u) {
+  static Eigen::Vector3<TScalar> b(TScalar const& u) {
     // SOPHUS_ASSERT(u >= TScalar(0), "but %", u);
     // SOPHUS_ASSERT(u < TScalar(1), "but %", u);
     TScalar u_square(u * u);
     return c() * Eigen::Vector4<TScalar>(TScalar(1), u, u_square, u * u_square);
   }
 
-  static SOPHUS_FUNC Eigen::Vector3<TScalar> dtB(
-      TScalar const& u, TScalar const& delta_t) {
+  static Eigen::Vector3<TScalar> dtB(TScalar const& u, TScalar const& delta_t) {
     // SOPHUS_ASSERT(u >= TScalar(0), "but %", u);
     // SOPHUS_ASSERT(u < TScalar(1), "but %", u);
     return (TScalar(1) / delta_t) * c() *
@@ -50,7 +49,7 @@ class SplineBasisFunction {
                TScalar(0), TScalar(1), TScalar(2) * u, TScalar(3) * u * u);
   }
 
-  static SOPHUS_FUNC Eigen::Vector3<TScalar> dt2B(
+  static Eigen::Vector3<TScalar> dt2B(
       TScalar const& u, TScalar const& delta_t) {
     // SOPHUS_ASSERT(u >= TScalar(0), "but %", u);
     // SOPHUS_ASSERT(u < TScalar(1), "but %", u);
@@ -314,12 +313,12 @@ class BasisSplineImpl {
 
   BasisSplineImpl(
       std::vector<LieGroup> const& parent_ts_control_point, double delta_t)
-      : parent_Ts_control_point_(parent_ts_control_point),
+      : parent_from_control_point_transforms_(parent_ts_control_point),
         delta_transform_(delta_t) {
     SOPHUS_ASSERT(
-        parent_Ts_control_point_.size() >= 2u,
+        parent_from_control_point_transforms_.size() >= 2u,
         ", but {}",
-        parent_Ts_control_point_.size());
+        parent_from_control_point_transforms_.size());
   }
 
   [[nodiscard]] LieGroup parentFromSpline(int i, double u) const {
@@ -327,10 +326,10 @@ class BasisSplineImpl {
     SOPHUS_ASSERT(
         i < this->getNumSegments(),
         "i = {};  this->getNumSegments() = {};  "
-        "parent_Ts_control_point_.size() = {}",
+        "parent_from_control_point_transforms_.size() = {}",
         i,
         this->getNumSegments(),
-        parent_Ts_control_point_.size());
+        parent_from_control_point_transforms_.size());
 
     SegmentCase segment_case =
         i == 0 ? SegmentCase::first
@@ -340,14 +339,15 @@ class BasisSplineImpl {
     int idx_prev = std::max(0, i - 1);
     int idx_0 = i;
     int idx_1 = i + 1;
-    int idx_2 = std::min(i + 2, int(this->parent_Ts_control_point_.size()) - 1);
+    int idx_2 = std::min(
+        i + 2, int(this->parent_from_control_point_transforms_.size()) - 1);
 
     return BasisSplineSegment<LieGroup>(
                segment_case,
-               parent_Ts_control_point_[idx_prev].data(),
-               parent_Ts_control_point_[idx_0].data(),
-               parent_Ts_control_point_[idx_1].data(),
-               parent_Ts_control_point_[idx_2].data())
+               parent_from_control_point_transforms_[idx_prev].data(),
+               parent_from_control_point_transforms_[idx_0].data(),
+               parent_from_control_point_transforms_[idx_1].data(),
+               parent_from_control_point_transforms_[idx_2].data())
         .parentFromSpline(u);
   }
 
@@ -356,10 +356,10 @@ class BasisSplineImpl {
     SOPHUS_ASSERT(
         i < this->getNumSegments(),
         "i = {};  this->getNumSegments() = {};  "
-        "parent_Ts_control_point_.size() = {}",
+        "parent_from_control_point_transforms_.size() = {}",
         i,
         this->getNumSegments(),
-        parent_Ts_control_point_.size());
+        parent_from_control_point_transforms_.size());
 
     SegmentCase segment_case =
         i == 0 ? SegmentCase::first
@@ -369,14 +369,15 @@ class BasisSplineImpl {
     int idx_prev = std::max(0, i - 1);
     int idx_0 = i;
     int idx_1 = i + 1;
-    int idx_2 = std::min(i + 2, int(this->parent_Ts_control_point_.size()) - 1);
+    int idx_2 = std::min(
+        i + 2, int(this->parent_from_control_point_transforms_.size()) - 1);
 
     return BasisSplineSegment<LieGroup>(
                segment_case,
-               parent_Ts_control_point_[idx_prev].data(),
-               parent_Ts_control_point_[idx_0].data(),
-               parent_Ts_control_point_[idx_1].data(),
-               parent_Ts_control_point_[idx_2].data())
+               parent_from_control_point_transforms_[idx_prev].data(),
+               parent_from_control_point_transforms_[idx_0].data(),
+               parent_from_control_point_transforms_[idx_1].data(),
+               parent_from_control_point_transforms_[idx_2].data())
         .dtParentFromSpline(u, delta_transform_);
   }
 
@@ -385,10 +386,10 @@ class BasisSplineImpl {
     SOPHUS_ASSERT(
         i < this->getNumSegments(),
         "i = {};  this->getNumSegments() = {};  "
-        "parent_Ts_control_point_.size() = {}",
+        "parent_from_control_point_transforms_.size() = {}",
         i,
         this->getNumSegments(),
-        parent_Ts_control_point_.size());
+        parent_from_control_point_transforms_.size());
 
     SegmentCase segment_case =
         i == 0 ? SegmentCase::first
@@ -398,33 +399,34 @@ class BasisSplineImpl {
     int idx_prev = std::max(0, i - 1);
     int idx_0 = i;
     int idx_1 = i + 1;
-    int idx_2 = std::min(i + 2, int(this->parent_Ts_control_point_.size()) - 1);
+    int idx_2 = std::min(
+        i + 2, int(this->parent_from_control_point_transforms_.size()) - 1);
 
     return BasisSplineSegment<LieGroup>(
                segment_case,
-               parent_Ts_control_point_[idx_prev].data(),
-               parent_Ts_control_point_[idx_0].data(),
-               parent_Ts_control_point_[idx_1].data(),
-               parent_Ts_control_point_[idx_2].data())
+               parent_from_control_point_transforms_[idx_prev].data(),
+               parent_from_control_point_transforms_[idx_0].data(),
+               parent_from_control_point_transforms_[idx_1].data(),
+               parent_from_control_point_transforms_[idx_2].data())
         .dt2ParentFromSpline(u, delta_transform_);
   }
 
   [[nodiscard]] std::vector<LieGroup> const& parentFromsControlPoint() const {
-    return parent_Ts_control_point_;
+    return parent_from_control_point_transforms_;
   }
 
   std::vector<LieGroup>& parentFromsControlPoint() {
-    return parent_Ts_control_point_;
+    return parent_from_control_point_transforms_;
   }
 
   [[nodiscard]] int getNumSegments() const {
-    return int(parent_Ts_control_point_.size()) - 1;
+    return int(parent_from_control_point_transforms_.size()) - 1;
   }
 
   [[nodiscard]] double deltaT() const { return delta_transform_; }
 
  private:
-  std::vector<LieGroup> parent_Ts_control_point_;
+  std::vector<LieGroup> parent_from_control_point_transforms_;
   double delta_transform_;
 };
 

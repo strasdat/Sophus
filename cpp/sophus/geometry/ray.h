@@ -9,11 +9,11 @@
 #pragma once
 
 #include "sophus/common/common.h"
-#include "sophus/geometry/unit_vector.h"
-#include "sophus/lie/se2.h"
-#include "sophus/lie/se3.h"
-#include "sophus/lie/sim2.h"
-#include "sophus/lie/sim3.h"
+#include "sophus/lie/isometry2.h"
+#include "sophus/lie/isometry3.h"
+#include "sophus/lie/similarity2.h"
+#include "sophus/lie/similarity3.h"
+#include "sophus/linalg/unit_vector.h"
 
 #include <Eigen/Dense>
 
@@ -42,19 +42,24 @@ class Ray {
       : origin_(origin), direction_(direction) {}
 
   Ray(Ray const&) = default;
-  Ray& operator=(Ray const&) = default;
+  auto operator=(Ray const&) -> Ray& = default;
 
-  [[nodiscard]] Eigen::Matrix<TScalar, kN, 1> const& origin() const {
+  [[nodiscard]] auto origin() const -> Eigen::Matrix<TScalar, kN, 1> const& {
     return origin_;
   }
-  [[nodiscard]] Eigen::Matrix<TScalar, kN, 1>& origin() { return origin_; }
+  [[nodiscard]] auto origin() -> Eigen::Matrix<TScalar, kN, 1>& {
+    return origin_;
+  }
 
-  [[nodiscard]] UnitVector<TScalar, kN> const& direction() const {
+  [[nodiscard]] auto direction() const -> UnitVector<TScalar, kN> const& {
     return direction_;
   }
-  [[nodiscard]] UnitVector<TScalar, kN>& direction() { return direction_; }
+  [[nodiscard]] auto direction() -> UnitVector<TScalar, kN>& {
+    return direction_;
+  }
 
-  [[nodiscard]] Eigen::Matrix<TScalar, kN, 1> pointAt(TScalar lambda) const {
+  [[nodiscard]] auto pointAt(TScalar lambda) const
+      -> Eigen::Matrix<TScalar, kN, 1> {
     return this->origin_ + lambda * this->direction_.vector();
   }
 
@@ -63,8 +68,8 @@ class Ray {
     Eigen::Matrix<TScalar, kN, 1> point;
   };
 
-  [[nodiscard]] std::optional<IntersectionResult> intersect(
-      Eigen::Hyperplane<TScalar, kN> const& plane) const {
+  [[nodiscard]] auto intersect(Eigen::Hyperplane<TScalar, kN> const& plane)
+      const -> std::optional<IntersectionResult> {
     using std::abs;
     TScalar dot_prod = plane.normal().dot(this->direction_.vector());
     if (abs(dot_prod) < sophus::kEpsilon<TScalar>) {
@@ -77,8 +82,8 @@ class Ray {
     return result;
   }
 
-  [[nodiscard]] Eigen::Matrix<TScalar, kN, 1> projection(
-      Eigen::Matrix<TScalar, kN, 1> const& point) const {
+  [[nodiscard]] auto projection(Eigen::Matrix<TScalar, kN, 1> const& point)
+      const -> Eigen::Matrix<TScalar, kN, 1> {
     return origin_ +
            direction_.getVector().dot(point - origin_) * direction_.vector();
   }
@@ -89,16 +94,18 @@ class Ray {
 };
 
 template <class TT>
-inline Ray<TT, 2> operator*(
-    Se2<TT> const& bar_from_foo, Ray<TT, 2> const& ray_foo) {
+inline auto operator*(
+    Isometry2<TT> const& bar_from_foo, Ray<TT, 2> const& ray_foo)
+    -> Ray<TT, 2> {
   return Ray<TT, 2>(
       bar_from_foo * ray_foo.origin(),
       bar_from_foo.so2() * ray_foo.direction());
 }
 
 template <class TT>
-inline Ray<TT, 3> operator*(
-    Se3<TT> const& bar_from_foo, Ray<TT, 3> const& ray_foo) {
+inline auto operator*(
+    Isometry3<TT> const& bar_from_foo, Ray<TT, 3> const& ray_foo)
+    -> Ray<TT, 3> {
   return Ray<TT, 3>(
       bar_from_foo * ray_foo.origin(),
       bar_from_foo.so3() * ray_foo.direction());
@@ -107,19 +114,22 @@ inline Ray<TT, 3> operator*(
 // Arbitrary 6-DoF transformation of a unit vector promotes it to a ray
 // having a potentially non-zero origin.
 template <class TT>
-inline Ray<TT, 3> operator*(
-    Se3<TT> const& bar_from_foo, UnitVector<TT, 3> const& v_foo) {
+inline auto operator*(
+    Isometry3<TT> const& bar_from_foo, UnitVector<TT, 3> const& v_foo)
+    -> Ray<TT, 3> {
   return Ray<TT, 3>(bar_from_foo.translation(), bar_from_foo.so3() * v_foo);
 }
 
 template <class TT>
-Ray2<TT> operator*(Sim2<TT> const& b_from_a, Ray2<TT> const& ray_a) {
+auto operator*(Similarity2<TT> const& b_from_a, Ray2<TT> const& ray_a)
+    -> Ray2<TT> {
   return Ray2<TT>(
       b_from_a * ray_a.origin(), b_from_a.rxso2() * ray_a.direction());
 }
 
 template <class TT>
-Ray3<TT> operator*(Sim3<TT> const& b_from_a, Ray3<TT> const& ray_a) {
+auto operator*(Similarity3<TT> const& b_from_a, Ray3<TT> const& ray_a)
+    -> Ray3<TT> {
   return Ray3<TT>(
       b_from_a * ray_a.origin(), b_from_a.rxso3() * ray_a.direction());
 }
@@ -141,8 +151,8 @@ struct ClosestApproachResult {
 /// measure. lambda0 and lambda1 may be positive or negative. If line_0 and
 /// line_1 are parallel, returns nullopt as no unique solution exists
 template <class TT>
-std::optional<ClosestApproachResult<TT>> closestApproachParameters(
-    Ray3<TT> const& line_0, Ray3<TT> const& line_1) {
+auto closestApproachParameters(Ray3<TT> const& line_0, Ray3<TT> const& line_1)
+    -> std::optional<ClosestApproachResult<TT>> {
   using std::abs;
   // Closest approach when line segment connecting closest points on each line
   // is perpendicular to both d0 and d1, thus:
@@ -184,8 +194,8 @@ std::optional<ClosestApproachResult<TT>> closestApproachParameters(
 /// If line_0 and line_1 are parallel, returns nullopt as no unique solution
 /// exists
 template <class TT>
-std::optional<Eigen::Vector3<TT>> closestApproach(
-    Ray3<TT> const& line_0, Ray3<TT> const& line_1) {
+auto closestApproach(Ray3<TT> const& line_0, Ray3<TT> const& line_1)
+    -> std::optional<Eigen::Vector3<TT>> {
   auto maybe_result = closestApproachParameters(line_0, line_1);
   if (!maybe_result) {
     return std::nullopt;

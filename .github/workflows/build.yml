@@ -112,6 +112,7 @@ jobs:
           ./compile_gcc.sh
         env:
           ROW_ACCESS: matrix.access
+          SOPHUS_CERES: On
         if: matrix.tests == 'unit_test' && matrix.compiler == 'gcc' &&  matrix.optional_features == 'ceres_proto'
 
       - name: Compile (clang)
@@ -130,6 +131,7 @@ jobs:
           ./compile_clang.sh
         env:
           ROW_ACCESS: matrix.access
+          SOPHUS_CERES: On
         if: matrix.tests == 'unit_test' && matrix.compiler == 'clang' &&  matrix.optional_features == 'ceres_proto'
 
       - name: Run unit tests

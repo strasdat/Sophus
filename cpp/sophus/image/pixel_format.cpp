@@ -10,13 +10,13 @@
 
 namespace sophus {
 
-bool operator==(PixelFormat const& lhs, PixelFormat const& rhs) {
+auto operator==(PixelFormat const& lhs, PixelFormat const& rhs) -> bool {
   return lhs.number_type == rhs.number_type &&
          lhs.num_channels == rhs.num_channels &&
          lhs.num_bytes_per_pixel_channel == rhs.num_bytes_per_pixel_channel;
 }
 
-std::ostream& operator<<(std::ostream& os, PixelFormat const& type) {
+auto operator<<(std::ostream& os, PixelFormat const& type) -> std::ostream& {
   std::string type_char = "?";
   switch (type.number_type) {
     case NumberType::fixed_point: {

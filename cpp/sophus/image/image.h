@@ -47,7 +47,8 @@ class Image : public ImageView<TPixel> {
   /// Creates contiguous copy from view.
   ///
   /// If view is not empty, memory allocation will happen.
-  [[nodiscard]] static Image makeCopyFrom(ImageView<TPixel> const& view) {
+  [[nodiscard]] static auto makeCopyFrom(ImageView<TPixel> const& view)
+      -> Image {
     return Image(MutImage<TPixel>::makeCopyFrom(view));
   }
 
@@ -55,8 +56,8 @@ class Image : public ImageView<TPixel> {
   ///
   /// Memory allocation will happen.
   template <class TUVOperation>
-  [[nodiscard]] static Image makeGenerative(
-      ImageSize size, TUVOperation const& uv_op) {
+  [[nodiscard]] static auto makeGenerative(
+      ImageSize size, TUVOperation const& uv_op) -> Image {
     MutImage<TPixel> mut_image(size);
     mut_image.generate(uv_op);
     return mut_image;
@@ -66,8 +67,8 @@ class Image : public ImageView<TPixel> {
   ///
   /// image(u, v) = unary_op(view(u, v));
   template <class TOtherPixel, class TUnaryOperation>
-  static Image makeFromTransform(
-      ImageView<TOtherPixel> view, TUnaryOperation const& unary_op) {
+  static auto makeFromTransform(
+      ImageView<TOtherPixel> view, TUnaryOperation const& unary_op) -> Image {
     return MutImage<TPixel>::makeFromTransform(view, unary_op);
   }
 
@@ -75,14 +76,14 @@ class Image : public ImageView<TPixel> {
   ///
   /// image(u, v) = binary_op(lhs(u, v), rhs(u, v));
   template <class TLhsPixel, class TRhsPixel, class TBinaryOperation>
-  static Image makeFromTransform(
+  static auto makeFromTransform(
       ImageView<TLhsPixel> lhs,
       ImageView<TRhsPixel> rhs,
-      TBinaryOperation const& binary_op) {
+      TBinaryOperation const& binary_op) -> Image {
     return MutImage<TPixel>::makeFromTransform(lhs, rhs, binary_op);
   }
 
-  [[nodiscard]] size_t useCount() const { return shared_.use_count(); }
+  [[nodiscard]] auto useCount() const -> size_t { return shared_.use_count(); }
 
   /// Sets Image instance to empty. Reduced use count by one.
   ///

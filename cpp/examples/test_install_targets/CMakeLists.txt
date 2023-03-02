@@ -46,7 +46,7 @@ foreach(example_src ${example_source2})
 )
 endforeach()
 
-if (BUILD_FARM_NG_PROTOS)
+if(${BUILD_FARM_NG_PROTOS})
   find_package(Protobuf REQUIRED)
   add_executable(compile_all_proto compile_all_proto.cpp)
   target_link_libraries(compile_all_proto PUBLIC
