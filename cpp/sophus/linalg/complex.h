@@ -90,6 +90,7 @@ template <class TScalar>
 class Complex {
  public:
   using Scalar = TScalar;
+  using Imag = Scalar;
   using Impl = ComplexImpl<Scalar>;
   static int constexpr kNumParams = 2;
 
@@ -119,6 +120,12 @@ class Complex {
   void setParams(Eigen::Vector<Scalar, kNumParams> const& params) {
     params_ = params;
   }
+
+  auto real() -> Scalar& { return params_[0]; }
+  [[nodiscard]] auto real() const -> Scalar const& { return params_[0]; }
+
+  auto imag() -> Scalar& { return params_[1]; }
+  [[nodiscard]] auto imag() const -> Scalar const& { return params_[1]; }
 
   auto operator+(Complex const& other) const -> Complex {
     return Complex::fromParams(Impl::addition(this->params_, other.params_));

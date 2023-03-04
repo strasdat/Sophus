@@ -12,67 +12,70 @@
 
 namespace sophus {
 
-Eigen::Quaterniond fromProto(proto::QuaternionF64 const& proto) {
-  Eigen::Quaterniond quat;
-  quat.vec() = fromProto(proto.imag());
-  quat.w() = proto.real();
+QuaternionF64 fromProto(proto::QuaternionF64 const& proto) {
+  QuaternionF64 quat;
+  quat.imag() = fromProto(proto.imag());
+  quat.real() = proto.real();
   return quat;
 }
 
-proto::QuaternionF64 toProto(Eigen::Quaterniond const& quat) {
+proto::QuaternionF64 toProto(QuaternionF64 const& quat) {
   proto::QuaternionF64 proto;
-  proto.set_real(quat.w());
-  *proto.mutable_imag() = toProto(quat.vec().eval());
+  proto.set_real(quat.real());
+  *proto.mutable_imag() = toProto(quat.imag().eval());
   return proto;
 }
 
-So2F64 fromProto(proto::So2F64 const& proto) { return So2F64(proto.theta()); }
+Rotation2F64 fromProto(proto::Rotation2F64 const& proto) {
+  return Rotation2F64(proto.theta());
+}
 
-proto::So2F64 toProto(sophus::So2F64 const& rotation) {
-  proto::So2F64 proto;
+proto::Rotation2F64 toProto(sophus::Rotation2F64 const& rotation) {
+  proto::Rotation2F64 proto;
   proto.set_theta(rotation.log()[0]);
   return proto;
 }
 
 Isometry2F64 fromProto(proto::Isometry2F64 const& proto) {
-  return Isometry2F64(fromProto(proto.so2()), fromProto(proto.translation()));
+  return Isometry2F64(
+      fromProto(proto.translation()), fromProto(proto.rotation()));
 }
 
 proto::Isometry2F64 toProto(Isometry2F64 const& pose) {
   proto::Isometry2F64 proto;
-  *proto.mutable_so2() = toProto(pose.so2());
-  *proto.mutable_translation() = toProto(pose.translation());
+  *proto.mutable_rotation() = toProto(pose.rotation());
+  *proto.mutable_translation() = toProto(pose.translation().eval());
   return proto;
 }
 
-Expected<So3F64> fromProto(proto::So3F64 const& proto) {
-  Eigen::Quaterniond quat = fromProto(proto.unit_quaternion());
+Expected<Rotation3F64> fromProto(proto::Rotation3F64 const& proto) {
+  QuaternionF64 quat = fromProto(proto.unit_quaternion());
   static double constexpr kEps = 1e-6;
   if (std::abs(quat.squaredNorm() - 1.0) > kEps) {
     return SOPHUS_UNEXPECTED(
         "quaternion norm ({}) is not close to 1:\n{}",
         quat.squaredNorm(),
-        quat.coeffs().transpose());
+        quat.params().transpose());
   }
 
-  return So3F64(quat);
+  return Rotation3F64::fromUnitQuaternion(quat);
 }
 
-proto::So3F64 toProto(sophus::So3F64 const& rotation) {
-  proto::So3F64 proto;
+proto::Rotation3F64 toProto(sophus::Rotation3F64 const& rotation) {
+  proto::Rotation3F64 proto;
   *proto.mutable_unit_quaternion() = toProto(rotation.unitQuaternion());
   return proto;
 }
 
 Expected<sophus::Isometry3F64> fromProto(proto::Isometry3F64 const& proto) {
-  SOPHUS_TRY(sophus::So3F64 so3, fromProto(proto.so3()));
-  return sophus::SE3d(so3, fromProto(proto.translation()));
+  SOPHUS_TRY(sophus::Rotation3F64 rotation, fromProto(proto.rotation()));
+  return Isometry3(fromProto(proto.translation()), rotation);
 }
 
 proto::Isometry3F64 toProto(Isometry3F64 const& pose) {
   proto::Isometry3F64 proto;
-  *proto.mutable_so3() = toProto(pose.so3());
-  *proto.mutable_translation() = toProto(pose.translation());
+  *proto.mutable_rotation() = toProto(pose.rotation());
+  *proto.mutable_translation() = toProto(pose.translation().eval());
   return proto;
 }
 
