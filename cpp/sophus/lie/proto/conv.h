@@ -16,17 +16,17 @@
 
 namespace sophus {
 
-Eigen::Quaterniond fromProto(proto::QuaternionF64 const& proto);
-proto::QuaternionF64 toProto(Eigen::Quaterniond const& quat);
+QuaternionF64 fromProto(proto::QuaternionF64 const& proto);
+proto::QuaternionF64 toProto(QuaternionF64 const& quat);
 
-Rotation2<double> fromProto(proto::So2F64 const& proto);
-proto::So2F64 toProto(Rotation2<double> const& rotation);
+Rotation2<double> fromProto(proto::Rotation2F64 const& proto);
+proto::Rotation2F64 toProto(Rotation2<double> const& rotation);
 
 Isometry2<double> fromProto(proto::Isometry2F64 const& proto);
 proto::Isometry2F64 toProto(Isometry2<double> const& pose);
 
-Expected<Rotation3<double>> fromProto(proto::So3F64 const& proto);
-proto::So3F64 toProto(Rotation3<double> const& rotation);
+Expected<Rotation3<double>> fromProto(proto::Rotation3F64 const& proto);
+proto::Rotation3F64 toProto(Rotation3<double> const& rotation);
 
 Expected<Isometry3<double>> fromProto(proto::Isometry3F64 const& proto);
 proto::Isometry3F64 toProto(Isometry3<double> const& pose);

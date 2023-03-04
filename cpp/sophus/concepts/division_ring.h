@@ -63,8 +63,11 @@ concept DivisionRingImpl =
 };
 
 template <class TT>
-concept DivisionRingConcept = DivisionRingImpl<typename TT::Impl> &&
-    requires(TT r, Eigen::Vector<typename TT::Scalar, TT::kNumParams> params) {
+concept DivisionRingConcept = DivisionRingImpl<typename TT::Impl> && requires(
+    TT r,
+    typename TT::Scalar real,
+    typename TT::Imag imag,
+    Eigen::Vector<typename TT::Scalar, TT::kNumParams> params) {
   // operations
   { r.operator+(r) } -> ::sophus::concepts::ConvertibleTo<TT>;
 
@@ -78,6 +81,10 @@ concept DivisionRingConcept = DivisionRingImpl<typename TT::Impl> &&
   { r.norm() } -> ::sophus::concepts::ConvertibleTo<typename TT::Scalar>;
 
   { r.squaredNorm() } -> ::sophus::concepts::ConvertibleTo<typename TT::Scalar>;
+
+  { r.real() } -> ::sophus::concepts::ConvertibleTo<typename TT::Scalar>;
+
+  { r.imag() } -> ::sophus::concepts::ConvertibleTo<typename TT::Imag>;
 };
 }  // namespace concepts
 }  // namespace sophus

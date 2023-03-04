@@ -88,6 +88,7 @@ template <class TScalar>
 class Quaternion {
  public:
   using Scalar = TScalar;
+  using Imag = Eigen::Vector<Scalar, 3>;
   using Impl = QuaternionImpl<Scalar>;
   static int constexpr kNumParams = 4;
 
@@ -122,6 +123,12 @@ class Quaternion {
     params_ = params;
   }
 
+  [[nodiscard]] auto real() const -> Scalar const& { return params_[3]; }
+  [[nodiscard]] auto real() -> Scalar& { return params_[3]; }
+
+  [[nodiscard]] auto imag() const { return params_.template head<3>(); }
+  [[nodiscard]] auto imag() { return params_.template head<3>(); }
+
   auto operator+(Quaternion const& other) const -> Quaternion {
     return Quaternion::fromParams(Impl::addition(this->params_, other.params_));
   }
@@ -151,5 +158,7 @@ class Quaternion {
   Quaternion(UninitTag /*unused*/) {}
   Eigen::Vector4<Scalar> params_;
 };
+
+using QuaternionF64 = Quaternion<double>;
 
 }  // namespace sophus

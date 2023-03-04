@@ -17,21 +17,21 @@ message QuaternionF64 {
   double real = 2;
 }
 
-message So2F64 {
+message Rotation2F64 {
   double theta = 1;
 }
 
 message Isometry2F64 {
-  So2F64 so2 = 1;
+  Rotation2F64 rotation = 1;
   Vec2F64 translation = 2;
 }
 
-message So3F64 {
+message Rotation3F64 {
   // Quaternion which is required to be unit lenght.
   QuaternionF64 unit_quaternion = 1;
 }
 
 message Isometry3F64 {
-  So3F64 so3 = 1;
+  Rotation3F64 rotation = 1;
   Vec3F64 translation = 2;
 }

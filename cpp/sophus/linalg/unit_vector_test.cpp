@@ -63,10 +63,10 @@ TEST(unitvec, manifold_prop_tests) {
 //       std::cerr << point_from.transpose() << std::endl;
 //       std::cerr << point_to.transpose() << std::endl;
 
-//       So3F64 to_rot_from = rotThroughPoints(
+//       Rotation3F64 to_rot_from = rotThroughPoints(
 //           UnitVector3F64::fromVectorAndNormalize(point_from),
 //           UnitVector3F64::fromVectorAndNormalize(point_to));
-//       So3F64 to_rot_from2 = rotThroughPoints(point_from, point_to);
+//       Rotation3F64 to_rot_from2 = rotThroughPoints(point_from, point_to);
 
 //       // Check that the resulting rotation can take ``from`` into a vector
 //       // collinear with ``to``
