@@ -24,6 +24,10 @@ class Group {
   static int constexpr kPointDim = Impl::kPointDim;
   static int constexpr kAmbientDim = Impl::kAmbientDim;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Point = Eigen::Vector<Scalar, kPointDim>;
+
   // constructors and factories
 
   Group() : params_(Impl::identityParams()) {}
@@ -31,8 +35,7 @@ class Group {
   Group(Group const&) = default;
   auto operator=(Group const&) -> Group& = default;
 
-  static auto fromParams(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> TDerived {
+  static auto fromParams(Params const& params) -> TDerived {
     TDerived g(UninitTag{});
     g.setParams(params);
     return g;
@@ -46,21 +49,19 @@ class Group {
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Eigen::Vector<Scalar, kDof> const& tangent) -> TDerived {
+  static auto exp(Tangent const& tangent) -> TDerived {
     return TDerived::fromParamsUnchecked(Impl::exp(tangent));
   }
 
-  [[nodiscard]] auto log() const -> Eigen::Vector<Scalar, kDof> {
-    return Impl::log(this->params_);
-  }
+  [[nodiscard]] auto log() const -> Tangent { return Impl::log(this->params_); }
 
-  static auto hat(Eigen::Vector<Scalar, kDof> const& tangent)
+  static auto hat(Tangent const& tangent)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     return Impl::hat(tangent);
   }
 
   static auto vee(Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> const& mat)
-      -> Eigen::Vector<Scalar, kDof> {
+      -> Tangent {
     return Impl::vee(mat);
   }
 
@@ -77,14 +78,11 @@ class Group {
 
   // Point actions
 
-  auto operator*(Eigen::Vector<Scalar, kPointDim> const& point) const
-      -> Eigen::Vector<Scalar, kPointDim> {
+  auto operator*(Point const& point) const -> Point {
     return Impl::action(this->params_, point);
   }
 
-  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point) {
-    return Impl::toAmbient(point);
-  }
+  static auto toAmbient(Point const& point) { return Impl::toAmbient(point); }
 
   auto operator*(UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
@@ -109,7 +107,7 @@ class Group {
     return Impl::adj(this->params_);
   }
 
-  // static auto dxExpX(Eigen::Vector<Scalar, kDof> const& tangent)
+  // static auto dxExpX(Tangent const& tangent)
   //     -> Eigen::Matrix<Scalar, kNumParams, kDof> {
   //   return Impl::dxExpX(tangent);
   // }
@@ -118,7 +116,7 @@ class Group {
     return Impl::dxExpXAt0();
   }
 
-  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto dxExpXTimesPointAt0(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return Impl::dxExpXTimesPointAt0(point);
   }
@@ -135,12 +133,11 @@ class Group {
 
   // for tests
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
+  static auto tangentExamples() -> std::vector<Tangent> {
     return Impl::tangentExamples();
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
+  static auto paramsExamples() -> std::vector<Params> {
     return Impl::paramsExamples();
   }
 
@@ -152,23 +149,19 @@ class Group {
     return out;
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
+  static auto invalidParamsExamples() -> std::vector<Params> {
     return Impl::invalidParamsExamples();
   }
 
   // getters and setters
 
-  [[nodiscard]] auto params() const
-      -> Eigen::Vector<Scalar, kNumParams> const& {
-    return this->params_;
-  }
+  [[nodiscard]] auto params() const -> Params const& { return this->params_; }
 
   [[nodiscard]] auto ptr() const { return this->params_.data(); }
 
   [[nodiscard]] auto unsafeMutPtr() { return this->params_.data(); }
 
-  void setParams(Eigen::Vector<Scalar, kNumParams> const& params) {
+  void setParams(Params const& params) {
     // Hack to get unexpected error message on failure.
     auto maybe_valid = Impl::areParamsValid(params);
     SOPHUS_UNWRAP(maybe_valid);
@@ -178,18 +171,15 @@ class Group {
  protected:
   explicit Group(UninitTag /*unused*/) {}
 
-  static auto fromParamsUnchecked(
-      Eigen::Vector<Scalar, kNumParams> const& params) -> TDerived {
+  static auto fromParamsUnchecked(Params const& params) -> TDerived {
     TDerived g(UninitTag{});
     g.setParamsUnchecked(params);
     return g;
   }
 
-  void setParamsUnchecked(Eigen::Vector<Scalar, kNumParams> const& params) {
-    this->params_ = params;
-  }
+  void setParamsUnchecked(Params const& params) { this->params_ = params; }
 
-  Eigen::Vector<Scalar, kNumParams> params_;
+  Params params_;
 };
 
 }  // namespace lie

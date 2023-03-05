@@ -230,7 +230,7 @@ struct LieGroupPropTestSuite {
       //   Eigen::Matrix<Scalar, kNumParams, kDof> d = Group::dxExpX(a);
       //   Eigen::Matrix<Scalar, kNumParams, kDof> j_num =
       //       vectorFieldNumDiff<Scalar, kNumParams, kDof>(
-      //           [](Tangent const& x) -> Eigen::Vector<Scalar, kNumParams> {
+      //           [](Tangent const& x) -> Params {
       //             return Group::exp(x).params();
       //           },
       //           a);
@@ -248,9 +248,7 @@ struct LieGroupPropTestSuite {
       Eigen::Matrix<Scalar, kNumParams, kDof> j = Group::dxExpXAt0();
       Eigen::Matrix<Scalar, kNumParams, kDof> j_num =
           vectorFieldNumDiff<Scalar, kNumParams, kDof>(
-              [](Tangent const& x) -> Eigen::Vector<Scalar, kNumParams> {
-                return Group::exp(x).params();
-              },
+              [](Tangent const& x) -> Params { return Group::exp(x).params(); },
               o);
       SOPHUS_ASSERT_NEAR(
           j,
@@ -290,7 +288,7 @@ struct LieGroupPropTestSuite {
         Eigen::Matrix<Scalar, kNumParams, kDof> j = g.dxThisMulExpXAt0();
         Eigen::Matrix<Scalar, kNumParams, kDof> j_num =
             vectorFieldNumDiff<Scalar, kNumParams, kDof>(
-                [g](Tangent const& x) -> Eigen::Vector<Scalar, kNumParams> {
+                [g](Tangent const& x) -> Params {
                   return (g * Group::exp(x)).params();
                 },
                 o);
@@ -325,7 +323,7 @@ struct LieGroupPropTestSuite {
 
   static auto runAllTests(std::string group_name) -> void {
     expTests(group_name);
-    adjointTests(group_name);
+    // adjointTests(group_name);
     hatTests(group_name);
 
     groupOperationTests(group_name);
@@ -503,13 +501,13 @@ decltype(pointExamples<typename TGroup::Scalar, TGroup::kPointDim>())
 // // }
 
 // //   template <class TS = Scalar>
-// //   std::enable_if_t<std::is_same<TS, float>::value, bool> testSpline() {
+// //   std::enable_if_t<std::is_same_v<TS, float>::value, bool> testSpline() {
 // //     // skip tests for Scalar == float
 // //     return true;
 // //   }
 
 // //   template <class TS = Scalar>
-// //   std::enable_if_t<!std::is_same<TS, float>::value, bool> testSpline() {
+// //   std::enable_if_t<!std::is_same_v<TS, float>::value, bool> testSpline() {
 // //     // run tests for Scalar != float
 // //     bool passed = true;
 

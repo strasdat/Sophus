@@ -20,6 +20,7 @@ if(${BUILD_SOPHUS_TESTS})
     find_package(Ceres 2.1.0 REQUIRED)
     foreach(test_basename
       ceres
+      manifold
     )
     farm_ng_add_test(${test_basename}
                           PARENT_LIBRARY sophus_ceres

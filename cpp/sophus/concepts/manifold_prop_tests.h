@@ -20,19 +20,20 @@ struct ManifoldPropTestSuite {
   static int constexpr kDof = Manifold::kDof;
   static int constexpr kNumParams = Manifold::kNumParams;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+
   static void oplusOMinusRoundTripTest(std::string manifold_name) {
     auto params_examples = Manifold::paramsExamples();
     auto tangent_examples = Manifold::tangentExamples();
 
     for (size_t params_id = 0; params_id < params_examples.size();
          ++params_id) {
-      Eigen::Vector<Scalar, kNumParams> params =
-          SOPHUS_AT(params_examples, params_id);
+      Params params = SOPHUS_AT(params_examples, params_id);
       Manifold a = Manifold::fromParams(params);
       for (size_t tangent_id = 0; tangent_id < tangent_examples.size();
            ++tangent_id) {
-        Eigen::Vector<Scalar, kDof> delta =
-            SOPHUS_AT(tangent_examples, tangent_id);
+        Tangent delta = SOPHUS_AT(tangent_examples, tangent_id);
         Manifold b = a.oplus(delta);
         SOPHUS_ASSERT_NEAR(
             a.ominus(b),

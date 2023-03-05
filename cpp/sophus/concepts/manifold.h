@@ -13,30 +13,20 @@ namespace sophus {
 namespace concepts {
 
 template <class TT>
-concept ManifoldImpl = ParamsImpl<TT> && TangentImpl<TT> && requires(
-    Eigen::Vector<typename TT::Scalar, TT::kDof> tangent,
-    Eigen::Vector<typename TT::Scalar, TT::kNumParams> params) {
-  {
-    TT::oplus(params, tangent)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+concept ManifoldImpl = ParamsImpl<TT> && TangentImpl<TT> &&
+    requires(typename TT::Tangent tangent, typename TT::Params params) {
+  { TT::oplus(params, tangent) } -> ConvertibleTo<typename TT::Params>;
 
-  {
-    TT::ominus(params, params)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kDof>>;
+  { TT::ominus(params, params) } -> ConvertibleTo<typename TT::Tangent>;
 };
 
 template <class TT>
 concept Manifold = ParamsConcept<TT> && ParamsImpl<TT> && TangentImpl<TT> &&
-    requires(
-        TT m,
-        Eigen::Vector<typename TT::Scalar, TT::kDof> tangent,
-        Eigen::Vector<typename TT::Scalar, TT::kNumParams> params) {
+    requires(TT m, typename TT::Tangent tangent, typename TT::Params params) {
   // Manifold concepts
   { m.oplus(tangent) } -> ConvertibleTo<TT>;
 
-  {
-    m.ominus(m)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kDof>>;
+  { m.ominus(m) } -> ConvertibleTo<typename TT::Tangent>;
 };
 
 }  // namespace concepts

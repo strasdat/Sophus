@@ -35,14 +35,17 @@ class Rotation2Impl {
   static int const kPointDim = 2;
   static int const kAmbientDim = 2;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Point = Eigen::Vector<Scalar, kPointDim>;
+
   // constructors and factories
 
-  static auto identityParams() -> Eigen::Vector<Scalar, kNumParams> {
+  static auto identityParams() -> Params {
     return Eigen::Vector<Scalar, 2>(1.0, 0.0);
   }
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& unit_complex)
+  static auto areParamsValid(Params const& unit_complex)
       -> sophus::Expected<Success> {
     static const Scalar kThr = kEpsilon<Scalar>;
     const Scalar squared_norm = unit_complex.squaredNorm();
@@ -61,20 +64,18 @@ class Rotation2Impl {
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Eigen::Vector<Scalar, kDof> const& angle)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto exp(Tangent const& angle) -> Params {
     using std::cos;
     using std::sin;
     return Eigen::Vector<Scalar, 2>(cos(angle[0]), sin(angle[0]));
   }
 
-  static auto log(Eigen::Vector<Scalar, kNumParams> const& unit_complex)
-      -> Eigen::Vector<Scalar, kDof> {
+  static auto log(Params const& unit_complex) -> Tangent {
     using std::atan2;
     return Eigen::Vector<Scalar, 1>{atan2(unit_complex.y(), unit_complex.x())};
   }
 
-  static auto hat(Eigen::Vector<Scalar, kDof> const& angle)
+  static auto hat(Tangent const& angle)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     return Eigen::Matrix<Scalar, 2, 2>{{0, -angle[0]}, {angle[0], 0}};
   }
@@ -84,23 +85,19 @@ class Rotation2Impl {
     return Eigen::Matrix<Scalar, kDof, 1>{mat(1, 0)};
   }
 
-  static auto adj(Eigen::Vector<Scalar, kNumParams> const& /*unused*/)
+  static auto adj(Params const& /*unused*/)
       -> Eigen::Matrix<Scalar, kDof, kDof> {
     return Eigen::Matrix<Scalar, 1, 1>::Identity();
   }
 
   // group operations
 
-  static auto inverse(Eigen::Vector<Scalar, kNumParams> const& unit_complex)
-      -> Eigen::Vector<Scalar, kNumParams> {
-    return Eigen::Vector<Scalar, kNumParams>(
-        unit_complex.x(), -unit_complex.y());
+  static auto inverse(Params const& unit_complex) -> Params {
+    return Params(unit_complex.x(), -unit_complex.y());
   }
 
-  static auto multiplication(
-      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
-      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
+      -> Params {
     auto result = Complex::multiplication(lhs_params, rhs_params);
     Scalar const squared_norm = result.squaredNorm();
 
@@ -119,20 +116,17 @@ class Rotation2Impl {
   }
 
   // Point actions
-  static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& unit_complex,
-      Eigen::Vector<Scalar, kPointDim> const& point)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto action(Params const& unit_complex, Point const& point) -> Point {
     return Complex::multiplication(unit_complex, point);
   }
 
-  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
   }
 
   static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& unit_complex,
+      Params const& unit_complex,
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromParams(
@@ -141,23 +135,20 @@ class Rotation2Impl {
 
   // matrices
 
-  static auto compactMatrix(
-      Eigen::Vector<Scalar, kNumParams> const& unit_complex)
+  static auto compactMatrix(Params const& unit_complex)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return Eigen::Matrix<Scalar, 2, 2>{
         {unit_complex.x(), -unit_complex.y()},
         {unit_complex.y(), unit_complex.x()}};
   }
 
-  static auto matrix(Eigen::Vector<Scalar, kNumParams> const& unit_complex)
+  static auto matrix(Params const& unit_complex)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return compactMatrix(unit_complex);
   }
 
   // Sub-group concepts
-  static auto matV(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kDof> const& theta)
+  static auto matV(Params const& params, Tangent const& theta)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     Scalar sin_theta_by_theta;
     Scalar one_minus_cos_theta_by_theta;
@@ -177,9 +168,7 @@ class Rotation2Impl {
          {one_minus_cos_theta_by_theta, sin_theta_by_theta}});
   }
 
-  static auto matVInverse(
-      Eigen::Vector<Scalar, kNumParams> const& z,
-      Eigen::Vector<Scalar, kDof> const& theta)
+  static auto matVInverse(Params const& z, Tangent const& theta)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     Scalar halftheta = Scalar(0.5) * theta[0];
     Scalar halftheta_by_tan_of_halftheta;
@@ -197,16 +186,14 @@ class Rotation2Impl {
     return v_inv;
   }
 
-  static auto topRightAdj(
-      Eigen::Vector<Scalar, kNumParams> const& /*unused*/,
-      Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto topRightAdj(Params const& /*unused*/, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return Eigen::Matrix<Scalar, 2, 1>(point[1], -point[0]);
   }
 
   // derivatives
 
-  static auto dxExpX(Eigen::Vector<Scalar, kDof> const& theta)
+  static auto dxExpX(Tangent const& theta)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     using std::cos;
     using std::sin;
@@ -218,53 +205,49 @@ class Rotation2Impl {
     return Eigen::Matrix<Scalar, kNumParams, kDof>(0.0, 1.0);
   }
 
-  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto dxExpXTimesPointAt0(Point const& point)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     return Eigen::Matrix<Scalar, 2, 1>(-point[1], point[0]);
   }
 
-  static auto dxThisMulExpXAt0(
-      Eigen::Vector<Scalar, kNumParams> const& unit_complex)
+  static auto dxThisMulExpXAt0(Params const& unit_complex)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     return -Eigen::Matrix<Scalar, 2, 1>(unit_complex[1], -unit_complex[0]);
   }
 
-  static auto dxLogThisInvTimesXAtThis(
-      Eigen::Vector<Scalar, kNumParams> const& unit_complex)
+  static auto dxLogThisInvTimesXAtThis(Params const& unit_complex)
       -> Eigen::Matrix<Scalar, kDof, kNumParams> {
     return Eigen::Matrix<Scalar, 1, 2>(-unit_complex[1], unit_complex[0]);
   }
 
   // for tests
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
-    return std::vector<Eigen::Vector<Scalar, kDof>>({
-        Eigen::Vector<Scalar, kDof>{0.0},
-        Eigen::Vector<Scalar, kDof>{0.00001},
-        Eigen::Vector<Scalar, kDof>{1.0},
-        Eigen::Vector<Scalar, kDof>{-1.0},
-        Eigen::Vector<Scalar, kDof>{5.0},
-        Eigen::Vector<Scalar, kDof>{0.5 * kPi<Scalar>},
-        Eigen::Vector<Scalar, kDof>{0.5 * kPi<Scalar> + 0.00001},
+  static auto tangentExamples() -> std::vector<Tangent> {
+    return std::vector<Tangent>({
+        Tangent{0.0},
+        Tangent{0.00001},
+        Tangent{1.0},
+        Tangent{-1.0},
+        Tangent{5.0},
+        Tangent{0.5 * kPi<Scalar>},
+        Tangent{0.5 * kPi<Scalar> + 0.00001},
     });
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
-        Rotation2Impl::exp(Eigen::Vector<Scalar, kDof>{0.0}),
-        Rotation2Impl::exp(Eigen::Vector<Scalar, kDof>{1.0}),
-        Rotation2Impl::exp(Eigen::Vector<Scalar, kDof>{0.5 * kPi<Scalar>}),
-        Rotation2Impl::exp(Eigen::Vector<Scalar, kDof>{kPi<Scalar>}),
+  static auto paramsExamples() -> std::vector<Params> {
+    return std::vector<Params>({
+        Rotation2Impl::exp(Tangent{0.0}),
+        Rotation2Impl::exp(Tangent{1.0}),
+        Rotation2Impl::exp(Tangent{0.5 * kPi<Scalar>}),
+        Rotation2Impl::exp(Tangent{kPi<Scalar>}),
     });
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
-        Eigen::Vector<Scalar, kNumParams>::Zero(),
-        Eigen::Vector<Scalar, kNumParams>::Ones(),
-        2.0 * Eigen::Vector<Scalar, kNumParams>::UnitX(),
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>({
+        Params::Zero(),
+        Params::Ones(),
+        2.0 * Params::UnitX(),
     });
   }
 };

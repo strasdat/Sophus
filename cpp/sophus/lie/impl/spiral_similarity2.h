@@ -36,14 +36,17 @@ class SpiralSimilarity2Impl {
   static int const kPointDim = 2;
   static int const kAmbientDim = 2;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Point = Eigen::Vector<Scalar, kPointDim>;
+
   // constructors and factories
 
-  static auto identityParams() -> Eigen::Vector<Scalar, kNumParams> {
+  static auto identityParams() -> Params {
     return Eigen::Vector<Scalar, 2>(1.0, 0.0);
   }
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_complex)
+  static auto areParamsValid(Params const& non_zero_complex)
       -> sophus::Expected<Success> {
     static const Scalar kThr = kEpsilon<Scalar> * kEpsilon<Scalar>;
     const Scalar squared_norm = non_zero_complex.squaredNorm();
@@ -62,8 +65,7 @@ class SpiralSimilarity2Impl {
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Eigen::Vector<Scalar, kDof> const& angle_logscale)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto exp(Tangent const& angle_logscale) -> Params {
     using std::exp;
     using std::max;
     using std::min;
@@ -79,16 +81,15 @@ class SpiralSimilarity2Impl {
     return z;
   }
 
-  static auto log(Eigen::Vector<Scalar, kNumParams> const& complex)
-      -> Eigen::Vector<Scalar, kDof> {
+  static auto log(Params const& complex) -> Tangent {
     using std::log;
-    Eigen::Vector<Scalar, kDof> theta_sigma;
+    Tangent theta_sigma;
     theta_sigma[0] = Rotation2Impl<Scalar>::log(complex)[0];
     theta_sigma[1] = log(complex.norm());
     return theta_sigma;
   }
 
-  static auto hat(Eigen::Vector<Scalar, kDof> const& angle_logscale)
+  static auto hat(Tangent const& angle_logscale)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     return Eigen::Matrix<Scalar, 2, 2>{
         {angle_logscale[1], -angle_logscale[0]},
@@ -100,25 +101,22 @@ class SpiralSimilarity2Impl {
     return Eigen::Matrix<Scalar, kDof, 1>{mat(1, 0), mat(0, 0)};
   }
 
-  static auto adj(Eigen::Vector<Scalar, kNumParams> const& /*unused*/)
+  static auto adj(Params const& /*unused*/)
       -> Eigen::Matrix<Scalar, kDof, kDof> {
     return Eigen::Matrix<Scalar, 2, 2>::Identity();
   }
 
   // group operations
 
-  static auto inverse(Eigen::Vector<Scalar, kNumParams> const& non_zero_complex)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto inverse(Params const& non_zero_complex) -> Params {
     Scalar squared_scale = non_zero_complex.squaredNorm();
-    return Eigen::Vector<Scalar, kNumParams>(
+    return Params(
         non_zero_complex.x() / squared_scale,
         -non_zero_complex.y() / squared_scale);
   }
 
-  static auto multiplication(
-      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
-      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
+      -> Params {
     auto result = Complex::multiplication(lhs_params, rhs_params);
     Scalar const squared_scale = result.squaredNorm();
 
@@ -136,20 +134,18 @@ class SpiralSimilarity2Impl {
   }
 
   // Point actions
-  static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_complex,
-      Eigen::Vector<Scalar, kPointDim> const& point)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto action(Params const& non_zero_complex, Point const& point)
+      -> Point {
     return matrix(non_zero_complex) * point;
   }
 
-  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
   }
 
   static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat,
+      Params const& non_zero_quat,
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromParams(
@@ -159,23 +155,21 @@ class SpiralSimilarity2Impl {
 
   // matrices
 
-  static auto compactMatrix(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_complex)
+  static auto compactMatrix(Params const& non_zero_complex)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return Eigen::Matrix<Scalar, 2, 2>{
         {non_zero_complex.x(), -non_zero_complex.y()},
         {non_zero_complex.y(), non_zero_complex.x()}};
   }
 
-  static auto matrix(Eigen::Vector<Scalar, kNumParams> const& non_zero_complex)
+  static auto matrix(Params const& non_zero_complex)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return compactMatrix(non_zero_complex);
   }
 
   // Sub-group concepts
   static auto matV(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_complex,
-      Eigen::Vector<Scalar, kDof> const& angle_logscale)
+      Params const& non_zero_complex, Tangent const& angle_logscale)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return details::calcW<Scalar, 2>(
         Rotation2Impl<Scalar>::hat(angle_logscale.template head<1>()),
@@ -184,8 +178,7 @@ class SpiralSimilarity2Impl {
   }
 
   static auto matVInverse(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_complex,
-      Eigen::Vector<Scalar, kDof> const& angle_logscale)
+      Params const& non_zero_complex, Tangent const& angle_logscale)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return details::calcWInv<Scalar, 2>(
         Rotation2Impl<Scalar>::hat(angle_logscale.template head<1>()),
@@ -194,9 +187,7 @@ class SpiralSimilarity2Impl {
         non_zero_complex.norm());
   }
 
-  static auto topRightAdj(
-      Eigen::Vector<Scalar, kNumParams> const& /*unused*/,
-      Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto topRightAdj(Params const& /*unused*/, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return Eigen::Matrix<Scalar, 2, 2>{
         {point[1], -point[0]}, {-point[0], -point[1]}};
@@ -204,7 +195,7 @@ class SpiralSimilarity2Impl {
 
   // derivatives
 
-  static auto dxExpX(Eigen::Vector<Scalar, kDof> const& a)
+  static auto dxExpX(Tangent const& a)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     using std::cos;
     using std::exp;
@@ -231,15 +222,14 @@ class SpiralSimilarity2Impl {
     return d;
   }
 
-  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto dxExpXTimesPointAt0(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     Eigen::Matrix<Scalar, 2, 2> d;
     d << Rotation2Impl<Scalar>::dxExpXTimesPointAt0(point), point;
     return d;
   }
 
-  static auto dxThisMulExpXAt0(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_complex)
+  static auto dxThisMulExpXAt0(Params const& non_zero_complex)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     Eigen::Matrix<Scalar, 2, 2> d;
     // clang-format off
@@ -249,8 +239,7 @@ class SpiralSimilarity2Impl {
     return d;
   }
 
-  static auto dxLogThisInvTimesXAtThis(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_complex)
+  static auto dxLogThisInvTimesXAtThis(Params const& non_zero_complex)
       -> Eigen::Matrix<Scalar, kDof, kNumParams> {
     Eigen::Matrix<Scalar, 2, 2> d;
     const Scalar norm_sq_inv = Scalar(1.) / non_zero_complex.squaredNorm();
@@ -263,21 +252,20 @@ class SpiralSimilarity2Impl {
 
   // for tests
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
-    return std::vector<Eigen::Vector<Scalar, kDof>>({
-        Eigen::Vector<Scalar, kDof>{0.2, 1},
-        Eigen::Vector<Scalar, kDof>{0.2, 1.1},
-        Eigen::Vector<Scalar, kDof>{0.0, 1.1},
-        Eigen::Vector<Scalar, kDof>{0.00001, 0},
-        Eigen::Vector<Scalar, kDof>{0.00001, 0.00001},
-        Eigen::Vector<Scalar, kDof>{0.5 * kPi<Scalar>, 0.9},
-        Eigen::Vector<Scalar, kDof>{0.5 * kPi<Scalar> + 0.00001, 0.2},
+  static auto tangentExamples() -> std::vector<Tangent> {
+    return std::vector<Tangent>({
+        Tangent{0.2, 1},
+        Tangent{0.2, 1.1},
+        Tangent{0.0, 1.1},
+        Tangent{0.00001, 0},
+        Tangent{0.00001, 0.00001},
+        Tangent{0.5 * kPi<Scalar>, 0.9},
+        Tangent{0.5 * kPi<Scalar> + 0.00001, 0.2},
     });
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
+  static auto paramsExamples() -> std::vector<Params> {
+    return std::vector<Params>({
         SpiralSimilarity2Impl::exp({0.2, 1}),
         SpiralSimilarity2Impl::exp({0.2, 1.1}),
         SpiralSimilarity2Impl::exp({0.0, 1.1}),
@@ -288,12 +276,11 @@ class SpiralSimilarity2Impl {
     });
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
-        Eigen::Vector<Scalar, kNumParams>::Zero(),
-        -Eigen::Vector<Scalar, kNumParams>::Ones(),
-        -Eigen::Vector<Scalar, kNumParams>::UnitX(),
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>({
+        Params::Zero(),
+        -Params::Ones(),
+        -Params::UnitX(),
     });
   }
 };
