@@ -23,11 +23,8 @@ namespace accessors {
 
 template <class TT>
 concept Translation = LieGroup<TT> &&
-    ConstructibleFrom<TT, Eigen::Vector<typename TT::Scalar, TT::kPointDim>> &&
-    requires(TT g) {
-  {
-    g.translation()
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kPointDim>>;
+    ConstructibleFrom<TT, typename TT::Point> && requires(TT g) {
+  { g.translation() } -> ConvertibleTo<typename TT::Point>;
 };
 
 template <class TT>
@@ -57,27 +54,23 @@ concept TxTyTz = requires(typename TT::Scalar s) {
 };
 
 template <class TT>
-concept Isometry =
-    LieGroup<TT> && Translation<TT> &&
-    ConstructibleFrom<TT, typename TT::Rotation> && ConstructibleFrom < TT,
-        Eigen::Vector<typename TT::Scalar, TT::kPointDim>,
-typename TT::Rotation > &&requires(TT g, typename TT::Rotation rotation) {
+concept Isometry = LieGroup<TT> && Translation<TT> &&
+    ConstructibleFrom<TT, typename TT::Rotation> &&
+    ConstructibleFrom<TT, typename TT::Point, typename TT::Rotation> &&
+    requires(TT g, typename TT::Rotation rotation) {
   { g.rotation() } -> ConvertibleTo<typename TT::Rotation>;
   {g.setRotation(rotation)};
 };
 
 template <class TT>
-concept Similarity =
-    LieGroup<TT> && Translation<TT> &&
-    ConstructibleFrom<TT, typename TT::Isometry> && ConstructibleFrom < TT,
-        Eigen::Vector<typename TT::Scalar, TT::kPointDim>,
-typename TT::Rotation,
-    typename TT::Scalar >
-        &&ConstructibleFrom<TT, typename TT::SpiralSimilarity>&&
-            ConstructibleFrom<
-                TT,
-                Eigen::Vector<typename TT::Scalar, TT::kPointDim>,
-                typename TT::SpiralSimilarity>;
+concept Similarity = LieGroup<TT> && Translation<TT> &&
+    ConstructibleFrom<TT, typename TT::Isometry> && ConstructibleFrom<
+        TT,
+        typename TT::Point,
+        typename TT::Rotation,
+        typename TT::Scalar> &&
+    ConstructibleFrom<TT, typename TT::SpiralSimilarity> &&
+    ConstructibleFrom<TT, typename TT::Point, typename TT::SpiralSimilarity>;
 
 template <class TT>
 concept SpiralSimilarity = Rotation<TT> &&

@@ -35,14 +35,17 @@ class SpiralSimilarity3Impl {
   static int const kPointDim = 3;
   static int const kAmbientDim = 3;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Point = Eigen::Vector<Scalar, kPointDim>;
+
   // constructors and factories
 
-  static auto identityParams() -> Eigen::Vector<Scalar, kNumParams> {
+  static auto identityParams() -> Params {
     return Eigen::Vector<Scalar, 4>(0.0, 0.0, 0.0, 1.0);
   }
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+  static auto areParamsValid(Params const& non_zero_quat)
       -> sophus::Expected<Success> {
     static const Scalar kThr = kEpsilon<Scalar> * kEpsilon<Scalar>;
     const Scalar squared_norm = non_zero_quat.squaredNorm();
@@ -61,8 +64,7 @@ class SpiralSimilarity3Impl {
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Eigen::Vector<Scalar, kDof> const& omega_logscale)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto exp(Tangent const& omega_logscale) -> Params {
     using std::exp;
     using std::max;
     using std::min;
@@ -74,25 +76,23 @@ class SpiralSimilarity3Impl {
     scale = max(scale, kEpsilonPlus<Scalar>);
     scale = min(scale, Scalar(1.) / kEpsilonPlus<Scalar>);
     Scalar sqrt_scale = sqrt(scale);
-    Eigen::Vector<Scalar, kNumParams> quat =
-        Rotation3Impl<Scalar>::exp(vec_omega);
+    Params quat = Rotation3Impl<Scalar>::exp(vec_omega);
     quat *= sqrt_scale;
     return quat;
   }
 
-  static auto log(Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
-      -> Eigen::Vector<Scalar, kDof> {
+  static auto log(Params const& non_zero_quat) -> Tangent {
     using std::log;
 
     Scalar scale = non_zero_quat.squaredNorm();
-    Eigen::Vector<Scalar, kDof> omega_and_logscale;
+    Tangent omega_and_logscale;
     omega_and_logscale.template head<3>() =
         Rotation3Impl<Scalar>::log(non_zero_quat.normalized());
     omega_and_logscale[3] = log(scale);
     return omega_and_logscale;
   }
 
-  static auto hat(Eigen::Vector<Scalar, kDof> const& omega_logscale)
+  static auto hat(Tangent const& omega_logscale)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     return Eigen::Matrix<Scalar, 3, 3>{
         {+omega_logscale(3), -omega_logscale(2), +omega_logscale(1)},
@@ -106,7 +106,7 @@ class SpiralSimilarity3Impl {
         mat(2, 1), mat(0, 2), mat(1, 0), mat(0, 0)};
   }
 
-  static auto adj(Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+  static auto adj(Params const& non_zero_quat)
       -> Eigen::Matrix<Scalar, kDof, kDof> {
     Eigen::Matrix<Scalar, kDof, kDof> mat;
     mat.setIdentity();
@@ -117,17 +117,14 @@ class SpiralSimilarity3Impl {
 
   // group operations
 
-  static auto inverse(Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto inverse(Params const& non_zero_quat) -> Params {
     Scalar squared_scale = non_zero_quat.norm();
     return (1.0 / squared_scale) *
            QuaternionImpl<Scalar>::conjugate(non_zero_quat.normalized());
   }
 
-  static auto multiplication(
-      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
-      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
+      -> Params {
     auto result =
         QuaternionImpl<Scalar>::multiplication(lhs_params, rhs_params);
     Scalar const squared_scale = result.squaredNorm();
@@ -146,20 +143,17 @@ class SpiralSimilarity3Impl {
   }
 
   // Point actions
-  static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat,
-      Eigen::Vector<Scalar, kPointDim> const& point)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto action(Params const& non_zero_quat, Point const& point) -> Point {
     return matrix(non_zero_quat) * point;
   }
 
-  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
   }
 
   static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat,
+      Params const& non_zero_quat,
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromParams(
@@ -169,8 +163,7 @@ class SpiralSimilarity3Impl {
 
   // matrices
 
-  static auto compactMatrix(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+  static auto compactMatrix(Params const& non_zero_quat)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     Eigen::Matrix<Scalar, kPointDim, kPointDim> s_r;
 
@@ -202,15 +195,13 @@ class SpiralSimilarity3Impl {
     return s_r;
   }
 
-  static auto matrix(Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+  static auto matrix(Params const& non_zero_quat)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return compactMatrix(non_zero_quat);
   }
 
   // Sub-group concepts
-  static auto matV(
-      Eigen::Vector<Scalar, kNumParams> const& /*unused*/,
-      Eigen::Vector<Scalar, kDof> const& angle_logscale)
+  static auto matV(Params const& /*unused*/, Tangent const& angle_logscale)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     Eigen::Matrix<Scalar, 3, 1> omega = angle_logscale.template head<3>();
     Eigen::Matrix<Scalar, 3, 3> mat_omega = Rotation3Impl<Scalar>::hat(omega);
@@ -221,8 +212,7 @@ class SpiralSimilarity3Impl {
   }
 
   static auto matVInverse(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat,
-      Eigen::Vector<Scalar, kDof> const& angle_logscale)
+      Params const& non_zero_quat, Tangent const& angle_logscale)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     Eigen::Matrix<Scalar, 3, 1> omega = angle_logscale.template head<3>();
     Eigen::Matrix<Scalar, 3, 3> mat_omega = Rotation3Impl<Scalar>::hat(omega);
@@ -231,9 +221,7 @@ class SpiralSimilarity3Impl {
         mat_omega, theta, angle_logscale[3], non_zero_quat.squaredNorm());
   }
 
-  static auto topRightAdj(
-      Eigen::Vector<Scalar, kNumParams> const& quat,
-      Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto topRightAdj(Params const& quat, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     Eigen::Matrix<Scalar, 3, 4> tr_adj;
     tr_adj.template topLeftCorner<3, 3>() =
@@ -245,14 +233,14 @@ class SpiralSimilarity3Impl {
 
   // derivatives
 
-  static auto dxExpX(Eigen::Vector<Scalar, kDof> const& a)
+  static auto dxExpX(Tangent const& a)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     using std::exp;
     using std::sqrt;
     Eigen::Matrix<Scalar, 4, 4> j;
     Eigen::Vector3<Scalar> const omega = a.template head<3>();
     Scalar const sigma = a[3];
-    Eigen::Vector<Scalar, kNumParams> quat = Rotation3Impl<Scalar>::exp(omega);
+    Params quat = Rotation3Impl<Scalar>::exp(omega);
     Scalar const scale = sqrt(exp(sigma));
     Scalar const scale_half = scale * Scalar(0.5);
 
@@ -266,15 +254,14 @@ class SpiralSimilarity3Impl {
     return kH * Eigen::Matrix<Scalar, 4, 4>::Identity();
   }
 
-  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto dxExpXTimesPointAt0(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     Eigen::Matrix<Scalar, 3, 4> j;
     j << Rotation3Impl<Scalar>::hat(-point), point;
     return j;
   }
 
-  static auto dxThisMulExpXAt0(
-      Eigen::Vector<Scalar, kNumParams> const& non_zero_quat)
+  static auto dxThisMulExpXAt0(Params const& non_zero_quat)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     Eigen::Matrix<Scalar, 4, 4> j;
     j.col(3) = non_zero_quat * Scalar(0.5);
@@ -300,8 +287,7 @@ class SpiralSimilarity3Impl {
     return j;
   }
 
-  static auto dxLogThisInvTimesXAtThis(
-      Eigen::Vector<Scalar, kNumParams> const& q)
+  static auto dxLogThisInvTimesXAtThis(Params const& q)
       -> Eigen::Matrix<Scalar, kDof, kNumParams> {
     Eigen::Matrix<Scalar, 4, 4> j;
     // clang-format off
@@ -316,21 +302,20 @@ class SpiralSimilarity3Impl {
 
   // for tests
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
-    return std::vector<Eigen::Vector<Scalar, kDof>>({
-        Eigen::Vector<Scalar, kDof>{0.0, 0.0, 0.0, 0.0},
-        Eigen::Vector<Scalar, kDof>{1.0, 0.0, 0.0, 0.0},
-        Eigen::Vector<Scalar, kDof>{1.0, 0.0, 0.0, 0.1},
-        Eigen::Vector<Scalar, kDof>{0.0, 1.0, 0.0, 0.1},
-        Eigen::Vector<Scalar, kDof>{0.00001, 0.00001, 0.0, 0.3},
-        Eigen::Vector<Scalar, kDof>{0.5 * kPi<Scalar>, 0.9, 0.0, 0.0},
-        Eigen::Vector<Scalar, kDof>{0.0, 0.0, 0.5 * kPi<Scalar> + 0.00001, 0.2},
+  static auto tangentExamples() -> std::vector<Tangent> {
+    return std::vector<Tangent>({
+        Tangent{0.0, 0.0, 0.0, 0.0},
+        Tangent{1.0, 0.0, 0.0, 0.0},
+        Tangent{1.0, 0.0, 0.0, 0.1},
+        Tangent{0.0, 1.0, 0.0, 0.1},
+        Tangent{0.00001, 0.00001, 0.0, 0.3},
+        Tangent{0.5 * kPi<Scalar>, 0.9, 0.0, 0.0},
+        Tangent{0.0, 0.0, 0.5 * kPi<Scalar> + 0.00001, 0.2},
     });
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
+  static auto paramsExamples() -> std::vector<Params> {
+    return std::vector<Params>({
         SpiralSimilarity3Impl::exp({0.2, 0.5, 0.0, 1.0}),
         SpiralSimilarity3Impl::exp({0.2, 0.5, -1.0, 1.1}),
         SpiralSimilarity3Impl::exp({0.0, 0.0, 0.0, 1.1}),
@@ -342,12 +327,11 @@ class SpiralSimilarity3Impl {
     });
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
-        Eigen::Vector<Scalar, kNumParams>::Zero(),
-        -Eigen::Vector<Scalar, kNumParams>::Ones(),
-        -Eigen::Vector<Scalar, kNumParams>::UnitX(),
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>({
+        Params::Zero(),
+        -Params::Ones(),
+        -Params::UnitX(),
     });
   }
 };

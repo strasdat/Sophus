@@ -34,14 +34,17 @@ class Rotation3Impl {
   static int const kPointDim = 3;
   static int const kAmbientDim = 3;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Point = Eigen::Vector<Scalar, kPointDim>;
+
   // constructors and factories
 
-  static auto identityParams() -> Eigen::Vector<Scalar, kNumParams> {
+  static auto identityParams() -> Params {
     return Eigen::Vector<Scalar, 4>(0.0, 0.0, 0.0, 1.0);
   }
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& unit_quaternion)
+  static auto areParamsValid(Params const& unit_quaternion)
       -> sophus::Expected<Success> {
     static const Scalar kThr = kEpsilonSqrt<Scalar>;
     const Scalar squared_norm = unit_quaternion.squaredNorm();
@@ -60,8 +63,7 @@ class Rotation3Impl {
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Eigen::Vector<Scalar, kDof> const& omega)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto exp(Tangent const& omega) -> Params {
     using std::abs;
     using std::cos;
     using std::sin;
@@ -86,15 +88,14 @@ class Rotation3Impl {
       real_factor = cos(half_theta);
     }
 
-    return Eigen::Vector<Scalar, kNumParams>(
+    return Params(
         imag_factor * omega.x(),
         imag_factor * omega.y(),
         imag_factor * omega.z(),
         real_factor);
   }
 
-  static auto log(Eigen::Vector<Scalar, kNumParams> const& unit_quaternion)
-      -> Eigen::Vector<Scalar, kDof> {
+  static auto log(Params const& unit_quaternion) -> Tangent {
     using std::abs;
     using std::atan2;
     using std::sqrt;
@@ -139,7 +140,7 @@ class Rotation3Impl {
     return two_atan_nbyw_by_n * ivec;
   }
 
-  static auto hat(Eigen::Vector<Scalar, kDof> const& omega)
+  static auto hat(Tangent const& omega)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> mat_omega;
     // clang-format off
@@ -158,22 +159,18 @@ class Rotation3Impl {
         mat_omega(2, 1), mat_omega(0, 2), mat_omega(1, 0));
   }
 
-  static auto adj(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Eigen::Matrix<Scalar, kDof, kDof> {
+  static auto adj(Params const& params) -> Eigen::Matrix<Scalar, kDof, kDof> {
     return matrix(params);
   }
 
   // group operations
 
-  static auto inverse(Eigen::Vector<Scalar, kNumParams> const& unit_quat)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto inverse(Params const& unit_quat) -> Params {
     return Quaternion::conjugate(unit_quat);
   }
 
-  static auto multiplication(
-      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
-      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
+      -> Params {
     auto result = Quaternion::multiplication(lhs_params, rhs_params);
     Scalar const squared_norm = result.squaredNorm();
 
@@ -192,24 +189,21 @@ class Rotation3Impl {
   }
 
   // Point actions
-  static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& unit_quat,
-      Eigen::Vector<Scalar, kPointDim> const& point)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto action(Params const& unit_quat, Point const& point) -> Point {
     Eigen::Vector3<Scalar> ivec = unit_quat.template head<3>();
 
-    Eigen::Vector<Scalar, kPointDim> uv = ivec.cross(point);
+    Point uv = ivec.cross(point);
     uv += uv;
     return point + unit_quat.w() * uv + ivec.cross(uv);
   }
 
-  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
   }
 
   static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& unit_quat,
+      Params const& unit_quat,
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromParams(
@@ -218,7 +212,7 @@ class Rotation3Impl {
 
   // matrices
 
-  static auto compactMatrix(Eigen::Vector<Scalar, kNumParams> const& unit_quat)
+  static auto compactMatrix(Params const& unit_quat)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     Eigen::Vector3<Scalar> ivec = unit_quat.template head<3>();
     Scalar real = unit_quat.w();
@@ -236,15 +230,13 @@ class Rotation3Impl {
          1 - 2 * (ivec[0] * ivec[0]) - 2 * (ivec[1] * ivec[1])}};
   }
 
-  static auto matrix(Eigen::Vector<Scalar, kNumParams> const& unit_quat)
+  static auto matrix(Params const& unit_quat)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return compactMatrix(unit_quat);
   }
 
   // Sub-group concepts
-  static auto matV(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kDof> const& omega)
+  static auto matV(Params const& params, Tangent const& omega)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     using std::cos;
     using std::sin;
@@ -266,9 +258,7 @@ class Rotation3Impl {
     return v;
   }
 
-  static auto matVInverse(
-      Eigen::Vector<Scalar, kNumParams> const& /*unused*/,
-      Eigen::Vector<Scalar, kDof> const& omega)
+  static auto matVInverse(Params const& /*unused*/, Tangent const& omega)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     using std::cos;
     using std::sin;
@@ -293,15 +283,13 @@ class Rotation3Impl {
     return v_inv;
   }
 
-  static auto topRightAdj(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto topRightAdj(Params const& params, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return hat(point) * matrix(params);
   }
 
   // derivatives
-  static auto dxExpX(Eigen::Vector<Scalar, kDof> const& omega)
+  static auto dxExpX(Tangent const& omega)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     using std::cos;
     using std::exp;
@@ -362,13 +350,12 @@ class Rotation3Impl {
     return j;
   }
 
-  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto dxExpXTimesPointAt0(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return hat(-point);
   }
 
-  static auto dxThisMulExpXAt0(
-      Eigen::Vector<Scalar, kNumParams> const& unit_quat)
+  static auto dxThisMulExpXAt0(Params const& unit_quat)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     Eigen::Matrix<Scalar, 4, 3> j;
     Scalar const c0 = Scalar(0.5) * unit_quat.w();
@@ -393,8 +380,7 @@ class Rotation3Impl {
     return j;
   }
 
-  static auto dxLogThisInvTimesXAtThis(
-      Eigen::Vector<Scalar, kNumParams> const& q)
+  static auto dxLogThisInvTimesXAtThis(Params const& q)
       -> Eigen::Matrix<Scalar, kDof, kNumParams> {
     Eigen::Matrix<Scalar, 3, 4> j;
     // clang-format off
@@ -407,29 +393,26 @@ class Rotation3Impl {
 
   // for tests
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
-    return std::vector<Eigen::Vector<Scalar, kDof>>({
-        Eigen::Vector<Scalar, kDof>{0.0, 0, 0},
-        Eigen::Vector<Scalar, kDof>{1, 0, 0},
-        Eigen::Vector<Scalar, kDof>{0, 1, 0},
-        Eigen::Vector<Scalar, kDof>{0.5 * kPi<Scalar>, 0.5 * kPi<Scalar>, 0},
-        Eigen::Vector<Scalar, kDof>{-1, 1, 0},
-        Eigen::Vector<Scalar, kDof>{20, -1, 0},
-        Eigen::Vector<Scalar, kDof>{30, 5, -1},
-        Eigen::Vector<Scalar, kDof>{1, 1, 4},
-        Eigen::Vector<Scalar, kDof>{1, -3, 0.5},
-        Eigen::Vector<Scalar, kDof>{-5, -6, 7},
+  static auto tangentExamples() -> std::vector<Tangent> {
+    return std::vector<Tangent>({
+        Tangent{0.0, 0, 0},
+        Tangent{1, 0, 0},
+        Tangent{0, 1, 0},
+        Tangent{0.5 * kPi<Scalar>, 0.5 * kPi<Scalar>, 0},
+        Tangent{-1, 1, 0},
+        Tangent{20, -1, 0},
+        Tangent{30, 5, -1},
+        Tangent{1, 1, 4},
+        Tangent{1, -3, 0.5},
+        Tangent{-5, -6, 7},
     });
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    using Point = Eigen::Vector<Scalar, kPointDim>;
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>(
-        {Eigen::Vector<Scalar, kNumParams>(
-             Scalar(0.1e-11), Scalar(0.), Scalar(1.), Scalar(0.)),
-         Eigen::Vector<Scalar, kNumParams>(
-             Scalar(-1), Scalar(0.00001), Scalar(0.0), Scalar(0.0)),
+  static auto paramsExamples() -> std::vector<Params> {
+    using Point = Point;
+    return std::vector<Params>(
+        {Params(Scalar(0.1e-11), Scalar(0.), Scalar(1.), Scalar(0.)),
+         Params(Scalar(-1), Scalar(0.00001), Scalar(0.0), Scalar(0.0)),
          exp(Point(Scalar(0.2), Scalar(0.5), Scalar(0.0))),
          exp(Point(Scalar(0.2), Scalar(0.5), Scalar(-1.0))),
          exp(Point(Scalar(0.), Scalar(0.), Scalar(0.))),
@@ -447,12 +430,11 @@ class Rotation3Impl {
              exp(Point(Scalar(-0.3), Scalar(-0.5), Scalar(-0.1))))});
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
-        Eigen::Vector<Scalar, kNumParams>::Zero(),
-        Eigen::Vector<Scalar, kNumParams>::Ones(),
-        2.0 * Eigen::Vector<Scalar, kNumParams>::UnitX(),
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>({
+        Params::Zero(),
+        Params::Ones(),
+        2.0 * Params::UnitX(),
     });
   }
 };
