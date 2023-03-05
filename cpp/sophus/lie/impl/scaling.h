@@ -22,6 +22,10 @@ class ScalingImpl {
   static int const kPointDim = kDim;
   static int const kAmbientDim = kDim;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Point = Eigen::Vector<Scalar, kPointDim>;
+
   static bool constexpr kIsOriginPreserving = true;
   static bool constexpr kIsAxisDirectionPreserving = false;
   static bool constexpr kIsDirectionVectorPreserving = false;
@@ -31,40 +35,44 @@ class ScalingImpl {
 
   // constructors and factories
 
-  static auto identityParams() -> Eigen::Vector<Scalar, kNumParams> {
+  static auto identityParams() -> Params {
     return Eigen::Vector<Scalar, kDim>::Ones();
   }
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& scale_factors)
+  static auto areParamsValid(Params const& scale_factors)
       -> sophus::Expected<Success> {
     static const Scalar kThr = kEpsilon<Scalar>;
 
-    if (!(scale_factors.array() >= kThr).all()) {
+    if (!(scale_factors.array() > kThr).all()) {
       return SOPHUS_UNEXPECTED(
-          "scale factors ({}) not positive.\n",
+          "scale factors ({}) too close to zero.\n",
           "thr: {}",
           scale_factors.transpose(),
           kThr);
+    }
+    if (!(scale_factors.array() < 1.0 / kThr).all()) {
+      return SOPHUS_UNEXPECTED(
+          "inverse of scale factors ({}) too close to zero.\n",
+          "1.0 / thr: {}",
+          scale_factors.transpose(),
+          1.0 / kThr);
     }
     return sophus::Expected<Success>{};
   }
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Eigen::Vector<Scalar, kDof> const& log_scale_factors)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto exp(Tangent const& log_scale_factors) -> Params {
     using std::exp;
     return log_scale_factors.array().exp();
   }
 
-  static auto log(Eigen::Vector<Scalar, kNumParams> const& scale_factors)
-      -> Eigen::Vector<Scalar, kDof> {
+  static auto log(Params const& scale_factors) -> Tangent {
     using std::log;
     return scale_factors.array().log();
   }
 
-  static auto hat(Eigen::Vector<Scalar, kDof> const& scale_factors)
+  static auto hat(Tangent const& scale_factors)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> mat;
     mat.setZero();
@@ -79,15 +87,14 @@ class ScalingImpl {
     return mat.diagonal();
   }
 
-  static auto adj(Eigen::Vector<Scalar, kNumParams> const& /*unused*/)
+  static auto adj(Params const& /*unused*/)
       -> Eigen::Matrix<Scalar, kDof, kDof> {
     return Eigen::Matrix<Scalar, kDof, kDof>::Identity();
   }
 
   // group operations
 
-  static auto inverse(Eigen::Vector<Scalar, kNumParams> const& scale_factors)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto inverse(Params const& scale_factors) -> Params {
     Eigen::Vector<Scalar, kDim> params;
     for (int i = 0; i < kDof; ++i) {
       params[i] = 1.0 / scale_factors[i];
@@ -95,29 +102,24 @@ class ScalingImpl {
     return params;
   }
 
-  static auto multiplication(
-      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
-      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
+      -> Params {
     return lhs_params.array() * rhs_params.array();
   }
 
   // Point actions
 
-  static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& scale_factors,
-      Eigen::Vector<Scalar, kPointDim> const& point)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto action(Params const& scale_factors, Point const& point) -> Point {
     return scale_factors.array() * point.array();
   }
 
-  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
   }
 
   static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& scale_factors,
+      Params const& scale_factors,
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
@@ -125,52 +127,56 @@ class ScalingImpl {
   }
   // Matrices
 
-  static auto compactMatrix(
-      Eigen::Vector<Scalar, kNumParams> const& scale_factors)
+  static auto compactMatrix(Params const& scale_factors)
       -> Eigen::Matrix<Scalar, kPointDim, kAmbientDim> {
     return hat(scale_factors);
   }
 
-  static auto matrix(Eigen::Vector<Scalar, kNumParams> const& scale_factors)
+  static auto matrix(Params const& scale_factors)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     return compactMatrix(scale_factors);
   }
 
   // subgroup concepts
 
-  static auto matV(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kDof> const& tangent)
+  static auto matV(Params const& params, Tangent const& tangent)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
+    using std::abs;
     Eigen::Matrix<Scalar, kPointDim, kPointDim> mat =
         Eigen::Matrix<Scalar, kPointDim, kPointDim>::Identity();
     for (int i = 0; i < kDof; ++i) {
-      mat(i, i) = (params[i] - 1.0) / tangent[i];
+      Scalar t = tangent[i];
+      if (abs(t) < kEpsilon<Scalar>) {
+        mat(i, i) = -1.0 + 2 * t - 1.5 * t * t;
+      } else {
+        mat(i, i) = (params[i] - 1.0) / tangent[i];
+      }
     }
     return mat;
   }
 
-  static auto matVInverse(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kNumParams> const& tangent)
+  static auto matVInverse(Params const& params, Params const& tangent)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     Eigen::Matrix<Scalar, kPointDim, kPointDim> mat =
         Eigen::Matrix<Scalar, kPointDim, kPointDim>::Identity();
     for (int i = 0; i < kDof; ++i) {
-      mat(i, i) = tangent[i] / (params[i] - 1.0);
+      Scalar t = tangent[i];
+      if (abs(t) < kEpsilon<Scalar>) {
+        mat(i, i) = -1.0 - 2 * t - 2.5 * t * t;
+      } else {
+        mat(i, i) = tangent[i] / (params[i] - 1.0);
+      }
     }
     return mat;
   }
 
-  static auto topRightAdj(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto topRightAdj(Params const& params, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return matrix(-point);
   }
 
   // derivatives
-  static auto dxExpX(Eigen::Vector<Scalar, kDof> const& /*unused*/)
+  static auto dxExpX(Tangent const& /*unused*/)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     return Eigen::Matrix<Scalar, kNumParams, kDof>::Identity();
   }
@@ -179,7 +185,7 @@ class ScalingImpl {
     return Eigen::Matrix<Scalar, kNumParams, kDof>::Identity();
   }
 
-  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto dxExpXTimesPointAt0(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     Eigen::Matrix<Scalar, kPointDim, kDof> j;
     j.setZero();
@@ -187,8 +193,7 @@ class ScalingImpl {
     return j;
   }
 
-  static auto dxThisMulExpXAt0(
-      Eigen::Vector<Scalar, kNumParams> const& unit_quat)
+  static auto dxThisMulExpXAt0(Params const& unit_quat)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     Eigen::Matrix<Scalar, kNumParams, kDof> j;
     j.setZero();
@@ -196,8 +201,7 @@ class ScalingImpl {
     return j;
   }
 
-  static auto dxLogThisInvTimesXAtThis(
-      Eigen::Vector<Scalar, kNumParams> const& unit_quat)
+  static auto dxLogThisInvTimesXAtThis(Params const& unit_quat)
       -> Eigen::Matrix<Scalar, kDof, kNumParams> {
     Eigen::Matrix<Scalar, kDof, kNumParams> j;
     j.setZero();
@@ -207,52 +211,49 @@ class ScalingImpl {
 
   // for tests
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
+  static auto tangentExamples() -> std::vector<Tangent> {
     if constexpr (kPointDim == 2) {
-      return std::vector<Eigen::Vector<Scalar, kDof>>({
-          Eigen::Vector<Scalar, kDof>({std::exp(1.0), std::exp(1.0)}),
-          Eigen::Vector<Scalar, kDof>({1.1, 1.1}),
-          Eigen::Vector<Scalar, kDof>({2.0, 1.1}),
-          Eigen::Vector<Scalar, kDof>({2.0, std::exp(1.0)}),
+      return std::vector<Tangent>({
+          Tangent({std::exp(1.0), std::exp(1.0)}),
+          Tangent({1.1, 1.1}),
+          Tangent({2.0, 1.1}),
+          Tangent({2.0, std::exp(1.0)}),
       });
     } else {
       if constexpr (kPointDim == 3) {
-        return std::vector<Eigen::Vector<Scalar, kDof>>({
-            Eigen::Vector<Scalar, kDof>(
-                {std::exp(1.0), std::exp(1.0), std::exp(1.0)}),
-            Eigen::Vector<Scalar, kDof>({1.1, 1.1, 1.7}),
-            Eigen::Vector<Scalar, kDof>({2.0, 1.1, 2.0}),
-            Eigen::Vector<Scalar, kDof>({2.0, std::exp(1.0), 2.2}),
+        return std::vector<Tangent>({
+            Tangent({std::exp(1.0), std::exp(1.0), std::exp(1.0)}),
+            Tangent({1.1, 1.1, 1.7}),
+            Tangent({2.0, 1.1, 2.0}),
+            Tangent({2.0, std::exp(1.0), 2.2}),
         });
       }
     }
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
+  static auto paramsExamples() -> std::vector<Params> {
     if constexpr (kPointDim == 2) {
-      return std::vector<Eigen::Vector<Scalar, kNumParams>>(
-          {Eigen::Vector<Scalar, kNumParams>({1.0, 1.0}),
-           Eigen::Vector<Scalar, kNumParams>({1.0, 2.0}),
-           Eigen::Vector<Scalar, kNumParams>({1.5, 1.0}),
-           Eigen::Vector<Scalar, kNumParams>({5.0, 1.237})});
+      return std::vector<Params>(
+          {Params({1.0, 1.0}),
+           Params({1.0, 2.0}),
+           Params({1.5, 1.0}),
+           Params({5.0, 1.237})});
     } else {
       if constexpr (kPointDim == 3) {
-        return std::vector<Eigen::Vector<Scalar, kNumParams>>(
-            {Eigen::Vector<Scalar, kNumParams>({1.0, 1.0, 1.0}),
-             Eigen::Vector<Scalar, kNumParams>({1.0, 2.0, 1.05}),
-             Eigen::Vector<Scalar, kNumParams>({1.5, 1.0, 2.8}),
-             Eigen::Vector<Scalar, kNumParams>({5.0, 1.237, 2})});
+        return std::vector<Params>(
+            {Params({1.0, 1.0, 1.0}),
+             Params({1.0, 2.0, 1.05}),
+             Params({1.5, 1.0, 2.8}),
+             Params({5.0, 1.237, 2})});
       }
     }
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({
-        Eigen::Vector<Scalar, kNumParams>::Zero(),
-        -Eigen::Vector<Scalar, kNumParams>::Ones(),
-        -Eigen::Vector<Scalar, kNumParams>::UnitX(),
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>({
+        Params::Zero(),
+        -Params::Ones(),
+        -Params::UnitX(),
     });
   }
 };

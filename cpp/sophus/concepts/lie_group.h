@@ -17,56 +17,44 @@ namespace concepts {
 
 template <class TT>
 concept LieGroupImpl =
-    ParamsImpl<TT> && TangentImpl<TT> &&
+    ParamsImpl<TT> && TangentImpl<TT> && std::is_same_v<
+        typename TT::Point,
+        Eigen::Vector<typename TT::Scalar, TT::kPointDim>> &&
     (TT::kPointDim == 2 || TT::kPointDim == 3) &&  // 2d or 3d points
     (TT::kPointDim == TT::kAmbientDim  // inhomogeneous point representation
      || TT::kPointDim + 1 ==
             TT::kAmbientDim)  // or homogeneous point representation
     && requires(
-           Eigen::Vector<typename TT::Scalar, TT::kDof> tangent,
-           Eigen::Vector<typename TT::Scalar, TT::kPointDim> point,
+           typename TT::Tangent tangent,
+           typename TT::Point point,
            UnitVector<typename TT::Scalar, TT::kPointDim> direction,
-           Eigen::Vector<typename TT::Scalar, TT::kNumParams> params,
+           typename TT::Params params,
            Eigen::Matrix<typename TT::Scalar, TT::kAmbientDim, TT::kAmbientDim>
                matrix,
            Eigen::Matrix<typename TT::Scalar, TT::kDof, TT::kDof> adjoint) {
   // constructors and factories
-  {
-    TT::identityParams()
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+  { TT::identityParams() } -> ConvertibleTo<typename TT::Params>;
 
   // Manifold / Lie Group concepts
 
-  {
-    TT::exp(tangent)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+  { TT::exp(tangent) } -> ConvertibleTo<typename TT::Params>;
 
-  {
-    TT::log(params)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kDof>>;
+  { TT::log(params) } -> ConvertibleTo<typename TT::Tangent>;
 
   {
     TT::hat(tangent)
     } -> ConvertibleTo<
         Eigen::Matrix<typename TT::Scalar, TT::kAmbientDim, TT::kAmbientDim>>;
 
-  {
-    TT::vee(matrix)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kDof>>;
+  { TT::vee(matrix) } -> ConvertibleTo<typename TT::Tangent>;
 
   // group operations
-  {
-    TT::multiplication(params, params)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+  { TT::multiplication(params, params) } -> ConvertibleTo<typename TT::Params>;
 
-  {
-    TT::inverse(params)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+  { TT::inverse(params) } -> ConvertibleTo<typename TT::Params>;
 
   // Group actions
-  {
-    TT::action(params, point)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kPointDim>>;
+  { TT::action(params, point) } -> ConvertibleTo<typename TT::Point>;
 
   {
     TT::toAmbient(point)
@@ -123,9 +111,9 @@ concept LieGroupImpl =
 // properties can be deduced.
 template <class TT>
 concept LieSubgroupImpl = LieGroupImpl<TT> && requires(
-    Eigen::Vector<typename TT::Scalar, TT::kDof> tangent,
-    Eigen::Vector<typename TT::Scalar, TT::kNumParams> params,
-    Eigen::Vector<typename TT::Scalar, TT::kPointDim> point) {
+    typename TT::Tangent tangent,
+    typename TT::Params params,
+    typename TT::Point point) {
   {
     TT::matV(params, tangent)
     } -> ConvertibleTo<
@@ -144,12 +132,15 @@ concept LieSubgroupImpl = LieGroupImpl<TT> && requires(
 
 template <class TT>
 concept LieGroup = LieGroupImpl<typename TT::Impl> && ParamsConcept<TT> &&
+    std::is_same_v<
+        typename TT::Point,
+        Eigen::Vector<typename TT::Scalar, TT::kPointDim>> &&
     requires(
         TT g,
-        Eigen::Vector<typename TT::Scalar, TT::kDof> tangent,
-        Eigen::Vector<typename TT::Scalar, TT::kPointDim> point,
+        typename TT::Tangent tangent,
+        typename TT::Point point,
         UnitVector<typename TT::Scalar, TT::kPointDim> direction,
-        Eigen::Vector<typename TT::Scalar, TT::kNumParams> params,
+        typename TT::Params params,
         Eigen::Matrix<typename TT::Scalar, TT::kAmbientDim, TT::kAmbientDim>
             matrix,
         Eigen::Matrix<typename TT::Scalar, TT::kDof, TT::kDof> adjoint) {
@@ -157,7 +148,7 @@ concept LieGroup = LieGroupImpl<typename TT::Impl> && ParamsConcept<TT> &&
 
   { TT::exp(tangent) } -> ConvertibleTo<TT>;
 
-  { g.log() } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kDof>>;
+  { g.log() } -> ConvertibleTo<typename TT::Tangent>;
 
   // group operations
   { g.operator*(g) } -> ConvertibleTo<TT>;
@@ -165,9 +156,7 @@ concept LieGroup = LieGroupImpl<typename TT::Impl> && ParamsConcept<TT> &&
   { g.inverse() } -> ConvertibleTo<TT>;
 
   // Group actions
-  {
-    g.operator*(point)
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kPointDim>>;
+  { g.operator*(point) } -> ConvertibleTo<typename TT::Point>;
 
   {
     g.operator*(direction)

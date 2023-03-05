@@ -95,7 +95,6 @@ jobs:
           ROW_ACCESS: matrix.access
         if: matrix.optional_features == 'ceres_proto'
 
-
       - name: Compile (gcc)
         working-directory: ./infra/scripts
         run:
@@ -132,6 +131,7 @@ jobs:
         env:
           ROW_ACCESS: matrix.access
           SOPHUS_CERES: On
+          BUILD_FARM_NG_PROTOS: On
         if: matrix.tests == 'unit_test' && matrix.compiler == 'clang' &&  matrix.optional_features == 'ceres_proto'
 
       - name: Run unit tests

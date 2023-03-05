@@ -16,41 +16,38 @@ namespace sophus {
 namespace concepts {
 
 template <class TT>
-concept ParamsImpl =
-    requires(Eigen::Vector<typename TT::Scalar, TT::kNumParams> params) {
+concept ParamsImpl = std::is_same_v<
+    typename TT::Params,
+    Eigen::Vector<typename TT::Scalar, TT::kNumParams>> &&
+    requires(typename TT::Params params) {
   // constructors and factories
   { TT::areParamsValid(params) } -> ConvertibleTo<sophus::Expected<Success>>;
 
-  {
-    TT::paramsExamples()
-    } -> ConvertibleTo<
-        std::vector<Eigen::Vector<typename TT::Scalar, TT::kNumParams>>>;
+  { TT::paramsExamples() } -> ConvertibleTo<std::vector<typename TT::Params>>;
 
   {
     TT::invalidParamsExamples()
-    } -> ConvertibleTo<
-        std::vector<Eigen::Vector<typename TT::Scalar, TT::kNumParams>>>;
+    } -> ConvertibleTo<std::vector<typename TT::Params>>;
 };
 
 template <class TT>
-concept TangentImpl = requires() {
-  {
-    TT::tangentExamples()
-    }
-    -> ConvertibleTo<std::vector<Eigen::Vector<typename TT::Scalar, TT::kDof>>>;
+concept TangentImpl = std::is_same_v<
+    typename TT::Tangent,
+    Eigen::Vector<typename TT::Scalar, TT::kDof>> && requires() {
+  { TT::tangentExamples() } -> ConvertibleTo<std::vector<typename TT::Tangent>>;
 };
 
 template <class TT>
-concept ParamsConcept =
-    requires(TT m, Eigen::Vector<typename TT::Scalar, TT::kNumParams> params) {
+concept ParamsConcept = std::is_same_v<
+    typename TT::Params,
+    Eigen::Vector<typename TT::Scalar, TT::kNumParams>> &&
+    requires(TT m, typename TT::Params params) {
   // constructors and factories
   { TT::fromParams(params) } -> ConvertibleTo<TT>;
 
   {m.setParams(params)};
 
-  {
-    m.params()
-    } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+  { m.params() } -> ConvertibleTo<typename TT::Params>;
 
   { m.ptr() } -> ConvertibleTo<typename TT::Scalar const *>;
 

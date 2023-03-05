@@ -20,6 +20,8 @@ class ComplexImpl {
   static int constexpr kNumParams = 2;
   static bool constexpr kIsCommutative = true;
 
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+
   // factories
   static auto zero() -> Eigen::Vector<Scalar, 2> {
     return Eigen::Vector<Scalar, 2>::Zero();
@@ -29,20 +31,17 @@ class ComplexImpl {
     return Eigen::Vector<Scalar, 2>(1.0, 0.0);
   }
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& /*unused*/)
+  static auto areParamsValid(Params const& /*unused*/)
       -> sophus::Expected<Success> {
     return sophus::Expected<Success>{};
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
+  static auto paramsExamples() -> std::vector<Params> {
     return pointExamples<Scalar, 2>();
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({});
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>({});
   }
 
   // operations
@@ -94,6 +93,8 @@ class Complex {
   using Impl = ComplexImpl<Scalar>;
   static int constexpr kNumParams = 2;
 
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+
   // constructors and factories
 
   Complex() : params_(Impl::zero()) {}
@@ -105,21 +106,15 @@ class Complex {
 
   static auto one() -> Complex { return Complex::fromParams(Impl::one()); }
 
-  static auto fromParams(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Complex {
+  static auto fromParams(Params const& params) -> Complex {
     Complex z(UninitTag{});
     z.setParams(params);
     return z;
   }
 
-  [[nodiscard]] auto params() const
-      -> Eigen::Vector<Scalar, kNumParams> const& {
-    return params_;
-  }
+  [[nodiscard]] auto params() const -> Params const& { return params_; }
 
-  void setParams(Eigen::Vector<Scalar, kNumParams> const& params) {
-    params_ = params;
-  }
+  void setParams(Params const& params) { params_ = params; }
 
   auto real() -> Scalar& { return params_[0]; }
   [[nodiscard]] auto real() const -> Scalar const& { return params_[0]; }
