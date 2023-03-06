@@ -49,8 +49,10 @@ class VectorField {
     h.setZero();
     for (int i = 0; i < kM; ++i) {
       h[i] = eps;
-      j.col(i) =
-          (vector_field(a + h) - vector_field(a - h)) / (TScalar(2) * eps);
+      Eigen::Vector<TScalar, kMatrixDim> vfp = vector_field(a + h);
+      Eigen::Vector<TScalar, kMatrixDim> vfm = vector_field(a - h);
+
+      j.col(i) = (vfp - vfm) / (TScalar(2) * eps);
       h[i] = TScalar(0);
     }
 
@@ -88,7 +90,7 @@ auto vectorFieldNumDiff(
     TScalar eps = kEpsilonSqrt<TScalar>)
     -> Eigen::Matrix<TScalar, kMatrixDim, kM> {
   return details::VectorField<TScalar, kMatrixDim, kM>::numDiff(
-      std::move(vector_field), a, eps);
+      vector_field, a, eps);
 }
 
 }  // namespace sophus

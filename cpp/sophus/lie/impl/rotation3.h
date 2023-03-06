@@ -206,7 +206,9 @@ class Rotation3Impl {
       Params const& unit_quat,
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
-    return UnitVector<Scalar, kPointDim>::fromParams(
+    // TODO: Implement normalization using expansion around 1 as done for
+    // ::multiplication to avoid possibly costly call to std::sqrt.
+    return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
         action(unit_quat, direction_vector.vector()));
   }
 

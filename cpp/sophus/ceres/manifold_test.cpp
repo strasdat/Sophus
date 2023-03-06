@@ -31,7 +31,7 @@ struct RotationalPart;
 template <>
 struct RotationalPart<sophus::Rotation2F64> {
   static double norm(sophus::Rotation2F64::Tangent const& t) {
-    return t.template tail<2>().norm();
+    return t.template tail<1>().norm();
   }
 };
 
@@ -45,7 +45,7 @@ struct RotationalPart<sophus::Rotation3F64> {
 template <>
 struct RotationalPart<sophus::Isometry2F64> {
   static double norm(sophus::Isometry2F64::Tangent const& t) {
-    return t.template tail<2>().norm();
+    return t.template tail<1>().norm();
   }
 };
 
@@ -59,7 +59,7 @@ struct RotationalPart<sophus::Isometry3F64> {
 template <>
 struct RotationalPart<sophus::SpiralSimilarity2F64> {
   static double norm(sophus::SpiralSimilarity2F64::Tangent const& t) {
-    return t.template segment<2>(0).norm();
+    return t.template segment<1>(0).norm();
   }
 };
 
@@ -73,7 +73,7 @@ struct RotationalPart<sophus::SpiralSimilarity3F64> {
 template <>
 struct RotationalPart<sophus::Similarity2F64> {
   static double norm(sophus::Similarity2F64::Tangent const& t) {
-    return t.template segment<2>(2).norm();
+    return t.template segment<1>(2).norm();
   }
 };
 

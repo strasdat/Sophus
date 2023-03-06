@@ -137,7 +137,7 @@ jobs:
       - name: Run unit tests
         working-directory: ./infra/scripts/build
         run: |
-          ctest
+          ctest --output-on-failure
         env:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
@@ -147,7 +147,7 @@ jobs:
         run: |
           source ../venv/bin/activate
           cd build
-          ctest
+          ctest --output-on-failure
         env:
           ROW_ACCESS: matrix.access
         if: matrix.tests == 'unit_test' && matrix.optional_features == 'ceres_proto'

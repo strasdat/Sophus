@@ -19,6 +19,17 @@ class Group {
  public:
   using Impl = TImpl;
   using Scalar = typename Impl::Scalar;
+
+  static bool constexpr kIsOriginPreserving = Impl::kIsOriginPreserving;
+  static bool constexpr kIsAxisDirectionPreserving =
+      Impl::kIsAxisDirectionPreserving;
+  static bool constexpr kIsDirectionVectorPreserving =
+      Impl::kIsDirectionVectorPreserving;
+  static bool constexpr kIsShapePreserving = Impl::kIsShapePreserving;
+  static bool constexpr kIisSizePreserving = Impl::kIisSizePreserving;
+  static bool constexpr kIisParallelLinePreserving =
+      Impl::kIisParallelLinePreserving;
+
   static int constexpr kDof = Impl::kDof;
   static int constexpr kNumParams = Impl::kNumParams;
   static int constexpr kPointDim = Impl::kPointDim;

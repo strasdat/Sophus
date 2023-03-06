@@ -27,10 +27,10 @@ class ScalingImpl {
   using Point = Eigen::Vector<Scalar, kPointDim>;
 
   static bool constexpr kIsOriginPreserving = true;
-  static bool constexpr kIsAxisDirectionPreserving = false;
+  static bool constexpr kIsAxisDirectionPreserving = true;
   static bool constexpr kIsDirectionVectorPreserving = false;
-  static bool constexpr kIsShapePreserving = true;
-  static bool constexpr kIisSizePreserving = true;
+  static bool constexpr kIsShapePreserving = false;
+  static bool constexpr kIisSizePreserving = false;
   static bool constexpr kIisParallelLinePreserving = true;
 
   // constructors and factories
@@ -147,9 +147,9 @@ class ScalingImpl {
     for (int i = 0; i < kDof; ++i) {
       Scalar t = tangent[i];
       if (abs(t) < kEpsilon<Scalar>) {
-        mat(i, i) = -1.0 + 2 * t - 1.5 * t * t;
+        mat(i, i) = 1.0 - 2 * t + 1.5 * t * t;
       } else {
-        mat(i, i) = (params[i] - 1.0) / tangent[i];
+        mat(i, i) = -(params[i] - 1.0) / tangent[i];
       }
     }
     return mat;
@@ -162,9 +162,9 @@ class ScalingImpl {
     for (int i = 0; i < kDof; ++i) {
       Scalar t = tangent[i];
       if (abs(t) < kEpsilon<Scalar>) {
-        mat(i, i) = -1.0 - 2 * t - 2.5 * t * t;
+        mat(i, i) = 1.0 + 2 * t + 2.5 * t * t;
       } else {
-        mat(i, i) = tangent[i] / (params[i] - 1.0);
+        mat(i, i) = -tangent[i] / (params[i] - 1.0);
       }
     }
     return mat;
@@ -237,14 +237,16 @@ class ScalingImpl {
           {Params({1.0, 1.0}),
            Params({1.0, 2.0}),
            Params({1.5, 1.0}),
-           Params({5.0, 1.237})});
+           Params({5.0, 1.237}),
+           Params({0.5, 2.0})});
     } else {
       if constexpr (kPointDim == 3) {
         return std::vector<Params>(
             {Params({1.0, 1.0, 1.0}),
              Params({1.0, 2.0, 1.05}),
              Params({1.5, 1.0, 2.8}),
-             Params({5.0, 1.237, 2})});
+             Params({5.0, 1.237, 2}),
+             Params({0.5, 1.237, 0.2})});
       }
     }
   }
