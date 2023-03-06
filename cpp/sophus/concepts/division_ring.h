@@ -19,38 +19,28 @@ class UnitVector;
 template <class TT>
 concept DivisionRingImpl =
     ::sophus::concepts::ParamsImpl<TT>  // or homogeneous point representation
-    && requires(Eigen::Vector<typename TT::Scalar, TT::kNumParams> params) {
+    && requires(typename TT::Params params) {
   // constructors and factories
-  {
-    TT::one()
-    } -> ::sophus::concepts::ConvertibleTo<
-        Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+  { TT::one() } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
 
-  {
-    TT::zero()
-    } -> ::sophus::concepts::ConvertibleTo<
-        Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+  { TT::zero() } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
 
   // operations
   {
     TT::addition(params, params)
-    } -> ::sophus::concepts::ConvertibleTo<
-        Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+    } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
 
   {
     TT::multiplication(params, params)
-    } -> ::sophus::concepts::ConvertibleTo<
-        Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+    } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
 
   {
     TT::conjugate(params)
-    } -> ::sophus::concepts::ConvertibleTo<
-        Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+    } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
 
   {
     TT::inverse(params)
-    } -> ::sophus::concepts::ConvertibleTo<
-        Eigen::Vector<typename TT::Scalar, TT::kNumParams>>;
+    } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
 
   // reduction
   {
@@ -67,7 +57,7 @@ concept DivisionRingConcept = DivisionRingImpl<typename TT::Impl> && requires(
     TT r,
     typename TT::Scalar real,
     typename TT::Imag imag,
-    Eigen::Vector<typename TT::Scalar, TT::kNumParams> params) {
+    typename TT::Params params) {
   // operations
   { r.operator+(r) } -> ::sophus::concepts::ConvertibleTo<TT>;
 

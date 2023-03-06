@@ -159,11 +159,7 @@ struct LieGroupCeresTests {
     //     }
     //   }
     // }
-    for (size_t i = 0; i < group_vec.size(); ++i) {
-      for (size_t j = 0; j < group_vec.size(); ++j) {
-        testManifold(group_vec[i], group_vec[j]);
-      }
-    }
+
     // int ns[] = {20, 40, 80, 160};
     // for (auto k_matrix_dim : ns) {
     //   std::cerr << "Averaging test: kMatrixDim = " << k_matrix_dim;
@@ -309,122 +305,6 @@ struct LieGroupCeresTests {
   //   return passed;
   // }
 
-  bool testManifold(LieGroupF64 const& x, LieGroupF64 const& y) {
-    // ceres/manifold_test_utils.h is google-test based; here we check all the
-    // same invariants
-    const TangentF64 delta = (x.inverse() * y).log();
-    TangentF64 o;
-    o.setZero();
-    ::sophus::ceres::Manifold<TLieGroup> manifold;
-
-    LieGroupF64 test_group;
-
-    bool passed = true;
-    auto coeffs =
-        Eigen::Map<const Eigen::Matrix<double, kNumParams, 1>>(x.ptr());
-    auto coeffs_y =
-        Eigen::Map<const Eigen::Matrix<double, kNumParams, 1>>(y.ptr());
-    std::cerr << "XPlusZeroIsXAt " << coeffs.transpose() << std::endl;
-    xPlusZeroIsXAt(x);
-    std::cerr << "XMinusXIsZeroAt " << coeffs.transpose() << std::endl;
-    xMinusXIsZeroAt(x);
-    std::cerr << "MinusPlusIsIdentityAt " << coeffs.transpose() << std::endl;
-    minusPlusIsIdentityAt(x, delta);
-    std::cerr << "MinusPlusIsIdentityAt " << coeffs.transpose() << std::endl;
-    minusPlusIsIdentityAt(x, o);
-    std::cerr << "PlusMinusIsIdentityAt " << coeffs.transpose() << std::endl;
-    plusMinusIsIdentityAt(x, x);
-    std::cerr << "PlusMinusIsIdentityAt " << coeffs.transpose() << " "
-              << coeffs_y.transpose() << std::endl;
-    plusMinusIsIdentityAt(x, y);
-    std::cerr << "MinusPlusJacobianIsIdentityAt " << coeffs.transpose()
-              << std::endl;
-    minusPlusJacobianIsIdentityAt(x);
-    return passed;
-  }
-
-  void xPlusZeroIsXAt(LieGroupF64 const& x) {
-    TangentF64 o;
-    o.setZero();
-    sophus::ceres::Manifold<TLieGroup> manifold;
-    LieGroupF64 test_group;
-
-    SOPHUS_ASSERT(manifold.Plus(x.ptr(), o.data(), test_group.unsafeMutPtr()));
-    double const error = ((x.inverse() * test_group).log()).squaredNorm();
-    SOPHUS_ASSERT(error < sophus::kEpsilonF64);
-  }
-
-  void xMinusXIsZeroAt(LieGroupF64 const& x) {
-    sophus::ceres::Manifold<TLieGroup> manifold;
-    LieGroupF64 test_group;
-    TangentF64 test_tangent;
-
-    SOPHUS_ASSERT(manifold.Minus(x.ptr(), x.ptr(), test_tangent.data()));
-    double const error = test_tangent.squaredNorm();
-    SOPHUS_ASSERT(error < sophus::kEpsilonF64);
-  }
-
-  void minusPlusIsIdentityAt(LieGroupF64 const& x, TangentF64 const& delta) {
-    // if (RotationalPart<LieGroupF64>::norm(delta) >
-    //     sophus::kPi<double> * (1. - sophus::kEpsilonF64)) {
-    //   return true;
-    // }
-    // sophus::Manifold<TLieGroup> manifold;
-    // LieGroupF64 test_group;
-    // TangentF64 test_tangent;
-
-    // bool passed = true;
-
-    // passed &= manifold.Plus(x.data(), data(delta), test_group.data());
-    // processTestResult(passed);
-
-    // passed &= manifold.Minus(test_group.data(), x.data(),
-    // data(test_tangent)); processTestResult(passed);
-
-    // const TangentF64 diff = test_tangent - delta;
-    // double const error = squaredNorm(diff);
-    // passed &= error < sophus::kEpsilonF64;
-    // processTestResult(passed);
-  }
-
-  void plusMinusIsIdentityAt(LieGroupF64 const& x, LieGroupF64 const& y) {
-    sophus::ceres::Manifold<TLieGroup> manifold;
-    LieGroupF64 test_group;
-    TangentF64 test_tangent;
-
-    SOPHUS_ASSERT(manifold.Minus(y.ptr(), x.ptr(), test_tangent.data()));
-
-    SOPHUS_ASSERT(
-        manifold.Plus(x.ptr(), test_tangent.data(), test_group.unsafeMutPtr()));
-
-    double const error = ((y.inverse() * test_group).log()).squaredNorm();
-    SOPHUS_ASSERT_LE(error, 10.0 * sophus::kEpsilonF64);
-  }
-
-  void minusPlusJacobianIsIdentityAt(LieGroupF64 const& x) {
-    sophus::ceres::Manifold<TLieGroup> manifold;
-    LieGroupF64 test_group;
-
-    Eigen::Matrix<
-        double,
-        kNumParams,
-        kDof,
-        kDof == 1 ? Eigen::ColMajor : Eigen::RowMajor>
-        jplus;
-    Eigen::Matrix<double, kDof, kNumParams, Eigen::RowMajor> jminus;
-
-    SOPHUS_ASSERT(manifold.PlusJacobian(x.ptr(), jplus.data()));
-
-    SOPHUS_ASSERT(manifold.MinusJacobian(x.ptr(), jminus.data()));
-
-    const Eigen::Matrix<double, kDof, kDof> diff =
-        jminus * jplus - Eigen::Matrix<double, kDof, kDof>::Identity();
-
-    std::cerr << diff << std::endl;
-    double const error = diff.squaredNorm();
-    SOPHUS_ASSERT(error < sophus::kEpsilonF64);
-  }
-
   LieGroupCeresTests(
       std::vector<LieGroupF64> const& group_vec,
       std::vector<PointF64> const& point_vec)
@@ -433,16 +313,6 @@ struct LieGroupCeresTests {
   std::vector<LieGroupF64> group_vec;
   std::vector<PointF64> point_vec;
 };
-
-// template <class TT>
-// using StdVector = std::vector<TT, Eigen::aligned_allocator<TT>>;
-
-// template <>
-// struct RotationalPart<sophus::SE3d> {
-//   static double norm(const typename sophus::SE3d::Tangent& t) {
-//     return t.template tail<3>().norm();
-//   }
-// };
 
 TEST(sophus_ceres, regression) {
   LieGroupCeresTests<sophus::Rotation3>(

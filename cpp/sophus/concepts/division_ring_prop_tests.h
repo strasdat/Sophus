@@ -19,6 +19,7 @@ struct DivisionRingTestSuite {
   using Scalar = typename TRing::Scalar;
   static int constexpr kNumParams = TRing::kNumParams;
   static decltype(Ring::Impl::paramsExamples()) const kParamsExamples;
+
   using Params = Eigen::Vector<Scalar, kNumParams>;
 
   static void associativityTests(std::string ring_name) {

@@ -8,19 +8,21 @@
 
 #pragma once
 #include "sophus/concepts/lie_group.h"
+#include "sophus/lie/impl/rotation3.h"
+#include "sophus/lie/impl/scaling.h"
 #include "sophus/linalg/unit_vector.h"
 
 namespace sophus {
 namespace lie {
 
-template <class TScalar, int kDim>
-class ScalingImpl {
+template <class TScalar>
+class RotoScaling3Impl {
  public:
   using Scalar = TScalar;
-  static int const kDof = kDim;
-  static int const kNumParams = kDim;
-  static int const kPointDim = kDim;
-  static int const kAmbientDim = kDim;
+  static int const kDof = 6;
+  static int const kNumParams = 7;
+  static int const kPointDim = 3;
+  static int const kAmbientDim = 3;
 
   using Tangent = Eigen::Vector<Scalar, kDof>;
   using Params = Eigen::Vector<Scalar, kNumParams>;
@@ -29,88 +31,94 @@ class ScalingImpl {
   static bool constexpr kIsOriginPreserving = true;
   static bool constexpr kIsAxisDirectionPreserving = false;
   static bool constexpr kIsDirectionVectorPreserving = false;
-  static bool constexpr kIsShapePreserving = true;
-  static bool constexpr kIisSizePreserving = true;
+  static bool constexpr kIsShapePreserving = false;
+  static bool constexpr kIisSizePreserving = false;
   static bool constexpr kIisParallelLinePreserving = true;
+
+  using Scaling = Scaling3Impl<Scalar>;
+  using Rotation = Rotation3Impl<Scalar>;
 
   // constructors and factories
 
   static auto identityParams() -> Params {
-    return Eigen::Vector<Scalar, kDim>::Ones();
+    return Eigen::Vector<Scalar, 7>(1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0);
   }
 
-  static auto areParamsValid(Params const& scale_factors)
+  static auto areParamsValid(Params const& params)
       -> sophus::Expected<Success> {
-    static const Scalar kThr = kEpsilon<Scalar>;
+    FARM_TRY(
+        auto roto_success, Rotation::areParamsValid(unitQuaternion(params)));
+    FARM_TRY(
+        auto scaling_success, Scaling::areParamsValid(scaleFactors(params)));
 
-    if (!(scale_factors.array() > kThr).all()) {
-      return SOPHUS_UNEXPECTED(
-          "scale factors ({}) too close to zero.\n",
-          "thr: {}",
-          scale_factors.transpose(),
-          kThr);
-    }
-    if (!(scale_factors.array() < 1.0 / kThr).all()) {
-      return SOPHUS_UNEXPECTED(
-          "inverse of scale factors ({}) too close to zero.\n",
-          "1.0 / thr: {}",
-          scale_factors.transpose(),
-          1.0 / kThr);
-    }
     return sophus::Expected<Success>{};
   }
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Tangent const& log_scale_factors) -> Params {
-    using std::exp;
-    return log_scale_factors.array().exp();
+  static auto exp(Tangent const& tangent) -> Params {
+    return params(
+        Scaling::exp(logFactors(tangent)),
+        Rotation::exp(angleTimesAxis(tangent)));
   }
 
-  static auto log(Params const& scale_factors) -> Tangent {
-    using std::log;
-    return scale_factors.array().log();
+  static auto log(Params const& params) -> Tangent {
+    return tangent(
+        Rotation::log(unitQuaternion(params)),
+        Scaling::log(scaleFactors(params)));
   }
 
-  static auto hat(Tangent const& scale_factors)
+  static auto hat(Tangent const& tangent)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
-    Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> mat;
-    mat.setZero();
-    for (int i = 0; i < kDof; ++i) {
-      mat.diagonal()[i] = scale_factors[i];
-    }
-    return mat;
+    return Rotation::hat(angleTimesAxis(tangent)) +
+           Scaling::hat(logFactors(tangent));
   }
 
   static auto vee(Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> const& mat)
       -> Eigen::Matrix<Scalar, kDof, 1> {
-    return mat.diagonal();
+    return tangent(Rotation::vee(mat), Scaling::vee(mat));
   }
 
-  static auto adj(Params const& /*unused*/)
-      -> Eigen::Matrix<Scalar, kDof, kDof> {
-    return Eigen::Matrix<Scalar, kDof, kDof>::Identity();
+  static auto adj(Params const& params) -> Eigen::Matrix<Scalar, kDof, kDof> {
+    Eigen::Matrix<Scalar, 6, 6> mat_adjoint;
+    mat_adjoint.setZero();
+
+    mat_adjoint.template topLeftCorner<3, 3>() =
+        Scaling::adj(scaleFactors(params));
+
+    mat_adjoint.template bottomRightCorner<3, 3>() =
+        Rotation::adj(unitQuaternion(params));
+
+    return mat_adjoint;
   }
 
   // group operations
 
-  static auto inverse(Params const& scale_factors) -> Params {
-    Eigen::Vector<Scalar, kDim> params;
-    for (int i = 0; i < kDof; ++i) {
-      params[i] = 1.0 / scale_factors[i];
-    }
-    return params;
+  static auto inverse(Params const& p) -> Params {
+    Eigen::Vector3<Scalar> f = Scaling::inverse(scaleFactors(p));
+    Eigen::Vector4<Scalar> q = Rotation::inverse(unitQuaternion(p));
+    return params(f, q);
   }
 
   static auto multiplication(Params const& lhs_params, Params const& rhs_params)
       -> Params {
-    return lhs_params.array() * rhs_params.array();
+    Eigen::Matrix3<Scalar> d;
+    d.setZero();
+    d.diagonal() = scaleFactors(rhs_params);
+
+    return params(
+        Scaling::multiplication(
+            scaleFactors(lhs_params),
+            (Rotation::matrix(unitQuaternion(lhs_params)) * d).diagonal()),
+        Rotation::multiplication(
+            unitQuaternion(lhs_params), unitQuaternion(rhs_params)));
   }
 
   // Point actions
 
-  static auto action(Params const& scale_factors, Point const& point) -> Point {
-    return scale_factors.array() * point.array();
+  static auto action(Params const& params, Point const& point) -> Point {
+    return Rotation::action(
+        unitQuaternion(params), Scaling::action(scaleFactors(params), point));
   }
 
   static auto toAmbient(Point const& point)
@@ -127,14 +135,15 @@ class ScalingImpl {
   }
   // Matrices
 
-  static auto compactMatrix(Params const& scale_factors)
+  static auto compactMatrix(Params const& params)
       -> Eigen::Matrix<Scalar, kPointDim, kAmbientDim> {
-    return hat(scale_factors);
+    return Rotation::compactMatrix(unitQuaternion(params)) *
+           Scaling::compactMatrix(scaleFactors(params));
   }
 
-  static auto matrix(Params const& scale_factors)
+  static auto matrix(Params const& params)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
-    return compactMatrix(scale_factors);
+    return compactMatrix(params);
   }
 
   // subgroup concepts
@@ -193,11 +202,11 @@ class ScalingImpl {
     return j;
   }
 
-  static auto dxThisMulExpXAt0(Params const& unit_quat)
+  static auto dxThisMulExpXAt0(Params const& params)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     Eigen::Matrix<Scalar, kNumParams, kDof> j;
     j.setZero();
-    j.diagonal() = unit_quat;
+    // j.diagonal() = unit_quat;
     return j;
   }
 
@@ -205,48 +214,30 @@ class ScalingImpl {
       -> Eigen::Matrix<Scalar, kDof, kNumParams> {
     Eigen::Matrix<Scalar, kDof, kNumParams> j;
     j.setZero();
-    j.diagonal() = 1.0 / unit_quat.array();
+    // j.diagonal() = 1.0 / unit_quat.array();
     return j;
   }
 
   // for tests
 
   static auto tangentExamples() -> std::vector<Tangent> {
-    if constexpr (kPointDim == 2) {
-      return std::vector<Tangent>({
-          Tangent({std::exp(1.0), std::exp(1.0)}),
-          Tangent({1.1, 1.1}),
-          Tangent({2.0, 1.1}),
-          Tangent({2.0, std::exp(1.0)}),
-      });
-    } else {
-      if constexpr (kPointDim == 3) {
-        return std::vector<Tangent>({
-            Tangent({std::exp(1.0), std::exp(1.0), std::exp(1.0)}),
-            Tangent({1.1, 1.1, 1.7}),
-            Tangent({2.0, 1.1, 2.0}),
-            Tangent({2.0, std::exp(1.0), 2.2}),
-        });
+    std::vector<Tangent> examples;
+    for (auto const& angle_times_axis : Rotation::tangentExamples()) {
+      for (auto const& log_factors : Scaling::tangentExamples()) {
+        examples.push_back(tangent(angle_times_axis, log_factors));
       }
     }
+    return examples;
   }
 
   static auto paramsExamples() -> std::vector<Params> {
-    if constexpr (kPointDim == 2) {
-      return std::vector<Params>(
-          {Params({1.0, 1.0}),
-           Params({1.0, 2.0}),
-           Params({1.5, 1.0}),
-           Params({5.0, 1.237})});
-    } else {
-      if constexpr (kPointDim == 3) {
-        return std::vector<Params>(
-            {Params({1.0, 1.0, 1.0}),
-             Params({1.0, 2.0, 1.05}),
-             Params({1.5, 1.0, 2.8}),
-             Params({5.0, 1.237, 2})});
+    std::vector<Params> examples;
+    for (auto const& scaling_factors : Scaling::paramsExamples()) {
+      for (auto const& unit_quaternion : Rotation::paramsExamples()) {
+        examples.push_back(params(scaling_factors, unit_quaternion));
       }
     }
+    return examples;
   }
 
   static auto invalidParamsExamples() -> std::vector<Params> {
@@ -256,13 +247,42 @@ class ScalingImpl {
         -Params::UnitX(),
     });
   }
+
+ private:
+  static auto unitQuaternion(Params const& params) -> Eigen::Vector<Scalar, 4> {
+    return params.template tail<4>();
+  }
+
+  static auto scaleFactors(Params const& params) -> Eigen::Vector<Scalar, 3> {
+    return params.template head<3>();
+  }
+
+  static auto params(
+      Eigen::Vector<Scalar, 3> const& scaling_factors,
+      Eigen::Vector<Scalar, 4> const& unit_quaternion) -> Params {
+    Params params;
+    params.template head<3>() = scaling_factors;
+    params.template tail<4>() = unit_quaternion;
+    return params;
+  }
+
+  static auto angleTimesAxis(Tangent const& tangent) -> Point {
+    return tangent.template head<3>();
+  }
+
+  static auto logFactors(Tangent const& tangent) -> Point {
+    return tangent.template tail<3>();
+  }
+
+  static auto tangent(
+      Eigen::Vector<Scalar, 3> const& angle_times_axis,
+      Eigen::Vector<Scalar, 3> const& log_factors) -> Tangent {
+    Tangent tangent;
+    tangent.template head<3>() = angle_times_axis;
+    tangent.template tail<3>() = log_factors;
+    return tangent;
+  }
 };
-
-template <class TScalar>
-using Scaling2Impl = ScalingImpl<TScalar, 2>;
-
-template <class TScalar>
-using Scaling3Impl = ScalingImpl<TScalar, 3>;
 
 }  // namespace lie
 }  // namespace sophus

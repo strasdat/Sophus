@@ -20,6 +20,8 @@ class QuaternionImpl {
   static int constexpr kNumParams = 4;
   static bool constexpr kIsCommutative = false;
 
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+
   // factories
 
   static auto zero() -> Eigen::Vector<Scalar, 4> {
@@ -30,20 +32,17 @@ class QuaternionImpl {
     return Eigen::Vector<Scalar, 4>(0.0, 0.0, 0.0, 1.0);
   }
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& /*unused*/)
+  static auto areParamsValid(Params const& /*unused*/)
       -> sophus::Expected<Success> {
     return sophus::Expected<Success>{};
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
+  static auto paramsExamples() -> std::vector<Params> {
     return pointExamples<Scalar, 4>();
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>({});
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>({});
   }
 
   static auto multiplication(
@@ -92,6 +91,8 @@ class Quaternion {
   using Impl = QuaternionImpl<Scalar>;
   static int constexpr kNumParams = 4;
 
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+
   // constructors and factories
 
   Quaternion() : params_(Impl::zero()) {}
@@ -99,8 +100,7 @@ class Quaternion {
   Quaternion(Quaternion const&) = default;
   auto operator=(Quaternion const&) -> Quaternion& = default;
 
-  static auto fromParams(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Quaternion {
+  static auto fromParams(Params const& params) -> Quaternion {
     Quaternion q(UninitTag{});
     q.setParams(params);
     return q;
@@ -114,14 +114,9 @@ class Quaternion {
     return Quaternion::fromParams(Impl::one());
   }
 
-  [[nodiscard]] auto params() const
-      -> Eigen::Vector<Scalar, kNumParams> const& {
-    return params_;
-  }
+  [[nodiscard]] auto params() const -> Params const& { return params_; }
 
-  void setParams(Eigen::Vector<Scalar, kNumParams> const& params) {
-    params_ = params;
-  }
+  void setParams(Params const& params) { params_ = params; }
 
   [[nodiscard]] auto real() const -> Scalar const& { return params_[3]; }
   [[nodiscard]] auto real() -> Scalar& { return params_[3]; }

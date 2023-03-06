@@ -109,7 +109,8 @@
 			"scoped_allocator": "cpp",
 			"span": "cpp",
 			"strstream": "cpp",
-			"typeindex": "cpp"
+			"typeindex": "cpp",
+			"__std_stream": "cpp"
 		}
 	}
 }

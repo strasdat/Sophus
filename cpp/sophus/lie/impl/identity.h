@@ -31,31 +31,26 @@ class IdentityImpl {
   static int const kPointDim = kDim;
   static int const kAmbientDim = kDim;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Point = Eigen::Vector<Scalar, kPointDim>;
+
   // constructors and factories
 
-  static auto identityParams() -> Eigen::Vector<Scalar, kNumParams> {
-    return Eigen::Vector<Scalar, kNumParams>::Zero();
-  }
+  static auto identityParams() -> Params { return Params::Zero(); }
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& scale_factors)
+  static auto areParamsValid(Params const& scale_factors)
       -> sophus::Expected<Success> {
     return sophus::Expected<Success>{};
   }
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Eigen::Vector<Scalar, kDof> const& tangent)
-      -> Eigen::Vector<Scalar, kNumParams> {
-    return tangent;
-  }
+  static auto exp(Tangent const& tangent) -> Params { return tangent; }
 
-  static auto log(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Eigen::Vector<Scalar, kDof> {
-    return params;
-  }
+  static auto log(Params const& params) -> Tangent { return params; }
 
-  static auto hat(Eigen::Vector<Scalar, kDof> const& tangent)
+  static auto hat(Tangent const& tangent)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> mat;
     mat.setZero();
@@ -67,82 +62,67 @@ class IdentityImpl {
     return Eigen::Matrix<Scalar, kDof, 1>();
   }
 
-  static auto adj(Eigen::Vector<Scalar, kNumParams> const& /*unused*/)
+  static auto adj(Params const& /*unused*/)
       -> Eigen::Matrix<Scalar, kDof, kDof> {
     return Eigen::Matrix<Scalar, kDof, kDof>::Identity();
   }
 
   // group operations
 
-  static auto inverse(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Eigen::Vector<Scalar, kNumParams> {
-    return params;
-  }
+  static auto inverse(Params const& params) -> Params { return params; }
 
-  static auto multiplication(
-      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
-      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
+      -> Params {
     return lhs_params;
   }
 
   // Point actions
-  static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kPointDim> const& point)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto action(Params const& params, Point const& point) -> Point {
     return point;
   }
 
-  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
   }
 
   static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      UnitVector<Scalar, kPointDim> const& point)
+      Params const& params, UnitVector<Scalar, kPointDim> const& point)
       -> UnitVector<Scalar, kPointDim> {
     return point;
   }
 
   // Matrices
 
-  static auto compactMatrix(Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto compactMatrix(Params const& params)
       -> Eigen::Matrix<Scalar, kPointDim, kAmbientDim> {
     return Eigen::Matrix<Scalar, kPointDim, kAmbientDim>::Identity();
   }
 
-  static auto matrix(Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto matrix(Params const& params)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     return compactMatrix(params);
   }
 
   // subgroup concepts
 
-  static auto matV(
-      Eigen::Vector<Scalar, kNumParams> const& /*unused*/,
-      Eigen::Vector<Scalar, kDof> const& /*unused*/)
+  static auto matV(Params const& /*unused*/, Tangent const& /*unused*/)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return Eigen::Matrix<Scalar, kPointDim, kPointDim>::Identity();
   }
 
-  static auto matVInverse(
-      Eigen::Vector<Scalar, kNumParams> const& /*unused*/,
-      Eigen::Vector<Scalar, kDof> const& /*unused*/)
+  static auto matVInverse(Params const& /*unused*/, Tangent const& /*unused*/)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return Eigen::Matrix<Scalar, kPointDim, kPointDim>::Identity();
   }
 
-  static auto topRightAdj(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto topRightAdj(Params const& params, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return Eigen::Matrix<Scalar, kPointDim, kDof>::Zero();
   }
 
   // derivatives
-  static auto dxExpX(Eigen::Vector<Scalar, kDof> const& /*unused*/)
+  static auto dxExpX(Tangent const& /*unused*/)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     return Eigen::Matrix<Scalar, kNumParams, 0>::Identity();
   }
@@ -151,37 +131,33 @@ class IdentityImpl {
     return Eigen::Matrix<Scalar, kNumParams, 0>::Identity();
   }
 
-  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto dxExpXTimesPointAt0(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return Eigen::Matrix<Scalar, kPointDim, 0>::Identity();
   }
 
-  static auto dxThisMulExpXAt0(
-      Eigen::Vector<Scalar, kNumParams> const& unit_complex)
+  static auto dxThisMulExpXAt0(Params const& unit_complex)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     return Eigen::Matrix<Scalar, kNumParams, 0>::Zero();
   }
 
-  static auto dxLogThisInvTimesXAtThis(
-      Eigen::Vector<Scalar, kNumParams> const& unit_quat)
+  static auto dxLogThisInvTimesXAtThis(Params const& unit_quat)
       -> Eigen::Matrix<Scalar, kDof, kNumParams> {
     return Eigen::Matrix<Scalar, kDof, kNumParams>::Identity();
   }
 
   // for tests
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
-    return std::vector<Eigen::Vector<Scalar, kDof>>();
+  static auto tangentExamples() -> std::vector<Tangent> {
+    return std::vector<Tangent>();
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>();
+  static auto paramsExamples() -> std::vector<Params> {
+    return std::vector<Params>();
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>();
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>();
   }
 };
 

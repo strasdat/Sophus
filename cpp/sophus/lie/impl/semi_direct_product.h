@@ -54,22 +54,24 @@ class SemiDirectProductWithTranslation {
   static int const kNumParams = SubGroup::kNumParams + kPointDim;
   static int const kAmbientDim = kPointDim + 1;
 
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Point = Eigen::Vector<Scalar, kPointDim>;
+
   // constructors and factories
 
-  static auto identityParams() -> Eigen::Vector<Scalar, kNumParams> {
-    return params(
-        SubGroup::identityParams(), Eigen::Vector<Scalar, kPointDim>::Zero());
+  static auto identityParams() -> Params {
+    return params(SubGroup::identityParams(), Point::Zero());
   }
 
-  static auto areParamsValid(Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto areParamsValid(Params const& params)
       -> sophus::Expected<Success> {
     return SubGroup::areParamsValid(subgroupParams(params));
   }
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Eigen::Vector<Scalar, kDof> tangent)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto exp(Tangent tangent) -> Params {
     Eigen::Vector<Scalar, SubGroup::kNumParams> subgroup_params =
         SubGroup::exp(subgroupTangent(tangent));
     return params(
@@ -79,8 +81,7 @@ class SemiDirectProductWithTranslation {
             .eval());
   }
 
-  static auto log(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Eigen::Vector<Scalar, kDof> {
+  static auto log(Params const& params) -> Tangent {
     Eigen::Vector<Scalar, SubGroup::kDof> subgroup_tangent =
         SubGroup::log(subgroupParams(params));
     return tangent(
@@ -89,7 +90,7 @@ class SemiDirectProductWithTranslation {
         subgroup_tangent);
   }
 
-  static auto hat(Eigen::Vector<Scalar, kDof> const& tangent)
+  static auto hat(Tangent const& tangent)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> hat_mat;
     hat_mat.setZero();
@@ -109,10 +110,8 @@ class SemiDirectProductWithTranslation {
   }
 
   // group operations
-  static auto multiplication(
-      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
-      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
+      -> Params {
     return SemiDirectProductWithTranslation::params(
         SubGroup::multiplication(
             subgroupParams(lhs_params), subgroupParams(rhs_params)),
@@ -120,8 +119,7 @@ class SemiDirectProductWithTranslation {
             translation(lhs_params));
   }
 
-  static auto inverse(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto inverse(Params const& params) -> Params {
     Eigen::Vector<Scalar, SubGroup::kNumParams> subgroup_params =
         SubGroup::inverse(subgroupParams(params));
     return SemiDirectProductWithTranslation::params(
@@ -131,22 +129,19 @@ class SemiDirectProductWithTranslation {
 
   // Point actions
 
-  static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kPointDim> const& point)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto action(Params const& params, Point const& point) -> Point {
     return SubGroup::action(subgroupParams(params), point) +
            translation(params);
   }
 
-  static auto toAmbient(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return unproj(point);
   }
 
   // Matrices
 
-  static auto compactMatrix(Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto compactMatrix(Params const& params)
       -> Eigen::Matrix<Scalar, kPointDim, kAmbientDim> {
     Eigen::Matrix<Scalar, kPointDim, kAmbientDim> mat;
     mat.template topLeftCorner<kPointDim, kPointDim>() =
@@ -155,7 +150,7 @@ class SemiDirectProductWithTranslation {
     return mat;
   }
 
-  static auto matrix(Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto matrix(Params const& params)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
     Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> mat;
     mat.setZero();
@@ -166,15 +161,14 @@ class SemiDirectProductWithTranslation {
   }
 
   static auto action(
-      Eigen::Vector<Scalar, kNumParams> const& params,
+      Params const& params,
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
     return SubGroup::action(subgroupParams(params), direction_vector);
   }
 
   // derivatives
-  static auto adj(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Eigen::Matrix<Scalar, kDof, kDof> {
+  static auto adj(Params const& params) -> Eigen::Matrix<Scalar, kDof, kDof> {
     Eigen::Matrix<Scalar, kDof, kDof> mat_adjoint;
 
     Eigen::Vector<Scalar, SubGroup::kNumParams> subgroup_params =
@@ -193,7 +187,7 @@ class SemiDirectProductWithTranslation {
     return mat_adjoint;
   }
 
-  // static auto dxExpX(Eigen::Vector<Scalar, kDof> const& tangent)
+  // static auto dxExpX(Tangent const& tangent)
   //     -> Eigen::Matrix<Scalar, kNumParams, kDof> {
   //   Eigen::Matrix<Scalar, kNumParams, kDof> j;
   //   j.setZero();
@@ -212,7 +206,7 @@ class SemiDirectProductWithTranslation {
     return j;
   }
 
-  static auto dxExpXTimesPointAt0(Eigen::Vector<Scalar, kPointDim> const& point)
+  static auto dxExpXTimesPointAt0(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     Eigen::Matrix<Scalar, kPointDim, kDof> j;
     j.template topLeftCorner<kPointDim, kPointDim>().setIdentity();
@@ -221,7 +215,7 @@ class SemiDirectProductWithTranslation {
     return j;
   }
 
-  static auto dxThisMulExpXAt0(Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto dxThisMulExpXAt0(Params const& params)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     Eigen::Matrix<Scalar, kNumParams, kDof> j;
     j.setZero();
@@ -234,8 +228,7 @@ class SemiDirectProductWithTranslation {
     return j;
   }
 
-  static auto dxLogThisInvTimesXAtThis(
-      Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto dxLogThisInvTimesXAtThis(Params const& params)
       -> Eigen::Matrix<Scalar, kDof, kNumParams> {
     Eigen::Matrix<Scalar, kDof, kNumParams> j;
     j.setZero();
@@ -250,8 +243,8 @@ class SemiDirectProductWithTranslation {
 
   // for tests
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
-    std::vector<Eigen::Vector<Scalar, kDof>> examples;
+  static auto tangentExamples() -> std::vector<Tangent> {
+    std::vector<Tangent> examples;
     for (auto const& group_tangent : SubGroup::tangentExamples()) {
       for (auto const& translation_tangents : exampleTranslations()) {
         examples.push_back(tangent(translation_tangents, group_tangent));
@@ -260,9 +253,8 @@ class SemiDirectProductWithTranslation {
     return examples;
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    std::vector<Eigen::Vector<Scalar, kNumParams>> examples;
+  static auto paramsExamples() -> std::vector<Params> {
+    std::vector<Params> examples;
     for (auto const& subgroup_params : SubGroup::paramsExamples()) {
       for (auto const& right_params : exampleTranslations()) {
         examples.push_back(params(subgroup_params, right_params));
@@ -271,9 +263,8 @@ class SemiDirectProductWithTranslation {
     return examples;
   }
 
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    std::vector<Eigen::Vector<Scalar, kNumParams>> examples;
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    std::vector<Params> examples;
     for (auto const& subgroup_params : SubGroup::invalidParamsExamples()) {
       for (auto const& right_params : exampleTranslations()) {
         examples.push_back(params(subgroup_params, right_params));
@@ -283,48 +274,44 @@ class SemiDirectProductWithTranslation {
   }
 
  private:
-  static auto subgroupParams(Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto subgroupParams(Params const& params)
       -> Eigen::Vector<Scalar, SubGroup::kNumParams> {
     return params.template head<SubGroup::kNumParams>();
   }
 
-  static auto translation(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto translation(Params const& params) -> Point {
     return params.template tail<kPointDim>();
   }
 
   static auto params(
       Eigen::Vector<Scalar, SubGroup::kNumParams> const& sub_group_params,
-      Eigen::Vector<Scalar, kPointDim> const& translation)
-      -> Eigen::Vector<Scalar, kNumParams> {
-    Eigen::Vector<Scalar, kNumParams> params;
+      Point const& translation) -> Params {
+    Params params;
     params.template head<SubGroup::kNumParams>() = sub_group_params;
     params.template tail<kPointDim>() = translation;
     return params;
   }
 
-  static auto subgroupTangent(Eigen::Vector<Scalar, kDof> const& tangent)
+  static auto subgroupTangent(Tangent const& tangent)
       -> Eigen::Vector<Scalar, SubGroup::kDof> {
     return tangent.template tail<SubGroup::kDof>();
   }
 
-  static auto translationTangent(Eigen::Vector<Scalar, kDof> const& tangent)
-      -> Eigen::Vector<Scalar, kPointDim> {
+  static auto translationTangent(Tangent const& tangent) -> Point {
     return tangent.template head<kPointDim>();
   }
 
   static auto tangent(
-      Eigen::Vector<Scalar, kPointDim> const& translation,
+      Point const& translation,
       Eigen::Vector<Scalar, SubGroup::kDof> const& subgroup_tangent)
-      -> Eigen::Vector<Scalar, kDof> {
-    Eigen::Vector<Scalar, kDof> tangent;
+      -> Tangent {
+    Tangent tangent;
     tangent.template head<kPointDim>() = translation;
     tangent.template tail<SubGroup::kDof>() = subgroup_tangent;
     return tangent;
   }
 
-  static auto exampleTranslations()
-      -> std::vector<Eigen::Vector<Scalar, kPointDim>> {
+  static auto exampleTranslations() -> std::vector<Point> {
     return ::sophus::pointExamples<Scalar, kPointDim>();
   }
 };

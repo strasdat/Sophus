@@ -42,8 +42,10 @@ class UnitVectorImpl {
   static int constexpr kDof = kDim - 1;
   static int constexpr kNumParams = kDim;
 
-  static auto areParamsValid(
-      Eigen::Vector<Scalar, kNumParams> const& unit_vector)
+  using Params = Eigen::Vector<Scalar, kNumParams>;
+  using Tangent = Eigen::Vector<Scalar, kDof>;
+
+  static auto areParamsValid(Params const& unit_vector)
       -> sophus::Expected<Success> {
     static const Scalar kThr = kEpsilon<Scalar>;
     const Scalar squared_norm = unit_vector.squaredNorm();
@@ -59,75 +61,60 @@ class UnitVectorImpl {
     return sophus::Expected<Success>{};
   }
 
-  static auto oplus(
-      Eigen::Vector<Scalar, kNumParams> const& params,
-      Eigen::Vector<Scalar, kDof> const& delta)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto oplus(Params const& params, Tangent const& delta) -> Params {
     return matRx(params) * exp(delta);
   }
 
-  static auto ominus(
-      Eigen::Vector<Scalar, kNumParams> const& lhs_params,
-      Eigen::Vector<Scalar, kNumParams> const& rhs_params)
-      -> Eigen::Vector<Scalar, kDof> {
+  static auto ominus(Params const& lhs_params, Params const& rhs_params)
+      -> Tangent {
     return log((matRx(lhs_params).transpose() * rhs_params).eval());
   }
 
-  static auto paramsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>(
-        {Eigen::Vector<Scalar, kNumParams>::UnitX(),
-         Eigen::Vector<Scalar, kNumParams>::UnitY(),
-         -Eigen::Vector<Scalar, kNumParams>::UnitX(),
-         -Eigen::Vector<Scalar, kNumParams>::UnitY()});
+  static auto paramsExamples() -> std::vector<Params> {
+    return std::vector<Params>(
+        {Params::UnitX(), Params::UnitY(), -Params::UnitX(), -Params::UnitY()});
   }
-  static auto invalidParamsExamples()
-      -> std::vector<Eigen::Vector<Scalar, kNumParams>> {
-    return std::vector<Eigen::Vector<Scalar, kNumParams>>(
-        {Eigen::Vector<Scalar, kNumParams>::Zero(),
-         Eigen::Vector<Scalar, kNumParams>::Ones(),
-         2.0 * Eigen::Vector<Scalar, kNumParams>::UnitX()});
+  static auto invalidParamsExamples() -> std::vector<Params> {
+    return std::vector<Params>(
+        {Params::Zero(), Params::Ones(), 2.0 * Params::UnitX()});
   }
 
-  static auto tangentExamples() -> std::vector<Eigen::Vector<Scalar, kDof>> {
-    return std::vector<Eigen::Vector<Scalar, kDof>>({
-        Eigen::Vector<Scalar, kDof>::Zero(),
-        0.01 * Eigen::Vector<Scalar, kDof>::UnitX(),
-        0.001 * Eigen::Vector<Scalar, kDof>::Ones(),
+  static auto tangentExamples() -> std::vector<Tangent> {
+    return std::vector<Tangent>({
+        Tangent::Zero(),
+        0.01 * Tangent::UnitX(),
+        0.001 * Tangent::Ones(),
     });
   }
 
  private:
-  static auto matRx(Eigen::Vector<Scalar, kNumParams> const& params)
+  static auto matRx(Params const& params)
       -> Eigen::Matrix<Scalar, kNumParams, kNumParams> {
     static Eigen::Vector<TScalar, kDim> const kUnitX =
         Eigen::Vector<TScalar, kDim>::UnitX();
     if ((kUnitX - params).squaredNorm() < kEpsilon<Scalar>) {
       return Eigen::Matrix<Scalar, kNumParams, kNumParams>::Identity();
     }
-    Eigen::Vector<Scalar, kNumParams> v = params - kUnitX;
+    Params v = params - kUnitX;
     return Eigen::Matrix<Scalar, kNumParams, kNumParams>::Identity() -
            2.0 * (v * v.transpose()) / v.squaredNorm();
   }
 
-  static auto exp(Eigen::Vector<Scalar, kDof> const& delta)
-      -> Eigen::Vector<Scalar, kNumParams> {
+  static auto exp(Tangent const& delta) -> Params {
     using std::cos;
-    Eigen::Vector<Scalar, kNumParams> params;
+    Params params;
     Scalar theta = delta.norm();
     params[0] = cos(theta);
     params.template tail<kDof>() = sinc(theta) * delta;
     return params;
   }
 
-  static auto log(Eigen::Vector<Scalar, kNumParams> const& params)
-      -> Eigen::Vector<Scalar, kDof> {
+  static auto log(Params const& params) -> Tangent {
     using std::atan2;
 
-    static Eigen::Vector<Scalar, kDof> const kUnitX =
-        Eigen::Vector<Scalar, kDof>::UnitX();
+    static Tangent const kUnitX = Tangent::UnitX();
     Scalar x = params[0];
-    Eigen::Vector<Scalar, kDof> tail = params.template tail<kDof>();
+    Tangent tail = params.template tail<kDof>();
     Scalar theta = tail.norm();
 
     if (abs(theta) < kEpsilon<Scalar>) {
@@ -158,6 +145,7 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
 
   static int constexpr kDof = kN - 1;
   static int constexpr kNumParams = kN;
+  using Tangent = Eigen::Vector<Scalar, kDof>;
 
   static auto tryFromUnitVector(Eigen::Matrix<TScalar, kN, 1> const& v)
       -> Expected<UnitVector> {
@@ -186,13 +174,13 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
     return fromUnitVector(v.normalized());
   }
 
-  auto oplus(Eigen::Vector<Scalar, kDof> const& delta) -> UnitVector {
+  auto oplus(Tangent const& delta) -> UnitVector {
     UnitVector v;
     v.vector_ = Impl::oplus(vector_, delta);
     return v;
   }
 
-  auto ominus(UnitVector const& rhs_params) -> Eigen::Vector<Scalar, kDof> {
+  auto ominus(UnitVector const& rhs_params) -> Tangent {
     return Impl::ominus(vector_, rhs_params.vector_);
   }
 
