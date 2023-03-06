@@ -10,6 +10,7 @@ sudo apt-get install \
   ccache \
   gfortran \
   libc++-dev \
+  libatlas-base-dev \
   libgtest-dev \
   libgoogle-glog-dev \
   libprotobuf-dev \

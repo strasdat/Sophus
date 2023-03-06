@@ -26,7 +26,7 @@ struct LieGroupPropTestSuite {
   static int constexpr kPointDim = Group::kPointDim;
   static int constexpr kAmbientDim = Group::kAmbientDim;
 
-  static decltype(Group::paramsExamples()) const kParamsExamples;
+  static decltype(Group::elementExamples()) const kElementExamples;
   static decltype(Group::tangentExamples()) const kTangentExamples;
   static decltype(pointExamples<Scalar, Group::kPointDim>())
       const kPointExamples;
@@ -37,11 +37,109 @@ struct LieGroupPropTestSuite {
   using Matrix = Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim>;
   using CompactMatrix = Eigen::Matrix<Scalar, kPointDim, kAmbientDim>;
 
+  static auto preservabilityTests(std::string group_name) -> void {
+    if (kElementExamples.size() == 0) {
+      return;
+    }
+
+    if (Group::kIsOriginPreserving) {
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
+        Point o;
+        o.setZero();
+        SOPHUS_ASSERT_NEAR(g * o, o, kEpsilon<Scalar>);
+      }
+    } else {
+      size_t num_preserves = 0;
+      size_t num = 0;
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
+        Point o;
+        o.setZero();
+        if ((g * o).norm() < kEpsilon<Scalar>) {
+          ++num_preserves;
+        }
+        ++num;
+      }
+      float percentage = float(num_preserves) / float(num);
+      FARM_ASSERT_LE(percentage, 0.75);
+    }
+
+    if (Group::kIsAxisDirectionPreserving) {
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
+        for (int d = 0; d < kPointDim; ++d) {
+          Point p;
+          p.setZero();
+          p[d] = 1.0;
+          UnitVector<Scalar, kPointDim> e =
+              UnitVector<Scalar, kPointDim>::fromUnitVector(p);
+          SOPHUS_ASSERT_NEAR((g * e).params(), e.params(), kEpsilon<Scalar>);
+        }
+      }
+    } else {
+      size_t num_preserves = 0;
+      size_t num = 0;
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
+        for (int d = 0; d < kPointDim; ++d) {
+          Point p;
+          p.setZero();
+          p[d] = 1.0;
+          UnitVector<Scalar, kPointDim> e =
+              UnitVector<Scalar, kPointDim>::fromUnitVector(p);
+
+          if (((g * e).params() - e.params()).norm() < kEpsilon<Scalar>) {
+            ++num_preserves;
+          }
+          ++num;
+        }
+      }
+      float percentage = float(num_preserves) / float(num);
+      FARM_ASSERT_LE(percentage, 0.75);
+    }
+
+    if (Group::kIsDirectionVectorPreserving) {
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
+        for (size_t point_id = 0; point_id < kPointExamples.size();
+             ++point_id) {
+          auto p = SOPHUS_AT(kPointExamples, point_id);
+          if (p.norm() < kEpsilon<Scalar>) {
+            continue;
+          }
+          UnitVector<Scalar, kPointDim> d =
+              UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(p);
+          SOPHUS_ASSERT_NEAR((g * d).params(), d.params(), kEpsilon<Scalar>);
+        }
+      }
+    } else {
+      size_t num_preserves = 0;
+      size_t num = 0;
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
+        for (size_t point_id = 0; point_id < kPointExamples.size();
+             ++point_id) {
+          auto p = SOPHUS_AT(kPointExamples, point_id);
+          if (p.norm() < kEpsilon<Scalar>) {
+            continue;
+          }
+          UnitVector<Scalar, kPointDim> d =
+              UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(p);
+          if (((g * d).params() - d.params()).norm() < kEpsilon<Scalar>) {
+            ++num_preserves;
+          }
+          ++num;
+        }
+      }
+      float percentage = float(num_preserves) / float(num);
+      FARM_ASSERT_LE(percentage, 0.75);
+    }
+  }
+
   static auto expTests(std::string group_name) -> void {
-    for (size_t params_id = 0; params_id < kParamsExamples.size();
-         ++params_id) {
-      Params params = SOPHUS_AT(kParamsExamples, params_id);
-      Group g = Group::fromParams(params);
+    for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+      Group g = SOPHUS_AT(kElementExamples, g_id);
       auto matrix_before = g.compactMatrix();
       auto matrix_after = Group::exp(g.log()).compactMatrix();
 
@@ -52,7 +150,7 @@ struct LieGroupPropTestSuite {
           "`exp(log(g)) == g` Test for {}\n"
           "params #{}",
           group_name,
-          params_id);
+          g_id);
     }
     for (size_t i = 0; i < kTangentExamples.size(); ++i) {
       Tangent tangent = SOPHUS_AT(kTangentExamples, i);
@@ -74,11 +172,8 @@ struct LieGroupPropTestSuite {
   }
 
   static auto adjointTests(std::string group_name) -> void {
-    for (size_t params_id = 0; params_id < kParamsExamples.size();
-         ++params_id) {
-      Params params = SOPHUS_AT(kParamsExamples, params_id);
-
-      Group g = Group::fromParams(params);
+    for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+      Group g = SOPHUS_AT(kElementExamples, g_id);
       Matrix mat = g.matrix();
       Eigen::Matrix<Scalar, Group::kDof, Group::kDof> ad = g.adj();
       for (size_t tangent_id = 0; tangent_id < kTangentExamples.size();
@@ -99,8 +194,8 @@ struct LieGroupPropTestSuite {
             ad,
             tangent_id,
             x.transpose(),
-            params_id,
-            params.transpose(),
+            g_id,
+            g.params().transpose(),
             g.compactMatrix());
       }
     }
@@ -121,19 +216,12 @@ struct LieGroupPropTestSuite {
   }
 
   static auto groupOperationTests(std::string group_name) -> void {
-    for (size_t params_id1 = 0; params_id1 < kParamsExamples.size();
-         ++params_id1) {
-      Params params1 = SOPHUS_AT(kParamsExamples, params_id1);
-      Group g1 = Group::fromParams(params1);
-      for (size_t params_id2 = 0; params_id2 < kParamsExamples.size();
-           ++params_id2) {
-        Params params2 = SOPHUS_AT(kParamsExamples, params_id2);
-        Group g2 = Group::fromParams(params2);
-
-        for (size_t params_id3 = 0; params_id3 < kParamsExamples.size();
-             ++params_id3) {
-          Params params3 = SOPHUS_AT(kParamsExamples, params_id3);
-          Group g3 = Group::fromParams(params3);
+    for (size_t g_id1 = 0; g_id1 < kElementExamples.size(); ++g_id1) {
+      Group g1 = SOPHUS_AT(kElementExamples, g_id1);
+      for (size_t g_id2 = 0; g_id2 < kElementExamples.size(); ++g_id2) {
+        Group g2 = SOPHUS_AT(kElementExamples, g_id2);
+        for (size_t g_id3 = 0; g_id3 < kElementExamples.size(); ++g_id3) {
+          Group g3 = SOPHUS_AT(kElementExamples, g_id3);
 
           Group left_hugging = (g1 * g2) * g3;
           Group right_hugging = g1 * (g2 * g3);
@@ -143,21 +231,17 @@ struct LieGroupPropTestSuite {
               10.0 * kEpsilonSqrt<Scalar>,
               "`(g1*g2)*g3 == g1*(g2*g3)` Test for {}, #{}/#{}/#{}",
               group_name,
-              params_id1,
-              params_id2,
-              params_id2);
+              g_id1,
+              g_id2,
+              g_id3);
         }
       }
     }
 
-    for (size_t params_id1 = 0; params_id1 < kParamsExamples.size();
-         ++params_id1) {
-      Params params1 = SOPHUS_AT(kParamsExamples, params_id1);
-      Group foo_from_bar_transform = Group::fromParams(params1);
-      for (size_t params_id2 = 0; params_id2 < kParamsExamples.size();
-           ++params_id2) {
-        Params params2 = SOPHUS_AT(kParamsExamples, params_id2);
-        Group bar_from_daz_transform = Group::fromParams(params2);
+    for (size_t g_id1 = 0; g_id1 < kElementExamples.size(); ++g_id1) {
+      Group foo_from_bar_transform = SOPHUS_AT(kElementExamples, g_id1);
+      for (size_t g_id2 = 0; g_id2 < kElementExamples.size(); ++g_id2) {
+        Group bar_from_daz_transform = SOPHUS_AT(kElementExamples, g_id2);
 
         Group daz_from_foo_transform_1 =
             bar_from_daz_transform.inverse() * foo_from_bar_transform.inverse();
@@ -170,8 +254,8 @@ struct LieGroupPropTestSuite {
             10 * kEpsilonSqrt<Scalar>,
             "`ing(g2) * inv(g1) == inv(g1 *g2)` Test for {}, #{}/#{}",
             group_name,
-            params_id1,
-            params_id2);
+            g_id1,
+            g_id2);
       }
     }
   }
@@ -179,10 +263,8 @@ struct LieGroupPropTestSuite {
   static auto groupActionTests(std::string group_name) -> void {
     for (size_t point_id = 0; point_id < kPointExamples.size(); ++point_id) {
       auto point_in = SOPHUS_AT(kPointExamples, point_id);
-      for (size_t params_id = 0; params_id < kParamsExamples.size();
-           ++params_id) {
-        auto params = SOPHUS_AT(kParamsExamples, params_id);
-        auto g = Group::fromParams(params);
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
         Point out_point_from_matrix =
             g.compactMatrix() * Group::toAmbient(point_in);
         Point out_point_from_action = g * point_in;
@@ -198,8 +280,8 @@ struct LieGroupPropTestSuite {
             group_name,
             point_id,
             point_in.transpose(),
-            params_id,
-            params.transpose(),
+            g_id,
+            g.params().transpose(),
             g.compactMatrix());
 
         Point in_point_through_inverse = g.inverse() * out_point_from_matrix;
@@ -214,8 +296,8 @@ struct LieGroupPropTestSuite {
             group_name,
             point_id,
             point_in.transpose(),
-            params_id,
-            params.transpose(),
+            g_id,
+            g.params().transpose(),
             g.compactMatrix());
       }
     }
@@ -248,7 +330,10 @@ struct LieGroupPropTestSuite {
       Eigen::Matrix<Scalar, kNumParams, kDof> j = Group::dxExpXAt0();
       Eigen::Matrix<Scalar, kNumParams, kDof> j_num =
           vectorFieldNumDiff<Scalar, kNumParams, kDof>(
-              [](Tangent const& x) -> Params { return Group::exp(x).params(); },
+              [](Tangent const& x) -> Params {
+                Params p = Group::exp(x).params();
+                return p;
+              },
               o);
       SOPHUS_ASSERT_NEAR(
           j,
@@ -278,10 +363,8 @@ struct LieGroupPropTestSuite {
             group_name);
       }
 
-      for (size_t params_id = 0; params_id < kParamsExamples.size();
-           ++params_id) {
-        auto params = SOPHUS_AT(kParamsExamples, params_id);
-        auto g = Group::fromParams(params);
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
 
         Tangent o;
         o.setZero();
@@ -301,10 +384,8 @@ struct LieGroupPropTestSuite {
             group_name);
       }
 
-      for (size_t params_id = 0; params_id < kParamsExamples.size();
-           ++params_id) {
-        auto params = SOPHUS_AT(kParamsExamples, params_id);
-        auto g = Group::fromParams(params);
+      for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
+        Group g = SOPHUS_AT(kElementExamples, g_id);
 
         Eigen::Matrix<Scalar, kDof, kDof> j =
             g.dxLogThisInvTimesXAtThis() * g.dxThisMulExpXAt0();
@@ -322,8 +403,9 @@ struct LieGroupPropTestSuite {
   }
 
   static auto runAllTests(std::string group_name) -> void {
+    preservabilityTests(group_name);
     expTests(group_name);
-    // adjointTests(group_name);
+    adjointTests(group_name);
     hatTests(group_name);
 
     groupOperationTests(group_name);
@@ -334,9 +416,9 @@ struct LieGroupPropTestSuite {
 };
 
 template <concepts::LieGroup TGroup>
-decltype(TGroup::paramsExamples())
-    const LieGroupPropTestSuite<TGroup>::kParamsExamples =
-        TGroup::paramsExamples();
+decltype(TGroup::elementExamples())
+    const LieGroupPropTestSuite<TGroup>::kElementExamples =
+        TGroup::elementExamples();
 
 template <concepts::LieGroup TGroup>
 decltype(TGroup::tangentExamples())
@@ -501,13 +583,15 @@ decltype(pointExamples<typename TGroup::Scalar, TGroup::kPointDim>())
 // // }
 
 // //   template <class TS = Scalar>
-// //   std::enable_if_t<std::is_same_v<TS, float>::value, bool> testSpline() {
+// //   std::enable_if_t<std::is_same_v<TS, float>::value, bool> testSpline()
+// {
 // //     // skip tests for Scalar == float
 // //     return true;
 // //   }
 
 // //   template <class TS = Scalar>
-// //   std::enable_if_t<!std::is_same_v<TS, float>::value, bool> testSpline() {
+// //   std::enable_if_t<!std::is_same_v<TS, float>::value, bool> testSpline()
+// {
 // //     // run tests for Scalar != float
 // //     bool passed = true;
 

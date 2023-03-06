@@ -39,19 +39,16 @@ concept EigenSameDim = EigenDenseType<TT1> && EigenDenseType<TT2> &&
                         TT1::ColsAtCompileTime == TT2::ColsAtCompileTime);
 
 template <int kRows, int kCols, typename TT>
-concept EigenWithDim = requires(TT) {
-  EigenDenseType<TT>&& TT::RowsAtCompileTime == kRows&& TT::ColsAtCompileTime ==
-      kCols;
-};
+concept EigenWithDim = EigenDenseType<TT> && TT::RowsAtCompileTime ==
+                       kRows&& TT::ColsAtCompileTime == kCols;
 
 template <int kRows, int kCols, typename TT>
-concept EigenWithDimOrDynamic = requires(TT) {
-  EigenDenseType<TT> &&
-      (TT::RowsAtCompileTime == Eigen::Dynamic ||
-       TT::RowsAtCompileTime == kRows) &&
-      (TT::ColsAtCompileTime == Eigen::Dynamic ||
-       TT::ColsAtCompileTime == kCols);
-};
+concept EigenWithDimOrDynamic = EigenDenseType<TT> &&
+                                (TT::RowsAtCompileTime == Eigen::Dynamic ||
+                                 TT::RowsAtCompileTime == kRows) &&
+                                (TT::ColsAtCompileTime == Eigen::Dynamic ||
+                                 TT::ColsAtCompileTime == kCols);
+;
 
 template <class TT>
 concept RealScalarType = std::is_floating_point_v<TT>;
