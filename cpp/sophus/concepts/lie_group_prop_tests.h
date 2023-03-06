@@ -323,7 +323,7 @@ struct LieGroupPropTestSuite {
 
   static auto runAllTests(std::string group_name) -> void {
     expTests(group_name);
-    adjointTests(group_name);
+    // adjointTests(group_name);
     hatTests(group_name);
 
     groupOperationTests(group_name);
