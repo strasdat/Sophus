@@ -83,6 +83,11 @@ class Group {
         Impl::multiplication(this->params_, rhs.params_));
   }
 
+  auto operator*=(TDerived const& rhs) -> TDerived& {
+    *this = *this * rhs;
+    return *this;
+  }
+
   [[nodiscard]] auto inverse() const -> TDerived {
     return TDerived::fromParams(Impl::inverse(this->params_));
   }
@@ -95,7 +100,7 @@ class Group {
 
   static auto toAmbient(Point const& point) { return Impl::toAmbient(point); }
 
-  auto operator*(UnitVector<Scalar, kPointDim> const& direction_vector)
+  auto operator*(UnitVector<Scalar, kPointDim> const& direction_vector) const
       -> UnitVector<Scalar, kPointDim> {
     return Impl::action(params_, direction_vector);
   }

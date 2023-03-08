@@ -26,11 +26,11 @@
 #include <type_traits>
 
 #ifdef __GNUC__
-#define SOPHUS_FUNCTION __PRETTY_FUNCTION__
+#define TION __PRETTY_FUNCTION__
 #elif (_MSC_VER >= 1310)
-#define SOPHUS_FUNCTION __FUNCTION__
+#define TION __FUNCTION__
 #else
-#define SOPHUS_FUNCTION "unknown"
+#define TION "unknown"
 #endif
 
 // from <farm_ng/core/logging/format.h>cd
