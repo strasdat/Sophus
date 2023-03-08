@@ -146,9 +146,7 @@ class Similarity3 : public lie::Group<
     return this->spiralSimilarity().rotation();
   }
 
-  void setRotation(Rotation const& rotation) {
-    return this->setRotation(rotation);
-  }
+  void setRotation(Rotation const& rotation) { this->rotation() = rotation; }
 
   [[nodiscard]] auto rotationMatrix() const -> Eigen::Matrix3<Scalar> {
     return this->rotation().matrix();

@@ -123,15 +123,13 @@ inline auto operator*(
 template <class TT>
 auto operator*(Similarity2<TT> const& b_from_a, Ray2<TT> const& ray_a)
     -> Ray2<TT> {
-  return Ray2<TT>(
-      b_from_a * ray_a.origin(), b_from_a.rxso2() * ray_a.direction());
+  return Ray2<TT>(b_from_a * ray_a.origin(), b_from_a * ray_a.direction());
 }
 
 template <class TT>
 auto operator*(Similarity3<TT> const& b_from_a, Ray3<TT> const& ray_a)
     -> Ray3<TT> {
-  return Ray3<TT>(
-      b_from_a * ray_a.origin(), b_from_a.rxso3() * ray_a.direction());
+  return Ray3<TT>(b_from_a * ray_a.origin(), b_from_a * ray_a.direction());
 }
 
 template <class TT>

@@ -40,4 +40,10 @@ using Translation2 = Translation<TScalar, 2>;
 template <class TScalar>
 using Translation3 = Translation<TScalar, 3>;
 
+using Translation2F32 = Translation2<float>;
+using Translation2F64 = Translation2<double>;
+
+using Translation3F32 = Translation3<float>;
+using Translation3F64 = Translation3<double>;
+
 }  // namespace sophus
