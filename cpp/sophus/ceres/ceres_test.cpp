@@ -221,7 +221,7 @@ struct LieGroupCeresTests {
   //       auto const delta = LieGroupF64::exp(delta_log);
   //       ::ceres::CostFunction* cost = new ::ceres::AutoDiffCostFunction<
   //           TestGraphFunctor,
-  //           LieGroupF64::kDoF,
+  //           LieGroupF64::kDof,
   //           LieGroupF64::kNumParams,
   //           LieGroupF64::kNumParams>(new TestGraphFunctor(diff * delta));
   //       // For real-world problems you should consider using robust

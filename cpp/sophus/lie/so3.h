@@ -13,8 +13,8 @@
 namespace sophus {
 
 template <class TScalar>
-using SO3 = Rotation3<TScalar>;          // NOLINT
-using SO3f = Rotation3<float>;           // NOLINT
-using Rotation3F64 = Rotation3<double>;  // NOLINT
+using SO3 = Rotation3<TScalar>;  // NOLINT
+using SO3f = Rotation3<float>;   // NOLINT
+using SO3d = Rotation3<double>;  // NOLINT
 
 }  // namespace sophus

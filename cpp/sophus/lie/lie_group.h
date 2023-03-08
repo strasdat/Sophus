@@ -85,7 +85,7 @@ class Group {
 
   auto operator*=(TDerived const& rhs) -> TDerived& {
     *this = *this * rhs;
-    return *this;
+    return *static_cast<TDerived*>(this);
   }
 
   [[nodiscard]] auto inverse() const -> TDerived {

@@ -191,7 +191,7 @@ auto isometryFromPlane(Eigen::Hyperplane<TScalar, 3> const& plane_in_foo)
   TScalar const d = plane_in_foo.offset();
   Eigen::Vector3<TScalar> const n = plane_in_foo.normal();
   Rotation3<TScalar> const foo_rotation_plane = rotation3FromPlane(n);
-  return Isometry3<TScalar>(foo_rotation_plane, -d * n);
+  return Isometry3<TScalar>(-d * n, foo_rotation_plane);
 }
 
 /// Takes in a hyperplane and returns unique representation by ensuring that the
