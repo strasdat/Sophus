@@ -47,32 +47,6 @@ class Cast<TT> {
   }
 };
 
-// template <class TT>
-// class Cast<sophus::Rotation3<TT>> {
-//  public:
-//   template <class TTo>
-//   static auto impl(sophus::Rotation3<TT> const& v) {
-//     return v.template cast<typename TTo::Scalar>();
-//   }
-//   template <class TTo>
-//   static auto implScalar(sophus::Rotation3<TT> const& v) {
-//     return v.template cast<TTo>();
-//   }
-// };
-
-// template <class TT>
-// class Cast<sophus::Isometry3<TT>> {
-//  public:
-//   template <class TTo>
-//   static auto impl(sophus::Isometry3<TT> const& v) {
-//     return v.template cast<typename TTo::Scalar>();
-//   }
-//   template <class TTo>
-//   static auto implScalar(sophus::Isometry3<TT> const& v) {
-//     return v.template cast<TTo>();
-//   }
-// };
-
 template <class TT>
 class Cast<std::vector<TT>> {
  public:

@@ -45,6 +45,11 @@ class Isometry3 : public lie::Group<
     this->params_.template tail<3>() = translation;
   }
 
+  [[deprecated(
+      "Use Isometry3(t, R) instead. Rotation and translation do not "
+      "commute and constructor arguments are sorted in sophus2 based on order "
+      "of operation from right to left:"
+      "Isometry3(t, R) * point == t + R * point.")]]  //
   explicit Isometry3(
       Rotation3<Scalar> const& group,
       Eigen::Vector<Scalar, 3> const& translation)
@@ -154,5 +159,20 @@ class Isometry3 : public lie::Group<
 using Isometry3F32 = Isometry3<float>;
 using Isometry3F64 = Isometry3<double>;
 static_assert(concepts::Isometry3<Isometry3F64>);
+
+namespace details {
+template <class TT>
+class Cast<sophus::Isometry3<TT>> {
+ public:
+  template <class TTo>
+  static auto impl(sophus::Isometry3<TT> const& v) {
+    return v.template cast<typename TTo::Scalar>();
+  }
+  template <class TTo>
+  static auto implScalar(sophus::Isometry3<TT> const& v) {
+    return v.template cast<TTo>();
+  }
+};
+}  // namespace details
 
 }  // namespace sophus

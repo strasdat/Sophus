@@ -24,7 +24,16 @@ class Translation : public lie::Group<
                             kDim,
                             lie::IdentityImpl>> {
  public:
+  using Scalar = TScalar;
+  using Base = lie::Group<
+      Translation<TScalar, kDim>,
+      lie::SemiDirectProductWithTranslation<TScalar, kDim, lie::IdentityImpl>>;
+
   Translation() = default;
+
+  Translation(Eigen::Vector<Scalar, kDim> const& translation) {
+    this->params_ = translation;
+  }
 
   explicit Translation(UninitTag /*unused*/) {}
 
@@ -33,6 +42,10 @@ class Translation : public lie::Group<
     return Translation<TOtherScalar, kDim>::fromParams(
         this->params_.template cast<TOtherScalar>());
   }
+
+  auto translation() { return this->params_; }
+
+  [[nodiscard]] auto translation() const { return this->params_; }
 };
 
 template <class TScalar>
@@ -45,5 +58,7 @@ using Translation2F64 = Translation2<double>;
 
 using Translation3F32 = Translation3<float>;
 using Translation3F64 = Translation3<double>;
+
+static_assert(concepts::Translation<Translation3F64>);
 
 }  // namespace sophus

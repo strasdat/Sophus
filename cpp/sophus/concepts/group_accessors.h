@@ -189,5 +189,8 @@ template <class TT>
 concept Similarity3 =
     accessors::Similarity<TT> && accessors::SpiralSimilarity3<TT>;
 
+template <class TT>
+concept Translation = accessors::Translation<TT>;
+
 }  // namespace concepts
 }  // namespace sophus

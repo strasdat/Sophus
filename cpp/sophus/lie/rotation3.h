@@ -138,4 +138,19 @@ using Rotation3F32 = Rotation3<float>;
 using Rotation3F64 = Rotation3<double>;
 static_assert(concepts::Rotation3<Rotation3F64>);
 
+namespace details {
+template <class TT>
+class Cast<sophus::Rotation3<TT>> {
+ public:
+  template <class TTo>
+  static auto impl(sophus::Rotation3<TT> const& v) {
+    return v.template cast<typename TTo::Scalar>();
+  }
+  template <class TTo>
+  static auto implScalar(sophus::Rotation3<TT> const& v) {
+    return v.template cast<TTo>();
+  }
+};
+}  // namespace details
+
 }  // namespace sophus

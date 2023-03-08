@@ -20,7 +20,6 @@ concept LieGroupImpl =
     ParamsImpl<TT> && TangentImpl<TT> && std::is_same_v<
         typename TT::Point,
         Eigen::Vector<typename TT::Scalar, TT::kPointDim>> &&
-    (TT::kPointDim == 2 || TT::kPointDim == 3) &&  // 2d or 3d points
     (TT::kPointDim == TT::kAmbientDim  // inhomogeneous point representation
      || TT::kPointDim + 1 ==
             TT::kAmbientDim)  // or homogeneous point representation
