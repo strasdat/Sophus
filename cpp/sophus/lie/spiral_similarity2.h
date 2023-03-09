@@ -31,8 +31,7 @@ class SpiralSimilarity2 : public lie::Group<
   explicit SpiralSimilarity2(UninitTag /*unused*/) {}
 
   SpiralSimilarity2(Rotation2<Scalar> const& rotation, Scalar scale = 1.0)
-      : Base(UninitTag{}) {
-    this->fromParams(rotation.params());
+      : Base(Base::fromParams(rotation.params())) {
     this->setScale(scale);
   }
 
