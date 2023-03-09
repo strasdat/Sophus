@@ -33,6 +33,10 @@ class Isometry2 : public lie::Group<
       lie::SemiDirectProductWithTranslation<Scalar, 2, lie::Rotation2Impl>>;
   using Rotation = Rotation2<Scalar>;
 
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   Isometry2() = default;
 
   explicit Isometry2(UninitTag /*unused*/) : Base(UninitTag{}) {}
@@ -95,9 +99,12 @@ class Isometry2 : public lie::Group<
         this->params_.template cast<TOtherScalar>());
   }
 
-  auto translation() { return this->params_.template tail<2>(); }
+  auto translation() -> Eigen::VectorBlock<Params, 2> {
+    return this->params_.template tail<2>();
+  }
 
-  [[nodiscard]] auto translation() const {
+  [[nodiscard]] auto translation() const
+      -> Eigen::VectorBlock<Params const, 2> {
     return this->params_.template tail<2>();
   }
 

@@ -26,6 +26,10 @@ class SpiralSimilarity3 : public lie::Group<
   using Base = lie::
       Group<SpiralSimilarity3<TScalar>, lie::SpiralSimilarity3Impl<TScalar>>;
 
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   SpiralSimilarity3() = default;
 
   explicit SpiralSimilarity3(UninitTag /*unused*/) {}

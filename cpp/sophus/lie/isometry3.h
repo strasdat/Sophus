@@ -33,6 +33,10 @@ class Isometry3 : public lie::Group<
       lie::SemiDirectProductWithTranslation<Scalar, 3, lie::Rotation3Impl>>;
   using Rotation = Rotation3<Scalar>;
 
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   Isometry3() = default;
 
   explicit Isometry3(UninitTag /*unused*/) : Base(UninitTag{}) {}
@@ -125,9 +129,12 @@ class Isometry3 : public lie::Group<
         this->params_.template cast<TOtherScalar>());
   }
 
-  auto translation() { return this->params_.template tail<3>(); }
+  auto translation() -> Eigen::VectorBlock<Params, 3> {
+    return this->params_.template tail<3>();
+  }
 
-  [[nodiscard]] auto translation() const {
+  [[nodiscard]] auto translation() const
+      -> Eigen::VectorBlock<Params const, 3> {
     return this->params_.template tail<3>();
   }
 
@@ -174,5 +181,10 @@ class Cast<sophus::Isometry3<TT>> {
   }
 };
 }  // namespace details
+
+template <class TScalar>
+using SE3 = Isometry3<TScalar>;  // NOLINT
+using SE3f = Isometry3<float>;   // NOLINT
+using SE3d = Isometry3<double>;  // NOLINT
 
 }  // namespace sophus

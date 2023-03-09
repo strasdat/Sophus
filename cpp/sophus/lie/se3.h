@@ -9,12 +9,3 @@
 #pragma once
 
 #include "sophus/lie/isometry3.h"
-
-namespace sophus {
-
-template <class TScalar>
-using SE3 = Isometry3<TScalar>;  // NOLINT
-using SE3f = Isometry3<float>;   // NOLINT
-using SE3d = Isometry3<double>;  // NOLINT
-
-}  // namespace sophus

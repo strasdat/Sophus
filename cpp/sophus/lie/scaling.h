@@ -20,6 +20,14 @@ class Scaling
     : public lie::
           Group<Scaling<TScalar, kDim>, lie::ScalingImpl<TScalar, kDim>> {
  public:
+  using Scalar = TScalar;
+  using Base =
+      lie::Group<Scaling<TScalar, kDim>, lie::ScalingImpl<TScalar, kDim>>;
+
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   Scaling() = default;
 
   explicit Scaling(UninitTag /*unused*/) {}
