@@ -20,6 +20,13 @@ template <class TScalar>
 class Rotation3
     : public lie::Group<Rotation3<TScalar>, lie::Rotation3Impl<TScalar>> {
  public:
+  using Scalar = TScalar;
+  using Base = lie::Group<Rotation3<TScalar>, lie::Rotation3Impl<TScalar>>;
+
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   Rotation3() = default;
 
   explicit Rotation3(UninitTag /*unused*/) {}
@@ -152,5 +159,10 @@ class Cast<sophus::Rotation3<TT>> {
   }
 };
 }  // namespace details
+
+template <class TScalar>
+using SO3 = Rotation3<TScalar>;  // NOLINT
+using SO3f = Rotation3<float>;   // NOLINT
+using SO3d = Rotation3<double>;  // NOLINT
 
 }  // namespace sophus

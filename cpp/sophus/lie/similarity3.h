@@ -37,6 +37,10 @@ class Similarity3 : public lie::Group<
   using SpiralSimilarity = SpiralSimilarity3<Scalar>;
   using Isometry = Isometry3<Scalar>;
 
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   Similarity3() = default;
 
   explicit Similarity3(UninitTag /*unused*/) {}
@@ -136,9 +140,12 @@ class Similarity3 : public lie::Group<
         this->params_.template cast<TOtherScalar>());
   }
 
-  auto translation() { return this->params_.template tail<3>(); }
+  auto translation() -> Eigen::VectorBlock<Params, 3> {
+    return this->params_.template tail<3>();
+  }
 
-  [[nodiscard]] auto translation() const {
+  [[nodiscard]] auto translation() const
+      -> Eigen::VectorBlock<Params const, 3> {
     return this->params_.template tail<3>();
   }
 

@@ -29,6 +29,10 @@ class Translation : public lie::Group<
       Translation<TScalar, kDim>,
       lie::SemiDirectProductWithTranslation<TScalar, kDim, lie::IdentityImpl>>;
 
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   Translation() = default;
 
   Translation(Eigen::Vector<Scalar, kDim> const& translation) {
@@ -43,9 +47,11 @@ class Translation : public lie::Group<
         this->params_.template cast<TOtherScalar>());
   }
 
-  auto translation() { return this->params_; }
+  auto translation() -> Point& { return this->params_; }
 
-  [[nodiscard]] auto translation() const { return this->params_; }
+  [[nodiscard]] auto translation() const -> Point const& {
+    return this->params_;
+  }
 };
 
 template <class TScalar>

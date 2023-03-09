@@ -10,6 +10,10 @@
 
 #include "sophus/calculus/num_diff.h"
 #include "sophus/concepts/group_accessors.h"
+#include "sophus/lie/isometry2.h"
+#include "sophus/lie/isometry3.h"
+#include "sophus/lie/rotation2.h"
+#include "sophus/lie/rotation3.h"
 #include "sophus/linalg/vector_space.h"
 
 namespace sophus {
@@ -24,67 +28,40 @@ void runTranslationAccessorTests() {
     p[i] = 0.1 * i;
   }
   SOPHUS_ASSERT_NEAR(TGroup(p).translation(), p, kEpsilon<Scalar>);
+
+  Eigen::Vector<Scalar, k_point_dim> q;
+  for (int i = 0; i < k_point_dim; ++i) {
+    q[i] = 0.2 * i;
+  }
+  TGroup q2;
+  q2.translation() = q;
+
+  SOPHUS_ASSERT_NEAR(q2.translation(), q, kEpsilon<Scalar>);
 }
 
 template <concepts::accessors::Rotation TGroup>
 void runRotationAccessorTests() {
-  // TODO
-}
+  using Scalar = typename TGroup::Scalar;
+  if constexpr (TGroup::kPointDim == 2) {
+    auto kElems = sophus::Rotation2<Scalar>::elementExamples();
+    for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
+      sophus::Rotation2<Scalar> rot = SOPHUS_AT(kElems, g_id);
 
-template <concepts::accessors::Isometry TGroup>
-void runIsometryAccessorTests() {
-  // TODO
-}
+      TGroup g = TGroup::fromRotationMatrix(rot.matrix());
+      SOPHUS_ASSERT_NEAR(
+          g.rotationMatrix(), rot.matrix(), kEpsilonSqrt<Scalar>);
+    }
+  } else if constexpr (TGroup::kPointDim == 3) {
+    auto kElems = sophus::Rotation3<Scalar>::elementExamples();
 
-template <concepts::accessors::SpiralSimilarity TGroup>
-void runSpiralSimilarityAccessorTests() {
-  // TODO
-}
+    for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
+      sophus::Rotation3<Scalar> rot = SOPHUS_AT(kElems, g_id);
 
-template <concepts::accessors::Similarity TGroup>
-void runSimilarityAccessorTests() {
-  // TODO
-}
-
-template <concepts::accessors::UnitComplex TGroup>
-void runUnitComplexTests() {
-  // TODO
-}
-
-template <concepts::accessors::UnitQuaternion TGroup>
-void runUnitQuaternionTests() {
-  // TODO
-}
-
-template <concepts::accessors::Rotation2 TGroup>
-void runRotation2AccessorTests() {
-  runRotationAccessorTests<TGroup>();
-  // TODO
-}
-
-template <concepts::accessors::Rotation3 TGroup>
-void runRotation3AccessorTests() {
-  runRotationAccessorTests<TGroup>();
-  // TODO
-}
-
-template <concepts::accessors::SpiralSimilarity2 TGroup>
-void runSpiralSimilarity2AccessorTests() {
-  runSpiralSimilarityAccessorTests<TGroup>();
-  runRotation2AccessorTests<TGroup>();
-  // TODO
-}
-
-template <concepts::accessors::SpiralSimilarity3 TGroup>
-void runSpiralSimilarity3AccessorTests() {
-  runSpiralSimilarityAccessorTests<TGroup>();
-  runRotation3AccessorTests<TGroup>();
-  // TODO
-}
-
-template <concepts::base::Rotation TGroup>
-void runBaseRotationTests() {
-  // TODO
+      TGroup g = TGroup::fromRotationMatrix(rot.matrix());
+      SOPHUS_ASSERT_NEAR(
+          g.rotationMatrix(), rot.matrix(), kEpsilonSqrt<Scalar>);
+    }
+  }
 }
 
 template <concepts::accessors::TxTy TGroup>
@@ -160,6 +137,82 @@ void runTxTyTzTests() {
         g.translation().template head<2>().norm(),
         kEpsilon<typename TGroup::Scalar>);
   }
+}
+
+template <concepts::accessors::Isometry TGroup>
+void runIsometryAccessorTests() {
+  using Scalar = typename TGroup::Scalar;
+  if constexpr (TGroup::kPointDim == 2) {
+    auto kElems = sophus::Isometry2<Scalar>::elementExamples();
+    for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
+      sophus::Isometry2<Scalar> iso = SOPHUS_AT(kElems, g_id);
+
+      TGroup rot_g = TGroup::fromRotationMatrix(iso.rotationMatrix());
+      SOPHUS_ASSERT_NEAR(
+          rot_g.rotationMatrix(), iso.rotationMatrix(), kEpsilon<Scalar>);
+    }
+  } else if constexpr (TGroup::kPointDim == 3) {
+    auto kElems = sophus::Rotation3<Scalar>::elementExamples();
+
+    for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
+      sophus::Rotation3<Scalar> iso = SOPHUS_AT(kElems, g_id);
+
+      TGroup rot_g = TGroup::fromRotationMatrix(iso.rotationMatrix());
+      SOPHUS_ASSERT_NEAR(
+          rot_g.rotationMatrix(), iso.rotationMatrix(), kEpsilon<Scalar>);
+    }
+  }
+}
+
+template <concepts::accessors::SpiralSimilarity TGroup>
+void runSpiralSimilarityAccessorTests() {
+  // TODO
+}
+
+template <concepts::accessors::Similarity TGroup>
+void runSimilarityAccessorTests() {
+  // TODO
+}
+
+template <concepts::accessors::UnitComplex TGroup>
+void runUnitComplexTests() {
+  // TODO
+}
+
+template <concepts::accessors::UnitQuaternion TGroup>
+void runUnitQuaternionTests() {
+  // TODO
+}
+
+template <concepts::accessors::Rotation2 TGroup>
+void runRotation2AccessorTests() {
+  runRotationAccessorTests<TGroup>();
+  // TODO
+}
+
+template <concepts::accessors::Rotation3 TGroup>
+void runRotation3AccessorTests() {
+  runRotationAccessorTests<TGroup>();
+  // TODO
+}
+
+template <concepts::accessors::SpiralSimilarity2 TGroup>
+void runSpiralSimilarity2AccessorTests() {
+  runSpiralSimilarityAccessorTests<TGroup>();
+  runRotation2AccessorTests<TGroup>();
+  // TODO
+}
+
+template <concepts::accessors::SpiralSimilarity3 TGroup>
+void runSpiralSimilarity3AccessorTests() {
+  runSpiralSimilarityAccessorTests<TGroup>();
+  runRotation3AccessorTests<TGroup>();
+  // TODO
+}
+
+template <concepts::base::Rotation TGroup>
+void runBaseRotationTests() {
+  // TODO
 }
 
 template <concepts::accessors::Isometry2 TGroup>

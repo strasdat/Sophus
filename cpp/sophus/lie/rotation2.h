@@ -20,6 +20,13 @@ template <class TScalar>
 class Rotation2
     : public lie::Group<Rotation2<TScalar>, lie::Rotation2Impl<TScalar>> {
  public:
+  using Scalar = TScalar;
+  using Base = lie::Group<Rotation2<TScalar>, lie::Rotation2Impl<TScalar>>;
+
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   Rotation2() = default;
 
   explicit Rotation2(UninitTag /*unused*/) {}

@@ -26,6 +26,10 @@ class SpiralSimilarity2 : public lie::Group<
       Group<SpiralSimilarity2<TScalar>, lie::SpiralSimilarity2Impl<TScalar>>;
   using Rotation = Rotation2<Scalar>;
 
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   SpiralSimilarity2() = default;
 
   explicit SpiralSimilarity2(UninitTag /*unused*/) {}

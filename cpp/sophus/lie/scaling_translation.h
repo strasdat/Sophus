@@ -24,6 +24,15 @@ class ScalingTranslation : public lie::Group<
                                    kDim,
                                    lie::ScalingImpl>> {
  public:
+  using Scalar = TScalar;
+  using Base = lie::Group<
+      ScalingTranslation<TScalar, kDim>,
+      lie::SemiDirectProductWithTranslation<TScalar, kDim, lie::ScalingImpl>>;
+
+  using Tangent = typename Base::Tangent;
+  using Params = typename Base::Params;
+  using Point = typename Base::Point;
+
   ScalingTranslation() = default;
 
   explicit ScalingTranslation(UninitTag /*unused*/) {}

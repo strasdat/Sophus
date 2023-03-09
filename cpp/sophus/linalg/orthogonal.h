@@ -31,7 +31,7 @@ auto isOrthogonal(Eigen::MatrixBase<TD> const& r) -> bool {
 
   return (r * r.transpose() -
           Eigen::Matrix<Scalar, kMatrixDim, kMatrixDim>::Identity())
-             .norm() < kEpsilon<Scalar>;
+             .norm() < kEpsilonSqrt<Scalar>;
 }
 
 /// Takes in arbitrary square matrix and returns true if it is
