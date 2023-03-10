@@ -14,6 +14,8 @@
 #include "sophus/lie/isometry3.h"
 #include "sophus/lie/rotation2.h"
 #include "sophus/lie/rotation3.h"
+#include "sophus/lie/spiral_similarity2.h"
+#include "sophus/lie/spiral_similarity3.h"
 #include "sophus/linalg/vector_space.h"
 
 namespace sophus {
@@ -152,21 +154,52 @@ void runIsometryAccessorTests() {
           rot_g.rotationMatrix(), iso.rotationMatrix(), kEpsilon<Scalar>);
     }
   } else if constexpr (TGroup::kPointDim == 3) {
-    auto kElems = sophus::Rotation3<Scalar>::elementExamples();
+    auto kElems = sophus::Isometry3<Scalar>::elementExamples();
 
     for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
-      sophus::Rotation3<Scalar> iso = SOPHUS_AT(kElems, g_id);
+      sophus::Isometry3<Scalar> iso = SOPHUS_AT(kElems, g_id);
 
       TGroup rot_g = TGroup::fromRotationMatrix(iso.rotationMatrix());
       SOPHUS_ASSERT_NEAR(
           rot_g.rotationMatrix(), iso.rotationMatrix(), kEpsilon<Scalar>);
     }
   }
+
+  // todo: also the Isometry(t, R) constructor
 }
 
 template <concepts::accessors::SpiralSimilarity TGroup>
 void runSpiralSimilarityAccessorTests() {
-  // TODO
+  using Scalar = typename TGroup::Scalar;
+
+  if constexpr (TGroup::kPointDim == 2) {
+    auto kElems = sophus::SpiralSimilarity2<Scalar>::elementExamples();
+    for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
+      sophus::SpiralSimilarity2<Scalar> spiral_sim = SOPHUS_AT(kElems, g_id);
+      double scale = spiral_sim.scale();
+
+      TGroup scale_g = TGroup::fromScale(scale);
+      SOPHUS_ASSERT_NEAR(scale_g.scale(), scale, kEpsilon<Scalar>);
+
+      TGroup scale_g2;
+      scale_g2.setScale(spiral_sim.scale());
+      SOPHUS_ASSERT_NEAR(scale_g2.scale(), scale, kEpsilon<Scalar>);
+    }
+  } else if constexpr (TGroup::kPointDim == 3) {
+    auto kElems = sophus::SpiralSimilarity3<Scalar>::elementExamples();
+
+    for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
+      sophus::SpiralSimilarity3<Scalar> spiral_sim = SOPHUS_AT(kElems, g_id);
+      double scale = spiral_sim.scale();
+
+      TGroup scale_g = TGroup::fromScale(scale);
+      SOPHUS_ASSERT_NEAR(scale_g.scale(), scale, kEpsilon<Scalar>);
+
+      TGroup scale_g2;
+      scale_g2.setScale(spiral_sim.scale());
+      SOPHUS_ASSERT_NEAR(scale_g2.scale(), scale, kEpsilon<Scalar>);
+    }
+  }
 }
 
 template <concepts::accessors::Similarity TGroup>
