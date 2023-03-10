@@ -81,7 +81,8 @@ class Region {
   /// If TPoint is floating point, the region is [-inf, +inf].
   static auto unbounded() noexcept -> Region<TPoint> {
     auto region = Region<TPoint>::uninitialized();
-    region.min_max_ = {PointTraits<TPoint>::min(), PointTraits<TPoint>::max()};
+    region.min_max_ = {
+        PointTraits<TPoint>::lowest(), PointTraits<TPoint>::max()};
     return region;
   }
 
@@ -299,7 +300,7 @@ class Region {
 
   /// Returns true if region has no bounds.
   [[nodiscard]] auto isUnbounded() const noexcept -> bool {
-    return allTrue(this->min() == PointTraits<TPoint>::min()) &&
+    return allTrue(this->min() == PointTraits<TPoint>::lowest()) &&
            allTrue(this->max() == PointTraits<TPoint>::max());
   }
 
