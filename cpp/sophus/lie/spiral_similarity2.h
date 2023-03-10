@@ -53,7 +53,9 @@ class SpiralSimilarity2 : public lie::Group<
   }
 
   static auto fromScale(Scalar scale) -> SpiralSimilarity2 {
-    SOPHUS_UNIMPLEMENTED();
+    SpiralSimilarity2 spiral_sim;
+    spiral_sim.setScale(scale);
+    return spiral_sim;
   }
 
   template <class TOtherScalar>
@@ -74,9 +76,7 @@ class SpiralSimilarity2 : public lie::Group<
 
   void setRotation(Rotation rot) { SOPHUS_UNIMPLEMENTED(); }
 
-  [[nodiscard]] auto scale() const -> Scalar {
-    return this->params_.squaredNorm();
-  }
+  [[nodiscard]] auto scale() const -> Scalar { return this->params_.norm(); }
 
   void setScale(Scalar scale) {
     using std::sqrt;

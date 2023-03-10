@@ -57,7 +57,9 @@ class SpiralSimilarity3 : public lie::Group<
   }
 
   static auto fromScale(Scalar scale) -> SpiralSimilarity3 {
-    SOPHUS_UNIMPLEMENTED();
+    SpiralSimilarity3 spiral_sim;
+    spiral_sim.setScale(scale);
+    return spiral_sim;
   }
 
   static auto fromQuaternion(Quaternion<Scalar> const& q) -> SpiralSimilarity3 {
