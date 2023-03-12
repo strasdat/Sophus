@@ -254,7 +254,8 @@ class Region {
       return *this;
     }
     if (this->isEmpty()) {
-      return other;
+      *this = other;
+      return *this;
     }
     min_max_[0] = sophus::min(min(), other.min());
     min_max_[1] = sophus::max(max(), other.max());
