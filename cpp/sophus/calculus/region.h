@@ -92,7 +92,8 @@ class Region {
   static auto from(TPoint const& p) noexcept -> Region<TPoint> {
     auto region = Region<TPoint>::empty();
     SOPHUS_ASSERT(!isNan(p));
-    region.extend(p);
+    region.min_max_[0] = p;
+    region.min_max_[1] = p;
     return region;
   }
 
@@ -162,34 +163,63 @@ class Region {
     return region;
   }
 
+  /// Precondition: !this->isEmptpy()
   [[nodiscard]] auto getElem(size_t row) const -> Region<Scalar> const& {
     return {
         SOPHUS_UNWRAP(tryGetElem(min(), row)),
         SOPHUS_UNWRAP(tryGetElem(max(), row))};
   }
 
+  /// Precondition: !this->isEmptpy()
   void setElem(size_t row, Region<Scalar> const& s) {
     SOPHUS_UNWRAP(trySetElem(min(), s, row));
     SOPHUS_UNWRAP(trySetElem(max(), s, row));
   }
 
   /// Returns the lower bound of the region.
+  ///
+  /// Precondition: !this->isEmptpy()
   [[nodiscard]] auto min() const noexcept -> TPoint const& {
+    SOPHUS_ASSERT(!this->isEmpty());
     return min_max_[0];
   }
 
   /// Returns the upper bound of the region.
+  ///
+  /// Precondition: !this->isEmptpy()
   [[nodiscard]] auto max() const noexcept -> TPoint const& {
+    SOPHUS_ASSERT(!this->isEmpty());
+    return min_max_[1];
+  }
+
+  /// Returns the lower bound of the region if it exit and nullopt otherwise.
+  [[nodiscard]] auto tryMin() const noexcept -> std::optional<TPoint> {
+    if (isEmpty()) {
+      return std::nullopt;
+    }
+    return min_max_[0];
+  }
+
+  /// Returns the lower bound of the region if it exit and nullopt otherwise.
+  [[nodiscard]] auto tryMax() const noexcept -> std::optional<TPoint> {
+    if (isEmpty()) {
+      return std::nullopt;
+    }
     return min_max_[1];
   }
 
   /// Returns the clamped version of the given point.
+  ///
+  /// Precondition: !this->isEmptpy()
   [[nodiscard]] auto clamp(TPoint const& point) const noexcept -> TPoint {
-    return sophus::clamp(point, min_max_[0], min_max_[1]);
+    return sophus::clamp(point, min(), min());
   }
 
   /// Returns true if the region contains the given point.
   [[nodiscard]] auto contains(TPoint const& point) const noexcept -> bool {
+    if (isEmpty()) {
+      return false;
+    }
     return isLessEqual(min(), point) && isLessEqual(point, max());
   }
 
@@ -197,6 +227,9 @@ class Region {
   ///
   /// It is zero if the region is not proper.
   [[nodiscard]] auto range() const noexcept -> TPoint {
+    if (isEmpty()) {
+      return zero<TPoint>();
+    }
     if constexpr (kIsInteger) {
       //  For integers, we consider e.g. {2} == [1.5, 2.5] hence range of
       //  Region(2, 3) == [1.5, 3.5] is 2.
@@ -209,12 +242,20 @@ class Region {
   ///
   /// Note: If TPoint is an integer point then the result will be rounded to
   /// the closed integer.
+  ///
+  /// Precondition: !this->isEmptpy()
   [[nodiscard]] auto mid() const noexcept -> TPoint {
     return eval(min() + range() / 2);
   }
 
   /// Extends this by other region.
   auto extend(Region const& other) noexcept -> Region<TPoint>& {
+    if (other.isEmpty()) {
+      return *this;
+    }
+    if (this->isEmpty()) {
+      return other;
+    }
     min_max_[0] = sophus::min(min(), other.min());
     min_max_[1] = sophus::max(max(), other.max());
     return *this;
@@ -222,8 +263,12 @@ class Region {
 
   /// Extends this by given point.
   auto extend(TPoint const& point) noexcept -> Region<TPoint>& {
-    min_max_[0] = sophus::min(min(), point);
-    min_max_[1] = sophus::max(max(), point);
+    if (this->isEmpty()) {
+      *this = from(point);
+    } else {
+      min_max_[0] = sophus::min(min(), point);
+      min_max_[1] = sophus::max(max(), point);
+    }
     return *this;
   }
 
@@ -264,6 +309,9 @@ class Region {
   template <class TOtherPoint>
   auto encloseCast() const noexcept -> Region<TOtherPoint> {
     static_assert(!kIsInteger && Region<TOtherPoint>::kIsInteger);
+    if (isEmpty()) {
+      return Region<TOtherPoint>::empty();
+    }
     return Region<TOtherPoint>(
         sophus::cast<TOtherPoint>(sophus::floor(min())),
         sophus::cast<TOtherPoint>(sophus::ceil(max())));
@@ -275,6 +323,9 @@ class Region {
   /// example: [1.1, 2.7] -> [1, 3]
   template <class TOtherPoint>
   auto roundCast() const noexcept -> Region<TOtherPoint> {
+    if (isEmpty()) {
+      return Region<TOtherPoint>::empty();
+    }
     static_assert(!kIsInteger && Region<TOtherPoint>::kIsInteger);
     return Region<TOtherPoint>(
         sophus::cast<TOtherPoint>(sophus::round(min())),
@@ -283,13 +334,13 @@ class Region {
 
   /// Returns true if region is empty.
   [[nodiscard]] auto isEmpty() const noexcept -> bool {
-    return allTrue(this->min() == PointTraits<TPoint>::max()) ||
-           allTrue(this->max() == PointTraits<TPoint>::lowest());
+    return allTrue(min_max_[0] == PointTraits<TPoint>::max()) &&
+           allTrue(min_max_[1] == PointTraits<TPoint>::lowest());
   }
 
   /// Returns true if region contains a single floating point number.
   [[nodiscard]] auto isDegenerated() const noexcept -> bool {
-    return !kIsInteger && allTrue(min() == max());
+    return !kIsInteger && allTrue(min_max_[0] == min_max_[1]);
   }
 
   /// Returns true if region is neither empty nor degenerated.
@@ -300,8 +351,8 @@ class Region {
 
   /// Returns true if region has no bounds.
   [[nodiscard]] auto isUnbounded() const noexcept -> bool {
-    return allTrue(this->min() == PointTraits<TPoint>::lowest()) &&
-           allTrue(this->max() == PointTraits<TPoint>::max());
+    return allTrue(min_max_[0] == PointTraits<TPoint>::lowest()) &&
+           allTrue(min_max_[1] == PointTraits<TPoint>::max());
   }
 
  private:
