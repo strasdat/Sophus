@@ -168,8 +168,7 @@ class SpiralSimilarity2Impl {
   }
 
   // Sub-group concepts
-  static auto matV(
-      Params const& non_zero_complex, Tangent const& angle_logscale)
+  static auto matV(Params const&, Tangent const& angle_logscale)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return details::calcW<Scalar, 2>(
         Rotation2Impl<Scalar>::hat(angle_logscale.template head<1>()),

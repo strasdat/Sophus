@@ -147,9 +147,9 @@ class ScalingImpl {
     for (int i = 0; i < kDof; ++i) {
       Scalar t = tangent[i];
       if (abs(t) < kEpsilon<Scalar>) {
-        mat(i, i) = 1.0 - 2 * t + 1.5 * t * t;
+        mat(i, i) = abs(1.0 - 2 * t + 1.5 * t * t);
       } else {
-        mat(i, i) = -(params[i] - 1.0) / tangent[i];
+        mat(i, i) = abs((params[i] - 1.0) / tangent[i]);
       }
     }
     return mat;
@@ -159,12 +159,13 @@ class ScalingImpl {
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     Eigen::Matrix<Scalar, kPointDim, kPointDim> mat =
         Eigen::Matrix<Scalar, kPointDim, kPointDim>::Identity();
+    using std::abs;
     for (int i = 0; i < kDof; ++i) {
       Scalar t = tangent[i];
       if (abs(t) < kEpsilon<Scalar>) {
-        mat(i, i) = 1.0 + 2 * t + 2.5 * t * t;
+        mat(i, i) = abs(1.0 + 2 * t + 2.5 * t * t);
       } else {
-        mat(i, i) = -tangent[i] / (params[i] - 1.0);
+        mat(i, i) = abs(tangent[i] / (params[i] - 1.0));
       }
     }
     return mat;
@@ -236,6 +237,8 @@ class ScalingImpl {
       return std::vector<Params>(
           {Params({1.0, 1.0}),
            Params({1.0, 2.0}),
+           Params({1.0, 0.5}),
+           Params({0.2, 0.5}),
            Params({1.5, 1.0}),
            Params({5.0, 1.237}),
            Params({0.5, 2.0})});

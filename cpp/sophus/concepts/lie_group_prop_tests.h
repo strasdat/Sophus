@@ -12,6 +12,8 @@
 #include "sophus/concepts/lie_group.h"
 #include "sophus/linalg/vector_space.h"
 
+#include <unsupported/Eigen/MatrixFunctions>  // for matrix exp
+
 namespace sophus {
 namespace test {
 
@@ -168,6 +170,14 @@ struct LieGroupPropTestSuite {
           Group::exp(tangent).compactMatrix(),
           i,
           tangent);
+    }
+
+    for (size_t i = 0; i < kTangentExamples.size(); ++i) {
+      Tangent omega = SOPHUS_AT(kTangentExamples, i);
+      Matrix exp_x = Group::exp(omega).matrix();
+      Matrix expmap_hat_x = (Group::hat(omega)).exp();
+      SOPHUS_ASSERT_NEAR(
+          exp_x, expmap_hat_x, 0.003, "expmap(hat(x)) - exp(x) case: %", i);
     }
   }
 
@@ -587,102 +597,6 @@ decltype(pointExamples<typename TGroup::Scalar, TGroup::kPointDim>())
 // {
 // //     // skip tests for Scalar == float
 // //     return true;
-// //   }
-
-// //   template <class TS = Scalar>
-// //   std::enable_if_t<!std::is_same_v<TS, float>::value, bool> testSpline()
-// {
-// //     // run tests for Scalar != float
-// //     bool passed = true;
-
-// //     for (Group const& t_world_foo : group_vec_) {
-// //       for (Group const& t_world_bar : group_vec_) {
-// //         std::vector<Group> control_poses;
-// //         control_poses.push_back(interpolate(t_world_foo, t_world_bar,
-// 0.0));
-
-// //         for (double p = 0.2; p < 1.0; p += 0.2) {
-// //           Group t_world_inter = interpolate(t_world_foo, t_world_bar,
-// p);
-// //           control_poses.push_back(t_world_inter);
-// //         }
-
-// //         BasisSplineImpl<Group> spline(control_poses, 1.0);
-
-// //         Group t = spline.parentFromSpline(0.0, 1.0);
-// //         Group t2 = spline.parentFromSpline(1.0, 0.0);
-
-// //         SOPHUS_TEST_APPROX(
-// //             passed,
-// //             t.matrix(),
-// //             t2.matrix(),
-// //             10 * small_eps_sqrt,
-// //             "parent_T_spline");
-
-// //         Transformation dt_parent_t_spline =
-// spline.dtParentFromSpline(0.0,
-// //         0.5); Transformation dt_parent_t_spline2 = curveNumDiff(
-// //             [&](double u_bar) -> Transformation {
-// //               return spline.parentFromSpline(0.0, u_bar).matrix();
-// //             },
-// //             0.5);
-// //         SOPHUS_TEST_APPROX(
-// //             passed,
-// //             dt_parent_t_spline,
-// //             dt_parent_t_spline2,
-// //             100 * small_eps_sqrt,
-// //             "Dt_parent_T_spline");
-// //         Transformation dt2_parent_t_spline =
-// //             spline.dt2ParentFromSpline(0.0, 0.5);
-// //         Transformation dt2_parent_t_spline2 = curveNumDiff(
-// //             [&](double u_bar) -> Transformation {
-// //               return spline.dtParentFromSpline(0.0, u_bar).matrix();
-// //             },
-// //             0.5);
-// //         SOPHUS_TEST_APPROX(
-// //             passed,
-// //             dt2_parent_t_spline,
-// //             dt2_parent_t_spline2,
-// //             20 * small_eps_sqrt,
-// //             "Dt2_parent_T_spline");
-
-// //         for (double frac : {0.01, 0.25, 0.5, 0.9, 0.99}) {
-// //           double t0 = 1.0;
-// //           double delta_t = 0.1;
-// //           BasisSpline<Group> spline(control_poses, t0, delta_t);
-// //           double t = t0 + frac * delta_t;
-
-// //           Transformation dt_parent_t_spline =
-// spline.dtParentFromSpline(t);
-// //           Transformation dt_parent_t_spline2 = curveNumDiff(
-// //               [&](double t_bar) -> Transformation {
-// //                 return spline.parentFromSpline(t_bar).matrix();
-// //               },
-// //               t);
-// //           SOPHUS_TEST_APPROX(
-// //               passed,kDof
-// //               dt_parent_t_spline,
-// //               dt_parent_t_spline2,
-// //               80 * small_eps_sqrt,
-// //               "Dt_parent_T_spline");
-
-// //           Transformation dt2_parent_t_spline =
-// spline.dt2ParentFromSpline(t);
-// //           Transformation dt2_parent_t_spline2 = curveNumDiff(
-// //               [&](double t_bar) -> Transformation {
-// //                 return spline.dtParentFromSpline(t_bar).matrix();
-// //               },
-// //               t);
-// //           SOPHUS_TEST_APPROX(
-// //               passed,
-// //               dt2_parent_t_spline,
-// //               dt2_parent_t_spline2,
-// //               20 * small_eps_sqrt,
-// //               "Dt2_parent_T_spline");
-// //         }
-// //       }
-// //     }
-// //     return passed;
 // //   }
 }  // namespace test
 }  // namespace sophus

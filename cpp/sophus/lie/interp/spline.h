@@ -13,9 +13,9 @@
 
 #pragma once
 
-#include "sophus/common/types.h"
-
-#include <cmath>
+#include "sophus/common/common.h"
+#include "sophus/lie/interp/interpolate.h"
+#include "sophus/lie/lie_group.h"
 
 namespace sophus {
 
@@ -59,12 +59,13 @@ class SplineBasisFunction {
   }
 };
 
-template <class TLieGroup>
+template <concepts::LieGroup TGroup>
 class BasisSplineFn {
  public:
-  using LieGroup = TLieGroup;
-  using TScalar = typename LieGroup::Scalar;
-  using Transformation = typename LieGroup::Transformation;
+  using LieGroup = TGroup;
+  using Scalar = typename LieGroup::Scalar;
+  using Transformation =
+      Eigen::Matrix<Scalar, TGroup::kAmbientDim, TGroup::kAmbientDim>;
   using Tangent = typename LieGroup::Tangent;
 
   static LieGroup parentFromSpline(
@@ -167,42 +168,51 @@ class BasisSplineFn {
 
 enum class SegmentCase { first, normal, last };
 
-template <class TLieGroup>
+template <concepts::LieGroup TGroup>
 struct BasisSplineSegment {
  public:
-  using T = typename TLieGroup::Scalar;
-  using Transformation = typename TLieGroup::Transformation;
+  using Scalar = typename TGroup::Scalar;
+  using T = Scalar;
+  using Transformation =
+      Eigen::Matrix<Scalar, TGroup::kAmbientDim, TGroup::kAmbientDim>;
+  using Params = typename TGroup::Params;
 
   BasisSplineSegment(
       SegmentCase segment_case,
-      T const* const raw_ptr0,
-      T const* const raw_ptr1,
-      T const* const raw_ptr2,
-      T const* const raw_ptr3)
+      Params const& params0,
+      Params const& params1,
+      Params const& params2,
+      Params const& params3)
       : segment_case_(segment_case),
-        raw_params0_(raw_ptr0),
-        raw_params1_(raw_ptr1),
-        raw_params2_(raw_ptr2),
-        raw_params3_(raw_ptr3) {}
+        params0_(params0),
+        params1_(params1),
+        params2_(params2),
+        params3_(params3) {}
 
-  [[nodiscard]] Eigen::Map<TLieGroup const> worldFromFooPrev() const {
-    return Eigen::Map<TLieGroup const>(raw_params0_);
+  BasisSplineSegment(BasisSplineSegment const&) = delete;
+  BasisSplineSegment(BasisSplineSegment&&) = delete;
+
+  auto operator=(BasisSplineSegment const&) -> BasisSplineSegment = delete;
+  auto operator=(BasisSplineSegment&&) -> BasisSplineSegment = delete;
+
+  [[nodiscard]] TGroup worldFromFooPrev() const {
+    return TGroup::fromParams(params0_);
   }
-  [[nodiscard]] Eigen::Map<TLieGroup const> worldFromFoo0() const {
-    return Eigen::Map<TLieGroup const>(raw_params1_);
+  [[nodiscard]] TGroup worldFromFoo0() const {
+    return TGroup::fromParams(params1_);
   }
 
-  [[nodiscard]] Eigen::Map<TLieGroup const> worldFromFoo1() const {
-    return Eigen::Map<TLieGroup const>(raw_params2_);
+  [[nodiscard]] TGroup worldFromFoo1() const {
+    return TGroup::fromParams(params2_);
   }
 
-  [[nodiscard]] Eigen::Map<TLieGroup const> worldFromFoo2() const {
-    return Eigen::Map<TLieGroup const>(raw_params3_);
+  [[nodiscard]] TGroup worldFromFoo2() const {
+    return TGroup::fromParams(params3_);
   }
-  TLieGroup parentFromSpline(double u) {
+  TGroup parentFromSpline(double u) {
     switch (segment_case_) {
       case SegmentCase::first:
-        return BasisSplineFn<TLieGroup>::parentFromSpline(
+        return BasisSplineFn<TGroup>::parentFromSpline(
             worldFromFoo0(),
             std::make_tuple(
                 (worldFromFoo0().inverse() * worldFromFoo0()).log(),
@@ -210,7 +220,7 @@ struct BasisSplineSegment {
                 (worldFromFoo1().inverse() * worldFromFoo2()).log()),
             u);
       case SegmentCase::normal:
-        return BasisSplineFn<TLieGroup>::parentFromSpline(
+        return BasisSplineFn<TGroup>::parentFromSpline(
             worldFromFooPrev(),
             std::make_tuple(
                 (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
@@ -218,7 +228,7 @@ struct BasisSplineSegment {
                 (worldFromFoo1().inverse() * worldFromFoo2()).log()),
             u);
       case SegmentCase::last:
-        return BasisSplineFn<TLieGroup>::parentFromSpline(
+        return BasisSplineFn<TGroup>::parentFromSpline(
             worldFromFooPrev(),
             std::make_tuple(
                 (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
@@ -232,7 +242,7 @@ struct BasisSplineSegment {
   Transformation dtParentFromSpline(double u, double delta_t) {
     switch (segment_case_) {
       case SegmentCase::first:
-        return BasisSplineFn<TLieGroup>::dtParentFromSpline(
+        return BasisSplineFn<TGroup>::dtParentFromSpline(
             worldFromFoo0(),
             std::make_tuple(
                 (worldFromFoo0().inverse() * worldFromFoo0()).log(),
@@ -241,7 +251,7 @@ struct BasisSplineSegment {
             u,
             delta_t);
       case SegmentCase::normal:
-        return BasisSplineFn<TLieGroup>::dtParentFromSpline(
+        return BasisSplineFn<TGroup>::dtParentFromSpline(
             worldFromFooPrev(),
             std::make_tuple(
                 (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
@@ -250,7 +260,7 @@ struct BasisSplineSegment {
             u,
             delta_t);
       case SegmentCase::last:
-        return BasisSplineFn<TLieGroup>::dtParentFromSpline(
+        return BasisSplineFn<TGroup>::dtParentFromSpline(
             worldFromFooPrev(),
             std::make_tuple(
                 (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
@@ -265,7 +275,7 @@ struct BasisSplineSegment {
   Transformation dt2ParentFromSpline(double u, double delta_t) {
     switch (segment_case_) {
       case SegmentCase::first:
-        return BasisSplineFn<TLieGroup>::dt2ParentFromSpline(
+        return BasisSplineFn<TGroup>::dt2ParentFromSpline(
             worldFromFoo0(),
             std::make_tuple(
                 (worldFromFoo0().inverse() * worldFromFoo0()).log(),
@@ -274,7 +284,7 @@ struct BasisSplineSegment {
             u,
             delta_t);
       case SegmentCase::normal:
-        return BasisSplineFn<TLieGroup>::dt2ParentFromSpline(
+        return BasisSplineFn<TGroup>::dt2ParentFromSpline(
             worldFromFooPrev(),
             std::make_tuple(
                 (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
@@ -283,7 +293,7 @@ struct BasisSplineSegment {
             u,
             delta_t);
       case SegmentCase::last:
-        return BasisSplineFn<TLieGroup>::dt2ParentFromSpline(
+        return BasisSplineFn<TGroup>::dt2ParentFromSpline(
             worldFromFooPrev(),
             std::make_tuple(
                 (worldFromFooPrev().inverse() * worldFromFoo0()).log(),
@@ -297,18 +307,19 @@ struct BasisSplineSegment {
 
  private:
   SegmentCase segment_case_;
-  T const* raw_params0_;
-  T const* raw_params1_;
-  T const* raw_params2_;
-  T const* raw_params3_;
+  Params const& params0_;
+  Params const& params1_;
+  Params const& params2_;
+  Params const& params3_;
 };
 
-template <class TLieGroup>
+template <concepts::LieGroup TGroup>
 class BasisSplineImpl {
  public:
-  using LieGroup = TLieGroup;
+  using LieGroup = TGroup;
   using Scalar = typename LieGroup::Scalar;
-  using Transformation = typename LieGroup::Transformation;
+  using Transformation =
+      Eigen::Matrix<Scalar, TGroup::kAmbientDim, TGroup::kAmbientDim>;
   using Tangent = typename LieGroup::Tangent;
 
   BasisSplineImpl(
@@ -344,10 +355,10 @@ class BasisSplineImpl {
 
     return BasisSplineSegment<LieGroup>(
                segment_case,
-               parent_from_control_point_transforms_[idx_prev].data(),
-               parent_from_control_point_transforms_[idx_0].data(),
-               parent_from_control_point_transforms_[idx_1].data(),
-               parent_from_control_point_transforms_[idx_2].data())
+               parent_from_control_point_transforms_[idx_prev].params(),
+               parent_from_control_point_transforms_[idx_0].params(),
+               parent_from_control_point_transforms_[idx_1].params(),
+               parent_from_control_point_transforms_[idx_2].params())
         .parentFromSpline(u);
   }
 
@@ -374,10 +385,10 @@ class BasisSplineImpl {
 
     return BasisSplineSegment<LieGroup>(
                segment_case,
-               parent_from_control_point_transforms_[idx_prev].data(),
-               parent_from_control_point_transforms_[idx_0].data(),
-               parent_from_control_point_transforms_[idx_1].data(),
-               parent_from_control_point_transforms_[idx_2].data())
+               parent_from_control_point_transforms_[idx_prev].params(),
+               parent_from_control_point_transforms_[idx_0].params(),
+               parent_from_control_point_transforms_[idx_1].params(),
+               parent_from_control_point_transforms_[idx_2].params())
         .dtParentFromSpline(u, delta_transform_);
   }
 
@@ -404,10 +415,10 @@ class BasisSplineImpl {
 
     return BasisSplineSegment<LieGroup>(
                segment_case,
-               parent_from_control_point_transforms_[idx_prev].data(),
-               parent_from_control_point_transforms_[idx_0].data(),
-               parent_from_control_point_transforms_[idx_1].data(),
-               parent_from_control_point_transforms_[idx_2].data())
+               parent_from_control_point_transforms_[idx_prev].params(),
+               parent_from_control_point_transforms_[idx_0].params(),
+               parent_from_control_point_transforms_[idx_1].params(),
+               parent_from_control_point_transforms_[idx_2].params())
         .dt2ParentFromSpline(u, delta_transform_);
   }
 
@@ -435,12 +446,13 @@ struct IndexAndU {
   double u;
 };
 
-template <class TLieGroup>
+template <concepts::LieGroup TGroup>
 class BasisSpline {
  public:
-  using LieGroup = TLieGroup;
+  using LieGroup = TGroup;
   using Scalar = typename LieGroup::Scalar;
-  using Transformation = typename LieGroup::Transformation;
+  using Transformation =
+      Eigen::Matrix<Scalar, TGroup::kAmbientDim, TGroup::kAmbientDim>;
   using Tangent = typename LieGroup::Tangent;
 
   BasisSpline(
