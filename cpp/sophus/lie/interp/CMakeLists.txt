@@ -20,3 +20,8 @@ farm_ng_add_test(interpolate
                       PARENT_LIBRARY sophus_lie_interp
                       LINK_LIBRARIES sophus_lie_interp
                       LABELS small)
+
+farm_ng_add_test(spline
+                      PARENT_LIBRARY sophus_lie_interp
+                      LINK_LIBRARIES sophus_lie_interp
+                      LABELS small)

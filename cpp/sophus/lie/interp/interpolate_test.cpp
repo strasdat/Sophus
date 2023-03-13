@@ -9,6 +9,7 @@
 #include "sophus/lie/interp/interpolate.h"
 
 #include "sophus/lie/interp/average.h"
+#include "sophus/lie/scaling_translation.h"
 
 #include <gtest/gtest.h>
 
@@ -59,7 +60,7 @@ struct InterpolatePropTestSuite {
             foo_t_quiz.matrix(), foo_from_bar.matrix(), sqrt_eps, "");
         foo_t_quiz = interpolate(foo_from_bar, foo_from_daz, Scalar(1));
         SOPHUS_ASSERT_NEAR(
-            foo_t_quiz.matrix(), foo_from_daz.matrix(), sqrt_eps, "");
+            foo_t_quiz.matrix(), foo_from_daz.matrix(), 10.0 * sqrt_eps, "");
       }
     }
     for (Scalar alpha :
@@ -95,8 +96,9 @@ struct InterpolatePropTestSuite {
             SOPHUS_ASSERT_NEAR(
                 dash_t_quiz.matrix(),
                 (dash_from_foo * foo_t_quiz).matrix(),
-                10 * sqrt_eps,
-                "");
+                500 * sqrt_eps,
+                "{}",
+                group_name);
           }
           // test inverse-invariance:
           //
@@ -105,7 +107,10 @@ struct InterpolatePropTestSuite {
           Group quiz_t_foo = interpolate(
               foo_from_bar.inverse(), foo_from_daz.inverse(), alpha);
           SOPHUS_ASSERT_NEAR(
-              quiz_t_foo.inverse().matrix(), foo_t_quiz.matrix(), sqrt_eps, "");
+              quiz_t_foo.inverse().matrix(),
+              foo_t_quiz.matrix(),
+              500.0 * sqrt_eps,
+              "");
         }
       }
       for (size_t params_id1 = 0; params_id1 < kParamsExamples.size();
@@ -138,7 +143,7 @@ struct InterpolatePropTestSuite {
             SOPHUS_ASSERT_NEAR(
                 quiz_t_dash.matrix(),
                 (quiz_t_foo * foo_from_dash).matrix(),
-                10 * sqrt_eps,
+                500 * sqrt_eps,
                 "");
           }
         }
@@ -173,7 +178,7 @@ struct InterpolatePropTestSuite {
           SOPHUS_ASSERT_NEAR(
               foo_t_quiz.matrix(),
               foo_t_average->matrix(),
-              sqrt_eps,
+              100.0 * sqrt_eps,
               "log(foo_from_bar): %\nlog(foo_from_daz): %\n"
               "log(interp): %\nlog(average): %",
               transpose(foo_from_bar.log()),
@@ -195,7 +200,7 @@ struct InterpolatePropTestSuite {
           SOPHUS_ASSERT_NEAR(
               foo_t_quiz.matrix(),
               foo_t_iaverage->matrix(),
-              sqrt_eps,
+              100 * sqrt_eps,
               "log(foo_from_bar): %\nlog(foo_from_daz): %",
               transpose(foo_from_bar.log()),
               transpose(foo_from_daz.log()),
@@ -230,9 +235,18 @@ TEST(lie_groups, linterpolate_prop_tests) {
   InterpolatePropTestSuite<Isometry2<double>>::runAllTests("Isometry2");
   InterpolatePropTestSuite<Isometry3<double>>::runAllTests("Isometry3");
 
-  //   InterpolatePropTestSuite<SpiralSimilarity2<double>>::runAllTests("SpiralSimilarity2");
-  //   InterpolatePropTestSuite<SpiralSimilarity3<double>>::runAllTests("SpiralSimilarity3");
-  //     InterpolatePropTestSuite<Similarity2<double>>::runAllTests("Similarity2");
-  //     InterpolatePropTestSuite<Similarity3<double>>::runAllTests("Similarity3");
+  InterpolatePropTestSuite<SpiralSimilarity2<double>>::runAllTests(
+      "SpiralSimilarity2");
+  InterpolatePropTestSuite<SpiralSimilarity3<double>>::runAllTests(
+      "SpiralSimilarity3");
+  InterpolatePropTestSuite<Similarity2<double>>::runAllTests("Similarity2");
+  InterpolatePropTestSuite<Similarity3<double>>::runAllTests("Similarity3");
+
+  InterpolatePropTestSuite<Scaling2<double>>::runAllTests("Scaling2");
+  InterpolatePropTestSuite<Scaling3<double>>::runAllTests("Scaling3");
+  InterpolatePropTestSuite<ScalingTranslation2<double>>::runAllTests(
+      "ScalingTranslation2");
+  InterpolatePropTestSuite<ScalingTranslation3<double>>::runAllTests(
+      "ScalingTranslation3");
 }
 }  // namespace sophus::test

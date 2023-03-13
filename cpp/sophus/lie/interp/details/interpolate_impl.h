@@ -13,6 +13,7 @@
 #include "sophus/lie/rotation2.h"
 #include "sophus/lie/rotation3.h"
 #include "sophus/lie/scaling.h"
+#include "sophus/lie/scaling_translation.h"
 #include "sophus/lie/similarity2.h"
 #include "sophus/lie/similarity3.h"
 #include "sophus/lie/spiral_similarity2.h"
@@ -31,6 +32,26 @@ struct Traits<Translation<TScalar, kPointDim>> {
 
   static auto hasShortestPathAmbiguity(
       Translation<TScalar, kPointDim> const& /*unused*/) -> bool {
+    return false;
+  }
+};
+
+template <class TScalar, int kPointDim>
+struct Traits<Scaling<TScalar, kPointDim>> {
+  static bool constexpr kSupported = true;
+
+  static auto hasShortestPathAmbiguity(
+      Scaling<TScalar, kPointDim> const& /*unused*/) -> bool {
+    return false;
+  }
+};
+
+template <class TScalar, int kPointDim>
+struct Traits<ScalingTranslation<TScalar, kPointDim>> {
+  static bool constexpr kSupported = true;
+
+  static auto hasShortestPathAmbiguity(
+      ScalingTranslation<TScalar, kPointDim> const& /*unused*/) -> bool {
     return false;
   }
 };
