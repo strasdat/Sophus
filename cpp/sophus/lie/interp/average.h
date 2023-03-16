@@ -16,6 +16,7 @@
 #include "sophus/lie/rotation2.h"
 #include "sophus/lie/rotation3.h"
 #include "sophus/lie/scaling.h"
+#include "sophus/lie/scaling_translation.h"
 #include "sophus/lie/similarity2.h"
 #include "sophus/lie/similarity3.h"
 #include "sophus/lie/spiral_similarity2.h"
