@@ -255,7 +255,7 @@ auto finiteInterval(sophus::ImageView<TPixel> const& image) -> Region<TPixel> {
           min_max.extend(v);
         }
       },
-      Region<TPixel>{});
+      Region<TPixel>::empty());
 }
 
 // TODO: make member function?
