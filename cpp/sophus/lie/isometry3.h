@@ -138,7 +138,7 @@ class Isometry3 : public lie::Group<
     return this->params_.template tail<3>();
   }
 
-  [[nodiscard]] auto rotation() const {
+  [[nodiscard]] auto rotation() const -> Rotation3<Scalar> const {
     return Rotation3<Scalar>::fromParams(
         this->params_.template head<Rotation3<Scalar>::kNumParams>().eval());
   }
@@ -160,7 +160,9 @@ class Isometry3 : public lie::Group<
     this->setRotation(Rotation::fromUnitQuaternion(z));
   }
 
-  [[nodiscard]] auto so3() const { return rotation(); }
+  [[nodiscard]] auto so3() const -> Rotation3<Scalar> const {
+    return rotation();
+  }
 };
 
 using Isometry3F32 = Isometry3<float>;
