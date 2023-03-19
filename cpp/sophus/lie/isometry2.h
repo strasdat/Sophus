@@ -108,7 +108,7 @@ class Isometry2 : public lie::Group<
     return this->params_.template tail<2>();
   }
 
-  [[nodiscard]] auto rotation() const {
+  [[nodiscard]] auto rotation() const -> Rotation2<Scalar> const {
     return Rotation2<Scalar>::fromParams(
         this->params_.template head<Rotation2<Scalar>::kNumParams>());
   }
