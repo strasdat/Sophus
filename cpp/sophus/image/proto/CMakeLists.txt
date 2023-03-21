@@ -13,6 +13,7 @@ target_link_libraries(sophus_image_proto_conv PUBLIC
   farm_ng_core::farm_ng_core_proto_defs
   farm_ng_core::farm_ng_core_prototools
   sophus_image_proto_defs
+  sophus_image
  )
 
 if(${BUILD_SOPHUS_TESTS})

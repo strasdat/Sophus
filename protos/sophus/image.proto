@@ -17,3 +17,20 @@ message ImageSize {
   // Image height in pixels.
   int32 height = 2;
 }
+
+message ImageLayout {
+  ImageSize size = 1;
+  uint32 pitch_bytes = 2;
+}
+
+message PixelFormat {
+  string number_type = 1;
+  int32 num_components = 2;
+  int32 num_bytes_per_component = 3;
+}
+
+message DynImage {
+  ImageLayout layout = 1;
+  PixelFormat pixel_format = 2;
+  bytes data = 3;
+}

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "sophus/common/common.h"
+#include "sophus/concepts/image.h"
 #include "sophus/image/image_size.h"
 
 #include <Eigen/Dense>
@@ -23,11 +24,8 @@ class ImageLayout {
  public:
   ImageLayout() = default;
 
-  ImageLayout(ImageSize image_size, size_t pitch_bytes)
+  explicit ImageLayout(ImageSize image_size, size_t pitch_bytes)
       : image_size_(image_size), pitch_bytes_(pitch_bytes) {}
-
-  ImageLayout(int width, int height, size_t pitch_bytes)
-      : image_size_(width, height), pitch_bytes_(pitch_bytes) {}
 
   template <class TPixelFormat>
   [[nodiscard]] static auto makeFromSizeAndPitch(
@@ -37,14 +35,6 @@ class ImageLayout {
     layout.image_size_ = image_size;
     layout.pitch_bytes_ = pitch_bytes;
 
-    return layout;
-  }
-
-  [[nodiscard]] static auto makeFromSizeAndPitchUnchecked(
-      ImageSize image_size, size_t pitch_bytes) -> ImageLayout {
-    ImageLayout layout;
-    layout.image_size_ = image_size;
-    layout.pitch_bytes_ = pitch_bytes;
     return layout;
   }
 
@@ -65,7 +55,7 @@ class ImageLayout {
   [[nodiscard]] auto area() const -> int {
     return this->width() * this->height();
   }
-  [[nodiscard]] auto sizeBytes() const -> int {
+  [[nodiscard]] auto sizeBytes() const -> size_t {
     return pitch_bytes_ * height();
   }
 
@@ -75,6 +65,8 @@ class ImageLayout {
   sophus::ImageSize image_size_ = {0, 0};
   size_t pitch_bytes_ = 0;
 };
+
+static_assert(concepts::ImageLayout<ImageLayout>);
 
 /// Equality operator.
 auto operator==(ImageLayout const& lhs, ImageLayout const& rhs) -> bool;

@@ -110,7 +110,8 @@
 			"span": "cpp",
 			"strstream": "cpp",
 			"typeindex": "cpp",
-			"__std_stream": "cpp"
+			"__std_stream": "cpp",
+			"filesystem": "cpp"
 		}
 	}
 }

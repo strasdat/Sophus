@@ -31,8 +31,10 @@ TEST(AnyImage, create_access_and_extract) {
 
   SOPHUS_ASSERT_EQ(mut_any_image.imageSize(), size64);
   SOPHUS_ASSERT_EQ(mut_any_image.numChannels(), 1);
-  SOPHUS_ASSERT_EQ(mut_any_image.numBytesPerPixelChannel(), sizeof(float));
-  SOPHUS_ASSERT_EQ(mut_any_image.numberType(), NumberType::floating_point);
+  SOPHUS_ASSERT_EQ(
+      mut_any_image.pixelFormat().num_bytes_per_component, sizeof(float));
+  SOPHUS_ASSERT_EQ(
+      mut_any_image.pixelFormat().number_type, NumberType::floating_point);
 
   SOPHUS_ASSERT(!mut_any_image.has<uint16_t>());
   SOPHUS_ASSERT(!mut_any_image.has<double>());
