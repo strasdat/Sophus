@@ -57,15 +57,35 @@ class DynImage : public DynImageView<TPredicate> {
     image.setViewToEmpty();
   }
 
-  /// Create type-image image from provided size and pixel type.
-  /// Pixel data is left uninitialized
-  DynImage(ImageSize const& size, PixelFormat const& pixel_type)
-      : DynImage(MutDynImage<TPredicate, TAllocator>(size, pixel_type)) {}
+  /// Tries to create image from provided size and format.
+  /// Returns error if format does not satisfy TPredicate.
+  static Expected<DynImage<TPredicate, TAllocator>> tryFromFormat(
+      ImageSize const& size, PixelFormat const& pixel_format) {
+    if (!TPredicate::isFormatValid(pixel_format)) {
+      return SOPHUS_UNEXPECTED("pixel format does not satisfy predicate");
+    }
+    return DynImage(MutDynImage<TPredicate, TAllocator>(size, pixel_format));
+  }
 
-  /// Create type-image image from provided layout and pixel type.
-  /// Pixel data is left uninitialized
-  DynImage(ImageLayout const& layout, PixelFormat const& pixel_type)
-      : DynImage(MutDynImage<TPredicate, TAllocator>(layout, pixel_type)) {}
+  /// Tries to create image from provided size and format.
+  /// Returns error if format does not satisfy TPredicate.
+  static Expected<DynImage<TPredicate, TAllocator>> tryFromFormat(
+      ImageLayout const& layout, PixelFormat const& pixel_format) {
+    if (!TPredicate::isFormatValid(pixel_format)) {
+      return SOPHUS_UNEXPECTED("pixel format does not satisfy predicate");
+    }
+    return DynImage(MutDynImage<TPredicate, TAllocator>(layout, pixel_format));
+  }
+
+  template <class TOtherPredicate>
+  static auto tryFrom(DynImage<TOtherPredicate, TAllocator> other_image)
+      -> Expected<DynImage<TPredicate, TAllocator>> {
+    if (!TPredicate::isFormatValid(other_image.pixelFormat())) {
+      return SOPHUS_UNEXPECTED("pixel format does not satisfy predicate");
+    }
+    return DynImage<TPredicate, TAllocator>(
+        other_image.layout(), other_image.pixelFormat(), other_image.shared_);
+  }
 
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
@@ -108,12 +128,15 @@ class DynImage : public DynImageView<TPredicate> {
   [[nodiscard]] auto useCount() const -> size_t { return shared_.use_count(); }
 
  protected:
+  template <class TPredicate2, class TAllocator2T>
+  friend class DynImage;
+
   // Private constructor mainly available for constructing sub-views
   DynImage(
       ImageLayout layout,
-      PixelFormat pixel_type,
+      PixelFormat pixel_format,
       std::shared_ptr<uint8_t> shared)
-      : DynImageView<TPredicate>(layout, pixel_type, shared.get()),
+      : DynImageView<TPredicate>(layout, pixel_format, shared.get()),
         shared_(shared) {}
 
   std::shared_ptr<uint8_t> shared_;

@@ -17,31 +17,46 @@ namespace sophus {
 /// unsigned integral channel type.
 template <class TAllocator = Eigen::aligned_allocator<uint8_t>>
 using AnyImage = DynImage<AnyImagePredicate, TAllocator>;
+static_assert(concepts::ImageLayout<AnyImage<>>);
 using AnyImageView = DynImageView<AnyImagePredicate>;
+static_assert(concepts::ImageLayout<AnyImageView>);
+
 template <class TAllocator = Eigen::aligned_allocator<uint8_t>>
 using MutAnyImage = MutDynImage<AnyImagePredicate, TAllocator>;
+static_assert(concepts::ImageLayout<MutAnyImage<>>);
 using MutAnyImageView = MutDynImageView<AnyImagePredicate>;
+static_assert(concepts::ImageLayout<MutAnyImageView>);
 
-template <class TPixelVariant>
-struct VariantImagePredicate {
-  using PixelVariant = TPixelVariant;
-
+struct IntensityImagePredicate {
+  using PixelVariant = std::variant<
+      uint8_t,
+      uint16_t,
+      float,
+      Pixel3U8,
+      Pixel3U16,
+      Pixel3F32,
+      Pixel4U8,
+      Pixel4U16,
+      Pixel4F32>;
   template <class TPixel>
   static auto constexpr isTypeValid() -> bool {
-    return has_type_v<TPixel, TPixelVariant>;
+    return has_type_v<TPixel, PixelVariant>;
+  }
+
+  static auto constexpr isFormatValid(PixelFormat format) -> bool {
+    bool num_components_contraint =
+        (format.num_components == 1 || format.num_components == 3 ||
+         format.num_components == 4);
+    bool u8_constraint = format.number_type == NumberType::fixed_point &&
+                         format.num_bytes_per_component == 1;
+    bool u16_constraint = format.number_type == NumberType::fixed_point &&
+                          format.num_bytes_per_component == 2;
+    bool f32_constraint = format.number_type == NumberType::floating_point &&
+                          format.num_bytes_per_component == 4;
+    return num_components_contraint &&
+           (u8_constraint || u16_constraint || f32_constraint);
   }
 };
-
-using IntensityImagePredicate = VariantImagePredicate<std::variant<
-    uint8_t,
-    uint16_t,
-    float,
-    Pixel3U8,
-    Pixel3U16,
-    Pixel3F32,
-    Pixel4U8,
-    Pixel4U16,
-    Pixel4F32>>;
 
 /// Image to represent intensity image / texture as grayscale (=1 channel),
 /// RGB (=3 channel ) and RGBA (=4 channel), either uint8_t [0-255],

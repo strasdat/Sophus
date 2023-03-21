@@ -64,7 +64,7 @@ struct ImageView {
 
   /// Creates view from image size and pointer to first pixel. The image is
   /// assumed to be contiguous and the pitch is set accordingly.
-  ImageView(sophus::ImageSize image_size, TPixel const* ptr) noexcept
+  explicit ImageView(sophus::ImageSize image_size, TPixel const* ptr) noexcept
       : ImageView(ImageLayout::makeFromSize<TPixel>(image_size), ptr) {}
 
   /// Returns true if view is empty.
@@ -85,10 +85,14 @@ struct ImageView {
   /// It is {{0,0}, 0} is view is empty.
   [[nodiscard]] auto layout() const -> ImageLayout const& { return layout_; }
 
+  [[nodiscard]] auto area() const -> int { return layout().area(); }
   [[nodiscard]] auto width() const -> int { return layout().width(); }
   [[nodiscard]] auto height() const -> int { return layout().height(); }
   [[nodiscard]] auto pitchBytes() const -> size_t {
     return layout().pitchBytes();
+  }
+  [[nodiscard]] auto sizeBytes() const -> size_t {
+    return layout().sizeBytes();
   }
 
   /// Returns true if u is in [0, width).

@@ -27,10 +27,6 @@ class MutDynImageView : public DynImageView<TPredicate> {
     static_assert(TPredicate::template isTypeValid<TPixel>());
   }
 
-  MutDynImageView(
-      ImageLayout const& layout, PixelFormat const& pixel_type, void const* ptr)
-      : DynImageView<TPredicate>(layout, pixel_type, ptr) {}
-
   /// Return true is this contains data of type TPixel.
   template <class TPixel>
   [[nodiscard]] auto has() const noexcept -> bool {
@@ -56,8 +52,7 @@ class MutDynImageView : public DynImageView<TPredicate> {
     SOPHUS_ASSERT_LE(uv.x() + size.width, this->layout_.width());
     SOPHUS_ASSERT_LE(uv.y() + size.height, this->layout_.height());
 
-    auto const layout =
-        ImageLayout::makeFromSizeAndPitchUnchecked(size, this->pitchBytes());
+    auto const layout = ImageLayout(size, this->pitchBytes());
     const size_t row_offset =
         uv.x() * this->numBytesPerPixelChannel() * this->numChannels();
     uint8_t* ptr = this->rawMutPtr() + uv.y() * this->pitchBytes() + row_offset;
@@ -108,6 +103,14 @@ class MutDynImageView : public DynImageView<TPredicate> {
   }
 
  protected:
+  MutDynImageView(
+      ImageLayout const& layout,
+      PixelFormat const& pixel_format,
+      void const* ptr)
+      : DynImageView<TPredicate>(layout, pixel_format, ptr) {
+    SOPHUS_ASSERT(TPredicate::isFormatValid(pixel_format));
+  }
+
   MutDynImageView() = default;
 };
 }  // namespace sophus

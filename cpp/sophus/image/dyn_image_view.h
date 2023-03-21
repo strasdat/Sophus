@@ -21,6 +21,8 @@ struct AnyImagePredicate {
   static auto constexpr isTypeValid() -> bool {
     return true;
   }
+
+  static auto constexpr isFormatValid(PixelFormat) -> bool { return true; }
 };
 
 template <class TPredicate = AnyImagePredicate>
@@ -36,13 +38,6 @@ class DynImageView {
     static_assert(TPredicate::template isTypeValid<TPixel>());
   }
 
-  DynImageView(
-      ImageLayout const& layout, PixelFormat const& pixel_type, void const* ptr)
-      : layout_(layout),
-        pixel_format_(pixel_type),
-        ptr_(reinterpret_cast<uint8_t const*>(ptr)) {}
-
-  /// Return true is this contains data of type TPixel.
   template <class TPixel>
   [[nodiscard]] auto has() const noexcept -> bool {
     PixelFormat expected_type = PixelFormat::fromTemplate<TPixel>();
@@ -58,22 +53,13 @@ class DynImageView {
 
   [[nodiscard]] auto rawPtr() const -> uint8_t const* { return ptr_; }
 
-  /// Number of bytes per channel of a single pixel.
-  ///
-  /// E.g. a pixel of Eigen::Matrix<uint8_t, 3, 1> has 1 byte per channel.
-  [[nodiscard]] auto numBytesPerPixelChannel() const -> int {
-    return pixel_format_.num_bytes_per_pixel_channel;
-  }
-  [[nodiscard]] auto numberType() const -> NumberType {
-    return pixel_format_.number_type;
-  }
-
   [[nodiscard]] auto layout() const -> ImageLayout const& { return layout_; }
 
   [[nodiscard]] auto imageSize() const -> ImageSize const& {
     return layout_.imageSize();
   }
 
+  [[nodiscard]] auto area() const -> int { return layout().area(); }
   [[nodiscard]] auto width() const -> int { return layout().width(); }
   [[nodiscard]] auto height() const -> int { return layout().height(); }
   [[nodiscard]] auto pitchBytes() const -> size_t {
@@ -90,7 +76,7 @@ class DynImageView {
     return pixel_format_;
   }
   [[nodiscard]] auto numChannels() const -> int {
-    return this->pixel_format_.num_channels;
+    return this->pixel_format_.num_components;
   }
 
   /// Returns subview with shared ownership semantics of whole image.
@@ -100,10 +86,8 @@ class DynImageView {
     SOPHUS_ASSERT_LE(uv.x() + size.width, this->layout_.width());
     SOPHUS_ASSERT_LE(uv.y() + size.height, this->layout_.height());
 
-    auto const layout =
-        ImageLayout::makeFromSizeAndPitchUnchecked(size, pitchBytes());
-    const size_t row_offset =
-        uv.x() * numBytesPerPixelChannel() * numChannels();
+    auto const layout = ImageLayout(size, pitchBytes());
+    const size_t row_offset = uv.x() * this->pixelFormat().numBytesPerPixel();
     uint8_t const* ptr = this->rawPtr() + uv.y() * pitchBytes() + row_offset;
     return DynImageView{layout, this->pixel_format_, ptr};
   }
@@ -134,6 +118,33 @@ class DynImageView {
 
  protected:
   DynImageView() = default;
+
+  // Protected until we understand how to do this right.
+  //
+  DynImageView(
+      ImageLayout const& layout,
+      PixelFormat const& pixel_format,
+      void const* ptr)
+      : layout_(layout),
+        pixel_format_(pixel_format),
+        ptr_(reinterpret_cast<uint8_t const*>(ptr)) {
+    SOPHUS_ASSERT(TPredicate::isFormatValid(pixel_format));
+  }
+  //
+  // Creating a DynImageView like this is a little tricky unless there are some
+  // guarantees how ptr is aligned in memory.
+  //
+  // We need proper alignment such that the two calls below are equivalent
+  //
+  //    DynImageView(layout, format, raw_ptr).imageView<Eigen::Vector4f>()
+  //
+  //    DynImageView(Image<Eigen::Vector4f>(...)).imageView<Eigen::Vector4f>()
+  //
+  // Hence we need some kind of runtime (or compile-time?) check for raw_ptr
+  // being properly  aligned.
+
+  // Return true is this contains data of type TPixel. Which might mean we need
+  // to add TAllocator as template parameter to the DynImageView.
 
   ImageLayout layout_ = {};
   PixelFormat pixel_format_;

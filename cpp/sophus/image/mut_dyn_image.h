@@ -50,16 +50,19 @@ class MutDynImage : public MutDynImageView<TPredicate> {
 
   /// Create type-image image from provided size and pixel type.
   /// Pixel data is left uninitialized
-  MutDynImage(ImageSize const& size, PixelFormat const& pixel_type)
+  MutDynImage(ImageSize const& size, PixelFormat const& pixel_format)
       : MutDynImage(
             ImageLayout::makeFromSizeAndPitch<uint8_t>(
-                size, size.width * pixel_type.bytesPerPixel()),
-            pixel_type) {}
+                size, size.width * pixel_format.numBytesPerPixel()),
+            pixel_format) {
+    SOPHUS_ASSERT(TPredicate::isFormatValid(pixel_format));
+  }
 
   /// Create type-image image from provided size and pixel type.
   /// Pixel data is left uninitialized
-  MutDynImage(ImageLayout const& layout, PixelFormat const& pixel_type)
-      : MutDynImage(layout, pixel_type, nullptr) {
+  MutDynImage(ImageLayout const& layout, PixelFormat const& pixel_format)
+      : MutDynImage(layout, pixel_format, nullptr) {
+    SOPHUS_ASSERT(TPredicate::isFormatValid(pixel_format));
     if (this->layout_.sizeBytes() != 0u) {
       this->unique_ = UniqueDataArea<TAllocator>(
           TAllocator().allocate(this->layout_.sizeBytes()),
@@ -67,6 +70,34 @@ class MutDynImage : public MutDynImageView<TPredicate> {
               UniqueDataAreaDeleter<TAllocator>(this->layout_.sizeBytes())));
     }
     this->ptr_ = this->unique_.get();
+  }
+
+  /// Tries to create image from provided size and format.
+  /// Returns error if format does not satisfy TPredicate.
+  static Expected<DynImage<TPredicate, TAllocator>> tryFromFormat(
+      ImageSize const& size, PixelFormat const& pixel_format) {
+    if (!TPredicate::isFormatValid(pixel_format)) {
+      return SOPHUS_UNEXPECTED("pixel format does not satisfy predicate");
+    }
+    return DynImage(MutDynImage<TPredicate, TAllocator>(size, pixel_format));
+  }
+
+  /// Tries to create image from provided size and format.
+  /// Returns error if format does not satisfy TPredicate.
+  static Expected<MutDynImage<TPredicate, TAllocator>> tryFromFormat(
+      ImageLayout const& layout, PixelFormat const& pixel_format) {
+    if (!TPredicate::isFormatValid(pixel_format)) {
+      return SOPHUS_UNEXPECTED("pixel format does not satisfy predicate");
+    }
+    MutDynImage img(layout, pixel_format, nullptr);
+    if (img.layout_.sizeBytes() != 0u) {
+      img.unique_ = UniqueDataArea<TAllocator>(
+          TAllocator().allocate(img.layout_.sizeBytes()),
+          MaybeLeakingUniqueDataAreaDeleter<TAllocator>(
+              UniqueDataAreaDeleter<TAllocator>(img.layout_.sizeBytes())));
+    }
+    img.ptr_ = img.unique_.get();
+    return img;
   }
 
   template <class TT>
@@ -109,9 +140,9 @@ class MutDynImage : public MutDynImageView<TPredicate> {
   // Private constructor mainly available for constructing sub-views
   MutDynImage(
       ImageLayout layout,
-      PixelFormat pixel_type,
+      PixelFormat pixel_format,
       UniqueDataArea<TAllocator> unique)
-      : MutDynImageView<TPredicate>(layout, pixel_type, unique.get()),
+      : MutDynImageView<TPredicate>(layout, pixel_format, unique.get()),
         unique_(std::move(unique)) {}
 
   UniqueDataArea<TAllocator> unique_;

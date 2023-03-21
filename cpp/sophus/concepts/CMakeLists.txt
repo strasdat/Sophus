@@ -8,6 +8,7 @@ farm_ng_add_library(sophus_concept
   NAMESPACE Sophus
   INCLUDE_DIR ../../
   HEADERS
+  image.h
   lie_group.h
   lie_group_prop_tests.h
   manifold.h

@@ -33,8 +33,10 @@ TEST(AnyImage, create_access_and_extract) {
   SOPHUS_ASSERT_EQ(any_image.useCount(), 2);
 
   SOPHUS_ASSERT_EQ(any_image.numChannels(), 1);
-  SOPHUS_ASSERT_EQ(any_image.numBytesPerPixelChannel(), sizeof(float));
-  SOPHUS_ASSERT_EQ(any_image.numberType(), NumberType::floating_point);
+  SOPHUS_ASSERT_EQ(
+      any_image.pixelFormat().num_bytes_per_component, sizeof(float));
+  SOPHUS_ASSERT_EQ(
+      any_image.pixelFormat().number_type, NumberType::floating_point);
 
   SOPHUS_ASSERT(!any_image.has<uint16_t>());
   SOPHUS_ASSERT(!any_image.has<double>());
@@ -72,54 +74,68 @@ TEST(AnyImage, runtime_type_info) {
     MutImage<float> mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    SOPHUS_ASSERT_EQ(any_image.numberType(), NumberType::floating_point);
+    SOPHUS_ASSERT_EQ(
+        any_image.pixelFormat().number_type, NumberType::floating_point);
     SOPHUS_ASSERT_EQ(any_image.numChannels(), 1);
-    SOPHUS_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 4);
+    SOPHUS_ASSERT_EQ(any_image.pixelFormat().num_bytes_per_component, 4);
+
+    auto maybe_any_image2 = AnyImage<>::tryFromFormat(
+        any_image.imageSize(), any_image.pixelFormat());
+    SOPHUS_ASSERT(maybe_any_image2);
+
+    auto maybe_any_image3 =
+        AnyImage<>::tryFromFormat(any_image.layout(), any_image.pixelFormat());
+    SOPHUS_ASSERT(maybe_any_image2);
   }
   {
     const ImageSize size64{6, 4};
     MutImage<uint8_t> mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    SOPHUS_ASSERT_EQ(any_image.numberType(), NumberType::fixed_point);
+    SOPHUS_ASSERT_EQ(
+        any_image.pixelFormat().number_type, NumberType::fixed_point);
     SOPHUS_ASSERT_EQ(any_image.numChannels(), 1);
-    SOPHUS_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 1);
+    SOPHUS_ASSERT_EQ(any_image.pixelFormat().num_bytes_per_component, 1);
   }
   {
     const ImageSize size64{6, 4};
     MutImage3F32 mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    SOPHUS_ASSERT_EQ(any_image.numberType(), NumberType::floating_point);
+    SOPHUS_ASSERT_EQ(
+        any_image.pixelFormat().number_type, NumberType::floating_point);
     SOPHUS_ASSERT_EQ(any_image.numChannels(), 3);
-    SOPHUS_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 4);
+    SOPHUS_ASSERT_EQ(any_image.pixelFormat().num_bytes_per_component, 4);
   }
   {
     const ImageSize size64{6, 4};
     MutImage3U8 mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    SOPHUS_ASSERT_EQ(any_image.numberType(), NumberType::fixed_point);
+    SOPHUS_ASSERT_EQ(
+        any_image.pixelFormat().number_type, NumberType::fixed_point);
     SOPHUS_ASSERT_EQ(any_image.numChannels(), 3);
-    SOPHUS_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 1);
+    SOPHUS_ASSERT_EQ(any_image.pixelFormat().num_bytes_per_component, 1);
   }
   {
     const ImageSize size64{6, 4};
     MutImage<Eigen::Vector4f> mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    SOPHUS_ASSERT_EQ(any_image.numberType(), NumberType::floating_point);
+    SOPHUS_ASSERT_EQ(
+        any_image.pixelFormat().number_type, NumberType::floating_point);
     SOPHUS_ASSERT_EQ(any_image.numChannels(), 4);
-    SOPHUS_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 4);
+    SOPHUS_ASSERT_EQ(any_image.pixelFormat().num_bytes_per_component, 4);
   }
   {
     const ImageSize size64{6, 4};
     MutImage4U8 mut_image(size64);
     AnyImage<> any_image(std::move(mut_image));
 
-    SOPHUS_ASSERT_EQ(any_image.numberType(), NumberType::fixed_point);
+    SOPHUS_ASSERT_EQ(
+        any_image.pixelFormat().number_type, NumberType::fixed_point);
     SOPHUS_ASSERT_EQ(any_image.numChannels(), 4);
-    SOPHUS_ASSERT_EQ(any_image.numBytesPerPixelChannel(), 1);
+    SOPHUS_ASSERT_EQ(any_image.pixelFormat().num_bytes_per_component, 1);
   }
 }
 

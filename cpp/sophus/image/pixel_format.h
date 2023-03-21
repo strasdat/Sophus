@@ -20,13 +20,13 @@ struct PixelFormat {
             std::is_floating_point_v<typename ImageTraits<TPixel>::ChannelT>
                 ? NumberType::floating_point
                 : NumberType::fixed_point,
-        .num_channels = ImageTraits<TPixel>::kNumChannels,
-        .num_bytes_per_pixel_channel =
+        .num_components = ImageTraits<TPixel>::kNumChannels,
+        .num_bytes_per_component =
             sizeof(typename ImageTraits<TPixel>::ChannelT)};
   }
 
-  [[nodiscard]] inline auto bytesPerPixel() const -> int {
-    return num_channels * num_bytes_per_pixel_channel;
+  [[nodiscard]] inline auto numBytesPerPixel() const -> size_t {
+    return num_components * num_bytes_per_component;
   }
 
   template <class TPixel>
@@ -35,8 +35,8 @@ struct PixelFormat {
   }
 
   NumberType number_type;
-  int num_channels;
-  int num_bytes_per_pixel_channel;
+  uint8_t num_components;
+  size_t num_bytes_per_component;
 };
 
 auto operator==(PixelFormat const& lhs, PixelFormat const& rhs) -> bool;

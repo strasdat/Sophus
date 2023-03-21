@@ -12,8 +12,8 @@ namespace sophus {
 
 auto operator==(PixelFormat const& lhs, PixelFormat const& rhs) -> bool {
   return lhs.number_type == rhs.number_type &&
-         lhs.num_channels == rhs.num_channels &&
-         lhs.num_bytes_per_pixel_channel == rhs.num_bytes_per_pixel_channel;
+         lhs.num_components == rhs.num_components &&
+         lhs.num_bytes_per_component == rhs.num_bytes_per_component;
 }
 
 auto operator<<(std::ostream& os, PixelFormat const& type) -> std::ostream& {
@@ -30,9 +30,9 @@ auto operator<<(std::ostream& os, PixelFormat const& type) -> std::ostream& {
   }
   os << SOPHUS_FORMAT(
       "{}{}{}",
-      type.num_channels,
+      type.num_components,
       type_char,
-      8 * type.num_bytes_per_pixel_channel);
+      8 * type.num_bytes_per_component);
   return os;
 }
 
