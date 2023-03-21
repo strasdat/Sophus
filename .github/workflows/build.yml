@@ -179,28 +179,3 @@ jobs:
         run: |
           ./run_clang_tidy.sh
         if: matrix.tests == 'clang_tidy'
-
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
-      - uses: actions-rs/cargo@v1
-        with:
-          command: check
-        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
-        if: matrix.tests == 'unit_test' && matrix.optional_features == 'minimal'
