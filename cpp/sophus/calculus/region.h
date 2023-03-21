@@ -200,7 +200,7 @@ class Region {
     return min_max_[0];
   }
 
-  /// Returns the lower bound of the region if it exit and nullopt otherwise.
+  /// Returns the lower bound of the region if it exists and nullopt otherwise.
   [[nodiscard]] auto tryMax() const noexcept -> std::optional<TPoint> {
     if (isEmpty()) {
       return std::nullopt;
@@ -212,7 +212,7 @@ class Region {
   ///
   /// Precondition: !this->isEmptpy()
   [[nodiscard]] auto clamp(TPoint const& point) const noexcept -> TPoint {
-    return sophus::clamp(point, min(), min());
+    return sophus::clamp(point, min(), max());
   }
 
   /// Returns true if the region contains the given point.

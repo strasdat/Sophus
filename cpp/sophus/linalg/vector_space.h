@@ -121,8 +121,8 @@ auto max(TPoint const& a, TPoint const& b) -> TPoint {
 }
 
 template <::sophus::concepts::PointType TPoint>
-auto clamp(TPoint const& val, TPoint const& a, TPoint const& b) -> TPoint {
-  return sophus::max(a, sophus::min(val, b));
+auto clamp(TPoint const& val, TPoint const& lo, TPoint const& hi) -> TPoint {
+  return sophus::max(lo, sophus::min(val, hi));
 }
 
 template <::sophus::concepts::ScalarType TPoint>
