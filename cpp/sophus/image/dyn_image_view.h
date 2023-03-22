@@ -59,7 +59,7 @@ class DynImageView {
     return layout_.imageSize();
   }
 
-  [[nodiscard]] auto area() const -> int { return layout().area(); }
+  [[nodiscard]] auto area() const -> size_t { return layout().area(); }
   [[nodiscard]] auto width() const -> int { return layout().width(); }
   [[nodiscard]] auto height() const -> int { return layout().height(); }
   [[nodiscard]] auto pitchBytes() const -> size_t {
@@ -116,11 +116,23 @@ class DynImageView {
     this->ptr_ = nullptr;
   }
 
+  // Marked as unsafe until this is fully understood.
+  //
+  // In particular, the user need to make sure that the memory block ptr
+  // is pointing too is properly aligned, such that calls as follows won't
+  // cause UB:
+  //
+  //    this->imageView<Eigen::Vector4f>()
+  static DynImageView unsafeWrapAndPromiseProperAlignment(
+      ImageLayout const& layout,
+      PixelFormat const& pixel_format,
+      void const* ptr) {
+    return DynImageView(layout, pixel_format, ptr);
+  }
+
  protected:
   DynImageView() = default;
 
-  // Protected until we understand how to do this right.
-  //
   DynImageView(
       ImageLayout const& layout,
       PixelFormat const& pixel_format,
@@ -130,21 +142,6 @@ class DynImageView {
         ptr_(reinterpret_cast<uint8_t const*>(ptr)) {
     SOPHUS_ASSERT(TPredicate::isFormatValid(pixel_format));
   }
-  //
-  // Creating a DynImageView like this is a little tricky unless there are some
-  // guarantees how ptr is aligned in memory.
-  //
-  // We need proper alignment such that the two calls below are equivalent
-  //
-  //    DynImageView(layout, format, raw_ptr).imageView<Eigen::Vector4f>()
-  //
-  //    DynImageView(Image<Eigen::Vector4f>(...)).imageView<Eigen::Vector4f>()
-  //
-  // Hence we need some kind of runtime (or compile-time?) check for raw_ptr
-  // being properly  aligned.
-
-  // Return true is this contains data of type TPixel. Which might mean we need
-  // to add TAllocator as template parameter to the DynImageView.
 
   ImageLayout layout_ = {};
   PixelFormat pixel_format_;

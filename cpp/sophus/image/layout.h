@@ -27,6 +27,9 @@ class ImageLayout {
   explicit ImageLayout(ImageSize image_size, size_t pitch_bytes)
       : image_size_(image_size), pitch_bytes_(pitch_bytes) {}
 
+  explicit ImageLayout(int width, int height, size_t pitch_bytes)
+      : image_size_(ImageSize(width, height)), pitch_bytes_(pitch_bytes) {}
+
   template <class TPixelFormat>
   [[nodiscard]] static auto makeFromSizeAndPitch(
       ImageSize image_size, size_t pitch_bytes) -> ImageLayout {
@@ -50,9 +53,10 @@ class ImageLayout {
   }
   [[nodiscard]] auto width() const -> int { return image_size_.width; }
   [[nodiscard]] auto height() const -> int { return image_size_.height; }
+
   [[nodiscard]] auto pitchBytes() const -> size_t { return pitch_bytes_; }
 
-  [[nodiscard]] auto area() const -> int {
+  [[nodiscard]] auto area() const -> size_t {
     return this->width() * this->height();
   }
   [[nodiscard]] auto sizeBytes() const -> size_t {
@@ -66,7 +70,7 @@ class ImageLayout {
   size_t pitch_bytes_ = 0;
 };
 
-static_assert(concepts::ImageLayout<ImageLayout>);
+static_assert(concepts::ImageLayoutTrait<ImageLayout>);
 
 /// Equality operator.
 auto operator==(ImageLayout const& lhs, ImageLayout const& rhs) -> bool;

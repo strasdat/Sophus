@@ -34,13 +34,13 @@ using ImageViewU8 = ImageView<uint8_t>;
 using ImageViewU16 = ImageView<uint16_t>;
 using ImageViewF32 = ImageView<float>;
 
-static_assert(concepts::ImageLayout<ImageViewF32>);
+static_assert(concepts::ImageView<ImageViewF32>);
 
 using MutImageViewU8 = MutImageView<uint8_t>;
 using MutImageViewU16 = MutImageView<uint16_t>;
 using MutImageViewF32 = MutImageView<float>;
 
-static_assert(concepts::ImageLayout<MutImageViewF32>);
+static_assert(concepts::ImageView<MutImageViewF32>);
 
 template <class TChannel>
 using ImageView3 = ImageView<Pixel3<TChannel>>;
@@ -48,7 +48,7 @@ using ImageView3U8 = ImageView3<uint8_t>;
 using ImageView3U16 = ImageView3<uint16_t>;
 using ImageView3F32 = ImageView3<float>;
 
-static_assert(concepts::ImageLayout<ImageView3F32>);
+static_assert(concepts::ImageView<ImageView3F32>);
 
 template <class TChannel>
 using MutImageView3 = MutImageView<Pixel3<TChannel>>;
@@ -56,7 +56,7 @@ using MutImageView3U8 = MutImageView3<uint8_t>;
 using MutImageView3U16 = MutImageView3<uint16_t>;
 using MutImageView3F32 = MutImageView3<float>;
 
-static_assert(concepts::ImageLayout<MutImageView3F32>);
+static_assert(concepts::ImageView<MutImageView3F32>);
 
 template <class TChannel>
 using ImageView4 = ImageView<Pixel4<TChannel>>;

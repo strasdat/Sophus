@@ -99,7 +99,7 @@ class MutDynImageView : public DynImageView<TPredicate> {
         (uint8_t const*)view.rawPtr(),
         view.layout().pitchBytes(),
         this->imageSize(),
-        this->imageSize().width * this->pixel_format_.bytesPerPixel());
+        this->imageSize().width * this->pixel_format_.numBytesPerPixel());
   }
 
  protected:

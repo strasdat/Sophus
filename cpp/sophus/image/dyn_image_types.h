@@ -17,15 +17,15 @@ namespace sophus {
 /// unsigned integral channel type.
 template <class TAllocator = Eigen::aligned_allocator<uint8_t>>
 using AnyImage = DynImage<AnyImagePredicate, TAllocator>;
-static_assert(concepts::ImageLayout<AnyImage<>>);
+static_assert(concepts::DynImageView<AnyImage<>>);
 using AnyImageView = DynImageView<AnyImagePredicate>;
-static_assert(concepts::ImageLayout<AnyImageView>);
+static_assert(concepts::DynImageView<AnyImageView>);
 
 template <class TAllocator = Eigen::aligned_allocator<uint8_t>>
 using MutAnyImage = MutDynImage<AnyImagePredicate, TAllocator>;
-static_assert(concepts::ImageLayout<MutAnyImage<>>);
+static_assert(concepts::DynImageView<MutAnyImage<>>);
 using MutAnyImageView = MutDynImageView<AnyImagePredicate>;
-static_assert(concepts::ImageLayout<MutAnyImageView>);
+static_assert(concepts::DynImageView<MutAnyImageView>);
 
 struct IntensityImagePredicate {
   using PixelVariant = std::variant<
@@ -44,7 +44,7 @@ struct IntensityImagePredicate {
   }
 
   static auto constexpr isFormatValid(PixelFormat format) -> bool {
-    bool num_components_contraint =
+    bool num_components_constraint =
         (format.num_components == 1 || format.num_components == 3 ||
          format.num_components == 4);
     bool u8_constraint = format.number_type == NumberType::fixed_point &&
@@ -53,7 +53,7 @@ struct IntensityImagePredicate {
                           format.num_bytes_per_component == 2;
     bool f32_constraint = format.number_type == NumberType::floating_point &&
                           format.num_bytes_per_component == 4;
-    return num_components_contraint &&
+    return num_components_constraint &&
            (u8_constraint || u16_constraint || f32_constraint);
   }
 };
