@@ -21,11 +21,12 @@ namespace sophus {
 struct ImageSize {
   ImageSize() = default;
   ImageSize(int width, int height) : width(width), height(height) {}
+
   static auto from(Eigen::Array2<int> const& arr) -> ImageSize {
     return {arr[0], arr[1]};
   }
 
-  [[nodiscard]] auto area() const -> int { return width * height; }
+  [[nodiscard]] auto area() const -> size_t { return width * height; }
 
   /// Returns true if obs is within image.
   ///
@@ -44,6 +45,9 @@ struct ImageSize {
   [[nodiscard]] auto array() const -> Eigen::Array2<int> {
     return Eigen::Array2<int>(width, height);
   }
+
+  [[nodiscard]] auto iwidth() const -> int { return this->width; }
+  [[nodiscard]] auto iheight() const -> int { return this->height; }
 
   /// Horizontal width of images, i.e. number of columns.
   int width = 0;

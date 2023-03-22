@@ -48,30 +48,6 @@ class MutDynImage : public MutDynImageView<TPredicate> {
     static_assert(TPredicate::template isTypeValid<TPixel>());
   }
 
-  /// Create type-image image from provided size and pixel type.
-  /// Pixel data is left uninitialized
-  MutDynImage(ImageSize const& size, PixelFormat const& pixel_format)
-      : MutDynImage(
-            ImageLayout::makeFromSizeAndPitch<uint8_t>(
-                size, size.width * pixel_format.numBytesPerPixel()),
-            pixel_format) {
-    SOPHUS_ASSERT(TPredicate::isFormatValid(pixel_format));
-  }
-
-  /// Create type-image image from provided size and pixel type.
-  /// Pixel data is left uninitialized
-  MutDynImage(ImageLayout const& layout, PixelFormat const& pixel_format)
-      : MutDynImage(layout, pixel_format, nullptr) {
-    SOPHUS_ASSERT(TPredicate::isFormatValid(pixel_format));
-    if (this->layout_.sizeBytes() != 0u) {
-      this->unique_ = UniqueDataArea<TAllocator>(
-          TAllocator().allocate(this->layout_.sizeBytes()),
-          MaybeLeakingUniqueDataAreaDeleter<TAllocator>(
-              UniqueDataAreaDeleter<TAllocator>(this->layout_.sizeBytes())));
-    }
-    this->ptr_ = this->unique_.get();
-  }
-
   /// Tries to create image from provided size and format.
   /// Returns error if format does not satisfy TPredicate.
   static Expected<DynImage<TPredicate, TAllocator>> tryFromFormat(
@@ -79,7 +55,7 @@ class MutDynImage : public MutDynImageView<TPredicate> {
     if (!TPredicate::isFormatValid(pixel_format)) {
       return SOPHUS_UNEXPECTED("pixel format does not satisfy predicate");
     }
-    return DynImage(MutDynImage<TPredicate, TAllocator>(size, pixel_format));
+    return MutDynImage<TPredicate, TAllocator>(size, pixel_format);
   }
 
   /// Tries to create image from provided size and format.
@@ -89,15 +65,23 @@ class MutDynImage : public MutDynImageView<TPredicate> {
     if (!TPredicate::isFormatValid(pixel_format)) {
       return SOPHUS_UNEXPECTED("pixel format does not satisfy predicate");
     }
-    MutDynImage img(layout, pixel_format, nullptr);
-    if (img.layout_.sizeBytes() != 0u) {
-      img.unique_ = UniqueDataArea<TAllocator>(
-          TAllocator().allocate(img.layout_.sizeBytes()),
-          MaybeLeakingUniqueDataAreaDeleter<TAllocator>(
-              UniqueDataAreaDeleter<TAllocator>(img.layout_.sizeBytes())));
-    }
-    img.ptr_ = img.unique_.get();
-    return img;
+    return MutDynImage<TPredicate, TAllocator>(layout, pixel_format);
+  }
+
+  // Creates image from provided size and format.
+  //
+  // Panics if format does not satisfy TPredicate.
+  static MutDynImage<TPredicate, TAllocator> fromFormat(
+      ImageSize const& size, PixelFormat const& pixel_format) {
+    return SOPHUS_UNWRAP(tryFromFormat(size, pixel_format));
+  }
+
+  // Creates image from provided size and format.
+  //
+  // Panics if format does not satisfy TPredicate.
+  static DynImage<TPredicate, TAllocator> fromFormat(
+      ImageLayout const& layout, PixelFormat const& pixel_format) {
+    return SOPHUS_UNWRAP(tryFromFormat(layout, pixel_format));
   }
 
   template <class TT>
@@ -144,6 +128,28 @@ class MutDynImage : public MutDynImageView<TPredicate> {
       UniqueDataArea<TAllocator> unique)
       : MutDynImageView<TPredicate>(layout, pixel_format, unique.get()),
         unique_(std::move(unique)) {}
+
+  MutDynImage(ImageSize const& size, PixelFormat const& pixel_format)
+      : MutDynImage(
+            ImageLayout::makeFromSizeAndPitch<uint8_t>(
+                size, size.width * pixel_format.numBytesPerPixel()),
+            pixel_format) {
+    SOPHUS_ASSERT(
+        TPredicate::isFormatValid(pixel_format), "Internal logic error");
+  }
+
+  MutDynImage(ImageLayout const& layout, PixelFormat const& pixel_format)
+      : MutDynImage(layout, pixel_format, nullptr) {
+    SOPHUS_ASSERT(
+        TPredicate::isFormatValid(pixel_format), "Internal logic error");
+    if (this->layout_.sizeBytes() != 0u) {
+      this->unique_ = UniqueDataArea<TAllocator>(
+          TAllocator().allocate(this->layout_.sizeBytes()),
+          MaybeLeakingUniqueDataAreaDeleter<TAllocator>(
+              UniqueDataAreaDeleter<TAllocator>(this->layout_.sizeBytes())));
+    }
+    this->ptr_ = this->unique_.get();
+  }
 
   UniqueDataArea<TAllocator> unique_;
 };

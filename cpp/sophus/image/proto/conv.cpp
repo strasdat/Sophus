@@ -57,7 +57,8 @@ Expected<sophus::AnyImage<>> fromProto(proto::DynImage const& proto) {
   auto layout = fromProto(proto.layout());
 
   SOPHUS_ASSERT_EQ(size_t(layout.sizeBytes()), proto.data().size());
-  sophus::MutAnyImage<> mut_image(layout, format);
+  SOPHUS_TRY(
+      auto mut_image, sophus::MutAnyImage<>::tryFromFormat(layout, format));
   std::memcpy(mut_image.rawMutPtr(), proto.data().data(), proto.data().size());
   return mut_image;
 }

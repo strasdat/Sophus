@@ -13,6 +13,7 @@
 namespace sophus {
 
 struct ImageSize;
+class ImageLayout;
 struct PixelFormat;
 
 SOPHUS_ENUM(NumberType, (fixed_point, floating_point));
@@ -20,30 +21,36 @@ SOPHUS_ENUM(NumberType, (fixed_point, floating_point));
 namespace concepts {
 
 template <class TT>
-concept ImageSize = requires(TT self) {
+concept ImageSizeTrait = requires(TT self) {
   // group operations
-  { self.width() } -> ConvertibleTo<int>;
+  { self.width() } -> SameAs<int>;
 
-  { self.height() } -> ConvertibleTo<int>;
+  { self.height() } -> SameAs<int>;
 
-  { self.area() } -> ConvertibleTo<int>;
+  { self.area() } -> SameAs<size_t>;
 };
 
 // Ideally, the LieSubgroupFunctions is not necessary and all these
 // properties can be deduced.
 template <class TT>
-concept ImageLayout = ImageSize<TT> && requires(TT self) {
-  { self.sizeBytes() } -> ConvertibleTo<int>;
+concept ImageLayoutTrait = ImageSizeTrait<TT> && requires(TT self) {
+  { self.sizeBytes() } -> SameAs<size_t>;
 
-  { self.pitchBytes() } -> ConvertibleTo<int>;
+  { self.pitchBytes() } -> SameAs<size_t>;
 
-  { self.isEmpty() } -> ConvertibleTo<bool>;
+  { self.isEmpty() } -> SameAs<bool>;
 
   { self.imageSize() } -> ConvertibleTo<sophus::ImageSize>;
 };
 
 template <class TT>
-concept DynImageView = ImageLayout<TT> && requires(TT self) {
+concept ImageView = ImageLayoutTrait<TT> && requires(TT self) {
+  { self.layout() } -> ConvertibleTo<sophus::ImageLayout>;
+};
+
+template <class TT>
+concept DynImageView = ImageLayoutTrait<TT> && requires(TT self) {
+  { self.layout() } -> ConvertibleTo<sophus::ImageLayout>;
   { self.pixelFormat() } -> ConvertibleTo<PixelFormat>;
 };
 

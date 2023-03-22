@@ -85,7 +85,7 @@ struct ImageView {
   /// It is {{0,0}, 0} is view is empty.
   [[nodiscard]] auto layout() const -> ImageLayout const& { return layout_; }
 
-  [[nodiscard]] auto area() const -> int { return layout().area(); }
+  [[nodiscard]] auto area() const -> size_t { return layout().area(); }
   [[nodiscard]] auto width() const -> int { return layout().width(); }
   [[nodiscard]] auto height() const -> int { return layout().height(); }
   [[nodiscard]] auto pitchBytes() const -> size_t {

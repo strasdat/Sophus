@@ -11,8 +11,8 @@
 namespace sophus {
 
 auto ImageSize::contains(Eigen::Vector2i const& obs, int border) const -> bool {
-  return obs.x() >= border && obs.x() < this->width - border &&
-         obs.y() >= border && obs.y() < this->height - border;
+  return obs.x() >= border && obs.x() < this->iwidth() - border &&
+         obs.y() >= border && obs.y() < this->iheight() - border;
 }
 
 auto ImageSize::contains(Eigen::Vector2d const& obs, double border) const

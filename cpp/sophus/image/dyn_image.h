@@ -61,10 +61,28 @@ class DynImage : public DynImageView<TPredicate> {
   /// Returns error if format does not satisfy TPredicate.
   static Expected<DynImage<TPredicate, TAllocator>> tryFromFormat(
       ImageSize const& size, PixelFormat const& pixel_format) {
-    if (!TPredicate::isFormatValid(pixel_format)) {
-      return SOPHUS_UNEXPECTED("pixel format does not satisfy predicate");
-    }
-    return DynImage(MutDynImage<TPredicate, TAllocator>(size, pixel_format));
+    using Mut = MutDynImage<TPredicate, TAllocator>;
+    FARM_TRY(auto mut, Mut::tryFromFormat(size, pixel_format));
+
+    return DynImage(std::move(mut));
+  }
+
+  // Creates image from provided size and format.
+  //
+  // Panics if format does not satisfy TPredicate.
+  static DynImage<TPredicate, TAllocator> fromFormat(
+      ImageSize const& size, PixelFormat const& pixel_format) {
+    auto maybe = tryFromFormat(size, pixel_format);
+    return SOPHUS_UNWRAP(maybe);
+  }
+
+  // Creates image from provided size and format.
+  //
+  // Panics if format does not satisfy TPredicate.
+  static DynImage<TPredicate, TAllocator> fromFormat(
+      ImageLayout const& layout, PixelFormat const& pixel_format) {
+    auto maybe = tryFromFormat(layout, pixel_format);
+    return SOPHUS_UNWRAP(maybe);
   }
 
   /// Tries to create image from provided size and format.
