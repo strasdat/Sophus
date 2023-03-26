@@ -18,7 +18,7 @@
 #define SOPHUS_FMT_CSTR(description, ...) description
 #define SOPHUS_FMT_STR(description, ...) std::string(description)
 #define SOPHUS_FMT_PRINT(description, ...) std::printf("%s\n", description)
-#define SOPHUS_FMT_ARG(arg)
+#define SOPHUS_FMT_ARG(arg) arg
 
 #else  // !SOPHUS_USE_BASIC_LOGGING
 
