@@ -185,28 +185,75 @@ struct LieGroupPropTestSuite {
     for (size_t g_id = 0; g_id < kElementExamples.size(); ++g_id) {
       Group g = SOPHUS_AT(kElementExamples, g_id);
       Matrix mat = g.matrix();
-      Eigen::Matrix<Scalar, Group::kDof, Group::kDof> ad = g.adj();
+      Eigen::Matrix<Scalar, Group::kDof, Group::kDof> mat_adj = g.adj();
       for (size_t tangent_id = 0; tangent_id < kTangentExamples.size();
            ++tangent_id) {
         Tangent x = SOPHUS_AT(kTangentExamples, tangent_id);
-        Tangent ad1 = ad * x;
-        Tangent ad2 = Group::vee(mat * Group::hat(x) * g.inverse().matrix());
+        Tangent mat_adj_x = mat_adj * x;
+        Tangent mat_adj_x2 =
+            Group::vee(mat * Group::hat(x) * g.inverse().matrix());
         SOPHUS_ASSERT_NEAR(
-            ad1,
-            ad2,
+            mat_adj_x,
+            mat_adj_x2,
             10 * kEpsilonSqrt<Scalar>,
-            "`ad * x == vee(g * hat(x) * inv(g))` Test for {}\n"
+            "`Adj * x == vee(g * hat(x) * inv(g))` Test for {}\n"
             "Adj: {}"
             "tangent # {} ({})\n"
             "params # {} ({}); matrix:\n"
             "{}",
             group_name,
-            ad,
+            mat_adj,
             tangent_id,
             x.transpose(),
             g_id,
             g.params().transpose(),
             g.compactMatrix());
+      }
+    }
+
+    for (size_t tangent_a_id = 0; tangent_a_id < kTangentExamples.size();
+         ++tangent_a_id) {
+      Tangent a = SOPHUS_AT(kTangentExamples, tangent_a_id);
+
+      for (size_t tangent_b_id = 0; tangent_b_id < kTangentExamples.size();
+           ++tangent_b_id) {
+        Tangent b = SOPHUS_AT(kTangentExamples, tangent_b_id);
+
+        Eigen::Matrix<Scalar, kDof, kDof> ad_a = Group::ad(a);
+        Tangent ad_a_b = ad_a * b;
+        Tangent lie_bracket_a_b = Group::vee(
+            Group::hat(a) * Group::hat(b) - Group::hat(b) * Group::hat(a));
+        SOPHUS_ASSERT_NEAR(
+            ad_a_b,
+            lie_bracket_a_b,
+            10 * kEpsilonSqrt<Scalar>,
+            "`Ad_A vee(B) == vee([A, B])` Test for {}\n"
+            "Ad_a: {}\n"
+            "a # {} ({})\n"
+            "b # {} ({})",
+            group_name,
+            ad_a.transpose(),
+            tangent_a_id,
+            a.transpose(),
+            tangent_b_id,
+            b.transpose());
+
+        if constexpr (kDof > 0) {
+          Eigen::Matrix<Scalar, kDof, kDof> const num_diff_ad_a =
+              vectorFieldNumDiff<Scalar, kDof, kDof>(
+                  [a](Tangent const& x) {
+                    return Group::vee(
+                        Group::hat(a) * Group::hat(x) -
+                        Group::hat(x) * Group::hat(a));
+                  },
+                  b);
+
+          SOPHUS_ASSERT_NEAR(
+              ad_a,
+              num_diff_ad_a,
+              10 * kEpsilonSqrt<Scalar>,
+              "`Ad_A == d/dx [a, x]` Test for {}\n");
+        }
       }
     }
   }

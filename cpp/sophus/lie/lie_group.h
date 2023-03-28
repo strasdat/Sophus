@@ -92,7 +92,7 @@ class Group {
     return TDerived::fromParams(Impl::inverse(this->params_));
   }
 
-  // Point actions
+  // Group actions
 
   auto operator*(Point const& point) const -> Point {
     return Impl::action(this->params_, point);
@@ -103,6 +103,10 @@ class Group {
   auto operator*(UnitVector<Scalar, kPointDim> const& direction_vector) const
       -> UnitVector<Scalar, kPointDim> {
     return Impl::action(params_, direction_vector);
+  }
+
+  [[nodiscard]] auto adj() const -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Impl::adj(this->params_);
   }
 
   // Matrices
@@ -119,8 +123,8 @@ class Group {
 
   // derivatives
 
-  [[nodiscard]] auto adj() const -> Eigen::Matrix<Scalar, kDof, kDof> {
-    return Impl::adj(this->params_);
+  static auto ad(Tangent const& tangent) -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Impl::ad(tangent);
   }
 
   // static auto dxExpX(Tangent const& tangent)
