@@ -106,15 +106,6 @@ class SpiralSimilarity3Impl {
         mat(2, 1), mat(0, 2), mat(1, 0), mat(0, 0)};
   }
 
-  static auto adj(Params const& non_zero_quat)
-      -> Eigen::Matrix<Scalar, kDof, kDof> {
-    Eigen::Matrix<Scalar, kDof, kDof> mat;
-    mat.setIdentity();
-    mat.template topLeftCorner<3, 3>() =
-        Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized());
-    return mat;
-  }
-
   // group operations
 
   static auto inverse(Params const& non_zero_quat) -> Params {
@@ -159,6 +150,15 @@ class SpiralSimilarity3Impl {
     return UnitVector<Scalar, kPointDim>::fromParams(
         Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized()) *
         direction_vector.vector());
+  }
+
+  static auto adj(Params const& non_zero_quat)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    Eigen::Matrix<Scalar, kDof, kDof> mat;
+    mat.setIdentity();
+    mat.template topLeftCorner<3, 3>() =
+        Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized());
+    return mat;
   }
 
   // matrices
@@ -221,7 +221,7 @@ class SpiralSimilarity3Impl {
         mat_omega, theta, angle_logscale[3], non_zero_quat.squaredNorm());
   }
 
-  static auto topRightAdj(Params const& quat, Point const& point)
+  static auto adjOfTranslation(Params const& quat, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     Eigen::Matrix<Scalar, 3, 4> tr_adj;
     tr_adj.template topLeftCorner<3, 3>() =
@@ -231,7 +231,23 @@ class SpiralSimilarity3Impl {
     return tr_adj;
   }
 
+  static auto adOfTranslation(Point const& point)
+      -> Eigen::Matrix<Scalar, kPointDim, kDof> {
+    Eigen::Matrix<Scalar, 3, 4> tr_ad;
+    tr_ad.template leftCols<3>() = Rotation3Impl<Scalar>::hat(point);
+    tr_ad.col(3) = -point;
+    return tr_ad;
+  }
+
   // derivatives
+
+  static auto ad(Tangent const& tangent) -> Eigen::Matrix<Scalar, kDof, kDof> {
+    Eigen::Matrix<Scalar, kDof, kDof> mat;
+    mat.setZero();
+    mat.template topLeftCorner<3, 3>() =
+        Rotation3Impl<Scalar>::hat(tangent.template head<3>());
+    return mat;
+  }
 
   static auto dxExpX(Tangent const& a)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {

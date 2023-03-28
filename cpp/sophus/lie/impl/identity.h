@@ -44,6 +44,11 @@ class IdentityImpl {
     return sophus::Expected<Success>{};
   }
 
+  static auto adj(Params const& /*unused*/)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Eigen::Matrix<Scalar, kDof, kDof>::Identity();
+  }
+
   // Manifold / Lie Group concepts
 
   static auto exp(Tangent const& tangent) -> Params { return tangent; }
@@ -60,11 +65,6 @@ class IdentityImpl {
   static auto vee(Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> const& mat)
       -> Eigen::Matrix<Scalar, kDof, 1> {
     return Eigen::Matrix<Scalar, kDof, 1>();
-  }
-
-  static auto adj(Params const& /*unused*/)
-      -> Eigen::Matrix<Scalar, kDof, kDof> {
-    return Eigen::Matrix<Scalar, kDof, kDof>::Identity();
   }
 
   // group operations
@@ -116,12 +116,22 @@ class IdentityImpl {
     return Eigen::Matrix<Scalar, kPointDim, kPointDim>::Identity();
   }
 
-  static auto topRightAdj(Params const& params, Point const& point)
+  static auto adjOfTranslation(Params const& params, Point const& point)
+      -> Eigen::Matrix<Scalar, kPointDim, kDof> {
+    return Eigen::Matrix<Scalar, kPointDim, kDof>::Zero();
+  }
+
+  static auto adOfTranslation(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return Eigen::Matrix<Scalar, kPointDim, kDof>::Zero();
   }
 
   // derivatives
+  static auto ad(Tangent const& /*unused*/)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Eigen::Matrix<Scalar, kDof, kDof>::Zero();
+  }
+
   static auto dxExpX(Tangent const& /*unused*/)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     return Eigen::Matrix<Scalar, kNumParams, 0>::Identity();

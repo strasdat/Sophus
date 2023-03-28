@@ -139,6 +139,40 @@ class SemiDirectProductWithTranslation {
     return unproj(point);
   }
 
+  static auto adj(Params const& params) -> Eigen::Matrix<Scalar, kDof, kDof> {
+    Eigen::Matrix<Scalar, kDof, kDof> mat_adjoint;
+
+    Eigen::Vector<Scalar, SubGroup::kNumParams> subgroup_params =
+        subgroupParams(params);
+
+    mat_adjoint.template topLeftCorner<kPointDim, kPointDim>() =
+        SubGroup::matrix(subgroup_params);
+    mat_adjoint.template topRightCorner<kPointDim, SubGroup::kDof>() =
+        SubGroup::adjOfTranslation(subgroup_params, translation(params));
+
+    mat_adjoint.template bottomLeftCorner<SubGroup::kDof, kPointDim>()
+        .setZero();
+    mat_adjoint.template bottomRightCorner<SubGroup::kDof, SubGroup::kDof>() =
+        SubGroup::adj(subgroup_params);
+
+    return mat_adjoint;
+  }
+
+  static auto ad(Tangent const& tangent) -> Eigen::Matrix<Scalar, kDof, kDof> {
+    Eigen::Matrix<Scalar, kDof, kDof> ad;
+    ad.template topLeftCorner<kPointDim, kPointDim>() =
+        SubGroup::hat(subgroupTangent(tangent));
+    ad.template topRightCorner<kPointDim, SubGroup::kDof>() =
+        SubGroup::adOfTranslation(translationTangent(tangent));
+
+    ad.template bottomLeftCorner<SubGroup::kDof, kPointDim>().setZero();
+
+    ad.template bottomRightCorner<SubGroup::kDof, SubGroup::kDof>() =
+        SubGroup::ad(subgroupTangent(tangent));
+
+    return ad;
+  }
+
   // Matrices
 
   static auto compactMatrix(Params const& params)
@@ -168,24 +202,6 @@ class SemiDirectProductWithTranslation {
   }
 
   // derivatives
-  static auto adj(Params const& params) -> Eigen::Matrix<Scalar, kDof, kDof> {
-    Eigen::Matrix<Scalar, kDof, kDof> mat_adjoint;
-
-    Eigen::Vector<Scalar, SubGroup::kNumParams> subgroup_params =
-        subgroupParams(params);
-
-    mat_adjoint.template topLeftCorner<kPointDim, kPointDim>() =
-        SubGroup::matrix(subgroup_params);
-    mat_adjoint.template topRightCorner<kPointDim, SubGroup::kDof>() =
-        SubGroup::topRightAdj(subgroup_params, translation(params));
-
-    mat_adjoint.template bottomLeftCorner<SubGroup::kDof, kPointDim>()
-        .setZero();
-    mat_adjoint.template bottomRightCorner<SubGroup::kDof, SubGroup::kDof>() =
-        SubGroup::adj(subgroup_params);
-
-    return mat_adjoint;
-  }
 
   // static auto dxExpX(Tangent const& tangent)
   //     -> Eigen::Matrix<Scalar, kNumParams, kDof> {

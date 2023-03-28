@@ -159,10 +159,6 @@ class Rotation3Impl {
         mat_omega(2, 1), mat_omega(0, 2), mat_omega(1, 0));
   }
 
-  static auto adj(Params const& params) -> Eigen::Matrix<Scalar, kDof, kDof> {
-    return matrix(params);
-  }
-
   // group operations
 
   static auto inverse(Params const& unit_quat) -> Params {
@@ -186,6 +182,10 @@ class Rotation3Impl {
       return scale * result;
     }
     return result;
+  }
+
+  static auto adj(Params const& params) -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return matrix(params);
   }
 
   // Point actions
@@ -285,12 +285,21 @@ class Rotation3Impl {
     return v_inv;
   }
 
-  static auto topRightAdj(Params const& params, Point const& point)
+  static auto adjOfTranslation(Params const& params, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return hat(point) * matrix(params);
   }
 
+  static auto adOfTranslation(Point const& point)
+      -> Eigen::Matrix<Scalar, kPointDim, kDof> {
+    return hat(point);
+  }
+
   // derivatives
+  static auto ad(Tangent const& omega) -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return hat(omega);
+  }
+
   static auto dxExpX(Tangent const& omega)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     using std::cos;

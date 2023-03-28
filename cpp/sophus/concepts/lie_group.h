@@ -63,6 +63,10 @@ concept LieGroupImpl =
   //   T::action(params, direction)
   //   } -> ConvertibleTo<UnitVector<typename T::Scalar, T::kPointDim>>;
 
+  {
+    TT::adj(params)
+    } -> ConvertibleTo<Eigen::Matrix<typename TT::Scalar, TT::kDof, TT::kDof>>;
+
   // Matrices
 
   {
@@ -76,8 +80,9 @@ concept LieGroupImpl =
         Eigen::Matrix<typename TT::Scalar, TT::kAmbientDim, TT::kAmbientDim>>;
 
   // Derivatives
+
   {
-    TT::adj(params)
+    TT::ad(tangent)
     } -> ConvertibleTo<Eigen::Matrix<typename TT::Scalar, TT::kDof, TT::kDof>>;
 
   // {
@@ -124,9 +129,14 @@ concept LieSubgroupImpl = LieGroupImpl<TT> && requires(
         Eigen::Matrix<typename TT::Scalar, TT::kPointDim, TT::kPointDim>>;
 
   {
-    TT::topRightAdj(params, point)
+    TT::adjOfTranslation(params, point)
     } -> ConvertibleTo<
         Eigen::Matrix<typename TT::Scalar, TT::kPointDim, TT::kDof>>;
+
+  {
+    TT::adOfTranslation(point)
+    } -> ConvertibleTo<
+        Eigen::Matrix<typename TT::Scalar, TT::kPointDim, TT::kPointDim>>;
 };
 
 template <class TT>
@@ -161,6 +171,10 @@ concept LieGroup = LieGroupImpl<typename TT::Impl> && ParamsConcept<TT> &&
     g.operator*(direction)
     } -> ConvertibleTo<UnitVector<typename TT::Scalar, TT::kPointDim>>;
 
+  {
+    g.adj()
+    } -> ConvertibleTo<Eigen::Matrix<typename TT::Scalar, TT::kDof, TT::kDof>>;
+
   // Matrices
 
   {
@@ -174,9 +188,8 @@ concept LieGroup = LieGroupImpl<typename TT::Impl> && ParamsConcept<TT> &&
         Eigen::Matrix<typename TT::Scalar, TT::kAmbientDim, TT::kAmbientDim>>;
 
   // Derivatives
-
   {
-    g.adj()
+    TT::ad(tangent)
     } -> ConvertibleTo<Eigen::Matrix<typename TT::Scalar, TT::kDof, TT::kDof>>;
 
   // {

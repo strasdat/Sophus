@@ -87,11 +87,6 @@ class ScalingImpl {
     return mat.diagonal();
   }
 
-  static auto adj(Params const& /*unused*/)
-      -> Eigen::Matrix<Scalar, kDof, kDof> {
-    return Eigen::Matrix<Scalar, kDof, kDof>::Identity();
-  }
-
   // group operations
 
   static auto inverse(Params const& scale_factors) -> Params {
@@ -125,6 +120,12 @@ class ScalingImpl {
     return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
         action(scale_factors, direction_vector.vector()));
   }
+
+  static auto adj(Params const& /*unused*/)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Eigen::Matrix<Scalar, kDof, kDof>::Identity();
+  }
+
   // Matrices
 
   static auto compactMatrix(Params const& scale_factors)
@@ -171,12 +172,22 @@ class ScalingImpl {
     return mat;
   }
 
-  static auto topRightAdj(Params const& params, Point const& point)
+  static auto adjOfTranslation(Params const& params, Point const& point)
+      -> Eigen::Matrix<Scalar, kPointDim, kDof> {
+    return matrix(-point);
+  }
+
+  static auto adOfTranslation(Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return matrix(-point);
   }
 
   // derivatives
+  static auto ad(Tangent const& /*unused*/)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Eigen::Matrix<Scalar, kDof, kDof>::Zero();
+  }
+
   static auto dxExpX(Tangent const& /*unused*/)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
     return Eigen::Matrix<Scalar, kNumParams, kDof>::Identity();

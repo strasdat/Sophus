@@ -85,11 +85,6 @@ class Rotation2Impl {
     return Eigen::Matrix<Scalar, kDof, 1>{mat(1, 0)};
   }
 
-  static auto adj(Params const& /*unused*/)
-      -> Eigen::Matrix<Scalar, kDof, kDof> {
-    return Eigen::Matrix<Scalar, 1, 1>::Identity();
-  }
-
   // group operations
 
   static auto inverse(Params const& unit_complex) -> Params {
@@ -115,7 +110,7 @@ class Rotation2Impl {
     return result;
   }
 
-  // Point actions
+  // Group actions
   static auto action(Params const& unit_complex, Point const& point) -> Point {
     return Complex::multiplication(unit_complex, point);
   }
@@ -131,6 +126,11 @@ class Rotation2Impl {
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromParams(
         Complex::multiplication(unit_complex, direction_vector.vector()));
+  }
+
+  static auto adj(Params const& /*unused*/)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Eigen::Matrix<Scalar, 1, 1>::Identity();
   }
 
   // matrices
@@ -186,12 +186,20 @@ class Rotation2Impl {
     return v_inv;
   }
 
-  static auto topRightAdj(Params const& /*unused*/, Point const& point)
+  static auto adjOfTranslation(Params const& /*unused*/, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return Eigen::Matrix<Scalar, 2, 1>(point[1], -point[0]);
   }
 
+  static auto adOfTranslation(Point const& point)
+      -> Eigen::Matrix<Scalar, kPointDim, kDof> {
+    return Eigen::Vector2<Scalar>(point[1], -point[0]);
+  }
+
   // derivatives
+  static auto ad(Tangent const&) -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Eigen::Matrix<Scalar, 1, 1>::Zero();
+  }
 
   static auto dxExpX(Tangent const& theta)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {

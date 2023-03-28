@@ -101,11 +101,6 @@ class SpiralSimilarity2Impl {
     return Eigen::Matrix<Scalar, kDof, 1>{mat(1, 0), mat(0, 0)};
   }
 
-  static auto adj(Params const& /*unused*/)
-      -> Eigen::Matrix<Scalar, kDof, kDof> {
-    return Eigen::Matrix<Scalar, 2, 2>::Identity();
-  }
-
   // group operations
 
   static auto inverse(Params const& non_zero_complex) -> Params {
@@ -133,7 +128,7 @@ class SpiralSimilarity2Impl {
     return result;
   }
 
-  // Point actions
+  // Group actions
   static auto action(Params const& non_zero_complex, Point const& point)
       -> Point {
     return matrix(non_zero_complex) * point;
@@ -151,6 +146,11 @@ class SpiralSimilarity2Impl {
     return UnitVector<Scalar, kPointDim>::fromParams(
         Rotation2Impl<Scalar>::matrix(non_zero_quat.normalized()) *
         direction_vector.vector());
+  }
+
+  static auto adj(Params const& /*unused*/)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Eigen::Matrix<Scalar, 2, 2>::Identity();
   }
 
   // matrices
@@ -186,13 +186,26 @@ class SpiralSimilarity2Impl {
         non_zero_complex.norm());
   }
 
-  static auto topRightAdj(Params const& /*unused*/, Point const& point)
+  static auto adjOfTranslation(Params const& /*unused*/, Point const& point)
       -> Eigen::Matrix<Scalar, kPointDim, kDof> {
     return Eigen::Matrix<Scalar, 2, 2>{
         {point[1], -point[0]}, {-point[0], -point[1]}};
   }
 
+  static auto adOfTranslation(Point const& point)
+      -> Eigen::Matrix<Scalar, kPointDim, kDof> {
+    Eigen::Matrix<Scalar, 2, 2> mat;
+    mat.col(0) = Eigen::Vector2<Scalar>(point[1], -point[0]);
+    mat.col(1) = -point;
+    return mat;
+  }
+
   // derivatives
+
+  static auto ad(Tangent const& /*unused*/)
+      -> Eigen::Matrix<Scalar, kDof, kDof> {
+    return Eigen::Matrix<Scalar, 2, 2>::Zero();
+  }
 
   static auto dxExpX(Tangent const& a)
       -> Eigen::Matrix<Scalar, kNumParams, kDof> {
