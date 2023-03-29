@@ -9,7 +9,7 @@
 #pragma once
 
 #include "sophus/concepts/lie_group.h"
-#include "sophus/linalg/unit_vector.h"
+#include "sophus/manifold/unit_vector.h"
 
 namespace sophus {
 namespace lie {

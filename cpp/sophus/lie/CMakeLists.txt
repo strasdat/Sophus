@@ -6,6 +6,7 @@ sophus_lie
 ]]
 
 set(sophus_lie_src_prefixes
+   group_manifold
    identity
    isometry2
    isometry3

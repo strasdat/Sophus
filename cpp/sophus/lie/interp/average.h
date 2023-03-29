@@ -31,7 +31,7 @@ namespace sophus {
 ///
 /// Returns ``nullopt`` if it does not converge.
 ///
-template <class TSequenceContainer>
+template <concepts::Range TSequenceContainer>
 auto iterativeMean(
     TSequenceContainer const& foo_from_bar_transforms, int max_num_iterations)
     -> std::optional<typename TSequenceContainer::value_type> {
@@ -75,7 +75,7 @@ optional<typename SequenceContainer::value_type> average(
 
 // Mean implementation for Translation.
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     int kPointDim = TSequenceContainer::value_type::kDof,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(TSequenceContainer const& foo_from_bar_transforms)
@@ -100,7 +100,7 @@ auto average(TSequenceContainer const& foo_from_bar_transforms)
 
 // Mean implementation for Scaling.
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     int kPointDim = TSequenceContainer::value_type::kDof,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(TSequenceContainer const& foo_from_bar_transforms)
@@ -125,7 +125,7 @@ auto average(TSequenceContainer const& foo_from_bar_transforms)
 
 // Mean implementation for SO(2).
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(TSequenceContainer const& foo_from_bar_transforms)
     -> std::enable_if_t<
@@ -151,7 +151,7 @@ auto average(TSequenceContainer const& foo_from_bar_transforms)
 
 // Mean implementation for RxSO(2).
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(TSequenceContainer const& foo_from_bar_transforms)
     -> std::enable_if_t<
@@ -191,7 +191,7 @@ auto getUnitQuaternion(SpiralSimilarity3<TScalar> const& s_r)
 }
 
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto averageUnitQuaternion(TSequenceContainer const& foo_from_bar_transforms)
     -> Eigen::Vector<TScalar, 4> {
@@ -235,7 +235,7 @@ auto averageUnitQuaternion(TSequenceContainer const& foo_from_bar_transforms)
 //
 // TODO: Detect degenerated cases and return nullopt.
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(TSequenceContainer const& foo_from_bar_transforms)
     -> std::enable_if_t<
@@ -249,7 +249,7 @@ auto average(TSequenceContainer const& foo_from_bar_transforms)
 
 // Mean implementation for R x SO(3).
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(TSequenceContainer const& foo_from_bar_transforms)
     -> std::enable_if_t<
@@ -275,7 +275,7 @@ auto average(TSequenceContainer const& foo_from_bar_transforms)
 }
 
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(
     TSequenceContainer const& foo_from_bar_transforms,
@@ -291,7 +291,7 @@ auto average(
 }
 
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(
     TSequenceContainer const& foo_from_bar_transforms,
@@ -305,7 +305,7 @@ auto average(
 }
 
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(
     TSequenceContainer const& foo_from_bar_transforms,
@@ -319,7 +319,7 @@ auto average(
 }
 
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(
     TSequenceContainer const& foo_from_bar_transforms,
@@ -333,7 +333,7 @@ auto average(
 }
 
 template <
-    class TSequenceContainer,
+    concepts::Range TSequenceContainer,
     int kPointDim = TSequenceContainer::value_type::kPointDim,
     class TScalar = typename TSequenceContainer::value_type::Scalar>
 auto average(

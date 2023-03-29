@@ -13,7 +13,7 @@
 #include "sophus/lie/isometry3.h"
 #include "sophus/lie/similarity2.h"
 #include "sophus/lie/similarity3.h"
-#include "sophus/linalg/unit_vector.h"
+#include "sophus/manifold/unit_vector.h"
 
 #include <Eigen/Dense>
 

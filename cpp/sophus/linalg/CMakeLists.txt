@@ -7,15 +7,12 @@ sophus_linalg
 
 set(sophus_linalg_src_prefixes
     cast
-    complex
     homogeneous
     orthogonal
     point_traits
-    quaternion
     reduce
     vector_space
     vector_space_traits
-    unit_vector
 )
 
 set(sophus_linalg_h)

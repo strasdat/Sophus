@@ -14,6 +14,8 @@
 #include "sophus/lie/isometry3.h"
 #include "sophus/lie/rotation2.h"
 #include "sophus/lie/rotation3.h"
+#include "sophus/lie/similarity2.h"
+#include "sophus/lie/similarity3.h"
 #include "sophus/lie/spiral_similarity2.h"
 #include "sophus/lie/spiral_similarity3.h"
 #include "sophus/linalg/vector_space.h"
@@ -204,7 +206,36 @@ void runSpiralSimilarityAccessorTests() {
 
 template <concepts::accessors::Similarity TGroup>
 void runSimilarityAccessorTests() {
-  // TODO
+  using Scalar = typename TGroup::Scalar;
+
+  if constexpr (TGroup::kPointDim == 2) {
+    auto kElems = sophus::Similarity2<Scalar>::elementExamples();
+    for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
+      sophus::Similarity2<Scalar> sim = SOPHUS_AT(kElems, g_id);
+      double scale = sim.scale();
+
+      TGroup scale_g = TGroup::fromScale(scale);
+      SOPHUS_ASSERT_NEAR(scale_g.scale(), scale, kEpsilon<Scalar>);
+
+      TGroup scale_g2;
+      scale_g2.setScale(sim.scale());
+      SOPHUS_ASSERT_NEAR(scale_g2.scale(), scale, kEpsilon<Scalar>);
+    }
+  } else if constexpr (TGroup::kPointDim == 3) {
+    auto kElems = sophus::Similarity3<Scalar>::elementExamples();
+
+    for (size_t g_id = 0; g_id < kElems.size(); ++g_id) {
+      sophus::Similarity3<Scalar> sim = SOPHUS_AT(kElems, g_id);
+      double scale = sim.scale();
+
+      TGroup scale_g = TGroup::fromScale(scale);
+      SOPHUS_ASSERT_NEAR(scale_g.scale(), scale, kEpsilon<Scalar>);
+
+      TGroup scale_g2;
+      scale_g2.setScale(sim.scale());
+      SOPHUS_ASSERT_NEAR(scale_g2.scale(), scale, kEpsilon<Scalar>);
+    }
+  }
 }
 
 template <concepts::accessors::UnitComplex TGroup>

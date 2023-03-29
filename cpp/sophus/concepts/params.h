@@ -31,14 +31,14 @@ concept ParamsImpl = std::is_same_v<
 };
 
 template <class TT>
-concept TangentImpl = std::is_same_v<
+concept Tangent = std::is_same_v<
     typename TT::Tangent,
     Eigen::Vector<typename TT::Scalar, TT::kDof>> && requires() {
   { TT::tangentExamples() } -> ConvertibleTo<std::vector<typename TT::Tangent>>;
 };
 
 template <class TT>
-concept ParamsConcept = std::is_same_v<
+concept Params = std::is_same_v<
     typename TT::Params,
     Eigen::Vector<typename TT::Scalar, TT::kNumParams>> &&
     requires(TT m, typename TT::Params params) {
