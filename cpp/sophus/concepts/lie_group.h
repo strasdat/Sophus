@@ -17,7 +17,7 @@ namespace concepts {
 
 template <class TT>
 concept LieGroupImpl =
-    ParamsImpl<TT> && TangentImpl<TT> && std::is_same_v<
+    ParamsImpl<TT> && Tangent<TT> && std::is_same_v<
         typename TT::Point,
         Eigen::Vector<typename TT::Scalar, TT::kPointDim>> &&
     (TT::kPointDim == TT::kAmbientDim  // inhomogeneous point representation
@@ -140,7 +140,7 @@ concept LieSubgroupImpl = LieGroupImpl<TT> && requires(
 };
 
 template <class TT>
-concept LieGroup = LieGroupImpl<typename TT::Impl> && ParamsConcept<TT> &&
+concept LieGroup = LieGroupImpl<typename TT::Impl> && Params<TT> &&
     std::is_same_v<
         typename TT::Point,
         Eigen::Vector<typename TT::Scalar, TT::kPointDim>> &&
@@ -174,6 +174,14 @@ concept LieGroup = LieGroupImpl<typename TT::Impl> && ParamsConcept<TT> &&
   {
     g.adj()
     } -> ConvertibleTo<Eigen::Matrix<typename TT::Scalar, TT::kDof, TT::kDof>>;
+
+  { g.leftPlus(tangent) } -> ConvertibleTo<TT>;
+
+  { g.rightPlus(tangent) } -> ConvertibleTo<TT>;
+
+  { g.leftMinus(g) } -> ConvertibleTo<typename TT::Tangent>;
+
+  { g.rightMinus(g) } -> ConvertibleTo<typename TT::Tangent>;
 
   // Matrices
 

@@ -13,7 +13,7 @@ namespace sophus {
 namespace concepts {
 
 template <class TT>
-concept ManifoldImpl = ParamsImpl<TT> && TangentImpl<TT> &&
+concept ManifoldImpl = Tangent<TT> &&
     requires(typename TT::Tangent tangent, typename TT::Params params) {
   { TT::oplus(params, tangent) } -> ConvertibleTo<typename TT::Params>;
 
@@ -21,12 +21,18 @@ concept ManifoldImpl = ParamsImpl<TT> && TangentImpl<TT> &&
 };
 
 template <class TT>
-concept Manifold = ParamsConcept<TT> && ParamsImpl<TT> && TangentImpl<TT> &&
-    requires(TT m, typename TT::Tangent tangent, typename TT::Params params) {
+concept BaseManifold = Tangent<TT> &&
+    requires(TT m, typename TT::Tangent tangent) {
   // Manifold concepts
   { m.oplus(tangent) } -> ConvertibleTo<TT>;
 
   { m.ominus(m) } -> ConvertibleTo<typename TT::Tangent>;
+};
+
+template <class TT>
+concept Manifold = Params<TT> && Tangent<TT> && BaseManifold<TT> &&
+    requires(std::vector<TT> points) {
+  { TT::average(points) } -> ConvertibleTo<std::optional<TT>>;
 };
 
 }  // namespace concepts

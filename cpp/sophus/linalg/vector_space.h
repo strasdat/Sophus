@@ -245,6 +245,17 @@ template <class TScalar, int kDim>
 struct PointExamples;
 
 template <class TScalar>
+struct PointExamples<TScalar, 1> {
+  static auto impl() {
+    std::vector<Eigen::Vector<TScalar, 1>> point_vec;
+    point_vec.push_back(Eigen::Vector<TScalar, 1>(TScalar(1)));
+    point_vec.push_back(Eigen::Vector<TScalar, 1>(TScalar(-3)));
+    point_vec.push_back(Eigen::Vector<TScalar, 1>::Zero());
+    return point_vec;
+  }
+};
+
+template <class TScalar>
 struct PointExamples<TScalar, 2> {
   static auto impl() {
     std::vector<Eigen::Vector<TScalar, 2>> point_vec;

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "sophus/common/enum.h"
 #include "sophus/concepts/lie_group.h"
 #include "sophus/lie/impl/semi_direct_product.h"
 
@@ -85,7 +86,7 @@ class Group {
 
   auto operator*=(TDerived const& rhs) -> TDerived& {
     *this = *this * rhs;
-    return *static_cast<TDerived*>(this);
+    return self();
   }
 
   [[nodiscard]] auto inverse() const -> TDerived {
@@ -107,6 +108,24 @@ class Group {
 
   [[nodiscard]] auto adj() const -> Eigen::Matrix<Scalar, kDof, kDof> {
     return Impl::adj(this->params_);
+  }
+
+  // left addition also called "left translation" in the literature
+  [[nodiscard]] auto leftPlus(Tangent const& tangent) const -> TDerived {
+    return this->exp(tangent) * self();
+  }
+
+  // right addition also called "right translation" in the literature
+  [[nodiscard]] auto rightPlus(Tangent const& tangent) const -> TDerived {
+    return self() * exp(tangent);
+  }
+
+  [[nodiscard]] auto leftMinus(TDerived const& other) const -> Tangent {
+    return (self() * other.inverse()).log();
+  }
+
+  [[nodiscard]] auto rightMinus(TDerived const& other) const -> Tangent {
+    return (other.inverse() * self()).log();
   }
 
   // Matrices
@@ -191,6 +210,12 @@ class Group {
  protected:
   explicit Group(UninitTag /*unused*/) {}
 
+  auto self() -> TDerived& { return static_cast<TDerived&>(*this); }
+
+  auto self() const -> TDerived const& {
+    return static_cast<TDerived const&>(*this);
+  }
+
   static auto fromParamsUnchecked(Params const& params) -> TDerived {
     TDerived g(UninitTag{});
     g.setParamsUnchecked(params);
@@ -201,7 +226,6 @@ class Group {
 
   Params params_;
 };
-
 }  // namespace lie
 
 }  // namespace sophus

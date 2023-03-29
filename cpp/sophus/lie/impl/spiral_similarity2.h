@@ -10,8 +10,8 @@
 #include "sophus/concepts/lie_group.h"
 #include "sophus/lie/impl/rotation2.h"
 #include "sophus/lie/impl/sim_mat_w.h"
-#include "sophus/linalg/complex.h"
-#include "sophus/linalg/unit_vector.h"
+#include "sophus/manifold/complex.h"
+#include "sophus/manifold/unit_vector.h"
 
 namespace sophus {
 namespace lie {

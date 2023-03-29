@@ -146,6 +146,7 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
   static int constexpr kDof = kN - 1;
   static int constexpr kNumParams = kN;
   using Tangent = Eigen::Vector<Scalar, kDof>;
+  using Params = Eigen::Vector<Scalar, kNumParams>;
 
   static auto tryFromUnitVector(Eigen::Matrix<TScalar, kN, 1> const& v)
       -> Expected<UnitVector> {
@@ -174,13 +175,13 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
     return fromUnitVector(v.normalized());
   }
 
-  auto oplus(Tangent const& delta) -> UnitVector {
+  auto oplus(Tangent const& delta) const -> UnitVector {
     UnitVector v;
     v.vector_ = Impl::oplus(vector_, delta);
     return v;
   }
 
-  auto ominus(UnitVector const& rhs_params) -> Tangent {
+  auto ominus(UnitVector const& rhs_params) const -> Tangent {
     return Impl::ominus(vector_, rhs_params.vector_);
   }
 
@@ -202,6 +203,18 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
   UnitVector(UnitVector const&) = default;
   auto operator=(UnitVector const&) -> UnitVector& = default;
 
+  template <concepts::Range TSequenceContainer>
+  static auto average(TSequenceContainer const& range) -> UnitVector {
+    size_t const len = std::distance(std::begin(range), std::end(range));
+    SOPHUS_ASSERT_GE(len, 0);
+
+    Params params = Params::Zero();
+    for (auto const& m : range) {
+      params += m.params();
+    }
+    return fromVectorAndNormalize(params / len);
+  }
+
  private:
   UnitVector() {}
 
@@ -210,37 +223,5 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
 };
 
 static_assert(concepts::Manifold<UnitVector<double, 3>>);
-
-// template <class TScalar>
-// inline UnitVector<TScalar, 2> operator*(
-//     Rotation2<TScalar> const& bar_rotation_foo, UnitVector<TScalar, 2> const&
-//     v_foo) {
-//   return UnitVector<TScalar, 2>::fromUnitVector(
-//       bar_rotation_foo * v_foo.vector());
-// }
-
-// template <class TScalar>
-// inline UnitVector<TScalar, 3> operator*(
-//     Rotation3<TScalar> const& bar_rotation_foo, UnitVector<TScalar, 3> const&
-//     v_foo) {
-//   return UnitVector<TScalar, 3>::fromUnitVector(
-//       bar_rotation_foo * v_foo.vector());
-// }
-
-// template <class TScalar>
-// inline UnitVector<TScalar, 2> operator*(
-//     RxSo2<TScalar> const& bar_rotscale_foo,
-//     UnitVector<TScalar, 2> const& v_foo) {
-//   return UnitVector<TScalar, 2>::fromVectorAndNormalize(
-//       bar_rotscale_foo * v_foo.vector());
-// }
-
-// template <class TScalar>
-// inline UnitVector<TScalar, 3> operator*(
-//     RxSo3<TScalar> const& bar_rotscale_foo,
-//     UnitVector<TScalar, 3> const& v_foo) {
-//   return UnitVector<TScalar, 3>::fromVectorAndNormalize(
-//       bar_rotscale_foo * v_foo.vector());
-// }
 
 }  // namespace sophus

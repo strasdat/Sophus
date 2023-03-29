@@ -37,5 +37,12 @@ concept ConvertibleTo = std::is_convertible_v<TFrom, TTo> && requires {
 template <class TT, class... TArgs>
 concept ConstructibleFrom =
     std::is_nothrow_destructible_v<TT> && std::is_constructible_v<TT, TArgs...>;
+
+template <class T>
+concept Range = requires(T& t) {
+  t.begin();
+  t.end();
+};
+
 }  // namespace concepts
 }  // namespace sophus

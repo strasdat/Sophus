@@ -10,8 +10,8 @@
 
 #include "sophus/concepts/lie_group.h"
 #include "sophus/linalg/homogeneous.h"
-#include "sophus/linalg/unit_vector.h"
 #include "sophus/linalg/vector_space.h"
+#include "sophus/manifold/unit_vector.h"
 
 namespace sophus {
 namespace lie {
