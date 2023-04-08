@@ -60,7 +60,7 @@ class Ray {
 
   [[nodiscard]] auto pointAt(TScalar lambda) const
       -> Eigen::Matrix<TScalar, kN, 1> {
-    return this->origin_ + lambda * this->direction_.vector();
+    return this->origin_ + lambda * this->direction_.params();
   }
 
   struct IntersectionResult {
@@ -162,7 +162,7 @@ auto closestApproachParameters(Ray3<TT> const& line_0, Ray3<TT> const& line_1)
   // ```
 
   Eigen::Vector<TT, 3> const d0_cross_d1 =
-      line_0.direction().vector().cross(line_1.direction().vector());
+      line_0.direction().params().cross(line_1.direction().params());
 
   TT const d0_cross_s1_length = d0_cross_d1.norm();
 
@@ -172,7 +172,7 @@ auto closestApproachParameters(Ray3<TT> const& line_0, Ray3<TT> const& line_1)
   }
 
   Eigen::Matrix<TT, 3, 3> mat_a;
-  mat_a << line_0.direction().vector(), -line_1.direction().vector(),
+  mat_a << line_0.direction().params(), -line_1.direction().params(),
       -d0_cross_d1;
 
   Eigen::Vector<TT, 3> const b = line_1.origin() - line_0.origin();

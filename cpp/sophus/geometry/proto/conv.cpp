@@ -18,14 +18,14 @@ Expected<UnitVector3F64> fromProto(proto::UnitVec3F64 const& proto) {
 
 proto::UnitVec3F64 toProto(sophus::UnitVector3F64 const& uvec) {
   proto::UnitVec3F64 proto;
-  *proto.mutable_vec3() = toProto(uvec.vector());
+  *proto.mutable_vec3() = toProto(uvec.params());
   return proto;
 }
 
 Expected<Eigen::Hyperplane<double, 3>> fromProto(
     proto::Hyperplane3F64 const& proto) {
   SOPHUS_TRY(sophus::UnitVector3F64 normal, fromProto(proto.normal()));
-  return Eigen::Hyperplane<double, 3>{normal.vector(), proto.offset()};
+  return Eigen::Hyperplane<double, 3>{normal.params(), proto.offset()};
 }
 
 proto::Hyperplane3F64 toProto(Eigen::Hyperplane<double, 3> const& plane) {

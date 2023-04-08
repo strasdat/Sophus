@@ -23,29 +23,29 @@ struct VectorManifold {
   using Params = Eigen::Vector<TScalar, kDim>;
   using Tangent = Params;
 
-  VectorManifold() { v.setZero(); }
+  VectorManifold() { vec.setZero(); }
 
-  VectorManifold(Params const& v) : v(v) {}
+  VectorManifold(Params const& vec) : vec(vec) {}
 
   auto oplus(Tangent const& a) const -> VectorManifold {
-    return VectorManifold(this->v + a);
+    return VectorManifold(this->vec + a);
   }
 
   auto ominus(VectorManifold const& other) const -> Tangent {
-    return this->v - other.params();
+    return this->vec - other.params();
   }
 
   static auto fromParams(Params const& params) -> VectorManifold {
     return VectorManifold(params);
   }
 
-  auto setParams(Params const& params) -> void { v = params; }
+  auto setParams(Params const& params) -> void { vec = params; }
 
-  auto params() const -> Params { return v; }
+  auto params() const -> Params const& { return vec; }
 
-  auto ptr() const -> Scalar const* { return v.data(); }
+  auto ptr() const -> Scalar const* { return vec.data(); }
 
-  auto unsafeMutPtr() -> Scalar* { return v.data(); }
+  auto unsafeMutPtr() -> Scalar* { return vec.data(); }
 
   static auto tangentExamples() -> std::vector<Tangent> {
     return pointExamples<Scalar, kDim>();
@@ -64,7 +64,7 @@ struct VectorManifold {
     return VectorManifold(params / len);
   }
 
-  Params v;
+  Params vec;
 };
 
 }  // namespace sophus
