@@ -209,7 +209,7 @@ class Rotation3Impl {
     // TODO: Implement normalization using expansion around 1 as done for
     // ::multiplication to avoid possibly costly call to std::sqrt.
     return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
-        action(unit_quat, direction_vector.vector()));
+        action(unit_quat, direction_vector.params()));
   }
 
   // matrices

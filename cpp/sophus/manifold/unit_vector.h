@@ -186,6 +186,7 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
   }
 
   void setParams(Eigen::Matrix<TScalar, kN, 1> const& v) const {
+    SOPHUS_ASSERT(Impl::areParamsValid(v));
     vector_.params = v;
   }
 
@@ -193,12 +194,12 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
     return vector_;
   }
 
-  [[nodiscard]] auto unsafeMutPtr() { return this->vector_.data(); }
-  [[nodiscard]] auto ptr() const { return this->vector_.data(); }
-
   [[nodiscard]] auto vector() const -> Eigen::Matrix<TScalar, kN, 1> const& {
     return vector_;
   }
+
+  [[nodiscard]] auto unsafeMutPtr() { return this->vector_.data(); }
+  [[nodiscard]] auto ptr() const { return this->vector_.data(); }
 
   UnitVector(UnitVector const&) = default;
   auto operator=(UnitVector const&) -> UnitVector& = default;

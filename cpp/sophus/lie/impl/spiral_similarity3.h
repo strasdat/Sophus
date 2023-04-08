@@ -149,7 +149,7 @@ class SpiralSimilarity3Impl {
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromParams(
         Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized()) *
-        direction_vector.vector());
+        direction_vector.params());
   }
 
   static auto adj(Params const& non_zero_quat)

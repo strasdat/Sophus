@@ -125,7 +125,7 @@ class Rotation2Impl {
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromParams(
-        Complex::multiplication(unit_complex, direction_vector.vector()));
+        Complex::multiplication(unit_complex, direction_vector.params()));
   }
 
   static auto adj(Params const& /*unused*/)

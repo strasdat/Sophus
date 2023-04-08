@@ -10,14 +10,14 @@
 
 #include "sophus/concepts/manifold.h"
 
+namespace sophus {
+
 // Credit: @bogdan at http://stackoverflow.com/q/37373602/6367128
 template <int... Ds>
 constexpr std::array<int, sizeof...(Ds)> cumulativeSum() {
   int v = 0;
   return {{v += Ds...}};
 }
-
-namespace sophus {
 
 template <concepts::Manifold... TSubManifold>
 class ProductManifold {
@@ -127,7 +127,7 @@ class ProductManifold {
   template <size_t i = 0>
   static auto getTangent(Tangent& t) {
     auto v = std::tuple_element_t<i, Tuple>::tangentExamples();
-    get_block<i>(t) = v[0];
+    getBlock<i>(t) = v[0];
     if constexpr (i < sizeof...(TSubManifold) - 1) {
       // recurse if not at end
       getTangent<i + 1>(t);
@@ -137,7 +137,7 @@ class ProductManifold {
 
   template <size_t i = 0>
   void oplusImpl(auto const& func, Tuple& out, Tangent const& in) const {
-    get_block<i>(out) = func(get_block<i>(manifolds_), get_block<i>(in));
+    getBlock<i>(out) = func(getBlock<i>(manifolds_), getBlock<i>(in));
 
     if constexpr (i < sizeof...(TSubManifold) - 1) {
       oplusImpl<i + 1>(func, out, in);
@@ -150,7 +150,7 @@ class ProductManifold {
       Tuple const& out,
       Tuple const& in,
       Tangent& tangent) const {
-    get_block<i>(tangent) = func(get_block<i>(out), get_block<i>(in));
+    getBlock<i>(tangent) = func(getBlock<i>(out), getBlock<i>(in));
 
     if constexpr (i < sizeof...(TSubManifold) - 1) {
       ominusImpl<i + 1>(func, out, in, tangent);
@@ -158,24 +158,24 @@ class ProductManifold {
   }
 
   template <size_t i>
-  static auto& get_block(Tuple& g) {
+  static auto& getBlock(Tuple& g) {
     return std::get<i>(g);
   }
 
   template <size_t i>
-  static auto const& get_block(Tuple const& g) {
+  static auto const& getBlock(Tuple const& g) {
     return std::get<i>(g);
   }
 
   template <size_t i>
-  static auto get_block(Tangent& tangent) {
+  static auto getBlock(Tangent& tangent) {
     constexpr size_t offset = kManifoldStarts[i];
     constexpr size_t size = kManifoldSizes[i];
     return tangent.template segment<size>(offset);
   }
 
   template <size_t i>
-  static auto get_block(Tangent const& tangent) {
+  static auto getBlock(Tangent const& tangent) {
     constexpr size_t offset = kManifoldStarts[i];
     constexpr size_t size = kManifoldSizes[i];
     return tangent.template segment<size>(offset);

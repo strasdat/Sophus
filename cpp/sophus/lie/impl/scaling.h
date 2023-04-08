@@ -118,7 +118,7 @@ class ScalingImpl {
       UnitVector<Scalar, kPointDim> const& direction_vector)
       -> UnitVector<Scalar, kPointDim> {
     return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
-        action(scale_factors, direction_vector.vector()));
+        action(scale_factors, direction_vector.params()));
   }
 
   static auto adj(Params const& /*unused*/)

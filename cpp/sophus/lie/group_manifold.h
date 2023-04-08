@@ -63,7 +63,7 @@ struct GroupManifold {
     return Group::tangentExamples();
   }
 
-  auto params() const -> Params { return group.params(); }
+  auto params() const -> Params const& { return group.params(); }
 
   template <concepts::Range TSequenceContainer>
   static auto average(TSequenceContainer const& range)
