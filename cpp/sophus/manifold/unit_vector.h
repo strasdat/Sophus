@@ -150,7 +150,7 @@ class UnitVector : public linalg::UnitVectorImpl<TScalar, kN> {
 
   static auto tryFromUnitVector(Eigen::Matrix<TScalar, kN, 1> const& v)
       -> Expected<UnitVector> {
-    SOPHUS_TRY(auto maybe_valid, Impl::areParamsValid(v));
+    SOPHUS_TRY(auto, maybe_valid, Impl::areParamsValid(v));
     UnitVector unit_vector;
     unit_vector.vector_ = v;
     return unit_vector;

@@ -53,19 +53,19 @@ proto::PixelFormat toProto(sophus::PixelFormat const& layout) {
 }
 
 Expected<sophus::AnyImage<>> fromProto(proto::DynImage const& proto) {
-  SOPHUS_TRY(PixelFormat format, fromProto(proto.pixel_format()));
+  SOPHUS_TRY(PixelFormat, format, fromProto(proto.pixel_format()));
   auto layout = fromProto(proto.layout());
 
   SOPHUS_ASSERT_EQ(size_t(layout.sizeBytes()), proto.data().size());
   SOPHUS_TRY(
-      auto mut_image, sophus::MutAnyImage<>::tryFromFormat(layout, format));
+      auto, mut_image, sophus::MutAnyImage<>::tryFromFormat(layout, format));
   std::memcpy(mut_image.rawMutPtr(), proto.data().data(), proto.data().size());
   return mut_image;
 }
 
 Expected<sophus::IntensityImage<>> intensityImageFromProto(
     proto::DynImage const& proto) {
-  SOPHUS_TRY(sophus::AnyImage<> any_image, fromProto(proto));
+  SOPHUS_TRY(sophus::AnyImage<>, any_image, fromProto(proto));
   return sophus::IntensityImage<>::tryFrom(any_image);
 }
 
