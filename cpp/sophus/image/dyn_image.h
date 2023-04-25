@@ -62,7 +62,7 @@ class DynImage : public DynImageView<TPredicate> {
   static Expected<DynImage<TPredicate, TAllocator>> tryFromFormat(
       ImageSize const& size, PixelFormat const& pixel_format) {
     using Mut = MutDynImage<TPredicate, TAllocator>;
-    FARM_TRY(auto mut, Mut::tryFromFormat(size, pixel_format));
+    FARM_TRY(auto, mut, Mut::tryFromFormat(size, pixel_format));
 
     return DynImage(std::move(mut));
   }

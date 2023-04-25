@@ -24,7 +24,7 @@ proto::UnitVec3F64 toProto(sophus::UnitVector3F64 const& uvec) {
 
 Expected<Eigen::Hyperplane<double, 3>> fromProto(
     proto::Hyperplane3F64 const& proto) {
-  SOPHUS_TRY(sophus::UnitVector3F64 normal, fromProto(proto.normal()));
+  SOPHUS_TRY(sophus::UnitVector3F64, normal, fromProto(proto.normal()));
   return Eigen::Hyperplane<double, 3>{normal.params(), proto.offset()};
 }
 

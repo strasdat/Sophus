@@ -68,7 +68,7 @@ proto::Rotation3F64 toProto(sophus::Rotation3F64 const& rotation) {
 }
 
 Expected<sophus::Isometry3F64> fromProto(proto::Isometry3F64 const& proto) {
-  SOPHUS_TRY(sophus::Rotation3F64 rotation, fromProto(proto.rotation()));
+  SOPHUS_TRY(sophus::Rotation3F64, rotation, fromProto(proto.rotation()));
   return Isometry3(fromProto(proto.translation()), rotation);
 }
 
