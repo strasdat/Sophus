@@ -302,6 +302,14 @@ class CameraModelT {
     return this->image_size_.contains(obs, border);
   }
 
+  /// cast to different scalar type.
+  template <typename TScalar2>
+  [[nodiscard]] auto cast() const
+      -> CameraModelT<TScalar2, TDistortion, TProj> {
+    return CameraModelT<TScalar2, TDistortion, TProj>(
+        image_size_, params_.template cast<TScalar2>());
+  }
+
  private:
   ImageSize image_size_;
   Eigen::Matrix<TScalar, kNumParams, 1> params_;
