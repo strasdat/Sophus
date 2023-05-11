@@ -8,11 +8,8 @@
 
 #include "sophus/ceres/manifold.h"
 #include "sophus/common/common.h"
-#include "sophus/lie/isometry2.h"
 #include "sophus/lie/isometry3.h"
-#include "sophus/lie/similarity2.h"
-#include "sophus/lie/similarity3.h"
-#include "sophus/linalg/vector_space.h"
+#include "sophus/sensor/camera_rig.h"
 
 #include <ceres/ceres.h>
 #include <gtest/gtest.h>
@@ -21,339 +18,314 @@
 
 namespace sophus::test {
 
-template <class TScalar>
-struct Random {
-  template <class TRt>
-  static TScalar sample(TRt& rng) {
-    std::normal_distribution<double> rnorm;
-    static_assert(
-        TScalar::RowsAtCompileTime >= 0,
-        "Matrix should have known size at compile-time");
-    static_assert(
-        TScalar::ColsAtCompileTime >= 0,
-        "Matrix should have known size at compile-time");
-    TScalar res;
-    for (Eigen::Index i = 0; i < res.size(); ++i) {
-      res.data()[i] = rnorm(rng);
-    }
-    return res;
-  }
+struct PointTrack {
+  std::map<int, Eigen::Vector2d> observations;
 };
 
-template <template <class> class TLieGroup>
-struct LieGroupCeresTests {
-  template <class TScalar>
-  using LieGroup = TLieGroup<TScalar>;
-  using LieGroupF64 = LieGroup<double>;
-
-  static int constexpr kDof = LieGroupF64::kDof;
-  static int constexpr kNumParams = LieGroupF64::kNumParams;
-  static int constexpr kPointDim = LieGroupF64::kPointDim;
-
-  using PointF64 = Eigen::Vector<double, kPointDim>;
-  using TangentF64 = Eigen::Vector<double, kDof>;
-
-  struct TestLieGroupCostFunctor {
-    TestLieGroupCostFunctor(LieGroupF64 const& foo_from_world_transform)
-        : foo_from_world_transform(foo_from_world_transform) {}
-
-    template <class TScalar>
-    bool operator()(
-        TScalar const* const raw_world_from_foo, TScalar* raw_residuals) const {
-      Eigen::Map<Eigen::Vector<TScalar, kDof>> residuals(raw_residuals);
-
-      LieGroup<TScalar> world_from_foo_transform =
-          LieGroup<TScalar>::fromParams(
-              Eigen::Map<Eigen::Vector<TScalar, kNumParams> const>(
-                  raw_world_from_foo));
-
-      // // We are able to mix Sophus types with doubles and Jet types withou
-      // // needing to cast to TScalar.
-      // residuals = (foo_from_world_transform *
-      // world_from_foo_transform).log();
-      // // Reverse order of multiplication. This forces the compiler to verify
-      // // that (Jet, double) and (double, Jet) LieGroup multiplication work
-      // // correctly.
-      // residuals = (world_from_foo_transform *
-      // foo_from_world_transform).log(); Finally, ensure that Jet-to-Jet
-      // multiplication works.
-      residuals = (world_from_foo_transform *
-                   foo_from_world_transform.template cast<TScalar>())
-                      .log();
-      return true;
-    }
-
-    LieGroupF64 foo_from_world_transform;
-  };
-  struct TestPointCostFunctor {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-    TestPointCostFunctor(PointF64 const& point_in_foo)
-        : point_in_foo(point_in_foo) {}
-
-    template <class TScalar>
-    bool operator()(
-        TScalar const* const raw_world_from_foo,
-        TScalar const* const raw_point_in_world,
-        TScalar* raw_residuals) const {
-      LieGroup<TScalar> world_from_foo_transform =
-          LieGroup<TScalar>::fromParams(
-              Eigen::Map<Eigen::Vector<TScalar, kNumParams> const>(
-                  raw_world_from_foo));
-      Eigen::Map<Eigen::Vector<TScalar, kPointDim> const> point_in_world(
-          raw_point_in_world);
-      Eigen::Map<Eigen::Vector<TScalar, kPointDim>> residuals(raw_residuals);
-
-      Eigen::Vector<TScalar, kPointDim> point_in_foo_prime =
-          world_from_foo_transform.inverse() * point_in_world;
-
-      residuals = point_in_foo_prime - point_in_foo;
-      return true;
-    }
-
-    LieGroupF64 foo_from_world_transform;
-    PointF64 point_in_foo;
-  };
-
-  struct TestGraphFunctor {
-    template <class TScalar>
-    bool operator()(
-        TScalar const* raw_world_from_foo,
-        TScalar const* raw_world_from_bar,
-        TScalar* raw_residuals) const {
-      using LieGroup = TLieGroup<TScalar>;
-      Eigen::Map<Eigen::Vector<TScalar, kDof>> residuals(raw_residuals);
-
-      Eigen::Map<LieGroup const> world_from_foo_transform(raw_world_from_foo);
-      Eigen::Map<LieGroup const> world_from_bar_transform(raw_world_from_bar);
-
-      residuals =
-          (bar_from_foo_transform *
-           (world_from_bar_transform.inverse() * world_from_foo_transform))
-              .log();
-      return true;
-    }
-
-    TestGraphFunctor(LieGroupF64 const& bar_from_foo_transform)
-        : bar_from_foo_transform(bar_from_foo_transform) {}
-    const LieGroupF64 bar_from_foo_transform;
-  };
-
-  void testAll() {
-    // for (size_t i = 0; i < group_vec.size(); ++i) {
-    //   for (size_t j = 0; j < group_vec.size(); ++j) {
-    //     if (i == j) {
-    //       continue;
-    //     }
-    //     for (size_t k = 0; k < point_vec.size(); ++k) {
-    //       for (size_t l = 0; l < point_vec.size(); ++l) {
-    //         if (k == l) {
-    //           continue;
-    //         }
-    //         std::cerr << "Simple test #" << i << ", " << j << ", " << k << ",
-    //         "
-    //                   << l;
-
-    //         test(group_vec[i], group_vec[j], point_vec[k], point_vec[l]);
-    //       }
-    //     }
-    //   }
-    // }
-
-    // int ns[] = {20, 40, 80, 160};
-    // for (auto k_matrix_dim : ns) {
-    //   std::cerr << "Averaging test: kMatrixDim = " << k_matrix_dim;
-    //   testAveraging(k_matrix_dim, .5, .1);
-    // }
-  }
-
-  // void testAveraging(
-  //     const size_t num_vertices,
-  //     double const sigma_init,
-  //     double const sigma_observation) {
-  //   if (num_vertices == 0u) {
-  //     return;
-  //   }
-  //   double const sigma_init_elementwise = sigma_init / std::sqrt(kDof);
-  //   double const sigma_observation_elementwise =
-  //       sigma_observation / std::sqrt(kDof);
-  //   // Running Lie group averaging on a K_n graph with a random
-  //   initialization
-  //   // noise and random noise in observations
-  //   ::ceres::Problem problem;
-
-  //   // "Random" initialization in order to keep tests repeatable
-  //   std::mt19937 rng(2021);
-  //   std::vector<LieGroupF64> vec(num_vertices);
-
-  //   std::vector<LieGroupF64> v_estimate;
-  //   v_estimate.reserve(num_vertices);
-  //   double initial_error = 0.;
-  //   auto parametrization = new sophus::ceres::Manifold<TLieGroup>;
-
-  //   // All vertices are initialized with an i.i.d noise with normal
-  //   // distribution; Scaling is adjusted in order to maintain the same
-  //   // expectation of squared norm for all groups
-  //   for (size_t i = 0; i < num_vertices; ++i) {
-  //     auto& v = vec[i];
-  //     v = LieGroupF64::sampleUniform(rng);
-  //     const TangentF64 delta_log =
-  //         Random<TangentF64>::sample(rng) * sigma_init_elementwise;
-  //     const LieGroupF64 delta = LieGroupF64::exp(delta_log);
-  //     v_estimate.emplace_back(v * delta);
-  //     initial_error += squaredNorm(delta_log);
-  //     problem.AddParameterBlock(
-  //         v_estimate.back().data(), LieGroupF64::kNumParams,
-  //         parametrization);
-  //   }
-
-  //   // For simplicity of graph generation, we use a complete (undirected)
-  //   graph.
-  //   // Each edge (observation) has i.i.d noise with multivariate normal
-  //   // distribution; Scaling is adjusted in order to maintain the same
-  //   // expectation of squared norm for all groups
-  //   for (size_t i = 0; i < num_vertices; ++i) {
-  //     for (size_t j = i + 1; j < num_vertices; ++j) {
-  //       LieGroupF64 diff = vec[i].inverse() * vec[j];
-  //       auto const delta_log =
-  //           Random<typename LieGroupF64::Tangent>::sample(rng) *
-  //           sigma_observation_elementwise;
-  //       auto const delta = LieGroupF64::exp(delta_log);
-  //       ::ceres::CostFunction* cost = new ::ceres::AutoDiffCostFunction<
-  //           TestGraphFunctor,
-  //           LieGroupF64::kDof,
-  //           LieGroupF64::kNumParams,
-  //           LieGroupF64::kNumParams>(new TestGraphFunctor(diff * delta));
-  //       // For real-world problems you should consider using robust
-  //       // loss-function
-  //       problem.AddResidualBlock(
-  //           cost, nullptr, v_estimate[i].data(), v_estimate[j].data());
-  //     }
-  //   }
-
-  //   ::ceres::Solver::Options options;
-  //   options.gradient_tolerance = 1e-2 * sophus::kEpsilonF64;
-  //   options.function_tolerance = 1e-2 * sophus::kEpsilonF64;
-  //   options.parameter_tolerance = 1e-2 * sophus::kEpsilonF64;
-  //   options.linear_solver_type = ::ceres::SPARSE_NORMAL_CHOLESKY;
-
-  //   ::ceres::Solver::Summary summary;
-  //   Solve(options, &problem, &summary);
-
-  //   // Computing final error in the estimates
-  //   double final_error = 0;
-  //   for (int i = 0; i < num_vertices; ++i) {
-  //     final_error += squaredNorm((vec[i].inverse() * v_estimate[i]).log());
-  //   }
-
-  //   // Expecting reasonable decrease of both estimates' errors and residuals
-  //   SOPHUS_ASSERT(summary.final_cost < .25 * summary.initial_cost);
-  //   SOPHUS_ASSERT(final_error < .25 * initial_error);
-  // }
-
-  // bool test(
-  //     LieGroupF64 const& t_w_targ,
-  //     LieGroupF64 const& t_w_init,
-  //     PointF64 const& point_a_init,
-  //     PointF64 const& point_b) {
-  //   static int constexpr kNumPointParameters = PointF64::RowsAtCompileTime;
-
-  //   // Optimization parameters.
-  //   LieGroupF64 t_wr = t_w_init;
-  //   PointF64 point_in_foo = point_a_init;
-
-  //   // Build the problem.
-  //   ::ceres::Problem problem;
-
-  //   // Specify local update rule for our parameter
-
-  //   auto parameterization = new sophus::ceres::Manifold<TLieGroup>;
-  //   problem.AddParameterBlock(
-  //       t_wr.unsafeMutPtr(), kNumParams, parameterization);
-
-  //   // Create and add cost functions. Derivatives will be evaluated via
-  //   // automatic differentiation
-  //   ::ceres::CostFunction* cost_function1 = new
-  //   ::ceres::AutoDiffCostFunction<
-  //       TestLieGroupCostFunctor,
-  //       LieGroupF64::kDof,
-  //       LieGroupF64::kNumParams>(
-  //       new TestLieGroupCostFunctor(t_w_targ.inverse()));
-  //   problem.AddResidualBlock(cost_function1, nullptr, t_wr.unsafeMutPtr());
-  //   ::ceres::CostFunction* cost_function2 = new
-  //   ::ceres::AutoDiffCostFunction<
-  //       TestPointCostFunctor,
-  //       kNumPointParameters,
-  //       kNumParams,
-  //       kNumPointParameters>(new TestPointCostFunctor(point_b));
-  //   problem.AddResidualBlock(cost_function2, nullptr, point_in_foo.data());
-
-  //   // Set solver options (precision / method)
-  //   ::ceres::Solver::Options options;
-  //   options.gradient_tolerance = 0.01 * sophus::kEpsilonF64;
-  //   options.function_tolerance = 0.01 * sophus::kEpsilonF64;
-  //   options.linear_solver_type = ::ceres::DENSE_QR;
-  //   options.max_num_iterations = 100;
-
-  //   // Solve
-  //   ::ceres::Solver::Summary summary;
-  //   Solve(options, &problem, &summary);
-
-  //   // Difference between target and parameter
-  //   double const mse = (t_w_targ.inverse() * t_wr).log().squaredNorm();
-  //   bool const passed = mse < 10. * sophus::kEpsilonF64;
-  //   return passed;
-  // }
-
-  LieGroupCeresTests(
-      std::vector<LieGroupF64> const& group_vec,
-      std::vector<PointF64> const& point_vec)
-      : group_vec(group_vec), point_vec(point_vec) {}
-
-  std::vector<LieGroupF64> group_vec;
-  std::vector<PointF64> point_vec;
+struct PointTracks {
+  std::vector<PointTrack> point_track_for_camera;
 };
 
-TEST(sophus_ceres, regression) {
-  LieGroupCeresTests<sophus::Rotation3>(
-      sophus::Rotation3F64::elementExamples(),
-      sophus::pointExamples<double, 3>())
-      .testAll();
+struct Variables {
+  std::vector<sophus::SE3d> world_from_robot_path;
+  std::vector<Eigen::Vector3d> points_in_world;
+};
 
-  LieGroupCeresTests<sophus::Isometry3>(
-      sophus::Isometry3F64::elementExamples(),
-      sophus::pointExamples<double, 3>())
-      .testAll();
+struct MiniSim {
+  static int constexpr kNumPoses = 5;
+  static int constexpr kNumPoints = 50;
 
-  LieGroupCeresTests<sophus::Rotation2>(
-      sophus::Rotation2F64::elementExamples(),
-      sophus::pointExamples<double, 2>())
-      .testAll();
+  MiniSim() {
+    int width = 640;
+    int height = 480;
+    sophus::CameraModel pinhole_intrinsics =
+        sophus::CameraModel::createDefaultPinholeModel({width, height});
 
-  LieGroupCeresTests<sophus::Isometry2>(
-      sophus::Isometry2F64::elementExamples(),
-      sophus::pointExamples<double, 2>())
-      .testAll();
+    CameraInRig cam_right(pinhole_intrinsics);
+    CameraInRig cam_left = cam_right;
+    cam_right.rig_from_camera = sophus::Isometry3F64::fromTy(0.25);
+    cam_left.rig_from_camera = sophus::Isometry3F64::fromTy(-0.25);
+    camera_rig.cameras_in_rig.push_back(cam_right);
+    camera_rig.cameras_in_rig.push_back(cam_left);
 
-  LieGroupCeresTests<sophus::SpiralSimilarity3>(
-      sophus::SpiralSimilarity3F64::elementExamples(),
-      sophus::pointExamples<double, 3>())
-      .testAll();
+    for (int i = 0; i < kNumPoses; ++i) {
+      truth.world_from_robot_path.push_back(
+          sophus::Isometry3F64::fromTx(0.1 * i));
+    }
 
-  LieGroupCeresTests<sophus::Similarity3>(
-      sophus::Similarity3F64::elementExamples(),
-      sophus::pointExamples<double, 3>())
-      .testAll();
+    sophus::Isometry3F64 world_from_robot_final_pose =
+        truth.world_from_robot_path.back();
 
-  LieGroupCeresTests<sophus::SpiralSimilarity2>(
-      sophus::SpiralSimilarity2F64::elementExamples(),
-      sophus::pointExamples<double, 2>())
-      .testAll();
+    // uniform random distribution between 0 and 1
+    std::default_random_engine re;
+    std::uniform_real_distribution<double> unif(0.0, 1.0);
+    std::normal_distribution<double> normal(0.0, 0.25);
 
-  LieGroupCeresTests<sophus::Similarity2>(
-      sophus::Similarity2F64::elementExamples(),
-      sophus::pointExamples<double, 2>())
-      .testAll();
+    for (int i = 0; i < kNumPoints; ++i) {
+      Eigen::Vector2d pixel =
+          Eigen::Vector2d(unif(re) * width, unif(re) * height);
+      double z = unif(re) * 5.0 + 1.0;
+      Eigen::Vector3d point_in_right_camera =
+          cam_right.camera_model.camUnproj(pixel, z);
+      Eigen::Vector3d point_in_left_camera =
+          cam_left.rig_from_camera * cam_right.rig_from_camera.inverse() *
+          point_in_right_camera;
+      if (point_in_left_camera.z() < 0.0) {
+        continue;
+      }
+      Eigen::Vector2d pixel_in_left =
+          cam_left.camera_model.camProj(point_in_left_camera);
+      if (!cam_left.camera_model.contains(pixel_in_left)) {
+        continue;
+      }
+
+      truth.points_in_world.push_back(
+          world_from_robot_final_pose * point_in_left_camera);
+      PointTracks point_tracks;
+      point_tracks.point_track_for_camera.resize(2);
+      observations.push_back(point_tracks);
+    }
+
+    for (size_t point_idx = 0; point_idx < truth.points_in_world.size();
+         ++point_idx) {
+      for (size_t pose_idx = 0; pose_idx < truth.world_from_robot_path.size();
+           ++pose_idx) {
+        sophus::Isometry3F64 const& world_from_robot =
+            truth.world_from_robot_path[pose_idx];
+        PointTracks& point_track = SOPHUS_AT(observations, point_idx);
+        Eigen::Vector3d point_in_world = truth.points_in_world[point_idx];
+        Eigen::Vector3d point_in_robot =
+            world_from_robot.inverse() * point_in_world;
+        for (size_t cam_idx = 0; cam_idx < camera_rig.cameras_in_rig.size();
+             ++cam_idx) {
+          CameraInRig const& camera_in_rig = camera_rig.cameras_in_rig[cam_idx];
+          Eigen::Vector3d point_in_camera =
+              camera_in_rig.rig_from_camera.inverse() * point_in_robot;
+          Eigen::Vector2d pixel =
+              camera_in_rig.camera_model.camProj(point_in_camera);
+          pixel.x() += normal(re);
+          pixel.y() += normal(re);
+
+          if (camera_in_rig.camera_model.contains(pixel)) {
+            SOPHUS_AT(point_track.point_track_for_camera, cam_idx)
+                .observations.insert(std::make_pair(pose_idx, pixel));
+          }
+        }
+      }
+    }
+  }
+
+  Variables truth;
+  MultiCameraRig camera_rig;
+  std::vector<PointTracks> observations;
+};
+
+struct Cost {
+  double median() const {
+    SOPHUS_ASSERT(!cost_terms.empty());
+    std::vector<double> sorted = cost_terms;
+    std::sort(sorted.begin(), sorted.end());
+    return sorted[sorted.size() / 2];
+  }
+
+  double mean() const {
+    SOPHUS_ASSERT(!cost_terms.empty());
+    double sum = 0.0;
+    for (double cost : cost_terms) {
+      sum += cost;
+    }
+    return sum / cost_terms.size();
+  }
+
+  std::vector<double> cost_terms;
+};
+
+Cost cost(
+    std::vector<PointTracks> const& observations,
+    MultiCameraRig const& camera_rig,
+    Variables const& estimate) {
+  Cost cost;
+  for (size_t point_idx = 0; point_idx < estimate.points_in_world.size();
+       ++point_idx) {
+    PointTracks const& point_track = SOPHUS_AT(observations, point_idx);
+    for (size_t cam_idx = 0; cam_idx < camera_rig.cameras_in_rig.size();
+         ++cam_idx) {
+      CameraInRig const& camera_in_rig =
+          SOPHUS_AT(camera_rig.cameras_in_rig, cam_idx);
+
+      std::map<int, Eigen::Vector2d> const& obs =
+          point_track.point_track_for_camera[cam_idx].observations;
+
+      for (auto const& [pose_id, pixel] : obs) {
+        sophus::Isometry3F64 const& world_from_robot =
+            SOPHUS_AT(estimate.world_from_robot_path, pose_id);
+        Eigen::Vector3d point_in_robot =
+            world_from_robot.inverse() * estimate.points_in_world[point_idx];
+        Eigen::Vector3d point_in_camera =
+            camera_in_rig.rig_from_camera.inverse() * point_in_robot;
+        Eigen::Vector2d pixel_reproj =
+            camera_in_rig.camera_model.camProj(point_in_camera);
+        cost.cost_terms.push_back((pixel - pixel_reproj).norm());
+      }
+    }
+  }
+  return cost;
+}
+
+struct BundleAdjustCostFunctor {
+  BundleAdjustCostFunctor(
+      sophus::PinholeModel const& camera_model,
+      sophus::Isometry3F64 const& robot_from_camera,
+      Eigen::Vector2d const& observation)
+      : camera_model(camera_model),
+        robot_from_camera(robot_from_camera),
+        observation(observation) {}
+
+  template <typename T>
+  bool operator()(
+      T const* const world_from_robot_raw,
+      T const* const point_in_world_raw,
+      T* residuals_raw) const {
+    sophus::Isometry3<T> world_from_robot = sophus::Isometry3<T>::fromParams(
+        Eigen::Map<Eigen::Matrix<T, 7, 1> const>(world_from_robot_raw));
+    Eigen::Matrix<T, 3, 1> point_in_world =
+        Eigen::Map<Eigen::Matrix<T, 3, 1> const>(point_in_world_raw);
+    Eigen::Map<Eigen::Matrix<T, 2, 1>> residuals(residuals_raw);
+
+    Eigen::Matrix<T, 3, 1> point_in_camera =
+        (world_from_robot * robot_from_camera.cast<T>()).inverse() *
+        point_in_world;
+
+    Eigen::Matrix<T, 2, 1> pixel =
+        camera_model.cast<T>().camProj(point_in_camera);
+
+    residuals = pixel - observation.cast<T>();
+    return true;
+  }
+
+  sophus::PinholeModel camera_model;
+  sophus::Isometry3F64 robot_from_camera;
+  Eigen::Vector2d observation;
+};
+
+void ceres_optimization(MiniSim const& sim, Variables& estimate) {
+  ::ceres::Problem problem;
+
+  auto parametrization = new sophus::ceres::Manifold<sophus::Isometry3>;
+
+  for (size_t pose_idx = 0; pose_idx < estimate.world_from_robot_path.size();
+       ++pose_idx) {
+    sophus::Isometry3F64& world_from_robot =
+        estimate.world_from_robot_path[pose_idx];
+    problem.AddParameterBlock(
+        world_from_robot.unsafeMutPtr(),
+        sophus::Isometry3F64::kNumParams,
+        parametrization);
+
+    if (pose_idx == 0) {
+      problem.SetParameterBlockConstant(world_from_robot.unsafeMutPtr());
+    }
+  }
+
+  for (size_t point_idx = 0; point_idx < estimate.points_in_world.size();
+       ++point_idx) {
+    PointTracks const& point_track = SOPHUS_AT(sim.observations, point_idx);
+    for (size_t cam_idx = 0; cam_idx < sim.camera_rig.cameras_in_rig.size();
+         ++cam_idx) {
+      CameraInRig const& camera_in_rig =
+          SOPHUS_AT(sim.camera_rig.cameras_in_rig, cam_idx);
+      std::map<int, Eigen::Vector2d> const& obs =
+          point_track.point_track_for_camera[cam_idx].observations;
+
+      for (auto const& [pose_id, pixel] : obs) {
+        sophus::Isometry3F64& world_from_robot =
+            estimate.world_from_robot_path[pose_id];
+
+        ::ceres::CostFunction* cost_function =
+            new ::ceres::AutoDiffCostFunction<BundleAdjustCostFunctor, 2, 7, 3>(
+                new BundleAdjustCostFunctor(
+                    std::get<sophus::PinholeModel>(
+                        camera_in_rig.camera_model.modelVariant()),
+                    camera_in_rig.rig_from_camera,
+                    pixel));
+
+        problem.AddResidualBlock(
+            cost_function,
+            nullptr,
+            estimate.world_from_robot_path[pose_id].unsafeMutPtr(),
+            estimate.points_in_world[point_idx].data());
+      }
+    }
+  }
+
+  ::ceres::Solver::Options options;
+  options.max_num_iterations = 100;
+  options.linear_solver_type = ::ceres::SPARSE_NORMAL_CHOLESKY;
+  options.minimizer_progress_to_stdout = true;
+  ::ceres::Solver::Summary summary;
+  ::ceres::Solve(options, &problem, &summary);
+  SOPHUS_INFO("Ceres summary: {}", summary.BriefReport());
+}
+
+TEST(bundle_adjust, test) {
+  MiniSim sim;
+
+  SOPHUS_ASSERT_EQ(sim.truth.world_from_robot_path.size(), MiniSim::kNumPoses);
+  SOPHUS_ASSERT_GE(sim.truth.points_in_world.size(), 0.5 * MiniSim::kNumPoints);
+  SOPHUS_ASSERT_EQ(sim.truth.points_in_world.size(), sim.observations.size());
+
+  Variables est = sim.truth;
+
+  Cost c = cost(sim.observations, sim.camera_rig, est);
+  SOPHUS_INFO("Initial cost: median {}, mean {}", c.median(), c.mean());
+  SOPHUS_ASSERT_LE(c.median(), 0.5);
+  SOPHUS_ASSERT_LE(c.mean(), 0.5);
+
+  ceres_optimization(sim, est);
+  c = cost(sim.observations, sim.camera_rig, est);
+  SOPHUS_INFO("Final cost: median {}, mean {}", c.median(), c.mean());
+  SOPHUS_ASSERT_LE(c.median(), 0.5);
+  SOPHUS_ASSERT_LE(c.mean(), 0.5);
+
+  for (size_t i = 0; i < est.world_from_robot_path.size(); ++i) {
+    SOPHUS_ASSERT_NEAR(
+        est.world_from_robot_path[i].compactMatrix(),
+        sim.truth.world_from_robot_path[i].compactMatrix(),
+        0.01,
+        "pose {}",
+        i);
+  }
+
+  est = sim.truth;
+
+  // adding some error to the path
+  for (size_t i = 1; i < est.world_from_robot_path.size(); ++i) {
+    est.world_from_robot_path[i].translation() +=
+        Eigen::Vector3d(0.3, -0.1, 0.1);
+    est.world_from_robot_path[i].setRotation(
+        est.world_from_robot_path[i].rotation() *
+        sophus::Rotation3F64::fromRx(0.1));
+  }
+
+  c = cost(sim.observations, sim.camera_rig, est);
+  SOPHUS_INFO("Initial cost: median {}, mean {}", c.median(), c.mean());
+  SOPHUS_ASSERT_GE(c.median(), 0.5);
+  SOPHUS_ASSERT_GE(c.mean(), 0.5);
+
+  ceres_optimization(sim, est);
+  c = cost(sim.observations, sim.camera_rig, est);
+  SOPHUS_INFO("Final cost: median {}, mean {}", c.median(), c.mean());
+  SOPHUS_ASSERT_LE(c.median(), 0.5);
+  SOPHUS_ASSERT_LE(c.mean(), 0.5);
+
+  for (size_t i = 0; i < est.world_from_robot_path.size(); ++i) {
+    SOPHUS_ASSERT_NEAR(
+        est.world_from_robot_path[i].compactMatrix(),
+        sim.truth.world_from_robot_path[i].compactMatrix(),
+        0.01,
+        "pose {}",
+        i);
+  }
 }
 
 }  // namespace sophus::test
