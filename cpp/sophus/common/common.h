@@ -93,9 +93,9 @@ static float const kEpsilonSqrtF32 = kEpsilonSqrt<float>;
 static float const kEpsilonSqrtF64 = kEpsilonSqrt<double>;
 
 template <class TScalar>
-TScalar constexpr kPi = TScalar(3.141592653589793238462643383279502884);
-float constexpr kPiF32 = kPi<float>;
-double constexpr kPiF64 = kPi<double>;
+TScalar const kPi = TScalar(3.141592653589793238462643383279502884);
+float const kPiF32 = kPi<float>;
+double const kPiF64 = kPi<double>;
 
 template <class TGenerator>
 struct IsUniformRandomBitGenerator {

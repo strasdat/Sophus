@@ -41,7 +41,8 @@ class Rotation3Impl {
   // constructors and factories
 
   static auto identityParams() -> Params {
-    return Eigen::Vector<Scalar, 4>(0.0, 0.0, 0.0, 1.0);
+    return Eigen::Vector<Scalar, 4>(
+        Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(1.0));
   }
 
   static auto areParamsValid(Params const& unit_quaternion)
@@ -219,17 +220,17 @@ class Rotation3Impl {
     Eigen::Vector3<Scalar> ivec = unit_quat.template head<3>();
     Scalar real = unit_quat.w();
     return Eigen::Matrix<Scalar, 3, 3>{
-        {1 - 2 * (ivec[1] * ivec[1]) - 2 * (ivec[2] * ivec[2]),
-         2 * ivec[0] * ivec[1] - 2 * ivec[2] * real,
-         2 * ivec[0] * ivec[2] + 2 * ivec[1] * real},
+        {Scalar(1.0 - 2.0 * (ivec[1] * ivec[1]) - 2.0 * (ivec[2] * ivec[2])),
+         Scalar(2.0 * ivec[0] * ivec[1] - 2.0 * ivec[2] * real),
+         Scalar(2.0 * ivec[0] * ivec[2] + 2.0 * ivec[1] * real)},
         {
-            2 * ivec[0] * ivec[1] + 2 * ivec[2] * real,
-            1 - 2 * (ivec[0] * ivec[0]) - 2 * (ivec[2] * ivec[2]),
-            2 * ivec[1] * ivec[2] - 2 * ivec[0] * real,
+            Scalar(2.0 * ivec[0] * ivec[1] + 2.0 * ivec[2] * real),
+            Scalar(1.0 - 2.0 * (ivec[0] * ivec[0]) - 2.0 * (ivec[2] * ivec[2])),
+            Scalar(2.0 * ivec[1] * ivec[2] - 2.0 * ivec[0] * real),
         },
-        {2 * ivec[0] * ivec[2] - 2 * ivec[1] * real,
-         2 * ivec[1] * ivec[2] + 2 * ivec[0] * real,
-         1 - 2 * (ivec[0] * ivec[0]) - 2 * (ivec[1] * ivec[1])}};
+        {Scalar(2.0 * ivec[0] * ivec[2] - 2.0 * ivec[1] * real),
+         Scalar(2.0 * ivec[1] * ivec[2] + 2.0 * ivec[0] * real),
+         Scalar(1.0 - 2.0 * (ivec[0] * ivec[0]) - 2.0 * (ivec[1] * ivec[1]))}};
   }
 
   static auto matrix(Params const& unit_quat)
@@ -405,17 +406,19 @@ class Rotation3Impl {
   // for tests
 
   static auto tangentExamples() -> std::vector<Tangent> {
+    Scalar o(0);
+    Scalar i(1);
     return std::vector<Tangent>({
-        Tangent{0.0, 0, 0},
-        Tangent{1, 0, 0},
-        Tangent{0, 1, 0},
-        Tangent{0.5 * kPi<Scalar>, 0.5 * kPi<Scalar>, 0},
-        Tangent{-1, 1, 0},
-        Tangent{20, -1, 0},
-        Tangent{30, 5, -1},
-        Tangent{1, 1, 4},
-        Tangent{1, -3, 0.5},
-        Tangent{-5, -6, 7},
+        Tangent(o, o, o),
+        Tangent(i, o, o),
+        Tangent(o, i, o),
+        Tangent{Scalar(0.5) * kPi<Scalar>, Scalar(0.5) * kPi<Scalar>, o},
+        Tangent{-i, i, o},
+        Tangent{Scalar(20), -i, o},
+        Tangent{Scalar(30), Scalar(5), -i},
+        Tangent{i, i, Scalar(4)},
+        Tangent{i, Scalar(-3), Scalar(0.5)},
+        Tangent{Scalar(-5), Scalar(-6), Scalar(7)},
     });
   }
 

@@ -118,7 +118,7 @@ class UnitVectorImpl {
     Scalar theta = tail.norm();
 
     if (abs(theta) < kEpsilon<Scalar>) {
-      return atan2(0.0, x) * kUnitX;
+      return atan2(Scalar(0.0), x) * kUnitX;
     }
 
     return (1.0 / theta) * atan2(theta, x) * tail;
