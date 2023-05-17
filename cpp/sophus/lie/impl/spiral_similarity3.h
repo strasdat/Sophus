@@ -171,7 +171,7 @@ class SpiralSimilarity3Impl {
       Params const& non_zero_quat,
       UnitVector<TCompatibleScalar, kPointDim> const& direction_vector)
       -> UnitVectorReturn<TCompatibleScalar> {
-    return UnitVector<Scalar, kPointDim>::fromParams(
+    return UnitVectorReturn<TCompatibleScalar>::fromParams(
         Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized()) *
         direction_vector.params());
   }
@@ -349,13 +349,18 @@ class SpiralSimilarity3Impl {
 
   static auto tangentExamples() -> std::vector<Tangent> {
     return std::vector<Tangent>({
-        Tangent{0.0, 0.0, 0.0, 0.0},
-        Tangent{1.0, 0.0, 0.0, 0.0},
-        Tangent{1.0, 0.0, 0.0, 0.1},
-        Tangent{0.0, 1.0, 0.0, 0.1},
-        Tangent{0.00001, 0.00001, 0.0, 0.3},
-        Tangent{0.5 * kPi<Scalar>, 0.9, 0.0, 0.0},
-        Tangent{0.0, 0.0, 0.5 * kPi<Scalar> + 0.00001, 0.2},
+        Tangent{Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(0.0)},
+        Tangent{Scalar(1.0), Scalar(0.0), Scalar(0.0), Scalar(0.0)},
+        Tangent{Scalar(1.0), Scalar(0.0), Scalar(0.0), Scalar(0.1)},
+        Tangent{Scalar(0.0), Scalar(1.0), Scalar(0.0), Scalar(0.1)},
+        Tangent{Scalar(0.00001), Scalar(0.00001), Scalar(0.0), Scalar(0.3)},
+        Tangent{
+            Scalar(0.5 * kPi<Scalar>), Scalar(0.9), Scalar(0.0), Scalar(0.0)},
+        Tangent{
+            Scalar(0.0),
+            Scalar(0.0),
+            Scalar(0.5 * kPi<Scalar> + 0.00001),
+            Scalar(0.2)},
     });
   }
 

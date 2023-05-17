@@ -962,62 +962,78 @@ struct JetLieGroupTests {
 
   using PointF64 = Eigen::Vector<double, kPointDim>;
   using ParamsF64 = Eigen::Vector<double, kNumParams>;
-  using UnitVectorF64 = Eigen::Vector<double, kPointDim>;
+  using UnitVectorF64 = UnitVector<double, kPointDim>;
 
   using PointJet = Eigen::Vector<Jet, kPointDim>;
   using ParamsJet = Eigen::Vector<Jet, kNumParams>;
-  using UnitVectorJet = Eigen::Vector<Jet, kPointDim>;
+  using UnitVectorJet = UnitVector<Jet, kPointDim>;
 
   static void testAll() {
     {
       // double  x  double  =>  double
-      ParamsF64 r = ImplF64::multiplication(ParamsF64{}, ParamsF64{});
+      ParamsF64 r = ImplF64::multiplication(
+          ParamsF64::Zero().eval(), ParamsF64::Zero().eval());
     }
     {
       // double  x  jet  =>  jet
-      ParamsJet r = ImplF64::multiplication(ParamsF64{}, ParamsJet{});
+      ParamsJet r = ImplF64::multiplication(
+          ParamsF64::Zero().eval(), ParamsJet::Zero().eval());
     }
     {
       // jet  x  double  =>  jet
-      ParamsJet r = ImplJet::multiplication(ParamsJet{}, ParamsF64{});
+      ParamsJet r = ImplJet::multiplication(
+          ParamsJet::Zero().eval(), ParamsF64::Zero().eval());
     }
     {
       // jet  x  jet  =>  jet
-      ParamsJet r = ImplJet::multiplication(ParamsJet{}, ParamsJet{});
+      ParamsJet r = ImplJet::multiplication(
+          ParamsJet::Zero().eval(), ParamsJet::Zero().eval());
     }
 
     {
       // double  x  double  =>  double
-      PointF64 r = ImplF64::action(ParamsF64{}, PointF64{});
+      PointF64 r =
+          ImplF64::action(ParamsF64::Zero().eval(), PointF64::Zero().eval());
     }
     {
       // double  x  jet  =>  jet
-      PointJet r = ImplF64::action(ParamsF64{}, PointJet{});
+      PointJet r =
+          ImplF64::action(ParamsF64::Zero().eval(), PointJet::Zero().eval());
     }
     {
       // jet  x  double  =>  jet
-      PointJet r = ImplJet::action(ParamsJet{}, PointF64{});
+      PointJet r =
+          ImplJet::action(ParamsJet::Zero().eval(), PointF64::Zero().eval());
     }
     {
       // jet  x  jet  =>  jet
-      PointJet r = ImplJet::action(ParamsJet{}, PointJet{});
+      PointJet r =
+          ImplJet::action(ParamsJet::Zero().eval(), PointJet::Zero().eval());
     }
 
     {
       // double  x  double  =>  double
-      UnitVectorF64 r = ImplF64::action(ParamsF64{}, UnitVectorF64{});
+      UnitVectorF64 r = ImplF64::action(
+          ParamsF64::Zero().eval(),
+          UnitVectorF64::fromVectorAndNormalize(PointF64::UnitX()));
     }
     {
       // double  x  jet  =>  jet
-      UnitVectorJet r = ImplF64::action(ParamsF64{}, UnitVectorJet{});
+      UnitVectorJet r = ImplF64::action(
+          ParamsF64::Zero().eval(),
+          UnitVectorJet::fromVectorAndNormalize(PointJet::UnitX()));
     }
     {
       // jet  x  double  =>  jet
-      UnitVectorJet r = ImplJet::action(ParamsJet{}, UnitVectorF64{});
+      UnitVectorJet r = ImplJet::action(
+          ParamsJet::Zero().eval(),
+          UnitVectorF64::fromVectorAndNormalize(PointF64::UnitX()));
     }
     {
       // jet  x  jet  =>  jet
-      UnitVectorJet r = ImplJet::action(ParamsJet{}, UnitVectorJet{});
+      UnitVectorJet r = ImplJet::action(
+          ParamsJet::Zero().eval(),
+          UnitVectorJet::fromVectorAndNormalize(PointJet::UnitX()));
     }
 
     LieGroupF64 g_d = LieGroupF64::elementExamples()[0];
@@ -1054,8 +1070,10 @@ struct JetLieGroupTests {
     // jet  x  jet  =>  jet
     { PointJet p_jet_r = g_jet * p_jet; }
 
-    UnitVectorF64 u_d = UnitVectorF64::Random();
-    UnitVectorJet u_jet = UnitVectorJet::Random();
+    UnitVectorF64 u_d =
+        UnitVectorF64::fromVectorAndNormalize(PointF64::UnitX());
+    UnitVectorJet u_jet =
+        UnitVectorJet::fromVectorAndNormalize(PointJet::UnitX());
 
     {
       // double  x  double  =>  double

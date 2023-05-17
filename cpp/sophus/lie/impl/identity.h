@@ -114,7 +114,8 @@ class IdentityImpl {
   static auto action(
       Params const& params, UnitVector<TCompatibleScalar, kPointDim> const& dir)
       -> UnitVectorReturn<TCompatibleScalar> {
-    return dir;
+    return UnitVectorReturn<TCompatibleScalar>::fromParams(
+        Scalar(1.0) * dir.params());
   }
 
   // Matrices

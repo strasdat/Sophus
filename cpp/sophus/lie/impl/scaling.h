@@ -137,7 +137,7 @@ class ScalingImpl {
       Params const& scale_factors,
       UnitVector<TCompatibleScalar, kPointDim> const& direction_vector)
       -> UnitVectorReturn<TCompatibleScalar> {
-    return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
+    return UnitVectorReturn<TCompatibleScalar>::fromVectorAndNormalize(
         action(scale_factors, direction_vector.params()));
   }
 
@@ -173,7 +173,7 @@ class ScalingImpl {
     for (int i = 0; i < kDof; ++i) {
       Scalar t = tangent[i];
       if (abs(t) < kEpsilon<Scalar>) {
-        mat(i, i) = abs(1.0 - 2 * t + 1.5 * t * t);
+        mat(i, i) = abs(1.0 - 2.0 * t + 1.5 * t * t);
       } else {
         mat(i, i) = abs((params[i] - 1.0) / tangent[i]);
       }
@@ -259,10 +259,13 @@ class ScalingImpl {
     } else {
       if constexpr (kPointDim == 3) {
         return std::vector<Tangent>({
-            Tangent({std::exp(1.0), std::exp(1.0), std::exp(1.0)}),
-            Tangent({1.1, 1.1, 1.7}),
-            Tangent({2.0, 1.1, 2.0}),
-            Tangent({2.0, std::exp(1.0), 2.2}),
+            Tangent(
+                {Scalar(std::exp(1.0)),
+                 Scalar(std::exp(1.0)),
+                 Scalar(std::exp(1.0))}),
+            Tangent({Scalar(1.1), Scalar(1.1), Scalar(1.7)}),
+            Tangent({Scalar(2.0), Scalar(1.1), Scalar(2.0)}),
+            Tangent({Scalar(2.0), Scalar(std::exp(1.0)), Scalar(2.2)}),
         });
       }
     }

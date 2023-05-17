@@ -29,6 +29,16 @@ concept DivisionRingImpl =
   { TT::zero() } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
 
   // operations
+
+  {
+    TT::addition(params, params)
+    } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
+
+  {
+    TT::multiplication(params, params)
+    } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
+
+#if __cplusplus >= 202002L
   {
     TT::template addition<CompatScalarEx<typename TT::Scalar>>(
         params, compatible_params)
@@ -40,6 +50,7 @@ concept DivisionRingImpl =
         params, compatible_params)
     } -> ::sophus::concepts::ConvertibleTo<typename TT::template ParamsReturn<
         CompatScalarEx<typename TT::Scalar>>>;
+#endif
 
   {
     TT::conjugate(params)
