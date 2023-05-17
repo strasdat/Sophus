@@ -56,29 +56,35 @@ concept LieGroupImpl =
   // group operations
   { TT::multiplication(params, params) } -> ConvertibleTo<typename TT::Params>;
 
+#if __cplusplus >= 202002L
   {
     TT::multiplication(params, compatible_params)
     } -> ConvertibleTo<typename TT::template ParamsReturn<
         CompatScalarEx<typename TT::Scalar>>>;
+#endif
 
   { TT::inverse(params) } -> ConvertibleTo<typename TT::Params>;
 
   // Group actions
   { TT::action(params, point) } -> ConvertibleTo<typename TT::Point>;
 
+#if __cplusplus >= 202002L
   {
     TT::action(params, compatible_point)
     } -> ConvertibleTo<
         typename TT::template PointReturn<CompatScalarEx<typename TT::Scalar>>>;
+#endif
 
   {
     TT::action(params, direction)
     } -> ConvertibleTo<UnitVector<typename TT::Scalar, TT::kPointDim>>;
 
+#if __cplusplus >= 202002L
   {
     TT::action(params, compatible_direction)
     } -> ConvertibleTo<typename TT::template UnitVectorReturn<
         CompatScalarEx<typename TT::Scalar>>>;
+#endif
 
   {
     TT::toAmbient(point)
@@ -191,18 +197,24 @@ concept LieGroup = LieGroupImpl<typename TT::Impl> && Params<TT> &&
 
   // Group actions
   { g.operator*(point) } -> ConvertibleTo<typename TT::Point>;
+
+#if __cplusplus >= 202002L
   {
     g.operator*(compatible_point)
     } -> ConvertibleTo<
         typename TT::template PointReturn<CompatScalarEx<typename TT::Scalar>>>;
+#endif
 
   {
     g.operator*(direction)
     } -> ConvertibleTo<UnitVector<typename TT::Scalar, TT::kPointDim>>;
+
+#if __cplusplus >= 202002L
   {
     g.operator*(compatible_direction)
     } -> ConvertibleTo<typename TT::template UnitVectorReturn<
         CompatScalarEx<typename TT::Scalar>>>;
+#endif
 
   {
     g.adj()

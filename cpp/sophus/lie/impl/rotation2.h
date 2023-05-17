@@ -261,13 +261,13 @@ class Rotation2Impl {
 
   static auto tangentExamples() -> std::vector<Tangent> {
     return std::vector<Tangent>({
-        Tangent{0.0},
-        Tangent{0.00001},
-        Tangent{1.0},
-        Tangent{-1.0},
-        Tangent{5.0},
-        Tangent{0.5 * kPi<Scalar>},
-        Tangent{0.5 * kPi<Scalar> + 0.00001},
+        Tangent{Scalar(0.0)},
+        Tangent{Scalar(0.00001)},
+        Tangent{Scalar(1.0)},
+        Tangent{Scalar(-1.0)},
+        Tangent{Scalar(5.0)},
+        Tangent{Scalar(0.5 * kPi<Scalar>)},
+        Tangent{Scalar(0.5 * kPi<Scalar> + 0.00001)},
     });
   }
 

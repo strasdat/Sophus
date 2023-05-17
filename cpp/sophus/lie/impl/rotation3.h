@@ -193,7 +193,8 @@ class Rotation3Impl {
       -> ParamsReturn<TCompatibleScalar> {
     ParamsReturn<TCompatibleScalar> result =
         Quaternion::multiplication(lhs_params, rhs_params);
-    auto const squared_norm = result.squaredNorm();
+    using SReturn = ScalarReturn<TCompatibleScalar>;
+    SReturn const squared_norm = result.squaredNorm();
 
     // We can assume that the squared-norm is close to 1 since we deal with a
     // unit complex number. Due to numerical precision issues, there might
@@ -202,8 +203,8 @@ class Rotation3Impl {
     // Since squared-norm is close to 1, we do not need to calculate the costly
     // square-root, but can use an approximation around 1 (see
     // http://stackoverflow.com/a/12934750 for details).
-    if (squared_norm != 1.0) {
-      auto const scale = 2.0 / (1.0 + squared_norm);
+    if (squared_norm != SReturn(1.0)) {
+      SReturn const scale = SReturn(2.0) / (SReturn(1.0) + squared_norm);
       return scale * result;
     }
     return result;

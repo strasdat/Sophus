@@ -171,7 +171,7 @@ class SpiralSimilarity2Impl {
       Params const& non_zero_complex,
       UnitVector<TCompatibleScalar, kPointDim> const& direction_vector)
       -> UnitVectorReturn<TCompatibleScalar> {
-    return UnitVector<Scalar, kPointDim>::fromParams(
+    return UnitVectorReturn<TCompatibleScalar>::fromParams(
         Rotation2Impl<Scalar>::matrix(non_zero_complex.normalized()) *
         direction_vector.params());
   }
@@ -186,8 +186,8 @@ class SpiralSimilarity2Impl {
   static auto compactMatrix(Params const& non_zero_complex)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
     return Eigen::Matrix<Scalar, 2, 2>{
-        {non_zero_complex.x(), -non_zero_complex.y()},
-        {non_zero_complex.y(), non_zero_complex.x()}};
+        {Scalar(non_zero_complex.x()), Scalar(-non_zero_complex.y())},
+        {Scalar(non_zero_complex.y()), Scalar(non_zero_complex.x())}};
   }
 
   static auto matrix(Params const& non_zero_complex)

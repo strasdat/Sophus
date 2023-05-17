@@ -236,7 +236,7 @@ struct BasisSplineSegment {
                 (worldFromFoo1().inverse() * worldFromFoo1()).log()),
             u);
     }
-    SOPHUS_ASSERT(false, "logic error");
+    SOPHUS_PANIC("logic error");
   }
 
   Transformation dtParentFromSpline(double u, double delta_t) {
@@ -269,7 +269,7 @@ struct BasisSplineSegment {
             u,
             delta_t);
     }
-    SOPHUS_ASSERT(false, "logic error");
+    SOPHUS_PANIC("logic error");
   }
 
   Transformation dt2ParentFromSpline(double u, double delta_t) {
@@ -302,7 +302,7 @@ struct BasisSplineSegment {
             u,
             delta_t);
     }
-    SOPHUS_ASSERT(false, "logic error");
+    SOPHUS_PANIC("logic error");
   }
 
  private:
