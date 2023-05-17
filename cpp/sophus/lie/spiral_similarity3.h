@@ -17,14 +17,14 @@ namespace sophus {
 
 // origin and shape preserving mapping
 template <class TScalar>
-class SpiralSimilarity3 : public lie::Group<
-                              SpiralSimilarity3<TScalar>,
-                              lie::SpiralSimilarity3Impl<TScalar>> {
+class SpiralSimilarity3
+    : public lie::
+          Group<SpiralSimilarity3, TScalar, lie::SpiralSimilarity3Impl> {
  public:
   using Scalar = TScalar;
   using Rotation = Rotation3<Scalar>;
-  using Base = lie::
-      Group<SpiralSimilarity3<TScalar>, lie::SpiralSimilarity3Impl<TScalar>>;
+  using Base =
+      lie::Group<SpiralSimilarity3, TScalar, lie::SpiralSimilarity3Impl>;
 
   using Tangent = typename Base::Tangent;
   using Params = typename Base::Params;

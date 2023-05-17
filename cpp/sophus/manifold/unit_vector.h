@@ -11,11 +11,6 @@
 #include "sophus/common/common.h"
 #include "sophus/concepts/manifold.h"
 
-// #include "sophus/lie/rxso2.h"
-// #include "sophus/lie/rxso3.h"
-// #include "sophus/lie/so2.h"
-// #include "sophus/lie/so3.h"
-
 #include <Eigen/Dense>
 
 namespace sophus {

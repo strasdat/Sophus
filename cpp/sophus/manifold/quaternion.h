@@ -22,6 +22,12 @@ class QuaternionImpl {
 
   using Params = Eigen::Vector<Scalar, kNumParams>;
 
+  template <class TCompatibleScalar>
+  using ParamsReturn = Eigen::Vector<
+      typename Eigen::ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::
+          ReturnType,
+      4>;
+
   // factories
 
   static auto zero() -> Eigen::Vector<Scalar, 4> {
@@ -45,22 +51,26 @@ class QuaternionImpl {
     return std::vector<Params>({});
   }
 
+  template <class TCompatibleScalar>
   static auto multiplication(
-      Eigen::Vector<Scalar, 4> const& lhs, Eigen::Vector<Scalar, 4> const& rhs)
-      -> Eigen::Vector<Scalar, 4> {
+      Eigen::Vector<Scalar, 4> const& lhs,
+      Eigen::Vector<TCompatibleScalar, 4> const& rhs)
+      -> ParamsReturn<TCompatibleScalar> {
     Eigen::Vector3<Scalar> lhs_ivec = lhs.template head<3>();
-    Eigen::Vector3<Scalar> rhs_ivec = rhs.template head<3>();
+    Eigen::Vector3<TCompatibleScalar> rhs_ivec = rhs.template head<3>();
 
-    Eigen::Vector<Scalar, 4> out;
+    ParamsReturn<TCompatibleScalar> out;
     out.w() = lhs.w() * rhs.w() - lhs_ivec.dot(rhs_ivec);
     out.template head<3>() =
         lhs.w() * rhs_ivec + rhs.w() * lhs_ivec + lhs_ivec.cross(rhs_ivec);
     return out;
   }
 
+  template <class TCompatibleScalar>
   static auto addition(
-      Eigen::Vector<Scalar, 4> const& a, Eigen::Vector<Scalar, 4> const& b)
-      -> Eigen::Vector<Scalar, 4> {
+      Eigen::Vector<Scalar, 4> const& a,
+      Eigen::Vector<TCompatibleScalar, 4> const& b)
+      -> ParamsReturn<TCompatibleScalar> {
     return a + b;
   }
 
@@ -93,6 +103,11 @@ class Quaternion {
 
   using Params = Eigen::Vector<Scalar, kNumParams>;
 
+  template <class TCompatibleScalar>
+  using QuaternionReturn = Quaternion<typename Eigen::ScalarBinaryOpTraits<
+      Scalar,
+      TCompatibleScalar>::ReturnType>;
+
   // constructors and factories
 
   Quaternion() : params_(Impl::zero()) {}
@@ -124,13 +139,18 @@ class Quaternion {
   [[nodiscard]] auto imag() const { return params_.template head<3>(); }
   [[nodiscard]] auto imag() { return params_.template head<3>(); }
 
-  auto operator+(Quaternion const& other) const -> Quaternion {
-    return Quaternion::fromParams(Impl::addition(this->params_, other.params_));
+  template <class TCompatibleScalar>
+  [[nodiscard]] auto operator*(Quaternion<TCompatibleScalar> const& other) const
+      -> QuaternionReturn<TCompatibleScalar> {
+    return QuaternionReturn<TCompatibleScalar>::fromParams(
+        Impl::multiplication(this->params_, other.params()));
   }
 
-  auto operator*(Quaternion const& other) const -> Quaternion {
-    return Quaternion::fromParams(
-        Impl::multiplication(this->params_, other.params_));
+  template <class TCompatibleScalar>
+  [[nodiscard]] auto operator+(Quaternion<TCompatibleScalar> const& other) const
+      -> QuaternionReturn<TCompatibleScalar> {
+    return QuaternionReturn<TCompatibleScalar>::fromParams(
+        Impl::addition(this->params_, other.params()));
   }
 
   [[nodiscard]] auto conjugate() const -> Quaternion {

@@ -16,10 +16,12 @@ namespace sophus {
 // definition: identity mapping in R^n
 //             <==> origin, direction and distance preserving mapping R^n
 //             <==> origin, direction, shape and size preserving mapping R^n
+
 template <class TScalar, int kDim>
-class Identity
-    : public lie::
-          Group<Identity<TScalar, kDim>, lie::IdentityImpl<TScalar, kDim>> {
+class Identity : public lie::Group<
+                     lie::IdentityWithDim<kDim>::template Group,
+                     TScalar,
+                     lie::IdentityWithDim<kDim>::template Impl> {
  public:
   Identity() = default;
 

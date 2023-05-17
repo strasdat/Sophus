@@ -9,8 +9,8 @@
 #pragma once
 
 #include "sophus/concepts/group_accessors.h"
-#include "sophus/lie/impl/semi_direct_product.h"
 #include "sophus/lie/impl/spiral_similarity2.h"
+#include "sophus/lie/impl/translation_factor_group_product.h"
 #include "sophus/lie/isometry2.h"
 #include "sophus/lie/lie_group.h"
 #include "sophus/lie/spiral_similarity2.h"
@@ -20,19 +20,17 @@ namespace sophus {
 // origin, coordinate axis directions, and shape preserving mapping
 template <class TScalar>
 class Similarity2 : public lie::Group<
-                        Similarity2<TScalar>,
-                        lie::SemiDirectProductWithTranslation<
-                            TScalar,
-                            2,
-                            lie::SpiralSimilarity2Impl>> {
+                        Similarity2,
+                        TScalar,
+                        lie::WithDimAndSubgroup<2, lie::SpiralSimilarity2Impl>::
+                            SemiDirectProduct> {
  public:
   using Scalar = TScalar;
   using Base = lie::Group<
-      Similarity2<Scalar>,
-      lie::SemiDirectProductWithTranslation<
-          Scalar,
-          2,
-          lie::SpiralSimilarity2Impl>>;
+      Similarity2,
+      TScalar,
+      lie::WithDimAndSubgroup<2, lie::SpiralSimilarity2Impl>::
+          SemiDirectProduct>;
   using Rotation = Rotation2<Scalar>;
   using SpiralSimilarity = SpiralSimilarity2<Scalar>;
   using Isometry = Isometry2<Scalar>;
@@ -133,9 +131,7 @@ class Similarity2 : public lie::Group<
     return this->spiralSimilarity().rotation();
   }
 
-  void setRotation(Rotation const& rotation) {
-    return this->setRotation(rotation);
-  }
+  void setRotation(Rotation const& rotation) { this->rotation() = rotation; }
 
   [[nodiscard]] auto rotationMatrix() const -> Eigen::Matrix2<Scalar> {
     return this->rotation().matrix();

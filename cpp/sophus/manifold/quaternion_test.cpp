@@ -6,7 +6,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/linalg/quaternion.h"
+#include "sophus/manifold/quaternion.h"
 
 #include "sophus/concepts/division_ring_prop_tests.h"
 

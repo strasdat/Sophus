@@ -26,8 +26,14 @@ concept LieGroupImpl =
     && requires(
            typename TT::Tangent tangent,
            typename TT::Point point,
+           Eigen::Vector<CompatScalarEx<typename TT::Scalar>, TT::kPointDim>
+               compatible_point,
            UnitVector<typename TT::Scalar, TT::kPointDim> direction,
+           UnitVector<CompatScalarEx<typename TT::Scalar>, TT::kPointDim>
+               compatible_direction,
            typename TT::Params params,
+           Eigen::Vector<CompatScalarEx<typename TT::Scalar>, TT::kNumParams>
+               compatible_params,
            Eigen::Matrix<typename TT::Scalar, TT::kAmbientDim, TT::kAmbientDim>
                matrix,
            Eigen::Matrix<typename TT::Scalar, TT::kDof, TT::kDof> adjoint) {
@@ -50,18 +56,33 @@ concept LieGroupImpl =
   // group operations
   { TT::multiplication(params, params) } -> ConvertibleTo<typename TT::Params>;
 
+  {
+    TT::multiplication(params, compatible_params)
+    } -> ConvertibleTo<typename TT::template ParamsReturn<
+        CompatScalarEx<typename TT::Scalar>>>;
+
   { TT::inverse(params) } -> ConvertibleTo<typename TT::Params>;
 
   // Group actions
   { TT::action(params, point) } -> ConvertibleTo<typename TT::Point>;
 
   {
+    TT::action(params, compatible_point)
+    } -> ConvertibleTo<
+        typename TT::template PointReturn<CompatScalarEx<typename TT::Scalar>>>;
+
+  {
+    TT::action(params, direction)
+    } -> ConvertibleTo<UnitVector<typename TT::Scalar, TT::kPointDim>>;
+
+  {
+    TT::action(params, compatible_direction)
+    } -> ConvertibleTo<typename TT::template UnitVectorReturn<
+        CompatScalarEx<typename TT::Scalar>>>;
+
+  {
     TT::toAmbient(point)
     } -> ConvertibleTo<Eigen::Vector<typename TT::Scalar, TT::kAmbientDim>>;
-
-  // {
-  //   T::action(params, direction)
-  //   } -> ConvertibleTo<UnitVector<typename T::Scalar, T::kPointDim>>;
 
   {
     TT::adj(params)
@@ -114,7 +135,7 @@ concept LieGroupImpl =
 // Ideally, the LieSubgroupFunctions is not necessary and all these
 // properties can be deduced.
 template <class TT>
-concept LieSubgroupImpl = LieGroupImpl<TT> && requires(
+concept LieFactorGroupImpl = LieGroupImpl<TT> && requires(
     typename TT::Tangent tangent,
     typename TT::Params params,
     typename TT::Point point) {
@@ -148,7 +169,11 @@ concept LieGroup = LieGroupImpl<typename TT::Impl> && Params<TT> &&
         TT g,
         typename TT::Tangent tangent,
         typename TT::Point point,
+        Eigen::Vector<CompatScalarEx<typename TT::Scalar>, TT::kPointDim>
+            compatible_point,
         UnitVector<typename TT::Scalar, TT::kPointDim> direction,
+        UnitVector<CompatScalarEx<typename TT::Scalar>, TT::kPointDim>
+            compatible_direction,
         typename TT::Params params,
         Eigen::Matrix<typename TT::Scalar, TT::kAmbientDim, TT::kAmbientDim>
             matrix,
@@ -166,10 +191,18 @@ concept LieGroup = LieGroupImpl<typename TT::Impl> && Params<TT> &&
 
   // Group actions
   { g.operator*(point) } -> ConvertibleTo<typename TT::Point>;
+  {
+    g.operator*(compatible_point)
+    } -> ConvertibleTo<
+        typename TT::template PointReturn<CompatScalarEx<typename TT::Scalar>>>;
 
   {
     g.operator*(direction)
     } -> ConvertibleTo<UnitVector<typename TT::Scalar, TT::kPointDim>>;
+  {
+    g.operator*(compatible_direction)
+    } -> ConvertibleTo<typename TT::template UnitVectorReturn<
+        CompatScalarEx<typename TT::Scalar>>>;
 
   {
     g.adj()

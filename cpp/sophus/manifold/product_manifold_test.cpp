@@ -6,9 +6,9 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/linalg/product_manifold.h"
+#include "sophus/manifold/product_manifold.h"
 
-#include "sophus/linalg/unit_vector.h"
+#include "sophus/manifold/unit_vector.h"
 
 #include <gtest/gtest.h>
 
@@ -18,6 +18,4 @@ TEST(product_manifold, unit) {
   using Product = ProductManifold<UnitVector3F64, UnitVector2F64>;
 
   static_assert(concepts::BaseManifold<Product>);
-
-  std::vector<Tangent> tangents = Product::exampleTangents();
 }

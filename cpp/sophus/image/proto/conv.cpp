@@ -37,8 +37,7 @@ proto::ImageLayout toProto(sophus::ImageLayout const& layout) {
 
 Expected<sophus::PixelFormat> fromProto(proto::PixelFormat const& proto) {
   sophus::PixelFormat format;
-  SOPHUS_ASSERT_OR_ERROR(
-      trySetFromString(format.number_type, proto.number_type()));
+  SOPHUS_TRY_ASSERT(trySetFromString(format.number_type, proto.number_type()));
   format.num_components = proto.num_components();
   format.num_bytes_per_component = proto.num_bytes_per_component();
   return format;

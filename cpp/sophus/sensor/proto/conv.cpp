@@ -22,7 +22,7 @@ Expected<CameraModel> fromProto(proto::CameraModel const& proto) {
   };
 
   CameraDistortionType model = CameraDistortionType::pinhole;
-  SOPHUS_ASSERT_OR_ERROR(
+  SOPHUS_TRY_ASSERT(
       trySetFromString(model, proto.distortion_type()),
       "distortion type not supported: {}",
       proto.distortion_type());

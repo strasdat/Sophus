@@ -17,4 +17,9 @@ farm_ng_add_test(common
   LINK_LIBRARIES sophus_common
   LABELS small)
 
-target_link_libraries(sophus_common INTERFACE Eigen3::Eigen farm_ng_core::farm_ng_core_logging)
+target_link_libraries(
+  sophus_common
+  INTERFACE
+    Eigen3::Eigen
+    farm_ng_core::farm_ng_core_logging
+  )

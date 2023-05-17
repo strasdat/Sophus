@@ -33,6 +33,21 @@ class ScalingImpl {
   static bool constexpr kIisSizePreserving = false;
   static bool constexpr kIisParallelLinePreserving = true;
 
+  template <class TCompatibleScalar>
+  using ScalarReturn = typename Eigen::
+      ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::ReturnType;
+
+  template <class TCompatibleScalar>
+  using ParamsReturn =
+      Eigen::Vector<ScalarReturn<TCompatibleScalar>, kNumParams>;
+
+  template <class TCompatibleScalar>
+  using PointReturn = Eigen::Vector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using UnitVectorReturn =
+      UnitVector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
   // constructors and factories
 
   static auto identityParams() -> Params {
@@ -59,6 +74,8 @@ class ScalingImpl {
     }
     return sophus::Expected<Success>{};
   }
+
+  static auto hasShortestPathAmbiguity(Params const&) -> bool { return false; }
 
   // Manifold / Lie Group concepts
 
@@ -97,28 +114,36 @@ class ScalingImpl {
     return params;
   }
 
-  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
-      -> Params {
+  template <class TCompatibleScalar>
+  static auto multiplication(
+      Params const& lhs_params,
+      Eigen::Vector<TCompatibleScalar, kPointDim> const& rhs_params)
+      -> ParamsReturn<TCompatibleScalar> {
     return lhs_params.array() * rhs_params.array();
   }
 
   // Point actions
 
-  static auto action(Params const& scale_factors, Point const& point) -> Point {
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& scale_factors,
+      Eigen::Vector<TCompatibleScalar, kPointDim> const& point)
+      -> PointReturn<TCompatibleScalar> {
     return scale_factors.array() * point.array();
+  }
+
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& scale_factors,
+      UnitVector<TCompatibleScalar, kPointDim> const& direction_vector)
+      -> UnitVectorReturn<TCompatibleScalar> {
+    return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
+        action(scale_factors, direction_vector.params()));
   }
 
   static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
-  }
-
-  static auto action(
-      Params const& scale_factors,
-      UnitVector<Scalar, kPointDim> const& direction_vector)
-      -> UnitVector<Scalar, kPointDim> {
-    return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
-        action(scale_factors, direction_vector.params()));
   }
 
   static auto adj(Params const& /*unused*/)
@@ -138,7 +163,7 @@ class ScalingImpl {
     return compactMatrix(scale_factors);
   }
 
-  // subgroup concepts
+  // factor group concepts
 
   static auto matV(Params const& params, Tangent const& tangent)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
@@ -164,7 +189,7 @@ class ScalingImpl {
     for (int i = 0; i < kDof; ++i) {
       Scalar t = tangent[i];
       if (abs(t) < kEpsilon<Scalar>) {
-        mat(i, i) = abs(1.0 + 2 * t + 2.5 * t * t);
+        mat(i, i) = abs(1.0 + 2.0 * t + 2.5 * t * t);
       } else {
         mat(i, i) = abs(tangent[i] / (params[i] - 1.0));
       }
@@ -256,11 +281,11 @@ class ScalingImpl {
     } else {
       if constexpr (kPointDim == 3) {
         return std::vector<Params>(
-            {Params({1.0, 1.0, 1.0}),
-             Params({1.0, 2.0, 1.05}),
-             Params({1.5, 1.0, 2.8}),
-             Params({5.0, 1.237, 2}),
-             Params({0.5, 1.237, 0.2})});
+            {Params({Scalar(1.0), Scalar(1.0), Scalar(1.0)}),
+             Params({Scalar(1.0), Scalar(2.0), Scalar(1.05)}),
+             Params({Scalar(1.5), Scalar(1.0), Scalar(2.8)}),
+             Params({Scalar(5.0), Scalar(1.237), Scalar(2)}),
+             Params({Scalar(0.5), Scalar(1.237), Scalar(0.2)})});
       }
     }
   }
@@ -274,11 +299,20 @@ class ScalingImpl {
   }
 };
 
-template <class TScalar>
-using Scaling2Impl = ScalingImpl<TScalar, 2>;
+}  // namespace lie
 
-template <class TScalar>
-using Scaling3Impl = ScalingImpl<TScalar, 3>;
+template <class TScalar, int kDim>
+class Scaling;
+
+namespace lie {
+template <int kDim>
+struct ScalingWithDim {
+  template <class TScalar>
+  using Impl = ScalingImpl<TScalar, kDim>;
+
+  template <class TScalar>
+  using Group = Scaling<TScalar, kDim>;
+};
 
 }  // namespace lie
 }  // namespace sophus

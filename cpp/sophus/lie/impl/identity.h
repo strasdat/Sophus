@@ -35,6 +35,21 @@ class IdentityImpl {
   using Params = Eigen::Vector<Scalar, kNumParams>;
   using Point = Eigen::Vector<Scalar, kPointDim>;
 
+  template <class TCompatibleScalar>
+  using ScalarReturn = typename Eigen::
+      ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::ReturnType;
+
+  template <class TCompatibleScalar>
+  using ParamsReturn =
+      Eigen::Vector<ScalarReturn<TCompatibleScalar>, kNumParams>;
+
+  template <class TCompatibleScalar>
+  using PointReturn = Eigen::Vector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using UnitVectorReturn =
+      UnitVector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
   // constructors and factories
 
   static auto identityParams() -> Params { return Params::Zero(); }
@@ -48,6 +63,8 @@ class IdentityImpl {
       -> Eigen::Matrix<Scalar, kDof, kDof> {
     return Eigen::Matrix<Scalar, kDof, kDof>::Identity();
   }
+
+  static auto hasShortestPathAmbiguity(Params const&) -> bool { return false; }
 
   // Manifold / Lie Group concepts
 
@@ -71,14 +88,21 @@ class IdentityImpl {
 
   static auto inverse(Params const& params) -> Params { return params; }
 
-  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
-      -> Params {
-    return lhs_params;
+  template <class TCompatibleScalar>
+  static auto multiplication(
+      Params const& lhs_params,
+      Eigen::Vector<TCompatibleScalar, kNumParams> const& rhs_params)
+      -> ParamsReturn<TCompatibleScalar> {
+    return ParamsReturn<TCompatibleScalar>{};
   }
 
   // Point actions
-  static auto action(Params const& params, Point const& point) -> Point {
-    return point;
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& params,
+      Eigen::Vector<TCompatibleScalar, kPointDim> const& point)
+      -> PointReturn<TCompatibleScalar> {
+    return Scalar(1.0) * point;
   }
 
   static auto toAmbient(Point const& point)
@@ -86,10 +110,11 @@ class IdentityImpl {
     return point;
   }
 
+  template <class TCompatibleScalar>
   static auto action(
-      Params const& params, UnitVector<Scalar, kPointDim> const& point)
-      -> UnitVector<Scalar, kPointDim> {
-    return point;
+      Params const& params, UnitVector<TCompatibleScalar, kPointDim> const& dir)
+      -> UnitVectorReturn<TCompatibleScalar> {
+    return dir;
   }
 
   // Matrices
@@ -104,7 +129,7 @@ class IdentityImpl {
     return compactMatrix(params);
   }
 
-  // subgroup concepts
+  // factor group concepts
 
   static auto matV(Params const& /*unused*/, Tangent const& /*unused*/)
       -> Eigen::Matrix<Scalar, kPointDim, kPointDim> {
@@ -172,4 +197,20 @@ class IdentityImpl {
 };
 
 }  // namespace lie
+
+template <class TScalar, int kDim>
+class Identity;
+
+namespace lie {
+template <int kDim>
+struct IdentityWithDim {
+  template <class TScalar>
+  using Impl = IdentityImpl<TScalar, kDim>;
+
+  template <class TScalar>
+  using Group = Identity<TScalar, kDim>;
+};
+
+}  // namespace lie
+
 }  // namespace sophus
