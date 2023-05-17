@@ -15,14 +15,18 @@
 namespace sophus {
 
 // origin, coordinate axis directions, and shape preserving mapping
+
 template <class TScalar, int kDim>
-class Scaling
-    : public lie::
-          Group<Scaling<TScalar, kDim>, lie::ScalingImpl<TScalar, kDim>> {
+class Scaling : public lie::Group<
+                    lie::ScalingWithDim<kDim>::template Group,
+                    TScalar,
+                    lie::ScalingWithDim<kDim>::template Impl> {
  public:
   using Scalar = TScalar;
-  using Base =
-      lie::Group<Scaling<TScalar, kDim>, lie::ScalingImpl<TScalar, kDim>>;
+  using Base = lie::Group<
+      lie::ScalingWithDim<kDim>::template Group,
+      TScalar,
+      lie::ScalingWithDim<kDim>::template Impl>;
 
   using Tangent = typename Base::Tangent;
   using Params = typename Base::Params;
@@ -36,6 +40,14 @@ class Scaling
   auto cast() const -> Scaling<TOtherScalar, kDim> {
     return Scaling<TOtherScalar, kDim>::fromParams(
         this->params_.template cast<TOtherScalar>());
+  }
+
+  [[nodiscard]] auto scaleFactors() const -> Params const& {
+    return this->params_;
+  }
+
+  auto setScaleFactors(Params const& scale_factors) -> void {
+    this->params_ = scale_factors;
   }
 };
 

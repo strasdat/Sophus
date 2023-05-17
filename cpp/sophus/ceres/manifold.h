@@ -34,6 +34,7 @@ class Manifold : public ::ceres::Manifold {
       double* t_plus_delta_raw) const override {
     LieGroupF64 t = LieGroupF64::fromParams(Eigen::Map<Params const>(t_raw));
     Eigen::Map<Tangent const> delta(delta_raw);
+
     Eigen::Map<Params> out_params(t_plus_delta_raw);
     LieGroupF64 t_plus_delta = t * LieGroupF64::exp(delta);
     out_params = t_plus_delta.params();

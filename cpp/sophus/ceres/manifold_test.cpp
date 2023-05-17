@@ -84,25 +84,48 @@ struct RotationalPart<sophus::Similarity3F64> {
   }
 };
 
-template <int kDim>
-struct RotationalPart<sophus::Scaling<double, kDim>> {
-  static double norm(typename sophus::Scaling<double, kDim>::Tangent const& t) {
+template <>
+struct RotationalPart<sophus::Scaling<double, 2>> {
+  static double norm(typename sophus::Scaling<double, 2>::Tangent const& t) {
     return 0.0;
   }
 };
 
-template <int kDim>
-struct RotationalPart<sophus::ScalingTranslation<double, kDim>> {
-  static double norm(
-      typename sophus::ScalingTranslation<double, kDim>::Tangent const& t) {
+template <>
+struct RotationalPart<sophus::Scaling<double, 3>> {
+  static double norm(typename sophus::Scaling<double, 3>::Tangent const& t) {
     return 0.0;
   }
 };
 
-template <int kDim>
-struct RotationalPart<sophus::Translation<double, kDim>> {
+template <>
+struct RotationalPart<sophus::ScalingTranslation<double, 2>> {
   static double norm(
-      typename sophus::Translation<double, kDim>::Tangent const& t) {
+      typename sophus::ScalingTranslation<double, 2>::Tangent const& t) {
+    return 0.0;
+  }
+};
+
+template <>
+struct RotationalPart<sophus::ScalingTranslation<double, 3>> {
+  static double norm(
+      typename sophus::ScalingTranslation<double, 3>::Tangent const& t) {
+    return 0.0;
+  }
+};
+
+template <>
+struct RotationalPart<sophus::Translation<double, 2>> {
+  static double norm(
+      typename sophus::Translation<double, 2>::Tangent const& t) {
+    return 0.0;
+  }
+};
+
+template <>
+struct RotationalPart<sophus::Translation<double, 3>> {
+  static double norm(
+      typename sophus::Translation<double, 3>::Tangent const& t) {
     return 0.0;
   }
 };

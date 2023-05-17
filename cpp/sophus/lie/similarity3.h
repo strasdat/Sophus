@@ -9,8 +9,8 @@
 #pragma once
 
 #include "sophus/concepts/group_accessors.h"
-#include "sophus/lie/impl/semi_direct_product.h"
 #include "sophus/lie/impl/spiral_similarity3.h"
+#include "sophus/lie/impl/translation_factor_group_product.h"
 #include "sophus/lie/isometry3.h"
 #include "sophus/lie/lie_group.h"
 #include "sophus/lie/spiral_similarity3.h"
@@ -20,19 +20,17 @@ namespace sophus {
 // origin, coordinate axis directions, and shape preserving mapping
 template <class TScalar>
 class Similarity3 : public lie::Group<
-                        Similarity3<TScalar>,
-                        lie::SemiDirectProductWithTranslation<
-                            TScalar,
-                            3,
-                            lie::SpiralSimilarity3Impl>> {
+                        Similarity3,
+                        TScalar,
+                        lie::WithDimAndSubgroup<3, lie::SpiralSimilarity3Impl>::
+                            SemiDirectProduct> {
  public:
   using Scalar = TScalar;
   using Base = lie::Group<
-      Similarity3<Scalar>,
-      lie::SemiDirectProductWithTranslation<
-          Scalar,
-          3,
-          lie::SpiralSimilarity3Impl>>;
+      Similarity3,
+      TScalar,
+      lie::WithDimAndSubgroup<3, lie::SpiralSimilarity3Impl>::
+          SemiDirectProduct>;
   using Rotation = Rotation3<Scalar>;
   using SpiralSimilarity = SpiralSimilarity3<Scalar>;
   using Isometry = Isometry3<Scalar>;

@@ -26,6 +26,7 @@ if(${BUILD_SOPHUS_TESTS})
                           PARENT_LIBRARY sophus_ceres
                           LINK_LIBRARIES
                           Ceres::ceres sophus_ceres
+                          farm_ng_core::farm_ng_core_pipeline
                           sophus_sensor
                           LABELS large)
     target_compile_definitions(${test_basename}_test_sophus_ceres PRIVATE ${ARGN})

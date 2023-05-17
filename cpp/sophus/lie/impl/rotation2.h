@@ -15,11 +15,9 @@
 namespace sophus {
 namespace lie {
 
-template <class TScalar, int kDim = 2>
+template <class TScalar>
 class Rotation2Impl {
  public:
-  static_assert(kDim == 2);
-
   using Scalar = TScalar;
   using Complex = ComplexImpl<TScalar>;
 
@@ -38,6 +36,21 @@ class Rotation2Impl {
   using Tangent = Eigen::Vector<Scalar, kDof>;
   using Params = Eigen::Vector<Scalar, kNumParams>;
   using Point = Eigen::Vector<Scalar, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using ScalarReturn = typename Eigen::
+      ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::ReturnType;
+
+  template <class TCompatibleScalar>
+  using ParamsReturn =
+      Eigen::Vector<ScalarReturn<TCompatibleScalar>, kNumParams>;
+
+  template <class TCompatibleScalar>
+  using PointReturn = Eigen::Vector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using UnitVectorReturn =
+      UnitVector<ScalarReturn<TCompatibleScalar>, kPointDim>;
 
   // constructors and factories
 
@@ -62,6 +75,13 @@ class Rotation2Impl {
     return sophus::Expected<Success>{};
   }
 
+  static auto hasShortestPathAmbiguity(Params const& foo_from_bar) -> bool {
+    using std::abs;
+    TScalar angle = abs(Rotation2Impl::log(foo_from_bar)[0]);
+    TScalar const k_pi = kPi<TScalar>;  // NOLINT
+    return abs(angle - k_pi) / (angle + k_pi) < kEpsilon<TScalar>;
+  }
+
   // Manifold / Lie Group concepts
 
   static auto exp(Tangent const& angle) -> Params {
@@ -77,7 +97,8 @@ class Rotation2Impl {
 
   static auto hat(Tangent const& angle)
       -> Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> {
-    return Eigen::Matrix<Scalar, 2, 2>{{0, -angle[0]}, {angle[0], 0}};
+    return Eigen::Matrix<Scalar, 2, 2>{
+        {Scalar(0.0), Scalar(-angle[0])}, {Scalar(angle[0]), Scalar(0.0)}};
   }
 
   static auto vee(Eigen::Matrix<Scalar, kAmbientDim, kAmbientDim> const& mat)
@@ -91,10 +112,13 @@ class Rotation2Impl {
     return Params(unit_complex.x(), -unit_complex.y());
   }
 
-  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
-      -> Params {
+  template <class TCompatibleScalar>
+  static auto multiplication(
+      Params const& lhs_params,
+      Eigen::Matrix<TCompatibleScalar, 2, 1> const& rhs_params)
+      -> ParamsReturn<TCompatibleScalar> {
     auto result = Complex::multiplication(lhs_params, rhs_params);
-    Scalar const squared_norm = result.squaredNorm();
+    auto const squared_norm = result.squaredNorm();
 
     // We can assume that the squared-norm is close to 1 since we deal with a
     // unit complex number. Due to numerical precision issues, there might
@@ -104,28 +128,33 @@ class Rotation2Impl {
     // square-root, but can use an approximation around 1 (see
     // http://stackoverflow.com/a/12934750 for details).
     if (squared_norm != 1.0) {
-      Scalar const scale = 2.0 / (1.0 + squared_norm);
+      auto const scale = 2.0 / (1.0 + squared_norm);
       return scale * result;
     }
     return result;
   }
 
   // Group actions
-  static auto action(Params const& unit_complex, Point const& point) -> Point {
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& unit_complex,
+      Eigen::Matrix<TCompatibleScalar, 2, 1> const& point)
+      -> PointReturn<TCompatibleScalar> {
     return Complex::multiplication(unit_complex, point);
+  }
+
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& unit_complex,
+      UnitVector<TCompatibleScalar, kPointDim> const& direction_vector)
+      -> UnitVectorReturn<TCompatibleScalar> {
+    return UnitVectorReturn<TCompatibleScalar>::fromParams(
+        Complex::multiplication(unit_complex, direction_vector.params()));
   }
 
   static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
-  }
-
-  static auto action(
-      Params const& unit_complex,
-      UnitVector<Scalar, kPointDim> const& direction_vector)
-      -> UnitVector<Scalar, kPointDim> {
-    return UnitVector<Scalar, kPointDim>::fromParams(
-        Complex::multiplication(unit_complex, direction_vector.params()));
   }
 
   static auto adj(Params const& /*unused*/)
@@ -244,10 +273,10 @@ class Rotation2Impl {
 
   static auto paramsExamples() -> std::vector<Params> {
     return std::vector<Params>({
-        Rotation2Impl::exp(Tangent{0.0}),
-        Rotation2Impl::exp(Tangent{1.0}),
-        Rotation2Impl::exp(Tangent{0.5 * kPi<Scalar>}),
-        Rotation2Impl::exp(Tangent{kPi<Scalar>}),
+        Rotation2Impl::exp(Tangent{Scalar(0.0)}),
+        Rotation2Impl::exp(Tangent{Scalar(1.0)}),
+        Rotation2Impl::exp(Tangent{Scalar(0.5 * kPi<Scalar>)}),
+        Rotation2Impl::exp(Tangent{Scalar(kPi<Scalar>)}),
     });
   }
 

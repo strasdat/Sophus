@@ -22,6 +22,12 @@ class ComplexImpl {
 
   using Params = Eigen::Vector<Scalar, kNumParams>;
 
+  template <class TCompatibleScalar>
+  using ParamsReturn = Eigen::Vector<
+      typename Eigen::ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::
+          ReturnType,
+      2>;
+
   // factories
   static auto zero() -> Eigen::Vector<Scalar, 2> {
     return Eigen::Vector<Scalar, 2>::Zero();
@@ -46,19 +52,21 @@ class ComplexImpl {
 
   // operations
 
+  template <class TCompatibleScalar>
   static auto addition(
       Eigen::Vector<Scalar, 2> const& lhs_real_imag,
-      Eigen::Vector<Scalar, 2> const& rhs_real_imag)
-      -> Eigen::Vector<Scalar, 2> {
+      Eigen::Vector<TCompatibleScalar, 2> const& rhs_real_imag)
+      -> ParamsReturn<TCompatibleScalar> {
     return lhs_real_imag + rhs_real_imag;
   }
 
+  template <class TCompatibleScalar>
   static auto multiplication(
       Eigen::Vector<Scalar, 2> const& lhs_real_imag,
-      Eigen::Vector<Scalar, 2> const& rhs_real_imag)
-      -> Eigen::Vector<Scalar, 2> {
+      Eigen::Vector<TCompatibleScalar, 2> const& rhs_real_imag)
+      -> ParamsReturn<TCompatibleScalar> {
     // complex multiplication
-    return Eigen::Vector<Scalar, 2>(
+    return ParamsReturn<TCompatibleScalar>(
         lhs_real_imag.x() * rhs_real_imag.x() -
             lhs_real_imag.y() * rhs_real_imag.y(),
         lhs_real_imag.x() * rhs_real_imag.y() +
@@ -95,6 +103,11 @@ class Complex {
 
   using Params = Eigen::Vector<Scalar, kNumParams>;
 
+  template <class TCompatibleScalar>
+  using ComplexReturn =
+      Complex<typename Eigen::ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::
+                  ReturnType>;
+
   // constructors and factories
 
   Complex() : params_(Impl::zero()) {}
@@ -122,13 +135,17 @@ class Complex {
   auto imag() -> Scalar& { return params_[1]; }
   [[nodiscard]] auto imag() const -> Scalar const& { return params_[1]; }
 
-  auto operator+(Complex const& other) const -> Complex {
-    return Complex::fromParams(Impl::addition(this->params_, other.params_));
+  template <class TCompatibleScalar>
+  auto operator+(Complex<TCompatibleScalar> const& other) const
+      -> ComplexReturn<TCompatibleScalar> {
+    return Complex::fromParams(Impl::addition(this->params_, other.params()));
   }
 
-  auto operator*(Complex const& other) const -> Complex {
-    return Complex::fromParams(
-        Impl::multiplication(this->params_, other.params_));
+  template <class TCompatibleScalar>
+  auto operator*(Complex<TCompatibleScalar> const& other) const
+      -> ComplexReturn<TCompatibleScalar> {
+    return ComplexReturn<TCompatibleScalar>::fromParams(
+        Impl::multiplication(this->params_, other.params()));
   }
 
   [[nodiscard]] auto conjugate() const -> Complex {

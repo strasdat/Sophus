@@ -10,24 +10,39 @@
 
 #include "sophus/concepts/group_accessors.h"
 #include "sophus/lie/impl/identity.h"
-#include "sophus/lie/impl/semi_direct_product.h"
+#include "sophus/lie/impl/translation_factor_group_product.h"
 #include "sophus/lie/lie_group.h"
 
 namespace sophus {
 
+template <class TScalar, int kDim>
+class Translation;
+
+namespace lie {
+template <int kDim>
+struct TranslationWithDim {
+  template <class TScalar>
+  using Group = Translation<TScalar, kDim>;
+};
+
+}  // namespace lie
+
 // scale and direction preserving mapping
 template <class TScalar, int kDim>
 class Translation : public lie::Group<
-                        Translation<TScalar, kDim>,
-                        lie::SemiDirectProductWithTranslation<
-                            TScalar,
+                        lie::TranslationWithDim<kDim>::template Group,
+                        TScalar,
+                        lie::WithDimAndSubgroup<
                             kDim,
-                            lie::IdentityImpl>> {
+                            lie::IdentityWithDim<kDim>::template Impl>::
+                            template SemiDirectProduct> {
  public:
   using Scalar = TScalar;
   using Base = lie::Group<
-      Translation<TScalar, kDim>,
-      lie::SemiDirectProductWithTranslation<TScalar, kDim, lie::IdentityImpl>>;
+      lie::TranslationWithDim<kDim>::template Group,
+      TScalar,
+      lie::WithDimAndSubgroup<kDim, lie::IdentityWithDim<kDim>::template Impl>::
+          template SemiDirectProduct>;
 
   using Tangent = typename Base::Tangent;
   using Params = typename Base::Params;

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "sophus/lie/interp/details/interpolate_impl.h"
+#include "sophus/lie/lie_group.h"
 
 #include <Eigen/Eigenvalues>
 
@@ -31,16 +31,16 @@ namespace sophus {
 ///
 /// Precondition: ``p`` must be in [0, 1].
 ///
-template <class TGroup, class TScalar2 = typename TGroup::Scalar>
+template <
+    concepts::LieGroup TGroup,
+    concepts::ConvertibleTo<typename TGroup::Scalar> TScalar>
 auto interpolate(
     TGroup const& foo_from_bar,
     TGroup const& foo_from_daz,
-    TScalar2 p = TScalar2(0.5f))
-    -> std::enable_if_t<interp_details::Traits<TGroup>::kSupported, TGroup> {
-  using Scalar = typename TGroup::Scalar;
-  Scalar inter_p(p);
+    TScalar p = TScalar(0.5f)) -> TGroup {
+  TScalar inter_p(p);
   SOPHUS_ASSERT(
-      inter_p >= Scalar(0) && inter_p <= Scalar(1),
+      inter_p >= TScalar(0) && inter_p <= TScalar(1),
       "p ({}) must in [0, 1].",
       inter_p);
   return foo_from_bar *

@@ -54,5 +54,65 @@ concept Params = std::is_same_v<
   { m.unsafeMutPtr() } -> ConvertibleTo<typename TT::Scalar *>;
 };
 
+// Example scalar type to be used when specifying concepts interfaces.
+//
+// The main motivation are compatible scalar types such as
+// ceres::Jet<double,...> which mix well with the scalar ``double``.
+// However, we do not want include ceres::Jet<double,...> here.
+template <class TT>
+struct CompatScalarEx {
+  CompatScalarEx(TT const &value) : value(value) {}
+
+  TT value;
+};
+
 }  // namespace concepts
 }  // namespace sophus
+
+namespace Eigen {
+
+// This is mirrored from ceres::Jet.
+template <class TT>
+struct NumTraits<sophus::concepts::CompatScalarEx<TT>> {
+  using Real = sophus::concepts::CompatScalarEx<TT>;
+  using NonInteger = sophus::concepts::CompatScalarEx<TT>;
+  using Nested = sophus::concepts::CompatScalarEx<TT>;
+  using Literal = sophus::concepts::CompatScalarEx<TT>;
+
+  static bool constexpr IsComplex = false;
+  static bool constexpr IsInteger = false;
+
+  static typename sophus::concepts::CompatScalarEx<TT> dummy_precision() {
+    return sophus::concepts::CompatScalarEx<TT>(1e-12);
+  }
+
+  inline static Real epsilon() {
+    return Real(std::numeric_limits<TT>::epsilon());
+  }
+
+  inline static int digits10() { return NumTraits<TT>::digits10(); }
+
+  inline static Real highest() {
+    return Real((std::numeric_limits<TT>::max)());
+  }
+  inline static Real lowest() {
+    return Real(-(std::numeric_limits<TT>::max)());
+  }
+};
+
+template <class BinaryOp, class TT>
+struct ScalarBinaryOpTraits<
+    sophus::concepts::CompatScalarEx<TT>,
+    TT,
+    BinaryOp> {
+  using ReturnType = sophus::concepts::CompatScalarEx<TT>;
+};
+template <class BinaryOp, class TT>
+struct ScalarBinaryOpTraits<
+    TT,
+    sophus::concepts::CompatScalarEx<TT>,
+    BinaryOp> {
+  using ReturnType = sophus::concepts::CompatScalarEx<TT>;
+};
+
+}  // namespace Eigen

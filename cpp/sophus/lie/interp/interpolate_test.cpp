@@ -15,7 +15,11 @@
 
 namespace sophus::test {
 
-template <concepts::LieGroup TGroup>
+template <
+    template <class>
+    class TGenericGroup,
+    class TScalar,
+    concepts::LieGroup TGroup = TGenericGroup<TScalar>>
 struct InterpolatePropTestSuite {
   using Group = TGroup;
 
@@ -80,8 +84,8 @@ struct InterpolatePropTestSuite {
           // == interp(dash_T_foo * foo_from_bar, dash_T_foo *
           // foo_from_daz)
 
-          if (interp_details::Traits<Group>::hasShortestPathAmbiguity(
-                  foo_from_bar.inverse() * foo_from_daz)) {
+          if ((foo_from_bar.inverse() * foo_from_daz)
+                  .hasShortestPathAmbiguity()) {
             // skip check since there is a shortest path ambiguity
             continue;
           }
@@ -127,8 +131,8 @@ struct InterpolatePropTestSuite {
           // interp(bar_from_foo, bar_from_foo) * foo_T_dash
           // == interp(bar_from_foo * foo_T_dash, bar_from_foo*
           // foo_T_dash)
-          if (interp_details::Traits<Group>::hasShortestPathAmbiguity(
-                  bar_from_foo * baz_from_foo.inverse())) {
+          if ((bar_from_foo * baz_from_foo.inverse())
+                  .hasShortestPathAmbiguity()) {
             // skip check since there is a shortest path ambiguity
             continue;
           }
@@ -157,8 +161,8 @@ struct InterpolatePropTestSuite {
            ++params_id2) {
         Params params2 = SOPHUS_AT(kParamsExamples, params_id2);
         Group foo_from_daz = Group::fromParams(params2);
-        if (interp_details::Traits<Group>::hasShortestPathAmbiguity(
-                foo_from_bar.inverse() * foo_from_daz)) {
+        if ((foo_from_bar.inverse() * foo_from_daz)
+                .hasShortestPathAmbiguity()) {
           // skip check since there is a shortest path ambiguity
           continue;
         }
@@ -211,42 +215,54 @@ struct InterpolatePropTestSuite {
   }
 };
 
-template <concepts::LieGroup TGroup>
-decltype(TGroup::paramsExamples())
-    const InterpolatePropTestSuite<TGroup>::kParamsExamples =
+template <
+    template <class>
+    class TGenericGroup,
+    class TScalar,
+    concepts::LieGroup TGroup>
+decltype(TGroup::paramsExamples()) const
+    InterpolatePropTestSuite<TGenericGroup, TScalar, TGroup>::kParamsExamples =
         TGroup::paramsExamples();
 
-template <concepts::LieGroup TGroup>
-decltype(TGroup::tangentExamples())
-    const InterpolatePropTestSuite<TGroup>::kTangentExamples =
+template <
+    template <class>
+    class TGenericGroup,
+    class TScalar,
+    concepts::LieGroup TGroup>
+decltype(TGroup::tangentExamples()) const
+    InterpolatePropTestSuite<TGenericGroup, TScalar, TGroup>::kTangentExamples =
         TGroup::tangentExamples();
 
-template <concepts::LieGroup TGroup>
-decltype(pointExamples<typename TGroup::Scalar, TGroup::kPointDim>())
-    const InterpolatePropTestSuite<TGroup>::kPointExamples =
+template <
+    template <class>
+    class TGenericGroup,
+    class TScalar,
+    concepts::LieGroup TGroup>
+decltype(pointExamples<typename TGroup::Scalar, TGroup::kPointDim>()) const
+    InterpolatePropTestSuite<TGenericGroup, TScalar, TGroup>::kPointExamples =
         pointExamples<Scalar, kPointDim>();
 
 TEST(lie_groups, linterpolate_prop_tests) {
-  InterpolatePropTestSuite<Translation2<double>>::runAllTests("Translation2");
-  InterpolatePropTestSuite<Translation3<double>>::runAllTests("Translation3");
+  InterpolatePropTestSuite<Translation2, double>::runAllTests("Translation2");
+  InterpolatePropTestSuite<Translation3, double>::runAllTests("Translation3");
 
-  InterpolatePropTestSuite<Rotation2<double>>::runAllTests("Rotation2");
-  InterpolatePropTestSuite<Rotation3<double>>::runAllTests("Rotation3");
-  InterpolatePropTestSuite<Isometry2<double>>::runAllTests("Isometry2");
-  InterpolatePropTestSuite<Isometry3<double>>::runAllTests("Isometry3");
+  InterpolatePropTestSuite<Rotation2, double>::runAllTests("Rotation2");
+  InterpolatePropTestSuite<Rotation3, double>::runAllTests("Rotation3");
+  InterpolatePropTestSuite<Isometry2, double>::runAllTests("Isometry2");
+  InterpolatePropTestSuite<Isometry3, double>::runAllTests("Isometry3");
 
-  InterpolatePropTestSuite<SpiralSimilarity2<double>>::runAllTests(
+  InterpolatePropTestSuite<SpiralSimilarity2, double>::runAllTests(
       "SpiralSimilarity2");
-  InterpolatePropTestSuite<SpiralSimilarity3<double>>::runAllTests(
+  InterpolatePropTestSuite<SpiralSimilarity3, double>::runAllTests(
       "SpiralSimilarity3");
-  InterpolatePropTestSuite<Similarity2<double>>::runAllTests("Similarity2");
-  InterpolatePropTestSuite<Similarity3<double>>::runAllTests("Similarity3");
+  InterpolatePropTestSuite<Similarity2, double>::runAllTests("Similarity2");
+  InterpolatePropTestSuite<Similarity3, double>::runAllTests("Similarity3");
 
-  InterpolatePropTestSuite<Scaling2<double>>::runAllTests("Scaling2");
-  InterpolatePropTestSuite<Scaling3<double>>::runAllTests("Scaling3");
-  InterpolatePropTestSuite<ScalingTranslation2<double>>::runAllTests(
+  InterpolatePropTestSuite<Scaling2, double>::runAllTests("Scaling2");
+  InterpolatePropTestSuite<Scaling3, double>::runAllTests("Scaling3");
+  InterpolatePropTestSuite<ScalingTranslation2, double>::runAllTests(
       "ScalingTranslation2");
-  InterpolatePropTestSuite<ScalingTranslation3<double>>::runAllTests(
+  InterpolatePropTestSuite<ScalingTranslation3, double>::runAllTests(
       "ScalingTranslation3");
 }
 }  // namespace sophus::test

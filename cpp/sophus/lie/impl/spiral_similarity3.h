@@ -16,10 +16,9 @@
 namespace sophus {
 namespace lie {
 
-template <class TScalar, int kDim = 3>
+template <class TScalar>
 class SpiralSimilarity3Impl {
  public:
-  static_assert(kDim == 3);
   using Scalar = TScalar;
   using Quaternion = QuaternionImpl<TScalar>;
 
@@ -39,10 +38,26 @@ class SpiralSimilarity3Impl {
   using Params = Eigen::Vector<Scalar, kNumParams>;
   using Point = Eigen::Vector<Scalar, kPointDim>;
 
+  template <class TCompatibleScalar>
+  using ScalarReturn = typename Eigen::
+      ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::ReturnType;
+
+  template <class TCompatibleScalar>
+  using ParamsReturn =
+      Eigen::Vector<ScalarReturn<TCompatibleScalar>, kNumParams>;
+
+  template <class TCompatibleScalar>
+  using PointReturn = Eigen::Vector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using UnitVectorReturn =
+      UnitVector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
   // constructors and factories
 
   static auto identityParams() -> Params {
-    return Eigen::Vector<Scalar, 4>(0.0, 0.0, 0.0, 1.0);
+    return Eigen::Vector<Scalar, 4>(
+        Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(1.0));
   }
 
   static auto areParamsValid(Params const& non_zero_quat)
@@ -60,6 +75,11 @@ class SpiralSimilarity3Impl {
           kThr);
     }
     return sophus::Expected<Success>{};
+  }
+
+  static auto hasShortestPathAmbiguity(Params const& non_zero_quat) -> bool {
+    return Rotation3Impl<Scalar>::hasShortestPathAmbiguity(
+        non_zero_quat.normalized());
   }
 
   // Manifold / Lie Group concepts
@@ -114,42 +134,51 @@ class SpiralSimilarity3Impl {
            QuaternionImpl<Scalar>::conjugate(non_zero_quat.normalized());
   }
 
-  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
-      -> Params {
-    auto result =
+  template <class TCompatibleScalar>
+  static auto multiplication(
+      Params const& lhs_params,
+      Eigen::Vector<TCompatibleScalar, kNumParams> const& rhs_params)
+      -> ParamsReturn<TCompatibleScalar> {
+    ParamsReturn<TCompatibleScalar> result =
         QuaternionImpl<Scalar>::multiplication(lhs_params, rhs_params);
-    Scalar const squared_scale = result.squaredNorm();
+    using R = ScalarReturn<TCompatibleScalar>;
+    R const squared_scale = result.squaredNorm();
 
     if (squared_scale < kEpsilon<Scalar> * kEpsilon<Scalar>) {
       /// Saturation to ensure class invariant.
       result.normalize();
-      result *= kEpsilonPlus<Scalar>;
+      result *= kEpsilonPlus<R>;
     }
     if (squared_scale > Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>)) {
       /// Saturation to ensure class invariant.
       result.normalize();
-      result /= kEpsilonPlus<Scalar>;
+      result /= kEpsilonPlus<R>;
     }
     return result;
   }
 
   // Point actions
-  static auto action(Params const& non_zero_quat, Point const& point) -> Point {
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& non_zero_quat,
+      Eigen::Vector<TCompatibleScalar, kPointDim> const& point)
+      -> PointReturn<TCompatibleScalar> {
     return matrix(non_zero_quat) * point;
+  }
+
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& non_zero_quat,
+      UnitVector<TCompatibleScalar, kPointDim> const& direction_vector)
+      -> UnitVectorReturn<TCompatibleScalar> {
+    return UnitVector<Scalar, kPointDim>::fromParams(
+        Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized()) *
+        direction_vector.params());
   }
 
   static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
-  }
-
-  static auto action(
-      Params const& non_zero_quat,
-      UnitVector<Scalar, kPointDim> const& direction_vector)
-      -> UnitVector<Scalar, kPointDim> {
-    return UnitVector<Scalar, kPointDim>::fromParams(
-        Rotation3Impl<Scalar>::matrix(non_zero_quat.normalized()) *
-        direction_vector.params());
   }
 
   static auto adj(Params const& non_zero_quat)
@@ -332,14 +361,23 @@ class SpiralSimilarity3Impl {
 
   static auto paramsExamples() -> std::vector<Params> {
     return std::vector<Params>({
-        SpiralSimilarity3Impl::exp({0.2, 0.5, 0.0, 1.0}),
-        SpiralSimilarity3Impl::exp({0.2, 0.5, -1.0, 1.1}),
-        SpiralSimilarity3Impl::exp({0.0, 0.0, 0.0, 1.1}),
-        SpiralSimilarity3Impl::exp({0.0, 0.0, 0.00001, 0}),
-        SpiralSimilarity3Impl::exp({0.0, 0.0, 0.00001, 0.00001}),
-        SpiralSimilarity3Impl::exp({0.5 * kPi<Scalar>, 0.9, 0.0, 0.0}),
         SpiralSimilarity3Impl::exp(
-            {0.5 * kPi<Scalar> + 0.00001, 0.0, 0.0, 0.9}),
+            {Scalar(0.2), Scalar(0.5), Scalar(0.0), Scalar(1.0)}),
+        SpiralSimilarity3Impl::exp(
+            {Scalar(0.2), Scalar(0.5), Scalar(-1.0), Scalar(1.1)}),
+        SpiralSimilarity3Impl::exp(
+            {Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(1.1)}),
+        SpiralSimilarity3Impl::exp(
+            {Scalar(0.0), Scalar(0.0), Scalar(0.00001), Scalar(0)}),
+        SpiralSimilarity3Impl::exp(
+            {Scalar(0.0), Scalar(0.0), Scalar(0.00001), Scalar(0.00001)}),
+        SpiralSimilarity3Impl::exp(
+            {Scalar(0.5 * kPi<Scalar>), Scalar(0.9), Scalar(0.0), Scalar(0.0)}),
+        SpiralSimilarity3Impl::exp(
+            {Scalar(0.5 * kPi<Scalar> + 0.00001),
+             Scalar(0.0),
+             Scalar(0.0),
+             Scalar(0.9)}),
     });
   }
 

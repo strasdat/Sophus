@@ -10,7 +10,7 @@
 
 #include "sophus/concepts/group_accessors.h"
 #include "sophus/lie/impl/rotation3.h"
-#include "sophus/lie/impl/semi_direct_product.h"
+#include "sophus/lie/impl/translation_factor_group_product.h"
 #include "sophus/lie/lie_group.h"
 #include "sophus/lie/rotation3.h"
 
@@ -19,18 +19,18 @@ namespace sophus {
 // definition: distance preserving mapping in R^3
 //             <==> shape and size preserving mapping in R^3
 template <class TScalar>
-class Isometry3 : public lie::Group<
-                      Isometry3<TScalar>,
-                      lie::SemiDirectProductWithTranslation<
-                          TScalar,
-                          3,
-                          lie::Rotation3Impl>> {
+class Isometry3
+    : public lie::Group<
+          Isometry3,
+          TScalar,
+          lie::WithDimAndSubgroup<3, lie::Rotation3Impl>::SemiDirectProduct> {
  public:
   using Scalar = TScalar;
 
   using Base = lie::Group<
-      Isometry3<Scalar>,
-      lie::SemiDirectProductWithTranslation<Scalar, 3, lie::Rotation3Impl>>;
+      Isometry3,
+      TScalar,
+      lie::WithDimAndSubgroup<3, lie::Rotation3Impl>::SemiDirectProduct>;
   using Rotation = Rotation3<Scalar>;
 
   using Tangent = typename Base::Tangent;

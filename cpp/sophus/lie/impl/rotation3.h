@@ -14,11 +14,9 @@
 namespace sophus {
 namespace lie {
 
-template <class TScalar, int kDim = 3>
+template <class TScalar>
 class Rotation3Impl {
  public:
-  static_assert(kDim == 3);
-
   using Scalar = TScalar;
   using Quaternion = QuaternionImpl<TScalar>;
 
@@ -37,6 +35,21 @@ class Rotation3Impl {
   using Tangent = Eigen::Vector<Scalar, kDof>;
   using Params = Eigen::Vector<Scalar, kNumParams>;
   using Point = Eigen::Vector<Scalar, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using ScalarReturn = typename Eigen::
+      ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::ReturnType;
+
+  template <class TCompatibleScalar>
+  using ParamsReturn =
+      Eigen::Vector<ScalarReturn<TCompatibleScalar>, kNumParams>;
+
+  template <class TCompatibleScalar>
+  using PointReturn = Eigen::Vector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using UnitVectorReturn =
+      UnitVector<ScalarReturn<TCompatibleScalar>, kPointDim>;
 
   // constructors and factories
 
@@ -60,6 +73,13 @@ class Rotation3Impl {
           kThr);
     }
     return sophus::Expected<Success>{};
+  }
+
+  static auto hasShortestPathAmbiguity(Params const& foo_from_bar) -> bool {
+    using std::abs;
+    TScalar angle = Rotation3Impl::log(foo_from_bar).norm();
+    TScalar const k_pi = kPi<TScalar>;  // NOLINT
+    return abs(angle - k_pi) / (angle + k_pi) < kEpsilon<TScalar>;
   }
 
   // Manifold / Lie Group concepts
@@ -166,10 +186,14 @@ class Rotation3Impl {
     return Quaternion::conjugate(unit_quat);
   }
 
-  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
-      -> Params {
-    auto result = Quaternion::multiplication(lhs_params, rhs_params);
-    Scalar const squared_norm = result.squaredNorm();
+  template <class TCompatibleScalar>
+  static auto multiplication(
+      Params const& lhs_params,
+      Eigen::Vector<TCompatibleScalar, 4> const& rhs_params)
+      -> ParamsReturn<TCompatibleScalar> {
+    ParamsReturn<TCompatibleScalar> result =
+        Quaternion::multiplication(lhs_params, rhs_params);
+    auto const squared_norm = result.squaredNorm();
 
     // We can assume that the squared-norm is close to 1 since we deal with a
     // unit complex number. Due to numerical precision issues, there might
@@ -179,7 +203,7 @@ class Rotation3Impl {
     // square-root, but can use an approximation around 1 (see
     // http://stackoverflow.com/a/12934750 for details).
     if (squared_norm != 1.0) {
-      Scalar const scale = 2.0 / (1.0 + squared_norm);
+      auto const scale = 2.0 / (1.0 + squared_norm);
       return scale * result;
     }
     return result;
@@ -190,27 +214,33 @@ class Rotation3Impl {
   }
 
   // Point actions
-  static auto action(Params const& unit_quat, Point const& point) -> Point {
+
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& unit_quat,
+      Eigen::Vector<TCompatibleScalar, kPointDim> const& point)
+      -> PointReturn<TCompatibleScalar> {
     Eigen::Vector3<Scalar> ivec = unit_quat.template head<3>();
 
-    Point uv = ivec.cross(point);
+    PointReturn<TCompatibleScalar> uv = ivec.cross(point);
     uv += uv;
     return point + unit_quat.w() * uv + ivec.cross(uv);
+  }
+
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& unit_quat,
+      UnitVector<TCompatibleScalar, 3> const& direction_vector)
+      -> UnitVectorReturn<TCompatibleScalar> {
+    // TODO: Implement normalization using expansion around 1 as done for
+    // ::multiplication to avoid possibly costly call to std::sqrt.
+    return UnitVectorReturn<TCompatibleScalar>::fromVectorAndNormalize(
+        action(unit_quat, direction_vector.params()));
   }
 
   static auto toAmbient(Point const& point)
       -> Eigen::Vector<Scalar, kAmbientDim> {
     return point;
-  }
-
-  static auto action(
-      Params const& unit_quat,
-      UnitVector<Scalar, kPointDim> const& direction_vector)
-      -> UnitVector<Scalar, kPointDim> {
-    // TODO: Implement normalization using expansion around 1 as done for
-    // ::multiplication to avoid possibly costly call to std::sqrt.
-    return UnitVector<Scalar, kPointDim>::fromVectorAndNormalize(
-        action(unit_quat, direction_vector.params()));
   }
 
   // matrices

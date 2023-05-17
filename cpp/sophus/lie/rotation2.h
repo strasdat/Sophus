@@ -17,11 +17,11 @@ namespace sophus {
 
 // definition: origin and distance preserving mapping in R^2
 template <class TScalar>
-class Rotation2
-    : public lie::Group<Rotation2<TScalar>, lie::Rotation2Impl<TScalar>> {
+class Rotation2 : public lie::Group<Rotation2, TScalar, lie::Rotation2Impl> {
  public:
   using Scalar = TScalar;
-  using Base = lie::Group<Rotation2<TScalar>, lie::Rotation2Impl<TScalar>>;
+
+  using Base = lie::Group<Rotation2, TScalar, lie::Rotation2Impl>;
 
   using Tangent = typename Base::Tangent;
   using Params = typename Base::Params;
@@ -32,6 +32,10 @@ class Rotation2
   explicit Rotation2(UninitTag /*unused*/) {}
 
   explicit Rotation2(TScalar angle) : Rotation2(Rotation2::fromAngle(angle)) {}
+
+  template <class TOtherScalar>
+  explicit Rotation2(TOtherScalar angle)
+      : Rotation2(Rotation2::fromAngle(angle)) {}
 
   template <class TOtherScalar>
   auto cast() const -> Rotation2<TOtherScalar> {

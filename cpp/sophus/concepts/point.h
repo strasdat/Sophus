@@ -42,6 +42,10 @@ template <int kRows, int kCols, typename TT>
 concept EigenWithDim = EigenDenseType<TT> && TT::RowsAtCompileTime ==
                        kRows&& TT::ColsAtCompileTime == kCols;
 
+template <typename TT>
+concept EigenVector3 = EigenDenseType<TT> && TT::RowsAtCompileTime == 3 &&
+                       TT::ColsAtCompileTime == 1;
+
 template <int kRows, int kCols, typename TT>
 concept EigenWithDimOrDynamic = EigenDenseType<TT> &&
                                 (TT::RowsAtCompileTime == Eigen::Dynamic ||

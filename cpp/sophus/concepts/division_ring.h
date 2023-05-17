@@ -19,7 +19,10 @@ class UnitVector;
 template <class TT>
 concept DivisionRingImpl =
     ::sophus::concepts::ParamsImpl<TT>  // or homogeneous point representation
-    && requires(typename TT::Params params) {
+    && requires(
+        typename TT::Params params,
+        Eigen::Vector<CompatScalarEx<typename TT::Scalar>, TT::kNumParams>
+            compatible_params) {
   // constructors and factories
   { TT::one() } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
 
@@ -27,12 +30,16 @@ concept DivisionRingImpl =
 
   // operations
   {
-    TT::addition(params, params)
-    } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
+    TT::template addition<CompatScalarEx<typename TT::Scalar>>(
+        params, compatible_params)
+    } -> ::sophus::concepts::ConvertibleTo<typename TT::template ParamsReturn<
+        CompatScalarEx<typename TT::Scalar>>>;
 
   {
-    TT::multiplication(params, params)
-    } -> ::sophus::concepts::ConvertibleTo<typename TT::Params>;
+    TT::template multiplication<CompatScalarEx<typename TT::Scalar>>(
+        params, compatible_params)
+    } -> ::sophus::concepts::ConvertibleTo<typename TT::template ParamsReturn<
+        CompatScalarEx<typename TT::Scalar>>>;
 
   {
     TT::conjugate(params)

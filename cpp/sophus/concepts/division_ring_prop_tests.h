@@ -88,7 +88,6 @@ struct DivisionRingTestSuite {
              ++params_id2) {
           Params params2 = SOPHUS_AT(kParamsExamples, params_id2);
           Ring g2 = Ring::fromParams(params2);
-
           Ring left_hugging = g1 * g2;
           Ring right_hugging = g2 * g1;
           ++num_cases;

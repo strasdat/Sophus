@@ -16,11 +16,9 @@
 namespace sophus {
 namespace lie {
 
-template <class TScalar, int kDim = 2>
+template <class TScalar>
 class SpiralSimilarity2Impl {
  public:
-  static_assert(kDim == 2);
-
   using Scalar = TScalar;
   using Complex = ComplexImpl<TScalar>;
 
@@ -39,6 +37,21 @@ class SpiralSimilarity2Impl {
   using Tangent = Eigen::Vector<Scalar, kDof>;
   using Params = Eigen::Vector<Scalar, kNumParams>;
   using Point = Eigen::Vector<Scalar, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using ScalarReturn = typename Eigen::
+      ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::ReturnType;
+
+  template <class TCompatibleScalar>
+  using ParamsReturn =
+      Eigen::Vector<ScalarReturn<TCompatibleScalar>, kNumParams>;
+
+  template <class TCompatibleScalar>
+  using PointReturn = Eigen::Vector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using UnitVectorReturn =
+      UnitVector<ScalarReturn<TCompatibleScalar>, kPointDim>;
 
   // constructors and factories
 
@@ -63,6 +76,11 @@ class SpiralSimilarity2Impl {
     return sophus::Expected<Success>{};
   }
 
+  static auto hasShortestPathAmbiguity(Params const& non_zero_complex) -> bool {
+    return Rotation2Impl<Scalar>::hasShortestPathAmbiguity(
+        non_zero_complex.normalized());
+  }
+
   // Manifold / Lie Group concepts
 
   static auto exp(Tangent const& angle_logscale) -> Params {
@@ -84,7 +102,8 @@ class SpiralSimilarity2Impl {
   static auto log(Params const& complex) -> Tangent {
     using std::log;
     Tangent theta_sigma;
-    theta_sigma[0] = Rotation2Impl<Scalar>::log(complex)[0];
+    theta_sigma[0] =
+        Eigen::Vector<Scalar, 1>{atan2(complex.y(), complex.x())}[0];
     theta_sigma[1] = log(complex.norm());
     return theta_sigma;
   }
@@ -110,27 +129,35 @@ class SpiralSimilarity2Impl {
         -non_zero_complex.y() / squared_scale);
   }
 
-  static auto multiplication(Params const& lhs_params, Params const& rhs_params)
-      -> Params {
+  template <class TCompatibleScalar>
+  static auto multiplication(
+      Params const& lhs_params,
+      Eigen::Vector<TCompatibleScalar, kNumParams> const& rhs_params)
+      -> ParamsReturn<TCompatibleScalar> {
     auto result = Complex::multiplication(lhs_params, rhs_params);
-    Scalar const squared_scale = result.squaredNorm();
+    using ScalarReturn = typename ParamsReturn<TCompatibleScalar>::Scalar;
+    ScalarReturn const squared_scale = result.squaredNorm();
 
     if (squared_scale < kEpsilon<Scalar> * kEpsilon<Scalar>) {
       /// Saturation to ensure class invariant.
       result.normalize();
-      result *= kEpsilonPlus<Scalar>;
+      result *= kEpsilonPlus<ScalarReturn>;
     }
-    if (squared_scale > Scalar(1.) / (kEpsilon<Scalar> * kEpsilon<Scalar>)) {
+    if (squared_scale >
+        Scalar(1.) / (kEpsilon<ScalarReturn> * kEpsilon<ScalarReturn>)) {
       /// Saturation to ensure class invariant.
       result.normalize();
-      result /= kEpsilonPlus<Scalar>;
+      result /= kEpsilonPlus<ScalarReturn>;
     }
     return result;
   }
 
   // Group actions
-  static auto action(Params const& non_zero_complex, Point const& point)
-      -> Point {
+  template <class TCompatibleScalar>
+  static auto action(
+      Params const& non_zero_complex,
+      Eigen::Vector<TCompatibleScalar, kPointDim> const& point)
+      -> PointReturn<TCompatibleScalar> {
     return matrix(non_zero_complex) * point;
   }
 
@@ -139,12 +166,13 @@ class SpiralSimilarity2Impl {
     return point;
   }
 
+  template <class TCompatibleScalar>
   static auto action(
-      Params const& non_zero_quat,
-      UnitVector<Scalar, kPointDim> const& direction_vector)
-      -> UnitVector<Scalar, kPointDim> {
+      Params const& non_zero_complex,
+      UnitVector<TCompatibleScalar, kPointDim> const& direction_vector)
+      -> UnitVectorReturn<TCompatibleScalar> {
     return UnitVector<Scalar, kPointDim>::fromParams(
-        Rotation2Impl<Scalar>::matrix(non_zero_quat.normalized()) *
+        Rotation2Impl<Scalar>::matrix(non_zero_complex.normalized()) *
         direction_vector.params());
   }
 

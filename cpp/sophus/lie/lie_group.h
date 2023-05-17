@@ -10,16 +10,29 @@
 
 #include "sophus/common/enum.h"
 #include "sophus/concepts/lie_group.h"
-#include "sophus/lie/impl/semi_direct_product.h"
+#include "sophus/lie/impl/translation_factor_group_product.h"
 
 namespace sophus {
 namespace lie {
 
-template <class TDerived, class TImpl>
+template <
+    template <class>
+    class TGenericDerived,
+    class TScalar,
+    template <class>
+    class TGenericImpl>
 class Group {
  public:
-  using Impl = TImpl;
-  using Scalar = typename Impl::Scalar;
+  using Scalar = TScalar;
+  using Impl = TGenericImpl<TScalar>;
+
+  template <
+      template <class>
+      class TOtherGenericDerived,
+      class TOtherScalar,
+      template <class>
+      class TOtherGenericImpl>
+  friend class Group;
 
   static bool constexpr kIsOriginPreserving = Impl::kIsOriginPreserving;
   static bool constexpr kIsAxisDirectionPreserving =
@@ -36,6 +49,22 @@ class Group {
   static int constexpr kPointDim = Impl::kPointDim;
   static int constexpr kAmbientDim = Impl::kAmbientDim;
 
+  template <class TCompatibleScalar>
+  using ScalarReturn = typename Eigen::
+      ScalarBinaryOpTraits<Scalar, TCompatibleScalar>::ReturnType;
+
+  using Derived = TGenericDerived<Scalar>;
+
+  template <class TCompatibleScalar>
+  using DerivedReturn = TGenericDerived<ScalarReturn<TCompatibleScalar>>;
+
+  template <class TCompatibleScalar>
+  using PointReturn = Eigen::Vector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
+  template <class TCompatibleScalar>
+  using UnitVectorReturn =
+      UnitVector<ScalarReturn<TCompatibleScalar>, kPointDim>;
+
   using Tangent = Eigen::Vector<Scalar, kDof>;
   using Params = Eigen::Vector<Scalar, kNumParams>;
   using Point = Eigen::Vector<Scalar, kPointDim>;
@@ -47,22 +76,22 @@ class Group {
   Group(Group const&) = default;
   auto operator=(Group const&) -> Group& = default;
 
-  static auto fromParams(Params const& params) -> TDerived {
-    TDerived g(UninitTag{});
+  static auto fromParams(Params const& params) -> Derived {
+    Derived g(UninitTag{});
     g.setParams(params);
     return g;
   }
 
-  static auto identity() -> TDerived {
-    TDerived g(UninitTag{});
+  static auto identity() -> Derived {
+    Derived g(UninitTag{});
     g.setParams(Impl::identityParams);
     return g;
   }
 
   // Manifold / Lie Group concepts
 
-  static auto exp(Tangent const& tangent) -> TDerived {
-    return TDerived::fromParamsUnchecked(Impl::exp(tangent));
+  static auto exp(Tangent const& tangent) -> Derived {
+    return Derived::fromParamsUnchecked(Impl::exp(tangent));
   }
 
   [[nodiscard]] auto log() const -> Tangent { return Impl::log(this->params_); }
@@ -77,54 +106,63 @@ class Group {
     return Impl::vee(mat);
   }
 
-  // group operations
-
-  auto operator*(TDerived const& rhs) const -> TDerived {
-    return TDerived::fromParamsUnchecked(
-        Impl::multiplication(this->params_, rhs.params_));
+  auto hasShortestPathAmbiguity() -> bool {
+    return Impl::hasShortestPathAmbiguity(this->params_);
   }
 
-  auto operator*=(TDerived const& rhs) -> TDerived& {
+  // group operations
+
+  template <class TCompatibleScalar>
+  auto operator*(TGenericDerived<TCompatibleScalar> const& rhs) const
+      -> DerivedReturn<TCompatibleScalar> {
+    auto params = Impl::multiplication(this->params_, rhs.params());
+    return DerivedReturn<TCompatibleScalar>::fromParamsUnchecked(params);
+  }
+
+  auto operator*=(Derived const& rhs) -> Derived& {
     *this = *this * rhs;
     return self();
   }
 
-  [[nodiscard]] auto inverse() const -> TDerived {
-    return TDerived::fromParams(Impl::inverse(this->params_));
+  [[nodiscard]] auto inverse() const -> Derived {
+    return Derived::fromParams(Impl::inverse(this->params_));
   }
 
   // Group actions
+  template <class TMatrixDerived>
+  auto operator*(Eigen::MatrixBase<TMatrixDerived> const& point) const
+      -> PointReturn<typename TMatrixDerived::Scalar> {
+    return Impl::action(this->params_, point.eval());
+  }
 
-  auto operator*(Point const& point) const -> Point {
-    return Impl::action(this->params_, point);
+  template <class TCompatibleScalar>
+  auto operator*(
+      UnitVector<TCompatibleScalar, kPointDim> const& direction_vector) const
+      -> UnitVectorReturn<TCompatibleScalar> {
+    return Impl::action(params_, direction_vector);
   }
 
   static auto toAmbient(Point const& point) { return Impl::toAmbient(point); }
-
-  auto operator*(UnitVector<Scalar, kPointDim> const& direction_vector) const
-      -> UnitVector<Scalar, kPointDim> {
-    return Impl::action(params_, direction_vector);
-  }
 
   [[nodiscard]] auto adj() const -> Eigen::Matrix<Scalar, kDof, kDof> {
     return Impl::adj(this->params_);
   }
 
   // left addition also called "left translation" in the literature
-  [[nodiscard]] auto leftPlus(Tangent const& tangent) const -> TDerived {
+  [[nodiscard]] auto leftPlus(Tangent const& tangent) const -> Derived {
     return this->exp(tangent) * self();
   }
 
   // right addition also called "right translation" in the literature
-  [[nodiscard]] auto rightPlus(Tangent const& tangent) const -> TDerived {
+  [[nodiscard]] auto rightPlus(Tangent const& tangent) const -> Derived {
     return self() * exp(tangent);
   }
 
-  [[nodiscard]] auto leftMinus(TDerived const& other) const -> Tangent {
+  [[nodiscard]] auto leftMinus(Derived const& other) const -> Tangent {
     return (self() * other.inverse()).log();
   }
 
-  [[nodiscard]] auto rightMinus(TDerived const& other) const -> Tangent {
+  [[nodiscard]] auto rightMinus(Derived const& other) const -> Tangent {
     return (other.inverse() * self()).log();
   }
 
@@ -180,10 +218,10 @@ class Group {
     return Impl::paramsExamples();
   }
 
-  static auto elementExamples() -> std::vector<TDerived> {
-    std::vector<TDerived> out;
-    for (auto const& params : TDerived::paramsExamples()) {
-      out.push_back(TDerived::fromParams(params));
+  static auto elementExamples() -> std::vector<Derived> {
+    std::vector<Derived> out;
+    for (auto const& params : Derived::paramsExamples()) {
+      out.push_back(Derived::fromParams(params));
     }
     return out;
   }
@@ -210,14 +248,14 @@ class Group {
  protected:
   explicit Group(UninitTag /*unused*/) {}
 
-  auto self() -> TDerived& { return static_cast<TDerived&>(*this); }
+  auto self() -> Derived& { return static_cast<Derived&>(*this); }
 
-  auto self() const -> TDerived const& {
-    return static_cast<TDerived const&>(*this);
+  auto self() const -> Derived const& {
+    return static_cast<Derived const&>(*this);
   }
 
-  static auto fromParamsUnchecked(Params const& params) -> TDerived {
-    TDerived g(UninitTag{});
+  static auto fromParamsUnchecked(Params const& params) -> Derived {
+    Derived g(UninitTag{});
     g.setParamsUnchecked(params);
     return g;
   }

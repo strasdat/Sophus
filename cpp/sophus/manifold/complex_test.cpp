@@ -6,7 +6,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "sophus/linalg/complex.h"
+#include "sophus/manifold/complex.h"
 
 #include "sophus/concepts/division_ring_prop_tests.h"
 
