@@ -53,7 +53,7 @@
 
 // from <farm_ng/core/logging/expected.h>
 #define SOPHUS_TRY(...) FARM_TRY(__VA_ARGS__)
-#define SOPHUS_TRY_ASSERT(...) FARM_TRY_ASSERT(__VA_ARGS__)
+#define SOPHUS_ASSERT_OR_ERROR(...) FARM_ASSERT_OR_ERROR(__VA_ARGS__)
 #define SOPHUS_UNEXPECTED(...) FARM_UNEXPECTED(__VA_ARGS__)
 
 namespace sophus {
