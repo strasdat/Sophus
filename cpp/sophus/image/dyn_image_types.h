@@ -32,6 +32,9 @@ struct IntensityImagePredicate {
       uint8_t,
       uint16_t,
       float,
+      Pixel2U8,
+      Pixel2U16,
+      Pixel2F32,
       Pixel3U8,
       Pixel3U16,
       Pixel3F32,
@@ -45,8 +48,8 @@ struct IntensityImagePredicate {
 
   static auto constexpr isFormatValid(PixelFormat format) -> bool {
     bool num_components_constraint =
-        (format.num_components == 1 || format.num_components == 3 ||
-         format.num_components == 4);
+        (format.num_components == 1 || format.num_components == 2 ||
+         format.num_components == 3 || format.num_components == 4);
     bool u8_constraint = format.number_type == NumberType::fixed_point &&
                          format.num_bytes_per_component == 1;
     bool u16_constraint = format.number_type == NumberType::fixed_point &&

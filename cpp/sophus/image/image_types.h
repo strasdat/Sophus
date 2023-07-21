@@ -15,6 +15,12 @@ namespace sophus {
 
 // Pixel type defs:
 template <class TChannel>
+using Pixel2 = Eigen::Matrix<TChannel, 2, 1>;
+using Pixel2U8 = Pixel2<uint8_t>;
+using Pixel2U16 = Pixel2<uint16_t>;
+using Pixel2F32 = Pixel2<float>;
+
+template <class TChannel>
 using Pixel3 = Eigen::Matrix<TChannel, 3, 1>;
 using Pixel3U8 = Pixel3<uint8_t>;
 using Pixel3U16 = Pixel3<uint16_t>;
