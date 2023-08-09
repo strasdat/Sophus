@@ -357,7 +357,7 @@ class Sim2Base {
 
   /// Setter of complex number using rotation matrix ``R``, leaves scale as is.
   ///
-  SOPHUS_FUNC void setRotationMatrix(Matrix2<Scalar>& R) {
+  SOPHUS_FUNC void setRotationMatrix(Matrix2<Scalar> const& R) {
     rxso2().setRotationMatrix(R);
   }
 
