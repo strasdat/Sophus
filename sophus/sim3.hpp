@@ -355,7 +355,7 @@ class Sim3Base {
 
   /// Setter of quaternion using rotation matrix ``R``, leaves scale as is.
   ///
-  SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar>& R) {
+  SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar> const& R) {
     rxso3().setRotationMatrix(R);
   }
 
