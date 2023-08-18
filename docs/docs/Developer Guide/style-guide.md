@@ -25,7 +25,7 @@ Note that the frame names line up: ``bar`` - ``bar``, ``foo`` - ``foo``.
 
  - If necessary to resolved ambiguities, e.g. between rotations and rigid
    body transforms, we use a corresponding notation, e.g.
-   ``bar_form_foo_rotation``, ``bar_form_foo_se3s`` etc.
+   ``bar_from_foo_rotation``, ``bar_from_foo_se3s`` etc.
 
  - If we have a list (or vector, or map) of transforms we write:, e.g.:
 
@@ -56,5 +56,5 @@ Note that the frame names line up: ``bar`` - ``bar``, ``foo`` - ``foo``.
     E.g. ``world_from_sensor_rig``, ``sensor_rig_from_camera``,
     ``robot_from_imu`` (and not ``sensor_rig_from_world`` etc.).
 
-    It is easier to reason about the pose of camera in the world frame, then
+    It is easier to reason about the pose of camera in the world frame than
     the pose of the world origin in the camera frame.
