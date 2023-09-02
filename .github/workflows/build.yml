@@ -41,13 +41,13 @@ jobs:
             tests: coverage
             access: col_major
             build_type: Debug
-          - os: macos-11
+          - os: macos-12
             compiler: clang
             optional_features: minimal
             tests: unit_test
             access: col_major
             build_type: Release
-          - os: macos-12
+          - os: macos-arm64
             compiler: clang
             optional_features: minimal # todo: ceres_proto here
             tests: unit_test
