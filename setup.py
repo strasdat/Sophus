@@ -56,6 +56,8 @@ class CMakeBuild(build_ext):
 
         cmake_args = [
             "-DBUILD_PYTHON_BINDINGS=ON",
+            "-DBUILD_SOPHUS_EXAMPLES=OFF",
+            "-DBUILD_SOPHUS_TESTS=OFF",
         ]
         build_args = []
         # Adding CMake arguments set as environment variable
@@ -143,7 +145,7 @@ def main():
         description="Sophus python API",
         long_description="Python API for sophus library",
         url="https://github.com/strasdat/sophus",
-        ext_modules=[CMakeExtension("SOPHUS", sourcedir=ROOT_DIR)],
+        ext_modules=[CMakeExtension("pysophus", sourcedir=ROOT_DIR)],
         author="Cheng Peng, David Caruso",
         cmdclass={"build_ext": CMakeBuild},
         zip_safe=False,
