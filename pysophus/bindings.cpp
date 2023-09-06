@@ -16,10 +16,6 @@
 
 #include "SophusPyBind.h"
 
-namespace py = pybind11;
-using namespace sophus;
-
-PYBIND11_MODULE(sophus, m) {
-  py::module sophus = m.def_submodule("pysophus");
-  sophus::exportSophus(sophus);
+PYBIND11_MODULE(pysophus, m) {
+  sophus::exportSophus(m);
 }

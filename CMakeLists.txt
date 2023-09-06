@@ -156,7 +156,7 @@ endif()
 # Build python sophus bindings
 option(BUILD_PYTHON_BINDINGS "Build python sophus bindings." ON)
 if(BUILD_PYTHON_BINDINGS)
-    add_subdirectory(python)
+    add_subdirectory(pysophus)
 endif(BUILD_PYTHON_BINDINGS)
 
 if(SOPHUS_INSTALL)
