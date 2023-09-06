@@ -153,6 +153,12 @@ if(BUILD_SOPHUS_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
+# Build python sophus bindings
+option(BUILD_PYTHON_BINDINGS "Build python sophus bindings." ON)
+if(BUILD_PYTHON_BINDINGS)
+    add_subdirectory(python)
+endif(BUILD_PYTHON_BINDINGS)
+
 if(SOPHUS_INSTALL)
   # Export package for use from the build tree
   set(SOPHUS_CMAKE_EXPORT_DIR ${CMAKE_INSTALL_DATADIR}/sophus/cmake)
