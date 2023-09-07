@@ -154,9 +154,19 @@ if(BUILD_SOPHUS_EXAMPLES)
 endif()
 
 # Build python sophus bindings
-option(BUILD_PYTHON_BINDINGS "Build python sophus bindings." ON)
+option(BUILD_PYTHON_BINDINGS "Build python sophus bindings." OFF)
 if(BUILD_PYTHON_BINDINGS)
-    add_subdirectory(pysophus)
+  include(FetchContent)
+  FetchContent_Declare(
+      pybind11
+      GIT_REPOSITORY https://github.com/pybind/pybind11.git
+      GIT_TAG master
+  )
+  FetchContent_MakeAvailable(pybind11)
+
+  add_subdirectory(${pybind11_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/pybind)
+  pybind11_add_module(pysophus ${CMAKE_CURRENT_SOURCE_DIR}/pysophus/bindings.cpp)
+  target_link_libraries(pysophus PUBLIC sophus)
 endif(BUILD_PYTHON_BINDINGS)
 
 if(SOPHUS_INSTALL)
