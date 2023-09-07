@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -111,6 +112,20 @@ class CMakeBuild(build_ext):
         subprocess.check_call(
             ["cmake", "--build", "."] + build_args, cwd=self.build_lib
         )
+
+        # remove all cmake files except *.so
+        contents = os.listdir(self.build_lib)
+        print(contents)
+        for tmp in contents:
+            out = os.path.join(self.build_lib, tmp)
+            if tmp.endswith(".so"):
+                continue
+            elif os.path.isfile(out):
+                os.remove(out)
+                print(f"removed {out}")
+            elif os.path.isdir(out):
+                shutil.rmtree(out)
+                print(f"removed {out}")
 
 
 def main():
