@@ -1,17 +1,3 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import os
 import re
 import subprocess
@@ -66,13 +52,6 @@ class CMakeBuild(build_ext):
             cmake_args += [item for item in os.environ["CMAKE_ARGS"].split(" ") if item]
 
         if "PYTHONPATH" in os.environ and "pip-build-env" in os.environ["PYTHONPATH"]:
-            # When the users use `pip install .` to install projectaria_tools and
-            # the cmake executable is a python entry script, there will be
-            # `Fix ModuleNotFoundError: No module named 'cmake'` from the cmake script.
-            # This is caused by the additional PYTHONPATH environment variable added by pip,
-            # which makes cmake python entry script not able to find correct python cmake packages.
-            # Actually, sys.path is well enough for `pip install -e .`.
-            # Therefore, we delete the PYTHONPATH variable.
             del os.environ["PYTHONPATH"]
 
         if self.compiler.compiler_type != "msvc":
@@ -125,14 +104,12 @@ class CMakeBuild(build_ext):
                 # CMake 3.12+ only.
                 build_args += [f"-j{self.parallel}"]
 
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
+        if not os.path.exists(self.build_lib):
+            os.makedirs(self.build_lib)
 
+        subprocess.check_call(["cmake", ext.sourcedir] + cmake_args, cwd=self.build_lib)
         subprocess.check_call(
-            ["cmake", ext.sourcedir] + cmake_args, cwd=self.build_temp
-        )
-        subprocess.check_call(
-            ["cmake", "--build", "."] + build_args, cwd=self.build_temp
+            ["cmake", "--build", "."] + build_args, cwd=self.build_lib
         )
 
 
