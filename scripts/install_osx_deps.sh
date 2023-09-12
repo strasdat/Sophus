@@ -5,7 +5,7 @@ set -e # exit on error
 
 brew update
 brew install fmt
-
+brew install ccache
 
 # Build a specific version of ceres-solver instead of one shipped over brew
 curl https://raw.githubusercontent.com/Homebrew/homebrew-core/b0792ccba6e71cd028263ca7621db894afc602d2/Formula/ceres-solver.rb -o ceres-solver.rb
