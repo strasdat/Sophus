@@ -165,8 +165,8 @@ if(BUILD_PYTHON_BINDINGS)
   FetchContent_MakeAvailable(pybind11)
 
   add_subdirectory(${pybind11_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/pybind)
-  pybind11_add_module(pysophus ${CMAKE_CURRENT_SOURCE_DIR}/pysophus/bindings.cpp)
-  target_link_libraries(pysophus PUBLIC sophus)
+  pybind11_add_module(sophus_pybind ${CMAKE_CURRENT_SOURCE_DIR}/sophus_pybind/bindings.cpp)
+  target_link_libraries(sophus_pybind PUBLIC sophus)
 endif(BUILD_PYTHON_BINDINGS)
 
 if(SOPHUS_INSTALL)
