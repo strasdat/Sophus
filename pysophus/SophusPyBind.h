@@ -13,7 +13,7 @@
 #define SOPHUS_ENABLE_ENSURE_HANDLER
 #endif
 
-namespace sophus {
+namespace Sophus {
 inline void
 ensureFailed(char const* function, char const* file, int line, char const* description) {
   std::stringstream message;
@@ -31,4 +31,4 @@ inline void exportSophus(pybind11::module& module) {
   exportSE3Interpolate<double>(module);
 }
 
-} // namespace sophus
+} // namespace Sophus

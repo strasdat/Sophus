@@ -12,7 +12,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-namespace sophus {
+namespace Sophus {
 
 // In python, we choose to export our Sophus::SE3 as a vector of SE3 objects by binding the cpp
 // object `SE3Group` defined below.
@@ -27,7 +27,7 @@ class SE3Group : public std::vector<Sophus::SE3<Scalar>> {
     this->push_back(in);
   }
 };
-} // namespace sophus
+} // namespace Sophus
 
 // The following caster makes so that, even if we wrap SE3Group in python, those can be
 // implicitly converted to the c++ Sophus::SE3 object at boundaries between languages.
@@ -46,7 +46,7 @@ struct type_caster<Sophus::SE3<double>> {
   // converting from python -> c++ type
   bool load(handle src, bool convert) {
     try {
-      sophus::SE3Group<double>& ref = src.cast<sophus::SE3Group<double>&>();
+      Sophus::SE3Group<double>& ref = src.cast<Sophus::SE3Group<double>&>();
       if (ref.size() != 1) {
         throw std::domain_error(fmt::format(
             "A element of size 1 is required here. Input has {} elements.", ref.size()));
@@ -60,13 +60,13 @@ struct type_caster<Sophus::SE3<double>> {
 
   // converting from c++ -> python type
   static handle cast(Sophus::SE3<double> src, return_value_policy policy, handle parent) {
-    return type_caster_base<sophus::SE3Group<double>>::cast(sophus::SE3Group<double>(src), policy, parent);
+    return type_caster_base<Sophus::SE3Group<double>>::cast(Sophus::SE3Group<double>(src), policy, parent);
   }
 };
 } // namespace detail
 } // namespace pybind11
 
-namespace sophus {
+namespace Sophus {
 /*SE3*/
 template <typename Scalar>
 using PybindSE3Type = pybind11::class_<SE3Group<Scalar>>;
@@ -319,7 +319,7 @@ PybindSE3Type<Scalar> exportSE3Transformation(
       "__len__", [](const SE3Group<Scalar>& transformations) { return transformations.size(); });
 
   type.def("__str__", [](const SE3Group<Scalar>& transformations) -> std::string {
-    return fmt::format("sophus.SE3 (x{})", transformations.size());
+    return fmt::format("Sophus.SE3 (x{})", transformations.size());
   });
 
   type.def(
@@ -500,4 +500,4 @@ void exportSE3Interpolate(pybind11::module& module) {
       "Interpolate two SE3s of size 1.");
 }
 
-} // namespace sophus
+} // namespace Sophus
