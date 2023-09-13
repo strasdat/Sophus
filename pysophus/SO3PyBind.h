@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fmt/format.h>
 #include <sophus/common.hpp>
 #include <sophus/so3.hpp>
 

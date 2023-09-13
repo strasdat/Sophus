@@ -1,0 +1,68 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build pysophus on ${{ matrix.os }} / ${{ matrix.cmakeOptions }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, macos-10.15]
+    steps:
+      - name : Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              # Update & upgrade package lists
+              sudo apt-get update -y
+              sudo apt-get upgrade
+              # Deal with Github CI limitation
+              # https://github.com/actions/runner-images/issues/6399#issuecomment-1285011525
+              sudo apt install -y libunwind-dev
+
+              # Generic dependencies
+              sudo apt-get install cmake
+
+              # Clean APT cache
+              sudo apt-get clean
+
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+              # Install system deps with Homebrew
+              brew install cmake
+              # VRS dependencies
+              brew install fmt lz4 zstd xxhash
+          else
+              echo "$RUNNER_OS not supported"
+              exit 1
+          fi
+
+      - name: Install pysophus
+        shell: bash
+        run: |
+          # Installing Python and dependencies
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install libpython3-dev python3-pip
+            sudo pip3 install numpy pytest
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            pip3 install numpy pytest
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+
+          # Build and install Python bindings
+          pip3 install .
+
+      - name: Run pysophus tests
+        shell: bash
+        run: python3 -m pytest pysophus/tests/sophusPybindTests.py
