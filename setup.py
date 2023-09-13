@@ -132,12 +132,12 @@ def main():
     # The information here can also be placed in setup.cfg - better separation of
     # logic and declaration, and simpler if you include description/version in a file.
     setup(
-        name="pysophus",
+        name="sophus_pybind",
         version="1.22.10",
         description="Sophus python API",
         long_description="Python API for sophus library",
         url="https://github.com/strasdat/sophus",
-        ext_modules=[CMakeExtension("pysophus", sourcedir=ROOT_DIR)],
+        ext_modules=[CMakeExtension("sophus_pybind", sourcedir=ROOT_DIR)],
         author="Cheng Peng, David Caruso",
         cmdclass={"build_ext": CMakeBuild},
         zip_safe=False,

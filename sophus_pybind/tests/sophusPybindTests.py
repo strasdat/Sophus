@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from pysophus import interpolate, iterativeMean, SE3, SO3
+from sophus_pybind import interpolate, iterativeMean, SE3, SO3
 
 
 class SophusPybindTest(unittest.TestCase):

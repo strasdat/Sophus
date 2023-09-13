@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build pysophus on ${{ matrix.os }} / ${{ matrix.cmakeOptions }}
+    name: Build sophus_pybind on ${{ matrix.os }} / ${{ matrix.cmakeOptions }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -46,7 +46,7 @@ jobs:
               exit 1
           fi
 
-      - name: Install pysophus
+      - name: Install sophus_pybind
         shell: bash
         run: |
           # Installing Python and dependencies
@@ -63,6 +63,6 @@ jobs:
           # Build and install Python bindings
           pip3 install .
 
-      - name: Run pysophus tests
+      - name: Run sophus_pybind tests
         shell: bash
-        run: python3 -m pytest pysophus/tests/sophusPybindTests.py
+        run: python3 -m pytest sophus_pybind/tests/sophusPybindTests.py
