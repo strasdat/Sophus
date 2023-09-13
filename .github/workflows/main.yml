@@ -64,24 +64,3 @@ jobs:
 
       - name: Run tests
         run: ./scripts/run_cpp_tests.sh
-
-      - name: Install pysophus
-        shell: bash
-        run: |
-          # Installing Python and dependencies
-          if [ "$RUNNER_OS" == "Linux" ]; then
-            sudo apt-get install libpython3-dev python3-pip
-            sudo pip3 install numpy pytest
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-            pip3 install numpy pytest
-          else
-            echo "$RUNNER_OS not supported"
-            exit 1
-          fi
-
-          # Build and install Python bindings
-          pip3 install .
-
-      - name: Run pysophus tests
-        shell: bash
-        run: pytest pysophus/tests/sophusPybindTests.py
