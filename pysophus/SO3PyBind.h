@@ -9,7 +9,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-namespace sophus {
+namespace Sophus {
 
 // In python, we choose to export our Sophus::SO3 as a vector of SO3 objects by binding the cpp
 // object `SO3Group` defined below. This is because numerical code in python tends to work with
@@ -26,7 +26,7 @@ class SO3Group : public std::vector<Sophus::SO3<Scalar>> {
     this->push_back(in);
   }
 };
-} // namespace sophus
+} // namespace Sophus
 
 // The following caster makes so that, even if we wrap SO3Group in python, those can be
 // implicitly converted to the c++ Sophus::SO3 object at boundaries between languages.
@@ -45,7 +45,7 @@ struct type_caster<Sophus::SO3<double>> {
   // converting from python -> c++ type
   bool load(handle src, bool /*convert*/) {
     try {
-      sophus::SO3Group<double>& ref = src.cast<sophus::SO3Group<double>&>();
+      Sophus::SO3Group<double>& ref = src.cast<Sophus::SO3Group<double>&>();
       if (ref.size() != 1) {
         throw std::domain_error(fmt::format(
             "A element of size 1 is required here. Input has {} elements.", ref.size()));
@@ -59,13 +59,13 @@ struct type_caster<Sophus::SO3<double>> {
 
   // converting from c++ -> python type
   static handle cast(Sophus::SO3<double> src, return_value_policy policy, handle parent) {
-    return type_caster_base<sophus::SO3Group<double>>::cast(sophus::SO3Group<double>(src), policy, parent);
+    return type_caster_base<Sophus::SO3Group<double>>::cast(Sophus::SO3Group<double>(src), policy, parent);
   }
 };
 } // namespace detail
 } // namespace pybind11
 
-namespace sophus {
+namespace Sophus {
 template <typename Scalar>
 using PybindSO3Group = pybind11::class_<SO3Group<Scalar>>;
 
@@ -200,7 +200,7 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module, const std::strin
     return rotations; // copy is done with the std::vector copy constructor
   });
   type.def("__str__", [](const SO3Group<Scalar>& rotations) -> std::string {
-    return fmt::format("sophus.SO3 (x{})", rotations.size());
+    return fmt::format("Sophus.SO3 (x{})", rotations.size());
   });
   type.def("__len__", [](const SO3Group<Scalar>& rotations) { return rotations.size(); });
   type.def("__repr__", [](const SO3Group<Scalar>& rotations) -> std::string {
@@ -371,4 +371,4 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module, const std::strin
   return type;
 }
 
-} // namespace sophus
+} // namespace Sophus
