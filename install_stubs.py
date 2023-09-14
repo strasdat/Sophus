@@ -7,3 +7,5 @@ subprocess.run(
     shell=True,
     check=True,
 )
+
+subprocess.run("pip install sophus_pybind-stubs/", shell=True, check=True)
