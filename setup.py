@@ -113,12 +113,20 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", "."] + build_args, cwd=self.build_lib
         )
 
-        # remove all cmake files except *.so
+        # copy stubs files from sophus_pybind-stubs to lib folder to be installed
+        subprocess.run(
+            f"cp sophus_pybind-stubs/*.pyi {self.build_lib}", shell=True, check=True,
+        )
+        subprocess.run(
+            f"cp sophus_pybind-stubs/*.typed {self.build_lib}",  shell=True, check=True,
+        )
+
+        # remove all cmake files except .so, .typed, and .pyi files
         contents = os.listdir(self.build_lib)
         print(contents)
         for tmp in contents:
             out = os.path.join(self.build_lib, tmp)
-            if tmp.endswith(".so"):
+            if tmp.endswith(".so") or tmp.endswith(".typed") or tmp.endswith(".pyi"):
                 continue
             elif os.path.isfile(out):
                 os.remove(out)
