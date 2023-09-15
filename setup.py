@@ -105,12 +105,15 @@ class CMakeBuild(build_ext):
                 # CMake 3.12+ only.
                 build_args += [f"-j{self.parallel}"]
 
-        if not os.path.exists(self.build_lib):
-            os.makedirs(self.build_lib)
+        if not os.path.exists(self.build_temp):
+            os.makedirs(self.build_temp)
 
-        subprocess.check_call(["cmake", ext.sourcedir] + cmake_args, cwd=self.build_lib)
+        if not os.path.exists(self.build_lib):
+                os.makedirs(self.build_lib)
+
+        subprocess.check_call(["cmake", ext.sourcedir] + cmake_args, cwd=self.build_temp)
         subprocess.check_call(
-            ["cmake", "--build", "."] + build_args, cwd=self.build_lib
+            ["cmake", "--build", "."] + build_args, cwd=self.build_temp
         )
 
         # copy stubs files from sophus_pybind-stubs to lib folder to be installed
@@ -120,20 +123,8 @@ class CMakeBuild(build_ext):
         subprocess.run(
             f"cp sophus_pybind-stubs/*.typed {self.build_lib}",  shell=True, check=True,
         )
-
-        # remove all cmake files except .so, .typed, and .pyi files
-        contents = os.listdir(self.build_lib)
-        print(contents)
-        for tmp in contents:
-            out = os.path.join(self.build_lib, tmp)
-            if tmp.endswith(".so") or tmp.endswith(".typed") or tmp.endswith(".pyi"):
-                continue
-            elif os.path.isfile(out):
-                os.remove(out)
-                print(f"removed {out}")
-            elif os.path.isdir(out):
-                shutil.rmtree(out)
-                print(f"removed {out}")
+        # copy .so file to lib
+        subprocess.run(f"cp {self.build_temp}/*.so {self.build_lib}/", shell=True, check=True,)
 
 
 def main():
