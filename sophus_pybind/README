@@ -1,0 +1,67 @@
+# Python binding for Sophus library: sophus-pybind 
+sophus-pybind implement python binding for sophus that provides access to SO3, SE3, interpolate and iterativeMean features.
+The user interface is inspired by scipy.spacial.transform.Rotation. 
+Here is a specific list of features.
+
+## Feature list
+* SO3
+  * Initialize with from_quat(), from_matrix(), exp()
+  * Convert to functions: to_quat(), to_matrix(), log()
+  * Multiplication with SO3 or 3D points
+  * Operator [] for setting/getting items with index or slices
+  * Inverse, copy, print, and len
+  * Function vectorization
+* SE3
+  * Initialize with from_quat_and_translation(), from_matrix(), from_matrix3x4(), exp()
+  * Convert to functions to_quat_and_translation(), to_matrix(), to_matrix3x4(), log()
+  * Multiplication with SE3 or 3D points
+  * Operator [] for setting/getting items with index or slices
+  * Function vectorization
+  * Inverse, copy, print, and len
+  * Interpolate between two SE3
+  * Iterative mean of a group of SE3 
+
+## Python module (pysophus) installation step 
+```
+# Create virtual environment
+python3 -m venv ~/sophus_venv
+source ~/sophus_venv/bin/activate
+
+# Install package 
+git clone <sophus-package>
+cd Sophus
+pip install .
+```
+
+## Example code
+Example code is provided in `sophus_pybind/examples/sophus_quickstart_tutorial.ipynb`
+```
+cd Sophus
+python3 -m jupyter notebook sophus_pybind/examples/sophus_quickstart_tutorial.ipynb
+```
+`python3 -m jupyter` ensures that the jupyter comes from the virtual environment that contains the sophus-pybind module.
+
+
+## Re-generate stub files (.pyi) for annotation
+```
+cd Sophus
+# install pybind11-stubgen that will create stub file for a python module
+pip3 install pybind11-stubgen
+
+# Create stub files (Requires sophus-pybind to be installed in prior)
+python3 generate_stubs.py
+
+# Re-install the sophus-pybind project with the stub file
+pip install .
+```
+
+## Vectorization detail
+In python, we choose to export our Sophus::SO3 as a vector of SO3 objects by binding the cpp object `SO3Group` defined below. This is because numerical code in python tends to work with array of values to get efficient program. This approach is inspired by scipy.spatial.transform.Rotation.
+```
+class SO3Group : public std::vector<Sophus::SO3<Scalar>> 
+class SE3Group : public std::vector<Sophus::SE3<Scalar>> 
+```
+
+### Passing a single SO3/SE3 object to c++ code in python binding
+To allow other python binding c++ code to take in a single SO3/SE3 object, we also build a caster so that, even if we wrap SO3Group/SE3Group in python, those can be implicitly converted to the c++ Sophus::SO3/SE3 object at boundaries between languages.
+This is so we can pass python SO3/SE3 object to c++ function as if they were regular 1-element Sophus::SO3/SE3 object. This simplifies binding the rest of c++ code. The implicit cast fails if the python object is not a 1-element object.
