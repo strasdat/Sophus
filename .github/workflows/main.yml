@@ -17,10 +17,10 @@ jobs:
         row_major: [ON, OFF]
         basic_logging: [ON, OFF]
         exclude:
-          - os: macos-10.15
-            row_major: ON
-          - os: macos-10.15
-            basic_logging: ON
+          # - os: macos-10.15
+          #   row_major: ON
+          # - os: macos-10.15
+          #   basic_logging: ON
           - build_type: Release
             row_major: ON
           - build_type: Release
