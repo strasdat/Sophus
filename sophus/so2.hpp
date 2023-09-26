@@ -263,10 +263,8 @@ class SO2Base {
     Scalar const& real = unit_complex().x();
     Scalar const& imag = unit_complex().y();
     return HomogeneousPointProduct<HPointDerived>(
-        real * p[0] - imag * p[1],
-        imag * p[0] + real * p[1],
-        static_cast<ReturnScalar<HPointDerived>>(p[2])
-    );
+        real * p[0] - imag * p[1], imag * p[0] + real * p[1],
+        static_cast<ReturnScalar<HPointDerived>>(p[2]));
   }
 
   /// Group action on lines.
