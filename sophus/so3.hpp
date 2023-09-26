@@ -166,8 +166,20 @@ class SO3Base {
 
   /// Returns copy of instance casted to NewScalarType.
   ///
+  /// Note: The case of casting to the same type is handled specifically to
+  /// avoid unnecessary quaternion renormalization. In the general case, the
+  /// construction of returned SO3 renormalizes the quaternion
   template <class NewScalarType>
-  SOPHUS_FUNC SO3<NewScalarType> cast() const {
+  SOPHUS_FUNC std::enable_if_t<std::is_same<Scalar, NewScalarType>::value,
+                               SO3<NewScalarType>>
+  cast() const {
+    return *this;
+  }
+
+  template <class NewScalarType>
+  SOPHUS_FUNC std::enable_if_t<!std::is_same<Scalar, NewScalarType>::value,
+                               SO3<NewScalarType>>
+  cast() const {
     return SO3<NewScalarType>(unit_quaternion().template cast<NewScalarType>());
   }
 
