@@ -3,7 +3,9 @@
 #include <ceres/ceres.h>
 
 #include <sophus/ceres_manifold.hpp>
+#include <sophus/spline.hpp>
 #include <sophus/test_macros.hpp>
+#include "ceres_flags.hpp"
 
 template <typename LieGroup>
 struct RotationalPart;
@@ -172,6 +174,68 @@ struct LieGroupCeresTests {
     const LieGroupd diff;
   };
 
+  struct TestSplineFunctor {
+    template <typename T>
+        bool operator()(const T* P0, const T* P1, const T* P2, const T* P3, 
+                T* residuals) const {
+            using LieGroupT = LieGroup<T>;
+            if (segment_case != SegmentCase::normal) {
+                std::cerr << "Invalid segment_case in spline functor (4)" << std::endl;
+                return false;
+            }
+            BasisSplineSegment<LieGroupT> s(segment_case,P0,P1,P2,P3);
+            LieGroupT pred = s.parent_T_spline(u);
+            LieGroupT diff = y.inverse() * pred;
+            using Mapper = Mapper<typename LieGroupT::Tangent>;
+            typename Mapper::Map diff_log = Mapper::map(residuals);
+
+            // Jet LieGroup multiplication with LieGroupd
+            diff_log = diff.log();
+            return true;
+        }
+
+
+    template <typename T>
+        bool operator()(const T* P0, const T* P1, const T* P2, 
+                T* residuals) const {
+            using LieGroupT = LieGroup<T>;
+            LieGroupT pred;
+            switch (segment_case) {
+                case SegmentCase::first:
+                    { 
+                        BasisSplineSegment<LieGroupT> s(segment_case,P0,P0,P1,P2);
+                        pred = s.parent_T_spline(u);
+                    }
+                    break;
+                case SegmentCase::last:
+                    { 
+                        BasisSplineSegment<LieGroupT> s(segment_case,P0,P1,P2,P2);
+                        pred = s.parent_T_spline(u);
+                    }
+                    break;
+                default:
+                    std::cerr << "Invalid segment_case in spline functor (3)" << std::endl;
+                    return false;
+            }
+            LieGroupT diff = y.inverse() * pred;
+            using Mapper = Mapper<typename LieGroupT::Tangent>;
+            typename Mapper::Map diff_log = Mapper::map(residuals);
+
+            // Jet LieGroup multiplication with LieGroupd
+            diff_log = diff.log();
+            return true;
+        }
+
+
+    TestSplineFunctor(SegmentCase scase, double u, const LieGroupd & yin) : 
+        segment_case(scase), u(u), y(yin){
+    }
+    SegmentCase segment_case;
+    double u;
+    const LieGroupd y;
+
+  };
+
   bool testAll() {
     bool passed = true;
     for (size_t i = 0; i < group_vec.size(); ++i) {
@@ -201,7 +265,129 @@ struct LieGroupCeresTests {
       passed &= testAveraging(N, .5, .1);
       processTestResult(passed);
     }
+    passed &= testSpline() != nullptr;
+    processTestResult(passed);
     return passed;
+  }
+
+  std::shared_ptr<BasisSpline<LieGroupd>> testSpline(int n_knots=-1) {
+    if (group_vec.empty()) 
+        return std::shared_ptr<BasisSpline<LieGroupd>>();
+    if (n_knots<0) {
+        n_knots = 3 * group_vec.size() / 4;
+    }
+    // Running Lie group spline approximation
+    std::vector<LieGroupd> control_poses(n_knots,LieGroupd());
+    std::shared_ptr<BasisSpline<LieGroupd>> spline(new BasisSpline<LieGroupd>(control_poses, -1.0, float(group_vec.size()+2)/(n_knots-1)));
+    ceres::Problem problem;
+
+    double initial_error = 0.;
+    auto parametrization = new Sophus::Manifold<LieGroup_>;
+
+    for (auto v : spline->parent_Ts_control_point()) {
+      
+      problem.AddParameterBlock(v.data(), LieGroupd::num_parameters, parametrization);
+    }
+
+    for (size_t i = 0; i < group_vec.size(); ++i) {
+        double t = i;
+        IndexAndU iu = spline->index_and_u(t);
+        LieGroupd pred = spline->parent_T_spline(t);
+        LieGroupd err = group_vec[i].inverse() * pred;
+        initial_error += squaredNorm(err.log());
+        SegmentCase segment_case =
+            iu.i == 0 ? SegmentCase::first
+            : (iu.i == spline->getNumSegments() - 1 ? SegmentCase::last
+                    : SegmentCase::normal);
+
+        int idx_prev = std::max(0, iu.i - 1);
+        int idx_0 = iu.i;
+        int idx_1 = iu.i + 1;
+        int idx_2 = std::min(iu.i + 2, int(spline->parent_Ts_control_point().size()) - 1);
+
+        ceres::CostFunction* cost;
+        switch (segment_case) {
+            case SegmentCase::first:
+                cost = new ceres::AutoDiffCostFunction<TestSplineFunctor, LieGroupd::DoF,
+                     LieGroupd::num_parameters,
+                     LieGroupd::num_parameters,
+                     LieGroupd::num_parameters>(
+                             new TestSplineFunctor(segment_case,iu.u,group_vec[i]));
+                problem.AddResidualBlock(cost, nullptr, 
+                        spline->parent_Ts_control_point()[idx_0].data(),
+                        spline->parent_Ts_control_point()[idx_1].data(),
+                        spline->parent_Ts_control_point()[idx_2].data());
+                break;
+            case SegmentCase::normal:
+                cost = new ceres::AutoDiffCostFunction<TestSplineFunctor, LieGroupd::DoF,
+                     LieGroupd::num_parameters,
+                     LieGroupd::num_parameters,
+                     LieGroupd::num_parameters,
+                     LieGroupd::num_parameters>(
+                             new TestSplineFunctor(segment_case,iu.u,group_vec[i]));
+                problem.AddResidualBlock(cost, nullptr, 
+                        spline->parent_Ts_control_point()[idx_prev].data(),
+                        spline->parent_Ts_control_point()[idx_0].data(),
+                        spline->parent_Ts_control_point()[idx_1].data(),
+                        spline->parent_Ts_control_point()[idx_2].data());
+                break;
+            case SegmentCase::last:
+                cost = new ceres::AutoDiffCostFunction<TestSplineFunctor, LieGroupd::DoF,
+                     LieGroupd::num_parameters,
+                     LieGroupd::num_parameters,
+                     LieGroupd::num_parameters>(
+                             new TestSplineFunctor(segment_case,iu.u,group_vec[i]));
+                problem.AddResidualBlock(cost, nullptr, 
+                        spline->parent_Ts_control_point()[idx_prev].data(),
+                        spline->parent_Ts_control_point()[idx_0].data(),
+                        spline->parent_Ts_control_point()[idx_1].data());
+                break;
+        }
+      }
+
+    ceres::Solver::Options options;
+    CHECK(StringToLinearSolverType(FLAGS_linear_solver,
+                &options.linear_solver_type));
+    CHECK(StringToPreconditionerType(FLAGS_preconditioner,
+                &options.preconditioner_type));
+    CHECK(StringToSparseLinearAlgebraLibraryType(
+                FLAGS_sparse_linear_algebra_library,
+                &options.sparse_linear_algebra_library_type));
+    options.use_nonmonotonic_steps = FLAGS_nonmonotonic_steps;
+    CHECK(StringToTrustRegionStrategyType(FLAGS_trust_region_strategy,
+                &options.trust_region_strategy_type));
+    CHECK(StringToDoglegType(FLAGS_dogleg, &options.dogleg_type));
+    options.use_inner_iterations = FLAGS_inner_iterations;
+
+    options.gradient_tolerance = 1e-2 * Sophus::Constants<double>::epsilon();
+    options.function_tolerance = 1e-2 * Sophus::Constants<double>::epsilon();
+    options.parameter_tolerance = 1e-2 * Sophus::Constants<double>::epsilon();
+    options.minimizer_progress_to_stdout = false;
+    options.max_num_iterations = 500;
+
+
+
+    ceres::Solver::Summary summary;
+    Solve(options, &problem, &summary);
+    // std::cout << summary.FullReport() << "\n";
+
+
+    // Computing final error in the estimates
+    double final_error = 0.;
+    for (size_t i = 0; i < group_vec.size(); ++i) {
+        double t = i;
+        LieGroupd pred = spline->parent_T_spline(t);
+        LieGroupd err = group_vec[i].inverse() * pred;
+        final_error += squaredNorm(err.log());
+    }
+
+
+    // Expecting reasonable decrease of both estimates' errors and residuals
+    if (summary.final_cost < .5 * summary.initial_cost) {
+        return spline;
+    } else {
+        return std::shared_ptr<BasisSpline<LieGroupd>>();
+    }
   }
 
   bool testAveraging(const size_t num_vertices, const double sigma_init,
