@@ -51,6 +51,8 @@ int main(int, char **) {
   test.testAll();
 
 
+#if 0
+  // Example code to output the spline curve into a plottable format
   std::shared_ptr<Sophus::BasisSpline<RxSO2d>> so2_spline = test.testSpline(6);
   std::ofstream control("ctrl_pts", std::ofstream::out);
   for (size_t i=0;i<rxso2_vec.size();i++) {
@@ -63,6 +65,6 @@ int main(int, char **) {
       inter << t << " " << g.log().transpose() << std::endl;
   }
   inter.close();
-
+#endif
   return 0;
 }
