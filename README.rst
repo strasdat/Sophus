@@ -14,7 +14,7 @@ SO(3) to present rotations in 2d and 3d as well as the special Euclidean group
 SE(2) and SE(3) to represent rigid body transformations (i.e. rotations and
 translations) in 2d and 3d.
 
-API documentation: https://strasdat.github.io/Sophus/
+API documentation: https://farm-ng.github.io/docs/namespacesophus.html
 
 Cross platform support
 ----------------------
