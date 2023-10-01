@@ -1,5 +1,6 @@
 #include <ceres/ceres.h>
 #include <iostream>
+#include <fstream>
 #include <sophus/so2.hpp>
 
 #include "tests.hpp"
@@ -40,6 +41,24 @@ int main(int, char **) {
   point_vec.emplace_back(Point(5.8, 9.2));
 
   std::cerr << "Test Ceres SO2" << std::endl;
-  Sophus::LieGroupCeresTests<Sophus::SO2>(so2_vec, point_vec).testAll();
+  Sophus::LieGroupCeresTests<Sophus::SO2> test(so2_vec, point_vec);
+  test.testAll();
+
+#if 0
+  // Example code to plot the interpolated spline
+  std::shared_ptr<Sophus::BasisSpline<SO2d>> so2_spline = test.testSpline(6);
+  std::ofstream control("ctrl_pts", std::ofstream::out);
+  for (size_t i=0;i<so2_vec.size();i++) {
+      control << i << " " << so2_vec[i].log() << std::endl;
+  }
+  control.close();
+  std::ofstream inter("inter_pts", std::ofstream::out);
+  for (double t=0;t<so2_vec.size();t+=0.1) {
+      SO2d g = so2_spline->parent_T_spline(t);
+      inter << t << " " << g.log() << std::endl;
+  }
+  inter.close();
+#endif
+
   return 0;
 }
