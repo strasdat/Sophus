@@ -77,8 +77,8 @@ bool testSpline() {
 
   BasisSplineImpl<SE3d> spline(control_poses, 1.0);
 
-  SE3d T = spline.parent_T_spline(0.0, 1.0);
-  SE3d T2 = spline.parent_T_spline(1.0, 0.0);
+  SE3d T = spline.parent_T_spline(0, 1.0);
+  SE3d T2 = spline.parent_T_spline(1, 0.0);
 
   Eigen::Matrix3d R = T.so3().matrix();
   Eigen::Matrix3d R2 = T2.so3().matrix();
@@ -89,19 +89,19 @@ bool testSpline() {
 
   SOPHUS_TEST_APPROX(passed, t, t2, kSmallEpsSqrt, "lambdsa");
 
-  Eigen::Matrix4d Dt_parent_T_spline = spline.Dt_parent_T_spline(0.0, 0.5);
+  Eigen::Matrix4d Dt_parent_T_spline = spline.Dt_parent_T_spline(0, 0.5);
   Eigen::Matrix4d Dt_parent_T_spline2 = curveNumDiff(
       [&](double u_bar) -> Eigen::Matrix4d {
-        return spline.parent_T_spline(0.0, u_bar).matrix();
+        return spline.parent_T_spline(0, u_bar).matrix();
       },
       0.5);
   SOPHUS_TEST_APPROX(passed, Dt_parent_T_spline, Dt_parent_T_spline2,
                      kSmallEpsSqrt, "Dt_parent_T_spline");
 
-  Eigen::Matrix4d Dt2_parent_T_spline = spline.Dt2_parent_T_spline(0.0, 0.5);
+  Eigen::Matrix4d Dt2_parent_T_spline = spline.Dt2_parent_T_spline(0, 0.5);
   Eigen::Matrix4d Dt2_parent_T_spline2 = curveNumDiff(
       [&](double u_bar) -> Eigen::Matrix4d {
-        return spline.Dt_parent_T_spline(0.0, u_bar).matrix();
+        return spline.Dt_parent_T_spline(0, u_bar).matrix();
       },
       0.5);
   SOPHUS_TEST_APPROX(passed, Dt2_parent_T_spline, Dt2_parent_T_spline2,
