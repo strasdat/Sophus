@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <Eigen/SVD>
 
 #include "types.hpp"
