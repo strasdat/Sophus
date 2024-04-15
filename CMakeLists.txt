@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.5)
 project(Sophus VERSION 1.22.10)
 
 include(CMakePackageConfigHelpers)
@@ -17,6 +17,8 @@ endif ()
 option(SOPHUS_INSTALL "Generate the install target." ${SOPHUS_MASTER_PROJECT})
 option(SOPHUS_USE_BASIC_LOGGING "Use basic logging (in ensure and test macros)" OFF)
 
+option(SOPHUS_INSANE_CFLAGS "Add a bunch of extra cflags to expose more warnings" OFF)
+
 if(SOPHUS_MASTER_PROJECT)
   # Release by default
   # Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"
@@ -27,17 +29,15 @@ if(SOPHUS_MASTER_PROJECT)
   set(CMAKE_CXX_STANDARD 14)
 
   # Set compiler specific settings (FixMe: Should not cmake do this for us automatically?)
-  IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
-    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
+  IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND ${SOPHUS_INSANE_CFLAGS})
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra  -Wno-deprecated-register -Qunused-arguments -fcolor-diagnostics")
   ELSEIF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
-    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -std=c++14 -Wno-deprecated-declarations -ftemplate-backtrace-limit=0")
     SET(CMAKE_CXX_FLAGS_COVERAGE "${CMAKE_CXX_FLAGS_DEBUG} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline")
     SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE "${CMAKE_EXE_LINKER_FLAGS_DEBUG} --coverage")
     SET(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} --coverage")
+    IF (${SOPHUS_INSANE_CFLAGS})
+      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -Wno-deprecated-declarations -ftemplate-backtrace-limit=0")
+    ENDIF()
   ELSEIF(CMAKE_CXX_COMPILER_ID MATCHES "^MSVC$")
     ADD_DEFINITIONS("-D _USE_MATH_DEFINES /bigobj /wd4305 /wd4244 /MP")
   ENDIF()
