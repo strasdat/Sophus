@@ -5,6 +5,8 @@
 
 #include <complex>
 
+#include <Eigen/Eigenvalues>
+
 #include "cartesian.hpp"
 #include "common.hpp"
 #include "rxso2.hpp"
