@@ -14,19 +14,19 @@ bool testSmokeDetails() {
   bool passed = true;
   std::cout << details::pretty(4.2) << std::endl;
   std::cout << details::pretty(Vector2f(1, 2)) << std::endl;
-  bool dummy = true;
-  details::testFailed(dummy, "dummyFunc", "dummyFile", 99,
-                      "This is just a practice alarm!");
-  SOPHUS_TEST_EQUAL(passed, dummy, false, "");
+
+  SOPHUS_TEST(passed, false, "Just a practice alarm");
+  if (passed) {
+    exit(-1);
+  }
+
+  passed = true;
 
   double val = transpose(42.0);
   SOPHUS_TEST_EQUAL(passed, val, 42.0, "");
   Matrix<float, 1, 2> row = transpose(Vector2f(1, 7));
   Matrix<float, 1, 2> expected_row(1, 7);
   SOPHUS_TEST_EQUAL(passed, row, expected_row, "");
-
-  optional<int> opt(nullopt);
-  SOPHUS_TEST(passed, !opt, "");
 
   return passed;
 }

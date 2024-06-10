@@ -273,7 +273,7 @@ class Tests {
   }
 
   template <class S = Scalar>
-  enable_if_t<std::is_floating_point<S>::value, bool> testFit() {
+  std::enable_if_t<std::is_floating_point<S>::value, bool> testFit() {
     bool passed = true;
     for (int i = 0; i < 10; ++i) {
       Matrix3<Scalar> M = Matrix3<Scalar>::Random();
@@ -281,20 +281,20 @@ class Tests {
         Matrix3<Scalar> R = makeRotationMatrix(M);
         Matrix3<Scalar> sR = scale * R;
         SOPHUS_TEST(passed, isScaledOrthogonalAndPositive(sR),
-                    "isScaledOrthogonalAndPositive(sR): {} *\n{}",
-                    SOPHUS_FMT_ARG(scale), SOPHUS_FMT_ARG(R));
+                    "isScaledOrthogonalAndPositive(sR): {} *\n{}", (scale),
+                    (R));
         Matrix3<Scalar> sR_cols_swapped;
         sR_cols_swapped << sR.col(1), sR.col(0), sR.col(2);
         SOPHUS_TEST(passed, !isScaledOrthogonalAndPositive(sR_cols_swapped),
-                    "isScaledOrthogonalAndPositive(-sR): {} *\n{}",
-                    SOPHUS_FMT_ARG(scale), SOPHUS_FMT_ARG(R));
+                    "isScaledOrthogonalAndPositive(-sR): {} *\n{}", (scale),
+                    (R));
       }
     }
     return passed;
   }
 
   template <class S = Scalar>
-  enable_if_t<!std::is_floating_point<S>::value, bool> testFit() {
+  std::enable_if_t<!std::is_floating_point<S>::value, bool> testFit() {
     return true;
   }
 

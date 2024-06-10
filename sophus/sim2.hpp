@@ -221,8 +221,8 @@ class Sim2Base {
   ///   ``p_bar = bar_sR_foo * p_foo + t_bar``.
   ///
   template <typename PointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<PointDerived, 2>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<PointDerived, 2>::value>>
   SOPHUS_FUNC PointProduct<PointDerived> operator*(
       Eigen::MatrixBase<PointDerived> const& p) const {
     return rxso2() * p + translation();
@@ -231,8 +231,8 @@ class Sim2Base {
   /// Group action on homogeneous 2-points. See above for more details.
   ///
   template <typename HPointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<HPointDerived, 3>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<HPointDerived, 3>::value>>
   SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
       Eigen::MatrixBase<HPointDerived> const& p) const {
     const PointProduct<HPointDerived> tp =
@@ -285,8 +285,8 @@ class Sim2Base {
   /// type of the multiplication is compatible with this SO2's Scalar type.
   ///
   template <typename OtherDerived,
-            typename = typename std::enable_if<
-                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+            typename = typename std::enable_if_t<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>>
   SOPHUS_FUNC Sim2Base<Derived>& operator*=(
       Sim2Base<OtherDerived> const& other) {
     *static_cast<Derived*>(this) = *this * other;

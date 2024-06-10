@@ -272,8 +272,8 @@ class RxSO3Base {
   ///   ``p_bar = s * (bar_R_foo * p_foo)``.
   ///
   template <typename PointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<PointDerived, 3>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<PointDerived, 3>::value>>
   SOPHUS_FUNC PointProduct<PointDerived> operator*(
       Eigen::MatrixBase<PointDerived> const& p) const {
     // Follows http:///eigen.tuxfamily.org/bz/show_bug.cgi?id=459
@@ -287,8 +287,8 @@ class RxSO3Base {
   /// Group action on homogeneous 3-points. See above for more details.
   ///
   template <typename HPointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<HPointDerived, 4>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<HPointDerived, 4>::value>>
   SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
       Eigen::MatrixBase<HPointDerived> const& p) const {
     const auto rsp = *this * p.template head<3>();
@@ -329,8 +329,8 @@ class RxSO3Base {
   /// order to ensure the class invariant.
   ///
   template <typename OtherDerived,
-            typename = typename std::enable_if<
-                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+            typename = typename std::enable_if_t<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>>
   SOPHUS_FUNC RxSO3Base<Derived>& operator*=(
       RxSO3Base<OtherDerived> const& other) {
     *static_cast<Derived*>(this) = *this * other;

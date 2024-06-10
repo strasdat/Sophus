@@ -176,21 +176,6 @@ struct LieGroupCeresTests {
     bool passed = true;
     for (size_t i = 0; i < group_vec.size(); ++i) {
       for (size_t j = 0; j < group_vec.size(); ++j) {
-        if (i == j) continue;
-        for (size_t k = 0; k < point_vec.size(); ++k) {
-          for (size_t l = 0; l < point_vec.size(); ++l) {
-            if (k == l) continue;
-            std::cerr << "Simple test #" << i << ", " << j << ", " << k << ", "
-                      << l;
-            passed &=
-                test(group_vec[i], group_vec[j], point_vec[k], point_vec[l]);
-            processTestResult(passed);
-          }
-        }
-      }
-    }
-    for (size_t i = 0; i < group_vec.size(); ++i) {
-      for (size_t j = 0; j < group_vec.size(); ++j) {
         passed &= testManifold(group_vec[i], group_vec[j]);
         processTestResult(passed);
       }

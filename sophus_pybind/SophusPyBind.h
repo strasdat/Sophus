@@ -4,8 +4,8 @@
 #include "SO3PyBind.h"
 
 #include <sstream>
-// By default, Sophus calls std::abort when a pre-condition fails. Register a handler that raises
-// an exception so we don't crash the Python process.
+// By default, Sophus calls std::abort when a pre-condition fails. Register a
+// handler that raises an exception so we don't crash the Python process.
 #ifdef SOPHUS_DISABLE_ENSURES
 #undef SOPHUS_DISABLE_ENSURES
 #endif
@@ -14,11 +14,12 @@
 #endif
 
 namespace Sophus {
-inline void
-ensureFailed(char const* function, char const* file, int line, char const* description) {
+inline void ensureFailed(char const* function, char const* file, int line,
+                         char const* description) {
   std::stringstream message;
-  message << "'SOPHUS_ENSURE' failed in function '" << function << "', on line '" << line
-          << "' of file '" << file << "'. Full description:" << std::endl
+  message << "'SOPHUS_ENSURE' failed in function '" << function
+          << "', on line '" << line << "' of file '" << file
+          << "'. Full description:" << std::endl
           << description;
   throw std::domain_error(message.str());
 }
@@ -31,4 +32,4 @@ inline void exportSophus(pybind11::module& module) {
   exportSE3Interpolate<double>(module);
 }
 
-} // namespace Sophus
+}  // namespace Sophus

@@ -191,8 +191,8 @@ class CartesianBase {
   /// Group action on points, again just vector addition.
   ///
   template <typename PointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<PointDerived, M>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<PointDerived, M>::value>>
   SOPHUS_FUNC PointProduct<PointDerived> operator*(
       Eigen::MatrixBase<PointDerived> const& p) const {
     return PointProduct<PointDerived>(params() + p);
@@ -201,8 +201,8 @@ class CartesianBase {
   /// Group action on homogeneous points. See above for more details.
   ///
   template <typename HPointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<HPointDerived, N>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<HPointDerived, N>::value>>
   SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
       Eigen::MatrixBase<HPointDerived> const& p) const {
     const auto rp = *this * p.template head<M>();
@@ -228,8 +228,8 @@ class CartesianBase {
   /// type.
   ///
   template <typename OtherDerived,
-            typename = typename std::enable_if<
-                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+            typename = typename std::enable_if_t<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>>
   SOPHUS_FUNC CartesianBase<Derived, M>& operator*=(
       CartesianBase<OtherDerived, M> const& other) {
     *static_cast<Derived*>(this) = *this * other;
