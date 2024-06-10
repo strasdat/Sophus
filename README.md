@@ -1,9 +1,3 @@
-<h1 align="center"> Sophus </h1>
-
-<p align="center">
-  <i> A collection of c++ types for 2d and 3d geometric problems. </i>
-</p>
-
 <div align="center">
 
 <a href="https://github.com/strasdat/Sophus/actions/workflows/main.yml">
@@ -25,6 +19,11 @@
 
 </div>
 
+<h1 align="center"> Sophus </h1>
+
+<p align="center">
+  <i> 2d and 3d Lie Groups for Computer Vision and Robotics </i>
+</p>
 
 This is a c++ implementation of Lie groups commonly used for 2d and 3d
 geometric problems (i.e. for Computer Vision or Robotics applications).
@@ -36,9 +35,9 @@ SE(2) and SE(3) to represent isometries also known as rigid body transformations
 ## Status
 
 
-*Sophus (aka Sophus 1) is in maintenance mode and there is no plane to add new larger features
-(as of June 2024).*
-
+*Sophus (aka Sophus 1) is in maintenance mode. As of June 2024, there is no
+plane to add new larger features and future PRs will likely be limited to bug
+fixes, small improvements and toolchain updates.*
 
 However, next incarnations of Sophus are under development:
 
@@ -66,8 +65,8 @@ However, next incarnations of Sophus are under development:
 
 
 
-How to build
-------------
+How to build Sophus
+-------------------
 
 Sophus requires a C++17 compiler (though older versions build with C++14).
 
