@@ -314,8 +314,8 @@ class SE3Base {
   ///   ``p_bar = bar_R_foo * p_foo + t_bar``.
   ///
   template <typename PointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<PointDerived, 3>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<PointDerived, 3>::value>>
   SOPHUS_FUNC PointProduct<PointDerived> operator*(
       Eigen::MatrixBase<PointDerived> const& p) const {
     return so3() * p + translation();
@@ -324,8 +324,8 @@ class SE3Base {
   /// Group action on homogeneous 3-points. See above for more details.
   ///
   template <typename HPointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<HPointDerived, 4>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<HPointDerived, 4>::value>>
   SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
       Eigen::MatrixBase<HPointDerived> const& p) const {
     const PointProduct<HPointDerived> tp =
@@ -363,8 +363,8 @@ class SE3Base {
   /// type of the multiplication is compatible with this SE3's Scalar type.
   ///
   template <typename OtherDerived,
-            typename = typename std::enable_if<
-                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+            typename = typename std::enable_if_t<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>>
   SOPHUS_FUNC SE3Base<Derived>& operator*=(SE3Base<OtherDerived> const& other) {
     *static_cast<Derived*>(this) = *this * other;
     return *this;
@@ -397,10 +397,9 @@ class SE3Base {
   /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   ///
   SOPHUS_FUNC void setRotationMatrix(Matrix3<Scalar> const& R) {
-    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}",
-                  SOPHUS_FMT_ARG(R));
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}", (R));
     SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: {}",
-                  SOPHUS_FMT_ARG(R.determinant()));
+                  (R.determinant()));
     so3().setQuaternion(Eigen::Quaternion<Scalar>(R));
   }
 
@@ -518,8 +517,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
     SOPHUS_ENSURE((T.row(3) - Matrix<Scalar, 1, 4>(Scalar(0), Scalar(0),
                                                    Scalar(0), Scalar(1)))
                           .squaredNorm() < Constants<Scalar>::epsilon(),
-                  "Last row is not (0,0,0,1), but ({}).",
-                  SOPHUS_FMT_ARG(T.row(3)));
+                  "Last row is not (0,0,0,1), but ({}).", (T.row(3)));
   }
 
   /// This provides unsafe read/write access to internal data. SO(3) is
@@ -863,7 +861,7 @@ class SE3 : public SE3Base<SE3<Scalar_, Options>> {
   /// Returns closest SE3 given arbitrary 4x4 matrix.
   ///
   template <class S = Scalar>
-  SOPHUS_FUNC static enable_if_t<std::is_floating_point<S>::value, SE3>
+  SOPHUS_FUNC static std::enable_if_t<std::is_floating_point<S>::value, SE3>
   fitToSE3(Matrix4<Scalar> const& T) {
     return SE3(SO3<Scalar>::fitToSO3(T.template block<3, 3>(0, 0)),
                T.template block<3, 1>(0, 3));

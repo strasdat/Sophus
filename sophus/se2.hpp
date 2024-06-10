@@ -255,8 +255,8 @@ class SE2Base {
   ///   ``p_bar = bar_R_foo * p_foo + t_bar``.
   ///
   template <typename PointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<PointDerived, 2>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<PointDerived, 2>::value>>
   SOPHUS_FUNC PointProduct<PointDerived> operator*(
       Eigen::MatrixBase<PointDerived> const& p) const {
     return so2() * p + translation();
@@ -265,8 +265,8 @@ class SE2Base {
   /// Group action on homogeneous 2-points. See above for more details.
   ///
   template <typename HPointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<HPointDerived, 3>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<HPointDerived, 3>::value>>
   SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
       Eigen::MatrixBase<HPointDerived> const& p) const {
     const PointProduct<HPointDerived> tp =
@@ -307,8 +307,8 @@ class SE2Base {
   /// type of the multiplication is compatible with this SO2's Scalar type.
   ///
   template <typename OtherDerived,
-            typename = typename std::enable_if<
-                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+            typename = typename std::enable_if_t<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>>
   SOPHUS_FUNC SE2Base<Derived>& operator*=(SE2Base<OtherDerived> const& other) {
     *static_cast<Derived*>(this) = *this * other;
     return *this;
@@ -344,10 +344,9 @@ class SE2Base {
   /// Precondition: ``R`` must be orthogonal and ``det(R)=1``.
   ///
   SOPHUS_FUNC void setRotationMatrix(Matrix<Scalar, 2, 2> const& R) {
-    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}",
-                  SOPHUS_FMT_ARG(R));
+    SOPHUS_ENSURE(isOrthogonal(R), "R is not orthogonal:\n {}", (R));
     SOPHUS_ENSURE(R.determinant() > Scalar(0), "det(R) is not positive: {}",
-                  SOPHUS_FMT_ARG(R.determinant()));
+                  (R.determinant()));
     typename SO2Type::ComplexTemporaryType const complex(
         Scalar(0.5) * (R(0, 0) + R(1, 1)), Scalar(0.5) * (R(1, 0) - R(0, 1)));
     so2().setComplex(complex);
@@ -633,7 +632,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   /// Returns closest SE3 given arbitrary 4x4 matrix.
   ///
   template <class S = Scalar>
-  static SOPHUS_FUNC enable_if_t<std::is_floating_point<S>::value, SE2>
+  static SOPHUS_FUNC std::enable_if_t<std::is_floating_point<S>::value, SE2>
   fitToSE2(Matrix3<Scalar> const& T) {
     return SE2(SO2<Scalar>::fitToSO2(T.template block<2, 2>(0, 0)),
                T.template block<2, 1>(0, 2));
@@ -763,7 +762,7 @@ class SE2 : public SE2Base<SE2<Scalar_, Options>> {
   SOPHUS_FUNC static Tangent vee(Transformation const& Omega) {
     SOPHUS_ENSURE(
         Omega.row(2).template lpNorm<1>() < Constants<Scalar>::epsilon(),
-        "Omega: \n{}", SOPHUS_FMT_ARG(Omega));
+        "Omega: \n{}", (Omega));
     Tangent upsilon_omega;
     upsilon_omega.template head<2>() = Omega.col(2).template head<2>();
     upsilon_omega[2] = SO2<Scalar>::vee(Omega.template topLeftCorner<2, 2>());

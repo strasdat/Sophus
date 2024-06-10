@@ -145,7 +145,7 @@ class Tests {
   }
 
   template <class S = Scalar>
-  enable_if_t<std::is_floating_point<S>::value, bool> testFit() {
+  std::enable_if_t<std::is_floating_point<S>::value, bool> testFit() {
     bool passed = true;
 
     for (int i = 0; i < 100; ++i) {
@@ -160,7 +160,7 @@ class Tests {
   }
 
   template <class S = Scalar>
-  enable_if_t<!std::is_floating_point<S>::value, bool> testFit() {
+  std::enable_if_t<!std::is_floating_point<S>::value, bool> testFit() {
     return true;
   }
 

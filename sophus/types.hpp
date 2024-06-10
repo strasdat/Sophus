@@ -128,7 +128,7 @@ template <class Scalar>
 class SetElementAt<Scalar, Scalar> {
  public:
   static void impl(Scalar& s, Scalar value, int at) {
-    SOPHUS_ENSURE(at == 0, "is {}", SOPHUS_FMT_ARG(at));
+    SOPHUS_ENSURE(at == 0, "is {}", (at));
     s = value;
   }
 };
@@ -137,7 +137,7 @@ template <class Scalar, int N>
 class SetElementAt<Vector<Scalar, N>, Scalar> {
  public:
   static void impl(Vector<Scalar, N>& v, Scalar value, int at) {
-    SOPHUS_ENSURE(at >= 0 && at < N, "is {}", SOPHUS_FMT_ARG(at));
+    SOPHUS_ENSURE(at >= 0 && at < N, "is {}", (at));
     v[at] = value;
   }
 };
@@ -231,9 +231,9 @@ struct GetScalar<Matrix<Scalar_, M, N>> {
 /// If the Vector type is of fixed size, then IsFixedSizeVector::value will be
 /// true.
 template <typename Vector, int NumDimensions,
-          typename = typename std::enable_if<
-              Vector::RowsAtCompileTime == NumDimensions &&
-              Vector::ColsAtCompileTime == 1>::type>
+          typename = typename std::enable_if_t<Vector::RowsAtCompileTime ==
+                                                   NumDimensions &&
+                                               Vector::ColsAtCompileTime == 1>>
 struct IsFixedSizeVector : std::true_type {};
 
 /// Planes in 3d are hyperplanes.

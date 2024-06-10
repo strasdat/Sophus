@@ -1,6 +1,6 @@
-# Python binding for Sophus library: sophus-pybind 
+# Python binding for Sophus library: sophus-pybind
 sophus-pybind implement python binding for sophus that provides access to SO3, SE3, interpolate and iterativeMean features.
-The user interface is inspired by scipy.spacial.transform.Rotation. 
+The user interface is inspired by scipy.spacial.transform.Rotation.
 Here is a specific list of features.
 
 ## Feature list
@@ -19,15 +19,15 @@ Here is a specific list of features.
   * Function vectorization
   * Inverse, copy, print, and len
   * Interpolate between two SE3
-  * Iterative mean of a group of SE3 
+  * Iterative mean of a group of SE3
 
-## Python module (pysophus) installation step 
+## Python module (pysophus) installation step
 ```
 # Create virtual environment
 python3 -m venv ~/sophus_venv
 source ~/sophus_venv/bin/activate
 
-# Install package 
+# Install package
 git clone <sophus-package>
 cd Sophus
 pip install .
@@ -58,8 +58,8 @@ pip install .
 ## Vectorization detail
 In python, we choose to export our Sophus::SO3 as a vector of SO3 objects by binding the cpp object `SO3Group` defined below. This is because numerical code in python tends to work with array of values to get efficient program. This approach is inspired by scipy.spatial.transform.Rotation.
 ```
-class SO3Group : public std::vector<Sophus::SO3<Scalar>> 
-class SE3Group : public std::vector<Sophus::SE3<Scalar>> 
+class SO3Group : public std::vector<Sophus::SO3<Scalar>>
+class SE3Group : public std::vector<Sophus::SE3<Scalar>>
 ```
 
 ### Passing a single SO3/SE3 object to c++ code in python binding

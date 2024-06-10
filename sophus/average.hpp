@@ -23,7 +23,7 @@ namespace Sophus {
 /// Returns ``nullopt`` if it does not converge.
 ///
 template <class SequenceContainer>
-optional<typename SequenceContainer::value_type> iterativeMean(
+std::optional<typename SequenceContainer::value_type> iterativeMean(
     SequenceContainer const& foo_Ts_bar, int max_num_iterations) {
   size_t N = foo_Ts_bar.size();
   SOPHUS_ENSURE(N >= 1, "N must be >= 1.");
@@ -52,23 +52,16 @@ optional<typename SequenceContainer::value_type> iterativeMean(
     foo_T_average = foo_T_newaverage;
   }
   // LCOV_EXCL_START
-  return nullopt;
+  return std::nullopt;
   // LCOV_EXCL_STOP
 }
-
-#ifdef DOXYGEN_SHOULD_SKIP_THIS
-/// Mean implementation for any Lie group.
-template <class SequenceContainer, class Scalar>
-optional<typename SequenceContainer::value_type> average(
-    SequenceContainer const& foo_Ts_bar);
-#else
 
 // Mean implementation for Cartesian.
 template <class SequenceContainer, int Dim = SequenceContainer::value_type::DoF,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<std::is_same<typename SequenceContainer::value_type,
-                         Cartesian<Scalar, Dim> >::value,
-            optional<typename SequenceContainer::value_type> >
+std::enable_if_t<std::is_same<typename SequenceContainer::value_type,
+                              Cartesian<Scalar, Dim> >::value,
+                 std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar) {
   size_t N = std::distance(std::begin(foo_Ts_bar), std::end(foo_Ts_bar));
   SOPHUS_ENSURE(N >= 1, "N must be >= 1.");
@@ -84,9 +77,9 @@ average(SequenceContainer const& foo_Ts_bar) {
 // Mean implementation for SO(2).
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<
+std::enable_if_t<
     std::is_same<typename SequenceContainer::value_type, SO2<Scalar> >::value,
-    optional<typename SequenceContainer::value_type> >
+    std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar) {
   // This implements rotational part of Proposition 12 from Sec. 6.2 of
   // ftp://ftp-sop.inria.fr/epidaure/Publications/Arsigny/arsigny_rr_biinvariant_average.pdf.
@@ -105,9 +98,9 @@ average(SequenceContainer const& foo_Ts_bar) {
 // Mean implementation for RxSO(2).
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<
+std::enable_if_t<
     std::is_same<typename SequenceContainer::value_type, RxSO2<Scalar> >::value,
-    optional<typename SequenceContainer::value_type> >
+    std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar) {
   size_t N = std::distance(std::begin(foo_Ts_bar), std::end(foo_Ts_bar));
   SOPHUS_ENSURE(N >= 1, "N must be >= 1.");
@@ -179,9 +172,9 @@ Eigen::Quaternion<Scalar> averageUnitQuaternion(
 // TODO: Detect degenerated cases and return nullopt.
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<
+std::enable_if_t<
     std::is_same<typename SequenceContainer::value_type, SO3<Scalar> >::value,
-    optional<typename SequenceContainer::value_type> >
+    std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar) {
   return SO3<Scalar>(details::averageUnitQuaternion(foo_Ts_bar));
 }
@@ -189,9 +182,9 @@ average(SequenceContainer const& foo_Ts_bar) {
 // Mean implementation for R x SO(3).
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<
+std::enable_if_t<
     std::is_same<typename SequenceContainer::value_type, RxSO3<Scalar> >::value,
-    optional<typename SequenceContainer::value_type> >
+    std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar) {
   size_t N = std::distance(std::begin(foo_Ts_bar), std::end(foo_Ts_bar));
 
@@ -208,9 +201,9 @@ average(SequenceContainer const& foo_Ts_bar) {
 
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<
+std::enable_if_t<
     std::is_same<typename SequenceContainer::value_type, SE2<Scalar> >::value,
-    optional<typename SequenceContainer::value_type> >
+    std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
   // TODO: Implement Proposition 12 from Sec. 6.2 of
   // ftp://ftp-sop.inria.fr/epidaure/Publications/Arsigny/arsigny_rr_biinvariant_average.pdf.
@@ -219,31 +212,29 @@ average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
 
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<
+std::enable_if_t<
     std::is_same<typename SequenceContainer::value_type, Sim2<Scalar> >::value,
-    optional<typename SequenceContainer::value_type> >
+    std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
   return iterativeMean(foo_Ts_bar, max_num_iterations);
 }
 
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<
+std::enable_if_t<
     std::is_same<typename SequenceContainer::value_type, SE3<Scalar> >::value,
-    optional<typename SequenceContainer::value_type> >
+    std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
   return iterativeMean(foo_Ts_bar, max_num_iterations);
 }
 
 template <class SequenceContainer,
           class Scalar = typename SequenceContainer::value_type::Scalar>
-enable_if_t<
+std::enable_if_t<
     std::is_same<typename SequenceContainer::value_type, Sim3<Scalar> >::value,
-    optional<typename SequenceContainer::value_type> >
+    std::optional<typename SequenceContainer::value_type> >
 average(SequenceContainer const& foo_Ts_bar, int max_num_iterations = 20) {
   return iterativeMean(foo_Ts_bar, max_num_iterations);
 }
-
-#endif  // DOXYGEN_SHOULD_SKIP_THIS
 
 }  // namespace Sophus

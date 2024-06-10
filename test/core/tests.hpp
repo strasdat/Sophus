@@ -86,9 +86,9 @@ class LieGroupTests {
   // For the time being, leftJacobian and leftJacobianInverse are only
   // implemented for SO3 and SE3
   template <class G = LieGroup>
-  enable_if_t<std::is_same<G, SO3<Scalar>>::value ||
-                  std::is_same<G, SE3<Scalar>>::value,
-              bool>
+  std::enable_if_t<std::is_same<G, SO3<Scalar>>::value ||
+                       std::is_same<G, SE3<Scalar>>::value,
+                   bool>
   leftJacobianTest() {
     bool passed = true;
     for (const auto& x : tangent_vec_) {
@@ -119,9 +119,9 @@ class LieGroupTests {
   }
 
   template <class G = LieGroup>
-  enable_if_t<!(std::is_same<G, SO3<Scalar>>::value ||
-                std::is_same<G, SE3<Scalar>>::value),
-              bool>
+  std::enable_if_t<!(std::is_same<G, SO3<Scalar>>::value ||
+                     std::is_same<G, SE3<Scalar>>::value),
+                   bool>
   leftJacobianTest() {
     return true;
   }
@@ -149,47 +149,43 @@ class LieGroupTests {
       LieGroup foo_T2_bar = foo_T_bar;
       SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T2_bar.matrix(),
                          kSmallEps, "Copy constructor: {}\nvs\n {}",
-                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
-                         SOPHUS_FMT_ARG(transpose(foo_T2_bar.matrix())));
+                         (transpose(foo_T_bar.matrix())),
+                         (transpose(foo_T2_bar.matrix())));
       LieGroup foo_T3_bar;
       foo_T3_bar = foo_T_bar;
       SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T3_bar.matrix(),
                          kSmallEps, "Copy assignment: {}\nvs\n {}",
-                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
-                         SOPHUS_FMT_ARG(transpose(foo_T3_bar.matrix())));
+                         (transpose(foo_T_bar.matrix())),
+                         (transpose(foo_T3_bar.matrix())));
 
       LieGroup foo_T4_bar(foo_T_bar.matrix());
-      SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T4_bar.matrix(),
-                         kSmallEps,
-                         "Constructor from homogeneous matrix: {}\nvs\n {}",
-                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
-                         SOPHUS_FMT_ARG(transpose(foo_T4_bar.matrix())));
+      SOPHUS_TEST_APPROX(
+          passed, foo_T_bar.matrix(), foo_T4_bar.matrix(), kSmallEps,
+          "Constructor from homogeneous matrix: {}\nvs\n {}",
+          (transpose(foo_T_bar.matrix())), (transpose(foo_T4_bar.matrix())));
 
       Eigen::Map<LieGroup> foo_Tmap_bar(foo_T_bar.data());
       LieGroup foo_T5_bar = foo_Tmap_bar;
-      SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T5_bar.matrix(),
-                         kSmallEps,
-                         "Assignment from Eigen::Map type: {}\nvs\n {}",
-                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
-                         SOPHUS_FMT_ARG(transpose(foo_T5_bar.matrix())));
+      SOPHUS_TEST_APPROX(
+          passed, foo_T_bar.matrix(), foo_T5_bar.matrix(), kSmallEps,
+          "Assignment from Eigen::Map type: {}\nvs\n {}",
+          (transpose(foo_T_bar.matrix())), (transpose(foo_T5_bar.matrix())));
 
       Eigen::Map<LieGroup const> foo_Tcmap_bar(foo_T_bar.data());
       LieGroup foo_T6_bar;
       foo_T6_bar = foo_Tcmap_bar;
-      SOPHUS_TEST_APPROX(passed, foo_T_bar.matrix(), foo_T5_bar.matrix(),
-                         kSmallEps,
-                         "Assignment from Eigen::Map type: {}\nvs\n {}",
-                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())),
-                         SOPHUS_FMT_ARG(transpose(foo_T5_bar.matrix())));
+      SOPHUS_TEST_APPROX(
+          passed, foo_T_bar.matrix(), foo_T5_bar.matrix(), kSmallEps,
+          "Assignment from Eigen::Map type: {}\nvs\n {}",
+          (transpose(foo_T_bar.matrix())), (transpose(foo_T5_bar.matrix())));
 
       LieGroup I;
       Eigen::Map<LieGroup> foo_Tmap2_bar(I.data());
       foo_Tmap2_bar = foo_T_bar;
-      SOPHUS_TEST_APPROX(passed, foo_Tmap2_bar.matrix(), foo_T_bar.matrix(),
-                         kSmallEps,
-                         "Assignment to Eigen::Map type: {}\nvs\n {}",
-                         SOPHUS_FMT_ARG(transpose(foo_Tmap2_bar.matrix())),
-                         SOPHUS_FMT_ARG(transpose(foo_T_bar.matrix())));
+      SOPHUS_TEST_APPROX(
+          passed, foo_Tmap2_bar.matrix(), foo_T_bar.matrix(), kSmallEps,
+          "Assignment to Eigen::Map type: {}\nvs\n {}",
+          (transpose(foo_Tmap2_bar.matrix())), (transpose(foo_T_bar.matrix())));
     }
     return passed;
   }
@@ -516,37 +512,34 @@ class LieGroupTests {
 
         // test average({A, B}) == interp(A, B):
         LieGroup foo_T_quiz = interpolate(foo_T_bar, foo_T_baz, 0.5);
-        optional<LieGroup> foo_T_iaverage = iterativeMean(
+        std::optional<LieGroup> foo_T_iaverage = iterativeMean(
             std::array<LieGroup, 2>({{foo_T_bar, foo_T_baz}}), 20);
-        optional<LieGroup> foo_T_average =
+        std::optional<LieGroup> foo_T_average =
             average(std::array<LieGroup, 2>({{foo_T_bar, foo_T_baz}}));
         SOPHUS_TEST(passed, bool(foo_T_average),
                     "log(foo_T_bar): {}\nlog(foo_T_baz): {}",
-                    SOPHUS_FMT_ARG(transpose(foo_T_bar.log())),
-                    SOPHUS_FMT_ARG(transpose(foo_T_baz.log())), "");
+                    (transpose(foo_T_bar.log())), (transpose(foo_T_baz.log())),
+                    "");
         if (foo_T_average) {
           SOPHUS_TEST_APPROX(
               passed, foo_T_quiz.matrix(), foo_T_average->matrix(), sqrt_eps,
               "log(foo_T_bar): {}\nlog(foo_T_baz): {}\n"
               "log(interp): {}\nlog(average): {}",
-              SOPHUS_FMT_ARG(transpose(foo_T_bar.log())),
-              SOPHUS_FMT_ARG(transpose(foo_T_baz.log())),
-              SOPHUS_FMT_ARG(transpose(foo_T_quiz.log())),
-              SOPHUS_FMT_ARG(transpose(foo_T_average->log())), "");
+              (transpose(foo_T_bar.log())), (transpose(foo_T_baz.log())),
+              (transpose(foo_T_quiz.log())), (transpose(foo_T_average->log())),
+              "");
         }
         SOPHUS_TEST(passed, bool(foo_T_iaverage),
                     "log(foo_T_bar): {}\nlog(foo_T_baz): {}\n"
                     "log(interp): {}\nlog(iaverage): {}",
-                    SOPHUS_FMT_ARG(transpose(foo_T_bar.log())),
-                    SOPHUS_FMT_ARG(transpose(foo_T_baz.log())),
-                    SOPHUS_FMT_ARG(transpose(foo_T_quiz.log())),
-                    SOPHUS_FMT_ARG(transpose(foo_T_iaverage->log())), "");
+                    (transpose(foo_T_bar.log())), (transpose(foo_T_baz.log())),
+                    (transpose(foo_T_quiz.log())),
+                    (transpose(foo_T_iaverage->log())), "");
         if (foo_T_iaverage) {
-          SOPHUS_TEST_APPROX(passed, foo_T_quiz.matrix(),
-                             foo_T_iaverage->matrix(), sqrt_eps,
-                             "log(foo_T_bar): {}\nlog(foo_T_baz): {}",
-                             SOPHUS_FMT_ARG(transpose(foo_T_bar.log())),
-                             SOPHUS_FMT_ARG(transpose(foo_T_baz.log())), "");
+          SOPHUS_TEST_APPROX(
+              passed, foo_T_quiz.matrix(), foo_T_iaverage->matrix(), sqrt_eps,
+              "log(foo_T_bar): {}\nlog(foo_T_baz): {}",
+              (transpose(foo_T_bar.log())), (transpose(foo_T_baz.log())), "");
         }
       }
     }
@@ -565,13 +558,13 @@ class LieGroupTests {
   }
 
   template <class S = Scalar>
-  enable_if_t<std::is_same<S, float>::value, bool> testSpline() {
+  std::enable_if_t<std::is_same<S, float>::value, bool> testSpline() {
     // skip tests for Scalar == float
     return true;
   }
 
   template <class S = Scalar>
-  enable_if_t<!std::is_same<S, float>::value, bool> testSpline() {
+  std::enable_if_t<!std::is_same<S, float>::value, bool> testSpline() {
     // run tests for Scalar != float
     bool passed = true;
 
@@ -642,12 +635,12 @@ class LieGroupTests {
   }
 
   template <class S = Scalar>
-  enable_if_t<std::is_floating_point<S>::value, bool> doAllTestsPass() {
+  std::enable_if_t<std::is_floating_point<S>::value, bool> doAllTestsPass() {
     return doesLargeTestSetPass();
   }
 
   template <class S = Scalar>
-  enable_if_t<!std::is_floating_point<S>::value, bool> doAllTestsPass() {
+  std::enable_if_t<!std::is_floating_point<S>::value, bool> doAllTestsPass() {
     return doesSmallTestSetPass();
   }
 

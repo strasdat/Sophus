@@ -1,4 +1,4 @@
-#include "common.hpp"
+#include <sophus/common.hpp>
 
 #include <cstdio>
 #include <cstdlib>
@@ -8,7 +8,6 @@ void ensureFailed(char const* function, char const* file, int line,
                   char const* description) {
   std::printf("Sophus ensure failed in function '%s', file '%s', line %d.\n",
               file, function, line);
-  std::printf("Description: %s\n", description);
-  std::abort();
+  throw std::runtime_error("Sophus ensure failed");
 }
 }  // namespace Sophus

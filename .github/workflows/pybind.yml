@@ -1,4 +1,4 @@
-name: Build and Test
+name: Pybind tests
 
 on:
   push:
@@ -12,7 +12,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-10.15]
+        os: [ubuntu-20.04, macos-13]
+      fail-fast: false
+
     steps:
       - name : Checkout
         uses: actions/checkout@v2

@@ -1,7 +1,31 @@
-# Tests to run
-SET( EXAMPLE_SOURCES HelloSO3)
+cmake_minimum_required(VERSION 3.16)
 
-FOREACH(example_src ${EXAMPLE_SOURCES})
-  ADD_EXECUTABLE( ${example_src} ${example_src}.cpp)
-  TARGET_LINK_LIBRARIES( ${example_src} sophus)
-ENDFOREACH(example_src)
+project(SophusExample)
+
+find_package(Sophus 1.24.06 REQUIRED)
+set(CMAKE_CXX_STANDARD 17)
+
+# Release by default Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
+
+# Tests to run
+set(EXAMPLE_SOURCES hello_so3 ensure_example)
+
+option(SOPHUS_ENABLE_ENSURE_HANDLER "Enable the custem ensure handler." OFF)
+if(SOPHUS_ENABLE_ENSURE_HANDLER)
+  add_library(custom_ensure_handler custom_ensure_handler.cpp)
+  target_link_libraries(custom_ensure_handler PRIVATE Sophus::Sophus)
+endif()
+
+foreach(example_src ${EXAMPLE_SOURCES})
+  add_executable(${example_src} ${example_src}.cpp)
+  if(SOPHUS_ENABLE_ENSURE_HANDLER)
+    target_compile_definitions(${example_src}
+                               PRIVATE SOPHUS_ENABLE_ENSURE_HANDLER=1)
+    target_link_libraries(${example_src} Sophus::Sophus custom_ensure_handler)
+  else()
+    target_link_libraries(${example_src} Sophus::Sophus)
+  endif()
+endforeach(example_src)

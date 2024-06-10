@@ -55,7 +55,7 @@ SOPHUS_FUNC bool isScaledOrthogonalAndPositive(Eigen::MatrixBase<D> const& sR) {
 /// Takes in arbitrary square matrix (2x2 or larger) and returns closest
 /// orthogonal matrix with positive determinant.
 template <class D>
-SOPHUS_FUNC enable_if_t<
+SOPHUS_FUNC std::enable_if_t<
     std::is_floating_point<typename D::Scalar>::value,
     Matrix<typename D::Scalar, D::RowsAtCompileTime, D::RowsAtCompileTime>>
 makeRotationMatrix(Eigen::MatrixBase<D> const& R) {

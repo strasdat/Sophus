@@ -249,8 +249,8 @@ class RxSO2Base {
   ///   ``p_bar = s * (bar_R_foo * p_foo)``.
   ///
   template <typename PointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<PointDerived, 2>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<PointDerived, 2>::value>>
   SOPHUS_FUNC PointProduct<PointDerived> operator*(
       Eigen::MatrixBase<PointDerived> const& p) const {
     return matrix() * p;
@@ -259,8 +259,8 @@ class RxSO2Base {
   /// Group action on homogeneous 2-points. See above for more details.
   ///
   template <typename HPointDerived,
-            typename = typename std::enable_if<
-                IsFixedSizeVector<HPointDerived, 3>::value>::type>
+            typename = typename std::enable_if_t<
+                IsFixedSizeVector<HPointDerived, 3>::value>>
   SOPHUS_FUNC HomogeneousPointProduct<HPointDerived> operator*(
       Eigen::MatrixBase<HPointDerived> const& p) const {
     const auto rsp = *this * p.template head<2>();
@@ -303,8 +303,8 @@ class RxSO2Base {
   /// order to ensure the class invariant.
   ///
   template <typename OtherDerived,
-            typename = typename std::enable_if<
-                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>::type>
+            typename = typename std::enable_if_t<
+                std::is_same<Scalar, ReturnScalar<OtherDerived>>::value>>
   SOPHUS_FUNC RxSO2Base<Derived>& operator*=(
       RxSO2Base<OtherDerived> const& other) {
     *static_cast<Derived*>(this) = *this * other;
@@ -399,7 +399,7 @@ class RxSO2Base {
   ///
   SOPHUS_FUNC void setScaledRotationMatrix(Transformation const& sR) {
     SOPHUS_ENSURE(isScaledOrthogonalAndPositive(sR),
-                  "sR must be scaled orthogonal:\n {}", SOPHUS_FMT_ARG(sR));
+                  "sR must be scaled orthogonal:\n {}", (sR));
     complex_nonconst() = sR.col(0);
   }
 
@@ -495,19 +495,18 @@ class RxSO2 : public RxSO2Base<RxSO2<Scalar_, Options>> {
   /// Precondition: complex number must not be close to either zero or infinity
   ///
   SOPHUS_FUNC explicit RxSO2(Vector2<Scalar> const& z) : complex_(z) {
-    SOPHUS_ENSURE(complex_.squaredNorm() >= Constants<Scalar>::epsilon() *
-                                                Constants<Scalar>::epsilon(),
-                  "Scale factor must be greater-equal epsilon: {} vs {}",
-                  SOPHUS_FMT_ARG(complex_.squaredNorm()),
-                  SOPHUS_FMT_ARG(Constants<Scalar>::epsilon() *
-                                 Constants<Scalar>::epsilon()));
+    SOPHUS_ENSURE(
+        complex_.squaredNorm() >=
+            Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon(),
+        "Scale factor must be greater-equal epsilon: {} vs {}",
+        (complex_.squaredNorm()),
+        (Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()));
     SOPHUS_ENSURE(
         complex_.squaredNorm() <= Scalar(1.) / (Constants<Scalar>::epsilon() *
                                                 Constants<Scalar>::epsilon()),
         "Inverse scale factor must be greater-equal epsilon: {} vs {}",
-        SOPHUS_FMT_ARG(Scalar(1.) / complex_.squaredNorm()),
-        SOPHUS_FMT_ARG(Constants<Scalar>::epsilon() *
-                       Constants<Scalar>::epsilon()));
+        (Scalar(1.) / complex_.squaredNorm()),
+        (Constants<Scalar>::epsilon() * Constants<Scalar>::epsilon()));
   }
 
   /// Constructor from complex number.

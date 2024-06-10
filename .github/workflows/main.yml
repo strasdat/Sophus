@@ -12,51 +12,114 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04]
-        build_type: [Debug, Release]
-        row_major: [ON, OFF]
-        basic_logging: [ON, OFF]
-        exclude:
-          - build_type: Release
-            row_major: ON
-          - build_type: Release
-            basic_logging: ON
-          - build_type: Debug
-            row_major: ON
-            basic_logging: ON
-      fail-fast: false
-    env:
-      BUILD_TYPE: ${{ matrix.build_type }}
-      ROW_MAJOR_DEFAULT: ${{ matrix.row_major }}
-      USE_BASIC_LOGGING: ${{ matrix.basic_logging }}
+        include:
+          - test: unit_tests
+            os: ubuntu-22.04
+            access: row_major
+            ensure: default_panic
+            compiler: clang
+          - test: unit_tests
+            os: ubuntu-24.04
+            access: col_major
+            ensure: default_panic
+            compiler: clang
+          - test: unit_tests
+            os: ubuntu-22.04
+            access: col_major
+            ensure: default_panic
+            compiler: gcc
+          - test: unit_tests
+            os: ubuntu-24.04
+            access: col_major
+            ensure: default_panic
+            compiler: gcc
+          - test: unit_tests
+            os: macos-13
+            access: col_major
+            ensure: default_panic
+            compiler: clang
+          - test: unit_tests
+            os: macos-14
+            access: col_major
+            ensure: default_panic
+            compiler: clang
+          - test: install_test
+            os: ubuntu-22.04
+            access: col_major
+            ensure: default_panic
+            compiler: clang
+          - test: install_test
+            os: ubuntu-22.04
+            access: col_major
+            ensure: custom_handler
+            compiler: clang
+          - test: install_test
+            os: macos-14
+            access: col_major
+            ensure: default_panic
+            compiler: clang
+          - test: install_test
+            os: macos-14
+            access: col_major
+            ensure: custom_handler
+            compiler: clang
 
+      fail-fast: false
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Set default value for for environment variables
+        run: |
+          echo "ROW_MAJOR_DEFAULT=OFF" >> $GITHUB_ENV
+          echo "SOPHUS_ENABLE_ENSURE_HANDLER=OFF" >> $GITHUB_ENV
 
-      - name: Format
-        uses: DoozyX/clang-format-lint-action@v0.12
-        with:
-          source: '.'
-          extensions: 'hpp,cpp'
-          exclude: './sympy ./doxyrest_b'
-          clangFormatVersion: 9
-        if: matrix.os == 'ubuntu-20.04'
+      - name: Update ROW_MAJOR_DEFAULT=ON if condition is met
+        if: matrix.access == 'row_major'
+        run: echo "ROW_MAJOR_DEFAULT=ON" >> $GITHUB_ENV
+
+      - name: Update SOPHUS_ENABLE_ENSURE_HANDLER=ON if condition is met
+        if: matrix.ensure == 'custom_handler'
+        run: echo "SOPHUS_ENABLE_ENSURE_HANDLER=ON" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v2
 
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.access }}-${{ matrix.ensure }}-${{ matrix.compiler }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.os }}-${{ matrix.access }}-${{ matrix.ensure }}-${{ matrix.compiler }}
 
-      - name: Install dependencies (Linux)
-        run: ./scripts/install_linux_deps.sh
-        if: matrix.os == 'ubuntu-20.04'
+      - name: Install dependencies (Linux incl. Ceres)
+        run: ./scripts/install_ubuntu_deps_incl_ceres.sh
+        if: matrix.os == 'ubuntu-22.04' || matrix.os == 'ubuntu-24.04'
 
-      - name: Install fmt dependency (Linux)
-        run: ./scripts/install_linux_fmt_deps.sh
-        if: matrix.os == 'ubuntu-20.04' && matrix.basic_logging == 'OFF'
+      - name: Install dependencies (Mac OS incl. Ceres)
+        run: ./scripts/install_osx_deps_incl_ceres.sh
+        if: matrix.os == 'macos-14' || matrix.os == 'macos-13'
 
-      - name: Install dependencies (Mac OS)
-        run: ./scripts/install_osx_deps.sh
-        if: matrix.os == 'macos-10.15'
+      - name: Build (gcc) and run tests
+        run: ./scripts/run_cpp_tests_gcc.sh
+        if: matrix.test == 'unit_tests' && matrix.compiler == 'gcc'
 
-      - name: Run tests
-        run: ./scripts/run_cpp_tests.sh
+      - name: Build (clang) and run tests
+        run: ./scripts/run_cpp_tests_clang.sh
+        if: matrix.test == 'unit_tests' && matrix.compiler == 'clang'
+
+      - name: Install test
+        run: |
+          echo "Install test"
+          mkdir build_dir
+          cd build_dir
+          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache .. -DSOPHUS_ENABLE_ENSURE_HANDLER=$SOPHUS_ENABLE_ENSURE_HANDLER
+          # Ubuntu builds via Github actions run on 2-core virtual machines
+          make -j2
+          sudo make install
+          cd ..
+          cd examples
+          mkdir build_dir
+          cd build_dir
+          cmake ..
+          make
+          ls -la
+          ./hello_so3
+        if: matrix.test == 'install_test'
