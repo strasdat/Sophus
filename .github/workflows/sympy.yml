@@ -2,7 +2,7 @@ name: Linux - sympy
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
 
   workflow_dispatch:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-22.04]
       fail-fast: false
 
 
