@@ -33,7 +33,7 @@ jobs:
               sudo apt install -y libunwind-dev
 
               # Generic dependencies
-              sudo apt-get install cmake
+              sudo apt-get install cmake libeigen3-dev libfmt-dev
 
               # Clean APT cache
               sudo apt-get clean
@@ -42,7 +42,7 @@ jobs:
               # Install system deps with Homebrew
               brew install cmake
               # VRS dependencies
-              brew install fmt lz4 zstd xxhash
+              brew install eigen fmt lz4 zstd xxhash
           else
               echo "$RUNNER_OS not supported"
               exit 1
