@@ -111,6 +111,9 @@ endif()
 # Build python sophus bindings
 option(BUILD_PYTHON_BINDINGS "Build python sophus bindings." OFF)
 if(BUILD_PYTHON_BINDINGS)
+  if(NOT TARGET fmt::fmt)
+    find_package(fmt REQUIRED)
+  endif()
   include(FetchContent)
   FetchContent_Declare(
     pybind11
@@ -121,7 +124,7 @@ if(BUILD_PYTHON_BINDINGS)
   add_subdirectory(${pybind11_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/pybind)
   pybind11_add_module(sophus_pybind
                       ${CMAKE_CURRENT_SOURCE_DIR}/sophus_pybind/bindings.cpp)
-  target_link_libraries(sophus_pybind PUBLIC sophus)
+  target_link_libraries(sophus_pybind PUBLIC sophus fmt::fmt)
 endif(BUILD_PYTHON_BINDINGS)
 
 if(SOPHUS_INSTALL)
