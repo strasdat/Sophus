@@ -43,7 +43,6 @@ class CMakeBuild(build_ext):
 
         cmake_args = [
             "-DBUILD_PYTHON_BINDINGS=ON",
-            "-DBUILD_SOPHUS_EXAMPLES=OFF",
             "-DBUILD_SOPHUS_TESTS=OFF",
         ]
         build_args = []
