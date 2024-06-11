@@ -65,8 +65,8 @@ However, next incarnations of Sophus are under development:
 
 
 
-How to build Sophus
--------------------
+How to build Sophus from source
+-------------------------------
 
 Sophus requires a C++17 compiler (though older versions build with C++14).
 
@@ -76,3 +76,20 @@ currently no CI for Windows, so it might require some smaller patches to build o
 There are no comprehensive build instructions but inspecting the install [scripts](scripts/)
 as well as the [main.yml](.github/workflows/main.yml) file should give you a good idea how to
 build the required dependencies.
+
+Installing Sophus through vcpkg
+-------------------------------
+
+You can build and install Sophus using [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager::
+
+```
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+./vcpkg install sophus
+```
+
+The Sophus port in vcpkg is kept up to date by Microsoft team members and community contributors.
+If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg)
+on the vcpkg repository.
