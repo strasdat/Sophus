@@ -131,7 +131,7 @@ def main():
     # logic and declaration, and simpler if you include description/version in a file.
     setup(
         name="sophus_pybind",
-        version="1.24.06",
+        version="1.24.6",
         description="Sophus python API",
         long_description="Python API for sophus library",
         url="https://github.com/strasdat/sophus",

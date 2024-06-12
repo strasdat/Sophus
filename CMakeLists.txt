@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.16)
-project(Sophus VERSION 1.24.06)
+cmake_minimum_required(VERSION 3.24)
+project(Sophus VERSION 1.24.6)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -24,20 +24,19 @@ if(SOPHUS_MASTER_PROJECT)
 
   set(CMAKE_CXX_STANDARD 17)
 
+  set(CMAKE_COMPILE_WARNING_AS_ERROR Off)
+
   # Set compiler specific settings (FixMe: Should not cmake do this for us
   # automatically?)
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-    set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra  -Wno-deprecated-register -Qunused-arguments -fcolor-diagnostics"
-    )
+    add_compile_options(-Wall -Wextra -Wno-deprecated-register
+                        -Qunused-arguments -fcolor-diagnostics)
   elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-    set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -std=c++14 -Wno-deprecated-declarations -ftemplate-backtrace-limit=0 -Wno-array-bounds"
-    )
+    add_compile_options(-Wall -Wextra -Wno-deprecated-declarations
+                        -ftemplate-backtrace-limit=0 -Wno-array-bounds)
+  elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    add_compile_options(/bigobj /wd4305 /wd4244 /MP)
+    add_compile_definitions(_USE_MATH_DEFINES)
   endif()
 
   # Add local path for finding packages, set the local version first
