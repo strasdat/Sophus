@@ -42,7 +42,7 @@ struct type_caster<Sophus::SE3<double>> {
   PYBIND11_TYPE_CASTER(Sophus::SE3<double>, _("SE3"));
 
   // converting from python -> c++ type
-  bool load(handle src, bool convert) {
+  bool load(handle src, bool /*convert*/) {
     try {
       Sophus::SE3Group<double>& ref = src.cast<Sophus::SE3Group<double>&>();
       if (ref.size() != 1) {
@@ -103,7 +103,7 @@ PybindSE3Type<Scalar> exportSE3Transformation(pybind11::module& module,
 
         SE3Group<Scalar> output;
         output.reserve(matrices.shape(0));
-        for (size_t i = 0; i < matrices.shape(0); ++i) {
+        for (int i = 0; i < matrices.shape(0); ++i) {
           Eigen::Map<const Eigen::Matrix<Scalar, 4, 4, Eigen::RowMajor>> mat(
               matrices.data(i, 0, 0));
           output.push_back(Sophus::SE3<Scalar>::fitToSE3(mat));
@@ -129,7 +129,7 @@ PybindSE3Type<Scalar> exportSE3Transformation(pybind11::module& module,
 
         SE3Group<Scalar> output;
         output.reserve(matrices.shape(0));
-        for (size_t i = 0; i < matrices.shape(0); ++i) {
+        for (int i = 0; i < matrices.shape(0); ++i) {
           Eigen::Map<const Eigen::Matrix<Scalar, 3, 4, Eigen::RowMajor>> mat(
               matrices.data(i, 0, 0));
           output.push_back(Sophus::SE3<Scalar>(
@@ -161,7 +161,7 @@ PybindSE3Type<Scalar> exportSE3Transformation(pybind11::module& module,
           -> SE3Group<Scalar> {
         SE3Group<Scalar> output;
         output.reserve(rotvecs.rows());
-        for (size_t i = 0; i < rotvecs.rows(); ++i) {
+        for (int i = 0; i < rotvecs.rows(); ++i) {
           auto tangentVec =
               Eigen::Matrix<Scalar, 6, 1>{translational_parts(i, 0),
                                           translational_parts(i, 1),
@@ -192,8 +192,8 @@ PybindSE3Type<Scalar> exportSE3Transformation(pybind11::module& module,
       [](const std::vector<Scalar>& x_vec,
          const Eigen::Matrix<Scalar, -1, 3>& xyz_vec,
          const Eigen::Matrix<Scalar, -1, 3>& translations) -> SE3Group<Scalar> {
-        if (x_vec.size() != xyz_vec.rows() ||
-            x_vec.size() != translations.rows()) {
+        if (int(x_vec.size()) != xyz_vec.rows() ||
+            int(x_vec.size()) != translations.rows()) {
           throw std::domain_error(
               fmt::format("Size of the input variables are not the same: x_vec "
                           "= {}, xyz_vec = {}, translation = {}",
@@ -413,7 +413,7 @@ PybindSE3Type<Scalar> exportSE3Transformation(pybind11::module& module,
              }
 
              Eigen::Matrix<Scalar, 3, Eigen::Dynamic> result(3, matrix.cols());
-             for (size_t i = 0; i < matrix.cols(); ++i) {
+             for (int i = 0; i < matrix.cols(); ++i) {
                result.col(i) = transformations[0] * matrix.col(i);
              }
              return result;
@@ -442,7 +442,7 @@ PybindSE3Type<Scalar> exportSE3Transformation(pybind11::module& module,
           SE3Group<Scalar> result;
           for (const auto index : index_list) {
             const auto intIndex = pybind11::cast<int>(index);
-            if (intIndex < 0 || intIndex >= se3Vec.size()) {
+            if (intIndex < 0 || intIndex >= int(se3Vec.size())) {
               throw std::out_of_range("Index out of range");
             }
             result.push_back(se3Vec[intIndex]);
@@ -451,7 +451,7 @@ PybindSE3Type<Scalar> exportSE3Transformation(pybind11::module& module,
         } else if (pybind11::isinstance<pybind11::int_>(
                        index_or_slice_or_list)) {
           int index = index_or_slice_or_list.cast<int>();
-          if (index < 0 || index >= se3Vec.size()) {
+          if (index < 0 || index >= int(se3Vec.size())) {
             throw std::out_of_range("Index out of range");
           }
           return se3Vec[index];
@@ -499,7 +499,7 @@ PybindSE3Type<Scalar> exportSE3Transformation(pybind11::module& module,
       }
     } else if (pybind11::isinstance<pybind11::int_>(index_or_slice_or_list)) {
       int index = index_or_slice_or_list.cast<int>();
-      if (index < 0 || index >= se3Vec.size()) {
+      if (index < 0 || index >= int(se3Vec.size())) {
         throw std::out_of_range("Index out of range");
       }
       if (value.size() != 1) {

@@ -92,7 +92,7 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module,
           -> SO3Group<Scalar> {
         SO3Group<Scalar> output;
         output.reserve(rotvecs.rows());
-        for (size_t i = 0; i < rotvecs.rows(); ++i) {
+        for (int i = 0; i < rotvecs.rows(); ++i) {
           output.emplace_back(Sophus::SO3<Scalar>::exp(rotvecs.row(i)));
         }
         return output;
@@ -113,7 +113,7 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module,
       "from_quat",
       [](const std::vector<Scalar>& x_vec,
          const Eigen::Matrix<Scalar, -1, 3>& xyz_vec) -> SO3Group<Scalar> {
-        if (x_vec.size() != xyz_vec.rows()) {
+        if (int(x_vec.size()) != xyz_vec.rows()) {
           throw std::runtime_error(fmt::format(
               "Size of the real and imagery part is not the same: {} {}",
               x_vec.size(), xyz_vec.rows()));
@@ -147,7 +147,7 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module,
 
         SO3Group<Scalar> output;
         output.reserve(matrices.shape(0));
-        for (size_t i = 0; i < matrices.shape(0); ++i) {
+        for (int i = 0; i < matrices.shape(0); ++i) {
           Eigen::Map<const Eigen::Matrix<Scalar, 3, 3, Eigen::RowMajor>> mat(
               matrices.data(i, 0, 0));
           output.push_back(Sophus::SO3<Scalar>::fitToSO3(mat));
@@ -298,7 +298,7 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module,
              }
 
              Eigen::Matrix<Scalar, 3, Eigen::Dynamic> result(3, matrix.cols());
-             for (size_t i = 0; i < matrix.cols(); ++i) {
+             for (int i = 0; i < matrix.cols(); ++i) {
                result.col(i) = rotations[0] * matrix.col(i);
              }
              return result;
@@ -327,7 +327,7 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module,
           SO3Group<Scalar> result;
           for (const auto index : index_list) {
             const auto intIndex = pybind11::cast<int>(index);
-            if (intIndex < 0 || intIndex >= so3Vec.size()) {
+            if (intIndex < 0 || intIndex >= int(so3Vec.size())) {
               throw std::out_of_range("Index out of range");
             }
             result.push_back(so3Vec[intIndex]);
@@ -336,7 +336,7 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module,
         } else if (pybind11::isinstance<pybind11::int_>(
                        index_or_slice_or_list)) {
           int index = index_or_slice_or_list.cast<int>();
-          if (index < 0 || index >= so3Vec.size()) {
+          if (index < 0 || index >= int(so3Vec.size())) {
             throw std::out_of_range("Index out of range");
           }
           return so3Vec[index];
@@ -384,7 +384,7 @@ PybindSO3Group<Scalar> exportSO3Group(pybind11::module& module,
       }
     } else if (pybind11::isinstance<pybind11::int_>(index_or_slice_or_list)) {
       int index = index_or_slice_or_list.cast<int>();
-      if (index < 0 || index >= so3Vec.size()) {
+      if (index < 0 || index >= int(so3Vec.size())) {
         throw std::out_of_range("Index out of range");
       }
       if (value.size() != 1) {
