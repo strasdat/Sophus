@@ -30,13 +30,13 @@ if(SOPHUS_MASTER_PROJECT)
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
     set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -Wall -Wno-error -Wextra  -Wno-deprecated-register -Qunused-arguments -fcolor-diagnostics"
+        "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra  -Wno-deprecated-register -Qunused-arguments -fcolor-diagnostics"
     )
   elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
     set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -Wall -Wno-error -Wextra -std=c++14 -Wno-deprecated-declarations -ftemplate-backtrace-limit=0 -Wno-array-bounds"
+        "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -std=c++14 -Wno-deprecated-declarations -ftemplate-backtrace-limit=0 -Wno-array-bounds"
     )
   endif()
 
