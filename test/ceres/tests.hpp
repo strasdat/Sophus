@@ -107,7 +107,7 @@ struct LieGroupCeresTests {
       using Mapper = Mapper<typename LieGroup<T>::Tangent>;
       typename Mapper::Map residuals = Mapper::map(sResiduals);
 
-      // We are able to mix Sophus types with doubles and Jet types withou
+      // We are able to mix Sophus types with doubles and Jet types without
       // needing to cast to T.
       residuals = (T_aw * T_wa).log();
       // Reverse order of multiplication. This forces the compiler to verify
