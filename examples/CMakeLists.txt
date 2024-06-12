@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.24)
 
 project(SophusExample)
 
-find_package(Sophus 1.24.06 REQUIRED)
+find_package(Sophus 1.24.6 REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 # Release by default Turn on Debug with "-DCMAKE_BUILD_TYPE=Debug"

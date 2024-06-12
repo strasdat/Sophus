@@ -110,7 +110,7 @@ jobs:
           echo "Install test"
           mkdir build_dir
           cd build_dir
-          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache .. -DSOPHUS_ENABLE_ENSURE_HANDLER=$SOPHUS_ENABLE_ENSURE_HANDLER
+          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache .. -DBUILD_SOPHUS_TESTS=Off -DCMAKE_COMPILE_WARNING_AS_ERROR=On -DSOPHUS_ENABLE_ENSURE_HANDLER=$SOPHUS_ENABLE_ENSURE_HANDLER
           # Ubuntu builds via Github actions run on 2-core virtual machines
           make -j2
           sudo make install
