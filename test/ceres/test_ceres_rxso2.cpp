@@ -1,5 +1,6 @@
 #include <ceres/ceres.h>
 #include <iostream>
+#include <fstream>
 #include <sophus/rxso2.hpp>
 
 #include "tests.hpp"
@@ -46,6 +47,24 @@ int main(int, char **) {
   point_vec.push_back(Point(5.8, 9.2));
 
   std::cerr << "Test Ceres RxSO2" << std::endl;
-  Sophus::LieGroupCeresTests<Sophus::RxSO2>(rxso2_vec, point_vec).testAll();
+  Sophus::LieGroupCeresTests<Sophus::RxSO2> test(rxso2_vec, point_vec);
+  test.testAll();
+
+
+#if 0
+  // Example code to output the spline curve into a plottable format
+  std::shared_ptr<Sophus::BasisSpline<RxSO2d>> so2_spline = test.testSpline(6);
+  std::ofstream control("ctrl_pts", std::ofstream::out);
+  for (size_t i=0;i<rxso2_vec.size();i++) {
+      control << i << " " << rxso2_vec[i].log().transpose() << std::endl;
+  }
+  control.close();
+  std::ofstream inter("inter_pts", std::ofstream::out);
+  for (double t=0;t<rxso2_vec.size();t+=0.1) {
+      RxSO2d g = so2_spline->parent_T_spline(t);
+      inter << t << " " << g.log().transpose() << std::endl;
+  }
+  inter.close();
+#endif
   return 0;
 }
