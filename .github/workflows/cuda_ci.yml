@@ -1,0 +1,32 @@
+name: cuda-compile
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pre-commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: Jimver/cuda-toolkit@v0.2.15
+        id: cuda-toolkit
+        with:
+          cuda: '12.4.1'
+
+      - name: Display CUDA version
+        run: |
+          echo "Installed CUDA version is: ${{ steps.cuda-toolkit.outputs.cuda }}"
+
+      - name: Display CUDA install location
+        run: |
+          echo "CUDA install location: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}"
+
+      - name: Check NVCC Version
+        run: |
+          nvcc -V
