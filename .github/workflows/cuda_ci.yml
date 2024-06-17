@@ -1,0 +1,52 @@
+name: cuda-compile
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  cuda-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: Jimver/cuda-toolkit@v0.2.15
+        id: cuda-toolkit
+        with:
+          cuda: '12.4.1'
+
+      - name: Display CUDA version
+        run: |
+          echo "Installed CUDA version is: ${{ steps.cuda-toolkit.outputs.cuda }}"
+
+      - name: Display CUDA install location
+        run: |
+          echo "CUDA install location: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}"
+
+      - name: Check NVCC Version
+        run: |
+          nvcc -V
+
+      - name: Install dependencies (Linux no Ceres)
+        run: ./scripts/install_ubuntu_deps_no_ceres.sh
+
+      - name: Install test
+        run: |
+          echo "Install test"
+          mkdir build_dir
+          cd build_dir
+          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache .. -DBUILD_SOPHUS_TESTS=Off -DCMAKE_COMPILE_WARNING_AS_ERROR=On -DSOPHUS_ENABLE_ENSURE_HANDLER=$SOPHUS_ENABLE_ENSURE_HANDLER
+          # Ubuntu builds via Github actions run on 2-core virtual machines
+          make -j2
+          sudo make install
+          cd ..
+          cd examples/cuda
+          mkdir build_dir
+          cd build_dir
+          cmake ..
+          make
+          ls -la

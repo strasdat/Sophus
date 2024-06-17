@@ -64,7 +64,24 @@
 			"streambuf": "cpp",
 			"thread": "cpp",
 			"cinttypes": "cpp",
-			"typeinfo": "cpp"
+			"typeinfo": "cpp",
+			"bitset": "cpp",
+			"charconv": "cpp",
+			"condition_variable": "cpp",
+			"forward_list": "cpp",
+			"format": "cpp",
+			"mutex": "cpp",
+			"span": "cpp",
+			"variant": "cpp",
+			"__bit_reference": "cpp",
+			"__locale": "cpp",
+			"__threading_support": "cpp",
+			"__verbose_abort": "cpp",
+			"ios": "cpp",
+			"locale": "cpp",
+			"print": "cpp",
+			"queue": "cpp",
+			"stack": "cpp"
 		}
 	}
 }
