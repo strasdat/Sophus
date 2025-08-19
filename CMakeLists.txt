@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.22)
 
 file(READ "SOPHUS_VERSION" SOPHUS_VERSION)
 project(Sophus VERSION ${SOPHUS_VERSION})
@@ -26,20 +26,21 @@ if(SOPHUS_MASTER_PROJECT)
 
   set(CMAKE_CXX_STANDARD 17)
 
-  set(CMAKE_COMPILE_WARNING_AS_ERROR Off)
-
-  # Set compiler specific settings (FixMe: Should not cmake do this for us
-  # automatically?)
-  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_compile_options(-Wall -Wextra -Wno-deprecated-register
-                        -Qunused-arguments -fcolor-diagnostics)
-  elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_compile_options(-Wall -Wextra -Wno-deprecated-declarations
-                        -ftemplate-backtrace-limit=0 -Wno-array-bounds)
-  elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    add_compile_options(/bigobj /wd4305 /wd4244 /MP)
-    add_compile_definitions(_USE_MATH_DEFINES)
-  endif()
+  # Set compiler specific settings (FixMe: Should not cmake do this for us automatically?)
+  IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+    SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra  -Wno-deprecated-register -Qunused-arguments -fcolor-diagnostics")
+  ELSEIF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+    SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -g -ggdb")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -std=c++17 -Wno-deprecated-declarations -ftemplate-backtrace-limit=0")
+    SET(CMAKE_CXX_FLAGS_COVERAGE "${CMAKE_CXX_FLAGS_DEBUG} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline")
+    SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE "${CMAKE_EXE_LINKER_FLAGS_DEBUG} --coverage")
+    SET(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} --coverage")
+  ELSEIF(CMAKE_CXX_COMPILER_ID MATCHES "^MSVC$")
+    ADD_DEFINITIONS("-D _USE_MATH_DEFINES /bigobj /wd4305 /wd4244 /MP")
+  ENDIF()
 
   # Add local path for finding packages, set the local version first
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")

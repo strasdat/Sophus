@@ -280,6 +280,16 @@ struct BasisSplineSegment {
   T const* raw_params3_;
 };
 
+struct KnotsAndU {
+  SegmentCase segment_case;
+  int idx_prev;
+  int idx_0;
+  int idx_1;
+  int idx_2;
+  double u;
+};
+
+
 template <class LieGroup_>
 class BasisSplineImpl {
  public:
@@ -295,6 +305,21 @@ class BasisSplineImpl {
                   parent_Ts_control_point_.size());
   }
 
+  KnotsAndU knots_and_u(int i, double u) const {
+      KnotsAndU ku;
+      ku.u = u;
+      ku.segment_case =
+          i == 0 ? SegmentCase::first
+          : (i == this->getNumSegments() - 1 ? SegmentCase::last
+                  : SegmentCase::normal);
+
+      ku.idx_prev = std::max(0, i - 1);
+      ku.idx_0 = i;
+      ku.idx_1 = std::min(i + 1, int(this->parent_Ts_control_point_.size()) - 1);
+      ku.idx_2 = std::min(i + 2, int(this->parent_Ts_control_point_.size()) - 1);
+      return ku;
+  }
+
   LieGroup parent_T_spline(int i, double u) const {
     SOPHUS_ENSURE(i >= 0, "i = {}", i);
     SOPHUS_ENSURE(i < this->getNumSegments(),
@@ -302,21 +327,13 @@ class BasisSplineImpl {
                   "parent_Ts_control_point_.size() = {}",
                   i, this->getNumSegments(), parent_Ts_control_point_.size());
 
-    SegmentCase segment_case =
-        i == 0 ? SegmentCase::first
-               : (i == this->getNumSegments() - 1 ? SegmentCase::last
-                                                  : SegmentCase::normal);
-
-    int idx_prev = std::max(0, i - 1);
-    int idx_0 = i;
-    int idx_1 = i + 1;
-    int idx_2 = std::min(i + 2, int(this->parent_Ts_control_point_.size()) - 1);
+    KnotsAndU ku = knots_and_u(i,u);
 
     return BasisSplineSegment<LieGroup>(
-               segment_case, parent_Ts_control_point_[idx_prev].data(),
-               parent_Ts_control_point_[idx_0].data(),
-               parent_Ts_control_point_[idx_1].data(),
-               parent_Ts_control_point_[idx_2].data())
+               ku.segment_case, parent_Ts_control_point_[ku.idx_prev].data(),
+               parent_Ts_control_point_[ku.idx_0].data(),
+               parent_Ts_control_point_[ku.idx_1].data(),
+               parent_Ts_control_point_[ku.idx_2].data())
         .parent_T_spline(u);
   }
 
@@ -327,21 +344,13 @@ class BasisSplineImpl {
                   "parent_Ts_control_point_.size() = {}",
                   i, this->getNumSegments(), parent_Ts_control_point_.size());
 
-    SegmentCase segment_case =
-        i == 0 ? SegmentCase::first
-               : (i == this->getNumSegments() - 1 ? SegmentCase::last
-                                                  : SegmentCase::normal);
-
-    int idx_prev = std::max(0, i - 1);
-    int idx_0 = i;
-    int idx_1 = i + 1;
-    int idx_2 = std::min(i + 2, int(this->parent_Ts_control_point_.size()) - 1);
+    KnotsAndU ku = knots_and_u(i,u);
 
     return BasisSplineSegment<LieGroup>(
-               segment_case, parent_Ts_control_point_[idx_prev].data(),
-               parent_Ts_control_point_[idx_0].data(),
-               parent_Ts_control_point_[idx_1].data(),
-               parent_Ts_control_point_[idx_2].data())
+               ku.segment_case, parent_Ts_control_point_[ku.idx_prev].data(),
+               parent_Ts_control_point_[ku.idx_0].data(),
+               parent_Ts_control_point_[ku.idx_1].data(),
+               parent_Ts_control_point_[ku.idx_2].data())
         .Dt_parent_T_spline(u, delta_t_);
   }
 
@@ -352,21 +361,13 @@ class BasisSplineImpl {
                   "parent_Ts_control_point_.size() = {}",
                   i, this->getNumSegments(), parent_Ts_control_point_.size());
 
-    SegmentCase segment_case =
-        i == 0 ? SegmentCase::first
-               : (i == this->getNumSegments() - 1 ? SegmentCase::last
-                                                  : SegmentCase::normal);
-
-    int idx_prev = std::max(0, i - 1);
-    int idx_0 = i;
-    int idx_1 = i + 1;
-    int idx_2 = std::min(i + 2, int(this->parent_Ts_control_point_.size()) - 1);
+    KnotsAndU ku = knots_and_u(i,u);
 
     return BasisSplineSegment<LieGroup>(
-               segment_case, parent_Ts_control_point_[idx_prev].data(),
-               parent_Ts_control_point_[idx_0].data(),
-               parent_Ts_control_point_[idx_1].data(),
-               parent_Ts_control_point_[idx_2].data())
+               ku.segment_case, parent_Ts_control_point_[ku.idx_prev].data(),
+               parent_Ts_control_point_[ku.idx_0].data(),
+               parent_Ts_control_point_[ku.idx_1].data(),
+               parent_Ts_control_point_[ku.idx_2].data())
         .Dt2_parent_T_spline(u, delta_t_);
   }
 
@@ -464,6 +465,12 @@ class BasisSpline {
     --index_and_u.i;
 
     return index_and_u;
+  }
+
+  KnotsAndU knots_and_u(double t) const {
+      IndexAndU iu = index_and_u(t);
+      KnotsAndU ku = impl_.knots_and_u(iu.i,iu.u);
+      return ku;
   }
 
  private:
