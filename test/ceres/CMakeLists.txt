@@ -6,7 +6,7 @@ find_package(Ceres 2)
 
 function(add_test_ceres source postfix)
   add_executable(${source}_${postfix} ${source}.cpp)
-  target_link_libraries(${source}_${postfix} sophus Ceres::ceres)
+  target_link_libraries(${source}_${postfix} sophus Ceres::ceres gflags glog)
   target_compile_definitions(${source}_${postfix} PRIVATE ${ARGN})
   add_test(${source}_${postfix} ${source}_${postfix})
 endfunction()
