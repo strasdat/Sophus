@@ -49,7 +49,10 @@ endif()
 # example defined by a parent project including Sophus via `add_subdirectory`.)
 
 if(NOT TARGET Eigen3::Eigen)
-  find_package(Eigen3 3.4.0 REQUIRED)
+  find_package(Eigen3 3.4...5 QUIET)
+  if(NOT Eigen3_FOUND)
+    find_package(Eigen3 3.4.0 REQUIRED)
+  endif()
 endif()
 
 # Define interface library target

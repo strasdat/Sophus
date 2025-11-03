@@ -34,11 +34,6 @@ jobs:
             ensure: default_panic
             compiler: gcc
           - test: unit_tests
-            os: macos-13
-            access: col_major
-            ensure: default_panic
-            compiler: clang
-          - test: unit_tests
             os: macos-14
             access: col_major
             ensure: default_panic
@@ -95,7 +90,7 @@ jobs:
 
       - name: Install dependencies (Mac OS incl. Ceres)
         run: ./scripts/install_osx_deps_incl_ceres.sh
-        if: matrix.os == 'macos-14' || matrix.os == 'macos-13'
+        if: matrix.os == 'macos-14'
 
       - name: Build (gcc) and run tests
         run: ./scripts/run_cpp_tests_gcc.sh

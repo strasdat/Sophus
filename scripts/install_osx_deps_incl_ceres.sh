@@ -7,10 +7,12 @@ brew update
 brew install ccache
 
 # Get dependencies for Ceres Solver
+brew install abseil
 brew install eigen
 brew install gflags
 brew install glog
 brew install gcc
+brew install googletest
 brew install openblas
 brew install libomp
 brew install hwloc
@@ -18,7 +20,7 @@ brew install tbb
 
 git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
 cd ceres-solver
-git reset --hard 6a74af202d83cf31811ea17dc66c74d03b89d79e
+git reset --hard f9b7b6651b108136a16df44d91fb31735645f5a7
 mkdir target
 cd target
 ls
