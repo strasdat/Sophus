@@ -9,12 +9,16 @@
 namespace Eigen {
 template class Map<Sophus::SE2<double>>;
 template class Map<Sophus::SE2<double> const>;
+template class Map<Sophus::SE2<double, 0, false>>;
+template class Map<Sophus::SE2<double, 0, false> const>;
 }  // namespace Eigen
 
 namespace Sophus {
 
 template class SE2<double, Eigen::AutoAlign>;
 template class SE2<double, Eigen::DontAlign>;
+template class SE2<double, Eigen::AutoAlign, false>;
+template class SE2<double, Eigen::DontAlign, false>;
 #if SOPHUS_CERES
 template class SE2<ceres::Jet<double, 3>>;
 #endif
@@ -72,6 +76,7 @@ class Tests {
     passed &= testRawDataAcces();
     passed &= testMutatingAccessors();
     passed &= testConstructors();
+    passed &= testNormalizationModes();
     passed &= testFit();
     processTestResult(passed);
   }
@@ -212,6 +217,72 @@ class Tests {
                        se2.matrix(), Constants<Scalar>::epsilon(), "");
     SOPHUS_TEST_APPROX(passed, SE2Type(se2.matrix()).matrix(), se2.matrix(),
                        Constants<Scalar>::epsilon(), "");
+
+    return passed;
+  }
+
+  bool testNormalizationModes() {
+    bool passed = true;
+    // Proactively preserving SO2 norm invariant (default)
+    using SE2N = SE2<Scalar>;
+    // Non-enforcing norm invariant
+    using SE2U = SE2<Scalar, 0, false>;
+    using SO2U = SO2<Scalar, 0, false>;
+
+    SE2U unnormalized(SO2U(Scalar(2), Scalar(0), SO2U::DontNormalize),
+                      Point(Scalar(3), Scalar(4)));
+    SE2N normalized_set_complex;
+    SE2U unnormalized_set_complex;
+    normalized_set_complex.so2().setComplex(Point(Scalar(2), Scalar(0)));
+    unnormalized_set_complex.so2().setComplex(Point(Scalar(2), Scalar(0)));
+    SE2N normalized = unnormalized;
+
+    SOPHUS_TEST_APPROX(passed, normalized.so2().unit_complex().norm(),
+                       Scalar(1), Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_APPROX(passed,
+                       normalized_set_complex.so2().unit_complex().norm(),
+                       Scalar(1), Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, unnormalized_set_complex.so2().unit_complex().x(),
+                      Scalar(2),
+                      "Unnormalized SE2 setComplex preserves magnitude");
+
+    unnormalized.normalize();
+    SOPHUS_TEST_APPROX(passed, unnormalized.so2().unit_complex().norm(),
+                       Scalar(1), Constants<Scalar>::epsilon(), "");
+
+    SE2U inverse = SE2U(SO2U(Scalar(2), Scalar(0), SO2U::DontNormalize),
+                        Point(Scalar(1), Scalar(0)))
+                       .inverse();
+    SE2N normalized_inverse =
+        SE2N(SO2U(Scalar(2), Scalar(0), SO2U::DontNormalize),
+             Point(Scalar(1), Scalar(0)))
+            .inverse();
+    SOPHUS_TEST_APPROX(passed, normalized_inverse.so2().unit_complex().norm(),
+                       Scalar(1), Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, inverse.so2().unit_complex().x(), Scalar(2),
+                      "Unnormalized inverse preserves rotation magnitude");
+
+    static_assert(
+        std::is_same_v<typename SE2N::template SE2Product<SE2N>, SE2N>);
+    static_assert(
+        std::is_same_v<typename SE2U::template SE2Product<SE2N>, SE2U>);
+    static_assert(
+        std::is_same_v<typename SE2N::template SE2Product<SE2U>, SE2U>);
+    static_assert(
+        std::is_same_v<typename SE2U::template SE2Product<SE2U>, SE2U>);
+
+    SE2N normalized_product =
+        SE2N::trans(Scalar(0), Scalar(0)) *
+        SE2N(SO2U(Scalar(2), Scalar(0), SO2U::DontNormalize),
+             Point(Scalar(0), Scalar(0)));
+    SE2U unnormalized_product =
+        SE2N::trans(Scalar(0), Scalar(0)) *
+        SE2U(SO2U(Scalar(2), Scalar(0), SO2U::DontNormalize),
+             Point(Scalar(0), Scalar(0)));
+    SOPHUS_TEST_APPROX(passed, normalized_product.so2().unit_complex().norm(),
+                       Scalar(1), Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_APPROX(passed, unnormalized_product.so2().unit_complex().norm(),
+                       Scalar(2), Constants<Scalar>::epsilon(), "");
 
     return passed;
   }
