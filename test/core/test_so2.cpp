@@ -8,12 +8,16 @@
 namespace Eigen {
 template class Map<Sophus::SO2<double>>;
 template class Map<Sophus::SO2<double> const>;
+template class Map<Sophus::SO2<double, 0, false>>;
+template class Map<Sophus::SO2<double, 0, false> const>;
 }  // namespace Eigen
 
 namespace Sophus {
 
 template class SO2<double, Eigen::AutoAlign>;
 template class SO2<float, Eigen::DontAlign>;
+template class SO2<double, Eigen::AutoAlign, false>;
+template class SO2<float, Eigen::DontAlign, false>;
 #if SOPHUS_CERES
 template class SO2<ceres::Jet<double, 3>>;
 #endif
@@ -53,6 +57,7 @@ class Tests {
     passed &= testUnity();
     passed &= testRawDataAcces();
     passed &= testConstructors();
+    passed &= testNormalizationModes();
     passed &= testFit();
     processTestResult(passed);
   }
@@ -140,6 +145,70 @@ class Tests {
     SO2Type so2(R);
     SOPHUS_TEST_APPROX(passed, R, so2.matrix(), Constants<Scalar>::epsilon(),
                        "");
+
+    return passed;
+  }
+
+  bool testNormalizationModes() {
+    bool passed = true;
+    // Proactively preserving norm invariant (default)
+    using SO2N = SO2<Scalar>;
+    // Non-enforcing norm invariant
+    using SO2U = SO2<Scalar, 0, false>;
+
+    Vector2<Scalar> diverged(Scalar(2), Scalar(0));
+    SO2N normalized(diverged);
+    SO2U unnormalized(diverged);
+    SO2N normalized_set_complex;
+    SO2U unnormalized_set_complex;
+    normalized_set_complex.setComplex(diverged);
+    unnormalized_set_complex.setComplex(diverged);
+
+    SOPHUS_TEST_APPROX(passed, normalized.unit_complex().norm(), Scalar(1),
+                       Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, unnormalized.unit_complex().x(), diverged.x(),
+                      "Unnormalized constructor preserves real part");
+    SOPHUS_TEST_EQUAL(passed, unnormalized.unit_complex().y(), diverged.y(),
+                      "Unnormalized constructor preserves imaginary part");
+    SOPHUS_TEST_APPROX(passed, normalized_set_complex.unit_complex().norm(),
+                       Scalar(1), Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, unnormalized_set_complex.unit_complex().x(),
+                      diverged.x(),
+                      "Unnormalized setComplex preserves real part");
+    SOPHUS_TEST_EQUAL(passed, unnormalized_set_complex.unit_complex().y(),
+                      diverged.y(),
+                      "Unnormalized setComplex preserves imaginary part");
+
+    SO2N normalized_from_unnormalized = unnormalized;
+    SOPHUS_TEST_APPROX(passed,
+                       normalized_from_unnormalized.unit_complex().norm(),
+                       Scalar(1), Constants<Scalar>::epsilon(),
+                       "Copy to normalized performs normalization");
+
+    unnormalized.normalize();
+    SOPHUS_TEST_APPROX(passed, unnormalized.unit_complex().norm(), Scalar(1),
+                       Constants<Scalar>::epsilon(), "");
+
+    static_assert(
+        std::is_same_v<typename SO2N::template SO2Product<SO2N>, SO2N>);
+    static_assert(
+        std::is_same_v<typename SO2U::template SO2Product<SO2N>, SO2U>);
+    static_assert(
+        std::is_same_v<typename SO2N::template SO2Product<SO2U>, SO2U>);
+    static_assert(
+        std::is_same_v<typename SO2U::template SO2Product<SO2U>, SO2U>);
+
+    SO2N normalized_product =
+        SO2N(Scalar(2), Scalar(0)) * normalized_from_unnormalized;
+    SO2U unnormalized_product =
+        SO2U(Scalar(2), Scalar(0), SO2U::DontNormalize) *
+        SO2U(Scalar(1), Scalar(0), SO2U::DontNormalize);
+    SOPHUS_TEST_APPROX(passed, normalized_product.unit_complex().norm(),
+                       Scalar(1), Constants<Scalar>::epsilon(), "");
+    SOPHUS_TEST_EQUAL(passed, unnormalized_product.unit_complex().x(),
+                      Scalar(2), "");
+    SOPHUS_TEST_EQUAL(passed, unnormalized_product.unit_complex().y(),
+                      Scalar(0), "");
 
     return passed;
   }

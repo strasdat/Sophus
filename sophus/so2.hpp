@@ -13,7 +13,7 @@
 #include "types.hpp"
 
 namespace Sophus {
-template <class Scalar_, int Options = 0>
+template <class Scalar_, int Options = 0, bool PreserveInvariant = true>
 class SO2;
 using SO2d = SO2<double>;
 using SO2f = SO2<float>;
@@ -22,25 +22,30 @@ using SO2f = SO2<float>;
 namespace Eigen {
 namespace internal {
 
-template <class Scalar_, int Options_>
-struct traits<Sophus::SO2<Scalar_, Options_>> {
+template <class Scalar_, int Options_, bool PreserveInvariant_>
+struct traits<Sophus::SO2<Scalar_, Options_, PreserveInvariant_>> {
   static constexpr int Options = Options_;
+  static constexpr bool PreserveInvariant = PreserveInvariant_;
   using Scalar = Scalar_;
   using ComplexType = Sophus::Vector2<Scalar, Options>;
 };
 
-template <class Scalar_, int Options_>
-struct traits<Map<Sophus::SO2<Scalar_>, Options_>>
-    : traits<Sophus::SO2<Scalar_, Options_>> {
+template <class Scalar_, int SO2Options, bool PreserveInvariant_, int Options_>
+struct traits<
+    Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_>, Options_>>
+    : traits<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_>> {
   static constexpr int Options = Options_;
+  static constexpr bool PreserveInvariant = PreserveInvariant_;
   using Scalar = Scalar_;
   using ComplexType = Map<Sophus::Vector2<Scalar>, Options>;
 };
 
-template <class Scalar_, int Options_>
-struct traits<Map<Sophus::SO2<Scalar_> const, Options_>>
-    : traits<Sophus::SO2<Scalar_, Options_> const> {
+template <class Scalar_, int SO2Options, bool PreserveInvariant_, int Options_>
+struct traits<
+    Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_> const, Options_>>
+    : traits<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_> const> {
   static constexpr int Options = Options_;
+  static constexpr bool PreserveInvariant = PreserveInvariant_;
   using Scalar = Scalar_;
   using ComplexType = Map<Sophus::Vector2<Scalar> const, Options>;
 };
@@ -98,6 +103,10 @@ class SO2Base {
   using Hyperplane = Hyperplane2<Scalar>;
   using Tangent = Scalar;
   using Adjoint = Scalar;
+  static constexpr bool PreserveInvariant =
+      Eigen::internal::traits<Derived>::PreserveInvariant;
+  static constexpr auto Normalize = std::bool_constant<true>{};
+  static constexpr auto DontNormalize = std::bool_constant<false>{};
 
   /// For binary operations the return type is determined with the
   /// ScalarBinaryOpTraits feature of Eigen. This allows mixing concrete and Map
@@ -108,7 +117,8 @@ class SO2Base {
       Scalar, typename OtherDerived::Scalar>::ReturnType;
 
   template <typename OtherDerived>
-  using SO2Product = SO2<ReturnScalar<OtherDerived>>;
+  using SO2Product = SO2<ReturnScalar<OtherDerived>, Options,
+                         PreserveInvariant && OtherDerived::PreserveInvariant>;
 
   template <typename PointDerived>
   using PointProduct = Vector2<ReturnScalar<PointDerived>>;
@@ -129,8 +139,16 @@ class SO2Base {
   /// Returns copy of instance casted to NewScalarType.
   ///
   template <class NewScalarType>
-  SOPHUS_FUNC SO2<NewScalarType> cast() const {
-    return SO2<NewScalarType>(unit_complex().template cast<NewScalarType>());
+  SOPHUS_FUNC SO2<NewScalarType, Options, PreserveInvariant> cast() const {
+    return SO2<NewScalarType, Options, PreserveInvariant>(
+        unit_complex().template cast<NewScalarType>());
+  }
+
+  /// Cast to SO2 type with different invariant-preserving property
+  ///
+  template <bool OtherPreserveInvariant>
+  SOPHUS_FUNC operator SO2<Scalar, Options, OtherPreserveInvariant>() const {
+    return SO2<Scalar, Options, OtherPreserveInvariant>(unit_complex());
   }
 
   /// This provides unsafe read/write access to internal data. SO(2) is
@@ -146,8 +164,10 @@ class SO2Base {
 
   /// Returns group inverse.
   ///
-  SOPHUS_FUNC SO2<Scalar> inverse() const {
-    return SO2<Scalar>(unit_complex().x(), -unit_complex().y());
+  SOPHUS_FUNC SO2<Scalar, Options, PreserveInvariant> inverse() const {
+    // Conjugation preserves the norm, thus no re-normalization is necessary
+    return SO2<Scalar, Options, PreserveInvariant>(
+        unit_complex().x(), -unit_complex().y(), DontNormalize);
   }
 
   /// Logarithmic map
@@ -209,6 +229,7 @@ class SO2Base {
   template <typename OtherDerived>
   SOPHUS_FUNC SO2Product<OtherDerived> operator*(
       SO2Base<OtherDerived> const& other) const {
+    using Product = SO2Product<OtherDerived>;
     using ResultT = ReturnScalar<OtherDerived>;
     Scalar const lhs_real = unit_complex().x();
     Scalar const lhs_imag = unit_complex().y();
@@ -218,20 +239,30 @@ class SO2Base {
     ResultT const result_real = lhs_real * rhs_real - lhs_imag * rhs_imag;
     ResultT const result_imag = lhs_real * rhs_imag + lhs_imag * rhs_real;
 
-    ResultT const squared_norm =
-        result_real * result_real + result_imag * result_imag;
-    // We can assume that the squared-norm is close to 1 since we deal with a
-    // unit complex number. Due to numerical precision issues, there might
-    // be a small drift after pose concatenation. Hence, we need to renormalizes
-    // the complex number here.
-    // Since squared-norm is close to 1, we do not need to calculate the costly
-    // square-root, but can use an approximation around 1 (see
-    // http://stackoverflow.com/a/12934750 for details).
-    if (squared_norm != ResultT(1.0)) {
-      ResultT const scale = ResultT(2.0) / (ResultT(1.0) + squared_norm);
-      return SO2Product<OtherDerived>(result_real * scale, result_imag * scale);
+    if constexpr (Product::PreserveInvariant) {
+      ResultT const squared_norm =
+          result_real * result_real + result_imag * result_imag;
+      // We can assume that the squared-norm is close to 1 since we deal with
+      // a unit complex number. Due to numerical precision issues, there might
+      // be a small drift after pose concatenation. Hence, we need to
+      // renormalize the complex number here. Since squared-norm is close to
+      // 1, we do not need to calculate the costly square-root, but can use an
+      // approximation around 1 (see http://stackoverflow.com/a/12934750 for
+      // details).
+      if (squared_norm != ResultT(1.0)) {
+        ResultT const scale = ResultT(2.0) / (ResultT(1.0) + squared_norm);
+        ResultT const scaled_real = result_real * scale;
+        ResultT const scaled_imag = result_imag * scale;
+        ResultT const scaled_squared_norm =
+            scaled_real * scaled_real + scaled_imag * scaled_imag;
+        if (scaled_squared_norm != ResultT(1.0)) {
+          return Product(scaled_real, scaled_imag, Normalize);
+        }
+        return Product(scaled_real, scaled_imag, DontNormalize);
+      }
+      return Product(result_real, result_imag, DontNormalize);
     }
-    return SO2Product<OtherDerived>(result_real, result_imag);
+    return Product(result_real, result_imag, DontNormalize);
   }
 
   /// Group action on 2-points.
@@ -334,7 +365,9 @@ class SO2Base {
   ///
   SOPHUS_FUNC void setComplex(Point const& complex) {
     unit_complex_nonconst() = complex;
-    normalize();
+    if constexpr (PreserveInvariant) {
+      normalize();
+    }
   }
 
   /// Accessor of unit quaternion.
@@ -355,12 +388,13 @@ class SO2Base {
 };
 
 /// SO2 using  default storage; derived from SO2Base.
-template <class Scalar_, int Options>
-class SO2 : public SO2Base<SO2<Scalar_, Options>> {
+template <class Scalar_, int Options, bool PreserveInvariant_>
+class SO2 : public SO2Base<SO2<Scalar_, Options, PreserveInvariant_>> {
  public:
-  using Base = SO2Base<SO2<Scalar_, Options>>;
+  using Base = SO2Base<SO2<Scalar_, Options, PreserveInvariant_>>;
   static int constexpr DoF = Base::DoF;
   static int constexpr num_parameters = Base::num_parameters;
+  static constexpr bool PreserveInvariant = PreserveInvariant_;
 
   using Scalar = Scalar_;
   using Transformation = typename Base::Transformation;
@@ -371,7 +405,7 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   using ComplexMember = Vector2<Scalar, Options>;
 
   /// ``Base`` is friend so unit_complex_nonconst can be accessed from ``Base``.
-  friend class SO2Base<SO2<Scalar, Options>>;
+  friend class SO2Base<SO2<Scalar, Options, PreserveInvariant>>;
 
   using Base::operator=;
 
@@ -394,7 +428,11 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   ///
   template <class OtherDerived>
   SOPHUS_FUNC SO2(SO2Base<OtherDerived> const& other)
-      : unit_complex_(other.unit_complex()) {}
+      : unit_complex_(other.unit_complex()) {
+    if constexpr (PreserveInvariant && !OtherDerived::PreserveInvariant) {
+      Base::normalize();
+    }
+  }
 
   /// Constructor from rotation matrix
   ///
@@ -410,14 +448,38 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
 
   /// Constructor from pair of real and imaginary number.
   ///
+  /// Normalization is performed based on PreserveInvariant
+  ///
   /// Precondition: The pair must not be close to zero.
   ///
   SOPHUS_FUNC SO2(Scalar const& real, Scalar const& imag)
       : unit_complex_(real, imag) {
-    Base::normalize();
+    if (PreserveInvariant) {
+      Base::normalize();
+    }
+  }
+
+  /// Constructor from pair of real and imaginary number with optional
+  /// normalization
+  ///
+  /// Normalization is performed based on normalize flag
+  /// SO2Base::Normalize and SO2Base::DontNormalize constants can be used as a
+  /// shorthand for calling this constructor
+  ///
+  /// Precondition: The pair must not be close to zero.
+  ///
+  template <bool normalize>
+  SO2(Scalar const& real, Scalar const& imag,
+      const std::bool_constant<normalize>)
+      : unit_complex_(real, imag) {
+    if (normalize) {
+      Base::normalize();
+    }
   }
 
   /// Constructor from 2-vector.
+  ///
+  /// Normalization is performed based on PreserveInvariant
   ///
   /// Precondition: The vector must not be close to zero.
   ///
@@ -426,13 +488,16 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
       : unit_complex_(complex) {
     static_assert(std::is_same<typename D::Scalar, Scalar>::value,
                   "must be same Scalar type");
-    Base::normalize();
+    if constexpr (PreserveInvariant) {
+      Base::normalize();
+    }
   }
 
   /// Constructor from an rotation angle.
   ///
   SOPHUS_FUNC explicit SO2(Scalar theta) {
-    unit_complex_nonconst() = SO2<Scalar>::exp(theta).unit_complex();
+    unit_complex_nonconst() =
+        SO2<Scalar, Options, PreserveInvariant>::exp(theta).unit_complex();
   }
 
   /// Accessor of unit complex number
@@ -450,10 +515,12 @@ class SO2 : public SO2Base<SO2<Scalar_, Options>> {
   /// with ``expmat(.)`` being the matrix exponential and ``hat(.)`` being the
   /// hat()-operator of SO(2).
   ///
-  SOPHUS_FUNC static SO2<Scalar> exp(Tangent const& theta) {
+  SOPHUS_FUNC static SO2<Scalar, Options, PreserveInvariant> exp(
+      Tangent const& theta) {
     using std::cos;
     using std::sin;
-    return SO2<Scalar>(cos(theta), sin(theta));
+    return SO2<Scalar, Options, PreserveInvariant>(cos(theta), sin(theta),
+                                                   Base::DontNormalize);
   }
 
   /// Returns derivative of exp(x) wrt. x.
@@ -578,12 +645,15 @@ namespace Eigen {
 ///
 /// Allows us to wrap SO2 objects around POD array (e.g. external c style
 /// complex number / tuple).
-template <class Scalar_, int Options>
-class Map<Sophus::SO2<Scalar_>, Options>
-    : public Sophus::SO2Base<Map<Sophus::SO2<Scalar_>, Options>> {
+template <class Scalar_, int SO2Options, bool PreserveInvariant_, int Options>
+class Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_>, Options>
+    : public Sophus::SO2Base<
+          Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_>, Options>> {
  public:
-  using Base = Sophus::SO2Base<Map<Sophus::SO2<Scalar_>, Options>>;
+  using Base = Sophus::SO2Base<
+      Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_>, Options>>;
   using Scalar = Scalar_;
+  static constexpr bool PreserveInvariant = PreserveInvariant_;
 
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
@@ -592,7 +662,8 @@ class Map<Sophus::SO2<Scalar_>, Options>
   using Adjoint = typename Base::Adjoint;
 
   /// ``Base`` is friend so unit_complex_nonconst can be accessed from ``Base``.
-  friend class Sophus::SO2Base<Map<Sophus::SO2<Scalar_>, Options>>;
+  friend class Sophus::SO2Base<
+      Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_>, Options>>;
 
   using Base::operator=;
   using Base::operator*=;
@@ -623,12 +694,16 @@ class Map<Sophus::SO2<Scalar_>, Options>
 ///
 /// Allows us to wrap SO2 objects around POD array (e.g. external c style
 /// complex number / tuple).
-template <class Scalar_, int Options>
-class Map<Sophus::SO2<Scalar_> const, Options>
-    : public Sophus::SO2Base<Map<Sophus::SO2<Scalar_> const, Options>> {
+template <class Scalar_, int SO2Options, bool PreserveInvariant_, int Options>
+class Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_> const, Options>
+    : public Sophus::SO2Base<
+          Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_> const,
+              Options>> {
  public:
-  using Base = Sophus::SO2Base<Map<Sophus::SO2<Scalar_> const, Options>>;
+  using Base = Sophus::SO2Base<
+      Map<Sophus::SO2<Scalar_, SO2Options, PreserveInvariant_> const, Options>>;
   using Scalar = Scalar_;
+  static constexpr bool PreserveInvariant = PreserveInvariant_;
   using Transformation = typename Base::Transformation;
   using Point = typename Base::Point;
   using HomogeneousPoint = typename Base::HomogeneousPoint;
@@ -642,8 +717,8 @@ class Map<Sophus::SO2<Scalar_> const, Options>
 
   /// Accessor of unit complex number.
   ///
-  SOPHUS_FUNC Map<Sophus::Vector2<Scalar> const, Options> const& unit_complex()
-      const {
+  SOPHUS_FUNC
+  Map<Sophus::Vector2<Scalar> const, Options> const& unit_complex() const {
     return unit_complex_;
   }
 
