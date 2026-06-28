@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>sophus</name>
+  <version>1.24.6</version>
+  <description>
+    Header-only C++ implementation of 2D and 3D Lie groups for computer vision
+    and robotics.
+  </description>
+
+  <maintainer email="dev@livoxtech.com">claydergc</maintainer>
+  <license>MIT</license>
+
+  <author>Hauke Strasdat</author>
+  <author>Steven Lovegrove</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>eigen</build_depend>
+  <run_depend>eigen</run_depend>
+
+  <export>
+  </export>
+</package>
