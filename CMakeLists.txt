@@ -103,6 +103,7 @@ target_include_directories(
 if(catkin_FOUND)
   catkin_package(
     INCLUDE_DIRS .
+    DEPENDS Eigen3
   )
 endif()
 
