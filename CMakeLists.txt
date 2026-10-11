@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 
 file(READ "SOPHUS_VERSION" SOPHUS_VERSION)
-project(Sophus VERSION ${SOPHUS_VERSION})
+project(sophus VERSION ${SOPHUS_VERSION})
 
+find_package(catkin QUIET)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
@@ -49,7 +50,7 @@ endif()
 # example defined by a parent project including Sophus via `add_subdirectory`.)
 
 if(NOT TARGET Eigen3::Eigen)
-  find_package(Eigen3 3.4.0 REQUIRED)
+  find_package(Eigen3 REQUIRED)
 endif()
 
 # Define interface library target
@@ -99,11 +100,18 @@ target_include_directories(
   sophus INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
                    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
+if(catkin_FOUND)
+  catkin_package(
+    INCLUDE_DIRS .
+    DEPENDS Eigen3
+  )
+endif()
+
 # Add sources as custom target so that they are shown in IDE's
 add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES} ${SOPHUS_HEADER_FILES})
 
 # Create 'test' make target using ctest
-option(BUILD_SOPHUS_TESTS "Build tests." ON)
+option(BUILD_SOPHUS_TESTS "Build tests." ${SOPHUS_MASTER_PROJECT})
 if(BUILD_SOPHUS_TESTS)
   enable_testing()
   add_subdirectory(test)
